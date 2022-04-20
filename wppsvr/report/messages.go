@@ -37,7 +37,7 @@ func reportMessages(sb *strings.Builder, session *store.Session, messages []*sto
 		sb.WriteString("---- The following messages were not counted in this report: ----\n")
 		for _, m := range invalid {
 			if m.FromAddress == "" && m.Subject == "" {
-				fmt.Fprintf(sb, "[unparseable message with hash %08x]\n", m.Hash)
+				fmt.Fprintf(sb, "[unparseable message with hash %s]\n", m.Hash)
 			} else {
 				fmt.Fprintf(sb, "%-30s %s\n", m.FromAddress, m.Subject)
 			}

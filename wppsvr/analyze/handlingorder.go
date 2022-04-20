@@ -73,7 +73,7 @@ priority %s should have handling order %s.
 				code:    ProblemFormHandlingOrder,
 				subject: "Incorrect handling order for form",
 				response: fmt.Sprintf(`
-This message handling order %s.  OA Municipal Status messages should have
+This message has handling order %s.  OA Municipal Status messages should have
 handling order IMMEDIATE.
 `, msg.HandlingOrder),
 				references: refFormRouting,

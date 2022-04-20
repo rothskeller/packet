@@ -23,9 +23,9 @@ func (st *Store) NextMessageID(prefix string) string {
 	default:
 		panic(err)
 	}
-	_, err = st.dbh.Exec("UPDATE msgnum SET num=? WHERE prefix=?", num, prefix)
+	_, err = st.dbh.Exec("INSERT OR REPLACE INTO msgnum (prefix, num) VALUES (?,?)", prefix, num)
 	if err != nil {
 		panic(err)
 	}
-	return fmt.Sprintf("%s-%03d", prefix, num)
+	return fmt.Sprintf("%s-%03dP", prefix, num)
 }

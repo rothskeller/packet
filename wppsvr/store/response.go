@@ -22,7 +22,7 @@ func (st *Store) SaveResponse(r *Response) {
 
 	st.mutex.Lock()
 	defer st.mutex.Unlock()
-	_, err = st.dbh.Exec("INSERT INTO response (id, responseto, to, subject, body, sendtime, sendercall, senderbbs) VALUES (?,?,?,?,?,?,?,?)",
+	_, err = st.dbh.Exec("INSERT INTO response (id, responseto, sendto, subject, body, sendtime, sendercall, senderbbs) VALUES (?,?,?,?,?,?,?,?)",
 		r.LocalID, r.ResponseTo, r.To, r.Subject, r.Body, r.SendTime, r.SenderCall, r.SenderBBS)
 	if err != nil {
 		panic(err)

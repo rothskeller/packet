@@ -67,8 +67,13 @@ func Connect() (c *jnos.Conn, err error) {
 }
 
 func connectSimulator(fh *os.File) (*jnos.Conn, error) {
-	conn, _, err := simulator.Connect(fh)
-	return conn, err
+	if _, err := simulator.Start(fh); err != nil {
+		return nil, err
+	}
+	*bbs = simulator.ListenAddress
+	*mbox = "x"
+	*pwd = "x"
+	return connectTelnet()
 }
 
 func connectKPC3Plus() (*jnos.Conn, error) {

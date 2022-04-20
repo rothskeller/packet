@@ -44,12 +44,12 @@ type SessionConfig struct {
 	ToBBSes                ScheduledValue `yaml:"toBBSes"`
 	DownBBSes              ScheduledValue `yaml:"downBBSes"`
 	RetrieveFromBBSes      []string       `yaml:"retrieveFromBBSes"`
-	RetrieveAt             string         `yaml:"retrieveAt"`
+	RetrieveAt             []string       `yaml:"retrieveAt"`
 	MessageTypes           ScheduledValue `yaml:"messageTypes"`
 
-	StartInterval      *Interval `yaml:"-"`
-	EndInterval        *Interval `yaml:"-"`
-	RetrieveAtInterval *Interval `yaml:"-"`
+	StartInterval      *Interval   `yaml:"-"`
+	EndInterval        *Interval   `yaml:"-"`
+	RetrieveAtInterval []*Interval `yaml:"-"`
 }
 
 // ScheduledValue holds a value that changes on a set schedule.  The value may
@@ -134,7 +134,7 @@ func (c *Config) applySessionDefaults() {
 		if session.RetrieveFromBBSes == nil {
 			session.RetrieveFromBBSes = c.SessionDefaults.RetrieveFromBBSes
 		}
-		if session.RetrieveAt == "" {
+		if session.RetrieveAt == nil {
 			session.RetrieveAt = c.SessionDefaults.RetrieveAt
 		}
 		if session.MessageTypes == nil {

@@ -84,13 +84,11 @@ The valid codes are "I" for Immediate, "P" for Priority, and "R" for Routine.
 		// so "Practice" got reported as the form name.
 		if strings.EqualFold(msg.FormName, "Practice") {
 			a.problems = append(a.problems, problemSubjectFormat(`
-Note that there is no underline after the word "Practice".
-`))
+Note that there is no underline after the word "Practice".`))
 		} else {
 			a.problems = append(a.problems, problemSubjectFormat(`
 Note that there is no form name between the handling order and the word
-"Practice" for plain text messages.
-`))
+"Practice" for plain text messages.`))
 		}
 	}
 }

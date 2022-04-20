@@ -175,7 +175,7 @@ var parseMessageTests = []struct {
 			},
 			DeliveredSubject: "subject",
 			LocalMessageID:   "AAA-111",
-			DeliveredTime:    time.Date(2021, 12, 18, 10, 0, 0, 0, time.Local),
+			DeliveredTime:    "2021-12-18 10:00:00",
 		},
 	},
 	{

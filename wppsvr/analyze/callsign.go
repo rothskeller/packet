@@ -38,7 +38,7 @@ func (a *Analysis) checkCallSign() {
 		formCS = strings.ToUpper(scco.OperatorCallSign)
 		isform = true
 	} else if form := a.msg.Form(); form != nil {
-		formCS = strings.ToUpper(msg.Form().Fields["OpCall"])
+		formCS = strings.ToUpper(form.Fields["OpCall"])
 		isform = true
 	}
 	// If we didn't find a call sign in any of those places, we can't count

@@ -22,8 +22,8 @@ type Session struct {
 	ToBBSes                []string
 	DownBBSes              []string
 	RetrieveFromBBSes      []string
-	RetrieveAt             string
-	RetrieveAtInterval     *config.Interval
+	RetrieveAt             []string
+	RetrieveAtInterval     []*config.Interval
 	MessageTypes           []string
 	Modified               bool
 	Running                bool
@@ -61,9 +61,10 @@ func (s *Store) getSessionsWhere(where string, args ...interface{}) (list []*Ses
 			tobbses       string
 			downbbses     string
 			retrievebbses string
+			retrieveats   string
 			messagetypes  string
 		)
-		err = rows.Scan(&session.ID, &session.CallSign, &session.Name, &session.Prefix, &session.Start, &session.End, &session.GenerateWeekSummary, &session.ExcludeFromWeekSummary, &reportto, &tobbses, &downbbses, &retrievebbses, &session.RetrieveAt, &messagetypes, &session.Modified, &session.Running, &session.Report)
+		err = rows.Scan(&session.ID, &session.CallSign, &session.Name, &session.Prefix, &session.Start, &session.End, &session.GenerateWeekSummary, &session.ExcludeFromWeekSummary, &reportto, &tobbses, &downbbses, &retrievebbses, &retrieveats, &messagetypes, &session.Modified, &session.Running, &session.Report)
 		if err != nil {
 			panic(err)
 		}
@@ -71,7 +72,11 @@ func (s *Store) getSessionsWhere(where string, args ...interface{}) (list []*Ses
 		session.ToBBSes = split(tobbses)
 		session.DownBBSes = split(downbbses)
 		session.RetrieveFromBBSes = split(retrievebbses)
-		session.RetrieveAtInterval, _ = config.ParseInterval(session.RetrieveAt)
+		session.RetrieveAt = split(retrieveats)
+		session.RetrieveAtInterval = make([]*config.Interval, len(session.RetrieveAt))
+		for i, ra := range session.RetrieveAt {
+			session.RetrieveAtInterval[i], _ = config.ParseInterval(ra)
+		}
 		session.MessageTypes = split(messagetypes)
 		list = append(list, &session)
 	}
@@ -90,12 +95,12 @@ func (s *Store) CreateSession(session *Session) {
 	)
 	s.mutex.Lock()
 	defer s.mutex.Unlock()
-	result, err = s.dbh.Exec("INSERT INTO session (callsign, name, prefix, start, end, generateweeksummary, excludefromweeksummary, reportto, tobbses, downbbses, retrievefrombbses, retrieveat, messagetypes, modified, running, report) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)",
+	result, err = s.dbh.Exec("INSERT INTO session (callsign, name, prefix, start, end, generateweeksummary, excludefromweeksummary, reportto, tobbses, downbbses, retrievefrombbses, retrieveat, messagetypes, modified, running, report) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)",
 		session.CallSign, session.Name, session.Prefix, session.Start, session.End,
 		session.GenerateWeekSummary, session.ExcludeFromWeekSummary,
 		strings.Join(session.ReportTo, ","), strings.Join(session.ToBBSes, ","),
 		strings.Join(session.DownBBSes, ","), strings.Join(session.RetrieveFromBBSes, ","),
-		session.RetrieveAt, strings.Join(session.MessageTypes, ","),
+		strings.Join(session.RetrieveAt, ","), strings.Join(session.MessageTypes, ","),
 		session.Modified, session.Running, session.Report)
 	if err != nil {
 		panic(err)
@@ -113,12 +118,12 @@ func (s *Store) UpdateSession(session *Session) {
 
 	s.mutex.Lock()
 	defer s.mutex.Unlock()
-	_, err = s.dbh.Exec("UPDATE session SET (callsign, name, prefix, start, end, generateweeksummary, excludefromweeksummary, reportto, tobbses, downbbses, retrievefrombbses, retrieveat, messagetypes, modified, running, report) = (?,?,?,?,?,?,?,?,?,?,?,?,?,?) WHERE id=?",
+	_, err = s.dbh.Exec("UPDATE session SET (callsign, name, prefix, start, end, generateweeksummary, excludefromweeksummary, reportto, tobbses, downbbses, retrievefrombbses, retrieveat, messagetypes, modified, running, report) = (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?) WHERE id=?",
 		session.CallSign, session.Name, session.Prefix, session.Start, session.End,
 		session.GenerateWeekSummary, session.ExcludeFromWeekSummary,
 		strings.Join(session.ReportTo, ","), strings.Join(session.ToBBSes, ","),
 		strings.Join(session.DownBBSes, ","), strings.Join(session.RetrieveFromBBSes, ","),
-		session.RetrieveAt, strings.Join(session.MessageTypes, ","),
+		strings.Join(session.RetrieveAt, ","), strings.Join(session.MessageTypes, ","),
 		session.Modified, session.Running, session.Report, session.ID)
 	if err != nil {
 		panic(err)

@@ -7,11 +7,11 @@ import (
 )
 
 var (
-	nl   = []byte{'\n'}
-	nlnl = []byte{'\n', '\n'}
-	nlsp = []byte{'\n', ' '}
-	sp   = []byte{' '}
-	spsp = []byte{' ', ' '}
+	nl      = []byte{'\n'}
+	nlnl    = []byte{'\n', '\n'}
+	nlsp    = []byte{'\n', ' '}
+	sp      = []byte{' '}
+	dotspsp = []byte{'.', ' ', ' '}
 )
 
 // Wrapper is a rudimentary word-wrapper.  Text written to it is word-wrapped at
@@ -85,7 +85,7 @@ var wrapRE2 = regexp.MustCompile(`\s*\n\s*`)
 
 // wrap does the actual wrapping.
 func (ww *Wrapper) wrap(b []byte) (err error) {
-	b = wrapRE1.ReplaceAllLiteral(b, spsp)
+	b = wrapRE1.ReplaceAllLiteral(b, dotspsp)
 	b = wrapRE2.ReplaceAllLiteral(b, sp)
 	for len(b) > 78 {
 		idx := bytes.LastIndexByte(b[:78], ' ')

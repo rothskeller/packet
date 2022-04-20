@@ -118,12 +118,17 @@ func (c *Config) Validate() (valid bool) {
 				valid = false
 			}
 		}
-		if session.RetrieveAt == "" {
+		if len(session.RetrieveAt) == 0 {
 			log.Printf("ERROR: config.sessions[%q].retrieveAt is not specified", toCallSign)
 			valid = false
-		} else if session.RetrieveAtInterval, err = ParseInterval(session.RetrieveAt); err != nil {
-			log.Printf("ERROR: config.sessions[%q].retrieveAt = %q: %s", toCallSign, session.RetrieveAt, err)
-			valid = false
+		} else {
+			session.RetrieveAtInterval = make([]*Interval, len(session.RetrieveAt))
+			for i, ra := range session.RetrieveAt {
+				if session.RetrieveAtInterval[i], err = ParseInterval(ra); err != nil {
+					log.Printf("ERROR: config.sessions[%q].retrieveAt[%d] = %q: %s", toCallSign, i, ra, err)
+					valid = false
+				}
+			}
 		}
 		if !session.MessageTypes.validate(fmt.Sprintf("config.sessions[%q].messageTypes", toCallSign)) {
 			valid = false
@@ -148,7 +153,7 @@ func (c *Config) Validate() (valid bool) {
 		}
 		for _, mtype := range ValidMessageTypes {
 			if form := mtype.Form(); form != nil {
-				if c.MinimumVersions[form.TypeCode()] == "" {
+				if c.MinimumVersions[mtype.TypeCode()] == "" {
 					log.Printf("ERROR: config.minimumVersions[%q] is not specified", form.TypeCode())
 					valid = false
 				}

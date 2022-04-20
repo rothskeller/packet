@@ -9,6 +9,7 @@ import (
 
 	"steve.rothskeller.net/packet/jnos"
 	"steve.rothskeller.net/packet/jnos/kpc3plus"
+	"steve.rothskeller.net/packet/jnos/telnet"
 	"steve.rothskeller.net/packet/wppsvr/analyze"
 	"steve.rothskeller.net/packet/wppsvr/config"
 	"steve.rothskeller.net/packet/wppsvr/store"
@@ -22,7 +23,14 @@ func ForRunningSessions(st *store.Store) {
 		now = time.Now()
 	)
 	for _, session := range st.GetRunningSessions() {
-		var lastRetrievalPoint = session.RetrieveAtInterval.Prev(now)
+		var lastRetrievalPoint time.Time
+
+		for _, rai := range session.RetrieveAtInterval {
+			point := rai.Prev(now)
+			if point.After(lastRetrievalPoint) {
+				lastRetrievalPoint = point
+			}
+		}
 		for _, bbs := range session.RetrieveFromBBSes {
 			if st.GetLastRetrieval(session.CallSign, bbs).Before(lastRetrievalPoint) {
 				wg.Add(1)
@@ -37,10 +45,16 @@ func ForRunningSessions(st *store.Store) {
 // session.
 func ForSession(st *store.Store, session *store.Session) {
 	var (
-		wg  sync.WaitGroup
-		now = time.Now()
+		wg                 sync.WaitGroup
+		lastRetrievalPoint time.Time
+		now                = time.Now()
 	)
-	var lastRetrievalPoint = session.RetrieveAtInterval.Prev(now)
+	for _, rai := range session.RetrieveAtInterval {
+		point := rai.Prev(now)
+		if point.After(lastRetrievalPoint) {
+			lastRetrievalPoint = point
+		}
+	}
 	for _, bbs := range session.RetrieveFromBBSes {
 		if st.GetLastRetrieval(session.CallSign, bbs).Before(lastRetrievalPoint) {
 			wg.Add(1)
@@ -54,8 +68,8 @@ func ForSession(st *store.Store, session *store.Session) {
 func checkBBS(st *store.Store, wg *sync.WaitGroup, session *store.Session, bbsname string) {
 	var (
 		conn   *jnos.Conn
-		msgnum int
 		err    error
+		msgnum = 1
 		start  = time.Now()
 	)
 	defer wg.Done()
@@ -97,7 +111,7 @@ func ConnectToBBS(bbsname, mailbox string) (conn *jnos.Conn) {
 	case "kpc3plus":
 		conn, err = kpc3plus.Connect("/dev/tty.usbserial-1410", bbs.AX25, mailbox, "KC6RSC")
 	case "telnet":
-		// conn, err = telnet.Connect(bbs.Domain, mailbox)
+		conn, err = telnet.Connect(bbs.TCP, mailbox, bbs.Passwords[mailbox])
 	}
 	if err != nil {
 		log.Printf("ERROR: can't connect to %s@%s via %s: %s", mailbox, bbsname, bbs.Transport, err)

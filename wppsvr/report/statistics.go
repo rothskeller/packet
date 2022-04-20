@@ -41,7 +41,9 @@ func reportStatistics(sb *strings.Builder, st Store, session *store.Session, mes
 	if session.GenerateWeekSummary {
 		fmt.Fprintf(sb, "  for the week:     %*d\n", countWidth, stats.uniqueCallSignsWeek)
 	}
-	sb.WriteString("Messages from:\n")
+	if len(stats.sourceNames) != 0 || stats.otherSourcesCount != 0 {
+		sb.WriteString("Messages from:\n")
+	}
 	for i, source := range stats.sourceNames {
 		if wasSimulatedDown(session, source) {
 			fmt.Fprintf(sb, "  %s:%*s%*d  (simulated down)\n",

@@ -7,6 +7,7 @@ import (
 	"strings"
 	"time"
 
+	"steve.rothskeller.net/packet/wppsvr/analyze"
 	"steve.rothskeller.net/packet/wppsvr/config"
 	"steve.rothskeller.net/packet/wppsvr/english"
 	"steve.rothskeller.net/packet/wppsvr/store"
@@ -39,12 +40,35 @@ func generate(st Store, session *store.Session) (report string, participants []s
 		messages []*store.Message
 	)
 	messages = st.GetSessionMessages(session.ID)
+	messages = removeUnreportableMessages(messages)
 	reportTitle(&sb, session)
 	reportParams(&sb, session)
 	reportStatistics(&sb, st, session, messages)
 	reportMessages(&sb, session, messages)
 	reportGenInfo(&sb)
 	return sb.String(), allFromAddresses(messages)
+}
+
+// removeUnreportableMessages removes from the messages list any messages that
+// should be excluded from the report (e.g., delivery receipts).  These are
+// identified as messages that (a) are not valid practice messages and (b) have
+// no reportable problems associated with them.
+func removeUnreportableMessages(messages []*store.Message) []*store.Message {
+	j := 0
+	for _, m := range messages {
+		var reportable = m.Valid
+
+		for _, p := range m.Problems {
+			if analyze.ProblemLabel[p] != "" {
+				reportable = true
+			}
+		}
+		if reportable {
+			messages[j] = m
+			j++
+		}
+	}
+	return messages[:j]
 }
 
 // reportTitle generates the title of the report.
@@ -110,13 +134,16 @@ func reportParams(sb *strings.Builder, session *store.Session) {
 
 // reportGenInfo reports when then report was generated and by what software.
 func reportGenInfo(sb *strings.Builder) {
+	var wr = english.NewWrapper(sb)
+
 	if bi, ok := debug.ReadBuildInfo(); ok {
-		fmt.Fprintf(sb, "This report was generated on %s by wppsvr version %s.\n",
+		fmt.Fprintf(wr, "This report was generated on %s by wppsvr version %s.\n",
 			now().Format("Monday, January 2, 2006 at 15:04"), bi.Main.Version)
 	} else {
-		fmt.Fprintf(sb, "This report was generated on %s by wppsvr.\n",
+		fmt.Fprintf(wr, "This report was generated on %s by wppsvr.\n",
 			now().Format("Monday, January 2, 2006 at 15:04"))
 	}
+	wr.Close()
 }
 
 // timerange returns a formatted date/time range.

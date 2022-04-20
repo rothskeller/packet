@@ -212,6 +212,15 @@ func parseRxBase(rawmsg string) *RxBase {
 			b.DeliveryTime, _ = mail.ParseDate(received[semi+1:])
 		}
 	}
+	if b.DeliveryTime.IsZero() {
+		// We didn't get a delivery time from a "Received:" header
+		// either.  We probably read the message with a JNOS "R" command
+		// that doesn't show those headers.  As a last resort, get it
+		// from the "Date:" header.  It's not really accurate since it
+		// shows when the message was sent rather than when the BBS
+		// received it, but it's better than nothing.
+		b.DeliveryTime, _ = mail.ParseDate(mm.Header.Get("Date"))
+	}
 	// Save the subject and date lines.
 	b.SubjectLine = mm.Header.Get("Subject")
 	b.DateLine = mm.Header.Get("Date")

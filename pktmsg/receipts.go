@@ -41,7 +41,7 @@ type RxDeliveryReceipt struct {
 	RxBase
 	DeliveredSubject string
 	LocalMessageID   string
-	DeliveredTime    time.Time
+	DeliveredTime    string
 }
 
 // TypeCode returns the machine-readable code for the message type.
@@ -55,7 +55,7 @@ func (*RxDeliveryReceipt) TypeArticle() string { return "a" }
 
 // deliveryReceiptRE matches the first line of a delivery receipt message.  Its
 // substrings are the local message ID and the delivery time.
-var deliveryReceiptRE = regexp.MustCompile(`^!LMI!([^!]+)!DR!(20\d\d-\d\d-\d\d \d\d:\d\d:\d\d)\n`)
+var deliveryReceiptRE = regexp.MustCompile(`^!LMI!([^!]+)!DR!(.+)\n`)
 
 // parseRxDeliveryReceipt examines an RxBase to see if it is a delivery receipt,
 // and if so, wraps it in an RxDeliveryReceipt and returns it.  If it is not, it
@@ -73,7 +73,7 @@ func parseRxDeliveryReceipt(b *RxBase) *RxDeliveryReceipt {
 	}
 	if match := deliveryReceiptRE.FindStringSubmatch(b.Body); match != nil {
 		dr.LocalMessageID = match[1]
-		dr.DeliveredTime, _ = time.ParseInLocation("2006-01-02 15:04:05", match[2], time.Local)
+		dr.DeliveredTime = match[2]
 	} else {
 		return nil
 	}

@@ -61,7 +61,7 @@ func (st *Store) GetSessionMessages(sessionID int) (messages []*Message) {
 			m        Message
 			problems string
 		)
-		err = rows.Scan(&m.LocalID, &m.Hash, &m.Message, &m.FromAddress, &m.FromCallSign, &m.FromBBS, &m.ToBBS, &m.Subject, &problems, &m.Valid, &m.Correct)
+		err = rows.Scan(&m.LocalID, &m.Hash, &m.DeliveryTime, &m.Message, &m.FromAddress, &m.FromCallSign, &m.FromBBS, &m.ToBBS, &m.Subject, &problems, &m.Valid, &m.Correct)
 		if err != nil {
 			panic(err)
 		}
@@ -102,7 +102,7 @@ func (st *Store) SaveMessage(m *Message) {
 	st.mutex.Lock()
 	defer st.mutex.Unlock()
 	_, err = st.dbh.Exec("INSERT INTO message (id, hash, deliverytime, message, session, fromaddress, fromcallsign, frombbs, tobbs, subject, problems, valid, correct) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)",
-		m.LocalID, m.Hash, m.DeliveryTime, m.Message, m.Session, m.FromAddress, m.FromBBS, m.ToBBS, m.Subject, strings.Join(m.Problems, ","), m.Valid, m.Correct)
+		m.LocalID, m.Hash, m.DeliveryTime, m.Message, m.Session, m.FromAddress, m.FromCallSign, m.FromBBS, m.ToBBS, m.Subject, strings.Join(m.Problems, ","), m.Valid, m.Correct)
 	if err != nil {
 		panic(err)
 	}

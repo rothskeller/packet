@@ -1,7 +1,7 @@
-// Package simulator provides a transport to a rudimentary simulation of a JNOS
-// BBS, which can be used for testing JNOS-based services without connecting to
-// a real BBS.  This simulation implements only the features of JNOS that are
-// used by package jnos.
+// Package simulator provides a rudimentary simulation of a JNOS BBS, which can
+// be used for testing JNOS-based services without connecting to a real BBS.
+// This simulation implements only the features of JNOS that are used by package
+// jnos.
 package simulator
 
 import (
@@ -14,52 +14,26 @@ import (
 	"strconv"
 	"strings"
 	"time"
-
-	"steve.rothskeller.net/packet/jnos"
-	"steve.rothskeller.net/packet/jnos/telnet"
 )
 
-// Connect starts a new JNOS simulator.  It returns an open jnos.Conn connected
-// to the simulator as well as a handle to the
-// simulator itself (which can be examined after the interaction to see what
-// messages were sent through the simulated BBS).  The messages available to
-// read from the simulation are those in the supplied messages file, which can
-// be an mbox-style file or a transcript of an actual JNOS session that read
-// messages.  The simulator's Stop method should be called when it is no longer
-// needed.
-func Connect(messages io.Reader) (c *jnos.Conn, s *Simulator, err error) {
-	var t *telnet.Transport
+// ListenAddress is the address to which the simulator listens.  Connect to it
+// with a telnet transport.  Any login and password is accepted.
+const ListenAddress = "localhost:63425"
 
-	if t, s, err = Start(messages); err != nil {
-		return nil, nil, err
-	}
-	if c, err = jnos.Connect(t); err != nil {
-		t.Close()
-		s.Stop()
-		return nil, nil, fmt.Errorf("BBS connect: %s", err)
-	}
-	return c, s, nil
-}
-
-// Start starts a new JNOS simulator.  It returns a transport connected to the
-// simulator (which can be passed to jnos.Connect) as well as a handle to the
-// simulator itself (which can be examined after the interaction to see what
-// messages were sent through the simulated BBS).  The messages available to
-// read from the simulation are those in the supplied messages file, which can
-// be an mbox-style file or a transcript of an actual JNOS session that read
-// messages.  The simulator's Stop method should be called when it is no longer
-// needed.
-func Start(messages io.Reader) (t *telnet.Transport, s *Simulator, err error) {
+// Start starts a new JNOS simulator.  It returnsa handle to the simulator,
+// which can be examined after the interaction to see what messages were sent
+// through the simulated BBS.  The messages available to read from the
+// simulation are those in the supplied messages file, which can be an
+// mbox-style file or a transcript of an actual JNOS session that read messages.
+// The simulator's Stop method should be called when it is no longer needed.
+func Start(messages io.Reader) (s *Simulator, err error) {
 	s = new(Simulator)
 	s.importMessages(messages)
-	if s.listener, err = net.ListenTCP("tcp", &net.TCPAddr{}); err != nil {
-		return nil, nil, err
+	if s.listener, err = net.Listen("tcp", ListenAddress); err != nil {
+		return nil, err
 	}
 	go s.listen()
-	if t, err = telnet.Open(s.listener.Addr().String(), "", ""); err != nil {
-		return nil, nil, err
-	}
-	return t, s, nil
+	return s, nil
 }
 
 // Simulator is a JNOS simulator.
@@ -269,7 +243,7 @@ func (s *Simulator) handleRead(conn net.Conn, command string) (err error) {
 	if _, err = fmt.Fprintf(conn, "Message #%d \r\n", msgnum); err != nil {
 		return err
 	}
-	_, err = conn.Write([]byte(s.messages[msgnum-1]))
+	_, err = conn.Write(bytes.ReplaceAll([]byte(s.messages[msgnum-1]), []byte{'\n'}, []byte{'\r', '\n'}))
 	return err
 }
 
@@ -301,7 +275,7 @@ func (s *Simulator) handleSend(conn net.Conn, scan *bufio.Scanner, command strin
 		return err
 	}
 	// Ask for the subject and preserve it.
-	if _, err = conn.Write([]byte("Subject: ")); err != nil {
+	if _, err = conn.Write([]byte("Subject:\r\n")); err != nil {
 		return err
 	}
 	if !scan.Scan() {
