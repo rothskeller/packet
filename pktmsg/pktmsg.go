@@ -17,6 +17,7 @@
 //           RxSCCoForm                TxSCCoForm           (sccoform.go)
 //             RxEOC213RRForm            TxEOC213RRForm     (eoc213rr.go)
 //             RxMuniStatForm            TxMuniStatForm     (munistat.go)
+//             RxSheltStatForm           TxSheltStatForm    (sheltstat.go)
 //
 // All message types embed either RxBase or TxBase.  Messages that can't be
 // parsed or have no return address are represented as a bare RxBase.
@@ -62,6 +63,9 @@ func ParseMessage(rawmsg string) ParsedMessage {
 	}
 	if munistat := parseRxMuniStatForm(form); munistat != nil {
 		return munistat
+	}
+	if sheltstat := parseRxSheltStatForm(form); sheltstat != nil {
+		return sheltstat
 	}
 	return form
 }

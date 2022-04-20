@@ -8,7 +8,7 @@ import (
 )
 
 // A TxMuniStatForm is an outgoing PackItForms-encoded message containing an
-// SCCo EOC-213RR form.
+// SCCo OA Municipal Status form.
 type TxMuniStatForm struct {
 	TxSCCoForm
 	ReportType                      string

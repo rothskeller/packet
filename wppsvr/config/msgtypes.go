@@ -9,6 +9,7 @@ var ValidMessageTypes = []pktmsg.ParsedMessage{
 	new(pktmsg.RxICS213Form),
 	new(pktmsg.RxEOC213RRForm),
 	new(pktmsg.RxMuniStatForm),
+	new(pktmsg.RxSheltStatForm),
 }
 
 // LookupMessageType finds the message type with the specified code, if it

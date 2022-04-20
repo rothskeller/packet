@@ -79,5 +79,17 @@ handling order IMMEDIATE.
 				references: refFormRouting,
 			})
 		}
+	case *pktmsg.RxSheltStatForm:
+		if msg.HandlingOrder != pktmsg.HandlingPriority {
+			a.problems = append(a.problems, &problem{
+				code:    ProblemFormHandlingOrder,
+				subject: "Incorrect handling order for form",
+				response: fmt.Sprintf(`
+This message has handling order %s.  OA Shelter Status messages should have
+handling order PRIORITY.
+`, msg.HandlingOrder),
+				references: refFormRouting,
+			})
+		}
 	}
 }

@@ -47,5 +47,20 @@ at "County EOC".
 				references: refFormRouting,
 			})
 		}
+	case *pktmsg.RxSheltStatForm:
+		// Note, we don't check the location; there are too many
+		// valid possibilities.
+		if msg.ToICSPosition != "Mass Care and Shelter Unit" && msg.ToICSPosition != "Care and Shelter Branch" && msg.ToICSPosition != "Operations Section" {
+			a.problems = append(a.problems, &problem{
+				code:    ProblemFormDestination,
+				subject: "Incorrect destination for form",
+				response: fmt.Sprintf(`
+This message form is addressed to %q.  OA Shelter Status messages should be
+addressed to "Mass Care and Shelter Unit", "Care and Shelter Branch", or
+"Operations Section".
+`, msg.ToICSPosition),
+				references: refFormRouting,
+			})
+		}
 	}
 }
