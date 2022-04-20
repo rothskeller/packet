@@ -1,0 +1,6 @@
+*.log
+config.yaml
+go.work
+log
+old
+run.lock
