@@ -2,6 +2,7 @@ package analyze
 
 import (
 	"regexp"
+	"strings"
 
 	"steve.rothskeller.net/packet/pktmsg"
 )
@@ -38,6 +39,14 @@ func (a *Analysis) checkMessageNumber() {
 		return
 	}
 	if !msgnumRE.MatchString(msgnum) {
+		if strings.IndexByte(msgnum, '_') >= 0 {
+			// This "message number" contains an underline.  That's
+			// indicative of a broader problem than just the message
+			// number.  We'll report it as a bad subject line
+			// instead.
+			a.problems = append(a.problems, problemSubjectFormat(""))
+			return
+		}
 		a.problems = append(a.problems, &problem{
 			code:    ProblemMsgNumFormat,
 			subject: "Incorrect message number format",
