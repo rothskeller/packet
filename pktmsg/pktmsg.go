@@ -14,6 +14,7 @@
 //         RxForm                    TxForm                 (form.go)
 //           RxICS213Form              TxICS213Form         (ics213.go)
 //           RxSCCoForm                TxSCCoForm           (sccoform.go)
+//             RxAHFacStatForm           TxAHFacStatForm    (ahfacstat.go)
 //             RxEOC213RRForm            TxEOC213RRForm     (eoc213rr.go)
 //             RxMuniStatForm            TxMuniStatForm     (munistat.go)
 //             RxSheltStatForm           TxSheltStatForm    (sheltstat.go)
@@ -56,6 +57,9 @@ func ParseMessage(rawmsg string) ParsedMessage {
 	}
 	if ics213 := parseRxICS213Form(form); ics213 != nil {
 		return ics213
+	}
+	if ahfacstat := parseRxAHFacStatForm(form); ahfacstat != nil {
+		return ahfacstat
 	}
 	if eoc213rr := parseRxEOC213RRForm(form); eoc213rr != nil {
 		return eoc213rr

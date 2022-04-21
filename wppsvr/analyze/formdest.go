@@ -25,17 +25,17 @@ func (a *Analysis) checkFormDestination() {
 		foundPosition bool
 		foundLocation bool
 		routing       = config.Get().FormRouting[a.msg.TypeCode()]
+		form          = a.msg.SCCoForm()
 	)
-	if routing == nil || (len(routing.ToICSPosition) == 0 && len(routing.ToLocation) == 0) {
+	if form == nil || routing == nil || (len(routing.ToICSPosition) == 0 && len(routing.ToLocation) == 0) {
 		return
 	}
 	if len(routing.ToICSPosition) == 0 {
 		foundPosition = true
 	} else {
 		log.Printf("%s %T\n", a.msg.TypeCode(), a.msg)
-		actual := a.msg.SCCoForm().ToICSPosition
 		for _, wanted := range routing.ToICSPosition {
-			if actual == wanted {
+			if form.ToICSPosition == wanted {
 				foundPosition = true
 				break
 			}
@@ -44,9 +44,8 @@ func (a *Analysis) checkFormDestination() {
 	if len(routing.ToLocation) == 0 {
 		foundLocation = true
 	} else {
-		actual := a.msg.SCCoForm().ToLocation
 		for _, wanted := range routing.ToLocation {
-			if actual == wanted {
+			if form.ToLocation == wanted {
 				foundLocation = true
 				break
 			}
@@ -66,7 +65,7 @@ func (a *Analysis) checkFormDestination() {
 			response: fmt.Sprintf(`
 This message form is addressed to ICS Position %q at Location %q.  %ss
 should be addressed to %s at %s.
-`, a.msg.SCCoForm().ToICSPosition, a.msg.SCCoForm().ToLocation, a.msg.TypeName(), english.Conjoin(positions, "or"), english.Conjoin(locations, "or")),
+`, form.ToICSPosition, form.ToLocation, a.msg.TypeName(), english.Conjoin(positions, "or"), english.Conjoin(locations, "or")),
 			references: refFormRouting,
 		})
 	}
@@ -80,7 +79,7 @@ should be addressed to %s at %s.
 			response: fmt.Sprintf(`
 This message form is addressed to ICS Position %q.  %ss should be addressed to
 ICS Position %s.
-`, a.msg.SCCoForm().ToICSPosition, a.msg.TypeName(), english.Conjoin(positions, "or")),
+`, form.ToICSPosition, a.msg.TypeName(), english.Conjoin(positions, "or")),
 			references: refFormRouting,
 		})
 	}
@@ -94,7 +93,7 @@ ICS Position %s.
 			response: fmt.Sprintf(`
 This message form is addressed to Location %q.  %ss should be addressed to
 Location %s.
-`, a.msg.SCCoForm().ToLocation, a.msg.TypeName(), english.Conjoin(locations, "or")),
+`, form.ToLocation, a.msg.TypeName(), english.Conjoin(locations, "or")),
 			references: refFormRouting,
 		})
 	}

@@ -7,6 +7,7 @@ import "steve.rothskeller.net/packet/pktmsg"
 var ValidMessageTypes = []pktmsg.ParsedMessage{
 	new(pktmsg.RxMessage),
 	new(pktmsg.RxICS213Form),
+	new(pktmsg.RxAHFacStatForm),
 	new(pktmsg.RxEOC213RRForm),
 	new(pktmsg.RxMuniStatForm),
 	new(pktmsg.RxSheltStatForm),

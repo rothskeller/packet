@@ -170,7 +170,7 @@ func (ms *TxMuniStatForm) Encode() (subject, body string, err error) {
 //------------------------------------------------------------------------------
 
 // An RxMuniStatForm is a received PackItForms-encoded message containing an
-// SCCo EOC-213RR form.
+// SCCo OA Municipal Status form.
 type RxMuniStatForm struct {
 	RxSCCoForm
 	ReportType                      string

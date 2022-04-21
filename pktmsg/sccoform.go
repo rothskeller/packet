@@ -3,6 +3,7 @@ package pktmsg
 // This file defines TxSCCoForm and RxSCCoForm.
 
 import (
+	"strconv"
 	"time"
 )
 
@@ -71,6 +72,15 @@ func (s *TxSCCoForm) encodeFooterFields() {
 	s.SetField("OpCall", s.OperatorCallSign)
 	s.SetField("OpDate", s.OperatorDateTime.Format("01/02/2006"))
 	s.SetField("OpTime", s.OperatorDateTime.Format("15:04"))
+}
+
+// intToText returns an empty string if the integer is zero and the string form
+// of the integer otherwise.
+func intToText(i int) string {
+	if i == 0 {
+		return ""
+	}
+	return strconv.Itoa(i)
 }
 
 // boolToChecked returns "checked" if the Boolean is true and "" otherwise.

@@ -69,16 +69,10 @@ func (a *Analysis) checkPracticeSubject() {
 	if msg.Subject == msg.SubjectLine {
 		return
 	}
-	// This check does not apply to OA Municipal or Shelter Status forms.
-	// They aren't expected to have the standard Practice subject.  It also
-	// doesn't apply to forms of unknown type.
-	if _, ok := a.msg.(*pktmsg.RxMuniStatForm); ok {
-		return
-	}
-	if _, ok := a.msg.(*pktmsg.RxSheltStatForm); ok {
-		return
-	}
-	if _, ok := a.msg.(*pktmsg.RxForm); ok {
+	// This check does not apply to forms that aren't expected to have the
+	// standard Practice subject (including forms of unknown type)
+	switch a.msg.(type) {
+	case *pktmsg.RxForm, *pktmsg.RxAHFacStatForm, *pktmsg.RxMuniStatForm, *pktmsg.RxSheltStatForm:
 		return
 	}
 	var match = practiceRE.FindStringSubmatch(msg.Subject)

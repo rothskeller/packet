@@ -7,7 +7,7 @@ import (
 	"strconv"
 )
 
-// A TxSheltStatForm is an outgoing PackItForss-encoded message containing an
+// A TxSheltStatForm is an outgoing PackItForms-encoded message containing an
 // SCCo OA Shelter Status form.
 type TxSheltStatForm struct {
 	TxSCCoForm
@@ -93,16 +93,8 @@ func (ss *TxSheltStatForm) Encode() (subject, body string, err error) {
 	ss.SetField("33d.", ss.ShelterZip)
 	ss.SetField("37a.", strconv.FormatFloat(ss.Latitude, 'f', -1, 64))
 	ss.SetField("37b.", strconv.FormatFloat(ss.Longitude, 'f', -1, 64))
-	if ss.Capacity != 0 {
-		ss.SetField("40a.", strconv.Itoa(ss.Capacity))
-	} else {
-		ss.SetField("40a.", "")
-	}
-	if ss.Occupancy != 0 {
-		ss.SetField("40b.", strconv.Itoa(ss.Occupancy))
-	} else {
-		ss.SetField("40b.", "")
-	}
+	ss.SetField("40a.", intToText(ss.Capacity))
+	ss.SetField("40b.", intToText(ss.Occupancy))
 	ss.SetField("41.", ss.Meals)
 	ss.SetField("42.", ss.NSS)
 	ss.SetField("43a.", ss.PetFriendly)
@@ -132,8 +124,8 @@ func (ss *TxSheltStatForm) Encode() (subject, body string, err error) {
 
 //------------------------------------------------------------------------------
 
-// An RxSheltStatForm is a received PackItForss-encoded message containing an
-// SCCo EOC-213RR form.
+// An RxSheltStatForm is a received PackItForms-encoded message containing an
+// SCCo OA Shelter Status form.
 type RxSheltStatForm struct {
 	RxSCCoForm
 	ReportType           string

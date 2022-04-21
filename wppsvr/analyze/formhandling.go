@@ -34,7 +34,7 @@ func (a *Analysis) checkFormHandlingOrder() {
 	default:
 		ho, _ = pktmsg.ParseHandlingOrder(handling)
 	}
-	if f := a.msg.Form(); f.HandlingOrder != ho {
+	if f := a.msg.Form(); f != nil && f.HandlingOrder != ho {
 		a.problems = append(a.problems, &problem{
 			code: ProblemFormHandlingOrder,
 			response: fmt.Sprintf(`
