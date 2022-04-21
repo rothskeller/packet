@@ -25,7 +25,7 @@ func (a *Analysis) checkValidForm() {
 			code:    ProblemFormCorrupt,
 			subject: "Incorrectly encoded form",
 			response: `
-This message uses PackItForms encoding to transmit a form, but the encoding is
+This message appears to contain an encoded form, but the encoding is
 incorrect.  It appears to have been created or edited by software other than
 the current PackItForms software.  Please use current PackItForms software to
 encode messages containing forms.

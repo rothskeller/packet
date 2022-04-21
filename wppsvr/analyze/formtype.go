@@ -24,8 +24,9 @@ func (a *Analysis) checkCorrectForm() {
 		allowed []string
 		article string
 	)
-	// This check only applies to human messages.
-	if a.msg.Message() == nil {
+	// This check only applies to human messages.  It does not apply to
+	// corrupt forms (we may not have detected their type correctly).
+	if a.msg.Message() == nil || (a.msg.Form() != nil && a.msg.Form().CorruptForm) {
 		return
 	}
 	code = a.msg.TypeCode()

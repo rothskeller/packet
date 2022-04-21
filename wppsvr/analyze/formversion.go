@@ -22,9 +22,10 @@ func init() {
 // checkFormVersion makes sure that the form embedded in the message (if any)
 // used a current version of the form template.
 func (a *Analysis) checkFormVersion() {
-	// This check only applies to messages with encoded forms.
+	// This check only applies to messages with encoded forms.  It does not
+	// apply to corrupted forms.
 	var form = a.msg.Form()
-	if form == nil {
+	if form == nil || form.CorruptForm {
 		return
 	}
 	minimums := config.Get().MinimumVersions

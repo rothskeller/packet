@@ -140,6 +140,10 @@ func (f *RxForm) TypeArticle() string {
 	return "a"
 }
 
+// formMatchRE is the regular expression that matches a form message.  It looks
+// for a line containing !SCCoPIFO!, !PACF!, or !/ADDON!.
+var formMatchRE = regexp.MustCompile(`!SCCoPIFO!|!PACF!|!/ADDON!`)
+
 // pifoFieldRE is the regular expression for a field value line in a PackItForms
 // message body.
 var pifoFieldRE = regexp.MustCompile(`^([-A-Za-z0-9.]+): \[(.*)\]$`)
@@ -156,12 +160,17 @@ func parseRxForm(m *RxMessage) *RxForm {
 		seenField     bool
 		seenFooter    bool
 	)
-	// Make sure this has the signature of a PackItForms-encoded form.
-	if !strings.HasPrefix(m.Body, "!SCCoPIFO!\n") {
+	// Make sure this is a form message.
+	if !formMatchRE.MatchString(m.Body) {
 		return nil
 	}
 	f.RxMessage = *m
 	f.Fields = make(map[string]string)
+	// Make sure this has the signature of a PackItForms-encoded form.
+	if !strings.HasPrefix(m.Body, "!SCCoPIFO!\n") {
+		f.CorruptForm = true
+		return &f
+	}
 	// Parse each line of the form message.
 	for _, line := range strings.Split(m.Body, "\n") {
 		switch {

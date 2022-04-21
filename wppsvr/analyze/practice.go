@@ -70,11 +70,15 @@ func (a *Analysis) checkPracticeSubject() {
 		return
 	}
 	// This check does not apply to OA Municipal or Shelter Status forms.
-	// They aren't expected to have the standard Practice subject.
+	// They aren't expected to have the standard Practice subject.  It also
+	// doesn't apply to forms of unknown type.
 	if _, ok := a.msg.(*pktmsg.RxMuniStatForm); ok {
 		return
 	}
 	if _, ok := a.msg.(*pktmsg.RxSheltStatForm); ok {
+		return
+	}
+	if _, ok := a.msg.(*pktmsg.RxForm); ok {
 		return
 	}
 	var match = practiceRE.FindStringSubmatch(msg.Subject)

@@ -1,7 +1,6 @@
 // Package pktmsg handles encoding and decoding packet messages.  It understands
 // RFC-4155 and RFC-5322 email encoding, SCCo-standard subject line encoding,
-// PackItForms and similar form encodings, and Outpost-specific feature
-// encodings.
+// PackItForms form encoding, and Outpost-specific feature encodings.
 //
 // This package exports two parallel hierarchies of message-related types.  The
 // types starting with "Rx" are for messages that have been received and are
@@ -26,7 +25,7 @@
 // text messages are represented by a bare RxMessage or TxMessage.
 //
 // Messages containing a PackItForms-encoded form also embed RxForm or TxForm.
-// If the form is not one that has its own message type, it is represented by a
+// If the form is not one that has its own message type it is represented by a
 // bare RxForm or TxForm.
 //
 // Forms with standard SCCo header and footer fields also embed RxSCCoForm or
