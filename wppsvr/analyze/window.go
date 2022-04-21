@@ -6,15 +6,15 @@ import (
 
 // Problem codes
 const (
-	ProblemMessageTooEarly  = "MessageTooEarly"
-	ProblemMessageTooLate   = "MessageTooLate"
-	ProblemSessionDateWrong = "SessionDateWrong"
+	ProblemMessageTooEarly = "MessageTooEarly"
+	ProblemMessageTooLate  = "MessageTooLate"
+	ProblemSessionDate     = "SessionDate"
 )
 
 func init() {
 	ProblemLabel[ProblemMessageTooEarly] = "message before start of practice session"
 	ProblemLabel[ProblemMessageTooLate] = "message after end of practice session"
-	ProblemLabel[ProblemSessionDateWrong] = "incorrect net date in subject"
+	ProblemLabel[ProblemSessionDate] = "incorrect net date in subject"
 }
 
 // checkPracticeWindow verifies that the message was sent within the proper
@@ -33,25 +33,21 @@ func (a *Analysis) checkPracticeWindow() {
 		if !a.subjectDate.IsZero() && a.subjectDate.Before(a.session.Start) {
 			// It was too late for the previous session.
 			a.problems = append(a.problems, &problem{
-				code:    ProblemMessageTooLate,
-				subject: "Message after end of practice session",
+				code: ProblemMessageTooLate,
 				response: fmt.Sprintf(`
 This message arrived at %s on %s.  That was too late to be counted for the %s
 on %s.
 `, a.toBBS, a.msg.Base().DeliveryTime.Format("2006-01-02 at 15:04"), a.session.Name, a.subjectDate.Format("January 2")),
-				invalid:    true,
 				references: refWeeklyPractice,
 			})
 			return
 		}
 		a.problems = append(a.problems, &problem{
-			code:    ProblemMessageTooEarly,
-			subject: "Message before start of practice session",
+			code: ProblemMessageTooEarly,
 			response: fmt.Sprintf(`
 This message arrived at %s on %s.  However, practice messages for %s aren't
 accepted until %s.
 `, a.toBBS, a.msg.Base().DeliveryTime.Format("2006-01-02 at 15:04"), a.session.Name, a.session.Start.Format("2006-01-02 at 15:04")),
-			invalid:    true,
 			references: refWeeklyPractice,
 		})
 		return
@@ -62,14 +58,12 @@ accepted until %s.
 			a.subjectDate.Month() != a.session.End.Month() ||
 			a.subjectDate.Day() != a.session.End.Day()) {
 		a.problems = append(a.problems, &problem{
-			code:    ProblemSessionDateWrong,
-			subject: "Incorrect net date in subject",
+			code: ProblemSessionDate,
 			response: fmt.Sprintf(`
 This message is being counted for %s on %s, but the subject line says it's
 intended for a net on %s.  This may indicate that the message was sent to the
 wrong net.
 `, a.session.Name, a.session.Start.Format("January 2"), a.subjectDate.Format("January 2")),
-			warning:    true, // not an error
 			references: refWeeklyPractice,
 		})
 	}

@@ -22,8 +22,7 @@ func (a *Analysis) checkValidForm() {
 	}
 	if form.CorruptForm {
 		a.problems = append(a.problems, &problem{
-			code:    ProblemFormCorrupt,
-			subject: "Incorrectly encoded form",
+			code: ProblemFormCorrupt,
 			response: `
 This message appears to contain an encoded form, but the encoding is
 incorrect.  It appears to have been created or edited by software other than
@@ -35,8 +34,7 @@ encode messages containing forms.
 	}
 	if vform, ok := a.msg.(interface{ Valid() bool }); ok && !vform.Valid() {
 		a.problems = append(a.problems, &problem{
-			code:    ProblemFormInvalid,
-			subject: "Invalid form contents",
+			code: ProblemFormInvalid,
 			response: `
 This message contains a form with invalid contents.  One or more fields of the
 form have invalid values, or required form fields are not filled in.  Please

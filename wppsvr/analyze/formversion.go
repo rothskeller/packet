@@ -31,8 +31,7 @@ func (a *Analysis) checkFormVersion() {
 	minimums := config.Get().MinimumVersions
 	if older, valid := older(form.PIFOVersion, minimums["PackItForms"]); older || !valid {
 		a.problems = append(a.problems, &problem{
-			code:    ProblemPIFOVersion,
-			subject: "PackItForms version out of date",
+			code: ProblemPIFOVersion,
 			response: fmt.Sprintf(`
 This message used version %s of PackItForms to encode the form, but that
 version is not current.  Please use PackItForms version %s or newer to encode
@@ -43,8 +42,7 @@ messages containing forms.
 	if minimums[form.FormName] != "" {
 		if older, valid := older(form.FormVersion, minimums[form.FormName]); older || !valid {
 			a.problems = append(a.problems, &problem{
-				code:    ProblemFormVersion,
-				subject: "form version out of date",
+				code: ProblemFormVersion,
 				response: fmt.Sprintf(`
 This message contains version %s of the %s, but that version is not current.
 Please use version %s or newer of the form.  (You can get the newer form by

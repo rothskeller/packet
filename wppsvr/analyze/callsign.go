@@ -47,27 +47,23 @@ func (a *Analysis) checkCallSign() {
 	if msg.FromCallSign == "" && a.subjectCallSign == "" && formCS == "" {
 		if isform {
 			a.problems = append(a.problems, &problem{
-				code:    ProblemNoCallSign,
-				subject: "No call sign in message",
+				code: ProblemNoCallSign,
 				response: fmt.Sprintf(`
 This message cannot be counted because it's not clear who sent it.  There
 is no call sign in the return address, or after the word "Practice" on the
 subject line, or in the Operator Call field of the form.  In order for a
 message to count, there must be a call sign in at least one of those places.
 `),
-				invalid: true,
 			})
 		} else {
 			a.problems = append(a.problems, &problem{
-				code:    ProblemNoCallSign,
-				subject: "No call sign in message",
+				code: ProblemNoCallSign,
 				response: fmt.Sprintf(`
 This message cannot be counted because it's not clear who sent it.  There
 is no call sign in the return address or after the word "Practice" on the
 subject line.  In order for a message to count, there must be a call sign in
 at least one of those places.
 `),
-				invalid: true,
 			})
 		}
 		return
@@ -87,8 +83,7 @@ at least one of those places.
 	// subject line, that's a problem to be reported.
 	if formCS != "" && formCS != a.fromCallSign {
 		a.problems = append(a.problems, &problem{
-			code:    ProblemCallSignConflict,
-			subject: "Call sign conflict",
+			code: ProblemCallSignConflict,
 			response: fmt.Sprintf(`
 This message has conflicting call signs.  The Subject line says the call sign
 is %s, but the Operator Call Sign field of the form says %s.  The two should

@@ -5,6 +5,7 @@ import (
 	"strings"
 
 	"steve.rothskeller.net/packet/wppsvr/analyze"
+	"steve.rothskeller.net/packet/wppsvr/config"
 	"steve.rothskeller.net/packet/wppsvr/store"
 )
 
@@ -14,6 +15,7 @@ func reportMessages(sb *strings.Builder, session *store.Session, messages []*sto
 	var (
 		invalid   []*store.Message
 		seenValid bool
+		actions   = config.Get().ProblemActionFlags
 	)
 	messages = removeReplaced(messages)
 	for _, m := range messages {
@@ -27,7 +29,9 @@ func reportMessages(sb *strings.Builder, session *store.Session, messages []*sto
 		}
 		fmt.Fprintf(sb, "%-30s %s\n", m.FromAddress, m.Subject)
 		for _, p := range m.Problems {
-			fmt.Fprintf(sb, "  ^ %s\n", analyze.ProblemLabel[p])
+			if actions[p]&config.ActionReport != 0 {
+				fmt.Fprintf(sb, "  ^ %s\n", analyze.ProblemLabel[p])
+			}
 		}
 	}
 	if seenValid {
@@ -42,7 +46,9 @@ func reportMessages(sb *strings.Builder, session *store.Session, messages []*sto
 				fmt.Fprintf(sb, "%-30s %s\n", m.FromAddress, m.Subject)
 			}
 			for _, p := range m.Problems {
-				fmt.Fprintf(sb, "  ^ %s\n", analyze.ProblemLabel[p])
+				if actions[p]&config.ActionReport != 0 {
+					fmt.Fprintf(sb, "  ^ %s\n", analyze.ProblemLabel[p])
+				}
 			}
 		}
 		sb.WriteByte('\n')

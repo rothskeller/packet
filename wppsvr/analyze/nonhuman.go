@@ -12,7 +12,7 @@ const (
 
 func init() {
 	ProblemLabel[ProblemBounceMessage] = "message has no return address (probably auto-response)"
-	ProblemLabel[ProblemDeliveryReceipt] = "" // don't show in report
+	ProblemLabel[ProblemDeliveryReceipt] = "DELIVERED receipt message"
 	ProblemLabel[ProblemReadReceipt] = "unexpected READ receipt message"
 	ProblemLabel[ProblemMessageCorrupt] = "message could not be parsed"
 }
@@ -25,8 +25,7 @@ func (a *Analysis) checkNonHuman() {
 	// not count as checkins.
 	if pe := a.msg.Base().ParseError; pe != "" {
 		a.problems = append(a.problems, &problem{
-			code:    ProblemMessageCorrupt,
-			invalid: true,
+			code: ProblemMessageCorrupt,
 		})
 		return
 	}
@@ -36,8 +35,7 @@ func (a *Analysis) checkNonHuman() {
 	// not get any response and will not count as checkins.
 	if a.msg.Base().ReturnAddress == "" {
 		a.problems = append(a.problems, &problem{
-			code:    ProblemBounceMessage,
-			invalid: true,
+			code: ProblemBounceMessage,
 		})
 		return
 	}
@@ -46,8 +44,7 @@ func (a *Analysis) checkNonHuman() {
 	// check-ins.
 	if _, ok := a.msg.(*pktmsg.RxDeliveryReceipt); ok {
 		a.problems = append(a.problems, &problem{
-			code:    ProblemDeliveryReceipt,
-			invalid: true,
+			code: ProblemDeliveryReceipt,
 		})
 	}
 	// Finally, look for read receipt messages.  Those get a response back
@@ -55,8 +52,7 @@ func (a *Analysis) checkNonHuman() {
 	// count as checkins.
 	if _, ok := a.msg.(*pktmsg.RxReadReceipt); ok {
 		a.problems = append(a.problems, &problem{
-			code:    ProblemReadReceipt,
-			subject: "Unexpected READ receipt message",
+			code: ProblemReadReceipt,
 			response: `
 This message is an Outpost "read receipt", which should not have been sent.
 Most likely, your Outpost installation has the "Auto-Read Receipt" setting
@@ -64,7 +60,6 @@ turned on.  The SCCo-standard Outpost configuration specifies that this setting
 should be turned off.  You can find it on the Receipts tab of the Message
 Settings dialog in Outpost.
 `,
-			invalid:    true,
 			references: refOutpostConfig,
 		})
 	}

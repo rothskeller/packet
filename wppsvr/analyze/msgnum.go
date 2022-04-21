@@ -48,8 +48,7 @@ func (a *Analysis) checkMessageNumber() {
 			return
 		}
 		a.problems = append(a.problems, &problem{
-			code:    ProblemMsgNumFormat,
-			subject: "Incorrect message number format",
+			code: ProblemMsgNumFormat,
 			response: `
 The message number of this message is not formatted correctly.  It should have
 a format like "XND-042P", containing:

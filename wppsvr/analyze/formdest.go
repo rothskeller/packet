@@ -24,8 +24,7 @@ func (a *Analysis) checkFormDestination() {
 	case *pktmsg.RxEOC213RRForm:
 		if msg.ToICSPosition != "Planning Section" && msg.ToLocation != "County EOC" {
 			a.problems = append(a.problems, &problem{
-				code:    ProblemFormDestination,
-				subject: "Incorrect destination for form",
+				code: ProblemFormDestination,
 				response: fmt.Sprintf(`
 This message form is addressed to ICS Position %q at Location %q.  EOC-213RR
 messages should be addressed to "Planning Section" at "County EOC".
@@ -34,8 +33,7 @@ messages should be addressed to "Planning Section" at "County EOC".
 			})
 		} else if msg.ToICSPosition != "Planning Section" {
 			a.problems = append(a.problems, &problem{
-				code:    ProblemFormDestination,
-				subject: "Incorrect destination for form",
+				code: ProblemFormDestination,
 				response: fmt.Sprintf(`
 This message form is addressed to ICS position %q.  EOC-213RR messages should
 be addressed to "Planning Section".
@@ -44,8 +42,7 @@ be addressed to "Planning Section".
 			})
 		} else if msg.ToLocation != "County EOC" {
 			a.problems = append(a.problems, &problem{
-				code:    ProblemFormDestination,
-				subject: "Incorrect destination for form",
+				code: ProblemFormDestination,
 				response: fmt.Sprintf(`
 This message form is addressed to ICS Location %q.  EOC-213RR messages should
 be addressed to "County EOC".
@@ -57,8 +54,7 @@ be addressed to "County EOC".
 		if msg.ToICSPosition != "Situation Analysis Unit" && msg.ToICSPosition != "Planning Section" &&
 			msg.ToLocation != "County EOC" {
 			a.problems = append(a.problems, &problem{
-				code:    ProblemFormDestination,
-				subject: "Incorrect destination for form",
+				code: ProblemFormDestination,
 				response: fmt.Sprintf(`
 This message form is addressed to ICS Position %q at Location %q.  OA
 Municipal Status messages should be addressed to either "Situation Analysis
@@ -68,8 +64,7 @@ Unit" or "Planning Section" at "County EOC".
 			})
 		} else if msg.ToICSPosition != "Situation Analysis Unit" && msg.ToICSPosition != "Planning Section" {
 			a.problems = append(a.problems, &problem{
-				code:    ProblemFormDestination,
-				subject: "Incorrect destination for form",
+				code: ProblemFormDestination,
 				response: fmt.Sprintf(`
 This message form is addressed to ICS Position %q.  OA Municipal Status
 messages should be addressed to either "Situation Analysis Unit" or
@@ -79,8 +74,7 @@ messages should be addressed to either "Situation Analysis Unit" or
 			})
 		} else if msg.ToLocation != "County EOC" {
 			a.problems = append(a.problems, &problem{
-				code:    ProblemFormDestination,
-				subject: "Incorrect destination for form",
+				code: ProblemFormDestination,
 				response: fmt.Sprintf(`
 This message form is addressed to ICS Location %q.  OA Municipal Status
 messages should be addressed to "County EOC".
@@ -93,8 +87,7 @@ messages should be addressed to "County EOC".
 		// valid possibilities.
 		if msg.ToICSPosition != "Mass Care and Shelter Unit" && msg.ToICSPosition != "Care and Shelter Branch" && msg.ToICSPosition != "Operations Section" {
 			a.problems = append(a.problems, &problem{
-				code:    ProblemFormDestination,
-				subject: "Incorrect destination for form",
+				code: ProblemFormDestination,
 				response: fmt.Sprintf(`
 This message form is addressed to %q.  OA Shelter Status messages should be
 addressed to "Mass Care and Shelter Unit", "Care and Shelter Branch", or

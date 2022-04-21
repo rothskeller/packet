@@ -6,11 +6,11 @@ import (
 
 // Problem codes
 const (
-	ProblemFormSubjectConflict = "FormSubjectConflict"
+	ProblemFormSubject = "FormSubject"
 )
 
 func init() {
-	ProblemLabel[ProblemFormSubjectConflict] = "message subject doesn't agree with form contents"
+	ProblemLabel[ProblemFormSubject] = "message subject doesn't agree with form contents"
 }
 
 // checkFormSubject checks to be sure that the Subject line of the message
@@ -31,8 +31,7 @@ func (a *Analysis) checkFormSubject() {
 	}
 	if sl := a.msg.Base().SubjectLine; sl != shouldbe {
 		a.problems = append(a.problems, &problem{
-			code:    ProblemFormSubjectConflict,
-			subject: "Message subject doesn't agree with form contents",
+			code: ProblemFormSubject,
 			response: fmt.Sprintf(`
 This message has
     Subject: %s

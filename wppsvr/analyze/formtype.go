@@ -43,8 +43,7 @@ func (a *Analysis) checkCorrectForm() {
 		}
 	}
 	a.problems = append(a.problems, &problem{
-		code:    ProblemMessageTypeWrong,
-		subject: "Incorrect message type",
+		code: ProblemMessageTypeWrong,
 		response: fmt.Sprintf(`
 This message is %s %s.  For the %s on %s, %s %s is expected.
 `, a.msg.TypeArticle(), a.msg.TypeName(), a.session.Name, a.session.End.Format("January 2"), article,

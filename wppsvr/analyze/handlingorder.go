@@ -35,8 +35,7 @@ func (a *Analysis) checkFormHandlingOrder() {
 		}
 		if shouldbe != 0 && msg.HandlingOrder != shouldbe {
 			a.problems = append(a.problems, &problem{
-				code:    ProblemFormHandlingOrder,
-				subject: "Incorrect handling order for form",
+				code: ProblemFormHandlingOrder,
 				response: fmt.Sprintf(`
 This message has severity %s and handling order %s.  ICS-213 messages with
 severity %s should have handling order %s.
@@ -58,8 +57,7 @@ severity %s should have handling order %s.
 		}
 		if shouldbe != 0 && msg.HandlingOrder != shouldbe {
 			a.problems = append(a.problems, &problem{
-				code:    ProblemFormHandlingOrder,
-				subject: "Incorrect handling order for form",
+				code: ProblemFormHandlingOrder,
 				response: fmt.Sprintf(`
 This message has priority %s and handling order %s.  EOC-213RR messages with
 priority %s should have handling order %s.
@@ -70,8 +68,7 @@ priority %s should have handling order %s.
 	case *pktmsg.RxMuniStatForm:
 		if msg.HandlingOrder != pktmsg.HandlingImmediate {
 			a.problems = append(a.problems, &problem{
-				code:    ProblemFormHandlingOrder,
-				subject: "Incorrect handling order for form",
+				code: ProblemFormHandlingOrder,
 				response: fmt.Sprintf(`
 This message has handling order %s.  OA Municipal Status messages should have
 handling order IMMEDIATE.
@@ -82,8 +79,7 @@ handling order IMMEDIATE.
 	case *pktmsg.RxSheltStatForm:
 		if msg.HandlingOrder != pktmsg.HandlingPriority {
 			a.problems = append(a.problems, &problem{
-				code:    ProblemFormHandlingOrder,
-				subject: "Incorrect handling order for form",
+				code: ProblemFormHandlingOrder,
 				response: fmt.Sprintf(`
 This message has handling order %s.  OA Shelter Status messages should have
 handling order PRIORITY.

@@ -22,7 +22,23 @@ type Config struct {
 	SessionDefaults *SessionConfig            `yaml:"sessionDefaults"`
 	Sessions        map[string]*SessionConfig `yaml:"sessions"`
 	MinimumVersions map[string]string         `yaml:"minimumVersions"`
+	ProblemActions  map[string]string         `yaml:"problemActions"`
+
+	ProblemActionFlags map[string]Action `yaml:"-"`
 }
+
+// Action is a flag, or a bitmask of flags, describing the action(s) to take in
+// response to a detected problem.
+type Action uint8
+
+// Values for Action:
+const (
+	ActionRespond Action = 1 << iota
+	ActionReport
+	ActionError
+	ActionDontCount
+	ActionDropMsg
+)
 
 // BBSConfig holds the configuration of a single BBS.
 type BBSConfig struct {

@@ -7,7 +7,6 @@ import (
 	"strings"
 	"time"
 
-	"steve.rothskeller.net/packet/wppsvr/analyze"
 	"steve.rothskeller.net/packet/wppsvr/config"
 	"steve.rothskeller.net/packet/wppsvr/english"
 	"steve.rothskeller.net/packet/wppsvr/store"
@@ -40,7 +39,7 @@ func generate(st Store, session *store.Session) (report string, participants []s
 		messages []*store.Message
 	)
 	messages = st.GetSessionMessages(session.ID)
-	messages = removeUnreportableMessages(messages)
+	messages = removeDroppedMessages(messages)
 	reportTitle(&sb, session)
 	reportParams(&sb, session)
 	reportStatistics(&sb, st, session, messages)
@@ -49,21 +48,22 @@ func generate(st Store, session *store.Session) (report string, participants []s
 	return sb.String(), allFromAddresses(messages)
 }
 
-// removeUnreportableMessages removes from the messages list any messages that
-// should be excluded from the report (e.g., delivery receipts).  These are
-// identified as messages that (a) are not valid practice messages and (b) have
-// no reportable problems associated with them.
-func removeUnreportableMessages(messages []*store.Message) []*store.Message {
+// removeDroppedMessages removes from the messages list any messages that
+// should be excluded from the report (e.g., delivery receipts).
+func removeDroppedMessages(messages []*store.Message) []*store.Message {
+	var actions = config.Get().ProblemActionFlags
+
 	j := 0
 	for _, m := range messages {
-		var reportable = m.Valid
+		var dropped bool
 
 		for _, p := range m.Problems {
-			if analyze.ProblemLabel[p] != "" {
-				reportable = true
+			if actions[p]&config.ActionDropMsg != 0 {
+				dropped = true
+				break
 			}
 		}
-		if reportable {
+		if !dropped {
 			messages[j] = m
 			j++
 		}

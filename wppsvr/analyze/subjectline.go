@@ -49,8 +49,7 @@ func (a *Analysis) checkSubjectLine() {
 	// Next, check for a severity code.  There shouldn't be one.
 	if msg.SeverityCode != "" {
 		a.problems = append(a.problems, &problem{
-			code:    ProblemSubjectHasSeverity,
-			subject: "Severity on Subject line",
+			code: ProblemSubjectHasSeverity,
 			response: fmt.Sprintf(`
 The Subject line of this message contains a both a Severity code and a
 Handling Order code ("_%s/%s_").  This is an outdated Subject line style.
@@ -63,8 +62,7 @@ line ("_%s_").
 	// Next, make sure the handling order code is valid.
 	if msg.HandlingOrder == 0 {
 		a.problems = append(a.problems, &problem{
-			code:    ProblemHandlingOrderCode,
-			subject: "Unknown handling order code",
+			code: ProblemHandlingOrderCode,
 			response: fmt.Sprintf(`
 The Subject line of this message contains an invalid Handling Order code (%s).
 The valid codes are "I" for Immediate, "P" for Priority, and "R" for Routine.
@@ -95,8 +93,7 @@ Note that there is no form name between the handling order and the word
 
 func problemSubjectFormat(note string) *problem {
 	return &problem{
-		code:    ProblemSubjectFormat,
-		subject: "Incorrect Subject line format",
+		code: ProblemSubjectFormat,
 		response: fmt.Sprintf(`
 This message has an incorrect subject line format.  According to SCCo
 standards, the subject should look like

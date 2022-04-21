@@ -10,6 +10,7 @@ import (
 	"time"
 
 	"steve.rothskeller.net/packet/pktmsg"
+	"steve.rothskeller.net/packet/wppsvr/config"
 	"steve.rothskeller.net/packet/wppsvr/store"
 )
 
@@ -58,20 +59,11 @@ type response struct {
 type problem struct {
 	// code is a machine-readable code that identifies the type of problem.
 	code string
-	// subject is the subject line for the response message reporting this
-	// problem.
-	subject string
 	// response is the text of the response message reporting this problem.
 	response string
 	// references is a bitmask of the references that should be listed at
 	// the bottom of the response message.
 	references reference
-	// invalid is a flag indicating that the message should not be counted
-	// as a check-in (even an erroneous one).
-	invalid bool
-	// warning is a flag indicating that this problem should not be counted
-	// as an error.
-	warning bool
 }
 
 // Analyze analyzes a single received message, and returns its analysis.
@@ -114,8 +106,10 @@ func Analyze(st *store.Store, session *store.Session, bbs, raw string) *Analysis
 
 // Commit commits the analyzed message to the database.
 func (a *Analysis) Commit(st *store.Store) {
-	var m store.Message
-
+	var (
+		m       store.Message
+		actions = config.Get().ProblemActionFlags
+	)
 	if a == nil { // message already handled, nothing to commit
 		return
 	}
@@ -133,12 +127,8 @@ func (a *Analysis) Commit(st *store.Store) {
 	}
 	m.Valid, m.Correct = true, true
 	for _, p := range a.problems {
-		if p.invalid {
-			m.Valid = false
-		}
-		if !p.warning {
-			m.Correct = false
-		}
+		m.Valid = actions[p.code]&config.ActionDontCount == 0
+		m.Correct = m.Valid && actions[p.code]&config.ActionError == 0
 		m.Problems = append(m.Problems, p.code)
 	}
 	st.SaveMessage(&m)

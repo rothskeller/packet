@@ -11,7 +11,7 @@ const (
 )
 
 func init() {
-	ProblemLabel[ProblemMessageNotASCII] = "contains non-ASCII characters"
+	ProblemLabel[ProblemMessageNotASCII] = "message has non-ASCII characters"
 	ProblemLabel[ProblemMessageNotPlainText] = "not a plain text message"
 }
 
@@ -28,8 +28,7 @@ func (a *Analysis) checkPlainText() {
 	// while the message was being parsed.
 	if a.msg.Base().NotPlainText {
 		a.problems = append(a.problems, &problem{
-			code:    ProblemMessageNotPlainText,
-			subject: "Not a plain text message",
+			code: ProblemMessageNotPlainText,
 			response: `
 This message is not a plain text message.  All SCCo packet messages should be
 plain text only.  ("Rich text" or HTML-formatted messages, common in email
@@ -43,8 +42,7 @@ messages when sending to an SCCo BBS.
 	// Check for the body containing non-ASCII characters.
 	if strings.IndexFunc(a.msg.Base().Body, nonASCII) >= 0 {
 		a.problems = append(a.problems, &problem{
-			code:    ProblemMessageNotASCII,
-			subject: "Non-ASCII characters",
+			code: ProblemMessageNotASCII,
 			response: `
 This message contains characters that are not in the standard ASCII character
 set (i.e., not on a standard keyboard).  Non-standard characters should be

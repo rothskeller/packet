@@ -84,15 +84,13 @@ func (a *Analysis) checkPracticeSubject() {
 	var match = practiceRE.FindStringSubmatch(msg.Subject)
 	if match == nil {
 		a.problems = append(a.problems, &problem{
-			code:    ProblemPracticeSubjectFormat,
-			subject: "Incorrect Practice subject format",
+			code: ProblemPracticeSubjectFormat,
 			response: `
 The Subject of this message does not have the correct format.  After the
 message number, handling order, and form type, it should have the word
 "Practice" followed by four comma-separated fields:
     Practice CallSign, FirstName, Jurisdiction, Date
 `,
-			warning:    true, // not counted as an error yet
 			references: refWeeklyPractice,
 		})
 		return

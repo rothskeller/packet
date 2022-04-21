@@ -5,6 +5,7 @@ import (
 	"log"
 	"net"
 	"regexp"
+	"strings"
 )
 
 var fccCallRE = regexp.MustCompile(`^[AKNW][A-Z]?[0-9][A-Z]{1,3}$`)
@@ -158,6 +159,36 @@ func (c *Config) Validate() (valid bool) {
 					valid = false
 				}
 			}
+		}
+	}
+
+	// Parse the problem actions.
+	if c.ProblemActions == nil {
+		log.Printf("ERROR: config.problemActions is not specified")
+		valid = false
+	} else {
+		c.ProblemActionFlags = make(map[string]Action, len(c.ProblemActions))
+		for problem, actions := range c.ProblemActions {
+			var flags Action
+
+			for _, word := range strings.Fields(actions) {
+				switch word {
+				case "respond":
+					flags |= ActionRespond
+				case "report":
+					flags |= ActionReport
+				case "error":
+					flags |= ActionError
+				case "dontcount":
+					flags |= ActionDontCount
+				case "dropmsg":
+					flags |= ActionDropMsg
+				default:
+					log.Printf("ERROR: config.problemActions[%q] contains %q, which is not recognized", problem, word)
+					valid = false
+				}
+			}
+			c.ProblemActionFlags[problem] = flags
 		}
 	}
 	return valid

@@ -2,10 +2,12 @@ package analyze
 
 import (
 	"fmt"
+	"log"
 	"strings"
 	"time"
 
 	"steve.rothskeller.net/packet/pktmsg"
+	"steve.rothskeller.net/packet/wppsvr/config"
 	"steve.rothskeller.net/packet/wppsvr/english"
 	"steve.rothskeller.net/packet/wppsvr/store"
 )
@@ -59,28 +61,31 @@ func (a *Analysis) responseMessage() (subject, body string) {
 		invalids   string
 		rbody      strings.Builder
 		wrapper    *english.Wrapper
-		references reference = refPacketGroup
+		actions    = config.Get().ProblemActionFlags
+		references = refPacketGroup
 	)
-	wrapper = english.NewWrapper(&rbody)
 	// Count the number of problems to include in the message, and note
 	// whether any of them prevent the message from counting.  We need that
 	// information for the header of the message.
 	for _, p := range a.problems {
-		if p.subject == "" {
-			continue
+		action, ok := actions[p.code]
+		if !ok {
+			log.Printf("ERROR: config doesn't specify how to handle %s; ignoring", p.code)
 		}
-		count++
-		subject = p.subject
-		if p.invalid {
+		if action&config.ActionRespond != 0 {
+			count++
+			subject = ProblemLabel[p.code]
+			references |= p.references
+		}
+		if action&config.ActionDontCount != 0 {
 			invalid = true
 		}
-		references |= p.references
 	}
 	switch count {
 	case 0:
 		return "", "" // no problem response message should be sent
 	case 1:
-		break
+		subject = strings.ToUpper(subject[:1]) + subject[1:]
 	default:
 		counts = "s"
 		subject = "Issues with packet practice message"
@@ -89,6 +94,7 @@ func (a *Analysis) responseMessage() (subject, body string) {
 		invalids = "  The message will not be counted."
 	}
 	// Generate the header of the message.
+	wrapper = english.NewWrapper(&rbody)
 	fmt.Fprintf(wrapper, `The packet practice message
     From: %s
     To: %s@%s
@@ -103,10 +109,9 @@ has the following issue%s.%s
 		counts, invalids)
 	// Add the paragraphs describing each problem.
 	for _, p := range a.problems {
-		if p.subject == "" {
-			continue
+		if actions[p.code]&config.ActionRespond != 0 {
+			wrapper.WriteString(p.response)
 		}
-		wrapper.WriteString(p.response)
 	}
 	// Add the references.
 	wrapper.WriteString("\nFor more information:")
