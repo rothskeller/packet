@@ -113,18 +113,26 @@ func (f *RxForm) Form() *RxForm { return f }
 
 // TypeCode returns the machine-readable code for the message type.
 func (f *RxForm) TypeCode() string {
-	if f.FormName != "" {
+	switch f.FormName {
+	case "":
+		return "UNKNOWN"
+	case "ICS213", "EOC213RR", "MuniStat", "SheltStat":
+		return "CORRUPT"
+	default:
 		return f.FormName
 	}
-	return "UNKNOWN"
 }
 
 // TypeName returns the human-reading name of the message type.
 func (f *RxForm) TypeName() string {
-	if f.FormName != "" {
-		return f.FormName + " form"
+	switch f.FormName {
+	case "":
+		return "unknown form"
+	case "ICS213", "EOC213RR", "MuniStat", "SheltStat":
+		return "corrupt form"
+	default:
+		return f.FormName
 	}
-	return "form of unknown type"
 }
 
 // TypeArticle returns "a" or "an", whichever is appropriate for the TypeName.

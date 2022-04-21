@@ -23,8 +23,17 @@ type Config struct {
 	Sessions        map[string]*SessionConfig `yaml:"sessions"`
 	MinimumVersions map[string]string         `yaml:"minimumVersions"`
 	ProblemActions  map[string]string         `yaml:"problemActions"`
+	FormRouting     map[string]*FormRouting   `yaml:"formRouting"`
 
 	ProblemActionFlags map[string]Action `yaml:"-"`
+}
+
+// A FormRouting structure specifies the required form routing for a particular
+// form type.
+type FormRouting struct {
+	HandlingOrder string   `yaml:"HandlingOrder"`
+	ToICSPosition []string `yaml:"ToICSPosition"`
+	ToLocation    []string `yaml:"ToLocation"`
 }
 
 // Action is a flag, or a bitmask of flags, describing the action(s) to take in

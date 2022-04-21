@@ -221,3 +221,18 @@ func (*RxICS213Form) TypeName() string { return "ICS-213 form" }
 
 // TypeArticle returns "a" or "an", whichever is appropriate for the TypeName.
 func (*RxICS213Form) TypeArticle() string { return "an" }
+
+// RecommendedHandlingOrder returns the recommended handling order for the form
+// based on its severity.
+func (i *RxICS213Form) RecommendedHandlingOrder() HandlingOrder {
+	switch i.Severity {
+	case SeverityEmergency:
+		return HandlingImmediate
+	case SeverityUrgent:
+		return HandlingPriority
+	case SeverityOther:
+		return HandlingRoutine
+	default:
+		return 0
+	}
+}

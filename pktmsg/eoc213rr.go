@@ -194,3 +194,18 @@ func (*RxEOC213RRForm) TypeName() string { return "EOC-213RR form" }
 
 // TypeArticle returns "a" or "an", whichever is appropriate for the TypeName.
 func (*RxEOC213RRForm) TypeArticle() string { return "an" }
+
+// RecommendedHandlingOrder returns the recommended handling order for the form
+// based on its priority.
+func (e *RxEOC213RRForm) RecommendedHandlingOrder() HandlingOrder {
+	switch e.Priority {
+	case "Now", "High":
+		return HandlingImmediate
+	case "Medium":
+		return HandlingPriority
+	case "Low":
+		return HandlingRoutine
+	default:
+		return 0
+	}
+}
