@@ -189,7 +189,7 @@ func (i *RxICS213Form) Valid() bool {
 	return (i.MessageNumber != "" &&
 		i.Date != "" &&
 		i.Time != "" &&
-		i.Severity != 0 &&
+		// i.Severity != 0 && // removed to allow v2.2, which doesn't have this field
 		i.HandlingOrder != 0 &&
 		(i.TakeAction == "" || i.TakeAction == "Yes" || i.TakeAction == "No") &&
 		(i.Reply == "" || i.Reply == "Yes" || i.Reply == "No") &&
