@@ -69,10 +69,13 @@ func (a *Analysis) checkPracticeSubject() {
 	if msg.Subject == msg.SubjectLine {
 		return
 	}
-	// This check does not apply to forms that aren't expected to have the
-	// standard Practice subject (including forms of unknown type)
+	// This check only applies to plain text messages, ICS-213 forms, and
+	// EOC-213RR forms.  All other known form types have different subject
+	// lines, and unknown form types get an error about that instead.
 	switch a.msg.(type) {
-	case *pktmsg.RxForm, *pktmsg.RxAHFacStatForm, *pktmsg.RxMuniStatForm, *pktmsg.RxRACESMARForm, *pktmsg.RxSheltStatForm:
+	case *pktmsg.RxMessage, *pktmsg.RxICS213Form, *pktmsg.RxEOC213RRForm:
+		break
+	default:
 		return
 	}
 	var match = practiceRE.FindStringSubmatch(msg.Subject)
