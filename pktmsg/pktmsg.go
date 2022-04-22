@@ -67,6 +67,9 @@ func ParseMessage(rawmsg string) ParsedMessage {
 	if munistat := parseRxMuniStatForm(form); munistat != nil {
 		return munistat
 	}
+	if racesmar := parseRxRACESMARForm(form); racesmar != nil {
+		return racesmar
+	}
 	if sheltstat := parseRxSheltStatForm(form); sheltstat != nil {
 		return sheltstat
 	}

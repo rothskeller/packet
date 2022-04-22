@@ -10,6 +10,7 @@ var ValidMessageTypes = []pktmsg.ParsedMessage{
 	new(pktmsg.RxAHFacStatForm),
 	new(pktmsg.RxEOC213RRForm),
 	new(pktmsg.RxMuniStatForm),
+	new(pktmsg.RxRACESMARForm),
 	new(pktmsg.RxSheltStatForm),
 }
 

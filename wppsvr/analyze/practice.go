@@ -72,7 +72,7 @@ func (a *Analysis) checkPracticeSubject() {
 	// This check does not apply to forms that aren't expected to have the
 	// standard Practice subject (including forms of unknown type)
 	switch a.msg.(type) {
-	case *pktmsg.RxForm, *pktmsg.RxAHFacStatForm, *pktmsg.RxMuniStatForm, *pktmsg.RxSheltStatForm:
+	case *pktmsg.RxForm, *pktmsg.RxAHFacStatForm, *pktmsg.RxMuniStatForm, *pktmsg.RxRACESMARForm, *pktmsg.RxSheltStatForm:
 		return
 	}
 	var match = practiceRE.FindStringSubmatch(msg.Subject)
