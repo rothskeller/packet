@@ -121,6 +121,7 @@ type RxEOC213RRForm struct {
 	RequireMaintenance       bool
 	RequireWater             bool
 	RequireOther             bool
+	OtherType                string
 	SpecialInstructions      string
 }
 
@@ -130,7 +131,7 @@ type RxEOC213RRForm struct {
 func parseRxEOC213RRForm(f *RxForm) *RxEOC213RRForm {
 	var e RxEOC213RRForm
 
-	if f.FormHTML != "form-scco-eoc-213rr.html" {
+	if f.FormHTML != "form-scco-eoc-213rr.html" && f.FormHTML != "form-scco-eoc-213rr-v2.html" {
 		return nil
 	}
 	e.RxSCCoForm.RxForm = *f
@@ -159,6 +160,7 @@ func parseRxEOC213RRForm(f *RxForm) *RxEOC213RRForm {
 	e.RequireMaintenance = e.Fields["36g."] != ""
 	e.RequireWater = e.Fields["36h."] != ""
 	e.RequireOther = e.Fields["36i."] != ""
+	e.OtherType = e.Fields["36j."]
 	e.SpecialInstructions = e.Fields["37."]
 	e.extractFooterFields()
 	return &e
