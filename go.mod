@@ -9,4 +9,8 @@ require (
 	gopkg.in/yaml.v3 v3.0.0-20210107192922-496545a6307b
 )
 
-require golang.org/x/sys v0.0.0-20220412211240-33da011f77ad // indirect
+require (
+	github.com/davecgh/go-spew v1.1.1 // indirect
+	golang.org/x/net v0.0.0-20220425223048-2871e0cb64e4 // indirect
+	golang.org/x/sys v0.0.0-20220412211240-33da011f77ad // indirect
+)

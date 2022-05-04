@@ -6,6 +6,7 @@ import (
 	"steve.rothskeller.net/packet/jnos"
 	"steve.rothskeller.net/packet/pktmsg"
 	"steve.rothskeller.net/packet/wppsvr/store"
+	"steve.rothskeller.net/packet/xscmsg"
 )
 
 // Send generates the report for the session and sends it to all designated
@@ -15,12 +16,9 @@ func Send(st Store, conn *jnos.Conn, session *store.Session) {
 	sendTo = append(sendTo, session.ReportTo...)
 	session.Report = report
 	st.UpdateSession(session)
-	var rm pktmsg.TxMessage
+	var rm = pktmsg.New()
 	rm.Body = report
-	rm.HandlingOrder = pktmsg.HandlingRoutine
-	rm.MessageNumber = st.NextMessageID(session.Prefix)
-	rm.Subject = "SCCo Packet Practice Report"
-	subject, body, _ := rm.Encode()
-	conn.Send(subject, body, sendTo...)
+	subject := xscmsg.EncodeSubject(st.NextMessageID(session.Prefix), xscmsg.HandlingRoutine, "", "SCCo Packet Practice Report")
+	conn.Send(subject, rm.EncodeBody(), sendTo...)
 	log.Printf("Sent report for %s on %s.", session.Name, session.End.Format("2006-01-02"))
 }

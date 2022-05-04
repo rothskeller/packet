@@ -183,6 +183,16 @@ func (t *Transport) ReadUntil(until string) (s string, err error) {
 	return t.readUntil(until, rfTimeout)
 }
 
+// ReadUntilT reads data from the BBS until the specified string is seen, or the
+// specified timeout occurs.  It returns the data that was read (even if it
+// returns an error).
+func (t *Transport) ReadUntilT(until string, timeout time.Duration) (s string, err error) {
+	if !t.connected {
+		return "", jnos.ErrDisconnected
+	}
+	return t.readUntil(until, timeout)
+}
+
 // readUntil reads data from the TNC until the specified string is seen, or the
 // specified timeout occurs.  It returns the data that was read (even if it
 // returns an error).

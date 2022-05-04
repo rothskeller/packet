@@ -12,16 +12,31 @@ import (
 	"steve.rothskeller.net/packet/pktmsg"
 	"steve.rothskeller.net/packet/wppsvr/config"
 	"steve.rothskeller.net/packet/wppsvr/store"
+	"steve.rothskeller.net/packet/xscmsg"
+)
+
+// Problem codes
+const (
+	ProblemBounceMessage  = "BounceMessage"
+	ProblemMessageCorrupt = "MessageCorrupt"
 )
 
 // ProblemLabel is a map from problem code to problem label (the short string
 // that appears under a message in a report when the message has that problem).
-var ProblemLabel = map[string]string{}
+var ProblemLabel = map[string]string{
+	ProblemBounceMessage:  "message has no return address (probably auto-response)",
+	ProblemMessageCorrupt: "message could not be parsed",
+	// others are added by init funcs in the files that detect those problems
+}
 
 // An Analysis contains the analysis of a received message.
 type Analysis struct {
-	// msg is the received message itself.
-	msg pktmsg.ParsedMessage
+	// raw is the raw received message.
+	raw string
+	// msg is the decoded received message.
+	msg *pktmsg.Message
+	// xsc is the recognized XSC message of the received message.
+	xsc xscmsg.XSCMessage
 	// hash is the hash of the raw received message, used for deduplication.
 	hash string
 	// localID is the local message ID of the received message.
@@ -71,37 +86,75 @@ func Analyze(st *store.Store, session *store.Session, bbs, raw string) *Analysis
 	var (
 		a   Analysis
 		sum [20]byte
+		err error
 	)
-	a.msg = pktmsg.ParseMessage(raw)
-	log.Printf("Received at %s@%s: from %q subject %q",
-		session.CallSign, bbs, a.msg.Base().ReturnAddress, a.msg.Base().SubjectLine)
-	// Hash the message and find out whether we've already handled it.
-	sum = sha1.Sum([]byte(raw))
-	a.hash = hex.EncodeToString(sum[:])
-	if st.HasMessageHash(a.hash) {
-		log.Printf("=> message already handled")
-		return nil
-	}
 	// Store the basic message information in the analysis.
+	a.raw = raw
 	a.session = session
 	a.toBBS = bbs
+	sum = sha1.Sum([]byte(raw))
+	a.hash = hex.EncodeToString(sum[:])
+	// Log receipt of the message.
+	a.msg, err = pktmsg.ParseMessage(raw)
+	if err != nil && a.msg.ReturnAddress() == "" {
+		log.Printf("Received at %s@%s: [UNPARSEABLE with hash %s]", session.CallSign, bbs, a.hash)
+	} else {
+		log.Printf("Received at %s@%s: from %q subject %q",
+			session.CallSign, bbs, a.msg.ReturnAddress(), a.msg.Header.Get("Subject"))
+	}
+	// If we've already handled the message, stop.
+	if a.localID = st.HasMessageHash(a.hash); a.localID != "" {
+		log.Printf("=> already handled as %s", a.localID)
+		return nil
+	}
+	// Assign it a local message ID.
 	a.localID = st.NextMessageID(a.session.Prefix)
-	// Run all of the checks against the message.
-	a.checkNonHuman()          // was the message a non-human message?
+	// Check the message for problems and log them in the analysis.
+	a.checkMessage(err)
+	return &a
+}
+
+// checkMessage checks the message for problems, logging them in the problems
+// list of the Analysis structure.
+func (a *Analysis) checkMessage(parseerr error) {
+	if parseerr != nil {
+		a.problems = append(a.problems, &problem{code: ProblemMessageCorrupt})
+		return
+	}
+	if a.msg.Flags&pktmsg.AutoResponse != 0 {
+		a.problems = append(a.problems, &problem{code: ProblemBounceMessage})
+		return
+	}
+	// Find out whether the message is a known type.  If it's not, we'll put
+	// it in our pseudo-type for plain text or unknown form, whichever fits.
+	if a.xsc = xscmsg.Recognize(a.msg, true); a.xsc == nil {
+		if form := pktmsg.ParseForm(a.msg.Body, true); form != nil {
+			a.xsc = &config.UnknownForm{M: a.msg, F: form}
+		} else {
+			a.xsc = &config.PlainTextMessage{M: a.msg}
+		}
+	}
+	// If the message is a delivery or read receipt, we don't want to run
+	// most of the checks because it's not actually a practice attempt.
+	if a.checkReceipts() {
+		return
+	}
+	// Run all of the various checks against the message.
 	a.checkPlainText()         // was the message entirely plain ASCII text?
 	a.checkValidForm()         // is the form valid? (encoding, field values, required fields)
-	a.checkFormVersion()       // is the form using a current encoding and version?
-	a.checkFormSubject()       // does the subject agree with the form?
-	a.checkSubjectLine()       // does the message have a valid subject line?
+	a.checkSubjectLine()       // does the message have a valid/correct subject line?
 	a.checkMessageNumber()     // does the message number have the correct format?
-	a.checkFormHandlingOrder() // does the form have the correct handling order?
-	a.checkFormDestination()   // does the form have the correct destination?
 	a.checkPracticeSubject()   // does the message have the correct "Practice ..." subject?
-	a.checkCallSign()          // can we find the sender's call sign?
 	a.checkPracticeWindow()    // was the message sent within the practice window for the net?
+	a.checkFormVersion()       // is the form using a current encoding and version?
+	a.checkCallSign()          // can we find the sender's call sign?
 	a.checkBBS()               // was the message sent from or to the wrong BBS?
 	a.checkCorrectForm()       // did the message use the correct form?
-	return &a
+	a.checkFormHandlingOrder() // does the form have the correct handling order?
+	a.checkFormDestination()   // does the form have the correct destination?
+	// NOTE: these checks are mostly unordered.  However:
+	//    checkPracticeWindow has to come after checkPracticeSubject
+	//    checkCallSign has to come after checkPracticeSubject
 }
 
 // Commit commits the analyzed message to the database.
@@ -115,16 +168,14 @@ func (a *Analysis) Commit(st *store.Store) {
 	}
 	m.LocalID = a.localID
 	m.Hash = a.hash
-	m.Message = a.msg.Base().RawMessage
+	m.Message = a.raw
 	m.Session = a.session.ID
-	m.FromAddress = a.msg.Base().ReturnAddress
+	m.FromAddress = a.msg.ReturnAddress()
 	m.FromCallSign = a.fromCallSign
 	m.ToBBS = a.toBBS
-	m.Subject = a.msg.Base().SubjectLine
-	m.DeliveryTime = a.msg.Base().DeliveryTime
-	if am := a.msg.Message(); am != nil {
-		m.FromBBS = am.FromBBS
-	}
+	m.Subject = a.msg.Header.Get("Subject")
+	m.DeliveryTime = a.msg.Date()
+	m.FromBBS = a.msg.FromBBS()
 	m.Valid, m.Correct = true, true
 	for _, p := range a.problems {
 		m.Valid = actions[p.code]&config.ActionDontCount == 0
@@ -132,5 +183,5 @@ func (a *Analysis) Commit(st *store.Store) {
 		m.Problems = append(m.Problems, p.code)
 	}
 	st.SaveMessage(&m)
-	log.Printf("=> %s %s %s", m.LocalID, a.msg.TypeCode(), strings.Join(m.Problems, ","))
+	log.Printf("=> %s %s %s", m.LocalID, a.xsc.TypeTag(), strings.Join(m.Problems, ","))
 }

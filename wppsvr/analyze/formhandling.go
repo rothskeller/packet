@@ -3,8 +3,8 @@ package analyze
 import (
 	"fmt"
 
-	"steve.rothskeller.net/packet/pktmsg"
 	"steve.rothskeller.net/packet/wppsvr/config"
+	"steve.rothskeller.net/packet/xscmsg"
 )
 
 // Problem codes
@@ -20,8 +20,8 @@ func init() {
 // handling order based on the form contents.
 func (a *Analysis) checkFormHandlingOrder() {
 	var (
-		ho      pktmsg.HandlingOrder
-		routing = config.Get().FormRouting[a.msg.TypeCode()]
+		want    xscmsg.HandlingOrder
+		routing = config.Get().FormRouting[a.xsc.TypeTag()]
 	)
 	if routing == nil {
 		return
@@ -30,18 +30,25 @@ func (a *Analysis) checkFormHandlingOrder() {
 	case "":
 		return
 	case "computed":
-		ho = a.msg.(interface{ RecommendedHandlingOrder() pktmsg.HandlingOrder }).RecommendedHandlingOrder()
+		want = config.ComputedRecommendedHandlingOrder[a.xsc.TypeTag()](a.xsc)
+		if want == 0 {
+			return
+		}
 	default:
-		ho, _ = pktmsg.ParseHandlingOrder(handling)
+		want, _ = xscmsg.ParseHandlingOrder(handling)
 	}
-	if f := a.msg.Form(); f != nil && f.HandlingOrder != ho {
-		a.problems = append(a.problems, &problem{
-			code: ProblemFormHandlingOrder,
-			response: fmt.Sprintf(`
+	if f, ok := a.xsc.(interface {
+		HandlingOrder() (string, xscmsg.HandlingOrder)
+	}); ok {
+		if _, have := f.HandlingOrder(); have != want {
+			a.problems = append(a.problems, &problem{
+				code: ProblemFormHandlingOrder,
+				response: fmt.Sprintf(`
 This message has handling order %s.  According to the SCCo ARES/RACES
 Recommended Form Routing document, it should have handling order %s.
-`, f.HandlingOrder, ho.String()),
-			references: refFormRouting,
-		})
+`, f.HandlingOrder, want.String()),
+				references: refFormRouting,
+			})
+		}
 	}
 }

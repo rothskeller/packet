@@ -31,6 +31,13 @@ type Transport interface {
 	// specified string was found, and any other error if something else
 	// goes wrong.
 	ReadUntil(string) (string, error)
+	// ReadUntilT reads data from the BBS until the specified string is
+	// seen, or the specified timeout occurs.  It returns the data that was
+	// read (even if it returns an error.)  It returns ErrDisconnected if
+	// the connection to the BBS was lost, ErrTimeout if the read timed out
+	// before the specified string was found, and any other error if
+	// something else goes wrong.
+	ReadUntilT(string, time.Duration) (string, error)
 	// Send sends a string to the BBS.  It returns ErrDisconnected if the
 	// connection to the BBS was lost, and any other error if something else
 	// goes wrong.

@@ -20,18 +20,13 @@ func init() {
 // the practice session.
 func (a *Analysis) checkCorrectForm() {
 	var (
-		code    string
+		tag     string
 		allowed []string
 		article string
 	)
-	// This check only applies to human messages.  It does not apply to
-	// corrupt forms (we may not have detected their type correctly).
-	if a.msg.Message() == nil || (a.msg.Form() != nil && a.msg.Form().CorruptForm) {
-		return
-	}
-	code = a.msg.TypeCode()
+	tag = a.xsc.TypeTag()
 	for _, mtype := range a.session.MessageTypes {
-		if mtype == code {
+		if mtype == tag {
 			return
 		}
 	}
@@ -46,7 +41,7 @@ func (a *Analysis) checkCorrectForm() {
 		code: ProblemMessageTypeWrong,
 		response: fmt.Sprintf(`
 This message is %s %s.  For the %s on %s, %s %s is expected.
-`, a.msg.TypeArticle(), a.msg.TypeName(), a.session.Name, a.session.End.Format("January 2"), article,
+`, a.xsc.TypeArticle(), a.xsc.TypeName(), a.session.Name, a.session.End.Format("January 2"), article,
 			english.Conjoin(allowed, "or")),
 		references: refWeeklyPractice,
 	})

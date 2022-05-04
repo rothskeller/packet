@@ -5,7 +5,10 @@ import (
 	"strings"
 	"time"
 
-	"steve.rothskeller.net/packet/pktmsg"
+	"steve.rothskeller.net/packet/wppsvr/config"
+	"steve.rothskeller.net/packet/xscmsg"
+	"steve.rothskeller.net/packet/xscmsg/eoc213rr"
+	"steve.rothskeller.net/packet/xscmsg/ics213"
 )
 
 // Problem codes
@@ -59,26 +62,21 @@ var dateREs = map[string]*regexp.Regexp{
 // checkPracticeSubject makes sure that the subject starts with the word
 // Practice followed by appropriate data.
 func (a *Analysis) checkPracticeSubject() {
-	var msg *pktmsg.RxMessage
-
-	// This check only applies to human messages.
-	if msg = a.msg.Message(); msg == nil {
-		return
-	}
-	// This check does not apply if the subject line couldn't be parsed.
-	if msg.Subject == msg.SubjectLine {
-		return
-	}
 	// This check only applies to plain text messages, ICS-213 forms, and
 	// EOC-213RR forms.  All other known form types have different subject
 	// lines, and unknown form types get an error about that instead.
-	switch a.msg.(type) {
-	case *pktmsg.RxMessage, *pktmsg.RxICS213Form, *pktmsg.RxEOC213RRForm:
+	switch a.xsc.(type) {
+	case *config.PlainTextMessage, *ics213.Form, *eoc213rr.Form:
 		break
 	default:
 		return
 	}
-	var match = practiceRE.FindStringSubmatch(msg.Subject)
+	// Parse the subject line to get the true subject.
+	xscsubj := xscmsg.ParseSubject(a.msg.Header.Get("Subject"))
+	if xscsubj == nil {
+		return // unparseable subject line reported elsewhere
+	}
+	var match = practiceRE.FindStringSubmatch(xscsubj.Subject)
 	if match == nil {
 		a.problems = append(a.problems, &problem{
 			code: ProblemPracticeSubjectFormat,

@@ -1,0 +1,709 @@
+<!DOCTYPE html><html><head>
+    <meta http-equiv="Content-type" content="text/html;charset=UTF-8"/>
+    <link rel="stylesheet" type="text/css" href="resources/css/loading.css"/>
+    <link rel="stylesheet" type="text/css" href="resources/css/pack-it-forms.css"/>
+    <style>
+      #the-form table.zebra-striped {
+          margin-top: 0.5em;
+      }
+      #the-form table.zebra-striped td>label {
+          font-weight: normal;
+      }
+      #the-form table.grid td {
+          padding-top: 3px;
+          padding-bottom: 3px;
+          vertical-align: center;
+      }
+      #the-form table.grid td:nth-child(odd) {
+          width: 25%;
+      }
+      #the-form table.grid td:nth-child(3n) {
+          text-align: right;
+      }
+    </style>
+    <script type="text/javascript" src="resources/js/pack-it-forms.js"></script>
+    <script type="text/javascript" src="resources/integration/integration.js"></script>
+    <meta name="pack-it-forms-pdf-URL" content="pdf/XSC_MuniStat_v190528b_Fillable.pdf"/>
+    <meta name="pack-it-forms-subject-suffix" content="_MuniStat_{{field:21.jurisdiction}}"/>
+    <script type="text/javascript">
+      function on_state_of_emergency(emergency) {
+          on_value(emergency, ['Yes'],
+                   {'99.how-sent': {enable: true, require: true, otherwise: {value: ''}},
+                    '98.how-to-send': {onMatch: {display: 'inline'}, otherwise: {display: 'none'}}});
+      }
+      var standardEarlyStartup = integration.early_startup;
+      integration.early_startup = function(next) {
+          standardEarlyStartup(function() {
+              array_for_each(document.querySelectorAll('option[value="Problem"]'), function(option) {
+                  select_backgroundColors(option.parentNode, {
+                      Unknown: "gray",
+                      Normal: "green",
+                      Problem: "yellow",
+                      Failure: "red"});
+              });
+              next();
+          });
+      };
+    </script>
+    <title>Jurisdiction Status</title>
+  </head>
+
+  <body>
+    <div class="version">2.0</div>
+    <div id="loading"><div>Loading<div id="spin"><div id="spin_1" class="spin"></div></div></div></div>
+    <div id="err">
+      <div>
+        <h1>Something went wrong.</h1>
+        The following log information may help resolve the problem.
+        <div id="error-log"></div>
+      </div>
+    </div>
+    <form id="the-form" name="the-form">
+      <div data-included-html="scco-header"><html><head></head><body><div>
+  <div class="version">0.1.0</div>
+  <table id="scco-banner" class="block-caption noborder" style="background-color:#bbeeff;">
+    <tbody><tr>
+      <td style="border:none;padding:4pt 4pt;">
+        <span name="header-title" class="templated no-msg-init" style="font-size:150%;"></span>
+        <br/>
+        <span name="header-subtitle" class="templated no-msg-init"></span>
+      </td>
+      <td style="border:none;padding:2pt 4pt;text-align:right;vertical-align:bottom;">
+        <span name="header-version" class="templated no-msg-init" style="font-weight:normal;"></span>
+      </td>
+    </tr>
+  </tbody></table>
+  <table>
+    <tbody><tr>
+      <td style="white-space:nowrap;width:1px;vertical-align:middle;">
+        <b>Message Numbers:</b>
+      </td><td class="label-sameline">
+        <b>Origin:</b>
+        <input type="text" name="MsgNo" class="message-number no-msg-init" tabindex="-1" value="{{envelope:sender_message_number}}" required="required"/>
+      </td><td class="label-sameline">
+        <b>Destination:</b>
+        <input type="text" class="message-number" disabled="disabled" tabindex="-1" value="{{envelope:receiver_message_number}}"/>
+      </td>
+    </tr>
+  </tbody></table>
+  <table>
+    <tbody><tr>
+      <td class="label-sameline">
+        <b>Date:</b>
+        <input type="text" name="1a.date" class="date" value="{{date}}" required="required" tabindex="3"/>
+      </td><td class="label-sameline">
+        <b>Time:</b>
+        <input type="text" name="1b.time" class="time" required="required" tabindex="4"/>
+      </td><td class="label-sameline" style="vertical-align:middle;">
+        <b>Handling:</b>
+        <label class="label-sameline" style="margin-left:0;">
+          <input type="radio" name="5.handling" tabindex="5" required="required" value="IMMEDIATE"/>Immediate
+          <span style="font-weight:normal;">(ASAP)</span>
+        </label>
+        <label class="label-sameline" style="margin-left:0;">
+          <input type="radio" name="5.handling" tabindex="5" required="required" value="PRIORITY"/>Priority
+          <span style="font-weight:normal;">(&lt;1 hr)</span>
+        </label>
+        <label class="label-sameline" style="margin-left:0;">
+          <input type="radio" name="5.handling" tabindex="5" required="required" value="ROUTINE"/>Routine
+          <span style="font-weight:normal;">(&lt;2 hrs)</span>
+        </label>
+      </td>
+    </tr>
+  </tbody></table>
+  <table id="form-row-3">
+    <tbody><tr>
+      <td rowspan="4" class="block-caption" style="width:1px;">
+        T<br/>O
+      </td><td style="vertical-align:middle;">
+        <table class="same-line-label-layout">
+          <tbody><tr>
+            <th>ICS Position:</th>
+            <td><input type="text" name="7a.to-ics-position" required="required" tabindex="6"/></td>
+          </tr>
+        </tbody></table>
+      </td><td rowspan="4" class="block-caption" style="width:1px;">
+        F<br/>R<br/>O<br/>M
+      </td><td style="vertical-align:middle;">
+        <table class="same-line-label-layout">
+          <tbody><tr>
+            <th>ICS Position:</th>
+            <td><input type="text" name="8a.from-ics-position" required="required" tabindex="10"/></td>
+          </tr>
+        </tbody></table>
+      </td>
+    </tr><tr>
+      <td style="vertical-align:middle;">
+        <table class="same-line-label-layout">
+          <tbody><tr>
+            <th>Location:</th>
+            <td><input type="text" name="7b.to-location" required="required" tabindex="7"/></td>
+          </tr>
+        </tbody></table>
+      </td><td style="vertical-align:middle;">
+        <table class="same-line-label-layout">
+          <tbody><tr>
+            <th>Location:</th>
+            <td><input type="text" name="8b.from-location" required="required" tabindex="11"/></td>
+          </tr>
+        </tbody></table>
+      </td>
+    </tr><tr>
+      <td style="vertical-align:middle;">
+        <table class="same-line-label-layout">
+          <tbody><tr>
+            <th>Name:</th>
+            <td><input type="text" name="7c.to-name" tabindex="8"/></td>
+          </tr>
+        </tbody></table>
+      </td><td style="vertical-align:middle;">
+        <table class="same-line-label-layout">
+          <tbody><tr>
+            <th>Name:</th>
+            <td><input type="text" name="8c.from-name" tabindex="12"/></td>
+          </tr>
+        </tbody></table>
+      </td>
+    </tr><tr>
+      <td style="vertical-align:middle;">
+        <table class="same-line-label-layout">
+          <tbody><tr>
+            <th>Contact Info:</th>
+            <td><input type="text" name="7d.to-contact" tabindex="9"/></td>
+          </tr>
+        </tbody></table>
+      </td><td style="vertical-align:middle;">
+        <table class="same-line-label-layout" <tr="">
+            <tbody><tr><th>Contact Info:</th>
+            <td><input type="text" name="8d.from-contact" tabindex="13"/></td>
+          </tr>
+        </tbody></table>
+      </td>
+    </tr>
+  </tbody></table>
+</div>
+</body></html></div>
+      <br/>
+      <table class="same-line-label-layout">
+        <tbody><tr>
+          <th>Report Type:</th>
+          <td class="label-sameline" style="width:1px;">
+            <label class="label-sameline" style="font-weight:normal;">
+              <input name="19.report-type" type="radio" value="Update" required="" tabindex="19" onchange="if (this.checked) on_report_type(false)"/>Update
+            </label>
+            <label class="label-sameline" style="font-weight:normal;">
+              <input name="19.report-type" type="radio" value="Complete" required="" tabindex="19" onchange="if (this.checked) on_report_type(true)"/>Complete
+            </label>
+          </td>
+          <th style="padding-left:2em;">Jurisdiction Name:</th>
+          <td>
+            <select name="21.jurisdiction" required="" tabindex="21">
+              <option value="" selected="" disabled="" hidden="" style="display:none;">
+                Select one...
+              </option>
+              <option value="Campbell">Campbell</option>
+              <option value="Cupertino">Cupertino</option>
+              <option value="Gilroy">Gilroy</option>
+              <option value="Los Altos">Los Altos</option>
+              <option value="Los Altos Hills">Los Altos Hills</option>
+              <option value="Los Gatos">Los Gatos</option>
+              <option value="Milpitas">Milpitas</option>
+              <option value="Monte Sereno">Monte Sereno</option>
+              <option value="Morgan Hill">Morgan Hill</option>
+              <option value="Mountain View">Mountain View</option>
+              <option value="Palo Alto">Palo Alto</option>
+              <option value="San Jose">San Jose</option>
+              <option value="Santa Clara">Santa Clara</option>
+              <option value="Saratoga">Saratoga</option>
+              <option value="Sunnyvale">Sunnyvale</option>
+              <option value="Unincorporated">*Unincorporated County Areas*</option>
+            </select>
+          </td>
+        </tr>
+      </tbody></table>
+      <br/>
+      <label>Contact Information
+        <table id="contact-info-table" class="zebra-striped grid">
+          <tbody><tr>
+            <td><label for="eoc-phone">EOC Phone:</label></td>
+            <td><input name="23.eoc-phone" type="text" class="phone-number required-for-complete" tabindex="23"/></td>
+            <td><label for="">EOC Fax:</label></td>
+            <td><input name="24.eoc-fax" type="text" class="clearable phone-number" tabindex="24"/></td>
+          </tr><tr>
+            <td><label for="pri-em-contact-name">Primary EM Contact Name:</label></td>
+            <td><input name="25.pri-em-contact-name" type="text" class="required-for-complete" tabindex="25"/></td>
+            <td><label for="pri-em-contact-phone">Primary EM Contact Phone:</label></td>
+            <td><input name="26.pri-em-contact-phone" type="text" class="phone-number required-for-complete" tabindex="26"/></td>
+          </tr><tr>
+            <td><label for="sec-em-contact-name">Secondary EM Contact Name:</label></td>
+            <td><input name="27.sec-em-contact-name" type="text" tabindex="27"/></td>
+            <td><label for="sec-em-contact-phone">Secondary EM Contact Phone:</label></td>
+            <td><input name="28.sec-em-contact-phone" type="text" class="clearable phone-number" tabindex="28"/></td>
+          </tr>
+        </tbody></table>
+      </label>
+      <br/>
+      <label>Government Office Status
+        <table id="gov-office-status" class="zebra-striped grid">
+          <tbody><tr>
+            <td><label for="office-status">Office Status:</label></td>
+            <td>
+              <select name="29.office-status" class="required-for-complete" tabindex="29">
+                <option value="" selected=""></option>
+                <option value="Unknown" data-background-color="gray">Unknown</option>
+                <option value="Open" data-background-color="green">Open</option>
+                <option value="Closed" data-background-color="red">Closed</option>
+              </select>
+            </td>
+            <td></td>
+            <td></td>
+          </tr><tr>
+            <td><label for="gov-expected-open-date">Expected to Open Date:</label></td>
+            <td><input name="30.gov-expected-open-date" type="text" class="clearable date"/></td>
+            <td><label for="gov-expected-open-time">Expected to Open Time:</label></td>
+            <td><input name="31.gov-expected-open-time" type="text" class="clearable time"/></td>
+          </tr><tr>
+            <td><label for="gov-expected-close-date">Expected to Close Date:</label></td>
+            <td><input name="32.gov-expected-close-date" type="text" class="clearable date"/></td>
+            <td><label for="gov-expected-close-time">Expected to Close Time:</label></td>
+            <td><input name="33.gov-expected-close-time" type="text" class="clearable time"/></td>
+          </tr>
+        </tbody></table>
+      </label>
+      <br/>
+      <label>EOC Status
+        <table id="eoc-status" class="zebra-striped grid">
+          <tbody><tr>
+            <td><label for="eoc-open">EOC Open:</label></td>
+            <td>
+              <select name="34.eoc-open" class="required-for-complete" tabindex="34">
+                <option value="" selected=""></option>
+                <option value="Unknown" data-background-color="gray">Unknown</option>
+                <option value="Yes" data-background-color="red">Yes</option>
+                <option value="No" data-background-color="green">No</option>
+              </select>
+            </td>
+            <td><label for="activation-level">Activation Level:</label></td>
+            <td>
+              <select name="35.eoc-activation-level" class="required-for-complete" tabindex="35">
+                <option value="" selected=""></option>
+                <option value="Normal" data-background-color="green">Normal</option>
+                <option value="Duty Officer" data-background-color="yellow">Duty Officer</option>
+                <option value="Monitor" data-background-color="orange">Monitor</option>
+                <option value="Partial" data-background-color="red">Partial</option>
+                <option value="Full" data-background-color="red">Full</option>
+              </select>
+            </td>
+          </tr><tr>
+            <td><label for="eoc-expected-open-date">Expected to Open Date:</label></td>
+            <td><input name="36.eoc-expected-open-date" type="text" class="clearable date"/></td>
+            <td><label for="eoc-expected-open-time">Expected to Open Time:</label></td>
+            <td><input name="37.eoc-expected-open-time" type="text" class="clearable time"/></td>
+          </tr><tr>
+            <td><label for="eoc-expected-close-date">Expected to Close Date:</label></td>
+            <td><input name="38.eoc-expected-close-date" type="text" class="clearable date"/></td>
+            <td><label for="eoc-expected-close-time">Expected to Close Time:</label></td>
+            <td><input name="39.eoc-expected-close-time" type="text" class="clearable time"/></td>
+          </tr>
+        </tbody></table>
+      </label>
+      <br/>
+      <label>Declarations
+        <table id="declarations" class="zebra-striped">
+          <tbody><tr>
+            <td style="width:1px;white-space:nowrap;"><label>State of Emergency:<label></label></label></td>
+            <td style="width:1px;">
+              <select name="40.state-of-emergency" class="required-for-complete" tabindex="40" onchange="on_state_of_emergency(this);">
+                <option value="" selected=""></option>
+                <option value="Unknown" data-background-color="gray">Unknown</option>
+                <option value="Yes" data-background-color="red">Yes</option>
+                <option value="No" data-background-color="green">No</option>
+              </select>
+            </td><td>
+              <input name="98.how-to-send" type="text" style="display:none" disabled="" value="Send a copy of your proclamation to the county EOC (fax, e-mail, ...)"/>
+            </td>
+          </tr><tr>
+            <td style="width:1px;white-space:nowrap;"><label>Indicate how sent (method/to):</label></td>
+            <td colspan="2"><input name="99.how-sent" type="text" disabled=""/></td>
+          </tr>
+        </tbody></table>
+      </label>
+      <br/>
+      <div style="page-break-inside:avoid;">
+        <label>Current Situation</label>
+        <table id="current-situation" class="zebra-striped">
+          <tbody><tr style="background-color:#bbeeff;">
+            <td class="bold label">Type</td>
+            <td class="bold label">Status</td>
+            <td class="bold">Comments</td>
+          </tr>
+          <tr>
+            <td class="label">Communications</td>
+            <td>
+              <select name="41.0.communications" class="required-for-complete" tabindex="41">
+                <option value="" selected=""></option>
+                <option value="Unknown">Unknown</option>
+                <option value="Normal">Normal</option>
+                <option value="Problem">Problem</option>
+                <option value="Failure">Failure</option>
+                <option value="Delayed">Delayed</option>
+                <option value="Closed">Closed</option>
+                <option value="Early Out">Early Out</option>
+              </select>
+            </td>
+            <td>
+              <textarea name="41.1.communications-comments" rows="2"></textarea>
+            </td>
+          </tr>
+          <tr>
+            <td class="label">Debris</td>
+            <td>
+              <select name="42.0.debris" class="required-for-complete" tabindex="42">
+                <option value="" selected=""></option>
+                <option value="Unknown">Unknown</option>
+                <option value="Normal">Normal</option>
+                <option value="Problem">Problem</option>
+                <option value="Failure">Failure</option>
+                <option value="Delayed">Delayed</option>
+                <option value="Closed">Closed</option>
+                <option value="Early Out">Early Out</option>
+              </select>
+            </td>
+            <td>
+              <textarea name="42.1.debris-comments" rows="2"></textarea>
+            </td>
+          </tr>
+          <tr>
+            <td class="label">Flooding</td>
+            <td>
+              <select name="43.0.flooding" class="required-for-complete" tabindex="43">
+                <option value="" selected=""></option>
+                <option value="Unknown">Unknown</option>
+                <option value="Normal">Normal</option>
+                <option value="Problem">Problem</option>
+                <option value="Failure">Failure</option>
+                <option value="Delayed">Delayed</option>
+                <option value="Closed">Closed</option>
+                <option value="Early Out">Early Out</option>
+              </select>
+            </td>
+            <td>
+              <textarea name="43.1.flooding-comments" rows="2"></textarea>
+            </td>
+          </tr>
+          <tr>
+            <td class="label">Hazmat</td>
+            <td>
+              <select name="44.0.hazmat" class="required-for-complete" tabindex="44">
+                <option value="" selected=""></option>
+                <option value="Unknown">Unknown</option>
+                <option value="Normal">Normal</option>
+                <option value="Problem">Problem</option>
+                <option value="Failure">Failure</option>
+                <option value="Delayed">Delayed</option>
+                <option value="Closed">Closed</option>
+                <option value="Early Out">Early Out</option>
+              </select>
+            </td>
+            <td>
+              <textarea name="44.1.hazmat-comments" rows="2"></textarea>
+            </td>
+          </tr>
+          <tr>
+            <td class="label">Emergency Services</td>
+            <td>
+              <select name="45.0.emergency-services" class="required-for-complete" tabindex="45">
+                <option value="" selected=""></option>
+                <option value="Unknown">Unknown</option>
+                <option value="Normal">Normal</option>
+                <option value="Problem">Problem</option>
+                <option value="Failure">Failure</option>
+                <option value="Delayed">Delayed</option>
+                <option value="Closed">Closed</option>
+                <option value="Early Out">Early Out</option>
+              </select>
+            </td>
+            <td>
+              <textarea name="45.1.emergency-services-comments" rows="2"></textarea>
+            </td>
+          </tr>
+          <tr>
+            <td class="label">Casualties</td>
+            <td>
+              <select name="46.0.casualties" class="required-for-complete" tabindex="46">
+                <option value="" selected=""></option>
+                <option value="Unknown">Unknown</option>
+                <option value="Normal">Normal</option>
+                <option value="Problem">Problem</option>
+                <option value="Failure">Failure</option>
+                <option value="Delayed">Delayed</option>
+                <option value="Closed">Closed</option>
+                <option value="Early Out">Early Out</option>
+              </select>
+            </td>
+            <td>
+              <textarea name="46.1.casualties-comments" rows="2"></textarea>
+            </td>
+          </tr>
+          <tr>
+            <td class="label">Utilities (Gas)</td>
+            <td>
+              <select name="47.0.utilities-gas" class="required-for-complete" tabindex="47">
+                <option value="" selected=""></option>
+                <option value="Unknown">Unknown</option>
+                <option value="Normal">Normal</option>
+                <option value="Problem">Problem</option>
+                <option value="Failure">Failure</option>
+                <option value="Delayed">Delayed</option>
+                <option value="Closed">Closed</option>
+                <option value="Early Out">Early Out</option>
+              </select>
+            </td>
+            <td>
+              <textarea name="47.1.utilities-gas-comments" rows="2"></textarea>
+            </td>
+          </tr>
+          <tr>
+            <td class="label">Utilites (Electric)</td>
+            <td>
+              <select name="48.0.utilities-electric" class="required-for-complete" tabindex="48">
+                <option value="" selected=""></option>
+                <option value="Unknown">Unknown</option>
+                <option value="Normal">Normal</option>
+                <option value="Problem">Problem</option>
+                <option value="Failure">Failure</option>
+                <option value="Delayed">Delayed</option>
+                <option value="Closed">Closed</option>
+                <option value="Early Out">Early Out</option>
+              </select>
+            </td>
+            <td>
+              <textarea name="48.1.utilities-electric-comments" rows="2"></textarea>
+            </td>
+          </tr>
+          <tr>
+            <td class="label">Infrastructure<br/>(Power)</td>
+            <td>
+              <select name="49.0.infrastructure-power" class="required-for-complete" tabindex="49">
+                <option value="" selected=""></option>
+                <option value="Unknown">Unknown</option>
+                <option value="Normal">Normal</option>
+                <option value="Problem">Problem</option>
+                <option value="Failure">Failure</option>
+                <option value="Delayed">Delayed</option>
+                <option value="Closed">Closed</option>
+                <option value="Early Out">Early Out</option>
+              </select>
+            </td>
+            <td>
+              <textarea name="49.1.infrastructure-power-comments" rows="2"></textarea>
+            </td>
+          </tr>
+          <tr>
+            <td class="label">Infrastructure<br/>(Water Systems)</td>
+            <td>
+              <select name="50.0.infrastructure-water-systems" class="required-for-complete" tabindex="50">
+                <option value="" selected=""></option>
+                <option value="Unknown">Unknown</option>
+                <option value="Normal">Normal</option>
+                <option value="Problem">Problem</option>
+                <option value="Failure">Failure</option>
+                <option value="Delayed">Delayed</option>
+                <option value="Closed">Closed</option>
+                <option value="Early Out">Early Out</option>
+              </select>
+            </td>
+            <td>
+              <textarea name="50.1.infrastructure-water-systems-comments" rows="2"></textarea>
+            </td>
+          </tr>
+          <tr>
+            <td class="label">Infrastructure<br/>(Sewer Systems)</td>
+            <td>
+              <select name="51.0.infrastructure-sewer-systems" class="required-for-complete" tabindex="51">
+                <option value="" selected=""></option>
+                <option value="Unknown">Unknown</option>
+                <option value="Normal">Normal</option>
+                <option value="Problem">Problem</option>
+                <option value="Failure">Failure</option>
+                <option value="Delayed">Delayed</option>
+                <option value="Closed">Closed</option>
+                <option value="Early Out">Early Out</option>
+              </select>
+            </td>
+            <td>
+              <textarea name="51.1.infrastructure-sewer-systems-comments" rows="2"></textarea>
+            </td>
+          </tr>
+          <tr>
+            <td class="label">Search and Rescue</td>
+            <td>
+              <select name="52.0.search-and-rescue" class="required-for-complete" tabindex="52">
+                <option value="" selected=""></option>
+                <option value="Unknown">Unknown</option>
+                <option value="Normal">Normal</option>
+                <option value="Problem">Problem</option>
+                <option value="Failure">Failure</option>
+                <option value="Delayed">Delayed</option>
+                <option value="Closed">Closed</option>
+                <option value="Early Out">Early Out</option>
+              </select>
+            </td>
+            <td>
+              <textarea name="52.1.search-and-rescue-comments" rows="2"></textarea>
+            </td>
+          </tr>
+          <tr>
+            <td class="label">Transportation (Roads)</td>
+            <td>
+              <select name="53.0.transportation-roads" class="required-for-complete" tabindex="53">
+                <option value="" selected=""></option>
+                <option value="Unknown">Unknown</option>
+                <option value="Normal">Normal</option>
+                <option value="Problem">Problem</option>
+                <option value="Failure">Failure</option>
+                <option value="Delayed">Delayed</option>
+                <option value="Closed">Closed</option>
+                <option value="Early Out">Early Out</option>
+              </select>
+            </td>
+            <td>
+              <textarea name="53.1.transportation-roads-comments" rows="2"></textarea>
+            </td>
+          </tr>
+          <tr>
+            <td class="label">Transportation (Bridges)</td>
+            <td>
+              <select name="54.0.transportation-bridges" class="required-for-complete" tabindex="54">
+                <option value="" selected=""></option>
+                <option value="Unknown">Unknown</option>
+                <option value="Normal">Normal</option>
+                <option value="Problem">Problem</option>
+                <option value="Failure">Failure</option>
+                <option value="Delayed">Delayed</option>
+                <option value="Closed">Closed</option>
+                <option value="Early Out">Early Out</option>
+              </select>
+            </td>
+            <td>
+              <textarea name="54.1.transportation-bridges-comments" rows="2"></textarea>
+            </td>
+          </tr>
+          <tr>
+            <td class="label">Civil Unrest</td>
+            <td>
+              <select name="55.0.civil-unrest" class="required-for-complete" tabindex="55">
+                <option value="" selected=""></option>
+                <option value="Unknown">Unknown</option>
+                <option value="Normal">Normal</option>
+                <option value="Problem">Problem</option>
+                <option value="Failure">Failure</option>
+                <option value="Delayed">Delayed</option>
+                <option value="Closed">Closed</option>
+                <option value="Early Out">Early Out</option>
+              </select>
+            </td>
+            <td>
+              <textarea name="55.1.civil-unrest-comments" rows="2"></textarea>
+            </td>
+          </tr>
+          <tr>
+            <td class="label">Animal Issues</td>
+            <td>
+              <select name="56.0.animal-issues" class="required-for-complete" tabindex="56">
+                <option value="" selected=""></option>
+                <option value="Unknown">Unknown</option>
+                <option value="Normal">Normal</option>
+                <option value="Problem">Problem</option>
+                <option value="Failure">Failure</option>
+                <option value="Delayed">Delayed</option>
+                <option value="Closed">Closed</option>
+                <option value="Early Out">Early Out</option>
+              </select>
+            </td>
+            <td>
+              <textarea name="56.1.animal-issues-comments" rows="2"></textarea>
+            </td>
+          </tr>
+        </tbody></table>
+      </div>
+      <br/>
+      <div data-included-html="scco-footer"><html><head></head><body><div>
+  <div class="version">1.0</div>
+  <div style="page-break-inside:avoid;">
+    <table class="border" style="border:1px solid #aaaaaa;">
+      <tbody><tr class="block-caption">
+        <td colspan="3">Radio Operator Only:</td>
+      </tr><tr>
+        <td class="block-caption" style="width:1px;">
+          Relay:
+        </td><td>
+          <table class="same-line-label-layout">
+            <tbody><tr>
+              <th>Rcvd:</th>
+              <td><input type="text" name="OpRelayRcvd" tabindex="500"/></td>
+            </tr>
+          </tbody></table>
+        </td><td>
+          <table class="same-line-label-layout">
+            <tbody><tr>
+              <th>Sent:</th>
+              <td><input type="text" name="OpRelaySent" tabindex="501"/></td>
+            </tr>
+          </tbody></table>
+        </td>
+      </tr>
+    </tbody></table><table>
+      <tbody><tr>
+        <td style="padding-right:0;">
+          <table class="same-line-label-layout">
+            <tbody><tr>
+              <th>Name:</th>
+              <td>
+                <input type="text" name="OpName" class="no-msg-init include-in-submit" tabindex="502" disabled="disabled" style="margin-right:0;" value="{{envelope:viewer_operator_name}}"/>
+              </td>
+            </tr>
+          </tbody></table>
+        </td><td class="label-sameline">
+          <b>Call Sign:</b>
+          <input type="text" name="OpCall" class="no-msg-init include-in-submit call-sign" tabindex="503" disabled="disabled" required="required" value="{{envelope:viewer_operator_call_sign}}"/>
+        </td><td class="label-sameline">
+          <b>Date:</b>
+          <input type="text" name="OpDate" class="date no-msg-init init-on-submit" tabindex="504" disabled="disabled" value="{{expand-while-null:{{envelope:viewer_date}},{{open-tmpl}}date{{close-tmpl}}}}"/>
+        </td><td class="label-sameline">
+          <b>Time:</b>
+          <input type="text" name="OpTime" class="time no-msg-init init-on-submit" tabindex="505" disabled="disabled" value="{{expand-while-null:{{envelope:viewer_time}},{{open-tmpl}}time{{close-tmpl}}}}"/>
+        </td>
+      </tr>
+    </tbody></table>
+  </div>
+</div>
+</body></html></div>
+    </form>
+    <div data-included-html="submit-buttons"><html><head></head><body><div>
+  <div class="version">0.1.1</div>
+  <table id="button-header" class="same-line-label-layout">
+    <tbody><tr>
+      <td style="vertical-align:middle;white-space:nowrap;">
+        <input type="button" id="opdirect-submit" tabindex="600" disabled="disabled" value="Submit to Outpost" onclick="opdirect_submit(event)" style="font-weight:bold"/>
+        <input type="button" id="email-submit" tabindex="602" disabled="disabled" value="Submit via Email" onclick="email_submit(event)" style="font-weight:bold"/>
+          
+        <input type="button" id="show-hide-data" tabindex="601" value="Show Data Message" onclick="toggle_form_data_visibility(event)"/>
+        <input type="button" id="clear-form" tabindex="603" value="Reset Form" onclick="clear_form(event)"/>
+        <input type="button" id="show-PDF-form" tabindex="604" class="hidden" hidden="hidden" value="Show PDF"/>
+        <span id="invalid-example">
+          <input type="text" class="invalid" disabled="disabled" style="margin-left:1em;width:2em;border:1px solid #cccccc;"/>
+            = required
+        </span>
+        <div id="error-indicator">Error</div>
+      </td>
+    </tr>
+  </tbody></table>
+  <form id="form-data-form" method="post" action="http://127.0.0.1:9334/send">
+    <textarea id="form-data" name="formtext" class="hidden"></textarea>
+  </form>
+</div>
+</body></html></div>
+  
+
+</body></html>

@@ -10,6 +10,9 @@ import (
 	"steve.rothskeller.net/packet/wppsvr/config"
 	"steve.rothskeller.net/packet/wppsvr/english"
 	"steve.rothskeller.net/packet/wppsvr/store"
+	"steve.rothskeller.net/packet/xscmsg"
+	"steve.rothskeller.net/packet/xscmsg/delivrcpt"
+	"steve.rothskeller.net/packet/xscmsg/readrcpt"
 )
 
 // Responses returns the list of messages that should be sent in response to the
@@ -18,32 +21,35 @@ func (a *Analysis) Responses(st *store.Store) (list []*store.Response) {
 	if a == nil { // message already handled, no responses needed
 		return nil
 	}
-	if msg := a.msg.Message(); msg != nil {
-		var dr pktmsg.TxDeliveryReceipt
-		dr.DeliveredSubject = msg.SubjectLine
-		dr.DeliveredTime = time.Now()
+	switch a.xsc.(type) {
+	case nil, *delivrcpt.DeliveryReceipt, *readrcpt.ReadReceipt:
+		break
+	default:
+		var dr = xscmsg.Create("DELIVERED").(*delivrcpt.DeliveryReceipt)
+		dr.DeliveredSubject = a.msg.Header.Get("Subject")
+		dr.DeliveredTime = time.Now().Format("01/02/2006 15:04:05")
 		dr.DeliveredTo = fmt.Sprintf("%s@%s.ampr.org", strings.ToLower(a.session.CallSign), strings.ToLower(a.toBBS))
 		dr.LocalMessageID = a.localID
 		var r store.Response
 		r.LocalID = st.NextMessageID(a.session.Prefix)
 		r.ResponseTo = a.localID
-		r.To = a.msg.Base().ReturnAddress
-		r.Subject, r.Body, _ = dr.Encode()
+		r.To = a.msg.ReturnAddress()
+		var drmsg = dr.Message(false)
+		r.Subject = drmsg.Header.Get("Subject")
+		r.Body = drmsg.EncodeBody()
 		r.SenderCall = a.session.CallSign
 		r.SenderBBS = a.toBBS
 		list = append(list, &r)
 	}
 	if rsubject, rbody := a.responseMessage(); rsubject != "" {
-		var rm pktmsg.TxMessage
+		var rm = pktmsg.New()
 		rm.Body = rbody
-		rm.HandlingOrder = pktmsg.HandlingRoutine
-		rm.MessageNumber = st.NextMessageID(a.session.Prefix)
-		rm.Subject = rsubject
 		var r store.Response
-		r.LocalID = rm.MessageNumber
+		r.LocalID = st.NextMessageID(a.session.Prefix)
 		r.ResponseTo = a.localID
-		r.To = a.msg.Base().ReturnAddress
-		r.Subject, r.Body, _ = rm.Encode()
+		r.To = a.msg.ReturnAddress()
+		r.Subject = xscmsg.EncodeSubject(r.LocalID, xscmsg.HandlingRoutine, "", rsubject)
+		r.Body = rm.EncodeBody()
 		r.SenderCall = a.session.CallSign
 		r.SenderBBS = a.toBBS
 		list = append(list, &r)
@@ -102,10 +108,10 @@ func (a *Analysis) responseMessage() (subject, body string) {
     Date: %s
 has the following issue%s.%s
 `,
-		a.msg.Base().ReturnAddress,
+		a.msg.ReturnAddress(),
 		strings.ToLower(a.session.CallSign), strings.ToLower(a.toBBS),
-		a.msg.Base().SubjectLine,
-		a.msg.Base().DateLine,
+		a.msg.Header.Get("Subject"),
+		a.msg.Header.Get("Date"),
 		counts, invalids)
 	// Add the paragraphs describing each problem.
 	for _, p := range a.problems {

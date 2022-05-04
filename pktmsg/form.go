@@ -1,245 +1,299 @@
 package pktmsg
 
-// This file defines TxForm and RxForm.
-
-// The format of a PackItForms message is:
-//     !SCCoPIFO!
-//     #T: «form html»
-//     #V: «version»
-//     «fields»
-//     !/ADDON!
-// where «fields» is any number of
-//     «fieldname»: [«fieldvalue»]
-//
-// «fieldname» can be either a word, or an integer followed by a period.
-//
-// Newlines in «fieldvalue» are rendered as "\n", and backslashes are rendered
-// as "\\".  Close brackets "]" are rendered as "`]".  A backtick at the end of
-// the field value is rendered as "`]]" (plus the third close bracket that ends
-// the «fieldvalue»).  Lines are not wrapped.
-
 import (
 	"fmt"
+	"math"
 	"regexp"
 	"strings"
 )
 
-// TxForm is the foundation for all outgoing messages containing
-// PackItForms-encoded forms.
-type TxForm struct {
-	TxMessage
-	// FormHTML is the name of the PackItForms HTML file for the form.  It
-	// identifies the form type.
-	FormHTML string
-	// FormVersion is the version number of the form.
-	FormVersion string
-	// Fields is an ordered list of field-name/field-value pairs, describing
-	// the fields of the form.
-	fields []string
+const lastLineMarker = "Ω"
+
+type parseStateFunc func(*Form, string, bool) parseStateFunc
+
+var (
+	typeLineRE      = regexp.MustCompile(`^#T: ([a-z][-a-z0-9]+\.html)$`)
+	versionLineRE   = regexp.MustCompile(`^#V: (\d+(?:\.\d+)*)-(\d+(?:\.\d+)*)$`)
+	fieldLineRE     = regexp.MustCompile(`(?i)^([A-Z0-9][-A-Z0-9.]*):(.*)$`)
+	unquoteSCCoPIFO = strings.NewReplacer(`\\`, `\`, `\n`, "\n", "`]", "]")
+	unquoteLoose    = strings.NewReplacer(`\\`, `\`, `\n`, "\n")
+	quoteSCCoPIFO   = strings.NewReplacer(`\`, `\\`, "\n", `\n`, "]", "`]")
+	quoteLoose      = strings.NewReplacer(`\`, `\\`, "\n", `\n`)
+)
+
+// IsForm returns whether the supplied message body looks like it has an
+// embedded form.
+func IsForm(body string) bool {
+	return strings.Contains(body, "!SCCoPIFO!") || strings.Contains(body, "!PACF!") || strings.Contains(body, "!/ADDON!")
 }
 
-// SetField sets the field with the specified name to the specified value.
-// Setting a field to "" removes it.
-func (f *TxForm) SetField(name, value string) {
-	for i := 0; i < len(f.fields); i += 2 {
-		if f.fields[i] == name {
-			if value != "" {
-				f.fields[i+1] = value
-			} else {
-				f.fields = append(f.fields[:i], f.fields[i+2:]...)
+// ParseForm parses the supplied message body as a form.  It returns the decoded
+// form, or nil if it could not be parsed.  The strict flag indicates whether
+// strict SCCoPIFO syntax must be used.  If it is false, field annotations,
+// comments, and loose quoting are allowed.
+func ParseForm(body string, strict bool) (f *Form) {
+	f = new(Form)
+	state := expectHeader
+	for _, line := range strings.Split(body, "\n") {
+		if state = state(f, line, strict); state == nil {
+			return nil
+		}
+	}
+	if state(f, lastLineMarker, strict) == nil {
+		return nil
+	}
+	return f
+}
+func expectHeader(f *Form, line string, _ bool) parseStateFunc {
+	switch line {
+	case "":
+		return expectHeader
+	case "!SCCoPIFO!":
+		return expectType
+	default:
+		return nil
+	}
+}
+func expectType(f *Form, line string, _ bool) parseStateFunc {
+	if match := typeLineRE.FindStringSubmatch(line); match != nil {
+		f.FormType = match[1]
+		return expectVersion
+	}
+	return nil
+}
+func expectVersion(f *Form, line string, _ bool) parseStateFunc {
+	if match := versionLineRE.FindStringSubmatch(line); match != nil {
+		f.PIFOVersion, f.FormVersion = match[1], match[2]
+		return expectField
+	}
+	return nil
+}
+func expectField(f *Form, line string, strict bool) parseStateFunc {
+	if line == "!/ADDON!" {
+		return expectEOF
+	}
+	if match := fieldLineRE.FindStringSubmatch(line); match != nil {
+		var tag, value = match[1], match[2]
+		if dot := strings.LastIndexByte(tag, '.'); dot >= 0 && dot < len(tag)-1 {
+			if strict {
+				return nil // field annotation not allowed in strict mode
 			}
+			tag = tag[:dot+1] // strip field annotation
+		}
+		if f.Has(tag) {
+			return nil // multiple values for field
+		}
+		if value, ok := unquote(value, strict); ok {
+			f.Set(tag, value)
+			return expectField
+		}
+	}
+	return nil
+}
+func expectEOF(_ *Form, line string, _ bool) parseStateFunc {
+	if line == "" || line == lastLineMarker {
+		return expectEOF
+	}
+	return nil
+}
+func unquote(value string, strict bool) (_ string, ok bool) {
+	// Strict SCCoPIFO has a single space after the colon, and then a value
+	// in square brackets.  Inside the brackets, newlines and backslashes
+	// are escaped with a backslash, and close brackets are escaped with a
+	// backtick.  A backtick at the end of the value is followed by three
+	// close brackets (including the one that ends the value).
+	if strings.HasPrefix(value, " [") && strings.HasSuffix(value, "]") {
+		value = value[2 : len(value)-1]
+		if strings.HasSuffix(value, "`]]") {
+			value = value[:len(value)-2]
+		}
+		return unquoteSCCoPIFO.Replace(value), true
+	}
+	if strict {
+		return "", false
+	}
+	// If we're not in strict mode, we don't care how much whitespace
+	// appears around the square brackets.
+	value = strings.TrimSpace(value)
+	if strings.HasPrefix(value, "[") && strings.HasSuffix(value, "]") {
+		value = value[1 : len(value)-1]
+		if strings.HasSuffix(value, "`]]") {
+			value = value[:len(value)-2]
+		}
+		return unquoteSCCoPIFO.Replace(value), true
+	}
+	// We also allow a value that doesn't have brackets (including an empty
+	// string).  If the value is not bracketed, it's allowed to have a
+	// trailing comment starting with a '#'.  Remove that.
+	if hash := strings.IndexByte(value, '#'); hash >= 0 {
+		value = strings.TrimSpace(value[:hash])
+	}
+	// For unbracketed values, newlines and backslashes have to be escaped
+	// with backslashes, but nothing else is escaped.
+	return unquoteLoose.Replace(value), true
+}
+
+// A Form represents a form encoded in a packet message.
+type Form struct {
+	// PIFOVersion identifies the version of the PackItForms encoding of the
+	// form.
+	PIFOVersion string
+	// FormType is a PackItForms HTML file name that identifies the form
+	// type.
+	FormType string
+	// FormVersion identifies the form version.
+	FormVersion string
+	// Fields is a list of form fields.
+	Fields []FormField
+}
+
+// A FormField is a single field of a Form.
+type FormField struct {
+	// Tag is the field tag as it appears in the PackItForms encoding of the
+	// form.  In most cases this is a number followed by a period.
+	Tag string
+	// Value is the value of the field, in string form.
+	Value string
+}
+
+// Has returns whether the form has a setting (even if empty) for the field with
+// the specified tag.
+func (f *Form) Has(tag string) bool {
+	for _, ff := range f.Fields {
+		if ff.Tag == tag {
+			return true
+		}
+	}
+	return false
+}
+
+// Get retrieves the value of the field with the specified tag.  If the field
+// is not in the form, it returns an empty string.
+func (f *Form) Get(tag string) string {
+	for _, ff := range f.Fields {
+		if ff.Tag == tag {
+			return ff.Value
+		}
+	}
+	return ""
+}
+
+// Set sets a field value.
+func (f *Form) Set(tag, value string) {
+	for i, ff := range f.Fields {
+		if ff.Tag == tag {
+			f.Fields[i].Value = value
 			return
 		}
 	}
-	if value != "" {
-		f.fields = append(f.fields, name, value)
-	}
+	f.Fields = append(f.Fields, FormField{Tag: tag, Value: value})
 }
 
-// Encode returns the encoded subject line and body of the message.
-func (f *TxForm) Encode() (subject, body string, err error) {
+// EncodeToMessage encodes the form into the supplied message.  If annotations
+// and/or comments are non-nil, they provide annotations to add to the field
+// tags and comments to display in place of empty field values.  If looseQuoting
+// is true, values are encoded with loose quoting; otherwise they are encoded
+// with strict SCCoPIFO quoting.  annotations and comments must be nil and
+// looseQuoting must be false when encoding a message for transmission.
+func (f *Form) EncodeToMessage(msg *Message, annotations, comments map[string]string, looseQuoting bool) {
+	msg.Body = f.Encode(annotations, comments, looseQuoting)
+}
+
+// Encode returns the encoded form.  If annotations and/or comments are non-nil,
+// they provide annotations to add to the field tags and comments to display in
+// place of empty field values.  If looseQuoting is true, values are encoded
+// with loose quoting; otherwise they are encoded with strict SCCoPIFO quoting.
+// annotations and comments must be nil and looseQuoting must be false when
+// encoding a message for transmission.
+func (f *Form) Encode(annotations, comments map[string]string, looseQuoting bool) string {
 	var sb strings.Builder
 
-	if f.FormHTML == "" || f.FormName == "" || f.FormVersion == "" || len(f.fields) == 0 {
-		return "", "", ErrIncomplete
+	if f.PIFOVersion == "" {
+		f.PIFOVersion = "3.2"
 	}
-	sb.WriteString("!SCCoPIFO!\n")
-	fmt.Fprintf(&sb, "#T: %s\n#V: 3.2-%s\n", f.FormHTML, f.FormVersion)
-	for i := 0; i < len(f.fields); i += 2 {
-		fmt.Fprintf(&sb, "%s: [%s]\n", f.fields[i], encodePIFOValue(f.fields[i+1]))
-	}
+	sb.WriteString("!SCCoPIFO!\n#T: ")
+	sb.WriteString(f.FormType)
+	sb.WriteString("\n#V: ")
+	sb.WriteString(f.PIFOVersion)
+	sb.WriteByte('-')
+	sb.WriteString(f.FormVersion)
+	sb.WriteByte('\n')
+	f.encodeFields(&sb, annotations, comments, looseQuoting)
 	sb.WriteString("!/ADDON!\n")
-	f.Body = sb.String()
-	return f.TxMessage.Encode()
+	return sb.String()
 }
-
-var encodePIFOReplacer = strings.NewReplacer(`\`, `\\`, "\n", `\n`, "]", "`]")
-
-// encodePIFOValue encodes a value for a PackItForms field line, escaping
-// newlines and close brackets.
-func encodePIFOValue(s string) string {
-	s = encodePIFOReplacer.Replace(s)
-	if len(s) != 0 && s[len(s)-1] == '`' {
-		s += "]]"
-	}
-	return s
-}
-
-//------------------------------------------------------------------------------
-
-// RxForm is the foundation for all received messages containing
-// PackItForms-encoded forms.
-type RxForm struct {
-	RxMessage
-	// FormHTML is the name of the PackItForms HTML file for the form.  It
-	// identifies the form type.
-	FormHTML string
-	// PIFOVersion is the version number of the PackItForms encoding.
-	PIFOVersion string
-	// FormVersion is the version number of the form.
-	FormVersion string
-	// Fields is a map from field name to field value, containing the values
-	// of the form fields.
-	Fields map[string]string
-	// CorruptForm is a flag indicating that the form was not encoded
-	// properly.
-	CorruptForm bool
-}
-
-// Form returns a pointer to the RxForm portion of a message object.  It
-// can be used to reach fields of the RxForm object that are occluded by
-// types that embed RxForme.
-func (f *RxForm) Form() *RxForm { return f }
-
-// TypeCode returns the machine-readable code for the message type.
-func (f *RxForm) TypeCode() string {
-	switch f.FormName {
-	case "":
-		return "UNKNOWN"
-	case "ICS213", "EOC213RR", "MuniStat", "SheltStat":
-		return "CORRUPT"
-	default:
-		return f.FormName
-	}
-}
-
-// TypeName returns the human-reading name of the message type.
-func (f *RxForm) TypeName() string {
-	switch f.FormName {
-	case "":
-		return "unknown form"
-	case "ICS213", "EOC213RR", "MuniStat", "SheltStat":
-		return "corrupt form"
-	default:
-		return f.FormName
-	}
-}
-
-// TypeArticle returns "a" or "an", whichever is appropriate for the TypeName.
-func (f *RxForm) TypeArticle() string {
-	if f.FormName != "" {
-		// We have to guess.  If it starts with an uppercase letter,
-		// we'll guess it's an acronym.
-		switch f.FormName[0] {
-		case 'A', 'E', 'F', 'H', 'I', 'L', 'M', 'N', 'O', 'R', 'S', 'X', 'a', 'e', 'i', 'o', 'u':
-			return "an"
-		}
-	}
-	return "a"
-}
-
-// formMatchRE is the regular expression that matches a form message.  It looks
-// for a line containing !SCCoPIFO!, !PACF!, or !/ADDON!.
-var formMatchRE = regexp.MustCompile(`!SCCoPIFO!|!PACF!|!/ADDON!`)
-
-// pifoFieldRE is the regular expression for a field value line in a PackItForms
-// message body.
-var pifoFieldRE = regexp.MustCompile(`^([-A-Za-z0-9.]+): \[(.*)\]$`)
-
-// parseRxForm examines an RxMessage to see if it contains a PackItForms-encoded
-// form, and if so, wraps it in an RxForm and returns it.  If it is not, it
-// returns nil.
-func parseRxForm(m *RxMessage) *RxForm {
+func (f *Form) encodeFields(sb *strings.Builder, annotations, comments map[string]string, looseQuoting bool) {
 	var (
-		f             RxForm
-		seenSignature bool
-		seenHTMLForm  bool
-		seenVersion   bool
-		seenField     bool
-		seenFooter    bool
+		tags    = make([]string, len(f.Fields))
+		taglens = make([]int, len(f.Fields))
 	)
-	// Make sure this is a form message.
-	if !formMatchRE.MatchString(m.Body) {
-		return nil
-	}
-	f.RxMessage = *m
-	f.Fields = make(map[string]string)
-	// Make sure this has the signature of a PackItForms-encoded form.
-	if !strings.HasPrefix(m.Body, "!SCCoPIFO!\n") {
-		f.CorruptForm = true
-		return &f
-	}
-	// Parse each line of the form message.
-	for _, line := range strings.Split(m.Body, "\n") {
-		switch {
-		case line == "!SCCoPIFO!": // signature line
-			if seenSignature {
-				f.CorruptForm = true
-			}
-			seenSignature = true
-		case strings.HasPrefix(line, "#T: "): // form type line
-			if seenHTMLForm || seenField || seenFooter {
-				f.CorruptForm = true
-			}
-			f.FormHTML = strings.TrimSpace(line[4:])
-			seenHTMLForm = true
-		case strings.HasPrefix(line, "#V: "): // version line
-			if seenVersion || seenField || seenFooter {
-				f.CorruptForm = true
-			}
-			if parts := strings.Split(line[4:], "-"); len(parts) == 2 {
-				f.PIFOVersion = parts[0]
-				f.FormVersion = parts[1]
-			} else {
-				f.CorruptForm = true
-			}
-			seenVersion = true
-		case line == "!/ADDON!": // footer line
-			if seenFooter {
-				f.CorruptForm = true
-			}
-			seenFooter = true
-		case line == "":
-			break
-		default: // anything else should be a field setting line
-			match := pifoFieldRE.FindStringSubmatch(line)
-			if match == nil {
-				f.CorruptForm = true // not a field setting line
-				break
-			}
-			if seenFooter {
-				f.CorruptForm = true
-			}
-			if _, ok := f.Fields[match[1]]; ok {
-				f.CorruptForm = true // multiple values for same field
-			}
-			f.Fields[match[1]] = decodePIFOValue(match[2])
-			seenField = true
+	for i, field := range f.Fields {
+		tag := field.Tag
+		if annotations != nil {
+			tag += annotations[tag]
 		}
+		tags[i] = tag
+		taglens[i] = len(tag) + 1
 	}
-	if !seenSignature || !seenHTMLForm || !seenVersion || !seenFooter {
-		f.CorruptForm = true
+	if looseQuoting {
+		alignLengths(taglens)
 	}
-	return &f
+	for i, tag := range tags {
+		if f.Fields[i].Value == "" && comments != nil {
+			if comment := comments[f.Fields[i].Tag]; comment != "" {
+				fmt.Fprintf(sb, "%s:%*s# %s\n", tag, taglens[i]-len(tag), "", comment)
+				continue
+			}
+		}
+		fmt.Fprintf(sb, "%s:%*s%s\n", tag, taglens[i]-len(tag), "", quote(f.Fields[i].Value, looseQuoting))
+	}
 }
-
-var decodePIFOReplacer = strings.NewReplacer(`\\`, `\`, `\n`, "\n", "`]", "]")
-
-// decodePIFOValue decodes a value in a PackItForms field line, by unescaping
-// newlines and close brackets.
-func decodePIFOValue(s string) string {
-	if strings.HasSuffix(s, "`]]") {
-		s = s[:len(s)-2]
+func alignLengths(lengths []int) {
+	// This algorithm is stolen from go/printer.exprList().  It aligns items
+	// (in this case, annotated field tags) that are of similar size, but
+	// starts a new alignment block when the size changes significantly.
+	// Specifically it starts a new alignment block when it comes across a
+	// line whose size differs from the geometric mean of the previous line
+	// sizes by greater than a threshold ratio.  A new alignment block is
+	// never started when both lines are below a minimum size.
+	const (
+		minimum   = 12
+		threshold = 2.5
+	)
+	var (
+		start int
+		max   int
+		lnsum float64
+	)
+	for i := range lengths {
+		var newblock bool
+		if i > start && (lengths[i] > minimum || lengths[i-1] > minimum) {
+			var mean = math.Exp(lnsum / float64(i-start))
+			var ratio = float64(lengths[i]) / mean
+			newblock = threshold*ratio <= 1 || threshold <= ratio
+		}
+		if newblock {
+			for j := start; j < i; j++ {
+				lengths[j] = max
+			}
+			start, max, lnsum = i, 0, 0
+		}
+		if lengths[i] > max {
+			max = lengths[i]
+		}
+		lnsum += math.Log(float64(lengths[i]))
 	}
-	return decodePIFOReplacer.Replace(s)
+	for i := start; i < len(lengths); i++ {
+		lengths[i] = max
+	}
+}
+func quote(value string, loose bool) string {
+	if !loose || strings.HasPrefix(value, "[") || strings.TrimSpace(value) != value {
+		value = quoteSCCoPIFO.Replace(value)
+		if strings.HasSuffix(value, "`") {
+			value += "]]"
+		}
+		return "[" + value + "]"
+	}
+	return quoteLoose.Replace(value)
 }

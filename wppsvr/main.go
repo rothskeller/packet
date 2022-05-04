@@ -23,6 +23,7 @@ import (
 	"steve.rothskeller.net/packet/wppsvr/retrieve"
 	"steve.rothskeller.net/packet/wppsvr/store"
 	"steve.rothskeller.net/packet/wppsvr/webserver"
+	_ "steve.rothskeller.net/packet/xscmsg/all" // register message types
 )
 
 func main() {

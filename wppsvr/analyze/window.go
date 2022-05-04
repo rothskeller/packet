@@ -21,11 +21,7 @@ func init() {
 // window of time.  It also verifies that the report end date matches the net
 // date given on the subject line.
 func (a *Analysis) checkPracticeWindow() {
-	// This check doesn't apply to non-human messages.
-	if a.msg.Message() == nil {
-		return
-	}
-	if a.msg.Base().DeliveryTime.Before(a.session.Start) {
+	if a.msg.Date().Before(a.session.Start) {
 		// This message occurred before the start of the current
 		// session, so we're not going to count it.  But, which session
 		// was it intended for?  Was it too early for the current
@@ -37,7 +33,7 @@ func (a *Analysis) checkPracticeWindow() {
 				response: fmt.Sprintf(`
 This message arrived at %s on %s.  That was too late to be counted for the %s
 on %s.
-`, a.toBBS, a.msg.Base().DeliveryTime.Format("2006-01-02 at 15:04"), a.session.Name, a.subjectDate.Format("January 2")),
+`, a.toBBS, a.msg.Date().Format("2006-01-02 at 15:04"), a.session.Name, a.subjectDate.Format("January 2")),
 				references: refWeeklyPractice,
 			})
 			return
@@ -47,7 +43,7 @@ on %s.
 			response: fmt.Sprintf(`
 This message arrived at %s on %s.  However, practice messages for %s aren't
 accepted until %s.
-`, a.toBBS, a.msg.Base().DeliveryTime.Format("2006-01-02 at 15:04"), a.session.Name, a.session.Start.Format("2006-01-02 at 15:04")),
+`, a.toBBS, a.msg.Date().Format("2006-01-02 at 15:04"), a.session.Name, a.session.Start.Format("2006-01-02 at 15:04")),
 			references: refWeeklyPractice,
 		})
 		return

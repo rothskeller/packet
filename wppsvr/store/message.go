@@ -75,21 +75,21 @@ func (st *Store) GetSessionMessages(sessionID int) (messages []*Message) {
 	return messages
 }
 
-// HasMessageHash returns whether the database already contains a message with
-// the specified hash.
-func (st *Store) HasMessageHash(hash string) bool {
+// HasMessageHash looks to see whether the database already contains a message
+// with the specified hash.  If so, it returns the ID of that message; if not,
+// it returns an empty string.
+func (st *Store) HasMessageHash(hash string) (id string) {
 	var (
-		dummy int
-		err   error
+		err error
 	)
 	st.mutex.RLock()
 	defer st.mutex.RUnlock()
-	err = st.dbh.QueryRow("SELECT 1 FROM message WHERE hash=?", hash).Scan(&dummy)
+	err = st.dbh.QueryRow("SELECT id FROM message WHERE hash=?", hash).Scan(&id)
 	switch err {
 	case nil:
-		return true
+		return id
 	case sql.ErrNoRows:
-		return false
+		return ""
 	default:
 		panic(err)
 	}

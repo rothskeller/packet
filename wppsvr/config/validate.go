@@ -7,7 +7,7 @@ import (
 	"regexp"
 	"strings"
 
-	"steve.rothskeller.net/packet/pktmsg"
+	"steve.rothskeller.net/packet/xscmsg"
 )
 
 var fccCallRE = regexp.MustCompile(`^[AKNW][A-Z]?[0-9][A-Z]{1,3}$`)
@@ -155,11 +155,12 @@ func (c *Config) Validate() (valid bool) {
 			valid = false
 		}
 		for _, mtype := range ValidMessageTypes {
-			if form := mtype.Form(); form != nil {
-				if c.MinimumVersions[mtype.TypeCode()] == "" {
-					log.Printf("ERROR: config.minimumVersions[%q] is not specified", mtype.TypeCode())
-					valid = false
-				}
+			if mtype.TypeTag() == "plain" {
+				continue
+			}
+			if c.MinimumVersions[mtype.TypeTag()] == "" {
+				log.Printf("ERROR: config.minimumVersions[%q] is not specified", mtype.TypeTag())
+				valid = false
 			}
 		}
 	}
@@ -200,24 +201,25 @@ func (c *Config) Validate() (valid bool) {
 		valid = false
 	} else {
 		for _, mtype := range ValidMessageTypes {
-			if form := mtype.Form(); form != nil {
-				if fr := c.FormRouting[mtype.TypeCode()]; fr == nil {
-					log.Printf("ERROR: config.formRouting[%q] is not specified", mtype.TypeCode())
-					valid = false
-				} else {
-					switch fr.HandlingOrder {
-					case "":
-						break
-					case "computed":
-						if _, ok := mtype.(interface{ RecommendedHandlingOrder() pktmsg.HandlingOrder }); !ok {
-							log.Printf("ERROR: config.formRouting[%q].HandlingOrder = %q, but that form has no handling order computation defined", mtype.TypeCode(), fr.HandlingOrder)
-							valid = false
-						}
-					default:
-						if _, ok := pktmsg.ParseHandlingOrder(fr.HandlingOrder); !ok {
-							log.Printf("ERROR: config.formRouting[%q].HandlingOrder = %q is not a valid handling order", mtype.TypeCode(), fr.HandlingOrder)
-							valid = false
-						}
+			if mtype.TypeTag() == "plain" {
+				continue
+			}
+			if fr := c.FormRouting[mtype.TypeTag()]; fr == nil {
+				log.Printf("ERROR: config.formRouting[%q] is not specified", mtype.TypeTag())
+				valid = false
+			} else {
+				switch fr.HandlingOrder {
+				case "":
+					break
+				case "computed":
+					if _, ok := ComputedRecommendedHandlingOrder[mtype.TypeTag()]; !ok {
+						log.Printf("ERROR: config.formRouting[%q].HandlingOrder = %q, but that form has no handling order computation defined", mtype.TypeTag(), fr.HandlingOrder)
+						valid = false
+					}
+				default:
+					if _, ok := xscmsg.ParseHandlingOrder(fr.HandlingOrder); !ok {
+						log.Printf("ERROR: config.formRouting[%q].HandlingOrder = %q is not a valid handling order", mtype.TypeTag(), fr.HandlingOrder)
+						valid = false
 					}
 				}
 			}

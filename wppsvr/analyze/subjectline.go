@@ -3,16 +3,21 @@ package analyze
 import (
 	"fmt"
 	"strings"
+
+	"steve.rothskeller.net/packet/wppsvr/config"
+	"steve.rothskeller.net/packet/xscmsg"
 )
 
 // Problem codes
 const (
+	ProblemFormSubject        = "FormSubject"
 	ProblemHandlingOrderCode  = "HandlingOrderCode"
 	ProblemSubjectFormat      = "SubjectFormat"
 	ProblemSubjectHasSeverity = "SubjectHasSeverity"
 )
 
 func init() {
+	ProblemLabel[ProblemFormSubject] = "message subject doesn't agree with form contents"
 	ProblemLabel[ProblemHandlingOrderCode] = "unknown handling order code"
 	ProblemLabel[ProblemSubjectFormat] = "incorrect subject line format"
 	ProblemLabel[ProblemSubjectHasSeverity] = "severity on subject line"
@@ -22,32 +27,45 @@ func init() {
 // (Specifically, the SCCo-standard parts of it, not the weekly practice parts
 // of it.)
 func (a *Analysis) checkSubjectLine() {
-	// These checks only apply to human messages.
-	var msg = a.msg.Message()
-	if msg == nil {
+	// Is the message of a type where the subject line can be derived from
+	// the content (i.e., a known form type)?
+	if es, ok := a.xsc.(interface{ EncodeSubject() string }); ok {
+		// Yes.  But we only want to do so if the form validates.  If it
+		// doesn't, the validation errors are enough and subject errors
+		// would be redundant.
+		if xsc, ok := a.xsc.(interface{ Validate(bool) []string }); ok {
+			if problems := xsc.Validate(true); len(problems) != 0 {
+				return
+			}
+		}
+		// What should the subject line be, and what is it?
+		want := es.EncodeSubject()
+		have := a.msg.Header.Get("Subject")
+		if have != want {
+			a.problems = append(a.problems, &problem{
+				code: ProblemFormSubject,
+				response: fmt.Sprintf(`
+This message has
+	Subject: %s
+but, based on the contents of the form, it should have
+	Subject: %s
+PackItForms automatically generates the Subject line from the form contents; it
+should not be overridden manually.
+`, have, want),
+			})
+		}
 		return
 	}
-	// These checks do not apply to forms for which we are able to generate
-	// the subject line from the form contents.  Those subject lines are
-	// checked separately.
-	if _, ok := a.msg.(interface{ EncodeSubjectLine() string }); ok {
-		return
-	}
-	// First, check the overall format of the subject line.  If pktmsg
-	// wasn't able to parse it, it will have put the entire SubjectLine into
-	// the Subject field.  Check for that.
-	if msg.Subject == msg.SubjectLine {
+	// Parse the subject line.  If we're not able to parse it, report that
+	// problem.
+	xscsubj := xscmsg.ParseSubject(a.msg.Header.Get("Subject"))
+	if xscsubj == nil {
 		a.problems = append(a.problems, problemSubjectFormat(""))
 		return
 	}
-	// There's no need to check the message number here.  If this is a plain
-	// text message or an unknown form type, it is checked by
-	// checkMessageNumber.  If it's a known form type, checkMessageNumber
-	// checks the number in the form, and checkFormSubject makes sure the
-	// one in the subject line matches.
-
-	// Next, check for a severity code.  There shouldn't be one.
-	if msg.SeverityCode != "" {
+	// The message number is checked elsewhere.
+	// Check for a severity code.  There shouldn't be one.
+	if xscsubj.SeverityCode != "" {
 		a.problems = append(a.problems, &problem{
 			code: ProblemSubjectHasSeverity,
 			response: fmt.Sprintf(`
@@ -55,38 +73,37 @@ The Subject line of this message contains a both a Severity code and a
 Handling Order code ("_%s/%s_").  This is an outdated Subject line style.
 Current SCCo standards include only the Handling Order code on the Subject
 line ("_%s_").
-`, msg.SeverityCode, msg.HandlingOrderCode, msg.HandlingOrderCode),
+`, xscsubj.SeverityCode, xscsubj.HandlingOrderCode, xscsubj.HandlingOrderCode),
 			references: refSubjectLine,
 		})
 	}
-	// Next, make sure the handling order code is valid.
-	if msg.HandlingOrder == 0 {
+	// Make sure the handling order code is valid.
+	if xscsubj.HandlingOrder == 0 {
 		a.problems = append(a.problems, &problem{
 			code: ProblemHandlingOrderCode,
 			response: fmt.Sprintf(`
 The Subject line of this message contains an invalid Handling Order code (%s).
 The valid codes are "I" for Immediate, "P" for Priority, and "R" for Routine.
-`, msg.HandlingOrderCode),
+`, xscsubj.HandlingOrderCode),
 			references: refSubjectLine,
 		})
 	}
-	// Next, check the form name.  If we have a known form and the form name
-	// is wrong, checkFormSubject will catch that.  If we have an unknown
-	// form, checkCorrectForm will catch that.  The only case we need to
-	// check here is a plain text message that has a form name in the
-	// subject.  We'll report it as a subject format problem, with an
-	// additional note.
-	if a.msg.Form() == nil && msg.FormName != "" {
-		// Empirically, 90% of the time this happens because the subject
-		// erroneously has an underscore after the word "Practice", and
-		// so "Practice" got reported as the form name.
-		if strings.EqualFold(msg.FormName, "Practice") {
-			a.problems = append(a.problems, problemSubjectFormat(`
+	// If this is a plain text message, there shouldn't be a form name in
+	// the subject line.
+	if _, ok := a.xsc.(*config.PlainTextMessage); ok {
+		if xscsubj.FormTag != "" {
+			// Empirically, 90% of the time this happens because the subject
+			// erroneously has an underscore after the word "Practice", and
+			// so "Practice" got reported as the form name.
+			if strings.EqualFold(xscsubj.FormTag, "Practice") {
+				a.problems = append(a.problems, problemSubjectFormat(`
 Note that there is no underline after the word "Practice".`))
-		} else {
-			a.problems = append(a.problems, problemSubjectFormat(`
+			} else {
+				a.problems = append(a.problems, problemSubjectFormat(`
 Note that there is no form name between the handling order and the word
-"Practice" for plain text messages.`))
+"Practice" for plain text messages.  If this is in fact a form message, it
+is improperly encoded and was not recognized as a form.`))
+			}
 		}
 	}
 }

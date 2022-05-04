@@ -21,14 +21,8 @@ func init() {
 
 // checkBBS verifies that the message was sent from and to a valid BBS.
 func (a *Analysis) checkBBS() {
-	var (
-		found bool
-		msg   = a.msg.Message()
-	)
-	// This check doesn't apply to non-human messages.
-	if msg == nil {
-		return
-	}
+	var found bool
+
 	for _, to := range a.session.ToBBSes {
 		if to == a.toBBS {
 			found = true
@@ -65,13 +59,13 @@ sent to %s at %s.
 		}
 	}
 	for _, down := range a.session.DownBBSes {
-		if down == msg.FromBBS {
+		if down == a.msg.FromBBS() {
 			a.problems = append(a.problems, &problem{
 				code: ProblemFromBBSDown,
 				response: fmt.Sprintf(`
 This message was sent from %s, which is simulated down for %s on %s.  Practice
 messages should not be sent from BBSes that are simulated down.
-`, msg.FromBBS, a.session.Name, a.session.End.Format("January 2")),
+`, a.msg.FromBBS(), a.session.Name, a.session.End.Format("January 2")),
 				references: refWeeklyPractice,
 			})
 		}

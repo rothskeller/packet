@@ -2,6 +2,8 @@ package analyze
 
 import (
 	"strings"
+
+	"steve.rothskeller.net/packet/pktmsg"
 )
 
 // Problem codes
@@ -18,15 +20,11 @@ func init() {
 // checkMessageNotPlainText checks for messages that aren't entirely plain text
 // with ASCII characters.
 func (a *Analysis) checkPlainText() {
-	// These checks only apply to human messages.
-	if a.msg.Message() == nil {
-		return
-	}
 	// Check for a Content-Type other than text/plain, or a
 	// Content-Transfer-Encoding other than 7bit or 8bit.  These conditions
 	// are reflected in the NotPlainText flag set by the pktmsg package
 	// while the message was being parsed.
-	if a.msg.Base().NotPlainText {
+	if a.msg.Flags&pktmsg.NotPlainText != 0 {
 		a.problems = append(a.problems, &problem{
 			code: ProblemMessageNotPlainText,
 			response: `
@@ -40,7 +38,7 @@ messages when sending to an SCCo BBS.
 		return
 	}
 	// Check for the body containing non-ASCII characters.
-	if strings.IndexFunc(a.msg.Base().Body, nonASCII) >= 0 {
+	if strings.IndexFunc(a.msg.Body, nonASCII) >= 0 {
 		a.problems = append(a.problems, &problem{
 			code: ProblemMessageNotASCII,
 			response: `

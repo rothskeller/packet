@@ -1,77 +1,50 @@
 // Package pktmsg handles encoding and decoding packet messages.  It understands
 // RFC-4155 and RFC-5322 email encoding, SCCo-standard subject line encoding,
-// PackItForms form encoding, and Outpost-specific feature encodings.
-//
-// This package exports two parallel hierarchies of message-related types.  The
-// types starting with "Rx" are for messages that have been received and are
-// being parsed.  The types starting with "Tx" are for messages that are being
-// built and will be sent.
-//
-//     RxBase                    TxBase                     (base.go)
-//       RxDeliveryReceipt         TxDeliveryReceipt        (receipts.go)
-//       RxReadReceipt             TxReadReceipt            (receipts.go)
-//       RxMessage                 TxMessage                (message.go)
-//         RxForm                    TxForm                 (form.go)
-//           RxICS213Form              TxICS213Form         (ics213.go)
-//           RxSCCoForm                TxSCCoForm           (sccoform.go)
-//             RxAHFacStatForm           TxAHFacStatForm    (ahfacstat.go)
-//             RxEOC213RRForm            TxEOC213RRForm     (eoc213rr.go)
-//             RxMuniStatForm            TxMuniStatForm     (munistat.go)
-//             RxSheltStatForm           TxSheltStatForm    (sheltstat.go)
-//
-// All message types embed either RxBase or TxBase.  Messages that can't be
-// parsed or have no return address are represented as a bare RxBase.
-//
-// Message types with human content also embed RxMessage or TxMessage.  Plain
-// text messages are represented by a bare RxMessage or TxMessage.
-//
-// Messages containing a PackItForms-encoded form also embed RxForm or TxForm.
-// If the form is not one that has its own message type it is represented by a
-// bare RxForm or TxForm.
-//
-// Forms with standard SCCo header and footer fields also embed RxSCCoForm or
-// TxSCCoForm.
-//
-// Received message objects (the "Rx" types) are created by calling ParseMessage
-// on the encoded message text.  Outgoing messages are built by creating a
-// message object of the appropriate type, filling it its fields, and then
-// calling its Encode() method.
+// and Outpost-specific feature encodings.
 package pktmsg
 
-// ParseMessage parses an encoded message and returns an object representing it.
-func ParseMessage(rawmsg string) ParsedMessage {
-	var base = parseRxBase(rawmsg)
-	if dr := parseRxDeliveryReceipt(base); dr != nil {
-		return dr
-	}
-	if rr := parseRxReadReceipt(base); rr != nil {
-		return rr
-	}
-	var msg = parseRxMessage(base)
-	if msg == nil {
-		return base
-	}
-	var form = parseRxForm(msg)
-	if form == nil {
-		return msg
-	}
-	if ics213 := parseRxICS213Form(form); ics213 != nil {
-		return ics213
-	}
-	if ahfacstat := parseRxAHFacStatForm(form); ahfacstat != nil {
-		return ahfacstat
-	}
-	if eoc213rr := parseRxEOC213RRForm(form); eoc213rr != nil {
-		return eoc213rr
-	}
-	if munistat := parseRxMuniStatForm(form); munistat != nil {
-		return munistat
-	}
-	if racesmar := parseRxRACESMARForm(form); racesmar != nil {
-		return racesmar
-	}
-	if sheltstat := parseRxSheltStatForm(form); sheltstat != nil {
-		return sheltstat
-	}
-	return form
+import (
+	"net/textproto"
+	"time"
+)
+
+// A Message represents a packet message.
+type Message struct {
+	// EnvelopeAddress is the return address on the RFC-4155 "From "
+	// envelope line, if any.
+	EnvelopeAddress string
+	// EnvelopeDate is the message date from the RFC-4155 "From " envelope
+	// line, if any.
+	EnvelopeDate time.Time
+	// Header contains the RFC-5322 header of the message.
+	Header textproto.MIMEHeader
+	// Body contains the plain text body of the message.
+	Body string
+	// Flags contains flags associated with the message.
+	Flags MessageFlag
+}
+
+// MessageFlag contains a flag, or a bitmask of flags, describing a Message.
+type MessageFlag uint8
+
+const (
+	// NotPlainText indicates that the message was not entirely plain text.
+	NotPlainText MessageFlag = 1 << iota
+	// AutoResponse indicates that the message appears to be a bounce
+	// message or other auto-responder message.
+	AutoResponse
+	// RequestDeliveryReceipt indicates that the recipient should send a
+	// delivery receipt to the sender when the message is delivered.
+	RequestDeliveryReceipt
+	// RequestReadReceipt indicates that the recipient should send a read
+	// receipt to the sender when the message has been read by a human.
+	RequestReadReceipt
+	// OutpostUrgent indicates that the Outpost messaging software should
+	// display this message as an urgent message.
+	OutpostUrgent
+)
+
+// New creates a new, empty message.
+func New() *Message {
+	return &Message{Header: make(textproto.MIMEHeader)}
 }

@@ -2,9 +2,6 @@ package analyze
 
 import (
 	"fmt"
-	"strings"
-
-	"steve.rothskeller.net/packet/pktmsg"
 )
 
 // Problem codes
@@ -24,27 +21,16 @@ func (a *Analysis) checkCallSign() {
 	var (
 		formCS string
 		isform bool
-		msg    = a.msg.Message()
 	)
-	// These checks don't apply to non-human messages.
-	if msg == nil {
-		return
-	}
 	// Extract the call sign from the the OpCall field of the form, if any.
-	if msg, ok := a.msg.(*pktmsg.RxICS213Form); ok {
-		formCS = strings.ToUpper(msg.OperatorCallSign)
-		isform = true
-	} else if scco := a.msg.SCCoForm(); scco != nil {
-		formCS = strings.ToUpper(scco.OperatorCallSign)
-		isform = true
-	} else if form := a.msg.Form(); form != nil {
-		formCS = strings.ToUpper(form.Fields["OpCall"])
+	if op, ok := a.xsc.(interface{ Operator() (string, string) }); ok {
+		_, formCS = op.Operator()
 		isform = true
 	}
-	// If we didn't find a call sign in any of those places, we can't count
-	// this message.  (The text of the response differs depending on whether
-	// it's a form message.)
-	if msg.FromCallSign == "" && a.subjectCallSign == "" && formCS == "" {
+	// If we didn't find a call sign anywhere, we can't count this message.
+	// (The text of the response differs depending on whether it's a form
+	// message.)
+	if a.msg.FromCallSign() == "" && a.subjectCallSign == "" && formCS == "" {
 		if isform {
 			a.problems = append(a.problems, &problem{
 				code: ProblemNoCallSign,
@@ -76,7 +62,7 @@ at least one of those places.
 	} else if formCS != "" {
 		a.fromCallSign = formCS
 	} else {
-		a.fromCallSign = msg.FromCallSign
+		a.fromCallSign = a.msg.FromCallSign()
 	}
 	// If the one in the return address doesn't match the one we chose,
 	// that's OK.  But if the one in the form doesn't match the one from the
