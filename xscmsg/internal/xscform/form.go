@@ -97,10 +97,6 @@ func (xf *XSCForm) TypeArticle() string { return xf.def.Article }
 func (xf *XSCForm) Validate(strict bool) (problems []string) {
 	var seen = make(map[string]bool)
 	for _, fd := range xf.def.Fields {
-		if strict && !xf.form.Has(fd.Tag) {
-			problems = append(problems, fmt.Sprintf("field %q is not present", fd.Tag))
-			continue
-		}
 		seen[fd.Tag] = true
 		if len(fd.Validations) == 0 {
 			continue
@@ -118,7 +114,7 @@ func (xf *XSCForm) Validate(strict bool) (problems []string) {
 	}
 	for _, field := range xf.form.Fields {
 		if !seen[field.Tag] {
-			problems = append(problems, "unrecognized field %q", field.Tag)
+			problems = append(problems, fmt.Sprintf("unrecognized field %q", field.Tag))
 		}
 	}
 	return problems

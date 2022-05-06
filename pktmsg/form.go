@@ -224,28 +224,34 @@ func (f *Form) Encode(annotations, comments map[string]string, looseQuoting bool
 }
 func (f *Form) encodeFields(sb *strings.Builder, annotations, comments map[string]string, looseQuoting bool) {
 	var (
-		tags    = make([]string, len(f.Fields))
-		taglens = make([]int, len(f.Fields))
+		tags      []string
+		values    []string
+		fcomments []string
+		taglens   []int
 	)
-	for i, field := range f.Fields {
+	for _, field := range f.Fields {
 		tag := field.Tag
 		if annotations != nil {
 			tag += annotations[tag]
 		}
-		tags[i] = tag
-		taglens[i] = len(tag) + 1
+		if field.Value != "" || looseQuoting {
+			tags = append(tags, tag)
+			values = append(values, field.Value)
+			taglens = append(taglens, len(tag)+1)
+			if comments != nil {
+				fcomments = append(fcomments, comments[field.Tag])
+			}
+		}
 	}
 	if looseQuoting {
 		alignLengths(taglens)
 	}
 	for i, tag := range tags {
-		if f.Fields[i].Value == "" && comments != nil {
-			if comment := comments[f.Fields[i].Tag]; comment != "" {
-				fmt.Fprintf(sb, "%s:%*s# %s\n", tag, taglens[i]-len(tag), "", comment)
-				continue
-			}
+		if values[i] == "" && fcomments != nil && fcomments[i] != "" {
+			fmt.Fprintf(sb, "%s:%*s# %s\n", tag, taglens[i]-len(tag), "", fcomments[i])
+		} else {
+			fmt.Fprintf(sb, "%s:%*s%s\n", tag, taglens[i]-len(tag), "", quote(values[i], looseQuoting))
 		}
-		fmt.Fprintf(sb, "%s:%*s%s\n", tag, taglens[i]-len(tag), "", quote(f.Fields[i].Value, looseQuoting))
 	}
 }
 func alignLengths(lengths []int) {

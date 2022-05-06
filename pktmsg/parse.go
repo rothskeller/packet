@@ -87,10 +87,15 @@ func extractPlainText(header textproto.MIMEHeader, body []byte) (nbody []byte, n
 	case "", "7bit", "8bit", "binary":
 		break // no decoding needed
 	case "quoted-printable":
-		body, _ = io.ReadAll(quotedprintable.NewReader(bytes.NewReader(body)))
+		if body, err = io.ReadAll(quotedprintable.NewReader(bytes.NewReader(body))); err != nil {
+			return nil, true, err
+		}
+		println(string(body), err)
 		notplain = true
 	case "base64":
-		body, _ = io.ReadAll(base64.NewDecoder(base64.StdEncoding, bytes.NewReader(body)))
+		if body, err = io.ReadAll(base64.NewDecoder(base64.StdEncoding, bytes.NewReader(body))); err != nil {
+			return nil, true, err
+		}
 		notplain = true
 	default:
 		return nil, true, nil

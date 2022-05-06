@@ -9,11 +9,13 @@ import (
 var encodeBodyTests = []struct {
 	name     string
 	msg      *Message
+	human    bool
 	wantBody string
 }{
 	{
 		"empty",
 		&Message{},
+		false,
 		"",
 	},
 	{
@@ -21,6 +23,7 @@ var encodeBodyTests = []struct {
 		&Message{
 			Body: "nothing\n",
 		},
+		false,
 		"nothing\n",
 	},
 	{
@@ -29,6 +32,7 @@ var encodeBodyTests = []struct {
 			Body:  "nothing\n",
 			Flags: RequestDeliveryReceipt | RequestReadReceipt | OutpostUrgent,
 		},
+		false,
 		"!URG!!RDR!!RRR!nothing\n",
 	},
 	{
@@ -36,14 +40,23 @@ var encodeBodyTests = []struct {
 		&Message{
 			Body: "nöthing\n",
 		},
+		false,
 		"!B64!bsO2dGhpbmcK\n",
+	},
+	{
+		"base64 human",
+		&Message{
+			Body: "nöthing\n",
+		},
+		true,
+		"nöthing\n",
 	},
 }
 
 func TestEncodeBody(t *testing.T) {
 	for _, tt := range encodeBodyTests {
 		t.Run(tt.name, func(t *testing.T) {
-			if gotBody := tt.msg.EncodeBody(); gotBody != tt.wantBody {
+			if gotBody := tt.msg.EncodeBody(tt.human); gotBody != tt.wantBody {
 				t.Errorf("Message.EncodeBody() = %v, want %v", gotBody, tt.wantBody)
 			}
 		})
@@ -51,13 +64,15 @@ func TestEncodeBody(t *testing.T) {
 }
 
 var encodeTests = []struct {
-	name string
-	msg  *Message
-	want string
+	name  string
+	msg   *Message
+	human bool
+	want  string
 }{
 	{
 		"plain",
 		&Message{Body: "nothing\n"},
+		false,
 		"\nnothing\n",
 	},
 	{
@@ -69,6 +84,7 @@ var encodeTests = []struct {
 			},
 			Body: "nothing\n",
 		},
+		false,
 		"To: <nobody@nowhere>, <somebody@somewhere>\nFrom: <me@here>\n\nnothing\n",
 	},
 	{
@@ -77,6 +93,7 @@ var encodeTests = []struct {
 			EnvelopeAddress: "me@here",
 			Body:            "nothing\n",
 		},
+		false,
 		"From me@here\n\nnothing\n",
 	},
 	{
@@ -87,6 +104,7 @@ var encodeTests = []struct {
 			Header:          textproto.MIMEHeader{"To": []string{"<nobody@nowhere>"}},
 			Body:            "nothing\n",
 		},
+		false,
 		"From me@here Wed Dec  1 08:04:29 2021\nTo: <nobody@nowhere>\n\nnothing\n",
 	},
 }
@@ -94,7 +112,7 @@ var encodeTests = []struct {
 func TestEncode(t *testing.T) {
 	for _, tt := range encodeTests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := tt.msg.Encode(); got != tt.want {
+			if got := tt.msg.Encode(tt.human); got != tt.want {
 				t.Errorf("Message.Encode() = %v, want %v", got, tt.want)
 			}
 		})
