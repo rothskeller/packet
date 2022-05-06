@@ -5,8 +5,9 @@ package eoc213rr
 import "steve.rothskeller.net/packet/xscmsg/internal/xscform"
 
 var formDefinitions = []*xscform.FormDefinition{
-	eoc213rr24,
 	eoc213rr23,
 	eoc213rr21,
 	eoc213rr20,
+	eoc213rr24,
+	eoc213rr23,
 }

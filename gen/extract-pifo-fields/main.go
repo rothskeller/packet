@@ -16,8 +16,8 @@ func main() {
 	filepath.WalkDir(".", func(path string, d fs.DirEntry, err error) error {
 		if strings.HasSuffix(path, ".html") {
 			log.Print(path)
-			extract(path)
-			packages[filepath.Dir(path)] = append(packages[filepath.Dir(path)], filepath.Base(path))
+			varname := extract(path)
+			packages[filepath.Dir(path)] = append(packages[filepath.Dir(path)], varname)
 		}
 		return nil
 	})

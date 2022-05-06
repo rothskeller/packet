@@ -6,6 +6,10 @@ import (
 	"steve.rothskeller.net/packet/xscmsg/internal/xscform"
 )
 
+func init() {
+	xscmsg.RegisterType(Create, Recognize)
+}
+
 // Create creates a new message of the type identified by the supplied tag.  If
 // the tag is not recognized by this package, Create returns nil.
 func Create(tag string) xscmsg.XSCMessage {

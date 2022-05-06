@@ -6,6 +6,7 @@ package main
 
 import (
 	"errors"
+	"fmt"
 	"io/fs"
 	"log"
 	"os"
@@ -115,19 +116,12 @@ func processForm(outdir, tag, form, pkg string) {
 	if version == "" {
 		log.Fatalf("no version found in %s %s", tag, form)
 	}
-	ident := makeIdent(pkg, version)
-	err := os.WriteFile(filepath.Join(outdir, pkg, ident+".html"), []byte(html), 0666)
+	fname := fmt.Sprintf("%s.v%s.html", form[:len(form)-5], version)
+	err := os.WriteFile(filepath.Join(outdir, pkg, fname), []byte(html), 0666)
 	if err != nil {
 		log.Fatal(err)
 	}
 	log.Printf("  %s", form)
-}
-
-func makeIdent(pkg, version string) string {
-	if c := pkg[len(pkg)-1]; c >= '0' && c <= '9' {
-		pkg += "v"
-	}
-	return pkg + strings.ReplaceAll(version, ".", "")
 }
 
 func saveTagsRead(outdir string, tags []string) {

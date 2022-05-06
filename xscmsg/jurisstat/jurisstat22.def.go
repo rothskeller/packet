@@ -5,7 +5,7 @@ package jurisstat
 import "steve.rothskeller.net/packet/xscmsg/internal/xscform"
 
 var jurisstat22 = &xscform.FormDefinition{
-	HTML:                   "jurisstat22.html",
+	HTML:                   "form-oa-muni-status.html",
 	Tag:                    "JurisStat",
 	Name:                   "jurisdiction status",
 	Article:                "a",

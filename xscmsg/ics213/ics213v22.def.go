@@ -5,7 +5,7 @@ package ics213
 import "steve.rothskeller.net/packet/xscmsg/internal/xscform"
 
 var ics213v22 = &xscform.FormDefinition{
-	HTML:                   "ics213v22.html",
+	HTML:                   "form-ics213.html",
 	Tag:                    "ICS213",
 	Name:                   "XSC ICS-213 message",
 	Article:                "an",

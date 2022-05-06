@@ -74,7 +74,7 @@ type Form struct {
 
 // makeICS213RxForm makes a receive-side ICS-213 form definition by changing the
 // DestinationNumberField to the middle message number field ("MsgNo"), and
-// removing the left-side message number field (2.).
+// removing the right-side message number field (3.).
 func makeICS213RxForm(fd *xscform.FormDefinition) (rx *xscform.FormDefinition) {
 	rx = new(xscform.FormDefinition)
 	*rx = *fd
@@ -82,7 +82,7 @@ func makeICS213RxForm(fd *xscform.FormDefinition) (rx *xscform.FormDefinition) {
 	rx.Fields = make([]*xscform.FieldDefinition, len(fd.Fields)-1)
 	j := 0
 	for _, ff := range fd.Fields {
-		if ff.Tag != "2." {
+		if ff.Tag != "3." {
 			rx.Fields[j] = ff
 			j++
 		}
@@ -92,7 +92,7 @@ func makeICS213RxForm(fd *xscform.FormDefinition) (rx *xscform.FormDefinition) {
 
 // makeICS213TxForm makes a transmit-side ICS-213 form definition by changing
 // the OriginNumberField to the middle message number field ("MsgNo"), and
-// removing the right-side message number field (3.).
+// removing the left-side message number field (2.).
 func makeICS213TxForm(fd *xscform.FormDefinition) (tx *xscform.FormDefinition) {
 	tx = new(xscform.FormDefinition)
 	*tx = *fd
@@ -100,7 +100,7 @@ func makeICS213TxForm(fd *xscform.FormDefinition) (tx *xscform.FormDefinition) {
 	tx.Fields = make([]*xscform.FieldDefinition, len(fd.Fields)-1)
 	j := 0
 	for _, ff := range fd.Fields {
-		if ff.Tag != "3." {
+		if ff.Tag != "2." {
 			tx.Fields[j] = ff
 			j++
 		}

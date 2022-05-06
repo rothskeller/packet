@@ -5,7 +5,7 @@ package racesmar
 import "steve.rothskeller.net/packet/xscmsg/internal/xscform"
 
 var racesmar21 = &xscform.FormDefinition{
-	HTML:                   "racesmar21.html",
+	HTML:                   "form-oa-mutual-aid-request-v2.html",
 	Tag:                    "RACES-MAR",
 	Name:                   "RACES mutual aid request",
 	Article:                "an",

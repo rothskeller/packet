@@ -19,6 +19,6 @@ func Send(st Store, conn *jnos.Conn, session *store.Session) {
 	var rm = pktmsg.New()
 	rm.Body = report
 	subject := xscmsg.EncodeSubject(st.NextMessageID(session.Prefix), xscmsg.HandlingRoutine, "", "SCCo Packet Practice Report")
-	conn.Send(subject, rm.EncodeBody(), sendTo...)
+	conn.Send(subject, rm.EncodeBody(false), sendTo...)
 	log.Printf("Sent report for %s on %s.", session.Name, session.End.Format("2006-01-02"))
 }

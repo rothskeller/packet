@@ -5,7 +5,7 @@ package sheltstat
 import "steve.rothskeller.net/packet/xscmsg/internal/xscform"
 
 var sheltstat22 = &xscform.FormDefinition{
-	HTML:                   "sheltstat22.html",
+	HTML:                   "form-oa-shelter-status.html",
 	Tag:                    "SheltStat",
 	Name:                   "shelter status",
 	Article:                "a",

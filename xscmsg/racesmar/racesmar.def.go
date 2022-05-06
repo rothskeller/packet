@@ -5,7 +5,7 @@ package racesmar
 import "steve.rothskeller.net/packet/xscmsg/internal/xscform"
 
 var formDefinitions = []*xscform.FormDefinition{
+	racesmar16,
 	racesmar23,
 	racesmar21,
-	racesmar16,
 }

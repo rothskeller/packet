@@ -41,14 +41,23 @@ type fieldDefinition struct {
 	Default     string
 }
 
-func extract(filename string) {
+var filenameRE = regexp.MustCompile(`(form-[^.]*)\.v([0-9.]+?)\.html$`)
+
+func extract(filename string) string {
 	fd, err := parseFormDefinition(filename)
 	if err != nil {
 		log.Fatal(err)
 	}
-	varname := filepath.Base(filename)
-	varname = varname[:len(varname)-5] // .html
-	fd.emit(filename[:len(filename)-5]+".def.go", filepath.Base(filepath.Dir(filename)), varname)
+	pkgname := filepath.Base(filepath.Dir(filename))
+	varname := pkgname
+	if d := varname[len(varname)-1]; d >= '0' && d <= '9' {
+		varname += "v"
+	}
+	match := filenameRE.FindStringSubmatch(filename)
+	varname += strings.ReplaceAll(match[2], ".", "")
+	fd.HTML = match[1] + ".html"
+	fd.emit(filepath.Join(filepath.Dir(filename), varname+".def.go"), pkgname, varname)
+	return varname
 }
 
 func parseFormDefinition(filename string) (fd *formDefinition, err error) {

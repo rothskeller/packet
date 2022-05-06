@@ -5,7 +5,7 @@ package ahfacstat
 import "steve.rothskeller.net/packet/xscmsg/internal/xscform"
 
 var ahfacstat20 = &xscform.FormDefinition{
-	HTML:                   "ahfacstat20.html",
+	HTML:                   "form-allied-health-facility-status.html",
 	Tag:                    "AHFacStat",
 	Name:                   "allied health status report",
 	Article:                "an",

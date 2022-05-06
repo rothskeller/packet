@@ -5,7 +5,7 @@ package eoc213rr
 import "steve.rothskeller.net/packet/xscmsg/internal/xscform"
 
 var eoc213rr24 = &xscform.FormDefinition{
-	HTML:                   "eoc213rr24.html",
+	HTML:                   "form-scco-eoc-213rr-v2.html",
 	Tag:                    "EOC213RR",
 	Name:                   "resource request form 213RR",
 	Article:                "a",
