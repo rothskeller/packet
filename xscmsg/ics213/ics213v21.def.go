@@ -7,7 +7,7 @@ import "steve.rothskeller.net/packet/xscmsg/internal/xscform"
 var ics213v21 = &xscform.FormDefinition{
 	HTML:                   "form-ics213.html",
 	Tag:                    "ICS213",
-	Name:                   "XSC ICS-213 message",
+	Name:                   "ICS-213 general message form",
 	Article:                "an",
 	Version:                "2.1",
 	OriginNumberField:      "2.",
@@ -157,7 +157,7 @@ var ics213v21 = &xscform.FormDefinition{
 		"6b.": "reply",
 		"6c.": "fyi",
 		"6d.": "reply-by",
-		"7.": "to-ics-position-other",
+		"7.": "to-ics-position",
 		"8.": "from-ics-position",
 		"9a.": "to-location",
 		"9b.": "from-location",

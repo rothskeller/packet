@@ -86,6 +86,9 @@ func (ff *fieldDefinition) emit(fh *os.File) {
 	if ff.Default != "" {
 		fmt.Fprintf(fh, "\t\t\tDefault: %q,\n", ff.Default)
 	}
+	if ff.ComputedFromField != "" {
+		fmt.Fprintf(fh, "\t\t\tComputedFromField: %q,\n", ff.ComputedFromField)
+	}
 	fmt.Fprintf(fh, "\t\t},\n")
 }
 func validateFuncName(v string) string {

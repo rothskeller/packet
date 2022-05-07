@@ -70,17 +70,22 @@ This creates a `*.def.go` file next to each `*.html` file.
 
 The above tools do 98% of the work.  But sometimes there are oddities in the
 PackItForms HTML files that we don't want to have in this library.  So, read
-over the field definitions created by the extract-pifo-html file.  (Really, you
-only need to read over the ones for new or updated form versions.)
+over the field definitions created by the extract-pifo-fields tool.  (Really,
+you only need to read over the ones for new or updated form versions.)
+
+Pay particular attention to fields that are implemented as combo boxes in the
+PackItForms HTML.  The extractor isn't able to read those from PackItForms
+properly, so those fields and their pre-defined values are hard-coded in the
+extractor tool (file `gen/extract-pifo-fields/fixups.go`).  They will need to be
+manually updated if they change.
 
 If you see any issues that need to be corrected, don't edit those `*.def.go`
 files; your changes would be lost the next time anyone regenerates them.
-Instead, edit the non-generated Go source file in the directory, and add a
-`func init()` that patches your change into the generated definition.
-
-Alternatively, if PackItForms has made some widespread change that is causing
-errors in all forms, you can update the source code for extract-pifo-fields to
-adapt to the change and then re-run it.
+Instead, edit the source code for the extract-pifo-fields tool.  Simple changes
+can be put in the `fixups.go` file mentioned above.  Alternatively, if
+PackItForms has made some widespread change that is causing errors in all forms,
+you can update the parser in extract-pifo-fields to adapt to the change and then
+re-run it.
 
 ## Step 5:  Address Prototype Form Versions
 

@@ -7,27 +7,6 @@ import (
 )
 
 func init() {
-	for _, fd := range formDefinitions {
-		fd.Name = "OA shelter status form"
-		fd.Article = "an"
-		fd.Comments["7a."] = "Mass Care and Shelter Unit, Care and Shelter Branch, Operations Section, ..."
-		if fd.FindField("34b.") != nil {
-			ff := fd.FindField("33b.")
-			ff.Default = "(computed)"
-			ff.Values = sheltstat21.FindField("33b.").Values
-			ff.ComputedFromField = "34b."
-			ff.Validations = []xscform.ValidateFunc{xscform.ValidateComputedChoice}
-			fd.Annotations["33b."] = "shelter-city-code"
-		}
-		if fd.FindField("49a.") != nil {
-			ff := fd.FindField("50a.")
-			ff.Default = "(computed)"
-			ff.Values = sheltstat21.FindField("50a.").Values
-			ff.ComputedFromField = "49a."
-			ff.Validations = []xscform.ValidateFunc{xscform.ValidateComputedChoice}
-			fd.Annotations["50a."] = "managed-by-code"
-		}
-	}
 	xscmsg.RegisterType(Create, Recognize)
 }
 

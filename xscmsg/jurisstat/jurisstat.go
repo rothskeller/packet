@@ -7,19 +7,6 @@ import (
 )
 
 func init() {
-	for _, fd := range formDefinitions {
-		fd.Name = "OA jurisdiction status form"
-		fd.Article = "an"
-		fd.Comments["7a."] = "Situation Analysis Unit, Planning Section, ..."
-		if fd.FindField("22.") != nil {
-			ff := fd.FindField("21.")
-			ff.Default = "(computed)"
-			ff.Values = jurisstat21.FindField("21.").Values
-			ff.ComputedFromField = "22."
-			ff.Validations = []xscform.ValidateFunc{xscform.ValidateComputedChoice}
-			fd.Annotations["21."] = "jurisdiction-code"
-		}
-	}
 	xscmsg.RegisterType(Create, Recognize)
 }
 

@@ -35,10 +35,11 @@ type formDefinition struct {
 	Comments               map[string]string
 }
 type fieldDefinition struct {
-	Tag         string
-	Values      []string
-	Validations []string
-	Default     string
+	Tag               string
+	Values            []string
+	Validations       []string
+	Default           string
+	ComputedFromField string
 }
 
 var filenameRE = regexp.MustCompile(`(form-[^.]*)\.v([0-9.]+?)\.html$`)
@@ -48,6 +49,7 @@ func extract(filename string) string {
 	if err != nil {
 		log.Fatal(err)
 	}
+	applyFixups(fd)
 	pkgname := filepath.Base(filepath.Dir(filename))
 	varname := pkgname
 	if d := varname[len(varname)-1]; d >= '0' && d <= '9' {

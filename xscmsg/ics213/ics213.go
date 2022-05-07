@@ -7,11 +7,6 @@ import (
 )
 
 func init() {
-	for _, fd := range formDefinitions {
-		fd.Name = "ICS-213 general message form"
-		fd.Article = "an"
-		fd.Annotations["7."] = "to-ics-position"
-	}
 	xscmsg.RegisterType(Create, Recognize)
 }
 

@@ -7,8 +7,8 @@ import "steve.rothskeller.net/packet/xscmsg/internal/xscform"
 var eoc213rr20 = &xscform.FormDefinition{
 	HTML:                   "form-scco-eoc-213rr.html",
 	Tag:                    "EOC213RR",
-	Name:                   "resource request form 213RR",
-	Article:                "a",
+	Name:                   "EOC-213RR resource request form",
+	Article:                "an",
 	Version:                "2.0",
 	OriginNumberField:      "MsgNo",
 	DestinationNumberField: "",
