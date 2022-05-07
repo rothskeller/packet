@@ -154,7 +154,7 @@ func (c *Config) Validate() (valid bool) {
 			log.Printf("ERROR: config.minimumVersions[%q] is not specified", PackItForms)
 			valid = false
 		}
-		for _, mtype := range ValidMessageTypes {
+		for _, mtype := range ValidMessageTypes() {
 			if mtype.TypeTag() == "plain" {
 				continue
 			}
@@ -200,7 +200,7 @@ func (c *Config) Validate() (valid bool) {
 		log.Printf("ERROR: config.formRouting is not specified")
 		valid = false
 	} else {
-		for _, mtype := range ValidMessageTypes {
+		for _, mtype := range ValidMessageTypes() {
 			if mtype.TypeTag() == "plain" {
 				continue
 			}

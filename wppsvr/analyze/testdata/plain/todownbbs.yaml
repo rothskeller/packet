@@ -1,0 +1,39 @@
+# Message sent to "down" BBS.
+
+# Message being analyzed:
+toBBS: W2XSC
+message: |
+  From: kc6rsc@w1xsc.ampr.org
+  To: pkttue@w2xsc.ampr.org
+  Date: Sun, 09 Jan 2022 20:00:00 -0800
+  Subject: STR-100P_R_Practice KC6RSC, Steve, SNY, 2022-01-11
+
+  Test message
+
+# Analysis that should be stored:
+stored:
+  deliveryTime: 2022-01-09T20:00:00-08:00
+  fromAddress: kc6rsc@w1xsc.ampr.org
+  fromCallSign: KC6RSC
+  fromBBS: W1XSC
+  toBBS: W2XSC
+  subject: STR-100P_R_Practice KC6RSC, Steve, SNY, 2022-01-11
+  problems:
+    - ToBBSDown
+
+# Messages that should be sent in response:
+responses:
+  - localID: TUE-101P
+    to: kc6rsc@w1xsc.ampr.org
+    senderBBS: W2XSC
+    subject: 'DELIVERED: STR-100P_R_Practice KC6RSC, Steve, SNY, 2022-01-11'
+    bodyREs:
+      - ^!LMI!TUE-100P!DR!01/11/2022 20:00:01\n
+  - localID: TUE-102P
+    to: kc6rsc@w1xsc.ampr.org
+    senderBBS: W2XSC
+    subject: TUE-102P_R_Message to incorrect BBS (simulated down)
+    bodyREs:
+      - will not be counted
+      - W2XSC is simulated down
+      - Weekly SPECS/SVECS Packet Practice

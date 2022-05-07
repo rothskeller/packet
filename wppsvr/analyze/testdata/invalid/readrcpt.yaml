@@ -1,0 +1,29 @@
+# Read receipt message.
+
+# Message being analyzed:
+message: |
+  From: kc6rsc@w1xsc.ampr.org
+  To: pkttue@w4xsc.ampr.org
+  Date: Sun, 09 Jan 2022 20:00:00 -0800
+  Subject: READ: STR-100P_R_Practice KC6RSC, Steve, SNY, 2022-01-11
+
+  It was read!
+
+# Analysis that should be stored:
+stored:
+  deliveryTime: 2022-01-09T20:00:00-08:00
+  fromAddress: kc6rsc@w1xsc.ampr.org
+  fromBBS: W1XSC
+  subject: 'READ: STR-100P_R_Practice KC6RSC, Steve, SNY, 2022-01-11'
+  problems:
+    - ReadReceipt
+
+# Messages that should be sent in response:
+responses:
+  - localID: TUE-101P
+    to: kc6rsc@w1xsc.ampr.org
+    subject: TUE-101P_R_Unexpected READ receipt message
+    bodyREs:
+      - read receipt
+      - will not be counted
+      - Outpost Configuration Instructions

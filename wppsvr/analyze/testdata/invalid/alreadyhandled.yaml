@@ -1,0 +1,14 @@
+# Message that has already been handled.  Should have nothing saved and no
+# response.
+
+# Already saw this message:
+seenHash: 0c76134dfa2d79cbabf2130c727844c964baeb29
+
+# Message being analyzed:
+message: |
+  From: kc6rsc@w1xsc.ampr.org
+  To: pkttue@w4xsc.ampr.org
+  Date: Sun, 09 Jan 2022 20:00:00 -0800
+  Subject: STR-100P_R_Practice KC6RSC, Steve, SNY, 2022-01-11
+
+  Test message

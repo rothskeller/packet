@@ -1,0 +1,35 @@
+# Message sent after practice session ended.
+
+# Message being analyzed:
+message: |
+  From: kc6rsc@w1xsc.ampr.org
+  To: pkttue@w4xsc.ampr.org
+  Date: Tue, 04 Jan 2022 20:00:01 -0800
+  Subject: STR-100P_R_Practice KC6RSC, Steve, SNY, 2022-01-04
+
+  Test message
+
+# Analysis that should be stored:
+stored:
+  deliveryTime: 2022-01-04T20:00:01-08:00
+  fromAddress: kc6rsc@w1xsc.ampr.org
+  fromCallSign: KC6RSC
+  fromBBS: W1XSC
+  subject: STR-100P_R_Practice KC6RSC, Steve, SNY, 2022-01-04
+  problems:
+    - MessageTooLate
+
+# Messages that should be sent in response:
+responses:
+  - localID: TUE-101P
+    to: kc6rsc@w1xsc.ampr.org
+    subject: 'DELIVERED: STR-100P_R_Practice KC6RSC, Steve, SNY, 2022-01-04'
+    bodyREs:
+      - ^!LMI!TUE-100P!DR!01/11/2022 20:00:01\n
+  - localID: TUE-102P
+    to: kc6rsc@w1xsc.ampr.org
+    subject: TUE-102P_R_Message after end of practice session
+    bodyREs:
+      - will not be counted
+      - too late to\nbe counted.*January 4
+      - Weekly SPECS/SVECS Packet Practice

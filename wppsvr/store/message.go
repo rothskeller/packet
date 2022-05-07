@@ -8,19 +8,19 @@ import (
 
 // A Message describes a single received message.
 type Message struct {
-	LocalID      string
-	Hash         string
-	DeliveryTime time.Time
-	Message      string
-	Session      int
-	FromAddress  string
-	FromCallSign string
-	FromBBS      string
-	ToBBS        string
-	Subject      string
-	Problems     []string
-	Valid        bool
-	Correct      bool
+	LocalID      string    `yaml:"localID"`
+	Hash         string    `yaml:"hash"`
+	DeliveryTime time.Time `yaml:"deliveryTime"`
+	Message      string    `yaml:"message"`
+	Session      int       `yaml:"session"`
+	FromAddress  string    `yaml:"fromAddress"`
+	FromCallSign string    `yaml:"fromCallSign"`
+	FromBBS      string    `yaml:"fromBBS"`
+	ToBBS        string    `yaml:"toBBS"`
+	Subject      string    `yaml:"subject"`
+	Problems     []string  `yaml:"problems"`
+	Valid        bool      `yaml:"valid"`
+	Correct      bool      `yaml:"correct"`
 }
 
 // SessionHasMessages returns whether there are any messages stored for the

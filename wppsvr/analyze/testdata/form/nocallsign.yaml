@@ -1,0 +1,62 @@
+# No call sign anywhere.
+
+# Allow ICS213 forms for session:
+session:
+  messageTypes:
+    - ICS213
+
+# Message being analyzed:
+message: |
+  From: nobody@w1xsc.ampr.org
+  To: pkttue@w4xsc.ampr.org
+  Date: Sun, 09 Jan 2022 20:00:00 -0800
+  Subject: STR-100P_R_ICS213_Practice
+
+  !SCCoPIFO!
+  #T: form-ics213.html
+  #V: 3.2-2.1
+  MsgNo: [STR-100P]
+  1a.: [01/09/2022]
+  4.: [OTHER]
+  5.: [ROUTINE]
+  1b.: [2000]
+  7.: [A]
+  8.: [B]
+  9a.: [A]
+  9b.: [B]
+  10.: [Practice]
+  12.: [Test Message]
+  Method: [Other]
+  Other: [Packet]
+  OpDate: [01/09/2022]
+  OpTime: [20:00]
+  !/ADDON!
+
+# Analysis that should be stored:
+stored:
+  deliveryTime: 2022-01-09T20:00:00-08:00
+  fromAddress: nobody@w1xsc.ampr.org
+  fromBBS: W1XSC
+  subject: STR-100P_R_ICS213_Practice
+  problems:
+    - FormInvalid
+    - PracticeSubjectFormat
+    - NoCallSign
+
+# Messages that should be sent in response:
+responses:
+  - localID: TUE-101P
+    to: nobody@w1xsc.ampr.org
+    subject: 'DELIVERED: STR-100P_R_ICS213_Practice'
+    bodyREs:
+      - ^!LMI!TUE-100P!DR!01/11/2022 20:00:01\n
+  - localID: TUE-102P
+    to: nobody@w1xsc.ampr.org
+    subject: TUE-102P_R_Issues with packet practice message
+    bodyREs:
+      - will not be counted
+      - form with invalid contents
+      - four comma-separated fields
+      - no call sign in
+      - in the Operator Call field of the form
+      - Weekly SPECS/SVECS Packet Practice

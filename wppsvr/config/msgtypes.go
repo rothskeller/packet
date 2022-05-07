@@ -7,22 +7,35 @@ import (
 	"steve.rothskeller.net/packet/xscmsg/ics213"
 )
 
-// ValidMessageTypes contains an empty message of each type that can be used
-// for packet check-ins.
-var ValidMessageTypes = []xscmsg.XSCMessage{
-	new(PlainTextMessage),
-	xscmsg.Create("AHFacStat"),
-	xscmsg.Create("EOC213RR"),
-	xscmsg.Create("ICS213"),
-	xscmsg.Create("JurisStat"),
-	xscmsg.Create("RACES-MAR"),
-	xscmsg.Create("SheltStat"),
+// validMessageTypes contains an empty message of each type that can be used
+// for packet practice.
+var validMessageTypes []xscmsg.XSCMessage
+
+// ValidMessageTypes returns a slice containing an empty message of each type
+// that can be used for packet practice.
+func ValidMessageTypes() []xscmsg.XSCMessage {
+	if validMessageTypes == nil {
+		// Initialize this on first use rather than at init time, so we
+		// can be sure that all of the message types have been
+		// registered.
+		validMessageTypes = []xscmsg.XSCMessage{
+			new(PlainTextMessage),
+			xscmsg.Create("AHFacStat"),
+			xscmsg.Create("EOC213RR"),
+			xscmsg.Create("ICS213"),
+			xscmsg.Create("JurisStat"),
+			xscmsg.Create("MuniStat"),
+			xscmsg.Create("RACES-MAR"),
+			xscmsg.Create("SheltStat"),
+		}
+	}
+	return validMessageTypes
 }
 
 // LookupMessageType finds the message type with the specified tag, if it
 // exists in ValidMessageTypes.
 func LookupMessageType(tag string) xscmsg.XSCMessage {
-	for _, msg := range ValidMessageTypes {
+	for _, msg := range ValidMessageTypes() {
 		if msg.TypeTag() == tag {
 			return msg
 		}

@@ -3,6 +3,7 @@ package analyze
 import (
 	"fmt"
 
+	"steve.rothskeller.net/packet/pktmsg"
 	"steve.rothskeller.net/packet/wppsvr/config"
 	"steve.rothskeller.net/packet/wppsvr/english"
 )
@@ -24,6 +25,12 @@ func (a *Analysis) checkCorrectForm() {
 		allowed []string
 		article string
 	)
+	if _, ok := a.xsc.(*config.PlainTextMessage); ok && pktmsg.IsForm(a.msg.Body) {
+		// It's a corrupt form.  That's reported elsewhere.  We can't
+		// really know what type of form it is, so we can't say whether
+		// it's correct.
+		return
+	}
 	tag = a.xsc.TypeTag()
 	for _, mtype := range a.session.MessageTypes {
 		if mtype == tag {

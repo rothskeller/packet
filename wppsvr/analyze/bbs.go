@@ -16,7 +16,7 @@ const (
 func init() {
 	ProblemLabel[ProblemToBBSDown] = "message to incorrect BBS (simulated down)"
 	ProblemLabel[ProblemToBBS] = "message to incorrect BBS"
-	ProblemLabel[ProblemFromBBSDown] = "message from incorrect BBS"
+	ProblemLabel[ProblemFromBBSDown] = "message from incorrect BBS (simulated down)"
 }
 
 // checkBBS verifies that the message was sent from and to a valid BBS.

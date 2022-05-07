@@ -81,8 +81,17 @@ type problem struct {
 	references reference
 }
 
+// astore is the interface that the store passed into analyze package functions
+// must implement.  In production it will be *store.Store, but it can be stubbed
+// for testing.
+type astore interface {
+	HasMessageHash(string) string
+	NextMessageID(string) string
+	SaveMessage(*store.Message)
+}
+
 // Analyze analyzes a single received message, and returns its analysis.
-func Analyze(st *store.Store, session *store.Session, bbs, raw string) *Analysis {
+func Analyze(st astore, session *store.Session, bbs, raw string) *Analysis {
 	var (
 		a   Analysis
 		sum [20]byte
@@ -152,15 +161,17 @@ func (a *Analysis) checkMessage(parseerr error) {
 	a.checkCorrectForm()       // did the message use the correct form?
 	a.checkFormHandlingOrder() // does the form have the correct handling order?
 	a.checkFormDestination()   // does the form have the correct destination?
-	// NOTE: these checks are mostly unordered.  However:
-	//    checkPracticeWindow has to come after checkPracticeSubject
-	//    checkCallSign has to come after checkPracticeSubject
+	// NOTE: these checks are mostly unordered.  However,
+	// checkPracticeWindow and checkCallSign both have to come after
+	// checkPracticeSubject because they rely on data extracted from the
+	// practice subject.
 }
 
 // Commit commits the analyzed message to the database.
-func (a *Analysis) Commit(st *store.Store) {
+func (a *Analysis) Commit(st astore) {
 	var (
 		m       store.Message
+		tag     string
 		actions = config.Get().ProblemActionFlags
 	)
 	if a == nil { // message already handled, nothing to commit
@@ -178,10 +189,15 @@ func (a *Analysis) Commit(st *store.Store) {
 	m.FromBBS = a.msg.FromBBS()
 	m.Valid, m.Correct = true, true
 	for _, p := range a.problems {
-		m.Valid = actions[p.code]&config.ActionDontCount == 0
-		m.Correct = m.Valid && actions[p.code]&config.ActionError == 0
+		m.Valid = m.Valid && actions[p.code]&config.ActionDontCount == 0
+		m.Correct = m.Correct && m.Valid && actions[p.code]&config.ActionError == 0
 		m.Problems = append(m.Problems, p.code)
 	}
 	st.SaveMessage(&m)
-	log.Printf("=> %s %s %s", m.LocalID, a.xsc.TypeTag(), strings.Join(m.Problems, ","))
+	if a.xsc != nil {
+		tag = a.xsc.TypeTag()
+	} else {
+		tag = "-"
+	}
+	log.Printf("=> %s %s %s", m.LocalID, tag, strings.Join(m.Problems, ","))
 }

@@ -10,24 +10,24 @@ import (
 
 // A Session defines the parameters of a single session instance.
 type Session struct {
-	ID                     int
-	CallSign               string
-	Name                   string
-	Prefix                 string
-	Start                  time.Time
-	End                    time.Time
-	GenerateWeekSummary    bool
-	ExcludeFromWeekSummary bool
-	ReportTo               []string
-	ToBBSes                []string
-	DownBBSes              []string
-	RetrieveFromBBSes      []string
-	RetrieveAt             []string
-	RetrieveAtInterval     []*config.Interval
-	MessageTypes           []string
-	Modified               bool
-	Running                bool
-	Report                 string
+	ID                     int                `yaml:"id"`
+	CallSign               string             `yaml:"callSign"`
+	Name                   string             `yaml:"name"`
+	Prefix                 string             `yaml:"prefix"`
+	Start                  time.Time          `yaml:"start"`
+	End                    time.Time          `yaml:"end"`
+	GenerateWeekSummary    bool               `yaml:"-"`
+	ExcludeFromWeekSummary bool               `yaml:"-"`
+	ReportTo               []string           `yaml:"-"`
+	ToBBSes                []string           `yaml:"toBBSes"`
+	DownBBSes              []string           `yaml:"downBBSes"`
+	RetrieveFromBBSes      []string           `yaml:"-"`
+	RetrieveAt             []string           `yaml:"-"`
+	RetrieveAtInterval     []*config.Interval `yaml:"-"`
+	MessageTypes           []string           `yaml:"messageTypes"`
+	Modified               bool               `yaml:"-"`
+	Running                bool               `yaml:"-"`
+	Report                 string             `yaml:"-"`
 }
 
 // GetRunningSessions returns the (unordered) list of all running sessions.

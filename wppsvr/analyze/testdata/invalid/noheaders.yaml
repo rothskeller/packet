@@ -1,0 +1,10 @@
+# Message with no headers.
+
+# Message being analyzed:
+message: |
+  Message has no headers.
+
+# Analysis that should be stored:
+stored:
+  problems:
+    - MessageCorrupt

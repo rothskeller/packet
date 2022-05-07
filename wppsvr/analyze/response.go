@@ -15,9 +15,12 @@ import (
 	"steve.rothskeller.net/packet/xscmsg/readrcpt"
 )
 
+// The time.Now function can be overridden by tests.
+var now = time.Now
+
 // Responses returns the list of messages that should be sent in response to the
 // analyzed message.
-func (a *Analysis) Responses(st *store.Store) (list []*store.Response) {
+func (a *Analysis) Responses(st astore) (list []*store.Response) {
 	if a == nil { // message already handled, no responses needed
 		return nil
 	}
@@ -27,7 +30,7 @@ func (a *Analysis) Responses(st *store.Store) (list []*store.Response) {
 	default:
 		var dr = xscmsg.Create("DELIVERED").(*delivrcpt.DeliveryReceipt)
 		dr.DeliveredSubject = a.msg.Header.Get("Subject")
-		dr.DeliveredTime = time.Now().Format("01/02/2006 15:04:05")
+		dr.DeliveredTime = now().Format("01/02/2006 15:04:05")
 		dr.DeliveredTo = fmt.Sprintf("%s@%s.ampr.org", strings.ToLower(a.session.CallSign), strings.ToLower(a.toBBS))
 		dr.LocalMessageID = a.localID
 		var r store.Response
@@ -36,7 +39,7 @@ func (a *Analysis) Responses(st *store.Store) (list []*store.Response) {
 		r.To = a.msg.ReturnAddress()
 		var drmsg = dr.Message(false)
 		r.Subject = drmsg.Header.Get("Subject")
-		r.Body = drmsg.EncodeBody()
+		r.Body = drmsg.EncodeBody(false)
 		r.SenderCall = a.session.CallSign
 		r.SenderBBS = a.toBBS
 		list = append(list, &r)
@@ -49,7 +52,7 @@ func (a *Analysis) Responses(st *store.Store) (list []*store.Response) {
 		r.ResponseTo = a.localID
 		r.To = a.msg.ReturnAddress()
 		r.Subject = xscmsg.EncodeSubject(r.LocalID, xscmsg.HandlingRoutine, "", rsubject)
-		r.Body = rm.EncodeBody()
+		r.Body = rm.EncodeBody(false)
 		r.SenderCall = a.session.CallSign
 		r.SenderBBS = a.toBBS
 		list = append(list, &r)

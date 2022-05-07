@@ -187,6 +187,12 @@ func (xf *XSCForm) SetHandlingOrder(ho xscmsg.HandlingOrder) {
 	}
 }
 
+// Routing returns the To ICS Position and To Location fields of the form, if
+// it has them.
+func (xf *XSCForm) Routing() (pos, loc string) {
+	return xf.form.Get("7a."), xf.form.Get("7b.")
+}
+
 // Operator returns the operator name and call sign from the message, if any.
 func (xf *XSCForm) Operator() (name string, callSign string) {
 	return xf.form.Get(xf.def.OperatorNameField), xf.form.Get(xf.def.OperatorCallField)

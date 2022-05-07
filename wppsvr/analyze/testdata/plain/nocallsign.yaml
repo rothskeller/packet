@@ -1,0 +1,35 @@
+# Message has no call sign.
+
+# Message being analyzed:
+message: |
+  From: steve@w1xsc.ampr.org
+  To: pkttue@w4xsc.ampr.org
+  Date: Sun, 09 Jan 2022 20:00:00 -0800
+  Subject: STR-100P_R_Practice
+
+  Test message
+
+# Analysis that should be stored:
+stored:
+  deliveryTime: 2022-01-09T20:00:00-08:00
+  fromAddress: steve@w1xsc.ampr.org
+  fromBBS: W1XSC
+  subject: STR-100P_R_Practice
+  problems:
+    - PracticeSubjectFormat
+    - NoCallSign
+
+# Messages that should be sent in response:
+responses:
+  - localID: TUE-101P
+    to: steve@w1xsc.ampr.org
+    subject: 'DELIVERED: STR-100P_R_Practice'
+    bodyREs:
+      - ^!LMI!TUE-100P!DR!01/11/2022 20:00:01\n
+  - localID: TUE-102P
+    to: steve@w1xsc.ampr.org
+    subject: TUE-102P_R_Issues with packet practice message
+    bodyREs:
+      - will not be counted
+      - no call sign
+      - Weekly SPECS/SVECS Packet Practice

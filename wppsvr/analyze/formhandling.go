@@ -40,13 +40,13 @@ func (a *Analysis) checkFormHandlingOrder() {
 	if f, ok := a.xsc.(interface {
 		HandlingOrder() (string, xscmsg.HandlingOrder)
 	}); ok {
-		if _, have := f.HandlingOrder(); have != want {
+		if havestr, have := f.HandlingOrder(); have != want {
 			a.problems = append(a.problems, &problem{
 				code: ProblemFormHandlingOrder,
 				response: fmt.Sprintf(`
 This message has handling order %s.  According to the SCCo ARES/RACES
 Recommended Form Routing document, it should have handling order %s.
-`, f.HandlingOrder, want.String()),
+`, havestr, want.String()),
 				references: refFormRouting,
 			})
 		}

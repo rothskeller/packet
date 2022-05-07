@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"strings"
 
+	"steve.rothskeller.net/packet/pktmsg"
 	"steve.rothskeller.net/packet/wppsvr/config"
 	"steve.rothskeller.net/packet/xscmsg"
 )
@@ -46,9 +47,9 @@ func (a *Analysis) checkSubjectLine() {
 				code: ProblemFormSubject,
 				response: fmt.Sprintf(`
 This message has
-	Subject: %s
+    Subject: %s
 but, based on the contents of the form, it should have
-	Subject: %s
+    Subject: %s
 PackItForms automatically generates the Subject line from the form contents; it
 should not be overridden manually.
 `, have, want),
@@ -98,6 +99,9 @@ The valid codes are "I" for Immediate, "P" for Priority, and "R" for Routine.
 			if strings.EqualFold(xscsubj.FormTag, "Practice") {
 				a.problems = append(a.problems, problemSubjectFormat(`
 Note that there is no underline after the word "Practice".`))
+			} else if pktmsg.IsForm(a.msg.Body) {
+				// It's a corrupt form.  That gets reported
+				// elsewhere, no need to pile on here.
 			} else {
 				a.problems = append(a.problems, problemSubjectFormat(`
 Note that there is no form name between the handling order and the word

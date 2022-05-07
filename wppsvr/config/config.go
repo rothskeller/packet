@@ -122,10 +122,17 @@ func Read() (err error) {
 	if !newconfig.Validate() {
 		return errors.New("invalid configuration data")
 	}
-	mutex.Lock()
-	config = &newconfig
-	mutex.Unlock()
+	SetConfig(&newconfig)
 	return nil
+}
+
+// SetConfig sets the configuration that will be returned by subsequent calls to
+// Get.  It should not be called by production code; it is intended for testing
+// only.
+func SetConfig(newconfig *Config) {
+	mutex.Lock()
+	config = newconfig
+	mutex.Unlock()
 }
 
 // applySessionDefaults applies defaults from the SessionDefaults section to all
