@@ -28,7 +28,7 @@ var (
 
 // ValidateBoolean verifies that the value is a Boolean (i.e., checkbox in the
 // SCCoPIFO HTML).
-func ValidateBoolean(_ *XSCForm, fd *FieldDefinition, value string) (newval, problem string) {
+func ValidateBoolean(_ *XSCForm, fd *FieldDefinition, value string, _ bool) (newval, problem string) {
 	switch strings.ToLower(value) {
 	case "", "f", "false", "n", "no":
 		return "", ""
@@ -40,19 +40,22 @@ func ValidateBoolean(_ *XSCForm, fd *FieldDefinition, value string) (newval, pro
 }
 
 // ValidateCallSign verifies that the value is an FCC call sign.
-func ValidateCallSign(_ *XSCForm, fd *FieldDefinition, value string) (newval, problem string) {
+func ValidateCallSign(_ *XSCForm, fd *FieldDefinition, value string, strict bool) (newval, problem string) {
 	if value == "" {
 		return value, ""
 	}
 	if !callSignRE.MatchString(value) {
 		return value, fmt.Sprintf("%q is not a valid call sign for field %q", value, fd.Tag)
 	}
+	if strict {
+		return value, ""
+	}
 	return strings.ToUpper(value), ""
 }
 
 // ValidateCardinalNumber verifies that the value is a cardinal number (i.e.,
 // non-negative integer).
-func ValidateCardinalNumber(_ *XSCForm, fd *FieldDefinition, value string) (newval, problem string) {
+func ValidateCardinalNumber(_ *XSCForm, fd *FieldDefinition, value string, _ bool) (newval, problem string) {
 	if value != "" && !cardinalNumberRE.MatchString(value) {
 		return value, fmt.Sprintf("%q is not a valid integer value for field %q", value, fd.Tag)
 	}
@@ -60,7 +63,7 @@ func ValidateCardinalNumber(_ *XSCForm, fd *FieldDefinition, value string) (newv
 }
 
 // ValidateDate verifies that the value is a date.
-func ValidateDate(_ *XSCForm, fd *FieldDefinition, value string) (newval, problem string) {
+func ValidateDate(_ *XSCForm, fd *FieldDefinition, value string, _ bool) (newval, problem string) {
 	if t, err := time.ParseInLocation("1/2/2006", value, time.Local); err == nil {
 		value = t.Format("01/02/2006")
 	}
@@ -71,7 +74,7 @@ func ValidateDate(_ *XSCForm, fd *FieldDefinition, value string) (newval, proble
 }
 
 // ValidateFrequency verifies that the value is a frequency.
-func ValidateFrequency(_ *XSCForm, fd *FieldDefinition, value string) (newval, problem string) {
+func ValidateFrequency(_ *XSCForm, fd *FieldDefinition, value string, _ bool) (newval, problem string) {
 	if value != "" && !frequencyRE.MatchString(value) {
 		return value, fmt.Sprintf("%q is not a valid frequency value for field %q", value, fd.Tag)
 	}
@@ -79,7 +82,7 @@ func ValidateFrequency(_ *XSCForm, fd *FieldDefinition, value string) (newval, p
 }
 
 // ValidateFrequencyOffset verifies that the value is a frequency offset.
-func ValidateFrequencyOffset(_ *XSCForm, fd *FieldDefinition, value string) (newval, problem string) {
+func ValidateFrequencyOffset(_ *XSCForm, fd *FieldDefinition, value string, _ bool) (newval, problem string) {
 	if value != "" && !frequencyOffsetRE.MatchString(value) {
 		return value, fmt.Sprintf("%q is not a valid frequency offset value for field %q", value, fd.Tag)
 	}
@@ -87,7 +90,7 @@ func ValidateFrequencyOffset(_ *XSCForm, fd *FieldDefinition, value string) (new
 }
 
 // ValidateMessageNumber verifies that the value is a message number.
-func ValidateMessageNumber(_ *XSCForm, fd *FieldDefinition, value string) (newval, problem string) {
+func ValidateMessageNumber(_ *XSCForm, fd *FieldDefinition, value string, _ bool) (newval, problem string) {
 	if value == "" {
 		return value, ""
 	}
@@ -99,7 +102,7 @@ func ValidateMessageNumber(_ *XSCForm, fd *FieldDefinition, value string) (newva
 }
 
 // ValidatePhoneNumber verifies that the value is a phone number.
-func ValidatePhoneNumber(_ *XSCForm, fd *FieldDefinition, value string) (newval, problem string) {
+func ValidatePhoneNumber(_ *XSCForm, fd *FieldDefinition, value string, _ bool) (newval, problem string) {
 	if value != "" && !phoneNumberRE.MatchString(value) {
 		return value, fmt.Sprintf("%q is not a valid phone number value for field %q", value, fd.Tag)
 	}
@@ -107,7 +110,7 @@ func ValidatePhoneNumber(_ *XSCForm, fd *FieldDefinition, value string) (newval,
 }
 
 // ValidateRealNumber verifies that the value is a real number.
-func ValidateRealNumber(_ *XSCForm, fd *FieldDefinition, value string) (newval, problem string) {
+func ValidateRealNumber(_ *XSCForm, fd *FieldDefinition, value string, _ bool) (newval, problem string) {
 	if value != "" && !realNumberRE.MatchString(value) {
 		return value, fmt.Sprintf("%q is not a valid number value for field %q", value, fd.Tag)
 	}
@@ -115,7 +118,7 @@ func ValidateRealNumber(_ *XSCForm, fd *FieldDefinition, value string) (newval, 
 }
 
 // ValidateRequired verifies that the value not empty.
-func ValidateRequired(_ *XSCForm, fd *FieldDefinition, value string) (newval, problem string) {
+func ValidateRequired(_ *XSCForm, fd *FieldDefinition, value string, _ bool) (newval, problem string) {
 	if value == "" {
 		return value, fmt.Sprintf("field %q needs a value", fd.Tag)
 	}
@@ -124,16 +127,16 @@ func ValidateRequired(_ *XSCForm, fd *FieldDefinition, value string) (newval, pr
 
 // ValidateRequiredForComplete verifies that, if the form type is Complete, the
 // value is not empty.
-func ValidateRequiredForComplete(xf *XSCForm, fd *FieldDefinition, value string) (newval, problem string) {
+func ValidateRequiredForComplete(xf *XSCForm, fd *FieldDefinition, value string, strict bool) (newval, problem string) {
 	if xf.form.Get("19.") == "Complete" {
-		return ValidateRequired(xf, fd, value)
+		return ValidateRequired(xf, fd, value, strict)
 	}
 	return value, ""
 }
 
 // ValidateSelect verifies that the value, if not empty, is one of the allowed
 // choices.
-func ValidateSelect(_ *XSCForm, fd *FieldDefinition, value string) (newval, problem string) {
+func ValidateSelect(_ *XSCForm, fd *FieldDefinition, value string, _ bool) (newval, problem string) {
 	var prefixOf string
 
 	if value == "" {
@@ -158,7 +161,7 @@ func ValidateSelect(_ *XSCForm, fd *FieldDefinition, value string) (newval, prob
 }
 
 // ValidateTime verifies that the value is a time.
-func ValidateTime(_ *XSCForm, fd *FieldDefinition, value string) (newval, problem string) {
+func ValidateTime(_ *XSCForm, fd *FieldDefinition, value string, _ bool) (newval, problem string) {
 	if value != "" && !timeRE.MatchString(value) {
 		return value, fmt.Sprintf("%q is not a valid time value for field %q", value, fd.Tag)
 	}

@@ -43,8 +43,9 @@ type FieldDefinition struct {
 // It takes the form, field definition, and value to be validated as input.  It
 // returns the value — which may have been corrected — and a problem string.
 // The problem string will describe any uncorrectable issue and will otherwise
-// be empty.
-type ValidateFunc func(xf *XSCForm, fd *FieldDefinition, value string) (newval, problem string)
+// be empty.  Note that any correction of the value will be considered an error
+// when validating in strict mode.
+type ValidateFunc func(xf *XSCForm, fd *FieldDefinition, value string, strict bool) (newval, problem string)
 
 // CreateForm creates a new XSCForm with the specified form definition, filling
 // in the defaults.
@@ -103,7 +104,7 @@ func (xf *XSCForm) Validate(strict bool) (problems []string) {
 		}
 		value := xf.form.Get(fd.Tag)
 		for _, validation := range fd.Validations {
-			if newval, problem := validation(xf, fd, value); problem != "" {
+			if newval, problem := validation(xf, fd, value, strict); problem != "" {
 				problems = append(problems, problem)
 			} else if newval != value && strict {
 				problems = append(problems, fmt.Sprintf("%q is not a valid value for field %q", value, fd.Tag))

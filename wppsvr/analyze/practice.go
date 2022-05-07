@@ -5,6 +5,7 @@ import (
 	"strings"
 	"time"
 
+	"steve.rothskeller.net/packet/pktmsg"
 	"steve.rothskeller.net/packet/wppsvr/config"
 	"steve.rothskeller.net/packet/xscmsg"
 	"steve.rothskeller.net/packet/xscmsg/eoc213rr"
@@ -66,7 +67,11 @@ func (a *Analysis) checkPracticeSubject() {
 	// EOC-213RR forms.  All other known form types have different subject
 	// lines, and unknown form types get an error about that instead.
 	switch a.xsc.(type) {
-	case *config.PlainTextMessage, *ics213.Form, *eoc213rr.Form:
+	case *config.PlainTextMessage:
+		if pktmsg.IsForm(a.msg.Body) { // corrupt form
+			return
+		}
+	case *ics213.Form, *eoc213rr.Form:
 		break
 	default:
 		return

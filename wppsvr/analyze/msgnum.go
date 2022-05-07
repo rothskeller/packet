@@ -25,6 +25,11 @@ func (a *Analysis) checkMessageNumber() {
 	if xsc, ok := a.xsc.(interface{ OriginNumber() string }); ok {
 		// It's a form, so check the number in the form.
 		msgnum = xsc.OriginNumber()
+		// But don't check it if the form failed to validate; the
+		// validation errors probably already reported it.
+		if xsc, ok := a.xsc.(interface{ Validate(bool) []string }); ok && len(xsc.Validate(true)) != 0 {
+			return
+		}
 	} else if xscsubj := xscmsg.ParseSubject(a.msg.Header.Get("Subject")); xscsubj != nil {
 		// It's not a form, but we were able to parse a message number
 		// out of the subject line, so check that.
