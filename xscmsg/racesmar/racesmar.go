@@ -7,6 +7,11 @@ import (
 )
 
 func init() {
+	for _, fd := range formDefinitions {
+		fd.Name = "RACES mutual aid request form"
+		fd.Article = "a"
+		fd.Comments["7a."] = "RACES Chief Radio Officer, RACES Unit, Operations Section, ..."
+	}
 	xscmsg.RegisterType(Create, Recognize)
 }
 

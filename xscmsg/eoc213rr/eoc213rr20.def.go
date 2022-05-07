@@ -105,7 +105,7 @@ var eoc213rr20 = &xscform.FormDefinition{
 		},
 		{
 			Tag: "31.",
-			Values: []string{"", "Now", "High", "Medium", "Low"},
+			Values: []string{"Now", "High", "Medium", "Low"},
 			Validations: []xscform.ValidateFunc{xscform.ValidateRequired, xscform.ValidateSelect},
 		},
 		{
@@ -230,7 +230,7 @@ var eoc213rr20 = &xscform.FormDefinition{
 		"28.": "required",
 		"29.": "required",
 		"30.": "required",
-		"31.": "required: , Now, High, Medium, Low",
+		"31.": "required: Now, High, Medium, Low",
 		"33.": "required",
 		"34.": "required",
 		"36a.": "boolean",

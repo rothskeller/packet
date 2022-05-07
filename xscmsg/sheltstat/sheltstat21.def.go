@@ -76,12 +76,12 @@ var sheltstat21 = &xscform.FormDefinition{
 		},
 		{
 			Tag: "30.",
-			Values: []string{"", "Type 1", "Type 2", "Type 3", "Type 4"},
+			Values: []string{"Type 1", "Type 2", "Type 3", "Type 4"},
 			Validations: []xscform.ValidateFunc{xscform.ValidateRequiredForComplete, xscform.ValidateSelect},
 		},
 		{
 			Tag: "31.",
-			Values: []string{"", "Open", "Closed", "Full"},
+			Values: []string{"Open", "Closed", "Full"},
 			Validations: []xscform.ValidateFunc{xscform.ValidateRequiredForComplete, xscform.ValidateSelect},
 		},
 		{
@@ -90,7 +90,7 @@ var sheltstat21 = &xscform.FormDefinition{
 		},
 		{
 			Tag: "33b.",
-			Values: []string{"", "Campbell", "Cupertino", "Gilroy", "Los Altos", "Los Altos Hills", "Los Gatos", "Milpitas", "Monte Sereno", "Morgan Hill", "Mountain View", "Palo Alto", "San Jose", "Santa Clara", "Saratoga", "Sunnyvale", "Unincorporated"},
+			Values: []string{"Campbell", "Cupertino", "Gilroy", "Los Altos", "Los Altos Hills", "Los Gatos", "Milpitas", "Monte Sereno", "Morgan Hill", "Mountain View", "Palo Alto", "San Jose", "Santa Clara", "Saratoga", "Sunnyvale", "Unincorporated"},
 			Validations: []xscform.ValidateFunc{xscform.ValidateRequiredForComplete, xscform.ValidateSelect},
 		},
 		{
@@ -124,17 +124,17 @@ var sheltstat21 = &xscform.FormDefinition{
 		},
 		{
 			Tag: "43a.",
-			Values: []string{"", "checked", "false"},
+			Values: []string{"checked", "false"},
 			Validations: []xscform.ValidateFunc{xscform.ValidateSelect},
 		},
 		{
 			Tag: "43b.",
-			Values: []string{"", "checked", "false"},
+			Values: []string{"checked", "false"},
 			Validations: []xscform.ValidateFunc{xscform.ValidateSelect},
 		},
 		{
 			Tag: "43c.",
-			Values: []string{"", "checked", "false"},
+			Values: []string{"checked", "false"},
 			Validations: []xscform.ValidateFunc{xscform.ValidateSelect},
 		},
 		{
@@ -148,7 +148,7 @@ var sheltstat21 = &xscform.FormDefinition{
 		},
 		{
 			Tag: "50a.",
-			Values: []string{"", "American Red Cross", "Private", "Community", "Government", "Other"},
+			Values: []string{"American Red Cross", "Private", "Community", "Government", "Other"},
 			Validations: []xscform.ValidateFunc{xscform.ValidateRequiredForComplete, xscform.ValidateSelect},
 		},
 		{
@@ -275,21 +275,21 @@ var sheltstat21 = &xscform.FormDefinition{
 		"19.": "required: Update, Complete",
 		"1a.": "required date",
 		"1b.": "required time",
-		"30.": "required-for-complete: , Type 1, Type 2, Type 3, Type 4",
-		"31.": "required-for-complete: , Open, Closed, Full",
+		"30.": "required-for-complete: Type 1, Type 2, Type 3, Type 4",
+		"31.": "required-for-complete: Open, Closed, Full",
 		"32.": "required",
 		"33a.": "required-for-complete",
-		"33b.": "required-for-complete: , Campbell, Cupertino, Gilroy, Los Altos, Los Altos Hills, Los Gatos, Milpitas, Monte Sereno, Morgan Hill, Mountain View, Palo Alto, San Jose, Santa Clara, Saratoga, Sunnyvale, Unincorporated",
+		"33b.": "required-for-complete: Campbell, Cupertino, Gilroy, Los Altos, Los Altos Hills, Los Gatos, Milpitas, Monte Sereno, Morgan Hill, Mountain View, Palo Alto, San Jose, Santa Clara, Saratoga, Sunnyvale, Unincorporated",
 		"33c.": "required-for-complete",
 		"37a.": "real-number",
 		"37b.": "real-number",
 		"40a.": "cardinal-number required-for-complete",
 		"40b.": "cardinal-number required-for-complete",
-		"43a.": ", checked, false",
-		"43b.": ", checked, false",
-		"43c.": ", checked, false",
+		"43a.": "checked, false",
+		"43b.": "checked, false",
+		"43c.": "checked, false",
 		"5.": "required: IMMEDIATE, PRIORITY, ROUTINE",
-		"50a.": "required-for-complete: , American Red Cross, Private, Community, Government, Other",
+		"50a.": "required-for-complete: American Red Cross, Private, Community, Government, Other",
 		"51a.": "required-for-complete",
 		"51b.": "phone-number required-for-complete",
 		"52b.": "phone-number",

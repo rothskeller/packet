@@ -72,7 +72,7 @@ var jurisstat20 = &xscform.FormDefinition{
 		},
 		{
 			Tag: "21.",
-			Values: []string{"", "Campbell", "Cupertino", "Gilroy", "Los Altos", "Los Altos Hills", "Los Gatos", "Milpitas", "Monte Sereno", "Morgan Hill", "Mountain View", "Palo Alto", "San Jose", "Santa Clara", "Saratoga", "Sunnyvale", "Unincorporated"},
+			Values: []string{"Campbell", "Cupertino", "Gilroy", "Los Altos", "Los Altos Hills", "Los Gatos", "Milpitas", "Monte Sereno", "Morgan Hill", "Mountain View", "Palo Alto", "San Jose", "Santa Clara", "Saratoga", "Sunnyvale", "Unincorporated"},
 			Validations: []xscform.ValidateFunc{xscform.ValidateRequired, xscform.ValidateSelect},
 		},
 		{
@@ -100,7 +100,7 @@ var jurisstat20 = &xscform.FormDefinition{
 		},
 		{
 			Tag: "29.",
-			Values: []string{"", "Unknown", "Open", "Closed"},
+			Values: []string{"Unknown", "Open", "Closed"},
 			Validations: []xscform.ValidateFunc{xscform.ValidateRequiredForComplete, xscform.ValidateSelect},
 		},
 		{
@@ -121,12 +121,12 @@ var jurisstat20 = &xscform.FormDefinition{
 		},
 		{
 			Tag: "34.",
-			Values: []string{"", "Unknown", "Yes", "No"},
+			Values: []string{"Unknown", "Yes", "No"},
 			Validations: []xscform.ValidateFunc{xscform.ValidateRequiredForComplete, xscform.ValidateSelect},
 		},
 		{
 			Tag: "35.",
-			Values: []string{"", "Normal", "Duty Officer", "Monitor", "Partial", "Full"},
+			Values: []string{"Normal", "Duty Officer", "Monitor", "Partial", "Full"},
 			Validations: []xscform.ValidateFunc{xscform.ValidateRequiredForComplete, xscform.ValidateSelect},
 		},
 		{
@@ -147,7 +147,7 @@ var jurisstat20 = &xscform.FormDefinition{
 		},
 		{
 			Tag: "40.",
-			Values: []string{"", "Unknown", "Yes", "No"},
+			Values: []string{"Unknown", "Yes", "No"},
 			Validations: []xscform.ValidateFunc{xscform.ValidateRequiredForComplete, xscform.ValidateSelect},
 		},
 		{
@@ -159,7 +159,7 @@ var jurisstat20 = &xscform.FormDefinition{
 		},
 		{
 			Tag: "41.0.",
-			Values: []string{"", "Unknown", "Normal", "Problem", "Failure", "Delayed", "Closed", "Early Out"},
+			Values: []string{"Unknown", "Normal", "Problem", "Failure", "Delayed", "Closed", "Early Out"},
 			Validations: []xscform.ValidateFunc{xscform.ValidateRequiredForComplete, xscform.ValidateSelect},
 		},
 		{
@@ -167,7 +167,7 @@ var jurisstat20 = &xscform.FormDefinition{
 		},
 		{
 			Tag: "42.0.",
-			Values: []string{"", "Unknown", "Normal", "Problem", "Failure", "Delayed", "Closed", "Early Out"},
+			Values: []string{"Unknown", "Normal", "Problem", "Failure", "Delayed", "Closed", "Early Out"},
 			Validations: []xscform.ValidateFunc{xscform.ValidateRequiredForComplete, xscform.ValidateSelect},
 		},
 		{
@@ -175,7 +175,7 @@ var jurisstat20 = &xscform.FormDefinition{
 		},
 		{
 			Tag: "43.0.",
-			Values: []string{"", "Unknown", "Normal", "Problem", "Failure", "Delayed", "Closed", "Early Out"},
+			Values: []string{"Unknown", "Normal", "Problem", "Failure", "Delayed", "Closed", "Early Out"},
 			Validations: []xscform.ValidateFunc{xscform.ValidateRequiredForComplete, xscform.ValidateSelect},
 		},
 		{
@@ -183,7 +183,7 @@ var jurisstat20 = &xscform.FormDefinition{
 		},
 		{
 			Tag: "44.0.",
-			Values: []string{"", "Unknown", "Normal", "Problem", "Failure", "Delayed", "Closed", "Early Out"},
+			Values: []string{"Unknown", "Normal", "Problem", "Failure", "Delayed", "Closed", "Early Out"},
 			Validations: []xscform.ValidateFunc{xscform.ValidateRequiredForComplete, xscform.ValidateSelect},
 		},
 		{
@@ -191,7 +191,7 @@ var jurisstat20 = &xscform.FormDefinition{
 		},
 		{
 			Tag: "45.0.",
-			Values: []string{"", "Unknown", "Normal", "Problem", "Failure", "Delayed", "Closed", "Early Out"},
+			Values: []string{"Unknown", "Normal", "Problem", "Failure", "Delayed", "Closed", "Early Out"},
 			Validations: []xscform.ValidateFunc{xscform.ValidateRequiredForComplete, xscform.ValidateSelect},
 		},
 		{
@@ -199,7 +199,7 @@ var jurisstat20 = &xscform.FormDefinition{
 		},
 		{
 			Tag: "46.0.",
-			Values: []string{"", "Unknown", "Normal", "Problem", "Failure", "Delayed", "Closed", "Early Out"},
+			Values: []string{"Unknown", "Normal", "Problem", "Failure", "Delayed", "Closed", "Early Out"},
 			Validations: []xscform.ValidateFunc{xscform.ValidateRequiredForComplete, xscform.ValidateSelect},
 		},
 		{
@@ -207,7 +207,7 @@ var jurisstat20 = &xscform.FormDefinition{
 		},
 		{
 			Tag: "47.0.",
-			Values: []string{"", "Unknown", "Normal", "Problem", "Failure", "Delayed", "Closed", "Early Out"},
+			Values: []string{"Unknown", "Normal", "Problem", "Failure", "Delayed", "Closed", "Early Out"},
 			Validations: []xscform.ValidateFunc{xscform.ValidateRequiredForComplete, xscform.ValidateSelect},
 		},
 		{
@@ -215,7 +215,7 @@ var jurisstat20 = &xscform.FormDefinition{
 		},
 		{
 			Tag: "48.0.",
-			Values: []string{"", "Unknown", "Normal", "Problem", "Failure", "Delayed", "Closed", "Early Out"},
+			Values: []string{"Unknown", "Normal", "Problem", "Failure", "Delayed", "Closed", "Early Out"},
 			Validations: []xscform.ValidateFunc{xscform.ValidateRequiredForComplete, xscform.ValidateSelect},
 		},
 		{
@@ -223,7 +223,7 @@ var jurisstat20 = &xscform.FormDefinition{
 		},
 		{
 			Tag: "49.0.",
-			Values: []string{"", "Unknown", "Normal", "Problem", "Failure", "Delayed", "Closed", "Early Out"},
+			Values: []string{"Unknown", "Normal", "Problem", "Failure", "Delayed", "Closed", "Early Out"},
 			Validations: []xscform.ValidateFunc{xscform.ValidateRequiredForComplete, xscform.ValidateSelect},
 		},
 		{
@@ -231,7 +231,7 @@ var jurisstat20 = &xscform.FormDefinition{
 		},
 		{
 			Tag: "50.0.",
-			Values: []string{"", "Unknown", "Normal", "Problem", "Failure", "Delayed", "Closed", "Early Out"},
+			Values: []string{"Unknown", "Normal", "Problem", "Failure", "Delayed", "Closed", "Early Out"},
 			Validations: []xscform.ValidateFunc{xscform.ValidateRequiredForComplete, xscform.ValidateSelect},
 		},
 		{
@@ -239,7 +239,7 @@ var jurisstat20 = &xscform.FormDefinition{
 		},
 		{
 			Tag: "51.0.",
-			Values: []string{"", "Unknown", "Normal", "Problem", "Failure", "Delayed", "Closed", "Early Out"},
+			Values: []string{"Unknown", "Normal", "Problem", "Failure", "Delayed", "Closed", "Early Out"},
 			Validations: []xscform.ValidateFunc{xscform.ValidateRequiredForComplete, xscform.ValidateSelect},
 		},
 		{
@@ -247,7 +247,7 @@ var jurisstat20 = &xscform.FormDefinition{
 		},
 		{
 			Tag: "52.0.",
-			Values: []string{"", "Unknown", "Normal", "Problem", "Failure", "Delayed", "Closed", "Early Out"},
+			Values: []string{"Unknown", "Normal", "Problem", "Failure", "Delayed", "Closed", "Early Out"},
 			Validations: []xscform.ValidateFunc{xscform.ValidateRequiredForComplete, xscform.ValidateSelect},
 		},
 		{
@@ -255,7 +255,7 @@ var jurisstat20 = &xscform.FormDefinition{
 		},
 		{
 			Tag: "53.0.",
-			Values: []string{"", "Unknown", "Normal", "Problem", "Failure", "Delayed", "Closed", "Early Out"},
+			Values: []string{"Unknown", "Normal", "Problem", "Failure", "Delayed", "Closed", "Early Out"},
 			Validations: []xscform.ValidateFunc{xscform.ValidateRequiredForComplete, xscform.ValidateSelect},
 		},
 		{
@@ -263,7 +263,7 @@ var jurisstat20 = &xscform.FormDefinition{
 		},
 		{
 			Tag: "54.0.",
-			Values: []string{"", "Unknown", "Normal", "Problem", "Failure", "Delayed", "Closed", "Early Out"},
+			Values: []string{"Unknown", "Normal", "Problem", "Failure", "Delayed", "Closed", "Early Out"},
 			Validations: []xscform.ValidateFunc{xscform.ValidateRequiredForComplete, xscform.ValidateSelect},
 		},
 		{
@@ -271,7 +271,7 @@ var jurisstat20 = &xscform.FormDefinition{
 		},
 		{
 			Tag: "55.0.",
-			Values: []string{"", "Unknown", "Normal", "Problem", "Failure", "Delayed", "Closed", "Early Out"},
+			Values: []string{"Unknown", "Normal", "Problem", "Failure", "Delayed", "Closed", "Early Out"},
 			Validations: []xscform.ValidateFunc{xscform.ValidateRequiredForComplete, xscform.ValidateSelect},
 		},
 		{
@@ -279,7 +279,7 @@ var jurisstat20 = &xscform.FormDefinition{
 		},
 		{
 			Tag: "56.0.",
-			Values: []string{"", "Unknown", "Normal", "Problem", "Failure", "Delayed", "Closed", "Early Out"},
+			Values: []string{"Unknown", "Normal", "Problem", "Failure", "Delayed", "Closed", "Early Out"},
 			Validations: []xscform.ValidateFunc{xscform.ValidateRequiredForComplete, xscform.ValidateSelect},
 		},
 		{
@@ -378,41 +378,41 @@ var jurisstat20 = &xscform.FormDefinition{
 		"19.": "required: Update, Complete",
 		"1a.": "required date",
 		"1b.": "required time",
-		"21.": "required: , Campbell, Cupertino, Gilroy, Los Altos, Los Altos Hills, Los Gatos, Milpitas, Monte Sereno, Morgan Hill, Mountain View, Palo Alto, San Jose, Santa Clara, Saratoga, Sunnyvale, Unincorporated",
+		"21.": "required: Campbell, Cupertino, Gilroy, Los Altos, Los Altos Hills, Los Gatos, Milpitas, Monte Sereno, Morgan Hill, Mountain View, Palo Alto, San Jose, Santa Clara, Saratoga, Sunnyvale, Unincorporated",
 		"23.": "phone-number required-for-complete",
 		"24.": "phone-number",
 		"25.": "required-for-complete",
 		"26.": "phone-number required-for-complete",
 		"28.": "phone-number",
-		"29.": "required-for-complete: , Unknown, Open, Closed",
+		"29.": "required-for-complete: Unknown, Open, Closed",
 		"30.": "date",
 		"31.": "time",
 		"32.": "date",
 		"33.": "time",
-		"34.": "required-for-complete: , Unknown, Yes, No",
-		"35.": "required-for-complete: , Normal, Duty Officer, Monitor, Partial, Full",
+		"34.": "required-for-complete: Unknown, Yes, No",
+		"35.": "required-for-complete: Normal, Duty Officer, Monitor, Partial, Full",
 		"36.": "date",
 		"37.": "time",
 		"38.": "date",
 		"39.": "time",
-		"40.": "required-for-complete: , Unknown, Yes, No",
-		"41.0.": "required-for-complete: , Unknown, Normal, Problem, Failure, Delayed, Closed, Early Out",
-		"42.0.": "required-for-complete: , Unknown, Normal, Problem, Failure, Delayed, Closed, Early Out",
-		"43.0.": "required-for-complete: , Unknown, Normal, Problem, Failure, Delayed, Closed, Early Out",
-		"44.0.": "required-for-complete: , Unknown, Normal, Problem, Failure, Delayed, Closed, Early Out",
-		"45.0.": "required-for-complete: , Unknown, Normal, Problem, Failure, Delayed, Closed, Early Out",
-		"46.0.": "required-for-complete: , Unknown, Normal, Problem, Failure, Delayed, Closed, Early Out",
-		"47.0.": "required-for-complete: , Unknown, Normal, Problem, Failure, Delayed, Closed, Early Out",
-		"48.0.": "required-for-complete: , Unknown, Normal, Problem, Failure, Delayed, Closed, Early Out",
-		"49.0.": "required-for-complete: , Unknown, Normal, Problem, Failure, Delayed, Closed, Early Out",
+		"40.": "required-for-complete: Unknown, Yes, No",
+		"41.0.": "required-for-complete: Unknown, Normal, Problem, Failure, Delayed, Closed, Early Out",
+		"42.0.": "required-for-complete: Unknown, Normal, Problem, Failure, Delayed, Closed, Early Out",
+		"43.0.": "required-for-complete: Unknown, Normal, Problem, Failure, Delayed, Closed, Early Out",
+		"44.0.": "required-for-complete: Unknown, Normal, Problem, Failure, Delayed, Closed, Early Out",
+		"45.0.": "required-for-complete: Unknown, Normal, Problem, Failure, Delayed, Closed, Early Out",
+		"46.0.": "required-for-complete: Unknown, Normal, Problem, Failure, Delayed, Closed, Early Out",
+		"47.0.": "required-for-complete: Unknown, Normal, Problem, Failure, Delayed, Closed, Early Out",
+		"48.0.": "required-for-complete: Unknown, Normal, Problem, Failure, Delayed, Closed, Early Out",
+		"49.0.": "required-for-complete: Unknown, Normal, Problem, Failure, Delayed, Closed, Early Out",
 		"5.": "required: IMMEDIATE, PRIORITY, ROUTINE",
-		"50.0.": "required-for-complete: , Unknown, Normal, Problem, Failure, Delayed, Closed, Early Out",
-		"51.0.": "required-for-complete: , Unknown, Normal, Problem, Failure, Delayed, Closed, Early Out",
-		"52.0.": "required-for-complete: , Unknown, Normal, Problem, Failure, Delayed, Closed, Early Out",
-		"53.0.": "required-for-complete: , Unknown, Normal, Problem, Failure, Delayed, Closed, Early Out",
-		"54.0.": "required-for-complete: , Unknown, Normal, Problem, Failure, Delayed, Closed, Early Out",
-		"55.0.": "required-for-complete: , Unknown, Normal, Problem, Failure, Delayed, Closed, Early Out",
-		"56.0.": "required-for-complete: , Unknown, Normal, Problem, Failure, Delayed, Closed, Early Out",
+		"50.0.": "required-for-complete: Unknown, Normal, Problem, Failure, Delayed, Closed, Early Out",
+		"51.0.": "required-for-complete: Unknown, Normal, Problem, Failure, Delayed, Closed, Early Out",
+		"52.0.": "required-for-complete: Unknown, Normal, Problem, Failure, Delayed, Closed, Early Out",
+		"53.0.": "required-for-complete: Unknown, Normal, Problem, Failure, Delayed, Closed, Early Out",
+		"54.0.": "required-for-complete: Unknown, Normal, Problem, Failure, Delayed, Closed, Early Out",
+		"55.0.": "required-for-complete: Unknown, Normal, Problem, Failure, Delayed, Closed, Early Out",
+		"56.0.": "required-for-complete: Unknown, Normal, Problem, Failure, Delayed, Closed, Early Out",
 		"7a.": "required",
 		"7b.": "required",
 		"8a.": "required",

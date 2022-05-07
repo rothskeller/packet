@@ -33,10 +33,11 @@ type FormDefinition struct {
 
 // A FieldDefinition is the definition of a single field in a FormDefinition.
 type FieldDefinition struct {
-	Tag         string
-	Values      []string
-	Validations []ValidateFunc
-	Default     string
+	Tag               string
+	Values            []string
+	Validations       []ValidateFunc
+	Default           string
+	ComputedFromField string
 }
 
 // A ValidateFunc is a function that validates the value of a field in a form.
@@ -240,3 +241,13 @@ func (xf *XSCForm) Get(tag string) string { return xf.form.Get(tag) }
 
 // Set sets the value of a form field.
 func (xf *XSCForm) Set(tag, value string) { xf.form.Set(tag, value) }
+
+// FindField finds the specified field definition in the form definition.
+func (fd *FormDefinition) FindField(tag string) *FieldDefinition {
+	for _, ff := range fd.Fields {
+		if ff.Tag == tag {
+			return ff
+		}
+	}
+	return nil
+}

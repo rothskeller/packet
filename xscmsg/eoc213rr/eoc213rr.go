@@ -7,6 +7,10 @@ import (
 )
 
 func init() {
+	for _, fd := range formDefinitions {
+		fd.Name = "EOC-213RR resource request form"
+		fd.Article = "an"
+	}
 	xscmsg.RegisterType(Create, Recognize)
 }
 

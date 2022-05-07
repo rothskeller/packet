@@ -62,6 +62,23 @@ func ValidateCardinalNumber(_ *XSCForm, fd *FieldDefinition, value string, _ boo
 	return value, ""
 }
 
+// ValidateComputedChoice handles a common pattern where the value of the target
+// field is computed based on the value of another field.  Specifically, if the
+// value of the other field is one of the allowed values for this field, it is
+// kept, and otherwise, the last allowed value of this field is used.  This
+// "validation" is used for fields that are implemented in the PackItForms HTML
+// with a combo box and a "compatible_values" function call.
+func ValidateComputedChoice(f *XSCForm, fd *FieldDefinition, value string, _ bool) (newval, _ string) {
+	other := f.Get(fd.ComputedFromField)
+	other, _ = ValidateSelect(f, fd, other, false)
+	for _, allowed := range fd.Values {
+		if other == allowed {
+			return other, ""
+		}
+	}
+	return fd.Values[len(fd.Values)-1], ""
+}
+
 // ValidateDate verifies that the value is a date.
 func ValidateDate(_ *XSCForm, fd *FieldDefinition, value string, _ bool) (newval, problem string) {
 	if t, err := time.ParseInLocation("1/2/2006", value, time.Local); err == nil {

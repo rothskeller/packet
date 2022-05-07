@@ -339,7 +339,9 @@ func (fd *formDefinition) parseInput(node *html.Node) (err error) {
 			field.Default = value
 		}
 	case "radio":
-		field.Values = append(field.Values, value)
+		if value != "" {
+			field.Values = append(field.Values, value)
+		}
 		if checked {
 			field.Default = value
 		}
@@ -410,7 +412,9 @@ OPTION:
 			case "disabled":
 				continue OPTION
 			case "value":
-				field.Values = append(field.Values, a.Val)
+				if a.Val != "" {
+					field.Values = append(field.Values, a.Val)
+				}
 			}
 		}
 	}

@@ -7,11 +7,11 @@ import (
 )
 
 func init() {
-	// Clean up an ugly annotation in the PIFO HTML encoding.
-	ics213v20.Annotations["7."] = "to-ics-position"
-	ics213v21.Annotations["7."] = "to-ics-position"
-	ics213v22.Annotations["7."] = "to-ics-position"
-	// Register the type.
+	for _, fd := range formDefinitions {
+		fd.Name = "ICS-213 general message form"
+		fd.Article = "an"
+		fd.Annotations["7."] = "to-ics-position"
+	}
 	xscmsg.RegisterType(Create, Recognize)
 }
 
