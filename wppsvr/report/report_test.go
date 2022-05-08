@@ -4,8 +4,18 @@ import (
 	"testing"
 	"time"
 
+	"steve.rothskeller.net/packet/wppsvr/config"
 	"steve.rothskeller.net/packet/wppsvr/store"
+	_ "steve.rothskeller.net/packet/xscmsg/all"
 )
+
+var fakeConfig = config.Config{
+	ProblemActionFlags: map[string]config.Action{
+		"ToBBSDown":                   config.ActionDontCount | config.ActionReport,
+		"SubjectFormat":               config.ActionError | config.ActionReport,
+		"MultipleMessagesFromAddress": config.ActionReport,
+	},
+}
 
 var fakeSession1 = store.Session{
 	ID:       1,
@@ -100,7 +110,7 @@ func (fakeStore) NextMessageID(string) string  { panic("not implemented") }
 const expected = `====  SCCo ARES/RACES Packet Practice Report  ====
 ==== for SVECS Net on Tuesday, April 19, 2022 ====
 
-This practice session expected an OA Municipal Status form or plain text
+This practice session expected an OA jurisdiction status form or plain text
 message sent to PKTTUE at W2XSC, between 00:00 on Wednesday, April 13 and
 20:00 on Tuesday, April 19, 2022.  W3XSC was simulated "down" for this
 practice session.
@@ -115,18 +125,19 @@ Messages from:
   W3XSC:            1  (simulated down)
 
 ---- The following messages were counted in this report: ----
+aa6bt@w3xsc.ampr.org           BLAH
+  ^ message to incorrect BBS (simulated down)
+  ^ incorrect subject line format
 kc6rsc@w1xsc.ampr.org          STR-100P_I_MuniStat_Sunnyvale
   ^ multiple messages from this address
-aa6bt@w3xsc.ampr.org           BLAH
-  ^ message to BBS simulated "down"
-  ^ incorrect subject line format
 
-This report was generated on Tuesday, April 19, 2022 at 20:00.
+This report was generated on Tuesday, April 19, 2022 at 20:00 by wppsvr.
 `
 
 func TestReport(t *testing.T) {
 	now = func() time.Time { return time.Date(2022, 4, 19, 20, 0, 1, 0, time.Local) }
-	actual := Generate(fakeStore{}, &fakeSession3)
+	config.SetConfig(&fakeConfig)
+	actual := Generate(fakeStore{}, &fakeSession3).RenderPlainText()
 	if actual != expected {
 		t.Errorf("incorrect report output:\n%s", actual)
 	}
