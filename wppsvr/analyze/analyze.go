@@ -187,10 +187,8 @@ func (a *Analysis) Commit(st astore) {
 	m.Subject = a.msg.Header.Get("Subject")
 	m.DeliveryTime = a.msg.Date()
 	m.FromBBS = a.msg.FromBBS()
-	m.Valid, m.Correct = true, true
 	for _, p := range a.problems {
-		m.Valid = m.Valid && actions[p.code]&config.ActionDontCount == 0
-		m.Correct = m.Correct && m.Valid && actions[p.code]&config.ActionError == 0
+		m.Actions |= actions[p.code]
 		m.Problems = append(m.Problems, p.code)
 	}
 	st.SaveMessage(&m)

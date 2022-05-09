@@ -14,3 +14,4 @@ message: |
 stored:
   problems:
     - MessageCorrupt
+  actions: 10

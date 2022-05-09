@@ -17,5 +17,4 @@ stored:
   subject: 'DELIVERED: STR-100P_R_Practice KC6RSC, Steve, SNY, 2022-01-11'
   problems:
     - DeliveryReceipt
-  valid: true
-  correct: true
+  actions: 16

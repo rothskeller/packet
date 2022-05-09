@@ -40,19 +40,9 @@ func Generate(st Store, session *store.Session) *Report {
 // removeDroppedMessages removes from the messages list any messages that
 // should be excluded from the report (e.g., delivery receipts).
 func removeDroppedMessages(messages []*store.Message) []*store.Message {
-	var actions = config.Get().ProblemActionFlags
-
 	j := 0
 	for _, m := range messages {
-		var dropped bool
-
-		for _, p := range m.Problems {
-			if actions[p]&config.ActionDropMsg != 0 {
-				dropped = true
-				break
-			}
-		}
-		if !dropped {
+		if m.Actions&config.ActionDropMsg == 0 {
 			messages[j] = m
 			j++
 		}
@@ -138,7 +128,7 @@ func generateStatistics(r *Report, session *store.Session, messages []*store.Mes
 		if m.FromCallSign != "" {
 			r.uniqueCallSigns[m.FromCallSign] = struct{}{}
 		}
-		if m.Correct {
+		if m.Actions&config.ActionError == 0 {
 			r.UniqueAddressesCorrect++
 		}
 	}
@@ -175,7 +165,7 @@ func removeInvalidAndReplaced(messages []*store.Message) (out []*store.Message) 
 	outidx = len(messages)
 	for msgidx = len(messages) - 1; msgidx >= 0; msgidx-- {
 		var m = messages[msgidx]
-		if !m.Valid {
+		if m.Actions&config.ActionDontCount != 0 {
 			continue
 		}
 		if addresses[m.FromAddress] {
@@ -215,11 +205,17 @@ func generateMessages(r *Report, session *store.Session, messages []*store.Messa
 			rm.Subject = m.Subject
 		}
 		for _, p := range m.Problems {
-			if actions[p]&config.ActionReport != 0 {
-				rm.Problems = append(rm.Problems, analyze.ProblemLabel[p])
+			if act, ok := actions[p]; ok {
+				if act&config.ActionReport != 0 {
+					rm.Problems = append(rm.Problems, analyze.ProblemLabel[p])
+				}
+			} else {
+				// Problem was imported from old packet NCO
+				// scripts.
+				rm.Problems = append(rm.Problems, p)
 			}
 		}
-		if m.Valid {
+		if m.Actions&config.ActionDontCount == 0 {
 			r.CountedMessages = append(r.CountedMessages, &rm)
 		} else {
 			r.InvalidMessages = append(r.InvalidMessages, &rm)

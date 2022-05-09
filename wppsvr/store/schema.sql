@@ -13,8 +13,7 @@ CREATE TABLE message (
     tobbs        text     NOT NULL,
     subject      text     NOT NULL,
     problems     text     NOT NULL,
-    valid        boolean  NOT NULL,
-    correct      boolean  NOT NULL
+    actions      integer  NOT NULL
 );
 CREATE INDEX message_session_idx ON message (session);
 

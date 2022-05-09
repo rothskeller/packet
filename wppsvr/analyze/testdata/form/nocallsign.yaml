@@ -42,6 +42,7 @@ stored:
     - FormInvalid
     - PracticeSubjectFormat
     - NoCallSign
+  actions: 15
 
 # Messages that should be sent in response:
 responses:

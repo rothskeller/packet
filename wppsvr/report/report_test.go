@@ -51,12 +51,10 @@ func (fakeStore) GetSessionMessages(sessionID int) []*store.Message {
 	case 1:
 		return []*store.Message{
 			{
-				Valid:        true,
 				FromAddress:  "k6sny@w1xsc.ampr.org",
 				FromCallSign: "K6SNY",
 			},
 			{
-				Valid:        true,
 				FromAddress:  "kc6rsc@w1xsc.ampr.org",
 				FromCallSign: "KC6RSC",
 			},
@@ -64,8 +62,6 @@ func (fakeStore) GetSessionMessages(sessionID int) []*store.Message {
 	case 3:
 		return []*store.Message{
 			{
-				Valid:        true,
-				Correct:      true,
 				FromAddress:  "kc6rsc@w1xsc.ampr.org",
 				FromCallSign: "KC6RSC",
 				FromBBS:      "W1XSC",
@@ -73,8 +69,6 @@ func (fakeStore) GetSessionMessages(sessionID int) []*store.Message {
 				Problems:     nil,
 			},
 			{
-				Valid:        true,
-				Correct:      true,
 				FromAddress:  "kc6rsc@w1xsc.ampr.org",
 				FromCallSign: "KC6RSC",
 				FromBBS:      "W1XSC",
@@ -82,13 +76,12 @@ func (fakeStore) GetSessionMessages(sessionID int) []*store.Message {
 				Problems:     nil,
 			},
 			{
-				Valid:        true,
-				Correct:      false,
 				FromAddress:  "aa6bt@w3xsc.ampr.org",
 				FromCallSign: "AA6BT",
 				FromBBS:      "W3XSC",
 				Subject:      "BLAH",
 				Problems:     []string{"ToBBSDown", "SubjectFormat"},
+				Actions:      config.ActionReport | config.ActionError,
 			},
 		}
 	default:

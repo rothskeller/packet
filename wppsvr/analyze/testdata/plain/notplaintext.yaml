@@ -19,7 +19,7 @@ stored:
   subject: STR-100P_R_Practice KC6RSC, Steve, SNY, 2022-01-11
   problems:
     - MessageNotPlainText
-  valid: true
+  actions: 7
 
 # Messages that should be sent in response:
 responses:

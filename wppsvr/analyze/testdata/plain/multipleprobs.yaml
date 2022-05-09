@@ -20,7 +20,7 @@ stored:
   problems:
     - SubjectHasSeverity
     - PracticeSubjectFormat
-  valid: true
+  actions: 7
 
 # Messages that should be sent in response:
 responses:
