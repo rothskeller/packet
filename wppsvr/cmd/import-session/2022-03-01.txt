@@ -1,0 +1,80 @@
+SCCo ARES/RACES Packet Practice Report For: Tuesday, March 01, 2022.
+
+---------------------- WEEK'S SUMMARY ----------------------
+Week's unique call signs: 51
+----------------------- DAY'S SUMMARY -----------------------
+Totals:
+  All messages:            33 received;  31 (94%) correct. [includes duplicates]
+  Unique "from" addresses: 32 received;  30 (94%) correct. [unique From: addresses]
+  Unique call signs:       31 received;  30 (97%) correct. [31 reported to main net]
+
+Simulated BBS outage: W1XSC
+  1/33 (3%) incorrectly sent FROM this BBS.
+
+Sources:
+  Santa Clara County BBSs: 32
+       1 W1XSC
+       6 W2XSC
+      13 W3XSC
+      12 W4XSC
+
+  Other: 0
+
+
+Most operators who sent a message that is flagged in the list below
+will automatically receive a reply with additional details and suggested
+corrective actions. If your message is flagged, please retrieve the detailed
+reply message from the BBS, email provider, or other service you used to
+submit the weekly packet practice message before requesting assistance.
+
+----------------------- DAY'S DETAILS -----------------------
+
+##     FROM                                       SUBJECT
+_1 k6sw@w2xsc.ampr.org         PEB-687P_R_EOC213RR_Practice K6SW, Pat, San Jose, 2022-03-01
+_2 ai6sl@w3xsc.ampr.org        6SL-783P_R_EOC213RR_Practice AI6SL, Wolfgang, Sunnyvale, 20220301
+_3 w6bg@w4xsc.ampr.org         6BG-560P_R_EOC213RR_Practice W6BG, Max, Cupertino, 2022-02-01
+     ^^^ Duplicate check-in
+_4 kk6fmq@w3xsc.ampr.org       FMQ-599P_R_EOC213RR_Practice KK6FMQ_Grant, PAF, 3/1/2022
+_5 kg6yhs@w3xsc.ampr.org       YHS-234P_R_EOC213RR_Practice KG6YHS, Irene, Palo Alto, 03/01/22
+_6 aj6hm@w4xsc.ampr.org        6HM-703P_P_EOC213RR_Practice AJ6HM, Steve, Saratoga, 03/01/2022
+_7 n6ik@w4xsc.ampr.org         6IK-354P_R_EOC213RR_Practice N6IK, Dick, Cupertino, 1 Mar 2022
+_8 kk6fmq@w2xsc.ampr.org       FMQ-601M_R_EOC213RR_Practice KK6FMQ_Grant, PAF, 3/1/2022
+     ^^^ Message Subject mismatch with Form contents.
+_9 km6lry@w4xsc.ampr.org       LRY-458P_R_EOC213RR_Practice KM6LRY, Les, LG/MS, 03/01/2022
+10 wu6p@w3xsc.ampr.org         U6P-379P_R_EOC213RR_Practice WU6P, Nianfeng, Sunnyvale, 3/1/2022
+11 kc6rsc@w3xsc.ampr.org       STR-2397P_R_EOC213RR_Practice KC6RSC, Steve, SNY, 2022-03-01
+12 kk6ebl@w4xsc.ampr.org       EBL-1279P_R_EOC213RR_Practice KK6EBL, Klaus, LG/MS 02/27/2022
+13 k6gmg@w2xsc.ampr.org        GMG-286P_R_EOC213RR_Practice K6GMG, Gary, Morgan Hill, 1-Mar-2022
+14 kt6jk@w4xsc.ampr.org        6JK-625P_R_EOC213RR_Practice KT6JK, Todd, CUP, 20220301
+15 ke6ppi@w3xsc.ampr.org       PPI-404P_R_EOC213RR_Practice KE6PPI, Roger, Sunnyvale, 02-28-2022
+16 km6mzm@w3xsc.ampr.org       MZM-389P_R_EOC213RR_Practice, KM6MZM, Daniel Tickell, Sunnyvale 03/01/2022
+17 w6jmk@w3xsc.ampr.org        JMK-237P_R_EOC213RR_Practice W6JMK, John, Los Altos, 3/1/2022
+18 af6ot@w3xsc.ampr.org        PJB-1192P_R_EOC213RR_Practice AF6OT, Pat, Palo Alto, 2022-03-01
+19 w6bg@w4xsc.ampr.org         6BG-563P_P_EOC213RR_Practice W6BG, Max, Cupertino, 2022-03-01
+20 km6clk@w1xsc.ampr.org       CLK-615P_R_ICS213_Practice km6clk, Bart, Los Gatos/Monte Sereno, 2-28-22
+     ^^^ From BBS simulated as down.
+21 n9dk@w3xsc.ampr.org         9DK-3131P_R_EOC213RR_Practice N9DK, Dave, MV, 2022-03-01
+22 k6rwy@w4xsc.ampr.org        RWY-2105P_R_EOC213RR_Practice K6RWY, Bob, San Jose, 03/01/22
+23 ag6gx@w4xsc.ampr.org        6GX-4766P_R_EOC213RR_Practice AG6GX, Brian, Cupertino, March 1,2022
+24 k6ces@w2xsc.ampr.org        CES-251P_R_ICS213_Practice K6CES, Chuck, San Jose, 2022-MAR-01
+25 pafdoc@w3xsc.ampr.org       DOC-124P_R_EOC213RR_Practice KK6JLW, Nathan, Palo Alto, 03012022
+26 kg6hi@w3xsc.ampr.org        6HI-1703P_R_EOC213RR_Practice, KG6HI, Jerry, Sunnyvale, 1 Mar 2022
+27 ki6fwb@w2xsc.ampr.org       FWB-550P_R_ICS213_Practice KI6FWB, Frank, San Jose, 03/01/2022
+28 km6iao@w4xsc.ampr.org       IAO-541P_R_EOC213RR_Practice KM6IAO, Paul, Milpitas, 03/01/2022
+29 k6fjc@w3xsc.ampr.org        FJC-638P_R_EOC213RR_Practice K6FJC, Mark, Redwood City, 3/1/2022
+30 xbeeoc@w2xsc.ampr.org       XBE-1343P_P_EOC213RR_Practice N6SBC, Timothy, San Benito County, 03/01/2022
+31 aa6pm@w4xsc.ampr.org        PJM-598P_R_EOC213RR_Practice AA6PM
+32 ke6tim@w4xsc.ampr.org       TIM-223P_R_EOC213RR_Practice KE6TIM, Tim, Milpitas, 03/01/2022
+33 kj6ace@w4xsc.ampr.org       ACE-730P_R_EOC213RR_Practice, KJ6ACE, Don, MLP, 220301
+
+Key:
+D: Duplicate practice message = same call sign via same BBS/address. (not counted)
+F: 'From' BBS simulated as down. (total = 1)
+M: Message Subject mismatch with Form contents.
+
+Practice Message count: 0 plain text messages.
+                        32 SCCoPIFO messages.
+
+This list created by AG6GX, Brian Tanner
+TueChk001.LrnOpst004.CntInit013.MsgWrap005
+.MsgErr005.Rprt017

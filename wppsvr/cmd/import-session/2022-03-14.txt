@@ -1,0 +1,87 @@
+SCCo ARES/RACES Packet Practice Report For: Monday, March 14, 2022.
+
+----------------------- DAY'S SUMMARY -----------------------
+Totals:
+  All messages:            32 received;  32 (100%) correct. [includes duplicates]
+  Unique "from" addresses: 29 received;  29 (100%) correct. [unique From: addresses]
+  Unique call signs:       28 received;  28 (100%) correct. [28 reported to main net]
+
+Simulated BBS outage: W2XSC
+  0/32 (0%) incorrectly sent FROM this BBS.
+  0/32 (0%) incorrectly sent TO this BBS.
+
+Sources:
+  Santa Clara County BBSs: 28
+      10 W1XSC
+       0 W2XSC
+      14 W3XSC
+       4 W4XSC
+
+  Other: 1
+      1 from E-Mail.
+
+
+Most operators who sent a message that is flagged in the list below
+will automatically receive a reply with additional details and suggested
+corrective actions. If your message is flagged, please retrieve the detailed
+reply message from the BBS, email provider, or other service you used to
+submit the weekly packet practice message before requesting assistance.
+
+----------------------- DAY'S DETAILS -----------------------
+
+##     FROM                                     SUBJECT
+_1 k6ott@w4xsc.ampr.org        OTT-612P_R_EOC213RR_Practice K6OTT, Andreas, Sunnyvale, 2022-03-14
+     ^^^ Duplicate check-in
+_2 kf6zsq@w3xsc.ampr.org       ZSQ-5220P_R_EOC213RR_practice, KF6ZSQ, Phil, 03-14-22, Mountain View
+     ^^^ Duplicate check-in
+_3 ke6ppi@w1xsc.ampr.org       PPI-415P_R_EOC213RR_Practice KE6PPI, Roger, Sunnyvale, 03-08-2022
+     ^^^ Duplicate check-in
+_4 ai6sl@w1xsc.ampr.org        6SL-790P_R_EOC213RR_Practice AI6SL, Wolfgang, Sunnyvale, 20220314
+_5 kz6dm@w3xsc.ampr.org        6DM-453P_R_EOC213RR_Practice KZ6DM, Poul, Mountain View, 03/14/2022
+_6 n6crc@w4xsc.ampr.org        CRC-209P_R_EOC213RR_Practice N6CRC, Chris, Campbell, 03-14-2022
+_7 kg6tmi@w3xsc.ampr.org       TMI-054P_R_EOC213RR_Practice KG6TMI, Patrick, PAF, 03/14/22
+_8 ke6ppi@w1xsc.ampr.org       PPI-417P_R_EOC213RR_Practice KE6PPI, Roger, Sunnyvale, 03-13-2022
+_9 kk6ekn@w1xsc.ampr.org       EKN-374P_P_EOC213RR_practice KK6EKN, Leslie, MTV, 03-14-2022
+10 ag6gx@w1xsc.ampr.org        6GX-4821P_R_EOC213RR_Practice AG6GX, Brian, Cupertino, March 14, 2022
+11 wu6p@w1xsc.ampr.org         U6P-388P_R_EOC213RR_Practice WU6P, Nianfeng, Sunnyvale, 3/14/2022
+12 kc6rsc@w1xsc.ampr.org       STR-2456P_R_EOC213RR_Practice KC6RSC, Steve, SNY, 2022-03-14
+13 kt2g@w3xsc.ampr.org         T2G-138P_R_EOC213RR_Practice KT2G, Marcellino, Mountain View, 3/14/2022
+14 km6mzm@w3xsc.ampr.org       MZM-394P_R_EOC213RR_Practice, KM6MZM, Daniel, Sunnyvale 03/14/2022
+15 wa1iam@w4xsc.ampr.org       IAM-698P_R_EOC213RR_Practice WA1IAM, Dave, MTV, 3/14/22
+16 kg6hi@w1xsc.ampr.org        6HI-1709P_R_EOC213RR_Practice, KG6HI, Jerry, Sunnyvale, 14 Maar 2022
+17 kk6fmq@w3xsc.ampr.org       FMQ-609P_R_EOC213RR_Practice KK6FMQ_Grant, PAF, 3/14/2022
+18 ki6pur@w3xsc.ampr.org       PUR-360P_R_EOC213RR_Practice KI6PUR, Rick, MTV, 03/14/22
+19 wu6k@w3xsc.ampr.org         U6K-330P_R_EOC213RR_Practice WU6K, Jim, Mountain View, 20220314
+20 w6vmw@w3xsc.ampr.org        VMW-113P_R_EOC213RR_Packet Practice, 03/14/2022, VMWare ARC
+21 w6bg@w1xsc.ampr.org         6BG-570P_R_EOC213RR_Practice W6BG, Max, Cupertino, 2022-03-14
+22 k9stv@w4xsc.ampr.org        STV-238P_R_EOC213RR_Practice K9STV, Stiv, Mountain View, 03-14-2022
+23 kk6fpp@w1xsc.ampr.org       FPP-446P_R_EOC213RR_Practice KK6FPP,Thomas,Sunnyvale,20220314
+24 kk6fpp@email1.scc-ares-races.net FPP-447E_R_EOC213RR_Practice KK6FPP,Thomas,Sunnyvale,20220314
+25 km6i@w3xsc.ampr.org         M6I-473P_R_EOC213RR_Packet practice 03/14/2022 Gprdpn MTV
+26 kn6ghd@w3xsc.ampr.org       GHD-259P_R_EOC213RR_Practice KN6GHD, Tim, Mountain View, 03-14-2022
+27 w6jmk@w3xsc.ampr.org        JMK-267P_R_EOC213RR_Practice W6JMK, John, Los Altos, 3/14/2022
+28 k6ott@w4xsc.ampr.org        OTT-612P_R_EOC213RR_Practice K6OTT, Andreas, Sunnyvale, 2022-03-14
+29 wa3aw@w3xsc.ampr.org        3AW-834P_R_EOC213RR_Practice WA3AW, Art, Los Altos, 03/14/22
+30 n9dk@w3xsc.ampr.org         9DK-3193P_R_EOC213RR_Practice N9DK, Dave, MV 2022-03-14
+31 kn6pe@w1xsc.ampr.org        6PE-558P_R_EOC213RR_Practice KN6PE, Jim, Cupertino, 14-Mar-2022
+32 kf6zsq@w3xsc.ampr.org       ZSQ-5220P_R_EOC213RR_practice, KF6ZSQ, Phil, 03-14-22, Mountain View
+
+Key:
+D: Duplicate practice message = same call sign via same BBS/address. (not counted)
+
+Practice Message count: 0 plain text messages.
+                        29 SCCoPIFO messages.
+
+
+The following messages were received this week but were not included in the
+above report because they were sent before the start of this week's practice
+period which began Tue Mar 08, 2022 at 00:00:01.
+
+1 kj6amm@w4xsc.ampr.org  AMM-534P_R_ICS213_Practice kj6amm, Paul, Mountain View, 02/21/2022
+^^ Sent Mon 2022-02-21 at 11:31:13  (14 days, 12.5 hours early.)
+2 km6ams@w3xsc.ampr.org  AMS-486P_R_EOC213RR_practice KM6AMS Fred Los Altos 3-7-22
+^^ Sent Mon 2022-03-07 at 11:10:01  (0 days, 12.8 hours early.)
+
+This list created by KK6FPP, Thomas Leibold
+MonChk002.LrnOpst004.CntInit013.MsgWrap005
+.MsgErr005.Rprt017

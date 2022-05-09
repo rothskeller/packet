@@ -1,0 +1,77 @@
+SCCo ARES/RACES Packet Practice Report For: Monday, February 28, 2022.
+
+----------------------- DAY'S SUMMARY -----------------------
+Totals:
+  All messages:            35 received;  34 (97%) correct. [includes duplicates]
+  Unique "from" addresses: 35 received;  34 (97%) correct. [unique From: addresses]
+  Unique call signs:       33 received;  32 (97%) correct. [33 reported to main net]
+
+Simulated BBS outage: W4XSC
+  1/35 (2%) incorrectly sent FROM this BBS.
+
+Sources:
+  Santa Clara County BBSs: 34
+       8 W1XSC
+       1 W2XSC
+      24 W3XSC
+       1 W4XSC
+
+  Other: 1
+      1 from E-Mail.
+
+
+Most operators who sent a message that is flagged in the list below
+will automatically receive a reply with additional details and suggested
+corrective actions. If your message is flagged, please retrieve the detailed
+reply message from the BBS, email provider, or other service you used to
+submit the weekly packet practice message before requesting assistance.
+
+----------------------- DAY'S DETAILS -----------------------
+
+##     FROM                                      SUBJECT
+_1 mtvgpk@w3xsc.ampr.org       GPK-208P_R_ICS213_practice kk6lua, donna, mtv. 02/28/22
+_2 ai6sl@w1xsc.ampr.org        6SL-781P_R_ICS213_Practice AI6SL, Wolfgang, Sunnyvale, 20220228
+_3 w6bg@w1xsc.ampr.org         6BG-559P_R_ICS213_Practice W6BG, Max, Cupertino, 2022-02-28
+_4 kz6dm@w3xsc.ampr.org        6DM-443P_R_ICS213_Practice KZ6DM, Poul, Mountain View, 02/28/2022
+_5 kk6fmq@w3xsc.ampr.org       FMQ-598P_R_ICS213_Practice_KK6FMQ_Grant, PAF, 2/28/2022
+_6 kk6fmq@w1xsc.ampr.org       FMQ-600M_R_ICS213_Practice KK6FMQ_Grant, PAF, 2/28/2022
+_7 kg6yhs@w3xsc.ampr.org       YHS-233P_R_ICS213_Practice KG6YHS, Irene, Palo Alto, 02/28/2022
+_8 kk6ekn@w3xsc.ampr.org       EKN-355P_R_ICS213_practice KK6EKN, Leslie, MTV, 02-28-2022
+_9 kj6amm@w3xsc.ampr.org       AMM-534P_R_ICS213_Practice kj6amm, Paul, Mountain View, 02/27/2022
+10 kg6kzz@w2xsc.ampr.org       KZZ-159P_R_ICS213_Practice KG6KZZ, Jason, Almaden, 2/28/2022
+11 km6ams@w3xsc.ampr.org       AMS-482P_R_ICS213_Practice KM6AMS Fred LOS ALTOS 2/28/22
+12 wu6p@w3xsc.ampr.org         U6P-378P_R_ICS213_Practice WU6P, Nianfeng, Sunnyvale, 02/28/2022
+13 kc6rsc@w1xsc.ampr.org       STR-2394P_R_ICS213_Practice KC6RSC, Steve, SNY, 2022-02-28
+14 ki6pur@w3xsc.ampr.org       PUR-354P_R_ICS213_Practice KI6PUR, Rick, MTV, 02/28/22
+15 wa1iam@w3xsc.ampr.org       IAM-691P_R_ICS213_Practice WA1IAM, Dave, MTV, 2/28/22
+16 kg6hi@w1xsc.ampr.org        6HI-1701P_R_ICS213_Practice, KG6HI, Jerry, Sunnyvale, 28 Feb 2022
+17 kn6ghd@w3xsc.ampr.org       GHD-252P_R_ICS213_KN6GHD, Tim, Mountain View, 02/28/2022
+18 kt6jk@w1xsc.ampr.org        6JK-622P_R_ICS213_Practice KT6JK, Todd, CUP, 20220228
+19 ke6ppi@w1xsc.ampr.org       PPI-403P_R_ICS213_Practice KE6PPI, Roger, Sunnyvale, 20-28-2022
+20 kg6tmi@w3xsc.ampr.org       TMI-048P_R_ICS213_Practice KG6TMI, Patrick, PAF, 02/28/22
+21 km6mzm@w3xsc.ampr.org       MZM-388P_R_ICS213_Practice, KM6MZM, Daniel Tickell, Sunnyvale 02/28/2022
+22 kk6fpp@w1xsc.ampr.org       FPP-434P_R_ICS213_Practice KK6FPP, Thomas, Sunnyvale, 20220228
+23 kk6fpp@email4.scc-ares-races.net FPP-435E_R_ICS213_Practice KK6FPP, Thomas, Sunnyvale, 20220228
+24 k1jh@w3xsc.ampr.org         1JH-364P_R_ICS213_Practice K1JH, Los Altos, 20220228
+25 km6i@w3xsc.ampr.org         M6I-467P_R_ICS213_Packet practice 02-28-2022
+26 w6jmk@w3xsc.ampr.org        JMK-236P_R_ICS213_Practice W6JMK, John, Los Altos, 2/28/2022
+27 w6vmw@w3xsc.ampr.org        VMW-109P_R_ICS213_Packet practice, 02-28-2022
+28 k9stv@w4xsc.ampr.org        STV-106P_R_ICS213_Practice K9STV, Stiv, Mountain View, 02-28-2022
+     ^^^ From BBS simulated as down.
+29 k6ott@w3xsc.ampr.org        OTT-607P_R_ICS213_Practice K6OTT, Andreas, Sunnyvale, 2022-02-28
+30 af6ot@w3xsc.ampr.org        PJB-1190P_R_ICS213_Practice AF6OT, Pat, Palo Alto, 2022-02-28
+31 kd6kdl@w3xsc.ampr.org       KDL-831P_R_ICS213_KDL-831P_R_Practice KD6KDL, Sally, Mtn view, 02/28/22
+32 wa3aw@w3xsc.ampr.org        3AW-828P_R_ICS213_Practice WA3AW. Art, Los Altos, 2/28/22
+33 wu6k@w3xsc.ampr.org         U6K-326P_R_ICS213_Practice WU6K, Jim, Mountain Vew, 20220228
+34 n9dk@w3xsc.ampr.org         9DK-3129P_R_ICS213_Practice N9DK, Dave, MV, 2022-02-28
+35 kf6zsq@w3xsc.ampr.org       ZSQ-5202P_R_ICS213_Practice, KF6ZSQ, Phil, 2/28/22, Mountain View
+
+Key:
+F: 'From' BBS simulated as down. (total = 1)
+
+Practice Message count: 0 plain text messages.
+                        35 SCCoPIFO messages.
+
+This list created by KK6FPP, Thomas Leibold
+MonChk002.LrnOpst004.CntInit013.MsgWrap005
+.MsgErr005.Rprt017

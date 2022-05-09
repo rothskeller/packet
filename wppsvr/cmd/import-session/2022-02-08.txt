@@ -1,0 +1,91 @@
+SCCo ARES/RACES Packet Practice Report For: Tuesday, February 08, 2022.
+
+---------------------- WEEK'S SUMMARY ----------------------
+Week's unique call signs: 50
+----------------------- DAY'S SUMMARY -----------------------
+Totals:
+  All messages:            38 received;  35 ( 92%) correct. [includes duplicates]
+  Unique "from" addresses: 35 received;  33 ( 94%) correct. [unique From: addresses]
+  Unique call signs:       30 received;  30 (100%) correct. [30 reported to main net]
+
+Simulated BBS outage: W2XSC
+  1/38 (2%) incorrectly sent FROM this BBS.
+  0/38 (0%) incorrectly sent TO this BBS.
+
+Sources:
+  Santa Clara County BBSs: 34
+      18 W1XSC
+       1 W2XSC
+       6 W3XSC
+       9 W4XSC
+
+  Other: 1
+      1 from WINLINK.ORG.
+
+
+Most operators who sent a message that is flagged in the list below
+will automatically receive a reply with additional details and suggested
+corrective actions. If your message is flagged, please retrieve the detailed
+reply message from the BBS, email provider, or other service you used to
+submit the weekly packet practice message before requesting assistance.
+
+----------------------- DAY'S DETAILS -----------------------
+
+##     FROM                                        SUBJECT
+_1 kg6yhs@w4xsc.ampr.org       YHS-198P_R_Practice KG6YHS, Irene, Palo Alto, 01/18/2022
+_2 aj6lg@w1xsc.ampr.org        JFM-472P_R_Practice AJ6LG, Jeff, Los Gatos, 01/18/2022
+_3 aa6pm@w1xsc.ampr.org        PJM-579P_R_Practice AA6PM, Peter, Saratoga, 01/18/2022
+     ^^^ Duplicate check-in
+_4 kj6ace@w1xsc.ampr.org       ACE-718P_R_Practice, KJ6ACE, Don, MLP, 220125
+_5 aj6hm@w4xsc.ampr.org        6HM-400P_R_ICS213_Practice AJ6HM, Steve, Saratoga, 02/01/2022
+_6 aj6lg@w4xsc.ampr.org        JFM-476P_R_ICS213_Practice AJ6LG, Jeff, Los Gatos, 02/01/2022
+_7 k6sw@w1xsc.ampr.org         PEB-649P_R_ICS213_Practice K6SW, Pat, San Jose, 2022/02/08
+_8 w6bg@w1xsc.ampr.org         6BG-449P_R_ICS213_Practice W6BG, Max, Cupertino, 2022-02-08
+_9 ke6ppi@w1xsc.ampr.org       PPI-359P_R_ICS213_Practice KE6PPI, Roger, Sunnyvale, 02-03-2022
+     ^^^ Duplicate check-in
+10 kk6fmq@w3xsc.ampr.org       FMQ-550P_R_ICS213_Practice_KK6FMQ_Grant, PAF, 2/9/2022
+11 kk6fmq@w1xsc.ampr.org       b
+     ^^^ Duplicate check-in  Subject line format issue(Missing: Message Number;
+        Message Handling Order; Subject.)
+12 kk6fmq@w1xsc.ampr.org       FMQ-552M_R_ICS213_Practice_KK6FMQ_Grant, PAF, 2/8/2022
+     ^^^ Packet Form version incorrect.
+13 n6tae@w1xsc.ampr.org        TAE-395P_P_ICS213_Practice N6TAE, Tae, Cupertino, 02-08-2022
+14 ai6sl@w1xsc.ampr.org        6SL-740P_R_ICS213_Practice AI6SL, Wolfgang, Sunnyvale, 2/8/2022
+15 aj6hm@w1xsc.ampr.org        6HM-404P_R_ICS213_Practice AJ6HM, Steve, Saratoga, 20/08/2022
+16 km6lry@w1xsc.ampr.org       LRY-449P_R_ICS213_Practice KM6LRY. Les, LG/MS, 02/08/2022
+17 ag6gx@w1xsc.ampr.org        6GX-4756P_R_EOC213RR_Practice AG6GX, Brian, Cupertino, 02/08/2022
+18 wu6p@w3xsc.ampr.org         U6P-368P_R_ICS213_Practice WU6P, Nianfeng, Sunnyvale, 02/08/2022
+19 k6fjc@w3xsc.ampr.org        FJC-532P_R_ICS213_Practice K6FJC, Mark, Redwood City, 02/08/2022
+20 k6gmg@w4xsc.ampr.org        GMG-268P_R_ICS213_Practice K6GMG, Gary, Morgan Hill, 8-Feb-2022
+21 n9dk@w3xsc.ampr.org         9DK-3071P_R_ICS213_Practice N9DK, Dave, MV, 2022-02-08
+22 ke6ppi@w1xsc.ampr.org       PPI-367P_R_ICS213_Practice KE6PPI, Roger, Sunnyvale, 02-07-2022
+23 w6jmk@w3xsc.ampr.org        JMK-181P_R_ICS213_Practice W6JMK, John, Los Altos, 2/8/2022
+24 k6rwy@w3xsc.ampr.org        RWY-2088P_R_ICS213_Practice K6RWY, Bob, San Jose, 02/08/22
+25 kk6ebl@w1xsc.ampr.org       EBL-1266P_R_EOC213RR_Practice KK6EBL, Klaus, LG/MS 07/02/2022
+26 wa6vfd@w4xsc.ampr.org       RKS-185P_R_ICS213_Practice_Skip,WA6VFD,Cupertino/Campbell/San Jose,220208
+27 k6ott@w1xsc.ampr.org        OTT-567P_R_ICS213_Practice K6OTT, Andreas, Sunnyvale, 2022-02-08
+28 k6ott@w2xsc.ampr.org        OTT-568P_R_ICS213_Practice K6OTT, Andreas, Sunnyvale, 2022-02-08
+     ^^^ From BBS simulated as down.
+29 ai6ls@w4xsc.ampr.org        WLC-606P_R_ICS213_Practice AI6LS, Bill, San Jose, 02/08/2021
+30 w6esl@w1xsc.ampr.org        ESL-536P_R_ICS213_Practice, W6ESL, Tom, San Jose, 2/8/2022
+31 kg6hi@w1xsc.ampr.org        6HI-1688P_R_ICS213_Practice, KG6HI, Jerry, Sunnyvale, 8 Feb 2022
+32 N6SBC@winlink.org           XBE-1338P_R_ICS213_Practice N6SBC, Timothy, San Benito County, 2022-02-08
+33 kt6jk@w1xsc.ampr.org        6JK-840P_R_ICS213_Practice KT6JK, Todd, CUP, 20220208
+34 km6iao@w4xsc.ampr.org       IAO-530P_R_ICS213_Practice KM6IAO, Paul, Milpitas, 02/08/2022
+35 kk6ewq@w1xsc.ampr.org       JDH-116P_R_ICS213_KK6EWQ, Judy, Cupertino, 02/08/22
+36 ke6tim@w4xsc.ampr.org       TIM-215P_R_ICS213_Practice KE6TIM, Tim, Milpitas, 02/08/2022
+37 kj6ace@w4xsc.ampr.org       ACE-721P_R_ICS213_ractice, KJ6ACE, Don, MLP, 220208
+38 aa6pm@w1xsc.ampr.org        PJM-587P_R_ICS213_Practice AA6PM, Peter, Saratoga, 02/08/2022
+
+Key:
+D: Duplicate practice message = same call sign via same BBS/address. (not counted)
+S: beginning of Subject line differs from Standards for Santa Clara County.
+P: incorrect version of SCCoPIFO; Correct version is 2.12
+F: 'From' BBS simulated as down. (total = 1)
+
+Practice Message count: 3 plain text messages.
+                        32 SCCoPIFO messages.
+
+This list created by KC6RSC, Steve Roth
+TueChk001.LrnOpst004.CntInit013.MsgWrap005
+.MsgErr005.Rprt017

@@ -1,0 +1,70 @@
+SCCo ARES/RACES Packet Practice Report For: Monday, April 11, 2022.
+
+----------------------- DAY'S SUMMARY -----------------------
+Totals:
+  All messages:            28 received;  27 (96%) correct. [includes duplicates]
+  Unique "from" addresses: 28 received;  27 (96%) correct. [unique From: addresses]
+  Unique call signs:       26 received;  25 (96%) correct. [26 reported to main net]
+
+Simulated BBS outage: W2XSC
+  0/28 (0%) incorrectly sent FROM this BBS.
+  0/28 (0%) incorrectly sent TO this BBS.
+
+Sources:
+  Santa Clara County BBSs: 28
+      12 W1XSC
+       0 W2XSC
+      13 W3XSC
+       3 W4XSC
+
+  Other: 0
+
+
+Most operators who sent a message that is flagged in the list below
+will automatically receive a reply with additional details and suggested
+corrective actions. If your message is flagged, please retrieve the detailed
+reply message from the BBS, email provider, or other service you used to
+submit the weekly packet practice message before requesting assistance.
+
+----------------------- DAY'S DETAILS -----------------------
+
+##     FROM                   SUBJECT
+_1 kk6ekn@w3xsc.ampr.org       EKN-571P_I_MuniStat_Mountain View
+_2 km6ams@w3xsc.ampr.org       AMS-500P_R_MuniStat_Los Altos
+_3 kk6ekn@w1xsc.ampr.org       ekn-123M_I_MuniStat_Mountain View
+_4 w6bg@w1xsc.ampr.org         6BG-726P_I_MuniStat_Cupertino
+_5 kk6fmq@w4xsc.ampr.org       FMQ-650M_R_MuniStat_Palo Alto
+_6 kz6dm@w3xsc.ampr.org        6DM-494P_I_MuniStat_Mountain View
+_7 kk6fmq@w3xsc.ampr.org       FMQ-652P_R_MuniStat_Palo Alto
+_8 ai6sl@w1xsc.ampr.org        6SL-816P_R_MuniStat_Sunnyvale
+_9 kt2g@w3xsc.ampr.org         T2G-148P_R_MuniStat_Mountain View
+10 ke6ppi@w1xsc.ampr.org       PPI-452P_R_MuniStat_Sunnyvale
+11 ag6gx@w1xsc.ampr.org        6GX-4923P_I_MuniStat_Cupertino
+12 kc6rsc@w1xsc.ampr.org       STR-2476P_I_MuniStat_Sunnyvale
+13 wu6p@w3xsc.ampr.org         U6P-407P_R_MuniStat_Sunnyvale
+14 kj6gbg@w3xsc.ampr.org       GBG-1267P_I_MuniStat_Palo Alto
+15 ki6pur@w3xsc.ampr.org       PUR-370P_R_MuniStat_Mountain View
+16 wa1iam@w4xsc.ampr.org       IAM-724P_R_MuniStat_Mountain View
+17 kg6hi@w1xsc.ampr.org        6HI-1728P_R_MuniStat_Sunnyvale
+18 wb6pvu@w1xsc.ampr.org       PVU-238P_I_MuniStat_Sunnyvale
+19 k6ott@w4xsc.ampr.org        OTT-642P_I_MuniStat_Sunnyvale
+20 kg6kzz@w1xsc.ampr.org       KZZ-366P_R_MuniStat_San Jose
+21 kt6jk@w1xsc.ampr.org        6JK-900M_I_MuniStat_Cupertino
+     ^^^ Packet Form version incorrect.
+22 n6crc@w1xsc.ampr.org        CRC-227P_R_MuniStat_Campbell
+23 kn6ghd@w3xsc.ampr.org       GHD-268P_I_MuniStat_Mountain View
+24 k1jh@w3xsc.ampr.org         1JH-388P_R_MuniStat_Los Altos
+25 wa3aw@w3xsc.ampr.org        3AW-847P_I_MuniStat_Los Altos
+26 km6mzm@w3xsc.ampr.org       MZM-429P_I_MuniStat_Sunnyvale
+27 kk6fpp@w1xsc.ampr.org       FPP-470P_R_MuniStat_Sunnyvale
+28 kf6zsq@w3xsc.ampr.org       ZSQ-5273P_R_MuniStat_Mountain View
+
+Key:
+P: incorrect version of SCCoPIFO; Correct version is 2.17
+
+Practice Message count: 0 plain text messages.
+                        28 SCCoPIFO messages.
+
+This list created by KK6FPP, Thomas Leibold
+MonChk002.LrnOpst004.CntInit013.MsgWrap005
+.MsgErr005.Rprt017

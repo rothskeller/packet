@@ -1,0 +1,79 @@
+SCCo ARES/RACES Packet Practice Report For: Tuesday, April 12, 2022.
+
+---------------------- WEEK'S SUMMARY ----------------------
+Week's unique call signs: 40
+----------------------- DAY'S SUMMARY -----------------------
+Totals:
+  All messages:            32 received;  30 (94%) correct. [includes duplicates]
+  Unique "from" addresses: 31 received;  29 (94%) correct. [unique From: addresses]
+  Unique call signs:       27 received;  26 (96%) correct. [27 reported to main net]
+
+Simulated BBS outage: W2XSC
+  0/32 (0%) incorrectly sent FROM this BBS.
+  0/32 (0%) incorrectly sent TO this BBS.
+
+Sources:
+  Santa Clara County BBSs: 31
+      18 W1XSC
+       0 W2XSC
+       6 W3XSC
+       7 W4XSC
+
+  Other: 0
+
+
+Most operators who sent a message that is flagged in the list below
+will automatically receive a reply with additional details and suggested
+corrective actions. If your message is flagged, please retrieve the detailed
+reply message from the BBS, email provider, or other service you used to
+submit the weekly packet practice message before requesting assistance.
+
+----------------------- DAY'S DETAILS -----------------------
+
+##     FROM                                        SUBJECT
+_1 aj6lg@w4xsc.ampr.org        JFM-483P_R_EOC213RR_Practice AJ6LG, Jeff, Los Gatos, 03/15/2022
+     ^^^ Duplicate check-in
+_2 km6mzm@w3xsc.ampr.org       MZM-395P_R_EOC213RR_Practice, KM6MZM, Daniel, Sunnyvale 03/15/2022
+_3 ke6tim@w1xsc.ampr.org       TIM-363P_R_EOC213RR_Practice KE6TIM, Tim, Milpitas, 03/29/2022
+_4 km6clk@w4xsc.ampr.org       CLK-268P_KM6CLK, Bart, Los Gatos/Monte Sereno, 4-5-2022_R_MuniStat_Los Gatos
+     ^^^ Subject line format issue(Missing: Message Handling Order.)
+_5 aj6lg@w4xsc.ampr.org        JFM-489P_R_MuniStat_Los Gatos
+_6 n6crc@w4xsc.ampr.org        CRC-224P_R_MuniStat_Campbell
+_7 k6sw@w1xsc.ampr.org         PEB-742P_I_MuniStat_San Jose
+_8 kk6zgl@w1xsc.ampr.org       ZGL-249P_I_MuniStat_San Jose
+_9 w6bg@w1xsc.ampr.org         6BG-727P_I_MuniStat_Cupertino
+10 kk6fmq@w4xsc.ampr.org       FMQ-651M_R_MuniStat_Palo Alto
+11 ai6sl@w1xsc.ampr.org        6SL-816P_R_MuniStat_Sunnyvale
+12 aj6hm@w1xsc.ampr.org        6HM-719P_I_MuniStat_Saratoga
+13 k6slb@w1xsc.ampr.org        SLB-703P_I_MuniStat_San Jose
+14 kt2g@w3xsc.ampr.org         T2G-153P_R_SheltStat_Mountain View
+15 n6ik@w1xsc.ampr.org         6IK-364P_R_MuniStat_Cupertino
+16 kk6fmq@w3xsc.ampr.org       FMQ-655P_R_MuniStat_Palo Alto
+17 ke6ppi@w1xsc.ampr.org       PPI-453P_R_MuniStat_Sunnyvale
+18 km6clk@w1xsc.ampr.org       CLK-270P_Practice KM6CLK, Bart, 4/10/2022_R_MuniStat_Los Gatos
+     ^^^ Subject line format issue(Missing: Message Handling Order.)
+19 ag6gx@w1xsc.ampr.org        6GX-4924P_I_MuniStat_Cupertino
+20 kc6rsc@w1xsc.ampr.org       STR-2477P_I_MuniStat_Sunnyvale
+21 wu6p@w3xsc.ampr.org         U6P-413P_R_MuniStat_Sunnyvale
+22 kg6kzz@w1xsc.ampr.org       KZZ-367P_R_MuniStat_San Jose
+23 n6crc@w1xsc.ampr.org        CRC-229P_R_MuniStat_Campbell
+24 km6lry@w1xsc.ampr.org       LRY-473P_R_MuniStat_Los Gatos
+25 af6ot@w3xsc.ampr.org        PJB-1226P_R_SheltStat_Practice AF6OT, Pat, Palo Alto, 2022-04012
+26 k6fjc@w3xsc.ampr.org        FJC-668P_I_MuniStat_Unincorporated
+27 k6rwy@w1xsc.ampr.org        RWY-2125P_R_MuniStat_San Jose
+28 k6ott@w4xsc.ampr.org        OTT-644P_I_MuniStat_Sunnyvale
+29 kg6hi@w1xsc.ampr.org        6HI-1731P_R_MuniStat_Sunnyvale
+30 aa6pm@w1xsc.ampr.org        PJM-614P_R_MuniStat_Saratoga
+31 ke6tim@w4xsc.ampr.org       TIM-370P_I_MuniStat_Milpitas
+32 kj6ace@w4xsc.ampr.org       ACE-749P_I_MuniStat_Milpitas
+
+Key:
+D: Duplicate practice message = same call sign via same BBS/address. (not counted)
+S: beginning of Subject line differs from Standards for Santa Clara County.
+
+Practice Message count: 0 plain text messages.
+                        31 SCCoPIFO messages.
+
+This list created by KC6RSC, Steve Roth
+TueChk001.LrnOpst004.CntInit013.MsgWrap005
+.MsgErr005.Rprt017
