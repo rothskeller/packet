@@ -47,23 +47,22 @@ CREATE TABLE retrieval (
 
 -- The session table describes all sessions.
 CREATE TABLE session (
-    id                     integer  PRIMARY KEY,
-    callsign               text     NOT NULL,
-    name                   text     NOT NULL,
-    prefix                 text     NOT NULL,
-    start                  datetime NOT NULL,
-    end                    datetime NOT NULL,
-    generateweeksummary    boolean  NOT NULL,
-    excludefromweeksummary boolean  NOT NULL,
-    reportto               text     NOT NULL,
-    tobbses                text     NOT NULL,
-    downbbses              text     NOT NULL,
-    retrievefrombbses      text     NOT NULL,
-    retrieveat             text     NOT NULL,
-    messagetypes           text     NOT NULL,
-    modified               boolean  NOT NULL,
-    running                boolean  NOT NULL,
-    report                 text     NOT NULL
+    id                integer  PRIMARY KEY,
+    callsign          text     NOT NULL,
+    name              text     NOT NULL,
+    prefix            text     NOT NULL,
+    start             datetime NOT NULL,
+    end               datetime NOT NULL,
+    excludefromweek   boolean  NOT NULL,
+    reportto          text     NOT NULL,
+    tobbses           text     NOT NULL,
+    downbbses         text     NOT NULL,
+    retrievefrombbses text     NOT NULL,
+    retrieveat        text     NOT NULL,
+    messagetypes      text     NOT NULL,
+    modified          boolean  NOT NULL,
+    running           boolean  NOT NULL,
+    report            text     NOT NULL
 );
 CREATE UNIQUE INDEX session_call_end_idx ON session (callsign, end);
 CREATE INDEX session_end_idx ON session (end);

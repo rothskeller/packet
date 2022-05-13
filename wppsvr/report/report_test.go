@@ -25,23 +25,22 @@ var fakeSession1 = store.Session{
 	End:      time.Date(2022, 4, 18, 20, 0, 0, 0, time.Local),
 }
 var fakeSession2 = store.Session{
-	ID:                     2,
-	CallSign:               "PKTEST",
-	Name:                   "Test Check-Ins",
-	Start:                  time.Date(2022, 4, 18, 0, 0, 0, 0, time.Local),
-	End:                    time.Date(2022, 4, 18, 23, 59, 0, 0, time.Local),
-	ExcludeFromWeekSummary: true,
+	ID:              2,
+	CallSign:        "PKTEST",
+	Name:            "Test Check-Ins",
+	Start:           time.Date(2022, 4, 18, 0, 0, 0, 0, time.Local),
+	End:             time.Date(2022, 4, 18, 23, 59, 0, 0, time.Local),
+	ExcludeFromWeek: true,
 }
 var fakeSession3 = store.Session{
-	ID:                  3,
-	CallSign:            "PKTTUE",
-	Name:                "SVECS Net",
-	Start:               time.Date(2022, 4, 13, 0, 0, 0, 0, time.Local),
-	End:                 time.Date(2022, 4, 19, 20, 0, 0, 0, time.Local),
-	GenerateWeekSummary: true,
-	ToBBSes:             []string{"W2XSC"},
-	DownBBSes:           []string{"W3XSC"},
-	MessageTypes:        []string{"MuniStat", "plain"},
+	ID:           3,
+	CallSign:     "PKTTUE",
+	Name:         "SVECS Net",
+	Start:        time.Date(2022, 4, 13, 0, 0, 0, 0, time.Local),
+	End:          time.Date(2022, 4, 19, 20, 0, 0, 0, time.Local),
+	ToBBSes:      []string{"W2XSC"},
+	DownBBSes:    []string{"W3XSC"},
+	MessageTypes: []string{"MuniStat", "plain"},
 }
 
 type fakeStore struct{}
@@ -91,10 +90,10 @@ func (fakeStore) GetSessionMessages(sessionID int) []*store.Message {
 
 func (fakeStore) GetSessions(start, end time.Time) []*store.Session {
 	if !start.Equal(time.Date(2022, 4, 17, 0, 0, 0, 0, time.Local)) ||
-		!end.Equal(time.Date(2022, 4, 19, 20, 0, 0, 0, time.Local)) {
+		!end.Equal(time.Date(2022, 4, 24, 0, 0, 0, 0, time.Local)) {
 		panic("wrong dates for GetSessionsEnding")
 	}
-	return []*store.Session{&fakeSession1, &fakeSession2}
+	return []*store.Session{&fakeSession1, &fakeSession2, &fakeSession3}
 }
 
 func (fakeStore) UpdateSession(*store.Session) { panic("not implemented") }

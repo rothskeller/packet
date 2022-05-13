@@ -28,12 +28,10 @@ func Generate(st Store, session *store.Session) *Report {
 	generateTitle(&r, session)
 	generateParams(&r, session)
 	generateStatistics(&r, session, messages)
+	generateWeekSummary(&r, st, session)
 	generateMessages(&r, session, messages)
 	generateGenInfo(&r)
 	generateParticipants(&r, messages)
-	if session.GenerateWeekSummary {
-		generateWeekSummary(&r, st, session)
-	}
 	return &r
 }
 
@@ -106,6 +104,54 @@ func timerange(start, end time.Time) string {
 	return fmt.Sprintf("between %s and %s",
 		start.Format("15:04 on Monday, January 2, 2006"),
 		end.Format("15:04 on Monday, January 2, 2006"))
+}
+
+// generateWeekSummary looks up all sessions that end in the same week as the
+// specified session.  If the specified session is the last one of those, it
+// generates a count of unique call signs across all of the sessions.
+func generateWeekSummary(r *Report, st Store, session *store.Session) {
+	var (
+		ostart   time.Time
+		sessions []*store.Session
+		unique   = make(map[string]struct{})
+	)
+	// If the specified session isn't part of the official week, do nothing.
+	if session.ExcludeFromWeek {
+		return
+	}
+	// Get all of the sessions of the week.
+	ostart = session.End.AddDate(0, 0, -int(session.End.Weekday()))
+	ostart = time.Date(ostart.Year(), ostart.Month(), ostart.Day(), 0, 0, 0, 0, time.Local)
+	sessions = st.GetSessions(ostart, ostart.AddDate(0, 0, 7))
+	// Remove the ones that aren't officially part of the week.
+	j := 0
+	for _, s := range sessions {
+		if !s.ExcludeFromWeek {
+			sessions[j] = s
+			j++
+		}
+	}
+	sessions = sessions[:j]
+	// If our specified session is not the last one on the list, or is the
+	// only one on the list, do nothing.
+	if len(sessions) < 2 || session.ID != sessions[len(sessions)-1].ID {
+		return
+	}
+	// OK, we do want to generate the week's list of unique call signs.
+	// Start with our own, and remove it from the list of sessions.
+	// Put our own call signs into the map.
+	for cs := range r.uniqueCallSigns {
+		unique[cs] = struct{}{}
+	}
+	sessions = sessions[:len(sessions)-1]
+	// Now add the unique call signs from the other sessions in the week.
+	for _, osession := range sessions {
+		oreport := Generate(st, osession)
+		for cs := range oreport.uniqueCallSigns {
+			unique[cs] = struct{}{}
+		}
+	}
+	r.UniqueCallSignsWeek = len(unique)
 }
 
 // generateStatistics scans the messages accumulated in the session and computes
@@ -285,34 +331,4 @@ func generateParticipants(r *Report, messages []*store.Message) {
 	for address := range addresses {
 		r.Participants = append(r.Participants, address)
 	}
-}
-
-// generateWeekSummary looks up all other sessions that ended before the
-// specified session, but during the same week as it.  It generates a count of
-// unique call signs across all of the sessions.
-func generateWeekSummary(r *Report, st Store, session *store.Session) {
-	var (
-		ostart time.Time
-		unique = make(map[string]struct{})
-	)
-	// Put our own call signs into the map.
-	for cs := range r.uniqueCallSigns {
-		unique[cs] = struct{}{}
-	}
-	// Calculate the start of the date range for interesting sessions, by
-	// rewinding to Sunday of the same week as the argument session, and
-	// then rewinding to midnight on that date.
-	ostart = session.End.AddDate(0, 0, -int(session.End.Weekday()))
-	ostart = time.Date(ostart.Year(), ostart.Month(), ostart.Day(), 0, 0, 0, 0, time.Local)
-	// Get all of the sessions in that range.
-	for _, osession := range st.GetSessions(ostart, session.End) {
-		if osession.ExcludeFromWeekSummary { // e.g., PKTEST session
-			continue
-		}
-		oreport := Generate(st, osession)
-		for cs := range oreport.uniqueCallSigns {
-			unique[cs] = struct{}{}
-		}
-	}
-	r.UniqueCallSignsWeek = len(unique)
 }

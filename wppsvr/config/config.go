@@ -59,18 +59,17 @@ type BBSConfig struct {
 
 // SessionConfig holds the default configuration of a single session.
 type SessionConfig struct {
-	Name                   string         `yaml:"name"`
-	Prefix                 string         `yaml:"prefix"`
-	Start                  string         `yaml:"start"`
-	End                    string         `yaml:"end"`
-	ReportTo               []string       `yaml:"reportTo"`
-	GenerateWeekSummary    bool           `yaml:"generateWeekSummary"`
-	ExcludeFromWeekSummary bool           `yaml:"excludeFromWeekSummary"`
-	ToBBSes                ScheduledValue `yaml:"toBBSes"`
-	DownBBSes              ScheduledValue `yaml:"downBBSes"`
-	RetrieveFromBBSes      []string       `yaml:"retrieveFromBBSes"`
-	RetrieveAt             []string       `yaml:"retrieveAt"`
-	MessageTypes           ScheduledValue `yaml:"messageTypes"`
+	Name              string         `yaml:"name"`
+	Prefix            string         `yaml:"prefix"`
+	Start             string         `yaml:"start"`
+	End               string         `yaml:"end"`
+	ReportTo          []string       `yaml:"reportTo"`
+	ExcludeFromWeek   bool           `yaml:"excludeFromWeek"`
+	ToBBSes           ScheduledValue `yaml:"toBBSes"`
+	DownBBSes         ScheduledValue `yaml:"downBBSes"`
+	RetrieveFromBBSes []string       `yaml:"retrieveFromBBSes"`
+	RetrieveAt        []string       `yaml:"retrieveAt"`
+	MessageTypes      ScheduledValue `yaml:"messageTypes"`
 
 	StartInterval      *Interval   `yaml:"-"`
 	EndInterval        *Interval   `yaml:"-"`

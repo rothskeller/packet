@@ -19,24 +19,23 @@ import (
 
 // A Session defines the parameters of a single session instance.
 type Session struct {
-	ID                     int                `yaml:"id"`
-	CallSign               string             `yaml:"callSign"`
-	Name                   string             `yaml:"name"`
-	Prefix                 string             `yaml:"prefix"`
-	Start                  time.Time          `yaml:"start"`
-	End                    time.Time          `yaml:"end"`
-	GenerateWeekSummary    bool               `yaml:"-"`
-	ExcludeFromWeekSummary bool               `yaml:"-"`
-	ReportTo               []string           `yaml:"-"`
-	ToBBSes                []string           `yaml:"toBBSes"`
-	DownBBSes              []string           `yaml:"downBBSes"`
-	RetrieveFromBBSes      []string           `yaml:"-"`
-	RetrieveAt             []string           `yaml:"-"`
-	RetrieveAtInterval     []*config.Interval `yaml:"-"`
-	MessageTypes           []string           `yaml:"messageTypes"`
-	Modified               bool               `yaml:"-"`
-	Running                bool               `yaml:"-"`
-	Report                 string             `yaml:"-"`
+	ID                 int                `yaml:"id"`
+	CallSign           string             `yaml:"callSign"`
+	Name               string             `yaml:"name"`
+	Prefix             string             `yaml:"prefix"`
+	Start              time.Time          `yaml:"start"`
+	End                time.Time          `yaml:"end"`
+	ExcludeFromWeek    bool               `yaml:"-"`
+	ReportTo           []string           `yaml:"-"`
+	ToBBSes            []string           `yaml:"toBBSes"`
+	DownBBSes          []string           `yaml:"downBBSes"`
+	RetrieveFromBBSes  []string           `yaml:"-"`
+	RetrieveAt         []string           `yaml:"-"`
+	RetrieveAtInterval []*config.Interval `yaml:"-"`
+	MessageTypes       []string           `yaml:"messageTypes"`
+	Modified           bool               `yaml:"-"`
+	Running            bool               `yaml:"-"`
+	Report             string             `yaml:"-"`
 }
 
 // GetRunningSessions returns the (unordered) list of all running sessions.
@@ -104,7 +103,7 @@ func (s *Store) getSessionsWhere(where string, args ...interface{}) (list []*Ses
 	)
 	s.mutex.RLock()
 	defer s.mutex.RUnlock()
-	rows, err = s.dbh.Query("SELECT id, callsign, name, prefix, start, end, generateweeksummary, excludefromweeksummary, reportto, tobbses, downbbses, retrievefrombbses, retrieveat, messagetypes, modified, running, report FROM session WHERE "+where, args...)
+	rows, err = s.dbh.Query("SELECT id, callsign, name, prefix, start, end, excludefromweek, reportto, tobbses, downbbses, retrievefrombbses, retrieveat, messagetypes, modified, running, report FROM session WHERE "+where, args...)
 	if err != nil {
 		panic(err)
 	}
@@ -118,7 +117,7 @@ func (s *Store) getSessionsWhere(where string, args ...interface{}) (list []*Ses
 			retrieveats   string
 			messagetypes  string
 		)
-		err = rows.Scan(&session.ID, &session.CallSign, &session.Name, &session.Prefix, &session.Start, &session.End, &session.GenerateWeekSummary, &session.ExcludeFromWeekSummary, &reportto, &tobbses, &downbbses, &retrievebbses, &retrieveats, &messagetypes, &session.Modified, &session.Running, &session.Report)
+		err = rows.Scan(&session.ID, &session.CallSign, &session.Name, &session.Prefix, &session.Start, &session.End, &session.ExcludeFromWeek, &reportto, &tobbses, &downbbses, &retrievebbses, &retrieveats, &messagetypes, &session.Modified, &session.Running, &session.Report)
 		if err != nil {
 			panic(err)
 		}
@@ -149,9 +148,8 @@ func (s *Store) CreateSession(session *Session) {
 	)
 	s.mutex.Lock()
 	defer s.mutex.Unlock()
-	result, err = s.dbh.Exec("INSERT INTO session (callsign, name, prefix, start, end, generateweeksummary, excludefromweeksummary, reportto, tobbses, downbbses, retrievefrombbses, retrieveat, messagetypes, modified, running, report) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)",
-		session.CallSign, session.Name, session.Prefix, session.Start, session.End,
-		session.GenerateWeekSummary, session.ExcludeFromWeekSummary,
+	result, err = s.dbh.Exec("INSERT INTO session (callsign, name, prefix, start, end, excludefromweek, reportto, tobbses, downbbses, retrievefrombbses, retrieveat, messagetypes, modified, running, report) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)",
+		session.CallSign, session.Name, session.Prefix, session.Start, session.End, session.ExcludeFromWeek,
 		strings.Join(session.ReportTo, ";"), strings.Join(session.ToBBSes, ";"),
 		strings.Join(session.DownBBSes, ";"), strings.Join(session.RetrieveFromBBSes, ";"),
 		strings.Join(session.RetrieveAt, ";"), strings.Join(session.MessageTypes, ";"),
@@ -177,9 +175,8 @@ func (s *Store) UpdateSession(session *Session) {
 	}
 	s.mutex.Lock()
 	defer s.mutex.Unlock()
-	_, err = s.dbh.Exec("UPDATE session SET (callsign, name, prefix, start, end, generateweeksummary, excludefromweeksummary, reportto, tobbses, downbbses, retrievefrombbses, retrieveat, messagetypes, modified, running, report) = (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?) WHERE id=?",
-		session.CallSign, session.Name, session.Prefix, session.Start, session.End,
-		session.GenerateWeekSummary, session.ExcludeFromWeekSummary,
+	_, err = s.dbh.Exec("UPDATE session SET (callsign, name, prefix, start, end, excludefromweek, reportto, tobbses, downbbses, retrievefrombbses, retrieveat, messagetypes, modified, running, report) = (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?) WHERE id=?",
+		session.CallSign, session.Name, session.Prefix, session.Start, session.End, session.ExcludeFromWeek,
 		strings.Join(session.ReportTo, ";"), strings.Join(session.ToBBSes, ";"),
 		strings.Join(session.DownBBSes, ";"), strings.Join(session.RetrieveFromBBSes, ";"),
 		strings.Join(session.RetrieveAt, ";"), strings.Join(session.MessageTypes, ";"),
@@ -204,8 +201,7 @@ func getConfiguredSessions(start, end time.Time) (list []*Session) {
 			session.Start = params.StartInterval.Prev(sessend)
 			session.End = sessend
 			session.ReportTo = params.ReportTo
-			session.GenerateWeekSummary = params.GenerateWeekSummary
-			session.ExcludeFromWeekSummary = params.ExcludeFromWeekSummary
+			session.ExcludeFromWeek = params.ExcludeFromWeek
 			session.ToBBSes = params.ToBBSes.AllFor(session.End)
 			session.DownBBSes = params.DownBBSes.AllFor(session.End)
 			session.RetrieveFromBBSes = params.RetrieveFromBBSes
