@@ -305,7 +305,7 @@ func generateWeekSummary(r *Report, st Store, session *store.Session) {
 	ostart = session.End.AddDate(0, 0, -int(session.End.Weekday()))
 	ostart = time.Date(ostart.Year(), ostart.Month(), ostart.Day(), 0, 0, 0, 0, time.Local)
 	// Get all of the sessions in that range.
-	for _, osession := range st.GetSessionsEnding(ostart, session.End) {
+	for _, osession := range st.GetSessions(ostart, session.End) {
 		if osession.ExcludeFromWeekSummary { // e.g., PKTEST session
 			continue
 		}

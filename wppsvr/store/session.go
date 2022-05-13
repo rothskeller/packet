@@ -1,7 +1,16 @@
 package store
 
+/*
+Sessions are unusual because they aren't all stored as rows in the "session"
+database table.  The set of sessions exposed by the "store" package is the union
+of those stored in the database table and the set of future sessions defined by
+the configuration.  The fact that some of them are not realized in the database
+is an internal implementation detail.
+*/
+
 import (
 	"database/sql"
+	"sort"
 	"strings"
 	"time"
 
@@ -32,23 +41,58 @@ type Session struct {
 
 // GetRunningSessions returns the (unordered) list of all running sessions.
 func (s *Store) GetRunningSessions() (list []*Session) {
+	// Running sessions are always realized in the database, because the act
+	// of setting their running flag causes them to be realized.  So this is
+	// just a database query.
 	return s.getSessionsWhere("running")
 }
 
-// GetSessionsEnding returns the (unordered) list of sessions that end during
-// the specified time range (inclusive start, exclusive end).
-func (s *Store) GetSessionsEnding(start, end time.Time) (list []*Session) {
-	return s.getSessionsWhere("end>=? AND end<?", start, end)
-}
+// GetSessions returns the set of sessions that end during the specified time
+// range (inclusive start, exclusive end).
+func (s *Store) GetSessions(start, end time.Time) (list []*Session) {
+	var sched []*Session
 
-// PreviousSession returns the session immediately preceding the supplied
-// session (and with the same call sign).  It returns nil if there is none.
-func (s *Store) PreviousSession(from *Session) *Session {
-	list := s.getSessionsWhere("callsign=? and end<? ORDER BY end DESC LIMIT 1", from.CallSign, from.End)
-	if len(list) != 0 {
-		return list[0]
+	// Start by retrieving all realized sessions in the range from the
+	// database.
+	list = s.getSessionsWhere("end>=? AND end<? ORDER BY end, callsign", start, end)
+	// If the end of the range is in the past, we're done.
+	if !time.Now().Before(end) {
+		return list
 	}
-	return nil
+	// Get the list of future sessions defined by the configuration for the
+	// specified range.
+	if start.Before(time.Now()) {
+		start = time.Now()
+	}
+	sched = getConfiguredSessions(start, end)
+	// Add those scheduled sessions to the list, but only where they don't
+	// overlap sessions already in the list.
+	for _, session := range sched {
+		var overlap bool
+		for _, listed := range list {
+			if sessionOverlap(session, listed) {
+				overlap = true
+				break
+			}
+		}
+		if !overlap {
+			list = append(list, session)
+		}
+	}
+	// Sort the resulting list.
+	sort.Slice(list, func(i, j int) bool {
+		if !list[i].End.Equal(list[j].End) {
+			return list[i].End.Before(list[j].End)
+		}
+		return list[i].CallSign < list[j].CallSign
+	})
+	return list
+}
+func sessionOverlap(a, b *Session) bool {
+	if a.CallSign != b.CallSign {
+		return false
+	}
+	return a.Start.Before(b.End) && b.Start.Before(a.End)
 }
 
 // getSessionsWhere returns the (unordered) list of sessions matching the
@@ -126,6 +170,11 @@ func (s *Store) CreateSession(session *Session) {
 func (s *Store) UpdateSession(session *Session) {
 	var err error
 
+	if session.ID == 0 {
+		// This is an unrealized session; we actually need to create it.
+		s.CreateSession(session)
+		return
+	}
 	s.mutex.Lock()
 	defer s.mutex.Unlock()
 	_, err = s.dbh.Exec("UPDATE session SET (callsign, name, prefix, start, end, generateweeksummary, excludefromweeksummary, reportto, tobbses, downbbses, retrievefrombbses, retrieveat, messagetypes, modified, running, report) = (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?) WHERE id=?",
@@ -140,14 +189,31 @@ func (s *Store) UpdateSession(session *Session) {
 	}
 }
 
-// DeleteSession deletes a session.
-func (s *Store) DeleteSession(sessionID int) {
-	var err error
-
-	s.mutex.Lock()
-	defer s.mutex.Unlock()
-	_, err = s.dbh.Exec("DELETE FROM session WHERE id=?", sessionID)
-	if err != nil {
-		panic(err)
+// getConfiguredSessions returns the sessions defined by the configuration that
+// end during the specified time range (inclusive start, exclusive end).  They
+// may or may not be realized in the database; the ID fields are not filled in.
+func getConfiguredSessions(start, end time.Time) (list []*Session) {
+	for callSign, params := range config.Get().Sessions {
+		sessend := params.EndInterval.Next(start.Add(-time.Second))
+		for sessend.Before(end) {
+			var (
+				session Session
+			)
+			session.CallSign = callSign
+			session.Name = params.Name
+			session.Start = params.StartInterval.Prev(sessend)
+			session.End = sessend
+			session.ReportTo = params.ReportTo
+			session.GenerateWeekSummary = params.GenerateWeekSummary
+			session.ExcludeFromWeekSummary = params.ExcludeFromWeekSummary
+			session.ToBBSes = params.ToBBSes.AllFor(session.End)
+			session.DownBBSes = params.DownBBSes.AllFor(session.End)
+			session.RetrieveFromBBSes = params.RetrieveFromBBSes
+			session.RetrieveAt, session.RetrieveAtInterval = params.RetrieveAt, params.RetrieveAtInterval
+			session.MessageTypes = params.MessageTypes.AllFor(session.End)
+			list = append(list, &session)
+			sessend = params.EndInterval.Next(sessend)
+		}
 	}
+	return list
 }

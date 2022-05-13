@@ -59,11 +59,11 @@ func step(st *store.Store) {
 		}
 		sleep5min()
 	}()
-	maybeReopenLog()   // at midnight on the first of each month
-	config.Read()      // re-read config in case it has changed
-	checkBBSes(st)     // retrieve and respond to check-in messages
-	closeSessions(st)  // close sessions that are ending and send reports
-	createSessions(st) // create new sessions that should be running
+	maybeReopenLog()  // at midnight on the first of each month
+	config.Read()     // re-read config in case it has changed
+	checkBBSes(st)    // retrieve and respond to check-in messages
+	closeSessions(st) // close sessions that are ending and send reports
+	openSessions(st)  // open sessions that should be running
 }
 
 // ensureSingleton makes sure there is only one instance of wppsvr running at a

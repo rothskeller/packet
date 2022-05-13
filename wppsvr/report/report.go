@@ -11,7 +11,7 @@ import (
 // generating reports.
 type Store interface {
 	GetSessionMessages(int) []*store.Message
-	GetSessionsEnding(start, end time.Time) []*store.Session
+	GetSessions(start, end time.Time) []*store.Session
 	UpdateSession(*store.Session)
 	NextMessageID(string) string
 }

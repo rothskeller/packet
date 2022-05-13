@@ -63,7 +63,7 @@ func (ws *webserver) emitFrontJSONWeek(w io.Writer, name string, date time.Time)
 	var specs, svecs *store.Session
 
 	date = time.Date(date.Year(), date.Month(), date.Day(), 0, 0, 0, 0, time.Local)
-	for _, session := range ws.st.GetSessionsEnding(date, date.AddDate(0, 0, 7)) {
+	for _, session := range ws.st.GetSessions(date, date.AddDate(0, 0, 7)) {
 		switch session.CallSign {
 		case "PKTMON":
 			specs = session

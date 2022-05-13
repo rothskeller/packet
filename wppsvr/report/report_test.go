@@ -89,7 +89,7 @@ func (fakeStore) GetSessionMessages(sessionID int) []*store.Message {
 	}
 }
 
-func (fakeStore) GetSessionsEnding(start, end time.Time) []*store.Session {
+func (fakeStore) GetSessions(start, end time.Time) []*store.Session {
 	if !start.Equal(time.Date(2022, 4, 17, 0, 0, 0, 0, time.Local)) ||
 		!end.Equal(time.Date(2022, 4, 19, 20, 0, 0, 0, time.Local)) {
 		panic("wrong dates for GetSessionsEnding")
