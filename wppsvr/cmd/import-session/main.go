@@ -106,6 +106,9 @@ func importMessages() {
 			msg = new(store.Message)
 			msg.Session = session.ID
 			sp := strings.IndexByte(lines[0][3:], ' ')
+			if sp < 0 {
+				sp = len(lines[0]) - 3
+			}
 			msg.FromAddress = lines[0][3 : 3+sp]
 			msg.Subject = strings.TrimSpace(lines[0][3+sp:])
 			msg.FromCallSign = strings.ToUpper(strings.Split(msg.FromAddress, "@")[0])
