@@ -39,7 +39,7 @@ func main() {
 	if err = config.Read(); err != nil {
 		os.Exit(1)
 	}
-	if err = webserver.Run(); err != nil {
+	if err = webserver.Run(st); err != nil {
 		log.Fatalf("ERROR: %s", err)
 	}
 	for { // repeat forever
@@ -57,13 +57,13 @@ func step(st *store.Store) {
 			log.Printf("PANIC: %v", panicked)
 			log.Print(string(debug.Stack()))
 		}
+		sleep5min()
 	}()
 	maybeReopenLog()   // at midnight on the first of each month
 	config.Read()      // re-read config in case it has changed
 	checkBBSes(st)     // retrieve and respond to check-in messages
 	closeSessions(st)  // close sessions that are ending and send reports
 	createSessions(st) // create new sessions that should be running
-	sleep5min()
 }
 
 // ensureSingleton makes sure there is only one instance of wppsvr running at a

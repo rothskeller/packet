@@ -67,6 +67,7 @@ func main() {
 			session.CallSign = "PKTTUE"
 			session.Name = "SVECS Net"
 			session.Prefix = "TUE"
+			session.GenerateWeekSummary = true
 		}
 	}
 	if session.CallSign == "" {

@@ -61,7 +61,7 @@ func createSession(st *store.Store, callSign string, params *config.SessionConfi
 	if params.StartInterval.Match(now) {
 		session.Start = now
 	} else {
-		session.Start = params.StartInterval.Next(now)
+		session.Start = params.StartInterval.Prev(now)
 	}
 	session.End = params.EndInterval.Next(session.Start)
 	session.ReportTo = params.ReportTo

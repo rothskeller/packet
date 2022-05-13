@@ -33,6 +33,8 @@ func (c *Config) Validate() (valid bool) {
 		case "":
 			log.Printf("ERROR: config.bbses[%q].transport is not specified", bbsCall)
 			valid = false
+		case "disable":
+			break
 		case "kpc3plus":
 			if bbsConf.AX25 == "" {
 				log.Printf("ERROR: config.bbses[%q].ax25 is not specified", bbsCall)
@@ -238,7 +240,7 @@ func (sv ScheduledValue) validate(label string) (valid bool) {
 		if item.When == "" {
 			log.Printf("ERROR: %s[%d].when is not specified", label, i)
 			valid = false
-		} else if item.Interval, err = ParseInterval(item.When); err != nil {
+		} else if sv[i].Interval, err = ParseInterval(item.When); err != nil {
 			log.Printf("ERROR: %s[%d].when = %q: %s", label, i, item.When, err)
 			valid = false
 		}

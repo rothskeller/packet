@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Weekly Packet Practice - Santa Clara County ARES/RACES</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style>
+body {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  font-family: Arial, Helvetica, sans-serif;
+}
+input[type='text'], input[type='password'] {
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 1rem;
+  border: 1px solid #888;
+  border-radius: 0.25rem;
+  padding: 0.125rem 0.25rem;
+}
+#org {
+  color: #444;
+  font-size: 1.25rem;
+  font-weight: bold;
+}
+#title {
+  color: #DD0000;
+  font-size: 1.75rem;
+  font-weight: bold;
+}
+#grid {
+  margin-top: 2rem;
+  display: grid;
+  grid: auto-flow / max-content max-content;
+  gap: 1rem 2rem;
+}
+.weekof::before {
+  content: "Week of\a";
+  font-weight: normal;
+  font-size: 1rem;
+  color: #444;
+}
+.weekof {
+  font-size: 1.25rem;
+  font-weight: bold;
+  text-align: center;
+  white-space: pre;
+}
+.bubble {
+  border: 1px solid #888;
+  border-radius: 0.25rem;
+  background-color: #eee;
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.label {
+  color: #444;
+  font-weight: bold;
+  font-size: 1.25rem;
+}
+.count {
+  margin-top: 1rem;
+  font-weight: bold;
+  font-size: 1.75rem;
+}
+.correct::after {
+  content: '% correct';
+}
+.preliminary {
+  color: #D00;
+  font-style: italic;
+}
+#login {
+  margin-top: 2rem;
+  color: #444;
+  font-size: 1.25rem;
+  font-weight: bold;
+}
+form {
+  margin-top: 1rem;
+  display: grid;
+  grid: auto-flow / max-content max-content;
+  align-items: baseline;
+  column-gap: 1rem;
+}
+#callsign {
+  margin-bottom: 0.25rem;
+}
+#pwdhint {
+  grid-column: 1 / 3;
+  font-size: 0.875rem;
+  color: #888;
+  justify-self: center;
+}
+#submitline {
+  margin-top: 0.5rem;
+  grid-column: 2;
+  justify-self: start;
+}
+#login-incorrect {
+  color: red;
+  margin-left: 2rem;
+}
+    </style>
+    <script>
+function applyData() {
+  document.getElementById('week1').textContent = wppdata.week1;
+  document.getElementById('week2').textContent = wppdata.week2;
+  document.getElementById('week1specsdate').textContent = wppdata.week1specs.date;
+  document.getElementById('week1specscount').textContent = wppdata.week1specs.count;
+  if (wppdata.week1specs.count) {
+    document.getElementById('week1specscorrect').textContent = wppdata.week1specs.correct;
+    document.getElementById('week1specscorrect').style.display = null;
+  } else {
+    document.getElementById('week1specscorrect').style.display = 'none';
+  }
+  document.getElementById('week2specsdate').textContent = wppdata.week2specs.date;
+  document.getElementById('week2specscount').textContent = wppdata.week2specs.count;
+  if (wppdata.week2specs.count) {
+    document.getElementById('week2specscorrect').textContent = wppdata.week2specs.correct;
+    document.getElementById('week2specscorrect').style.display = null;
+  } else {
+    document.getElementById('week2specscorrect').style.display = 'none';
+  }
+  if (wppdata.week2specs.preliminary) {
+    document.getElementById('week2specspreliminary').style.display = null;
+  } else {
+    document.getElementById('week2specspreliminary').style.display = 'none';
+  }
+  document.getElementById('week1svecsdate').textContent = wppdata.week1svecs.date;
+  document.getElementById('week1svecscount').textContent = wppdata.week1svecs.count;
+  if (wppdata.week1svecs.count) {
+    document.getElementById('week1svecscorrect').textContent = wppdata.week1svecs.correct;
+    document.getElementById('week1svecscorrect').style.display = null;
+  } else {
+    document.getElementById('week1svecscorrect').style.display = 'none';
+  }
+  document.getElementById('week2svecsdate').textContent = wppdata.week2svecs.date;
+  document.getElementById('week2svecscount').textContent = wppdata.week2svecs.count;
+  if (wppdata.week2svecs.count) {
+    document.getElementById('week2svecscorrect').textContent = wppdata.week2svecs.correct;
+    document.getElementById('week2svecscorrect').style.display = null;
+  } else {
+    document.getElementById('week2svecscorrect').style.display = 'none';
+  }
+  if (wppdata.week2svecs.preliminary) {
+    document.getElementById('week2svecspreliminary').style.display = null;
+  } else {
+    document.getElementById('week2svecspreliminary').style.display = 'none';
+  }
+  document.getElementById('week1combined').textContent = wppdata.week1combined;
+  document.getElementById('week2combined').textContent = wppdata.week2combined;
+  if (wppdata.week2specs.preliminary || wppdata.week2svecs.preliminary) {
+    document.getElementById('week2preliminary').style.display = null;
+  } else {
+    document.getElementById('week2preliminary').style.display = 'none';
+  }
+  window.setTimeout(reload, wppdata.reload * 1000);
+}
+async function reload() {
+  let response = await fetch('/');
+  if (!response.ok) {
+    console.error(response)
+    return
+  }
+  wppdata = await response.json()
+  applyData()
+}
+async function onSubmit(evt) {
+  evt.preventDefault();
+  let form = new FormData(evt.currentTarget);
+  let response = await fetch('/login', { method: 'POST', body: form });
+  if (!response.ok) {
+    document.getElementById('login-incorrect').style.display = null;
+    document.getElementById('password').value = '';
+    document.getElementById('password').focus();
+    return
+  }
+  location.href = '/overview';
+}
+window.addEventListener('load', function() {
+  document.getElementById('form').addEventListener('submit', onSubmit);
+  applyData();
+});
+    </script>
+  </head>
+  <body>
+    <div id="org">Santa Clara County ARES<sup>®</sup>/RACES</div>
+    <div id="title">Weekly Packet Practice</div>
+    <div id="grid">
+      <div id="week1" class="weekof"></div>
+      <div id="week2" class="weekof"></div>
+      <div class="bubble">
+        <div class="label">SPECS Net</div>
+        <div id="week1specsdate" class="date"></div>
+        <div id="week1specscount" class="count"></div>
+        <div id="week1specscorrect" class="correct"></div>
+      </div>
+      <div class="bubble">
+        <div class="label">SPECS Net</div>
+        <div id="week2specsdate" class="date"></div>
+        <div id="week2specscount" class="count"></div>
+        <div id="week2specscorrect" class="correct"></div>
+        <div id="week2specspreliminary" class="preliminary">preliminary</div>
+      </div>
+      <div class="bubble">
+        <div class="label">SVECS Net</div>
+        <div id="week1svecsdate" class="date"></div>
+        <div id="week1svecscount" class="count"></div>
+        <div id="week1svecscorrect" class="correct"></div>
+      </div>
+      <div class="bubble">
+        <div class="label">SVECS Net</div>
+        <div id="week2svecsdate" class="date"></div>
+        <div id="week2svecscount" class="count"></div>
+        <div id="week2svecscorrect" class="correct"></div>
+        <div id="week2svecspreliminary" class="preliminary">preliminary</div>
+      </div>
+      <div class="bubble">
+        <div class="label">Combined</div>
+        <div id="week1combined" class="count"></div>
+      </div>
+      <div class="bubble">
+        <div class="label">Combined</div>
+        <div id="week2combined" class="count"></div>
+        <div id="week2preliminary" class="preliminary">preliminary</div>
+      </div>
+    </div>
+    <div id="login">For more detail, please log in.</div>
+    <form id="form">
+      <label for="callsign">Call Sign</label>
+      <input type="text" id="callsign" name="callsign">
+      <label for="password">Password</label>
+      <input type="password" id="password" name="password">
+      <div id="pwdhint">Use your password from scc-ares-races.org.</div>
+      <div id="submitline">
+        <input type="submit" id="submit" value="Log In">
+        <span id="login-incorrect" style="display:none">Login incorrect</span>
+      </div>
+    </form>
+  </body>
+</html>

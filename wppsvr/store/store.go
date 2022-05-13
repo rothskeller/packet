@@ -32,11 +32,11 @@ func Open() (store *Store, err error) {
 	return store, nil
 }
 
-// split splits a string on a comma.  Unlike strings.Split, it returns an empty
-// list if the input is an empty string.
+// split splits a string on a semicolon.  Unlike strings.Split, it returns an
+// empty list if the input is an empty string.
 func split(s string) []string {
 	if s == "" {
 		return nil
 	}
-	return strings.Split(s, ",")
+	return strings.Split(s, ";")
 }

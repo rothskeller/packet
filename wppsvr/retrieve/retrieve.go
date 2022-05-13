@@ -108,6 +108,9 @@ func ConnectToBBS(bbsname, mailbox string) (conn *jnos.Conn) {
 	)
 	bbs = config.Get().BBSes[bbsname]
 	switch bbs.Transport {
+	case "disable":
+		log.Printf("ERROR: can't connect to %s@%s: connections to %s are disabled", mailbox, bbsname, bbsname)
+		return nil
 	case "kpc3plus":
 		conn, err = kpc3plus.Connect("/dev/tty.usbserial-1410", bbs.AX25, mailbox, "KC6RSC")
 	case "telnet":

@@ -41,6 +41,16 @@ func (s *Store) GetSessionsEnding(start, end time.Time) (list []*Session) {
 	return s.getSessionsWhere("end>=? AND end<?", start, end)
 }
 
+// PreviousSession returns the session immediately preceding the supplied
+// session (and with the same call sign).  It returns nil if there is none.
+func (s *Store) PreviousSession(from *Session) *Session {
+	list := s.getSessionsWhere("callsign=? and end<? ORDER BY end DESC LIMIT 1", from.CallSign, from.End)
+	if len(list) != 0 {
+		return list[0]
+	}
+	return nil
+}
+
 // getSessionsWhere returns the (unordered) list of sessions matching the
 // specified criteria.
 func (s *Store) getSessionsWhere(where string, args ...interface{}) (list []*Session) {
@@ -98,9 +108,9 @@ func (s *Store) CreateSession(session *Session) {
 	result, err = s.dbh.Exec("INSERT INTO session (callsign, name, prefix, start, end, generateweeksummary, excludefromweeksummary, reportto, tobbses, downbbses, retrievefrombbses, retrieveat, messagetypes, modified, running, report) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)",
 		session.CallSign, session.Name, session.Prefix, session.Start, session.End,
 		session.GenerateWeekSummary, session.ExcludeFromWeekSummary,
-		strings.Join(session.ReportTo, ","), strings.Join(session.ToBBSes, ","),
-		strings.Join(session.DownBBSes, ","), strings.Join(session.RetrieveFromBBSes, ","),
-		strings.Join(session.RetrieveAt, ","), strings.Join(session.MessageTypes, ","),
+		strings.Join(session.ReportTo, ";"), strings.Join(session.ToBBSes, ";"),
+		strings.Join(session.DownBBSes, ";"), strings.Join(session.RetrieveFromBBSes, ";"),
+		strings.Join(session.RetrieveAt, ";"), strings.Join(session.MessageTypes, ";"),
 		session.Modified, session.Running, session.Report)
 	if err != nil {
 		panic(err)
@@ -121,9 +131,9 @@ func (s *Store) UpdateSession(session *Session) {
 	_, err = s.dbh.Exec("UPDATE session SET (callsign, name, prefix, start, end, generateweeksummary, excludefromweeksummary, reportto, tobbses, downbbses, retrievefrombbses, retrieveat, messagetypes, modified, running, report) = (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?) WHERE id=?",
 		session.CallSign, session.Name, session.Prefix, session.Start, session.End,
 		session.GenerateWeekSummary, session.ExcludeFromWeekSummary,
-		strings.Join(session.ReportTo, ","), strings.Join(session.ToBBSes, ","),
-		strings.Join(session.DownBBSes, ","), strings.Join(session.RetrieveFromBBSes, ","),
-		strings.Join(session.RetrieveAt, ","), strings.Join(session.MessageTypes, ","),
+		strings.Join(session.ReportTo, ";"), strings.Join(session.ToBBSes, ";"),
+		strings.Join(session.DownBBSes, ";"), strings.Join(session.RetrieveFromBBSes, ";"),
+		strings.Join(session.RetrieveAt, ";"), strings.Join(session.MessageTypes, ";"),
 		session.Modified, session.Running, session.Report, session.ID)
 	if err != nil {
 		panic(err)
