@@ -12,8 +12,10 @@ var contentMarker = "@@CONTENT@@"
 //go:embed "html.html"
 var reportHTML string
 
-// RenderHTML renders a report in HTML format.
-func (r *Report) RenderHTML() string {
+// RenderHTML renders a report in HTML format.  If links is set to a call sign,
+// only messages from that call sign have embedded links.  If links is an empty
+// string, all messages have embedded links.
+func (r *Report) RenderHTML(links string) string {
 	var sb strings.Builder
 
 	content := strings.Index(reportHTML, contentMarker)
@@ -21,7 +23,7 @@ func (r *Report) RenderHTML() string {
 	r.htmlTitle(&sb)
 	r.htmlParams(&sb)
 	r.htmlStatistics(&sb)
-	r.htmlMessages(&sb)
+	r.htmlMessages(&sb, links)
 	r.htmlGenInfo(&sb)
 	sb.WriteString(reportHTML[content+len(contentMarker):])
 	return sb.String()
@@ -67,33 +69,41 @@ func (r *Report) htmlStatistics(sb *strings.Builder) {
 	sb.WriteString(`</div>`)
 }
 
-func (r *Report) htmlMessages(sb *strings.Builder) {
+func (r *Report) htmlMessages(sb *strings.Builder, links string) {
+	sb.WriteString(`<div id="messages">`)
 	if len(r.CountedMessages) != 0 {
-		sb.WriteString(`<div class="messages"><div class="heading">The following messages were counted in this report:</div>`)
+		sb.WriteString(`<div class="heading">The following messages were counted in this report:</div>`)
 		for _, m := range r.CountedMessages {
-			fmt.Fprintf(sb, `<div class="from"><a href="/message/%s">%s</a></div>`,
-				m.ID, html.EscapeString(m.FromAddress))
+			if links == "" || (links != "" && links == m.FromCallSign) {
+				fmt.Fprintf(sb, `<div class="from"><a href="/message/%s">%s</a></div>`,
+					m.ID, html.EscapeString(m.FromAddress))
+			} else {
+				fmt.Fprintf(sb, `<div class="from">%s</div>`, html.EscapeString(m.FromAddress))
+			}
 			fmt.Fprintf(sb, `<div class="subject">%s</div>`, html.EscapeString(m.Subject))
 			if len(m.Problems) != 0 {
 				fmt.Fprintf(sb, `<div class="error">%s</div>`,
 					html.EscapeString(strings.Join(m.Problems, "\n")))
 			}
 		}
-		sb.WriteString(`</div>`)
 	}
 	if len(r.InvalidMessages) != 0 {
-		sb.WriteString(`<div class="messages"><div class="heading">The following messages were <span style="color:red">not</span> counted in this report:</div>`)
+		sb.WriteString(`<div class="heading">The following messages were <span style="color:red">not</span> counted in this report:</div>`)
 		for _, m := range r.InvalidMessages {
-			fmt.Fprintf(sb, `<div class="from"><a href="/message/%s">%s</a></div>`,
-				m.ID, html.EscapeString(m.FromAddress))
+			if links == "" || (links != "" && links == m.FromCallSign) {
+				fmt.Fprintf(sb, `<div class="from"><a href="/message/%s">%s</a></div>`,
+					m.ID, html.EscapeString(m.FromAddress))
+			} else {
+				fmt.Fprintf(sb, `<div class="from">%s</div>`, html.EscapeString(m.FromAddress))
+			}
 			fmt.Fprintf(sb, `<div class="subject">%s</div>`, html.EscapeString(m.Subject))
 			if len(m.Problems) != 0 {
 				fmt.Fprintf(sb, `<div class="error">%s</div>`,
 					html.EscapeString(strings.Join(m.Problems, "\n")))
 			}
 		}
-		sb.WriteString(`</div>`)
 	}
+	sb.WriteString(`</div>`)
 }
 
 func (r *Report) htmlGenInfo(sb *strings.Builder) {

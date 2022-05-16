@@ -82,7 +82,7 @@ func (msg *Message) FromCallSign() string {
 // followed by a call sign, optionally followed by ".ampr.org", at the end of
 // the string.  It is not case-sensitive.  The substring returned is the call
 // sign (i.e., the BBS name).
-var fromBBSRE = regexp.MustCompile(`(?i)@([AKNW][A-Z]?[0-9][A-Z]{1,3})(?:\.ampr\.org)?$`)
+var fromBBSRE = regexp.MustCompile(`(?i)@([AKNW][A-Z]?[0-9][A-Z]{1,3})(?:\.ampr\.org|\.#.*)?$`)
 
 // FromBBS extracts the sending BBS from the message return address.
 func (msg *Message) FromBBS() string {

@@ -33,10 +33,9 @@ func (ws *webserver) serveCalendar(w http.ResponseWriter, r *http.Request) {
 		callsign string
 		year     = time.Now().Year()
 	)
-	// if callsign = checkLoggedIn(w, r); callsign == "" {
-	// 	return
-	// }
-	callsign = "KC6RSC"
+	if callsign = checkLoggedIn(w, r); callsign == "" {
+		return
+	}
 	// What are we trying to view?  The check-in counts, or the results for
 	// a particular call sign?  And for which year?
 	view = r.FormValue("view")
@@ -94,23 +93,7 @@ func isAllowedToView(callsign, view string) bool {
 	if strings.EqualFold(callsign, view) {
 		return true
 	}
-	for _, cs := range config.Get().CanViewEveryone {
-		if cs == callsign {
-			return true
-		}
-	}
-	return false
-}
-
-// canEditSessions returns whether the viewer (identified by callsign) is
-// allowed to edit session definitions.
-func canEditSessions(callsign string) bool {
-	for _, cs := range config.Get().CanEditSessions {
-		if cs == callsign {
-			return true
-		}
-	}
-	return false
+	return canViewEveryone(callsign)
 }
 
 func (ws *webserver) yearHasSessions(year int) bool {

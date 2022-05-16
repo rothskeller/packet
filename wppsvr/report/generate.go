@@ -165,19 +165,19 @@ func generateWeekSummary(r *Report, st Store, session *store.Session) {
 // generateStatistics scans the messages accumulated in the session and computes
 // the statistics that we will display.
 func generateStatistics(r *Report, session *store.Session, messages []*store.Message) {
-	var (
-		otherSourcesCount int
-		fromBBS           = make(map[string]int)
-	)
+	var sources = make(map[string]int)
+
 	r.uniqueCallSigns = make(map[string]struct{})
 	r.TotalMessages = len(messages)
 	messages = removeInvalidAndReplaced(messages)
 	r.UniqueAddresses = len(messages)
 	for _, m := range messages {
-		if m.FromBBS == "" {
-			otherSourcesCount++
+		if m.FromBBS != "" {
+			sources[m.FromBBS]++
+		} else if strings.HasSuffix(strings.ToLower(m.FromAddress), "@winlink.org") {
+			sources["Winlink"]++
 		} else {
-			fromBBS[m.FromBBS]++
+			sources["Email"]++
 		}
 		if m.FromCallSign != "" {
 			r.uniqueCallSigns[m.FromCallSign] = struct{}{}
@@ -190,8 +190,8 @@ func generateStatistics(r *Report, session *store.Session, messages []*store.Mes
 	if r.UniqueAddresses != 0 {
 		r.PercentCorrect = r.UniqueAddressesCorrect * 100 / r.UniqueAddresses
 	}
-	r.Sources = make([]*Source, 0, len(fromBBS))
-	for source, count := range fromBBS {
+	r.Sources = make([]*Source, 0, len(sources))
+	for source, count := range sources {
 		r.Sources = append(r.Sources, &Source{
 			Name:          source,
 			Count:         count,
@@ -199,12 +199,6 @@ func generateStatistics(r *Report, session *store.Session, messages []*store.Mes
 		})
 	}
 	sort.Slice(r.Sources, func(i, j int) bool { return r.Sources[i].Name < r.Sources[j].Name })
-	if otherSourcesCount != 0 {
-		r.Sources = append(r.Sources, &Source{
-			Name:  "Other sources",
-			Count: otherSourcesCount,
-		})
-	}
 }
 
 // removeInvalidAndReplaced removes invalid and replaced messages from the list
@@ -254,6 +248,7 @@ func generateMessages(r *Report, session *store.Session, messages []*store.Messa
 
 		rm.ID = m.LocalID
 		rm.FromAddress = m.FromAddress
+		rm.FromCallSign = m.FromCallSign
 		if m.FromAddress == "" && m.Subject == "" {
 			rm.Subject = fmt.Sprintf("[unparseable message with hash %s]", m.Hash)
 		} else {

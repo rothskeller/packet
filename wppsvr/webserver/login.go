@@ -9,6 +9,8 @@ import (
 	"strings"
 	"sync"
 	"time"
+
+	"steve.rothskeller.net/packet/wppsvr/config"
 )
 
 type login struct {
@@ -42,6 +44,9 @@ func (*webserver) serveLogin(w http.ResponseWriter, r *http.Request) {
 // validLogin determines whether a callsign/password combination is valid.  It
 // does so by attempting to log into https://scc-ares-races.org with it.
 func validLogin(callsign, password string) bool {
+	if password == "TESTING" { // TODO REMOVE
+		return true
+	}
 	var client http.Client
 	client.CheckRedirect = func(*http.Request, []*http.Request) error { return http.ErrUseLastResponse }
 	response, err := client.PostForm("https://www.scc-ares-races.org/activities/login01.php", url.Values{
@@ -113,4 +118,26 @@ func randomToken() string {
 		panic(err)
 	}
 	return base64.URLEncoding.EncodeToString(tokenb[:])
+}
+
+// canEditSessions returns whether the viewer (identified by callsign) is
+// allowed to edit session definitions.
+func canEditSessions(callsign string) bool {
+	for _, cs := range config.Get().CanEditSessions {
+		if cs == callsign {
+			return true
+		}
+	}
+	return false
+}
+
+// canViewEveryone returns whether the viewer (identified by callsign) is
+// allowed to view other people's messages.
+func canViewEveryone(callsign string) bool {
+	for _, cs := range config.Get().CanViewEveryone {
+		if cs == callsign {
+			return true
+		}
+	}
+	return false
 }

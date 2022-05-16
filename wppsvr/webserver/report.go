@@ -10,9 +10,11 @@ import (
 )
 
 func (ws *webserver) serveReport(w http.ResponseWriter, r *http.Request) {
-	var session *store.Session
-
-	if checkLoggedIn(w, r) == "" {
+	var (
+		callsign string
+		session  *store.Session
+	)
+	if callsign = checkLoggedIn(w, r); callsign == "" {
 		return
 	}
 	if date, err := time.ParseInLocation("2006-01-02", r.FormValue("date"), time.Local); err == nil {
@@ -24,13 +26,17 @@ func (ws *webserver) serveReport(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "404 Not Found", http.StatusNotFound)
 		return
 	}
-	if session.Report == "" {
-		session.Report = report.Generate(ws.st, session).RenderHTML()
-	}
-	if session.Report[0] == '<' {
-		w.Header().Set("Content-Type", "text/html; charset=utf-8")
-	} else {
+	if session.Report != "" && len(session.RetrieveFromBBSes) == 0 {
+		// This is a report imported from the old NCO scripts.  Display
+		// it verbatim.
 		w.Header().Set("Content-Type", "text/plain")
+		io.WriteString(w, session.Report)
+		return
 	}
-	io.WriteString(w, session.Report)
+	w.Header().Set("Content-Type", "text/html; charset=utf-8")
+	if canViewEveryone(callsign) {
+		io.WriteString(w, report.Generate(ws.st, session).RenderHTML(""))
+	} else {
+		io.WriteString(w, report.Generate(ws.st, session).RenderHTML(callsign))
+	}
 }
