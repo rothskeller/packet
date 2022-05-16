@@ -133,15 +133,19 @@ func handleMessage(st *store.Store, conn *jnos.Conn, session *store.Session, bbs
 	analysis = analyze.Analyze(st, session, bbsname, message)
 	responses = analysis.Responses(st)
 	for _, response := range responses {
-		if err = conn.Send(response.Subject, response.Body, response.To); err != nil {
-			log.Printf("ERROR: sending message from %s@%s: %s", session.CallSign, bbsname, err)
-			return
+		if !config.Get().DisableResponses {
+			if err = conn.Send(response.Subject, response.Body, response.To); err != nil {
+				log.Printf("ERROR: sending message from %s@%s: %s", session.CallSign, bbsname, err)
+				return
+			}
 		}
 		response.SendTime = time.Now()
 	}
-	if err = conn.Kill(msgnum); err != nil {
-		log.Printf("ERROR: killing message %d at %s@%s: %s", msgnum, session.CallSign, bbsname, err)
-		return
+	if !config.Get().DisableKill {
+		if err = conn.Kill(msgnum); err != nil {
+			log.Printf("ERROR: killing message %d at %s@%s: %s", msgnum, session.CallSign, bbsname, err)
+			return
+		}
 	}
 	analysis.Commit(st)
 	for _, response := range responses {

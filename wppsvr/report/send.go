@@ -5,6 +5,7 @@ import (
 
 	"steve.rothskeller.net/packet/jnos"
 	"steve.rothskeller.net/packet/pktmsg"
+	"steve.rothskeller.net/packet/wppsvr/config"
 	"steve.rothskeller.net/packet/wppsvr/store"
 	"steve.rothskeller.net/packet/xscmsg"
 )
@@ -16,9 +17,11 @@ func Send(st Store, conn *jnos.Conn, session *store.Session) {
 	sendTo := append(report.Participants, session.ReportTo...)
 	session.Report = report.RenderPlainText()
 	st.UpdateSession(session)
-	var rm = pktmsg.New()
-	rm.Body = session.Report
-	subject := xscmsg.EncodeSubject(st.NextMessageID(session.Prefix), xscmsg.HandlingRoutine, "", "SCCo Packet Practice Report")
-	conn.Send(subject, rm.EncodeBody(false), sendTo...)
-	log.Printf("Sent report for %s on %s.", session.Name, session.End.Format("2006-01-02"))
+	if !config.Get().DisableReportToParticipants {
+		var rm = pktmsg.New()
+		rm.Body = session.Report
+		subject := xscmsg.EncodeSubject(st.NextMessageID(session.Prefix), xscmsg.HandlingRoutine, "", "SCCo Packet Practice Report")
+		conn.Send(subject, rm.EncodeBody(false), sendTo...)
+		log.Printf("Sent report for %s on %s.", session.Name, session.End.Format("2006-01-02"))
+	}
 }
