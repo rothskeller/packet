@@ -22,6 +22,7 @@ func (ws *webserver) serveFrontPage(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "404 Not Found", http.StatusNotFound)
 		return
 	}
+	w.Header().Set("Cache-Control", "nostore")
 	if strings.Contains(r.Header.Get("Accept"), "text/html") {
 		w.Header().Set("Content-Type", "text/html; charset=utf-8")
 		w.Write(frontHTML)

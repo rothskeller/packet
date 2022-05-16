@@ -227,6 +227,24 @@ func (c *Config) Validate() (valid bool) {
 			}
 		}
 	}
+
+	// Check that the permissions are granted to real call signs.
+	for i, call := range c.CanViewEveryone {
+		call = strings.ToUpper(call)
+		if !fccCallRE.MatchString(call) {
+			log.Printf("ERROR: config.canViewEveryone[%d] = %q: not a valid call sign", i, call)
+			valid = false
+		}
+		c.CanViewEveryone[i] = call
+	}
+	for i, call := range c.CanEditSessions {
+		call = strings.ToUpper(call)
+		if !fccCallRE.MatchString(call) {
+			log.Printf("ERROR: config.canEditSessions[%d] = %q: not a valid call sign", i, call)
+			valid = false
+		}
+		c.CanEditSessions[i] = call
+	}
 	return valid
 }
 

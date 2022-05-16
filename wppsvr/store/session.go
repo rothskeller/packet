@@ -46,8 +46,27 @@ func (s *Store) GetRunningSessions() (list []*Session) {
 	return s.getSessionsWhere("running")
 }
 
+// ExistRealizedSessions returns whether any realized sessions exist in the
+// specified time range (inclusive start, exclusive end).
+func (s *Store) ExistRealizedSessions(start, end time.Time) bool {
+	var (
+		dummy int
+	)
+	s.mutex.RLock()
+	defer s.mutex.RUnlock()
+	switch err := s.dbh.QueryRow(`SELECT 1 FROM session WHERE end>=? AND end <? LIMIT 1`, start, end).Scan(&dummy); err {
+	case nil:
+		return true
+	case sql.ErrNoRows:
+		return false
+	default:
+		panic(err)
+	}
+}
+
 // GetSessions returns the set of sessions that end during the specified time
-// range (inclusive start, exclusive end).
+// range (inclusive start, exclusive end).  The sessions are sorted by end time,
+// then by call sign.
 func (s *Store) GetSessions(start, end time.Time) (list []*Session) {
 	var sched []*Session
 

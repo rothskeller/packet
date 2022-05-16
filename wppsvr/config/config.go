@@ -24,6 +24,8 @@ type Config struct {
 	MinimumVersions map[string]string         `yaml:"minimumVersions"`
 	ProblemActions  map[string]string         `yaml:"problemActions"`
 	FormRouting     map[string]*FormRouting   `yaml:"formRouting"`
+	CanViewEveryone []string                  `yaml:"canViewEveryone"`
+	CanEditSessions []string                  `yaml:"canEditSessions"`
 
 	ProblemActionFlags map[string]Action `yaml:"-"`
 }
