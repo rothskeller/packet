@@ -2,7 +2,7 @@
 <html>
   <head>
     <meta charset="utf-8">
-    <title>2022 - Weekly Packet Practice - Santa Clara County ARES/RACES</title>
+    <title>Weekly Packet Practice - Santa Clara County ARES/RACES</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <style>
 body {
@@ -89,6 +89,8 @@ body {
   height: 2.4rem;
   padding-left: 0.125rem;
   line-height: 1.2;
+  cursor: pointer;
+  user-select: none;
 }
 .date {
   color: #888;
@@ -113,6 +115,17 @@ body {
   color: red;
 }
     </style>
+    <script>
+window.addEventListener('load', function() {
+  let days = document.getElementsByClassName('day');
+  for (let i = 0; i < days.length; i++) {
+    days[i].addEventListener('click', function(evt) {
+      let links = evt.currentTarget.getElementsByTagName('a');
+      if (links.length) location.href = links[0].href;
+    });
+  }
+});
+    </script>
   </head>
   <body>
     <div id="org">Santa Clara County ARES<sup>®</sup>/RACES</div>

@@ -49,6 +49,7 @@ type Source struct {
 
 // A Message contains the information about a single message in a Report.
 type Message struct {
+	ID          string
 	FromAddress string
 	Subject     string
 	Problems    []string

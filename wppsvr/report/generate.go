@@ -62,9 +62,17 @@ func generateTitle(r *Report, session *store.Session) {
 func generateParams(r *Report, session *store.Session) {
 	var (
 		sb           strings.Builder
+		verb1        string
+		verb2        string
+		verb3        string
 		article      string
 		messageTypes []string
 	)
+	if now().Before(session.End) {
+		verb1, verb2, verb3 = "expects", "is", "are"
+	} else {
+		verb1, verb2, verb3 = "expected", "was", "were"
+	}
 	for i, id := range session.MessageTypes {
 		var mt = config.LookupMessageType(id)
 
@@ -73,19 +81,19 @@ func generateParams(r *Report, session *store.Session) {
 			article = mt.TypeArticle()
 		}
 	}
-	fmt.Fprintf(&sb, "This practice session expected %s %s sent to %s at %s, %s.",
-		article, english.Conjoin(messageTypes, "or"), session.CallSign,
+	fmt.Fprintf(&sb, "This practice session %s %s %s sent to %s at %s, %s.",
+		verb1, article, english.Conjoin(messageTypes, "or"), session.CallSign,
 		english.Conjoin(session.ToBBSes, "or"),
 		timerange(session.Start, session.End))
 	switch len(session.DownBBSes) {
 	case 0:
 		break
 	case 1:
-		fmt.Fprintf(&sb, "  %s was simulated \"down\" for this practice session.",
-			session.DownBBSes[0])
+		fmt.Fprintf(&sb, "  %s %s simulated \"down\" for this practice session.",
+			session.DownBBSes[0], verb2)
 	default:
-		fmt.Fprintf(&sb, "  %s were simulated \"down\" for this practice session.",
-			english.Conjoin(session.DownBBSes, "and"))
+		fmt.Fprintf(&sb, "  %s %s simulated \"down\" for this practice session.",
+			english.Conjoin(session.DownBBSes, "and"), verb3)
 	}
 	r.Parameters = sb.String()
 	r.Modified = session.Modified
@@ -244,6 +252,7 @@ func generateMessages(r *Report, session *store.Session, messages []*store.Messa
 	for _, m := range messages {
 		var rm Message
 
+		rm.ID = m.LocalID
 		rm.FromAddress = m.FromAddress
 		if m.FromAddress == "" && m.Subject == "" {
 			rm.Subject = fmt.Sprintf("[unparseable message with hash %s]", m.Hash)

@@ -71,7 +71,7 @@ func validLogin(callsign, password string) bool {
 // login page and returns an empty string.
 func checkLoggedIn(w http.ResponseWriter, r *http.Request) string {
 	var token string
-	if c, err := r.Cookie("auth"); err != nil {
+	if c, err := r.Cookie("auth"); err == nil {
 		token = c.Value
 		loginMutex.Lock()
 		defer loginMutex.Unlock()

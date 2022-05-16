@@ -14,6 +14,7 @@ func Run(st *store.Store) (err error) {
 	http.Handle("/", http.HandlerFunc(ws.serveFrontPage))
 	http.Handle("/calendar", http.HandlerFunc(ws.serveCalendar))
 	http.Handle("/login", http.HandlerFunc(ws.serveLogin))
+	http.Handle("/report", http.HandlerFunc(ws.serveReport))
 	go http.ListenAndServe("localhost:8000", nil)
 	return nil
 }
