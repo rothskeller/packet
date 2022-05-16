@@ -75,7 +75,7 @@ func (r *Report) htmlMessages(sb *strings.Builder, links string) {
 		sb.WriteString(`<div class="heading">The following messages were counted in this report:</div>`)
 		for _, m := range r.CountedMessages {
 			if links == "" || (links != "" && links == m.FromCallSign) {
-				fmt.Fprintf(sb, `<div class="from"><a href="/message/%s">%s</a></div>`,
+				fmt.Fprintf(sb, `<div class="from"><a href="/message?id=%s">%s</a></div>`,
 					m.ID, html.EscapeString(m.FromAddress))
 			} else {
 				fmt.Fprintf(sb, `<div class="from">%s</div>`, html.EscapeString(m.FromAddress))
@@ -91,7 +91,7 @@ func (r *Report) htmlMessages(sb *strings.Builder, links string) {
 		sb.WriteString(`<div class="heading">The following messages were <span style="color:red">not</span> counted in this report:</div>`)
 		for _, m := range r.InvalidMessages {
 			if links == "" || (links != "" && links == m.FromCallSign) {
-				fmt.Fprintf(sb, `<div class="from"><a href="/message/%s">%s</a></div>`,
+				fmt.Fprintf(sb, `<div class="from"><a href="/message?id=%s">%s</a></div>`,
 					m.ID, html.EscapeString(m.FromAddress))
 			} else {
 				fmt.Fprintf(sb, `<div class="from">%s</div>`, html.EscapeString(m.FromAddress))

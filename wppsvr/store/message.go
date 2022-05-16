@@ -44,6 +44,31 @@ func (st *Store) SessionHasMessages(sessionID int) bool {
 	}
 }
 
+// GetMessage returns the message with the specified local ID, or nil if there
+// is none.
+func (st *Store) GetMessage(localID string) *Message {
+	var (
+		m        Message
+		problems string
+		err      error
+	)
+	m.LocalID = localID
+	st.mutex.RLock()
+	defer st.mutex.RUnlock()
+	err = st.dbh.QueryRow("SELECT session, hash, deliverytime, message, fromaddress, fromcallsign, frombbs, tobbs, subject, problems, actions FROM message WHERE id=?", localID).
+		Scan(&m.Session, &m.Hash, &m.DeliveryTime, &m.Message, &m.FromAddress, &m.FromCallSign, &m.FromBBS, &m.ToBBS, &m.Subject, &problems, &m.Actions)
+	switch err {
+	case nil:
+		break
+	case sql.ErrNoRows:
+		return nil
+	default:
+		panic(err)
+	}
+	m.Problems = split(problems)
+	return &m
+}
+
 // GetSessionMessages returns the set of messages received for the session, in
 // the order they were delivered to the BBS at which they were received.
 func (st *Store) GetSessionMessages(sessionID int) (messages []*Message) {
