@@ -278,14 +278,20 @@ var msgLine1RE = regexp.MustCompile(`^Message #(?:\d+) (?:\[Deleted|Held\])?$`)
 
 // Read reads a single message given its number.  It returns nil if there is no
 // such message.
-func (c *Conn) Read(msgnum int) (msg string, err error) {
+func (c *Conn) Read(msgnum int, verbose bool) (msg string, err error) {
 	var (
+		cmd       string
 		sb        strings.Builder
 		line      string
 		sawHeader bool
 	)
 	defer c.maybeIdent()
-	if err = c.t.Send(fmt.Sprintf("R %d\n", msgnum)); err != nil {
+	if verbose {
+		cmd = "V"
+	} else {
+		cmd = "R"
+	}
+	if err = c.t.Send(fmt.Sprintf("%s %d\n", cmd, msgnum)); err != nil {
 		return "", err
 	}
 	if line, err = c.readLine(); err != nil {

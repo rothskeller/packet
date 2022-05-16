@@ -67,10 +67,11 @@ func ForSession(st *store.Store, session *store.Session) {
 // checkBBS retrieves and responds to new check-in messages on a specific BBS.
 func checkBBS(st *store.Store, wg *sync.WaitGroup, session *store.Session, bbsname string) {
 	var (
-		conn   *jnos.Conn
-		err    error
-		msgnum = 1
-		start  = time.Now()
+		conn    *jnos.Conn
+		verbose bool
+		err     error
+		msgnum  = 1
+		start   = time.Now()
 	)
 	defer wg.Done()
 	if conn = ConnectToBBS(bbsname, session.CallSign); conn == nil {
@@ -81,10 +82,11 @@ func checkBBS(st *store.Store, wg *sync.WaitGroup, session *store.Session, bbsna
 			log.Printf("ERROR: closing connection to %s@%s: %s", session.CallSign, bbsname, err)
 		}
 	}()
+	verbose = config.Get().BBSes[bbsname].VerboseReads
 	for {
 		var message string
 
-		if message, err = conn.Read(msgnum); err != nil {
+		if message, err = conn.Read(msgnum, verbose); err != nil {
 			log.Printf("ERROR: reading messages to %s@%s: %s", session.CallSign, bbsname, err)
 			return
 		} else if message == "" { // no more messages
