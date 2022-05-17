@@ -217,6 +217,7 @@ func getConfiguredSessions(start, end time.Time) (list []*Session) {
 			)
 			session.CallSign = callSign
 			session.Name = params.Name
+			session.Prefix = params.Prefix
 			session.Start = params.StartInterval.Prev(sessend)
 			session.End = sessend
 			session.ReportTo = params.ReportTo
