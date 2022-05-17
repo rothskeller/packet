@@ -44,6 +44,7 @@ func main() {
 		os.Exit(1)
 	}
 	session.Report = string(buf)
+	session.Imported = true
 	if st, err = store.Open(); err != nil {
 		fmt.Fprintf(os.Stderr, "ERROR: %s\n", err)
 		os.Exit(1)

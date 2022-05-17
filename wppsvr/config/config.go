@@ -26,8 +26,6 @@ type Config struct {
 	FormRouting                 map[string]*FormRouting   `yaml:"formRouting"`
 	CanViewEveryone             []string                  `yaml:"canViewEveryone"`
 	CanEditSessions             []string                  `yaml:"canEditSessions"`
-	DisableKill                 bool                      `yaml:"disableKill"`
-	DisableResponses            bool                      `yaml:"disableResponses"`
 	DisableReportToParticipants bool                      `yaml:"disableReportToParticipants"`
 
 	ProblemActionFlags map[string]Action `yaml:"-"`
@@ -65,21 +63,30 @@ type BBSConfig struct {
 
 // SessionConfig holds the default configuration of a single session.
 type SessionConfig struct {
-	Name              string         `yaml:"name"`
-	Prefix            string         `yaml:"prefix"`
-	Start             string         `yaml:"start"`
-	End               string         `yaml:"end"`
-	ReportTo          []string       `yaml:"reportTo"`
-	ExcludeFromWeek   bool           `yaml:"excludeFromWeek"`
-	ToBBSes           ScheduledValue `yaml:"toBBSes"`
-	DownBBSes         ScheduledValue `yaml:"downBBSes"`
-	RetrieveFromBBSes []string       `yaml:"retrieveFromBBSes"`
-	RetrieveAt        []string       `yaml:"retrieveAt"`
-	MessageTypes      ScheduledValue `yaml:"messageTypes"`
+	Name            string         `yaml:"name"`
+	Prefix          string         `yaml:"prefix"`
+	Start           string         `yaml:"start"`
+	End             string         `yaml:"end"`
+	ReportTo        []string       `yaml:"reportTo"`
+	ExcludeFromWeek bool           `yaml:"excludeFromWeek"`
+	ToBBSes         ScheduledValue `yaml:"toBBSes"`
+	DownBBSes       ScheduledValue `yaml:"downBBSes"`
+	Retrieve        []*Retrieval   `yaml:"retrieve"`
+	MessageTypes    ScheduledValue `yaml:"messageTypes"`
 
-	StartInterval      *Interval   `yaml:"-"`
-	EndInterval        *Interval   `yaml:"-"`
-	RetrieveAtInterval []*Interval `yaml:"-"`
+	StartInterval *Interval `yaml:"-"`
+	EndInterval   *Interval `yaml:"-"`
+}
+
+// Retrieval holds the configuration of a single retrieval for a session.
+type Retrieval struct {
+	When              string `yaml:"when"`
+	BBS               string `yaml:"bbs"`
+	Mailbox           string `yaml:"mailbox"`
+	DontKillMessages  bool   `yaml:"dontKillMessages"`
+	DontSendResponses bool   `yaml:"dontSendResponses"`
+
+	Interval *Interval `yaml:"-"`
 }
 
 // ScheduledValue holds a value that changes on a set schedule.  The value may
@@ -147,18 +154,6 @@ func (c *Config) applySessionDefaults() {
 		return
 	}
 	for _, session := range c.Sessions {
-		if session.Name == "" {
-			session.Name = c.SessionDefaults.Name
-		}
-		if session.Prefix == "" {
-			session.Prefix = c.SessionDefaults.Prefix
-		}
-		if session.Start == "" {
-			session.Start = c.SessionDefaults.Start
-		}
-		if session.End == "" {
-			session.End = c.SessionDefaults.End
-		}
 		if session.ReportTo == nil {
 			session.ReportTo = c.SessionDefaults.ReportTo
 		}
@@ -167,12 +162,6 @@ func (c *Config) applySessionDefaults() {
 		}
 		if session.DownBBSes == nil {
 			session.DownBBSes = c.SessionDefaults.DownBBSes
-		}
-		if session.RetrieveFromBBSes == nil {
-			session.RetrieveFromBBSes = c.SessionDefaults.RetrieveFromBBSes
-		}
-		if session.RetrieveAt == nil {
-			session.RetrieveAt = c.SessionDefaults.RetrieveAt
 		}
 		if session.MessageTypes == nil {
 			session.MessageTypes = c.SessionDefaults.MessageTypes

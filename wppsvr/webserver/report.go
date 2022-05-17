@@ -26,9 +26,9 @@ func (ws *webserver) serveReport(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "404 Not Found", http.StatusNotFound)
 		return
 	}
-	if session.Report != "" && len(session.RetrieveFromBBSes) == 0 {
+	if session.Imported {
 		// This is a report imported from the old NCO scripts.  Display
-		// it verbatim.
+		// its report verbatim.
 		w.Header().Set("Content-Type", "text/plain")
 		io.WriteString(w, session.Report)
 		return

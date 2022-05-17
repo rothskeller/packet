@@ -19,23 +19,33 @@ import (
 
 // A Session defines the parameters of a single session instance.
 type Session struct {
-	ID                 int                `yaml:"id"`
-	CallSign           string             `yaml:"callSign"`
-	Name               string             `yaml:"name"`
-	Prefix             string             `yaml:"prefix"`
-	Start              time.Time          `yaml:"start"`
-	End                time.Time          `yaml:"end"`
-	ExcludeFromWeek    bool               `yaml:"-"`
-	ReportTo           []string           `yaml:"-"`
-	ToBBSes            []string           `yaml:"toBBSes"`
-	DownBBSes          []string           `yaml:"downBBSes"`
-	RetrieveFromBBSes  []string           `yaml:"-"`
-	RetrieveAt         []string           `yaml:"-"`
-	RetrieveAtInterval []*config.Interval `yaml:"-"`
-	MessageTypes       []string           `yaml:"messageTypes"`
-	Modified           bool               `yaml:"-"`
-	Running            bool               `yaml:"-"`
-	Report             string             `yaml:"-"`
+	ID              int          `yaml:"id"`
+	CallSign        string       `yaml:"callSign"`
+	Name            string       `yaml:"name"`
+	Prefix          string       `yaml:"prefix"`
+	Start           time.Time    `yaml:"start"`
+	End             time.Time    `yaml:"end"`
+	ExcludeFromWeek bool         `yaml:"-"`
+	ReportTo        []string     `yaml:"-"`
+	ToBBSes         []string     `yaml:"toBBSes"`
+	DownBBSes       []string     `yaml:"downBBSes"`
+	Retrieve        []*Retrieval `yaml:"retrieve"`
+	MessageTypes    []string     `yaml:"messageTypes"`
+	Modified        bool         `yaml:"-"`
+	Running         bool         `yaml:"-"`
+	Imported        bool         `yaml:"-"`
+	Report          string       `yaml:"-"`
+}
+
+// A Retrieval describes a single scheduled retrieval for a session.
+type Retrieval struct {
+	When              string           `yaml:"when"`
+	BBS               string           `yaml:"bbs"`
+	Mailbox           string           `yaml:"mailbox"`
+	DontKillMessages  bool             `yaml:"dontKillMessages"`
+	DontSendResponses bool             `yaml:"dontSendResponses"`
+	LastRun           time.Time        `yaml:"lastRun"`
+	Interval          *config.Interval `yaml:"-"`
 }
 
 // GetRunningSessions returns the (unordered) list of all running sessions.
@@ -122,34 +132,43 @@ func (s *Store) getSessionsWhere(where string, args ...interface{}) (list []*Ses
 	)
 	s.mutex.RLock()
 	defer s.mutex.RUnlock()
-	rows, err = s.dbh.Query("SELECT id, callsign, name, prefix, start, end, excludefromweek, reportto, tobbses, downbbses, retrievefrombbses, retrieveat, messagetypes, modified, running, report FROM session WHERE "+where, args...)
+	rows, err = s.dbh.Query("SELECT id, callsign, name, prefix, start, end, excludefromweek, reportto, tobbses, downbbses, messagetypes, modified, running, imported, report FROM session WHERE "+where, args...)
 	if err != nil {
 		panic(err)
 	}
 	for rows.Next() {
 		var (
-			session       Session
-			reportto      string
-			tobbses       string
-			downbbses     string
-			retrievebbses string
-			retrieveats   string
-			messagetypes  string
+			session      Session
+			reportto     string
+			tobbses      string
+			downbbses    string
+			messagetypes string
+			rows2        *sql.Rows
 		)
-		err = rows.Scan(&session.ID, &session.CallSign, &session.Name, &session.Prefix, &session.Start, &session.End, &session.ExcludeFromWeek, &reportto, &tobbses, &downbbses, &retrievebbses, &retrieveats, &messagetypes, &session.Modified, &session.Running, &session.Report)
+		err = rows.Scan(&session.ID, &session.CallSign, &session.Name, &session.Prefix, &session.Start, &session.End, &session.ExcludeFromWeek, &reportto, &tobbses, &downbbses, &messagetypes, &session.Modified, &session.Running, &session.Imported, &session.Report)
 		if err != nil {
 			panic(err)
 		}
 		session.ReportTo = split(reportto)
 		session.ToBBSes = split(tobbses)
 		session.DownBBSes = split(downbbses)
-		session.RetrieveFromBBSes = split(retrievebbses)
-		session.RetrieveAt = split(retrieveats)
-		session.RetrieveAtInterval = make([]*config.Interval, len(session.RetrieveAt))
-		for i, ra := range session.RetrieveAt {
-			session.RetrieveAtInterval[i], _ = config.ParseInterval(ra)
-		}
 		session.MessageTypes = split(messagetypes)
+		rows2, err = s.dbh.Query(`SELECT when, bbs, mailbox, dontkillmessages, dontsendresponses, lastrun FROM retrieval WHERE session=?`, session.ID)
+		if err != nil {
+			panic(err)
+		}
+		for rows2.Next() {
+			var r Retrieval
+
+			if err = rows2.Scan(&r.When, &r.BBS, &r.Mailbox, &r.DontKillMessages, &r.DontSendResponses, &r.LastRun); err != nil {
+				panic(err)
+			}
+			r.Interval, _ = config.ParseInterval(r.When)
+			session.Retrieve = append(session.Retrieve, &r)
+		}
+		if err = rows2.Err(); err != nil {
+			panic(err)
+		}
 		list = append(list, &session)
 	}
 	if err = rows.Err(); err != nil {
@@ -161,18 +180,19 @@ func (s *Store) getSessionsWhere(where string, args ...interface{}) (list []*Ses
 // CreateSession creates a new session.
 func (s *Store) CreateSession(session *Session) {
 	var (
+		tx     *sql.Tx
 		result sql.Result
 		id     int64
 		err    error
 	)
 	s.mutex.Lock()
 	defer s.mutex.Unlock()
-	result, err = s.dbh.Exec("INSERT INTO session (callsign, name, prefix, start, end, excludefromweek, reportto, tobbses, downbbses, retrievefrombbses, retrieveat, messagetypes, modified, running, report) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)",
+	tx, err = s.dbh.Begin()
+	result, err = tx.Exec("INSERT INTO session (callsign, name, prefix, start, end, excludefromweek, reportto, tobbses, downbbses, messagetypes, modified, running, imported, report) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?)",
 		session.CallSign, session.Name, session.Prefix, session.Start, session.End, session.ExcludeFromWeek,
 		strings.Join(session.ReportTo, ";"), strings.Join(session.ToBBSes, ";"),
-		strings.Join(session.DownBBSes, ";"), strings.Join(session.RetrieveFromBBSes, ";"),
-		strings.Join(session.RetrieveAt, ";"), strings.Join(session.MessageTypes, ";"),
-		session.Modified, session.Running, session.Report)
+		strings.Join(session.DownBBSes, ";"), strings.Join(session.MessageTypes, ";"),
+		session.Modified, session.Running, session.Imported, session.Report)
 	if err != nil {
 		panic(err)
 	}
@@ -181,12 +201,24 @@ func (s *Store) CreateSession(session *Session) {
 		panic(err)
 	}
 	session.ID = int(id)
+	for _, r := range session.Retrieve {
+		_, err = tx.Exec("INSERT INTO retrieval (session, when, bbs, mailbox, dontkillmessages, dontsendresponses, lastrun) VALUES (?,?,?,?,?,?,?)",
+			session.ID, r.When, r.BBS, r.Mailbox, r.DontKillMessages, r.DontSendResponses, r.LastRun)
+		if err != nil {
+			panic(err)
+		}
+	}
+	if err = tx.Commit(); err != nil {
+		panic(err)
+	}
 }
 
 // UpdateSession updates an existing session.
 func (s *Store) UpdateSession(session *Session) {
-	var err error
-
+	var (
+		tx  *sql.Tx
+		err error
+	)
 	if session.ID == 0 {
 		// This is an unrealized session; we actually need to create it.
 		s.CreateSession(session)
@@ -194,13 +226,28 @@ func (s *Store) UpdateSession(session *Session) {
 	}
 	s.mutex.Lock()
 	defer s.mutex.Unlock()
-	_, err = s.dbh.Exec("UPDATE session SET (callsign, name, prefix, start, end, excludefromweek, reportto, tobbses, downbbses, retrievefrombbses, retrieveat, messagetypes, modified, running, report) = (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?) WHERE id=?",
+	if tx, err = s.dbh.Begin(); err != nil {
+		panic(err)
+	}
+	_, err = tx.Exec("UPDATE session SET (callsign, name, prefix, start, end, excludefromweek, reportto, tobbses, downbbses, messagetypes, modified, running, imported, report) = (?,?,?,?,?,?,?,?,?,?,?,?,?,?) WHERE id=?",
 		session.CallSign, session.Name, session.Prefix, session.Start, session.End, session.ExcludeFromWeek,
 		strings.Join(session.ReportTo, ";"), strings.Join(session.ToBBSes, ";"),
-		strings.Join(session.DownBBSes, ";"), strings.Join(session.RetrieveFromBBSes, ";"),
-		strings.Join(session.RetrieveAt, ";"), strings.Join(session.MessageTypes, ";"),
-		session.Modified, session.Running, session.Report, session.ID)
+		strings.Join(session.DownBBSes, ";"), strings.Join(session.MessageTypes, ";"),
+		session.Modified, session.Running, session.Report, session.Imported, session.ID)
 	if err != nil {
+		panic(err)
+	}
+	if _, err = tx.Exec(`DELETE FROM retrieval WHERE session=?`, session.ID); err != nil {
+		panic(err)
+	}
+	for _, r := range session.Retrieve {
+		_, err = tx.Exec("INSERT INTO retrieval (session, when, bbs, mailbox, dontkillmessages, dontsendresponses, lastrun) VALUES (?,?,?,?,?,?,?)",
+			session.ID, r.When, r.BBS, r.Mailbox, r.DontKillMessages, r.DontSendResponses, r.LastRun)
+		if err != nil {
+			panic(err)
+		}
+	}
+	if err = tx.Commit(); err != nil {
 		panic(err)
 	}
 }
@@ -224,9 +271,18 @@ func getConfiguredSessions(start, end time.Time) (list []*Session) {
 			session.ExcludeFromWeek = params.ExcludeFromWeek
 			session.ToBBSes = params.ToBBSes.AllFor(session.End)
 			session.DownBBSes = params.DownBBSes.AllFor(session.End)
-			session.RetrieveFromBBSes = params.RetrieveFromBBSes
-			session.RetrieveAt, session.RetrieveAtInterval = params.RetrieveAt, params.RetrieveAtInterval
 			session.MessageTypes = params.MessageTypes.AllFor(session.End)
+			session.Retrieve = make([]*Retrieval, len(params.Retrieve))
+			for i, pr := range params.Retrieve {
+				session.Retrieve[i] = &Retrieval{
+					When:              pr.When,
+					BBS:               pr.BBS,
+					Mailbox:           pr.Mailbox,
+					DontKillMessages:  pr.DontKillMessages,
+					DontSendResponses: pr.DontSendResponses,
+					Interval:          pr.Interval,
+				}
+			}
 			list = append(list, &session)
 			sessend = params.EndInterval.Next(sessend)
 		}

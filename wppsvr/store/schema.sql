@@ -36,14 +36,18 @@ CREATE TABLE response (
     senderbbs  text     NOT NULL
 );
 
--- The retrieval table contains the time of the most recent successful retrieval
--- from each combination of call sign and BBS.
+-- The retrieval table contains a row for each scheduled retrieval for each
+-- session, describing the retrieval parameters and the last time that retrieval
+-- was successfully completed.
 CREATE TABLE retrieval (
-    callsign text     NOT NULL,
-    bbs      text     NOT NULL,
-    time     datetime NOT NULL,
-    PRIMARY KEY (callsign, bbs)
-) WITHOUT ROWID;
+    session           integer  PRIMARY KEY REFERENCES session,
+    when              text     NOT NULL,
+    bbs               text     NOT NULL,
+    mailbox           text     NOT NULL,
+    dontkillmessages  boolean  NOT NULL,
+    dontsendresponses boolean  NOT NULL,
+    lastrun           datetime NOT NULL
+);
 
 -- The session table describes all sessions.
 CREATE TABLE session (
@@ -57,11 +61,10 @@ CREATE TABLE session (
     reportto          text     NOT NULL,
     tobbses           text     NOT NULL,
     downbbses         text     NOT NULL,
-    retrievefrombbses text     NOT NULL,
-    retrieveat        text     NOT NULL,
     messagetypes      text     NOT NULL,
     modified          boolean  NOT NULL,
     running           boolean  NOT NULL,
+    imported          boolean  NOT NULL,
     report            text     NOT NULL
 );
 CREATE UNIQUE INDEX session_call_end_idx ON session (callsign, end);

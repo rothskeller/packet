@@ -39,12 +39,6 @@ sessionDefaults:
     - { when: 'DAY=8-14', then: W2XSC }
     - { when: 'DAY=15-21', then: W3XSC }
     - { when: 'DAY=22-28', then: W4XSC }
-  # The BBS(es) from which we retrieve messages for the session.
-  retrieveFromBBSes:
-    - W1XSC
-    - W2XSC
-    - W3XSC
-    - W4XSC
   # Message type(s) that are accepted for check-in messages for the session.
   # This is ICS-213 in February, June, and October; EOC-213RR in March, July,
   # and November; and OA Municipal Status in April, August, and December.
@@ -72,11 +66,6 @@ sessions:
     # PKTMON session, and ends the following Monday night at 20:00.
     start: HOUR=0 MINUTE=0
     end: WEEKDAY=Monday HOUR=20 MINUTE=0
-    # We retrieve PKTMON messages every hour of every day, plus a few times
-    # during the hour before the net.
-    retrieveAt:
-      - MINUTE=0
-      - WEEKDAY=Monday HOUR=19 MINUTE=30,40,50
   # Settings for the Tuesday night SVECS net sessions.
   PKTTUE:
     name: SVECS Net
@@ -85,14 +74,6 @@ sessions:
     # PKTTUE session, and ends the following Tuesday night at 20:00.
     start: HOUR=0 MINUTE=0
     end: WEEKDAY=Tuesday HOUR=20 MINUTE=0
-    # We retrieve PKTTUE messages every hour of every day, plus a few times
-    # during the hour before the net.
-    retrieveAt:
-      - MINUTE=0
-      - WEEKDAY=Tuesday HOUR=19 MINUTE=30,40,50
-    # PKTTUE session reports include a summary of the week (i.e., merged unique
-    # call sign totals with the previous day's PKTMON session report).
-    generateWeekSummary: true
   # Settings for the test sessions.
   PKTEST:
     name: Test Check-Ins
@@ -102,12 +83,10 @@ sessions:
     start: HOUR=20 MINUTE=0
     end: HOUR=20 MINUTE=0
     # We retrieve PKTEST messages every hour of every day.
-    retrieveAt:
-      - MINUTE=0
     # PKTEST session reports are sent only to those who checked in.
     reportTo: []
     # PKTEST sessions are not included in the weekly summaries.
-    excludeFromWeekSummary: true
+    excludeFromWeek: true
 
 # This section defines the minimum acceptable form versions.
 minimumVersions:

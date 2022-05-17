@@ -116,23 +116,20 @@ func (c *Config) Validate() (valid bool) {
 				valid = false
 			}
 		}
-		for _, bbs := range session.RetrieveFromBBSes {
-			if _, ok := c.BBSes[bbs]; !ok {
-				log.Printf("ERROR: config.sessions[%q].retrieveFromBBSes: %q is not a recognized BBS",
-					toCallSign, bbs)
+		for i, r := range session.Retrieve {
+			if r.Interval, err = ParseInterval(r.When); err != nil {
+				log.Printf("ERROR: config.sessions[%q].retrieve[%d].when = %q: %s", toCallSign, i, r.When, err)
 				valid = false
 			}
-		}
-		if len(session.RetrieveAt) == 0 {
-			log.Printf("ERROR: config.sessions[%q].retrieveAt is not specified", toCallSign)
-			valid = false
-		} else {
-			session.RetrieveAtInterval = make([]*Interval, len(session.RetrieveAt))
-			for i, ra := range session.RetrieveAt {
-				if session.RetrieveAtInterval[i], err = ParseInterval(ra); err != nil {
-					log.Printf("ERROR: config.sessions[%q].retrieveAt[%d] = %q: %s", toCallSign, i, ra, err)
-					valid = false
-				}
+			if _, ok := c.BBSes[r.BBS]; !ok {
+				log.Printf("ERROR: config.sessions[%q].retrieve[%d].bbs = %q is not a recognized BBS", toCallSign, i, r.BBS)
+				valid = false
+			}
+			if r.Mailbox == "" {
+				r.Mailbox = toCallSign
+			} else if !tacticalCallRE.MatchString(r.Mailbox) {
+				log.Printf("ERROR: config.sessions[%q].retrieve[%d].mailbox = %q is not a valid mailbox name", toCallSign, i, r.Mailbox)
+				valid = false
 			}
 		}
 		if !session.MessageTypes.validate(fmt.Sprintf("config.sessions[%q].messageTypes", toCallSign)) {
