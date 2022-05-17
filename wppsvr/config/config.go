@@ -18,15 +18,14 @@ const PackItForms = "PackItForms"
 
 // Config holds all of the configuration data.
 type Config struct {
-	BBSes                       map[string]*BBSConfig     `yaml:"bbses"`
-	SessionDefaults             *SessionConfig            `yaml:"sessionDefaults"`
-	Sessions                    map[string]*SessionConfig `yaml:"sessions"`
-	MinimumVersions             map[string]string         `yaml:"minimumVersions"`
-	ProblemActions              map[string]string         `yaml:"problemActions"`
-	FormRouting                 map[string]*FormRouting   `yaml:"formRouting"`
-	CanViewEveryone             []string                  `yaml:"canViewEveryone"`
-	CanEditSessions             []string                  `yaml:"canEditSessions"`
-	DisableReportToParticipants bool                      `yaml:"disableReportToParticipants"`
+	BBSes           map[string]*BBSConfig     `yaml:"bbses"`
+	SessionDefaults *SessionConfig            `yaml:"sessionDefaults"`
+	Sessions        map[string]*SessionConfig `yaml:"sessions"`
+	MinimumVersions map[string]string         `yaml:"minimumVersions"`
+	ProblemActions  map[string]string         `yaml:"problemActions"`
+	FormRouting     map[string]*FormRouting   `yaml:"formRouting"`
+	CanViewEveryone []string                  `yaml:"canViewEveryone"`
+	CanEditSessions []string                  `yaml:"canEditSessions"`
 
 	ProblemActionFlags map[string]Action `yaml:"-"`
 }
