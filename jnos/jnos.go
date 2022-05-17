@@ -296,7 +296,7 @@ func (c *Conn) Read(msgnum int, verbose bool) (msg string, err error) {
 	}
 	if line, err = c.readLine(); err != nil {
 		return "", err
-	} else if strings.HasPrefix(line, "Invalid Message") {
+	} else if strings.HasPrefix(line, "Invalid Message") || strings.HasPrefix(line, "No messages") {
 		return "", c.skipLinesUntilPrompt()
 	} else if !msgLine1RE.MatchString(line) {
 		c.skipLinesUntilPrompt()
