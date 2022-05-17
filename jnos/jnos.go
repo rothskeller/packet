@@ -44,6 +44,9 @@ type Transport interface {
 	Send(string) error
 	// Close closes the connection to the BBS.
 	Close() error
+	// UseVerboseReads returns whether it's appropriate to use verbose reads
+	// when communicating over this transport.
+	UseVerboseReads() bool
 }
 
 // ErrDisconnected is returned when the connection disconnects unexpectedly.
@@ -278,7 +281,7 @@ var msgLine1RE = regexp.MustCompile(`^Message #(?:\d+) (?:\[Deleted|Held\])?$`)
 
 // Read reads a single message given its number.  It returns nil if there is no
 // such message.
-func (c *Conn) Read(msgnum int, verbose bool) (msg string, err error) {
+func (c *Conn) Read(msgnum int) (msg string, err error) {
 	var (
 		cmd       string
 		sb        strings.Builder
@@ -286,7 +289,7 @@ func (c *Conn) Read(msgnum int, verbose bool) (msg string, err error) {
 		sawHeader bool
 	)
 	defer c.maybeIdent()
-	if verbose {
+	if c.t.UseVerboseReads() {
 		cmd = "V"
 	} else {
 		cmd = "R"

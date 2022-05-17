@@ -199,6 +199,10 @@ func (t *Transport) Close() error {
 	return t.telnet.Close()
 }
 
+// UseVerboseReads returns whether it's appropriate to use verbose reads
+// when communicating over this transport.
+func (t *Transport) UseVerboseReads() bool { return true }
+
 // connectTelnet opens a connection to the specified network address, and starts
 // a background reader thread for it.
 func (t *Transport) connectTelnet(address string) (err error) {

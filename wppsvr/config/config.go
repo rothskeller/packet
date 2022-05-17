@@ -53,11 +53,10 @@ const (
 
 // BBSConfig holds the configuration of a single BBS.
 type BBSConfig struct {
-	Transport    string            `yaml:"transport"`
-	AX25         string            `yaml:"ax25"`
-	TCP          string            `yaml:"tcp"`
-	Passwords    map[string]string `yaml:"passwords"`
-	VerboseReads bool              `yaml:"verboseReads"`
+	Transport string            `yaml:"transport"`
+	AX25      string            `yaml:"ax25"`
+	TCP       string            `yaml:"tcp"`
+	Passwords map[string]string `yaml:"passwords"`
 }
 
 // SessionConfig holds the default configuration of a single session.

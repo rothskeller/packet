@@ -419,6 +419,10 @@ func (t *Transport) postIdentify() (abort bool, err error) {
 	return false, err
 }
 
+// UseVerboseReads returns whether it's appropriate to use verbose reads
+// when communicating over this transport.
+func (t *Transport) UseVerboseReads() bool { return false }
+
 // connectSerial opens a connection to the specified serial port, and starts a
 // background reader thread for it.
 func (t *Transport) connectSerial(serialPort string) (err error) {
