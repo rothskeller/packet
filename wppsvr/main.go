@@ -74,7 +74,7 @@ func ensureSingleton() {
 		err    error
 	)
 	// Create (or truncate) the run.lock file.
-	if lockFH, err = os.Create("run.lock"); err != nil {
+	if lockFH, err = os.OpenFile("run.lock", os.O_CREATE|os.O_WRONLY, 0666); err != nil {
 		log.Fatalf("ERROR: open run.lock: %s", err)
 	}
 	// Acquire an exclusive lock on the run.lock file.
