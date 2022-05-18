@@ -3,6 +3,7 @@ package webserver
 import (
 	"net/http"
 
+	"steve.rothskeller.net/packet/wppsvr/config"
 	"steve.rothskeller.net/packet/wppsvr/store"
 )
 
@@ -16,7 +17,7 @@ func Run(st *store.Store) (err error) {
 	http.Handle("/login", http.HandlerFunc(ws.serveLogin))
 	http.Handle("/message", http.HandlerFunc(ws.serveMessage))
 	http.Handle("/report", http.HandlerFunc(ws.serveReport))
-	go http.ListenAndServe("localhost:8000", nil)
+	go http.ListenAndServe(config.Get().ListenAddr, nil)
 	return nil
 }
 

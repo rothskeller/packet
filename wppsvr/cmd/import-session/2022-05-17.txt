@@ -1,0 +1,69 @@
+SCCo ARES/RACES Packet Practice Report For: Tuesday, May 17, 2022.
+
+---------------------- WEEK'S SUMMARY ----------------------
+Week's unique call signs: 33
+----------------------- DAY'S SUMMARY -----------------------
+Totals:
+  All messages:            26 received;  25 ( 96%) correct. [includes duplicates]
+  Unique "from" addresses: 26 received;  25 ( 96%) correct. [unique From: addresses]
+  Unique call signs:       24 received;  24 (100%) correct. [24 reported to main net]
+
+Simulated BBS outage: W3XSC
+  1/26 (3%) incorrectly sent FROM this BBS.
+
+Sources:
+  Santa Clara County BBSs: 24
+      15 W1XSC
+       3 W2XSC
+       1 W3XSC
+       5 W4XSC
+
+  Other: 2
+      2 from BBS Network.
+
+
+Most operators who sent a message that is flagged in the list below
+will automatically receive a reply with additional details and suggested
+corrective actions. If your message is flagged, please retrieve the detailed
+reply message from the BBS, email provider, or other service you used to
+submit the weekly packet practice message before requesting assistance.
+
+----------------------- DAY'S DETAILS -----------------------
+
+##     FROM                                 SUBJECT
+_1 ak6by@w1xsc.ampr.org        6BY-101P_R_Practice AK6BY, Anne, San Jose, 5/17/22
+_2 k6sw@w1xsc.ampr.org         PEB-771P_R_Practice K6SW, Pat, San Jose, 2022-05-17
+_3 w6bg@w1xsc.ampr.org         6BG-794P_R_Practice W6BG, MAX, CUPERTINO, 2022-05-17
+_4 ke6ppi@w1xsc.ampr.org       PPI-500P_R_Practice KE6PPI, Roger, Sunnyvale, 05-13-2022
+_5 kk6fmq@w1xsc.ampr.org       FMQ-305M_R_Practice KK6FMQ, Grant, PAF, 05/17/2022
+_6 kk6fmq@w3xsc.ampr.org       FMQ-140P_R_Practice KK6FMQ, Grant, PAF, 05/17/2022
+     ^^^ From BBS simulated as down.
+_7 ag6gx@w1xsc.ampr.org        6GX-4985P_R_Practice AG6GX, Brian, Cupertino, 05/17/2022
+_8 kc6rsc@w1xsc.ampr.org       STR-2654P_R_Practice KC6RSC, Steve, SNY, 2022-05-17
+_9 wu6p@w1xsc.ampr.org         U6P-435P_R_Practice WU6P, Nianfeng, Sunnyvale, 05/17/2022
+10 kg6yhs@w4xsc.ampr.org       YHS-247P_R_Practice KG6YHS, Irene, Palo Alto, 05/17/2022
+11 kk6fpp@w4xsc.ampr.org       FPP-102M_R_Practice KK6FPP, Thomas, Sunnyvale, 20220517
+12 kg6kzz@w1xsc.ampr.org       KZZ-388P_R_Practice KG6KZZ, Jason, Almaden, 5/17/2022
+13 kg6kzz@w1xsc.#nca.ca.usa.noam KZZ-388P_R_Practice KG6KZZ, Jason, Almaden, 5/17/2022
+14 kt6jk@w1xsc.#nca.ca.usa.noam 6JK-910M_R_Practice KT6JK, Todd, CUP, 20220517
+15 km6lry@w1xsc.ampr.org       LRY-487P_R_Practice KM6LRY, Les, LG/MS, 05/17/2022
+16 km6mzm@w2xsc.ampr.org       MZM-467P_R_Practice, KM6MZM, Daniel, Sunnyvale 05/17/2022
+17 k6fjc@w2xsc.ampr.org        FJC-808P_R_Practice K6FJC, Mark, Redwood City, 20220517
+18 n9dk@w4xsc.ampr.org         9DK-3400P_R_Practice N9DK, Dave, MV, 2022-05-17
+19 k6rwy@w4xsc.ampr.org        RWY-2141P_R_Practice K6RWY, Bob, San Jose, 05/17/22
+20 kg6hi@w1xsc.ampr.org        6HI-1748P_R_Practice, KG6HI, Jerry, Sunnyvale, 17 May 2022
+21 km6iao@w4xsc.ampr.org       IAO-568P_R_Practice KM6IAO, Paul, Milpitas, 05/17/2022
+22 aa6pm@w1xsc.ampr.org        PJM-625P_R_Practice AA6PM, Peter, Saratoga, 05/17/2022
+23 xbeeoc@w2xsc.ampr.org       XBE-1362P_R_Practice N6SBC, Timothy, San Benito Co., 05/17/2022
+24 kk6wvi@w1xsc.ampr.org       JWB-674P_R_Practice KK6WVI, James, San Jose, 05-17-2022
+25 kk6ebl@w1xsc.ampr.org       EBL-1311P_R_Practice KK6EBL, Klaus, LG/MS 05/17/2022
+26 aj6hm@w1xsc.ampr.org        6HM-755P_R_Practice AJ6HM, Steve, Saratoga, 05/17/2022
+
+Key:
+F: 'From' BBS simulated as down. (total = 1)
+
+Practice Message count: 26 plain text messages.
+
+This list created by KC6RSC, Steve Roth
+TueChk001.LrnOpst004.CntInit013.MsgWrap005
+.MsgErr005.Rprt017

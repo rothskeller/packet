@@ -10,6 +10,7 @@ import (
 	"time"
 
 	"gopkg.in/yaml.v3"
+	"steve.rothskeller.net/packet/wppsvr/interval"
 )
 
 // PackItForms is the key into the Config.MinimumVersions map for retrieving the
@@ -24,6 +25,7 @@ type Config struct {
 	MinimumVersions map[string]string         `yaml:"minimumVersions"`
 	ProblemActions  map[string]string         `yaml:"problemActions"`
 	FormRouting     map[string]*FormRouting   `yaml:"formRouting"`
+	ListenAddr      string                    `yaml:"listenAddr"`
 	CanViewEveryone []string                  `yaml:"canViewEveryone"`
 	CanEditSessions []string                  `yaml:"canEditSessions"`
 
@@ -72,8 +74,8 @@ type SessionConfig struct {
 	Retrieve        []*Retrieval   `yaml:"retrieve"`
 	MessageTypes    ScheduledValue `yaml:"messageTypes"`
 
-	StartInterval *Interval `yaml:"-"`
-	EndInterval   *Interval `yaml:"-"`
+	StartInterval interval.Interval `yaml:"-"`
+	EndInterval   interval.Interval `yaml:"-"`
 }
 
 // Retrieval holds the configuration of a single retrieval for a session.
@@ -84,7 +86,7 @@ type Retrieval struct {
 	DontKillMessages  bool   `yaml:"dontKillMessages"`
 	DontSendResponses bool   `yaml:"dontSendResponses"`
 
-	Interval *Interval `yaml:"-"`
+	Interval interval.Interval `yaml:"-"`
 }
 
 // ScheduledValue holds a value that changes on a set schedule.  The value may
@@ -93,7 +95,7 @@ type ScheduledValue []struct {
 	When string
 	Then string
 
-	Interval *Interval `yaml:"-"`
+	Interval interval.Interval `yaml:"-"`
 }
 
 var (

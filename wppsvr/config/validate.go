@@ -7,6 +7,7 @@ import (
 	"regexp"
 	"strings"
 
+	"steve.rothskeller.net/packet/wppsvr/interval"
 	"steve.rothskeller.net/packet/xscmsg"
 )
 
@@ -19,8 +20,10 @@ var prefixRE = regexp.MustCompile(`^(?:[A-Z]{3}|[A-Z][0-9][A-Z]|[0-9][A-Z]{2})$`
 // If there are any errors, they are logged, and the function returns false.
 // If the configuration is valid, the function returns true.
 func (c *Config) Validate() (valid bool) {
-	var err error
-
+	var (
+		err          error
+		sawRetrieval = make(map[string]bool)
+	)
 	valid = true // assume valid until proven otherwise
 
 	// Check each of the BBS configurations.
@@ -85,15 +88,15 @@ func (c *Config) Validate() (valid bool) {
 		if session.Start == "" {
 			log.Printf("ERROR: config.sessions[%q].start is not specified", toCallSign)
 			valid = false
-		} else if session.StartInterval, err = ParseInterval(session.Start); err != nil {
-			log.Printf("ERROR: config.sessions[%q].start = %q: %s", toCallSign, session.Start, err)
+		} else if session.StartInterval = interval.Parse(session.Start); session.StartInterval == nil {
+			log.Printf("ERROR: config.sessions[%q].start = %q is not a valid interval", toCallSign, session.Start)
 			valid = false
 		}
 		if session.End == "" {
 			log.Printf("ERROR: config.sessions[%q].end is not specified", toCallSign)
 			valid = false
-		} else if session.EndInterval, err = ParseInterval(session.End); err != nil {
-			log.Printf("ERROR: config.sessions[%q].end = %q: %s", toCallSign, session.End, err)
+		} else if session.EndInterval = interval.Parse(session.End); session.EndInterval == nil {
+			log.Printf("ERROR: config.sessions[%q].end = %q is not a valid interval", toCallSign, session.End)
 			valid = false
 		}
 		if !session.ToBBSes.validate(fmt.Sprintf("config.sessions[%q].toBBS", toCallSign)) {
@@ -117,8 +120,14 @@ func (c *Config) Validate() (valid bool) {
 			}
 		}
 		for i, r := range session.Retrieve {
-			if r.Interval, err = ParseInterval(r.When); err != nil {
-				log.Printf("ERROR: config.sessions[%q].retrieve[%d].when = %q: %s", toCallSign, i, r.When, err)
+			key := r.Mailbox + "@" + r.BBS
+			if sawRetrieval[key] {
+				log.Printf("ERROR: config.sessions[%q].retrieve: multiple retrievals from %s", toCallSign, key)
+				valid = false
+			}
+			sawRetrieval[key] = true
+			if r.Interval = interval.Parse(r.When); r.Interval == nil {
+				log.Printf("ERROR: config.sessions[%q].retrieve[%d].when = %q is not a valid interval", toCallSign, i, r.When)
 				valid = false
 			}
 			if _, ok := c.BBSes[r.BBS]; !ok {
@@ -225,6 +234,12 @@ func (c *Config) Validate() (valid bool) {
 		}
 	}
 
+	// Check that we have a listen address for the web server.
+	if c.ListenAddr == "" {
+		log.Printf("ERROR: config.listenAddr is not specified")
+		valid = false
+	}
+
 	// Check that the permissions are granted to real call signs.
 	for i, call := range c.CanViewEveryone {
 		call = strings.ToUpper(call)
@@ -248,15 +263,13 @@ func (c *Config) Validate() (valid bool) {
 // validate makes sure that the interval specified in a scheduled value is
 // parseable.
 func (sv ScheduledValue) validate(label string) (valid bool) {
-	var err error
-
 	valid = true
 	for i, item := range sv {
 		if item.When == "" {
 			log.Printf("ERROR: %s[%d].when is not specified", label, i)
 			valid = false
-		} else if sv[i].Interval, err = ParseInterval(item.When); err != nil {
-			log.Printf("ERROR: %s[%d].when = %q: %s", label, i, item.When, err)
+		} else if sv[i].Interval = interval.Parse(item.When); sv[i].Interval == nil {
+			log.Printf("ERROR: %s[%d].when = %q is not a valid interval", label, i, item.When)
 			valid = false
 		}
 	}

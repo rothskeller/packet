@@ -15,6 +15,7 @@ import (
 	"time"
 
 	"steve.rothskeller.net/packet/wppsvr/config"
+	"steve.rothskeller.net/packet/wppsvr/interval"
 )
 
 // A Session defines the parameters of a single session instance.
@@ -39,13 +40,13 @@ type Session struct {
 
 // A Retrieval describes a single scheduled retrieval for a session.
 type Retrieval struct {
-	When              string           `yaml:"when"`
-	BBS               string           `yaml:"bbs"`
-	Mailbox           string           `yaml:"mailbox"`
-	DontKillMessages  bool             `yaml:"dontKillMessages"`
-	DontSendResponses bool             `yaml:"dontSendResponses"`
-	LastRun           time.Time        `yaml:"lastRun"`
-	Interval          *config.Interval `yaml:"-"`
+	When              string            `yaml:"interval"`
+	BBS               string            `yaml:"bbs"`
+	Mailbox           string            `yaml:"mailbox"`
+	DontKillMessages  bool              `yaml:"dontKillMessages"`
+	DontSendResponses bool              `yaml:"dontSendResponses"`
+	LastRun           time.Time         `yaml:"lastRun"`
+	Interval          interval.Interval `yaml:"-"`
 }
 
 // GetRunningSessions returns the (unordered) list of all running sessions.
@@ -153,7 +154,7 @@ func (s *Store) getSessionsWhere(where string, args ...interface{}) (list []*Ses
 		session.ToBBSes = split(tobbses)
 		session.DownBBSes = split(downbbses)
 		session.MessageTypes = split(messagetypes)
-		rows2, err = s.dbh.Query(`SELECT when, bbs, mailbox, dontkillmessages, dontsendresponses, lastrun FROM retrieval WHERE session=?`, session.ID)
+		rows2, err = s.dbh.Query(`SELECT interval, bbs, mailbox, dontkillmessages, dontsendresponses, lastrun FROM retrieval WHERE session=?`, session.ID)
 		if err != nil {
 			panic(err)
 		}
@@ -163,7 +164,7 @@ func (s *Store) getSessionsWhere(where string, args ...interface{}) (list []*Ses
 			if err = rows2.Scan(&r.When, &r.BBS, &r.Mailbox, &r.DontKillMessages, &r.DontSendResponses, &r.LastRun); err != nil {
 				panic(err)
 			}
-			r.Interval, _ = config.ParseInterval(r.When)
+			r.Interval = interval.Parse(r.When)
 			session.Retrieve = append(session.Retrieve, &r)
 		}
 		if err = rows2.Err(); err != nil {
@@ -202,7 +203,7 @@ func (s *Store) CreateSession(session *Session) {
 	}
 	session.ID = int(id)
 	for _, r := range session.Retrieve {
-		_, err = tx.Exec("INSERT INTO retrieval (session, when, bbs, mailbox, dontkillmessages, dontsendresponses, lastrun) VALUES (?,?,?,?,?,?,?)",
+		_, err = tx.Exec("INSERT INTO retrieval (session, interval, bbs, mailbox, dontkillmessages, dontsendresponses, lastrun) VALUES (?,?,?,?,?,?,?)",
 			session.ID, r.When, r.BBS, r.Mailbox, r.DontKillMessages, r.DontSendResponses, r.LastRun)
 		if err != nil {
 			panic(err)
@@ -233,7 +234,7 @@ func (s *Store) UpdateSession(session *Session) {
 		session.CallSign, session.Name, session.Prefix, session.Start, session.End, session.ExcludeFromWeek,
 		strings.Join(session.ReportTo, ";"), strings.Join(session.ToBBSes, ";"),
 		strings.Join(session.DownBBSes, ";"), strings.Join(session.MessageTypes, ";"),
-		session.Modified, session.Running, session.Report, session.Imported, session.ID)
+		session.Modified, session.Running, session.Imported, session.Report, session.ID)
 	if err != nil {
 		panic(err)
 	}
@@ -241,7 +242,7 @@ func (s *Store) UpdateSession(session *Session) {
 		panic(err)
 	}
 	for _, r := range session.Retrieve {
-		_, err = tx.Exec("INSERT INTO retrieval (session, when, bbs, mailbox, dontkillmessages, dontsendresponses, lastrun) VALUES (?,?,?,?,?,?,?)",
+		_, err = tx.Exec("INSERT INTO retrieval (session, interval, bbs, mailbox, dontkillmessages, dontsendresponses, lastrun) VALUES (?,?,?,?,?,?,?)",
 			session.ID, r.When, r.BBS, r.Mailbox, r.DontKillMessages, r.DontSendResponses, r.LastRun)
 		if err != nil {
 			panic(err)
@@ -257,16 +258,23 @@ func (s *Store) UpdateSession(session *Session) {
 // may or may not be realized in the database; the ID fields are not filled in.
 func getConfiguredSessions(start, end time.Time) (list []*Session) {
 	for callSign, params := range config.Get().Sessions {
-		sessend := params.EndInterval.Next(start.Add(-time.Second))
-		for sessend.Before(end) {
-			var (
-				session Session
-			)
+		var sessend time.Time
+
+		if sessend = start.Truncate(time.Minute); !start.Equal(sessend) {
+			sessend = sessend.Add(time.Minute)
+		}
+		for ; sessend.Before(end); sessend = sessend.Add(time.Minute) {
+			var session Session
+
+			if !params.EndInterval.Match(sessend) {
+				continue
+			}
 			session.CallSign = callSign
 			session.Name = params.Name
 			session.Prefix = params.Prefix
-			session.Start = params.StartInterval.Prev(sessend)
 			session.End = sessend
+			for session.Start = sessend.Add(-time.Minute); !params.StartInterval.Match(session.Start); session.Start = session.Start.Add(-time.Minute) {
+			}
 			session.ReportTo = params.ReportTo
 			session.ExcludeFromWeek = params.ExcludeFromWeek
 			session.ToBBSes = params.ToBBSes.AllFor(session.End)
@@ -284,7 +292,6 @@ func getConfiguredSessions(start, end time.Time) (list []*Session) {
 				}
 			}
 			list = append(list, &session)
-			sessend = params.EndInterval.Next(sessend)
 		}
 	}
 	return list

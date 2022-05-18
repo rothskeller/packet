@@ -15,6 +15,13 @@ import (
 	"steve.rothskeller.net/packet/wppsvr/store"
 )
 
+// serialRetrievals is false in production, allowing retrievals from multiple
+// BBSes to proceed in parallel.  It can be set to true for debugging.
+const serialRetrievals = false
+
+// serialMutex is used to enforce serial retrievals if enabled.
+var serialMutex sync.Mutex
+
 // ForRunningSessions retrieves and responds to new messages in all running
 // practice sessions.
 func ForRunningSessions(st *store.Store) {
@@ -24,7 +31,15 @@ func ForRunningSessions(st *store.Store) {
 	)
 	for _, session := range st.GetRunningSessions() {
 		for _, ret := range session.Retrieve {
-			point := ret.Interval.Prev(now)
+			point := now
+			if point.Equal(point.Truncate(time.Minute)) {
+				point = point.Add(-time.Minute)
+			} else {
+				point = point.Truncate(time.Minute)
+			}
+			for point.After(ret.LastRun) && !ret.Interval.Match(point) {
+				point = point.Add(-time.Minute)
+			}
 			if point.After(ret.LastRun) {
 				wg.Add(1)
 				go checkBBS(st, &wg, session, ret)
@@ -42,7 +57,15 @@ func ForSession(st *store.Store, session *store.Session) {
 		now = time.Now()
 	)
 	for _, ret := range session.Retrieve {
-		point := ret.Interval.Prev(now)
+		point := now
+		if point.Equal(point.Truncate(time.Minute)) {
+			point = point.Add(-time.Minute)
+		} else {
+			point = point.Truncate(time.Minute)
+		}
+		for point.After(ret.LastRun) && !ret.Interval.Match(point) {
+			point = point.Add(-time.Minute)
+		}
 		if point.After(ret.LastRun) {
 			wg.Add(1)
 			go checkBBS(st, &wg, session, ret)
@@ -60,6 +83,10 @@ func checkBBS(st *store.Store, wg *sync.WaitGroup, session *store.Session, retri
 		start  = time.Now()
 	)
 	defer wg.Done()
+	if serialRetrievals {
+		serialMutex.Lock()
+		defer serialMutex.Unlock()
+	}
 	if conn = ConnectToBBS(retrieval.BBS, retrieval.Mailbox); conn == nil {
 		return
 	}

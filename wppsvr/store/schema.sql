@@ -40,14 +40,15 @@ CREATE TABLE response (
 -- session, describing the retrieval parameters and the last time that retrieval
 -- was successfully completed.
 CREATE TABLE retrieval (
-    session           integer  PRIMARY KEY REFERENCES session,
-    when              text     NOT NULL,
+    session           integer  REFERENCES session,
+    interval          text     NOT NULL,
     bbs               text     NOT NULL,
     mailbox           text     NOT NULL,
     dontkillmessages  boolean  NOT NULL,
     dontsendresponses boolean  NOT NULL,
     lastrun           datetime NOT NULL
 );
+CREATE INDEX retrieval_session_idx ON retrieval (session);
 
 -- The session table describes all sessions.
 CREATE TABLE session (
