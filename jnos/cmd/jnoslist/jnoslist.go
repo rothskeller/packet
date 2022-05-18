@@ -7,7 +7,7 @@ import (
 	"fmt"
 	"os"
 
-	"steve.rothskeller.net/packet/jnos/cmd/jnosargs"
+	"github.com/rothskeller/packet/jnos/cmd/jnosargs"
 )
 
 func main() {

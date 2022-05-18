@@ -11,9 +11,9 @@ import (
 	"strings"
 	"time"
 
-	"steve.rothskeller.net/packet/wppsvr/config"
-	"steve.rothskeller.net/packet/wppsvr/report"
-	"steve.rothskeller.net/packet/wppsvr/store"
+	"github.com/rothskeller/packet/wppsvr/config"
+	"github.com/rothskeller/packet/wppsvr/report"
+	"github.com/rothskeller/packet/wppsvr/store"
 )
 
 // contentMarker is the Marker in calendar.html for the place where the variable

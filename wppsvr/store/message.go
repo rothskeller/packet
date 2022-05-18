@@ -5,7 +5,7 @@ import (
 	"strings"
 	"time"
 
-	"steve.rothskeller.net/packet/wppsvr/config"
+	"github.com/rothskeller/packet/wppsvr/config"
 )
 
 // A Message describes a single received message.

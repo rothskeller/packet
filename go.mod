@@ -1,4 +1,4 @@
-module steve.rothskeller.net/packet
+module github.com/rothskeller/packet
 
 go 1.18
 

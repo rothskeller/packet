@@ -1,8 +1,8 @@
 package analyze
 
 import (
-	"steve.rothskeller.net/packet/xscmsg/delivrcpt"
-	"steve.rothskeller.net/packet/xscmsg/readrcpt"
+	"github.com/rothskeller/packet/xscmsg/delivrcpt"
+	"github.com/rothskeller/packet/xscmsg/readrcpt"
 )
 
 // Problem codes

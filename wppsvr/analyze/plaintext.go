@@ -3,7 +3,7 @@ package analyze
 import (
 	"strings"
 
-	"steve.rothskeller.net/packet/pktmsg"
+	"github.com/rothskeller/packet/pktmsg"
 )
 
 // Problem codes

@@ -3,7 +3,7 @@ package analyze
 import (
 	"regexp"
 
-	"steve.rothskeller.net/packet/xscmsg"
+	"github.com/rothskeller/packet/xscmsg"
 )
 
 // Problem codes

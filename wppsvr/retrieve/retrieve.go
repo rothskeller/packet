@@ -7,12 +7,12 @@ import (
 	"sync"
 	"time"
 
-	"steve.rothskeller.net/packet/jnos"
-	"steve.rothskeller.net/packet/jnos/kpc3plus"
-	"steve.rothskeller.net/packet/jnos/telnet"
-	"steve.rothskeller.net/packet/wppsvr/analyze"
-	"steve.rothskeller.net/packet/wppsvr/config"
-	"steve.rothskeller.net/packet/wppsvr/store"
+	"github.com/rothskeller/packet/jnos"
+	"github.com/rothskeller/packet/jnos/kpc3plus"
+	"github.com/rothskeller/packet/jnos/telnet"
+	"github.com/rothskeller/packet/wppsvr/analyze"
+	"github.com/rothskeller/packet/wppsvr/config"
+	"github.com/rothskeller/packet/wppsvr/store"
 )
 
 // serialRetrievals is false in production, allowing retrievals from multiple

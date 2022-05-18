@@ -4,9 +4,9 @@ import (
 	"fmt"
 	"strings"
 
-	"steve.rothskeller.net/packet/pktmsg"
-	"steve.rothskeller.net/packet/wppsvr/config"
-	"steve.rothskeller.net/packet/xscmsg"
+	"github.com/rothskeller/packet/pktmsg"
+	"github.com/rothskeller/packet/wppsvr/config"
+	"github.com/rothskeller/packet/xscmsg"
 )
 
 // Problem codes

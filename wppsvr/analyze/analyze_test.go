@@ -23,9 +23,9 @@ import (
 	"github.com/go-test/deep"
 	"gopkg.in/yaml.v3"
 
-	"steve.rothskeller.net/packet/wppsvr/config"
-	"steve.rothskeller.net/packet/wppsvr/store"
-	_ "steve.rothskeller.net/packet/xscmsg/all"
+	"github.com/rothskeller/packet/wppsvr/config"
+	"github.com/rothskeller/packet/wppsvr/store"
+	_ "github.com/rothskeller/packet/xscmsg/all"
 )
 
 type testdata struct {

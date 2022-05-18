@@ -2,7 +2,7 @@
 
 package sheltstat
 
-import "steve.rothskeller.net/packet/xscmsg/internal/xscform"
+import "github.com/rothskeller/packet/xscmsg/internal/xscform"
 
 var sheltstat21 = &xscform.FormDefinition{
 	HTML:                   "form-oa-shelter-status.html",

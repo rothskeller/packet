@@ -8,7 +8,7 @@ import (
 	"strconv"
 	"strings"
 
-	"steve.rothskeller.net/packet/pktmsg"
+	"github.com/rothskeller/packet/pktmsg"
 )
 
 // XSCMessage is the interface implemented by all XSC message types.

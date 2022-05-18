@@ -3,8 +3,8 @@ package webserver
 import (
 	"net/http"
 
-	"steve.rothskeller.net/packet/wppsvr/config"
-	"steve.rothskeller.net/packet/wppsvr/store"
+	"github.com/rothskeller/packet/wppsvr/config"
+	"github.com/rothskeller/packet/wppsvr/store"
 )
 
 // Run starts the web server running in the background.

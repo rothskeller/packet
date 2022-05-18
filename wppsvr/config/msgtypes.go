@@ -1,10 +1,10 @@
 package config
 
 import (
-	"steve.rothskeller.net/packet/pktmsg"
-	"steve.rothskeller.net/packet/xscmsg"
-	"steve.rothskeller.net/packet/xscmsg/eoc213rr"
-	"steve.rothskeller.net/packet/xscmsg/ics213"
+	"github.com/rothskeller/packet/pktmsg"
+	"github.com/rothskeller/packet/xscmsg"
+	"github.com/rothskeller/packet/xscmsg/eoc213rr"
+	"github.com/rothskeller/packet/xscmsg/ics213"
 )
 
 // validMessageTypes contains an empty message of each type that can be used

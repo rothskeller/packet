@@ -8,7 +8,7 @@ import (
 	"strings"
 	"time"
 
-	"steve.rothskeller.net/packet/wppsvr/store"
+	"github.com/rothskeller/packet/wppsvr/store"
 )
 
 //go:embed "message.html"

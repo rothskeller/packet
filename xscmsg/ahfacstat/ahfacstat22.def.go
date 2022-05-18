@@ -2,7 +2,7 @@
 
 package ahfacstat
 
-import "steve.rothskeller.net/packet/xscmsg/internal/xscform"
+import "github.com/rothskeller/packet/xscmsg/internal/xscform"
 
 var ahfacstat22 = &xscform.FormDefinition{
 	HTML:                   "form-allied-health-facility-status.html",

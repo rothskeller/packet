@@ -1,9 +1,9 @@
 package sheltstat
 
 import (
-	"steve.rothskeller.net/packet/pktmsg"
-	"steve.rothskeller.net/packet/xscmsg"
-	"steve.rothskeller.net/packet/xscmsg/internal/xscform"
+	"github.com/rothskeller/packet/pktmsg"
+	"github.com/rothskeller/packet/xscmsg"
+	"github.com/rothskeller/packet/xscmsg/internal/xscform"
 )
 
 func init() {

@@ -13,8 +13,8 @@ import (
 	"strings"
 	"time"
 
-	"steve.rothskeller.net/packet/pktmsg"
-	"steve.rothskeller.net/packet/xscmsg"
+	"github.com/rothskeller/packet/pktmsg"
+	"github.com/rothskeller/packet/xscmsg"
 )
 
 // ErrCancel is returned by NewMessage when the user cancels the creation of the

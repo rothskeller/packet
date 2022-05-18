@@ -6,13 +6,13 @@ import (
 	"strings"
 	"time"
 
-	"steve.rothskeller.net/packet/pktmsg"
-	"steve.rothskeller.net/packet/wppsvr/config"
-	"steve.rothskeller.net/packet/wppsvr/english"
-	"steve.rothskeller.net/packet/wppsvr/store"
-	"steve.rothskeller.net/packet/xscmsg"
-	"steve.rothskeller.net/packet/xscmsg/delivrcpt"
-	"steve.rothskeller.net/packet/xscmsg/readrcpt"
+	"github.com/rothskeller/packet/pktmsg"
+	"github.com/rothskeller/packet/wppsvr/config"
+	"github.com/rothskeller/packet/wppsvr/english"
+	"github.com/rothskeller/packet/wppsvr/store"
+	"github.com/rothskeller/packet/xscmsg"
+	"github.com/rothskeller/packet/xscmsg/delivrcpt"
+	"github.com/rothskeller/packet/xscmsg/readrcpt"
 )
 
 // The time.Now function can be overridden by tests.

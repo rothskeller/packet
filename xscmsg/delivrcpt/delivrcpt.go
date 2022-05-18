@@ -6,8 +6,8 @@ import (
 	"strings"
 	"time"
 
-	"steve.rothskeller.net/packet/pktmsg"
-	"steve.rothskeller.net/packet/xscmsg"
+	"github.com/rothskeller/packet/pktmsg"
+	"github.com/rothskeller/packet/xscmsg"
 )
 
 const (

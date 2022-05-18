@@ -3,10 +3,10 @@ package report
 import (
 	"log"
 
-	"steve.rothskeller.net/packet/jnos"
-	"steve.rothskeller.net/packet/pktmsg"
-	"steve.rothskeller.net/packet/wppsvr/store"
-	"steve.rothskeller.net/packet/xscmsg"
+	"github.com/rothskeller/packet/jnos"
+	"github.com/rothskeller/packet/pktmsg"
+	"github.com/rothskeller/packet/wppsvr/store"
+	"github.com/rothskeller/packet/xscmsg"
 )
 
 // Send generates the report for the session and sends it to all designated

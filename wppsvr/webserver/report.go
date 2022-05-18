@@ -5,8 +5,8 @@ import (
 	"net/http"
 	"time"
 
-	"steve.rothskeller.net/packet/wppsvr/report"
-	"steve.rothskeller.net/packet/wppsvr/store"
+	"github.com/rothskeller/packet/wppsvr/report"
+	"github.com/rothskeller/packet/wppsvr/store"
 )
 
 func (ws *webserver) serveReport(w http.ResponseWriter, r *http.Request) {

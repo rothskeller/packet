@@ -1,8 +1,8 @@
 package analyze
 
 import (
-	"steve.rothskeller.net/packet/pktmsg"
-	"steve.rothskeller.net/packet/wppsvr/config"
+	"github.com/rothskeller/packet/pktmsg"
+	"github.com/rothskeller/packet/wppsvr/config"
 )
 
 // Problem codes

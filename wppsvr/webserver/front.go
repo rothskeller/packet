@@ -8,8 +8,8 @@ import (
 	"strings"
 	"time"
 
-	"steve.rothskeller.net/packet/wppsvr/report"
-	"steve.rothskeller.net/packet/wppsvr/store"
+	"github.com/rothskeller/packet/wppsvr/report"
+	"github.com/rothskeller/packet/wppsvr/store"
 )
 
 //go:embed "front.html"

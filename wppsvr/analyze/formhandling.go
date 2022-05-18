@@ -3,8 +3,8 @@ package analyze
 import (
 	"fmt"
 
-	"steve.rothskeller.net/packet/wppsvr/config"
-	"steve.rothskeller.net/packet/xscmsg"
+	"github.com/rothskeller/packet/wppsvr/config"
+	"github.com/rothskeller/packet/xscmsg"
 )
 
 // Problem codes

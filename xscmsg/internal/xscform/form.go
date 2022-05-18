@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"time"
 
-	"steve.rothskeller.net/packet/pktmsg"
-	"steve.rothskeller.net/packet/xscmsg"
+	"github.com/rothskeller/packet/pktmsg"
+	"github.com/rothskeller/packet/xscmsg"
 )
 
 // A FormDefinition defines the characteristics of a form such that the base

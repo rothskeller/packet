@@ -4,7 +4,7 @@ package report
 import (
 	"time"
 
-	"steve.rothskeller.net/packet/wppsvr/store"
+	"github.com/rothskeller/packet/wppsvr/store"
 )
 
 // Store is an interface covering those methods of store.Store that are used in

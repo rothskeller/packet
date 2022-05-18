@@ -7,8 +7,8 @@ import (
 	"regexp"
 	"strings"
 
-	"steve.rothskeller.net/packet/wppsvr/interval"
-	"steve.rothskeller.net/packet/xscmsg"
+	"github.com/rothskeller/packet/wppsvr/interval"
+	"github.com/rothskeller/packet/xscmsg"
 )
 
 var fccCallRE = regexp.MustCompile(`^[AKNW][A-Z]?[0-9][A-Z]{1,3}$`)

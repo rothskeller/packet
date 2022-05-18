@@ -5,11 +5,11 @@ import (
 	"strings"
 	"time"
 
-	"steve.rothskeller.net/packet/pktmsg"
-	"steve.rothskeller.net/packet/wppsvr/config"
-	"steve.rothskeller.net/packet/xscmsg"
-	"steve.rothskeller.net/packet/xscmsg/eoc213rr"
-	"steve.rothskeller.net/packet/xscmsg/ics213"
+	"github.com/rothskeller/packet/pktmsg"
+	"github.com/rothskeller/packet/wppsvr/config"
+	"github.com/rothskeller/packet/xscmsg"
+	"github.com/rothskeller/packet/xscmsg/eoc213rr"
+	"github.com/rothskeller/packet/xscmsg/ics213"
 )
 
 // Problem codes

@@ -4,9 +4,9 @@ import (
 	"testing"
 	"time"
 
-	"steve.rothskeller.net/packet/wppsvr/config"
-	"steve.rothskeller.net/packet/wppsvr/store"
-	_ "steve.rothskeller.net/packet/xscmsg/all"
+	"github.com/rothskeller/packet/wppsvr/config"
+	"github.com/rothskeller/packet/wppsvr/store"
+	_ "github.com/rothskeller/packet/xscmsg/all"
 )
 
 var fakeConfig = config.Config{

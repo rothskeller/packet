@@ -16,7 +16,7 @@ import (
 	"strconv"
 	"time"
 
-	"steve.rothskeller.net/packet/jnos"
+	"github.com/rothskeller/packet/jnos"
 )
 
 // trace is a flag indicating that data sent and retrieved should be echoed to

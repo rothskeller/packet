@@ -8,8 +8,8 @@ import (
 	"fmt"
 	"os"
 
-	"steve.rothskeller.net/packet/editmsg"
-	_ "steve.rothskeller.net/packet/xscmsg/all"
+	"github.com/rothskeller/packet/editmsg"
+	_ "github.com/rothskeller/packet/xscmsg/all"
 )
 
 func main() {

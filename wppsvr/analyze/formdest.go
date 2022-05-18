@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"strconv"
 
-	"steve.rothskeller.net/packet/wppsvr/config"
-	"steve.rothskeller.net/packet/wppsvr/english"
+	"github.com/rothskeller/packet/wppsvr/config"
+	"github.com/rothskeller/packet/wppsvr/english"
 )
 
 // Problem codes

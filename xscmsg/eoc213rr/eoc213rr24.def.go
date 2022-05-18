@@ -2,7 +2,7 @@
 
 package eoc213rr
 
-import "steve.rothskeller.net/packet/xscmsg/internal/xscform"
+import "github.com/rothskeller/packet/xscmsg/internal/xscform"
 
 var eoc213rr24 = &xscform.FormDefinition{
 	HTML:                   "form-scco-eoc-213rr-v2.html",

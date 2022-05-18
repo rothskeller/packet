@@ -3,7 +3,7 @@ package analyze
 import (
 	"fmt"
 
-	"steve.rothskeller.net/packet/wppsvr/english"
+	"github.com/rothskeller/packet/wppsvr/english"
 )
 
 // Problem codes

@@ -2,14 +2,14 @@
 package all
 
 import (
-	_ "steve.rothskeller.net/packet/xscmsg/ahfacstat" // .
-	_ "steve.rothskeller.net/packet/xscmsg/checkin"   // .
-	_ "steve.rothskeller.net/packet/xscmsg/checkout"  // .
-	_ "steve.rothskeller.net/packet/xscmsg/delivrcpt" // .
-	_ "steve.rothskeller.net/packet/xscmsg/eoc213rr"  // .
-	_ "steve.rothskeller.net/packet/xscmsg/ics213"    // .
-	_ "steve.rothskeller.net/packet/xscmsg/jurisstat" // .
-	_ "steve.rothskeller.net/packet/xscmsg/racesmar"  // .
-	_ "steve.rothskeller.net/packet/xscmsg/readrcpt"  // .
-	_ "steve.rothskeller.net/packet/xscmsg/sheltstat" // .
+	_ "github.com/rothskeller/packet/xscmsg/ahfacstat" // .
+	_ "github.com/rothskeller/packet/xscmsg/checkin"   // .
+	_ "github.com/rothskeller/packet/xscmsg/checkout"  // .
+	_ "github.com/rothskeller/packet/xscmsg/delivrcpt" // .
+	_ "github.com/rothskeller/packet/xscmsg/eoc213rr"  // .
+	_ "github.com/rothskeller/packet/xscmsg/ics213"    // .
+	_ "github.com/rothskeller/packet/xscmsg/jurisstat" // .
+	_ "github.com/rothskeller/packet/xscmsg/racesmar"  // .
+	_ "github.com/rothskeller/packet/xscmsg/readrcpt"  // .
+	_ "github.com/rothskeller/packet/xscmsg/sheltstat" // .
 )

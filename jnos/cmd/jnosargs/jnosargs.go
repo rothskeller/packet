@@ -9,10 +9,10 @@ import (
 	"regexp"
 	"strings"
 
-	"steve.rothskeller.net/packet/jnos"
-	"steve.rothskeller.net/packet/jnos/kpc3plus"
-	"steve.rothskeller.net/packet/jnos/simulator"
-	"steve.rothskeller.net/packet/jnos/telnet"
+	"github.com/rothskeller/packet/jnos"
+	"github.com/rothskeller/packet/jnos/kpc3plus"
+	"github.com/rothskeller/packet/jnos/simulator"
+	"github.com/rothskeller/packet/jnos/telnet"
 )
 
 // Usage is string describing the transport-options.  It can be incorporated

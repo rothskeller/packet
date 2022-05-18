@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"strings"
 
-	"steve.rothskeller.net/packet/wppsvr/english"
+	"github.com/rothskeller/packet/wppsvr/english"
 )
 
 // RenderPlainText renders a report in plain text format.

@@ -10,7 +10,7 @@ import (
 	"sync"
 	"time"
 
-	"steve.rothskeller.net/packet/wppsvr/config"
+	"github.com/rothskeller/packet/wppsvr/config"
 )
 
 type login struct {

@@ -2,7 +2,7 @@
 
 package ics213
 
-import "steve.rothskeller.net/packet/xscmsg/internal/xscform"
+import "github.com/rothskeller/packet/xscmsg/internal/xscform"
 
 var ics213v20 = &xscform.FormDefinition{
 	HTML:                   "form-ics213.html",

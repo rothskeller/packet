@@ -19,11 +19,11 @@ import (
 	"syscall"
 	"time"
 
-	"steve.rothskeller.net/packet/wppsvr/config"
-	"steve.rothskeller.net/packet/wppsvr/retrieve"
-	"steve.rothskeller.net/packet/wppsvr/store"
-	"steve.rothskeller.net/packet/wppsvr/webserver"
-	_ "steve.rothskeller.net/packet/xscmsg/all" // register message types
+	"github.com/rothskeller/packet/wppsvr/config"
+	"github.com/rothskeller/packet/wppsvr/retrieve"
+	"github.com/rothskeller/packet/wppsvr/store"
+	"github.com/rothskeller/packet/wppsvr/webserver"
+	_ "github.com/rothskeller/packet/xscmsg/all" // register message types
 )
 
 func main() {

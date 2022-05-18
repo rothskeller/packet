@@ -9,8 +9,8 @@ import (
 	"sync"
 	"time"
 
+	"github.com/rothskeller/packet/wppsvr/interval"
 	"gopkg.in/yaml.v3"
-	"steve.rothskeller.net/packet/wppsvr/interval"
 )
 
 // PackItForms is the key into the Config.MinimumVersions map for retrieving the
