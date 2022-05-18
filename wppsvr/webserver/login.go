@@ -44,9 +44,6 @@ func (*webserver) serveLogin(w http.ResponseWriter, r *http.Request) {
 // validLogin determines whether a callsign/password combination is valid.  It
 // does so by attempting to log into https://scc-ares-races.org with it.
 func validLogin(callsign, password string) bool {
-	if password == "TESTING" { // TODO REMOVE
-		return true
-	}
 	var client http.Client
 	client.CheckRedirect = func(*http.Request, []*http.Request) error { return http.ErrUseLastResponse }
 	response, err := client.PostForm("https://www.scc-ares-races.org/activities/login01.php", url.Values{

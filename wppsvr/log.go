@@ -9,7 +9,7 @@ import (
 
 // When development is true, log entries go to stderr instead of to a log file.
 // It should be false in production deployments.
-const development = true
+const development = false
 
 var (
 	logFH    *os.File // log file handle
