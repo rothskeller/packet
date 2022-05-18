@@ -66,14 +66,16 @@ func step(st *store.Store) {
 	openSessions(st)  // open sessions that should be running
 }
 
+// lockFH is the singleton lock file used in ensureSingleton.  It is declared at
+// global scope so that it never gets garbage collected.
+var lockFH *os.File
+
 // ensureSingleton makes sure there is only one instance of wppsvr running at a
 // time.  Redundant instances exit immediately and silently.
 func ensureSingleton() {
-	var (
-		lockFH *os.File
-		err    error
-	)
-	// Create (or truncate) the run.lock file.
+	var err error
+
+	// Open (or create) the run.lock file.
 	if lockFH, err = os.OpenFile("run.lock", os.O_CREATE|os.O_WRONLY, 0666); err != nil {
 		log.Fatalf("ERROR: open run.lock: %s", err)
 	}
