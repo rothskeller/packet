@@ -36,7 +36,7 @@ func (r *Report) htmlTitle(sb *strings.Builder) {
 	}
 }
 
-var noBreakReplacer = strings.NewReplacer(" ", "&nbsp;", "-", "#8209;")
+var noBreakReplacer = strings.NewReplacer(" ", "&nbsp;", "-", "&#8209;")
 
 func (r *Report) htmlParams(sb *strings.Builder) {
 	sb.WriteString(`<div class="block"><div class="block-title">Message Expectations`)
