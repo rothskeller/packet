@@ -1,0 +1,6 @@
+Implement new report style in text.
+Move jurisdiction map out of code and into config.
+Analysis should keep any unrecognized jurisdiction.
+Report should change unrecognized jurisdictions to ???.
+Add link to online report to text report.
+Change session configuration from web UI.

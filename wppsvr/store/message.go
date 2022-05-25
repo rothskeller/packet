@@ -20,6 +20,7 @@ type Message struct {
 	FromBBS      string        `yaml:"fromBBS"`
 	ToBBS        string        `yaml:"toBBS"`
 	Jurisdiction string        `yaml:"jurisdiction"`
+	MessageType  string        `yaml:"messageType"`
 	Subject      string        `yaml:"subject"`
 	Problems     []string      `yaml:"problems"`
 	Actions      config.Action `yaml:"actions"`
@@ -56,8 +57,8 @@ func (st *Store) GetMessage(localID string) *Message {
 	m.LocalID = localID
 	st.mutex.RLock()
 	defer st.mutex.RUnlock()
-	err = st.dbh.QueryRow("SELECT session, hash, deliverytime, message, fromaddress, fromcallsign, frombbs, tobbs, jurisdiction, subject, problems, actions FROM message WHERE id=?", localID).
-		Scan(&m.Session, &m.Hash, &m.DeliveryTime, &m.Message, &m.FromAddress, &m.FromCallSign, &m.FromBBS, &m.ToBBS, &m.Jurisdiction, &m.Subject, &problems, &m.Actions)
+	err = st.dbh.QueryRow("SELECT session, hash, deliverytime, message, fromaddress, fromcallsign, frombbs, tobbs, jurisdiction, messagetype, subject, problems, actions FROM message WHERE id=?", localID).
+		Scan(&m.Session, &m.Hash, &m.DeliveryTime, &m.Message, &m.FromAddress, &m.FromCallSign, &m.FromBBS, &m.ToBBS, &m.Jurisdiction, &m.MessageType, &m.Subject, &problems, &m.Actions)
 	switch err {
 	case nil:
 		break
@@ -79,7 +80,7 @@ func (st *Store) GetSessionMessages(sessionID int) (messages []*Message) {
 	)
 	st.mutex.RLock()
 	defer st.mutex.RUnlock()
-	rows, err = st.dbh.Query("SELECT id, hash, deliverytime, message, fromaddress, fromcallsign, frombbs, tobbs, jurisdiction, subject, problems, actions FROM message WHERE session=? ORDER BY deliverytime", sessionID)
+	rows, err = st.dbh.Query("SELECT id, hash, deliverytime, message, fromaddress, fromcallsign, frombbs, tobbs, jurisdiction, messagetype, subject, problems, actions FROM message WHERE session=? ORDER BY deliverytime", sessionID)
 	if err != nil {
 		panic(err)
 	}
@@ -88,7 +89,7 @@ func (st *Store) GetSessionMessages(sessionID int) (messages []*Message) {
 			m        Message
 			problems string
 		)
-		err = rows.Scan(&m.LocalID, &m.Hash, &m.DeliveryTime, &m.Message, &m.FromAddress, &m.FromCallSign, &m.FromBBS, &m.ToBBS, &m.Jurisdiction, &m.Subject, &problems, &m.Actions)
+		err = rows.Scan(&m.LocalID, &m.Hash, &m.DeliveryTime, &m.Message, &m.FromAddress, &m.FromCallSign, &m.FromBBS, &m.ToBBS, &m.Jurisdiction, &m.MessageType, &m.Subject, &problems, &m.Actions)
 		if err != nil {
 			panic(err)
 		}
@@ -128,8 +129,8 @@ func (st *Store) SaveMessage(m *Message) {
 
 	st.mutex.Lock()
 	defer st.mutex.Unlock()
-	_, err = st.dbh.Exec("INSERT INTO message (id, hash, deliverytime, message, session, fromaddress, fromcallsign, frombbs, tobbs, jurisdiction, subject, problems, actions) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)",
-		m.LocalID, m.Hash, m.DeliveryTime, m.Message, m.Session, m.FromAddress, m.FromCallSign, m.FromBBS, m.ToBBS, m.Jurisdiction, m.Subject, strings.Join(m.Problems, ";"), m.Actions)
+	_, err = st.dbh.Exec("INSERT INTO message (id, hash, deliverytime, message, session, fromaddress, fromcallsign, frombbs, tobbs, jurisdiction, messagetype, subject, problems, actions) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?)",
+		m.LocalID, m.Hash, m.DeliveryTime, m.Message, m.Session, m.FromAddress, m.FromCallSign, m.FromBBS, m.ToBBS, m.Jurisdiction, m.MessageType, m.Subject, strings.Join(m.Problems, ";"), m.Actions)
 	if err != nil {
 		panic(err)
 	}

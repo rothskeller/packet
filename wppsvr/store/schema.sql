@@ -12,6 +12,7 @@ CREATE TABLE message (
     frombbs      text     NOT NULL,
     tobbs        text     NOT NULL,
     jurisdiction text     NOT NULL,
+    messagetype  text     NOT NULL,
     subject      text     NOT NULL,
     problems     text     NOT NULL,
     actions      integer  NOT NULL

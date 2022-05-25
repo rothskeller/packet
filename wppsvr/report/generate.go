@@ -22,9 +22,12 @@ func Generate(st Store, session *store.Session) *Report {
 	var (
 		r        Report
 		messages []*store.Message
+		count    int
 	)
 	messages = st.GetSessionMessages(session.ID)
+	count = len(messages)
 	messages = removeDroppedMessages(messages)
+	r.DroppedCount = count - len(messages)
 	generateTitle(&r, session)
 	generateParams(&r, session)
 	generateStatistics(&r, session, messages)
@@ -126,11 +129,10 @@ func generateWeekSummary(r *Report, st Store, session *store.Session) {
 func generateStatistics(r *Report, session *store.Session, messages []*store.Message) {
 	var sources = make(map[string]int)
 	var jurisdictions = make(map[string]int)
+	var mtypes = make(map[string]int)
 
 	r.uniqueCallSigns = make(map[string]struct{})
-	r.TotalMessages = len(messages)
-	messages = removeInvalidAndReplaced(messages)
-	r.UniqueAddresses = len(messages)
+	messages, r.InvalidCount, r.ReplacedCount = removeInvalidAndReplaced(messages)
 	for _, m := range messages {
 		if m.FromBBS != "" {
 			sources[m.FromBBS]++
@@ -144,17 +146,19 @@ func generateStatistics(r *Report, session *store.Session, messages []*store.Mes
 		} else {
 			jurisdictions["~~~"]++ // chosen to sort after anything real
 		}
+		mtypes[m.MessageType]++
 		if m.FromCallSign != "" {
 			r.uniqueCallSigns[m.FromCallSign] = struct{}{}
 		}
-		if m.Actions&config.ActionError == 0 {
-			r.UniqueAddressesCorrect++
+		if m.Actions&config.ActionError != 0 {
+			r.ErrorCount++
+		} else if len(m.Problems) > 1 || (len(m.Problems) == 1 && m.Problems[0] != analyze.ProblemMultipleMessagesFromAddress) {
+			r.WarningCount++
+		} else {
+			r.OKCount++
 		}
 	}
 	r.UniqueCallSigns = len(r.uniqueCallSigns)
-	if r.UniqueAddresses != 0 {
-		r.PercentCorrect = r.UniqueAddressesCorrect * 100 / r.UniqueAddresses
-	}
 	r.Sources = make([]*Source, 0, len(sources))
 	for source, count := range sources {
 		r.Sources = append(r.Sources, &Source{
@@ -164,9 +168,9 @@ func generateStatistics(r *Report, session *store.Session, messages []*store.Mes
 		})
 	}
 	sort.Slice(r.Sources, func(i, j int) bool { return r.Sources[i].Name < r.Sources[j].Name })
-	r.Jurisdictions = make([]*Jurisdiction, 0, len(jurisdictions))
+	r.Jurisdictions = make([]*Count, 0, len(jurisdictions))
 	for jurisdiction, count := range jurisdictions {
-		r.Jurisdictions = append(r.Jurisdictions, &Jurisdiction{
+		r.Jurisdictions = append(r.Jurisdictions, &Count{
 			Name:  jurisdiction,
 			Count: count,
 		})
@@ -178,11 +182,19 @@ func generateStatistics(r *Report, session *store.Session, messages []*store.Mes
 	if len(r.Jurisdictions) != 0 && r.Jurisdictions[len(r.Jurisdictions)-1].Name == "~~~" {
 		r.Jurisdictions[len(r.Jurisdictions)-1].Name = "???"
 	}
+	r.MTypeCounts = make([]*Count, 0, len(mtypes))
+	for mtype, count := range mtypes {
+		r.MTypeCounts = append(r.MTypeCounts, &Count{
+			Name:  mtype,
+			Count: count,
+		})
+	}
+	sort.Slice(r.MTypeCounts, func(i, j int) bool { return r.MTypeCounts[i].Name < r.MTypeCounts[j].Name })
 }
 
 // removeInvalidAndReplaced removes invalid and replaced messages from the list
 // of messages.
-func removeInvalidAndReplaced(messages []*store.Message) (out []*store.Message) {
+func removeInvalidAndReplaced(messages []*store.Message) (out []*store.Message, invalid, replaced int) {
 	var (
 		msgidx    int
 		outidx    int
@@ -193,16 +205,18 @@ func removeInvalidAndReplaced(messages []*store.Message) (out []*store.Message) 
 	for msgidx = len(messages) - 1; msgidx >= 0; msgidx-- {
 		var m = messages[msgidx]
 		if m.Actions&config.ActionDontCount != 0 {
+			invalid++
 			continue
 		}
 		if addresses[m.FromAddress] {
+			replaced++
 			continue
 		}
 		addresses[m.FromAddress] = true
 		outidx--
 		out[outidx] = m
 	}
-	return out[outidx:]
+	return out[outidx:], invalid, replaced
 }
 
 // wasSimulatedDown returns whether the specified BBS was simulated down for the

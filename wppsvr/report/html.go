@@ -21,7 +21,7 @@ func (r *Report) RenderHTML(links string) string {
 	content := strings.Index(reportHTML, contentMarker)
 	sb.WriteString(reportHTML[:content])
 	r.htmlTitle(&sb)
-	r.htmlParams(&sb)
+	r.htmlExpectsResults(&sb)
 	r.htmlStatistics(&sb)
 	r.htmlMessages(&sb, links)
 	r.htmlGenInfo(&sb)
@@ -34,12 +34,18 @@ func (r *Report) htmlTitle(sb *strings.Builder) {
 	if r.Preliminary {
 		fmt.Fprintf(sb, `<div id="preliminary">PRELIMINARY</div>`)
 	}
+	if r.UniqueCallSigns != 0 {
+		fmt.Fprintf(sb, `<div id="unique">%d Unique Call Signs</div>`, r.UniqueCallSigns)
+		if r.UniqueCallSignsWeek != 0 {
+			fmt.Fprintf(sb, `<div id="unique-week">%d for the week</div>`, r.UniqueCallSignsWeek)
+		}
+	}
 }
 
 var noBreakReplacer = strings.NewReplacer(" ", "&nbsp;", "-", "&#8209;")
 
-func (r *Report) htmlParams(sb *strings.Builder) {
-	sb.WriteString(`<div class="block"><div class="block-title">Message Expectations`)
+func (r *Report) htmlExpectsResults(sb *strings.Builder) {
+	sb.WriteString(`<div class="blocks-line"><div class="block"><div class="block-title">Expectations`)
 	if r.Modified {
 		sb.WriteString(`*`)
 	}
@@ -59,26 +65,40 @@ func (r *Report) htmlParams(sb *strings.Builder) {
 	}
 	sb.WriteString(`</div>`)
 	if r.Modified {
-		sb.WriteString(`<div>*NOTE: The message expectations were changed after some messages were received.  The earlier messages were evaluated with different expectations.</div>`)
+		sb.WriteString(`<div>*modified during session</div>`)
 	}
 	sb.WriteString(`</div>`)
+	sb.WriteString(`<div class="block"><div class="block-title">Results</div><div class="key-value">`)
+	if r.OKCount+r.WarningCount+r.ErrorCount+r.InvalidCount+r.ReplacedCount+r.DroppedCount != 0 {
+		if r.OKCount != 0 {
+			fmt.Fprintf(sb, `<div>OK:</div><div>%d</div>`, r.OKCount)
+		}
+		if r.WarningCount != 0 {
+			fmt.Fprintf(sb, `<div>WARNING:</div><div>%d</div>`, r.WarningCount)
+		}
+		if r.ErrorCount != 0 {
+			fmt.Fprintf(sb, `<div>ERROR:</div><div>%d</div>`, r.ErrorCount)
+		}
+		if r.InvalidCount != 0 {
+			fmt.Fprintf(sb, `<div class="gray">NOT COUNTED:</div><div class="gray">%d</div>`, r.InvalidCount)
+		}
+		if r.ReplacedCount != 0 {
+			fmt.Fprintf(sb, `<div class="gray">Duplicate:</div><div class="gray">%d</div>`, r.ReplacedCount)
+		}
+		if r.DroppedCount != 0 {
+			fmt.Fprintf(sb, `<div class="gray">Delivery rcpt:</div><div class="gray">%d</div>`, r.DroppedCount)
+		}
+	} else {
+		sb.WriteString(`<div>Messages:</div><div>0</div>`)
+	}
+	sb.WriteString(`</div></div></div>`)
 }
 
 func (r *Report) htmlStatistics(sb *strings.Builder) {
-	var lines = 4
-	sb.WriteString(`<div class="blocks-line"><div class="block"><div class="block-title">Message Counts</div><div class="key-value-note">`)
-	fmt.Fprintf(sb, `<div>Total messages:</div><div>%d</div><div></div>`, r.TotalMessages)
-	fmt.Fprintf(sb, `<div>Unique addresses:</div><div>%d</div><div></div>`, r.UniqueAddresses)
-	if r.UniqueAddresses != 0 {
-		fmt.Fprintf(sb, `<div>Correct messages:</div><div>%d</div><div>(%d%%)</div>`, r.UniqueAddressesCorrect, r.PercentCorrect)
-		lines++
+	if len(r.Sources) == 0 && len(r.Jurisdictions) == 0 && len(r.MTypeCounts) == 0 {
+		return
 	}
-	fmt.Fprintf(sb, `<div>Unique call signs:</div><div>%d</div><div>(reported)</div>`, r.UniqueCallSigns)
-	if r.UniqueCallSignsWeek != 0 {
-		fmt.Fprintf(sb, `<div class="indent">for the week:</div><div>%d</div><div></div>`, r.UniqueCallSignsWeek)
-		lines++
-	}
-	sb.WriteString(`</div></div>`)
+	sb.WriteString(`<div class="blocks-line">`)
 	if len(r.Sources) != 0 {
 		var hasDown bool
 		sb.WriteString(`<div class="block"><div class="block-title">Source</div><div class="key-value">`)
@@ -94,15 +114,9 @@ func (r *Report) htmlStatistics(sb *strings.Builder) {
 			sb.WriteString(`<div>*Simulated "down"</div>`)
 		}
 		sb.WriteString(`</div>`)
-		if len(r.Sources) > lines {
-			lines = len(r.Sources)
-		}
 	}
 	if len(r.Jurisdictions) != 0 {
-		var cols = 1
-		if len(r.Jurisdictions) > lines {
-			cols = 2
-		}
+		var cols = len(r.Jurisdictions) + 5/6
 		var rows = (len(r.Jurisdictions) + cols - 1) / cols
 		sb.WriteString(`<div class="block"><div class="block-title">Jurisdiction</div><div class="key-value-columns">`)
 		for col := 0; col < len(r.Jurisdictions); col += rows {
@@ -111,6 +125,13 @@ func (r *Report) htmlStatistics(sb *strings.Builder) {
 				fmt.Fprintf(sb, `<div>%s</div><div>%d</div>`, html.EscapeString(r.Jurisdictions[i].Name), r.Jurisdictions[i].Count)
 			}
 			sb.WriteString(`</div>`)
+		}
+		sb.WriteString(`</div></div>`)
+	}
+	if len(r.MTypeCounts) != 0 {
+		sb.WriteString(`<div class="block"><div class="block-title">Message Types</div><div class="key-value">`)
+		for _, mtype := range r.MTypeCounts {
+			fmt.Fprintf(sb, `<div>%s</div><div>%d</div>`, html.EscapeString(mtype.Name), mtype.Count)
 		}
 		sb.WriteString(`</div></div>`)
 	}

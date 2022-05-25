@@ -20,27 +20,30 @@ type Store interface {
 // practice session.  (This can include information from multiple sessions when
 // a weekly summary is part of the report.)
 type Report struct {
-	SessionName            string
-	SessionDate            string
-	Preliminary            bool
-	MessageTypes           string
-	SentTo                 string
-	SentBefore             string
-	SentAfter              string
-	NotSentFrom            string
-	Modified               bool
-	TotalMessages          int
-	UniqueAddresses        int
-	UniqueAddressesCorrect int
-	PercentCorrect         int
-	uniqueCallSigns        map[string]struct{}
-	UniqueCallSigns        int
-	UniqueCallSignsWeek    int
-	Sources                []*Source
-	Jurisdictions          []*Jurisdiction
-	Messages               []*Message
-	Participants           []string
-	GenerationInfo         string
+	SessionName         string
+	SessionDate         string
+	Preliminary         bool
+	MessageTypes        string
+	SentTo              string
+	SentBefore          string
+	SentAfter           string
+	NotSentFrom         string
+	Modified            bool
+	OKCount             int
+	WarningCount        int
+	ErrorCount          int
+	InvalidCount        int
+	ReplacedCount       int
+	DroppedCount        int
+	uniqueCallSigns     map[string]struct{}
+	UniqueCallSigns     int
+	UniqueCallSignsWeek int
+	Sources             []*Source
+	Jurisdictions       []*Count
+	MTypeCounts         []*Count
+	Messages            []*Message
+	Participants        []string
+	GenerationInfo      string
 }
 
 // A Source contains the information about a single source of messages in a
@@ -51,9 +54,8 @@ type Source struct {
 	SimulatedDown bool
 }
 
-// A Jurisdiction contains the information about a single jurisdiction in a
-// Report.
-type Jurisdiction struct {
+// A Count contains a name/count pair.
+type Count struct {
 	Name  string
 	Count int
 }

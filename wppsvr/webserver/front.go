@@ -76,8 +76,9 @@ func (ws *webserver) emitFrontJSONWeek(w io.Writer, name string, date time.Time)
 	if specs != nil {
 		r := report.Generate(ws.st, specs)
 		fmt.Fprintf(w, `"%sspecs":{"date":"%s","count":%d`, name, specs.End.Format("January 2"), r.UniqueCallSigns)
-		if r.UniqueCallSigns != 0 {
-			fmt.Fprintf(w, `,"correct":%d`, r.PercentCorrect)
+		if count := r.OKCount + r.WarningCount + r.ErrorCount; count != 0 {
+			pct := (r.OKCount + r.WarningCount) * 100 / count
+			fmt.Fprintf(w, `,"correct":%d`, pct)
 		}
 		if specs.Running {
 			io.WriteString(w, `,"preliminary":true`)
@@ -87,8 +88,9 @@ func (ws *webserver) emitFrontJSONWeek(w io.Writer, name string, date time.Time)
 	if svecs != nil {
 		r := report.Generate(ws.st, svecs)
 		fmt.Fprintf(w, `"%ssvecs":{"date":"%s","count":%d`, name, svecs.End.Format("January 2"), r.UniqueCallSigns)
-		if r.UniqueCallSigns != 0 {
-			fmt.Fprintf(w, `,"correct":%d`, r.PercentCorrect)
+		if count := r.OKCount + r.WarningCount + r.ErrorCount; count != 0 {
+			pct := (r.OKCount + r.WarningCount) * 100 / count
+			fmt.Fprintf(w, `,"correct":%d`, pct)
 		}
 		if svecs.Running {
 			io.WriteString(w, `,"preliminary":true`)

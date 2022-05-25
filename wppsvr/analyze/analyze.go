@@ -187,6 +187,9 @@ func (a *Analysis) Commit(st astore) {
 	m.FromCallSign = a.fromCallSign
 	m.ToBBS = a.toBBS
 	m.Jurisdiction = a.jurisdiction
+	if a.xsc != nil {
+		m.MessageType = a.xsc.TypeTag()
+	}
 	m.Subject = a.msg.Header.Get("Subject")
 	m.DeliveryTime = a.msg.Date()
 	m.FromBBS = a.msg.FromBBS()
