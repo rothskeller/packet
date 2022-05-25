@@ -171,6 +171,9 @@ func generateStatistics(r *Report, session *store.Session, messages []*store.Mes
 			Count: count,
 		})
 	}
+	if len(r.Jurisdictions) == 1 && r.Jurisdictions[0].Name == "~~~" {
+		r.Jurisdictions = nil
+	}
 	sort.Slice(r.Jurisdictions, func(i, j int) bool { return r.Jurisdictions[i].Name < r.Jurisdictions[j].Name })
 	if len(r.Jurisdictions) != 0 && r.Jurisdictions[len(r.Jurisdictions)-1].Name == "~~~" {
 		r.Jurisdictions[len(r.Jurisdictions)-1].Name = "???"
