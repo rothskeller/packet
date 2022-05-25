@@ -99,7 +99,10 @@ func (r *Report) htmlStatistics(sb *strings.Builder) {
 		}
 	}
 	if len(r.Jurisdictions) != 0 {
-		var cols = (len(r.Jurisdictions) + lines - 1) / lines
+		var cols = 1
+		if len(r.Jurisdictions) > lines {
+			cols = 2
+		}
 		var rows = (len(r.Jurisdictions) + cols - 1) / cols
 		sb.WriteString(`<div class="block"><div class="block-title">Jurisdiction</div><div class="key-value-columns">`)
 		for col := 0; col < len(r.Jurisdictions); col += rows {
@@ -141,38 +144,3 @@ func (r *Report) htmlMessages(sb *strings.Builder, links string) {
 func (r *Report) htmlGenInfo(sb *strings.Builder) {
 	fmt.Fprintf(sb, `<div id="generation">%s</div>`, html.EscapeString(r.GenerationInfo))
 }
-
-/*
-   <div class="block">
-     <div class="block-title">Messages</div>
-     <div id="messages">
-       <div><a href="...">W6</a></div>
-       <div><a href="...">BG</a></div>
-       <div>W1XSC</div>
-       <div>CUP</div>
-       <div class="ok"></div>
-       <div><a href="...">AK6</a></div>
-       <div><a href="...">BY</a></div>
-       <div>W1XSC</div>
-       <div>SJC</div>
-       <div class="ok"></div>
-       <div><a href="...">KK6</a></div>
-       <div><a href="...">EBL</a></div>
-       <div>W1XSC</div>
-       <div>LGT</div>
-       <div class="warning">invalid Practice subject format</div>
-       <div><a href="...">W6</a></div>
-       <div><a href="...">ESL</a></div>
-       <div>W1XSC*</div>
-       <div>SJC</div>
-       <div class="error">wrong something</div>
-       <div><a href="...">AJ6</a></div>
-       <div><a href="...">LG</a></div>
-       <div>W1XSC</div>
-       <div>SJC</div>
-       <div class="invalid">message to incorrect BBS</div>
-     </div>
-   </div>
-   <div id="generation">This report was generated on Tuesday, May 24, 2022 at 08:32 by wppsvr version (devel).</div>
-
-*/
