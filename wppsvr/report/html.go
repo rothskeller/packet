@@ -41,7 +41,7 @@ var noBreakReplacer = strings.NewReplacer(" ", "&nbsp;", "-", "&#8209;")
 func (r *Report) htmlParams(sb *strings.Builder) {
 	sb.WriteString(`<div class="block"><div class="block-title">Message Expectations`)
 	if r.Modified {
-		sb.WriteString(`<sup>*</sup>`)
+		sb.WriteString(`*`)
 	}
 	sb.WriteString(`</div><div class="key-text"><div>Message type:</div><div>`)
 	sb.WriteString(r.MessageTypes)
@@ -59,7 +59,7 @@ func (r *Report) htmlParams(sb *strings.Builder) {
 	}
 	sb.WriteString(`</div>`)
 	if r.Modified {
-		sb.WriteString(`<div><sup>*</sup>NOTE: The message expectations were changed after some messages were received.  The earlier messages were evaluated with different expectations.</div>`)
+		sb.WriteString(`<div>*NOTE: The message expectations were changed after some messages were received.  The earlier messages were evaluated with different expectations.</div>`)
 	}
 	sb.WriteString(`</div>`)
 }
@@ -85,13 +85,13 @@ func (r *Report) htmlStatistics(sb *strings.Builder) {
 		for _, source := range r.Sources {
 			var down string
 			if source.SimulatedDown {
-				down, hasDown = `<sup>*</sup>`, true
+				down, hasDown = `*`, true
 			}
 			fmt.Fprintf(sb, `<div>%s%s</div><div>%d</div>`, html.EscapeString(source.Name), down, source.Count)
 		}
 		sb.WriteString(`</div>`)
 		if hasDown {
-			sb.WriteString(`<div><sup>*</sup>Simulated "down"</div>`)
+			sb.WriteString(`<div>*Simulated "down"</div>`)
 		}
 		sb.WriteString(`</div>`)
 		if len(r.Sources) > lines {
@@ -126,14 +126,14 @@ func (r *Report) htmlMessages(sb *strings.Builder, links string) {
 			fmt.Fprintf(sb, `<div>%s</div><div>%s</div>`, html.EscapeString(m.Prefix), html.EscapeString(m.Suffix))
 		}
 		if m.Multiple {
-			multiple, hasMultiple = `<sup>*</sup>`, true
+			multiple, hasMultiple = `*`, true
 		}
 		fmt.Fprintf(sb, `<div>%s%s</div><div>%s</div><div class="%s">%s</div>`,
 			m.Source, multiple, m.Jurisdiction, m.Class, m.Problem)
 	}
 	sb.WriteString(`</div>`)
 	if hasMultiple {
-		sb.WriteString(`<div><sup>*</sup>multiple messages from this address; only the last one counts</div>`)
+		sb.WriteString(`<div>*multiple messages from this address; only the last one counts</div>`)
 	}
 	sb.WriteString(`</div>`)
 }
