@@ -43,6 +43,11 @@ func RegisterType(create func(string) XSCMessage, recognize func(*pktmsg.Message
 
 // Create creates a new message of the type identified by the supplied tag.  If
 // the tag is not recognized, Create returns nil.
+//
+// For this to work, the message type you want to create must have been
+// registered.  The standard message types can be registered by importing the
+// appropriate message-type-specific subpackages of xscmsg.  Alternatively, all
+// standard message types can be registered by importing xscmsg/all.
 func Create(tag string) XSCMessage {
 	for _, createFunc := range createFuncs {
 		if xsc := createFunc(tag); xsc != nil {
@@ -52,11 +57,16 @@ func Create(tag string) XSCMessage {
 	return nil
 }
 
-// Recognize examines the supplied Message to see if it is one of the standard
-// XSC messages.  If so, it returns the appropriate XSCMessage implementation
-// wrapping it.  If not, it returns nil.  The strict flag indicates whether any
-// form embedded in the message should be parsed strictly; see pktmsg.ParseForm
-// for details.
+// Recognize examines the supplied Message to see if it is one of the registered
+// XSC message types.  If so, it returns the appropriate XSCMessage
+// implementation wrapping it.  If not, it returns nil.  The strict flag
+// indicates whether any form embedded in the message should be parsed strictly;
+// see pktmsg.ParseForm for details.
+//
+// For a message to be recognized, its message type must have been registered.
+// The standard message types can be registered by importing the appropriate
+// message-type-specific subpackages of xscmsg.  Alternatively, all standard
+// message types can be registered by importing xscmsg/all.
 func Recognize(msg *pktmsg.Message, strict bool) XSCMessage {
 	var form *pktmsg.Form
 	if pktmsg.IsForm(msg.Body) {

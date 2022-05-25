@@ -23,7 +23,8 @@ type XSCSubject struct {
 var subjectLineRE = regexp.MustCompile(`(?i)^([A-Z0-9]+-?[0-9]+[A-Z]?)_(?:([A-Z])/)?([A-Z])_(?:([^_\s]+)_)?([^_\s]+(?:\s.*|$))`)
 
 // ParseSubject parses the message Subject to see if it is an SCCo-standard
-// subject line, and if so returns the data extracted from it.
+// subject line, and if so returns the data extracted from it.  (If not, it
+// returns nil.)
 func ParseSubject(subjline string) (s *XSCSubject) {
 	if match := subjectLineRE.FindStringSubmatch(subjline); match != nil {
 		s = new(XSCSubject)

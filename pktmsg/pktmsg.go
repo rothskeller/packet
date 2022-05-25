@@ -1,5 +1,5 @@
 // Package pktmsg handles encoding and decoding packet messages.  It understands
-// RFC-4155 and RFC-5322 email encoding, SCCo-standard subject line encoding,
+// RFC-4155 and RFC-5322 email encoding, PackItForms and similar form encodings,
 // and Outpost-specific feature encodings.
 package pktmsg
 

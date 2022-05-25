@@ -9,15 +9,15 @@ follow these instructions.
 
 If you haven't checked out the PackItForms source code before:
 
-    $ cd ..       # (i.e., the directory above "packet")
-    $ git clone https://github.com/jmkristian/pack-it-forms
-    $ cd packet   # (i.e., return to the "packet" directory)
+    > cd ..       # (i.e., the directory above "packet")
+    > git clone https://github.com/jmkristian/pack-it-forms
+    > cd packet   # (i.e., return to the "packet" directory)
 
 If you have it already checked out and you need to update it:
 
-    $ cd ../pack-it-forms
-    $ git pull
-    $ cd ../packet
+    > cd ../pack-it-forms
+    > git pull
+    > cd ../packet
 
 ## Step 2:  Update the HTML Files in the Packet Tree
 
@@ -26,7 +26,7 @@ from various versions of PackItForms.  Some of these may have changed and need
 to be updated.  Also, there may be new versions of some forms that need to be
 copied.  To do these things:
 
-    $ go run ./gen/get-pifo-html
+    > go run ./gen/get-pifo-html
 
 (Note:  get-pifo-html assumes that the PackItForms source code is at
 `../pack-it-forms` and that the output files should go in `./xscmsg/internal`.
@@ -62,7 +62,7 @@ fetched, and generates a Go source file for each one (i.e., for each version of
 each form), containing information about the fields of the form.  To run this
 tool:
 
-    $ go run ./gen/extract-pifo-html
+    > go run ./gen/extract-pifo-html
 
 This creates a `*.def.go` file next to each `*.html` file.
 

@@ -2,6 +2,10 @@
 // be used for testing JNOS-based services without connecting to a real BBS.
 // This simulation implements only the features of JNOS that are used by package
 // jnos.
+//
+// To use this simulator, call Start to start it, then create a jnos/telnet
+// Transport connecting to simulator.ListenAddress.  Call the simulator's Stop
+// method when it is no longer needed.
 package simulator
 
 import (

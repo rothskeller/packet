@@ -1,7 +1,7 @@
 // Package jnos provides a library for interacting with a JNOS BBS.  To use it,
 // first create a Transport that will handle the physical communication.  This
-// repository contains three Transport implementations: kpc3plus, telnet, and
-// simulator.  Others can be implemented elsewhere as long as they honor the
+// repository contains two Transport implementations: jnos/kpc3plus and
+// jnos/telnet.  Others can be implemented elsewhere as long as they honor the
 // Transport interface in this package.
 //
 // Once you have an open Transport, pass it to this package's Connect method to
