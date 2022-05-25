@@ -6,11 +6,15 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <style>
 body {
-  margin: 0.5rem 0;
+  margin: 0;
+  font-family: Arial, Helvetica, sans-serif;
+}
+#report {
+  max-width: 42rem;
+  margin: 0.5rem auto;
+  padding: 1rem;
   display: flex;
   flex-direction: column;
-  align-items: center;
-  font-family: Arial, Helvetica, sans-serif;
 }
 #org {
   color: #444;
@@ -35,117 +39,128 @@ body {
 #preliminary {
   font-size: 1.5rem;
   font-weight: bold;
+  text-align: center;
   color: #d00;
 }
-#description {
+.blocks-line {
+  display: flex;
+  flex-wrap: wrap;
+}
+.blocks-line .block {
+  margin-right: 2rem;
+}
+.blocks-line .block:last-child {
+  margin-right: 0;
+}
+.block {
   max-width: 40rem;
-  margin: 1.5rem 1rem 0;
+  margin-bottom: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
 }
-#statistics {
-  margin: 1rem 1rem 0;
+#date + .block,
+#preliminary + .block {
+  margin-top: 1.5rem;
+}
+.block-title {
+  font-size: 1.25rem;
+  font-weight: bold;
+  color: #444;
+}
+.key-value-columns {
+  display: flex;
+}
+.key-value-columns .key-value {
+  margin-right: 2rem;
+}
+.key-value-columns .key-value:last-child {
+  margin-right: 0;
+}
+.key-text {
   display: grid;
-  grid: auto-flow / max-content max-content 1fr;
-  width: calc(100vw - 2rem);
-  column-gap: 1rem;
+  grid: auto-flow / max-content auto;
+  gap: 0.125rem 1rem;
 }
-.stat {
-  grid-column: 1;
+.key-text div:nth-child(2n+1) {
+  color: #666;
 }
-.stat-head {
-  grid-column: 1 / 4;
+.key-value {
+  display: grid;
+  grid: auto-flow / max-content auto;
+  gap: 0.125rem 1rem;
 }
-.stat-indent {
-  grid-column: 1;
-  padding-left: 1.5rem;
+.key-value div:nth-child(2n+1) {
+  color: #666;
 }
-.stat-count {
-  grid-column: 2;
+.key-value div:nth-child(2n) {
   text-align: right;
 }
-.stat-percent {
-  grid-column: 3;
+.key-value-note {
+  display: grid;
+  grid: auto-flow / max-content auto max-content;
+  row-gap: 0.125rem;
 }
-.stat-note {
-  grid-column: 3;
+.key-value-note div:nth-child(3n+1) {
+  color: #666;
 }
-.omitabbr {
-  display: none;
+.key-value-note div:nth-child(3n+2) {
+  text-align: right;
+  padding-left: 1rem;
 }
-@media (min-width: 25em) {
-  .omitabbr {
-    display: inline;
-  }
+.key-value-note div:nth-child(3n) {
+  padding-left: 0.25rem;
 }
-@media (min-width: 42em) {
-  #statistics {
-    width: 40rem;
-  }
+.indent {
+  padding-left: 2rem;
 }
 #messages {
-  margin: 0 1rem 0;
   display: grid;
-  grid: auto-flow / 1fr;
-  max-width: calc(100vw - 2rem);
+  grid: auto-flow / repeat(5, max-content);
+  row-gap: 0.25rem;
 }
-#messages div {
-  white-space: nowrap;
-  min-width: 0;
-  overflow: hidden;
-  text-overflow: ellipsis;
+#messages div:nth-child(5n+1) {
+  text-align: right;
 }
-div.heading {
-  padding-top: 2rem;
-  white-space: normal;
+#messages div:nth-child(5n+2) {
+  font-weight: bold;
 }
-.from {
-  padding-top: 0.5rem;
+#messages div:nth-child(5n+3),
+#messages div:nth-child(5n+4),
+#messages div:nth-child(5n+5) {
+  margin-left: 1rem;
 }
-.from::before {
-  content: "From: "
+.ok {
+  color: green;
 }
-#messages div.error {
-  padding-left: 2rem;
-  font-size: 0.875rem;
+.ok::before {
+  content: "OK"
+}
+.warning {
+  color: #ed7d31;
+}
+.warning::before {
+  content: "WARNING: "
+}
+.error {
   color: red;
-  white-space: pre;
 }
-@media (min-width: 40em) {
-  #messages {
-    grid: auto-flow / max-content 1fr;
-    column-gap: 1rem;
-  }
-  .heading {
-    grid-column: 1 / 3;
-    padding-bottom: 0.5rem;
-  }
-  .from {
-    grid-column: 1;
-    padding-top: 0;
-  }
-  .from::before {
-    content: none;
-  }
-  .subject {
-    grid-column: 2;
-  }
-  .error {
-    grid-column: 1 / 3;
-  }
+.error::before {
+  content: "ERROR: "
 }
-#generation {
-  width: calc(100vw - 2rem);
-  margin: 2rem 1rem 1rem;
+.invalid {
+  color: #888;
 }
-@media (min-width: 42rem) {
-  #generation {
-    width: 40rem;
-  }
+.invalid::before {
+  content: "NOT COUNTED: "
 }
     </style>
   </head>
   <body>
-    <div id="org">Santa Clara County ARES<sup>®</sup>/RACES</div>
-    <div id="title">Weekly Packet Practice</div>
-    @@CONTENT@@
+    <div id="report">
+      <div id="org">Santa Clara County ARES<sup>®</sup>/RACES</div>
+      <div id="title">Weekly Packet Practice</div>
+      @@CONTENT@@
+    </div>
   </body>
 </html>

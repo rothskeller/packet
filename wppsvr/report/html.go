@@ -36,72 +36,104 @@ func (r *Report) htmlTitle(sb *strings.Builder) {
 	}
 }
 
+var noBreakReplacer = strings.NewReplacer(" ", "&nbsp;", "-", "#8209;")
+
 func (r *Report) htmlParams(sb *strings.Builder) {
-	sb.WriteString(`<div id="description">`)
-	sb.WriteString(html.EscapeString(r.Parameters))
+	sb.WriteString(`<div class="block"><div class="block-title">Message Expectations`)
 	if r.Modified {
-		sb.WriteString("<br><br>NOTE: The practice session expectations were changed after some check-in messages were received.  The earlier check-in messages may have been evaluated with different criteria.")
+		sb.WriteString(`<sup>*</sup>`)
+	}
+	sb.WriteString(`</div><div class="key-text"><div>Message type:</div><div>`)
+	sb.WriteString(r.MessageTypes)
+	sb.WriteString(`</div><div>Sent to:</div><div>`)
+	sb.WriteString(r.SentTo)
+	sb.WriteString(`</div><div>Sent between:</div><div style="white-space:normal">`)
+	sb.WriteString(noBreakReplacer.Replace(r.SentAfter))
+	sb.WriteString(`&nbsp;and `)
+	sb.WriteString(noBreakReplacer.Replace(r.SentBefore))
+	sb.WriteString(`</div>`)
+	if r.NotSentFrom != "" {
+		sb.WriteString(`<div>Not sent from:</div><div>`)
+		sb.WriteString(r.NotSentFrom)
+		sb.WriteString(`</div>`)
+	}
+	sb.WriteString(`</div>`)
+	if r.Modified {
+		sb.WriteString(`<div><sup>*</sup>NOTE: The message expectations were changed after some messages were received.  The earlier messages were evaluated with different expectations.</div>`)
 	}
 	sb.WriteString(`</div>`)
 }
 
 func (r *Report) htmlStatistics(sb *strings.Builder) {
-	sb.WriteString(`<div id="statistics">`)
-	fmt.Fprintf(sb, `<div class="stat">Total messages:</div><div class="stat-count">%d</div>`, r.TotalMessages)
-	fmt.Fprintf(sb, `<div class="stat">Unique addresses:</div><div class="stat-count">%d</div>`, r.UniqueAddresses)
+	var lines = 4
+	sb.WriteString(`<div class="blocks-line"><div class="block"><div class="block-title">Message Counts</div><div class="key-value-note">`)
+	fmt.Fprintf(sb, `<div>Total messages:</div><div>%d</div><div></div>`, r.TotalMessages)
+	fmt.Fprintf(sb, `<div>Unique addresses:</div><div>%d</div><div></div>`, r.UniqueAddresses)
 	if r.UniqueAddresses != 0 {
-		fmt.Fprintf(sb, `<div class="stat">Correct messages:</div><div class="stat-count">%d</div><div class="stat-percent">(%d%%)</div>`, r.UniqueAddressesCorrect, r.PercentCorrect)
+		fmt.Fprintf(sb, `<div>Correct messages:</div><div>%d</div><div>(%d%%)</div>`, r.UniqueAddressesCorrect, r.PercentCorrect)
+		lines++
 	}
-	fmt.Fprintf(sb, `<div class="stat">Unique call signs:</div><div class="stat-count">%d</div><div class="stat-note">(reported<span class="omitabbr"> to net</span>)</div>`, r.UniqueCallSigns)
+	fmt.Fprintf(sb, `<div>Unique call signs:</div><div>%d</div><div>(reported)</div>`, r.UniqueCallSigns)
 	if r.UniqueCallSignsWeek != 0 {
-		fmt.Fprintf(sb, `<div class="stat-indent">for the week:</div><div class="stat-count">%d</div>`, r.UniqueCallSignsWeek)
+		fmt.Fprintf(sb, `<div class="indent">for the week:</div><div>%d</div><div></div>`, r.UniqueCallSignsWeek)
+		lines++
 	}
+	sb.WriteString(`</div></div>`)
 	if len(r.Sources) != 0 {
-		sb.WriteString(`<div class="stat-head">Messages from:</div>`)
-	}
-	for _, source := range r.Sources {
-		fmt.Fprintf(sb, `<div class="stat-indent">%s:</div><div class="stat-count">%d</div>`,
-			html.EscapeString(source.Name), source.Count)
-		if source.SimulatedDown {
-			sb.WriteString(`<div class="stat-note">(<span class="omitabbr">simulated </span>down)</div>`)
+		var hasDown bool
+		sb.WriteString(`<div class="block"><div class="block-title">Source</div><div class="key-value">`)
+		for _, source := range r.Sources {
+			var down string
+			if source.SimulatedDown {
+				down, hasDown = `<sup>*</sup>`, true
+			}
+			fmt.Fprintf(sb, `<div>%s%s</div><div>%d</div>`, html.EscapeString(source.Name), down, source.Count)
 		}
+		sb.WriteString(`</div>`)
+		if hasDown {
+			sb.WriteString(`<div><sup>*</sup>Simulated "down"</div>`)
+		}
+		sb.WriteString(`</div>`)
+		if len(r.Sources) > lines {
+			lines = len(r.Sources)
+		}
+	}
+	if len(r.Jurisdictions) != 0 {
+		var cols = (len(r.Jurisdictions) + lines - 1) / lines
+		var rows = (len(r.Jurisdictions) + cols - 1) / cols
+		sb.WriteString(`<div class="block"><div class="block-title">Jurisdiction</div><div class="key-value-columns">`)
+		for col := 0; col < len(r.Jurisdictions); col += rows {
+			sb.WriteString(`<div class="key-value">`)
+			for i := col; i < len(r.Jurisdictions) && i < col+rows; i++ {
+				fmt.Fprintf(sb, `<div>%s</div><div>%d</div>`, html.EscapeString(r.Jurisdictions[i].Name), r.Jurisdictions[i].Count)
+			}
+			sb.WriteString(`</div>`)
+		}
+		sb.WriteString(`</div></div>`)
 	}
 	sb.WriteString(`</div>`)
 }
 
 func (r *Report) htmlMessages(sb *strings.Builder, links string) {
-	sb.WriteString(`<div id="messages">`)
-	if len(r.CountedMessages) != 0 {
-		sb.WriteString(`<div class="heading">The following messages were counted in this report:</div>`)
-		for _, m := range r.CountedMessages {
-			if links == "" || (links != "" && links == m.FromCallSign) {
-				fmt.Fprintf(sb, `<div class="from"><a href="/message?id=%s">%s</a></div>`,
-					m.ID, html.EscapeString(m.FromAddress))
-			} else {
-				fmt.Fprintf(sb, `<div class="from">%s</div>`, html.EscapeString(m.FromAddress))
-			}
-			fmt.Fprintf(sb, `<div class="subject">%s</div>`, html.EscapeString(m.Subject))
-			if len(m.Problems) != 0 {
-				fmt.Fprintf(sb, `<div class="error">%s</div>`,
-					html.EscapeString(strings.Join(m.Problems, "\n")))
-			}
+	var hasMultiple bool
+	sb.WriteString(`<div class="block"><div class="block-title">Messages</div><div id="messages">`)
+	for _, m := range r.Messages {
+		var multiple string
+		if links == "" || (links != "" && links == m.FromCallSign) {
+			fmt.Fprintf(sb, `<div><a href="/message?id=%s">%s</a></div><div><a href="/message?id=%s">%s</a></div>`,
+				m.ID, html.EscapeString(m.Prefix), m.ID, html.EscapeString(m.Suffix))
+		} else {
+			fmt.Fprintf(sb, `<div>%s</div><div>%s</div>`, html.EscapeString(m.Prefix), html.EscapeString(m.Suffix))
 		}
+		if m.Multiple {
+			multiple, hasMultiple = `<sup>*</sup>`, true
+		}
+		fmt.Fprintf(sb, `<div>%s%s</div><div>%s</div><div class="%s">%s</div>`,
+			m.Source, multiple, m.Jurisdiction, m.Class, m.Problem)
 	}
-	if len(r.InvalidMessages) != 0 {
-		sb.WriteString(`<div class="heading">The following messages were <span style="color:red">not</span> counted in this report:</div>`)
-		for _, m := range r.InvalidMessages {
-			if links == "" || (links != "" && links == m.FromCallSign) {
-				fmt.Fprintf(sb, `<div class="from"><a href="/message?id=%s">%s</a></div>`,
-					m.ID, html.EscapeString(m.FromAddress))
-			} else {
-				fmt.Fprintf(sb, `<div class="from">%s</div>`, html.EscapeString(m.FromAddress))
-			}
-			fmt.Fprintf(sb, `<div class="subject">%s</div>`, html.EscapeString(m.Subject))
-			if len(m.Problems) != 0 {
-				fmt.Fprintf(sb, `<div class="error">%s</div>`,
-					html.EscapeString(strings.Join(m.Problems, "\n")))
-			}
-		}
+	sb.WriteString(`</div>`)
+	if hasMultiple {
+		sb.WriteString(`<div><sup>*</sup>multiple messages from this address; only the last one counts</div>`)
 	}
 	sb.WriteString(`</div>`)
 }
@@ -109,3 +141,38 @@ func (r *Report) htmlMessages(sb *strings.Builder, links string) {
 func (r *Report) htmlGenInfo(sb *strings.Builder) {
 	fmt.Fprintf(sb, `<div id="generation">%s</div>`, html.EscapeString(r.GenerationInfo))
 }
+
+/*
+   <div class="block">
+     <div class="block-title">Messages</div>
+     <div id="messages">
+       <div><a href="...">W6</a></div>
+       <div><a href="...">BG</a></div>
+       <div>W1XSC</div>
+       <div>CUP</div>
+       <div class="ok"></div>
+       <div><a href="...">AK6</a></div>
+       <div><a href="...">BY</a></div>
+       <div>W1XSC</div>
+       <div>SJC</div>
+       <div class="ok"></div>
+       <div><a href="...">KK6</a></div>
+       <div><a href="...">EBL</a></div>
+       <div>W1XSC</div>
+       <div>LGT</div>
+       <div class="warning">invalid Practice subject format</div>
+       <div><a href="...">W6</a></div>
+       <div><a href="...">ESL</a></div>
+       <div>W1XSC*</div>
+       <div>SJC</div>
+       <div class="error">wrong something</div>
+       <div><a href="...">AJ6</a></div>
+       <div><a href="...">LG</a></div>
+       <div>W1XSC</div>
+       <div>SJC</div>
+       <div class="invalid">message to incorrect BBS</div>
+     </div>
+   </div>
+   <div id="generation">This report was generated on Tuesday, May 24, 2022 at 08:32 by wppsvr version (devel).</div>
+
+*/

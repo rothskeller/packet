@@ -26,7 +26,7 @@ func init() {
 // whitespace also allowed between the fields).  The RE returns the first field
 // (the call sign) and the fourth field (the date) as substrings so that they
 // can be further checked.
-var practiceRE = regexp.MustCompile(`(?i)^Practice\s+([AKNW][A-Z]?[0-9][A-Z]{1,3})\s*,[^,]+,[^,]+,\s*([^,]+?)\s*$`)
+var practiceRE = regexp.MustCompile(`(?i)^Practice\s+([AKNW][A-Z]?[0-9][A-Z]{1,3})\s*,[^,]+,([^,]+),\s*([^,]+?)\s*$`)
 
 // dateREs is a map from date format string to regular expression.  There is no
 // standard for the formatting of the date on the subject line, but we try all
@@ -63,6 +63,11 @@ var dateREs = map[string]*regexp.Regexp{
 // checkPracticeSubject makes sure that the subject starts with the word
 // Practice followed by appropriate data.
 func (a *Analysis) checkPracticeSubject() {
+	// Parse the subject line to get the true subject.
+	xscsubj := xscmsg.ParseSubject(a.msg.Header.Get("Subject"))
+	if xscsubj == nil {
+		return // unparseable subject line reported elsewhere
+	}
 	// This check only applies to plain text messages, ICS-213 forms, and
 	// EOC-213RR forms.  All other known form types have different subject
 	// lines, and unknown form types get an error about that instead.
@@ -74,12 +79,9 @@ func (a *Analysis) checkPracticeSubject() {
 	case *ics213.Form, *eoc213rr.Form:
 		break
 	default:
+		// Try to extract the jurisdiction from the entire subject.
+		a.jurisdiction = jurisdictionMap[strings.ToUpper(xscsubj.Subject)]
 		return
-	}
-	// Parse the subject line to get the true subject.
-	xscsubj := xscmsg.ParseSubject(a.msg.Header.Get("Subject"))
-	if xscsubj == nil {
-		return // unparseable subject line reported elsewhere
 	}
 	var match = practiceRE.FindStringSubmatch(xscsubj.Subject)
 	if match == nil {
@@ -96,13 +98,89 @@ message number, handling order, and form type, it should have the word
 		return
 	}
 	a.subjectCallSign = strings.ToUpper(match[1])
+	a.jurisdiction = jurisdictionMap[strings.ToUpper(strings.TrimSpace(match[2]))]
 	// Look for a date.
 	for fmt, re := range dateREs {
-		if re.MatchString(match[2]) {
-			if date, err := time.ParseInLocation(fmt, match[2], time.Local); err == nil {
+		if re.MatchString(match[3]) {
+			if date, err := time.ParseInLocation(fmt, match[3], time.Local); err == nil {
 				a.subjectDate = date
 				break
 			}
 		}
 	}
+}
+
+var jurisdictionMap = map[string]string{
+	"ALAMEDA":              "XAL",
+	"ALAMEDA CO.":          "XAL",
+	"ALAMEDA COUNTY":       "XAL",
+	"CAMPBELL":             "CBL",
+	"CBL":                  "CBL",
+	"CONTRA COSTA":         "XCC",
+	"CONTRA COSTA CO.":     "XCC",
+	"CONTRA COSTA COUNTY":  "XCC",
+	"CUP":                  "CUP",
+	"CUPERTINO":            "CUP",
+	"GIL":                  "GIL",
+	"GILROY":               "GIL",
+	"LAH":                  "LAH",
+	"LG/MS":                "LGT",
+	"LGT":                  "LGT",
+	"LMP":                  "LMP",
+	"LOMA PRIETA":          "LMP",
+	"LOS ALTOS HILLS":      "LAH",
+	"LOS ALTOS":            "LOS",
+	"LOS GATOS":            "LGT",
+	"LOS":                  "LOS",
+	"MARIN":                "XMR",
+	"MARIN CO.":            "XMR",
+	"MARIN COUNTY":         "XMR",
+	"MILPITAS":             "MLP",
+	"MLP":                  "MLP",
+	"MONTE SERENO":         "MSO",
+	"MONTEREY":             "XMY",
+	"MONTEREY CO.":         "XMY",
+	"MONTEREY COUNTY":      "XMY",
+	"MORGAN HILL":          "MRG",
+	"MOUNTAIN VIEW":        "MTV",
+	"MRG":                  "MRG",
+	"MSO":                  "MSO",
+	"MTV":                  "MTV",
+	"MV":                   "MTV",
+	"NAM":                  "NAM",
+	"NASA/AMES":            "NAM",
+	"PAF":                  "PAF",
+	"PALO ALTO":            "PAF",
+	"SAN BENITO":           "XBE",
+	"SAN BENITO CO.":       "XBE",
+	"SAN BENITO COUNTY":    "XBE",
+	"SAN FRANCISCO":        "XSF",
+	"SAN FRANCISCO CO.":    "XSF",
+	"SAN FRANCISCO COUNTY": "XSF",
+	"SAN JOSE":             "SJC",
+	"SAN MATEO":            "XSM",
+	"SAN MATEO CO.":        "XSM",
+	"SAN MATEO COUNTY":     "XSM",
+	"SANTA CLARA":          "SNC",
+	"SANTA CRUZ":           "XCZ",
+	"SANTA CRUZ CO.":       "XCZ",
+	"SANTA CRUZ COUNTY":    "XCZ",
+	"SAR":                  "SAR",
+	"SARATOGA":             "SAR",
+	"SJC":                  "SJC",
+	"SNC":                  "SNC",
+	"SNY":                  "SNY",
+	"STANFORD":             "STU",
+	"STANFORD UNIVERSITY":  "STU",
+	"STU":                  "STU",
+	"SUNNYVALE":            "SNY",
+	"XAL":                  "XAL",
+	"XBE":                  "XBE",
+	"XCC":                  "XCC",
+	"XCZ":                  "XCZ",
+	"XMR":                  "XMR",
+	"XMY":                  "XMY",
+	"XSC":                  "XSC",
+	"XSF":                  "XSF",
+	"XSM":                  "XSM",
 }

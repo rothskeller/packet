@@ -1,24 +1,21 @@
 package report
 
-import (
-	"fmt"
-	"strings"
-
-	"github.com/rothskeller/packet/wppsvr/english"
-)
-
 // RenderPlainText renders a report in plain text format.
 func (r *Report) RenderPlainText() string {
-	var sb strings.Builder
+	/*
+		var sb strings.Builder
 
-	r.plainTextTitle(&sb)
-	r.plainTextParams(&sb)
-	r.plainTextStatistics(&sb)
-	r.plainTextMessages(&sb)
-	r.plainTextGenInfo(&sb)
-	return sb.String()
+		r.plainTextTitle(&sb)
+		r.plainTextParams(&sb)
+		r.plainTextStatistics(&sb)
+		r.plainTextMessages(&sb)
+		r.plainTextGenInfo(&sb)
+		return sb.String()
+	*/
+	return ""
 }
 
+/*
 func (r *Report) plainTextTitle(sb *strings.Builder) {
 	var (
 		line1  string
@@ -122,3 +119,4 @@ func (r *Report) plainTextGenInfo(sb *strings.Builder) {
 	wr.WriteString("\n")
 	wr.Close()
 }
+*/

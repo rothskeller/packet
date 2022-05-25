@@ -66,7 +66,9 @@ func testAnalyze(t *testing.T, testfile string) {
 	// testdata/config.yaml, and then allow it to be modified by the test's
 	// yaml file.
 	os.Chdir("testdata")
-	config.Read()
+	if err := config.Read(); err != nil {
+		t.Fatal(err)
+	}
 	os.Chdir("..")
 	testdata.Config = config.Get()
 	// We also need a session definition, which again, the test's yaml file

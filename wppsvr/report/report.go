@@ -23,7 +23,11 @@ type Report struct {
 	SessionName            string
 	SessionDate            string
 	Preliminary            bool
-	Parameters             string
+	MessageTypes           string
+	SentTo                 string
+	SentBefore             string
+	SentAfter              string
+	NotSentFrom            string
 	Modified               bool
 	TotalMessages          int
 	UniqueAddresses        int
@@ -33,8 +37,8 @@ type Report struct {
 	UniqueCallSigns        int
 	UniqueCallSignsWeek    int
 	Sources                []*Source
-	CountedMessages        []*Message
-	InvalidMessages        []*Message
+	Jurisdictions          []*Jurisdiction
+	Messages               []*Message
 	Participants           []string
 	GenerationInfo         string
 }
@@ -47,11 +51,22 @@ type Source struct {
 	SimulatedDown bool
 }
 
+// A Jurisdiction contains the information about a single jurisdiction in a
+// Report.
+type Jurisdiction struct {
+	Name  string
+	Count int
+}
+
 // A Message contains the information about a single message in a Report.
 type Message struct {
 	ID           string
-	FromAddress  string
 	FromCallSign string
-	Subject      string
-	Problems     []string
+	Prefix       string
+	Suffix       string
+	Source       string
+	Multiple     bool
+	Jurisdiction string
+	Class        string
+	Problem      string
 }

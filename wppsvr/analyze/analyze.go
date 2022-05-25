@@ -46,6 +46,8 @@ type Analysis struct {
 	// toBBS is the name of the BBS to which the message was sent (i.e.,
 	// the one from which we retrieved it).
 	toBBS string
+	// jurisdiction is the jurisdiction of the sender, if known.
+	jurisdiction string
 	// problems is the list of problems found with the message.
 	problems []*problem
 	// responses is a list of messages that should be sent in response to
@@ -184,6 +186,7 @@ func (a *Analysis) Commit(st astore) {
 	m.FromAddress = a.msg.ReturnAddress()
 	m.FromCallSign = a.fromCallSign
 	m.ToBBS = a.toBBS
+	m.Jurisdiction = a.jurisdiction
 	m.Subject = a.msg.Header.Get("Subject")
 	m.DeliveryTime = a.msg.Date()
 	m.FromBBS = a.msg.FromBBS()

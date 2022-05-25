@@ -15,6 +15,7 @@ stored:
   fromAddress: kc6rsc@w1xsc.ampr.org
   fromCallSign: KC6RSC
   fromBBS: W1XSC
+  jurisdiction: SNY
   subject: STR-100P_O/R_Practice KC6RSC, Steve, SNY, 2022-01-11
   problems:
     - SubjectHasSeverity

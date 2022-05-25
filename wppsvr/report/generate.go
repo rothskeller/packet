@@ -60,58 +60,17 @@ func generateTitle(r *Report, session *store.Session) {
 // generateParams adds a description of the parameters of the practice session
 // to the report.
 func generateParams(r *Report, session *store.Session) {
-	var (
-		sb           strings.Builder
-		verb1        string
-		verb2        string
-		verb3        string
-		article      string
-		messageTypes []string
-	)
-	if now().Before(session.End) {
-		verb1, verb2, verb3 = "expects", "is", "are"
-	} else {
-		verb1, verb2, verb3 = "expected", "was", "were"
-	}
-	for i, id := range session.MessageTypes {
-		var mt = config.LookupMessageType(id)
+	var messageTypes []string
 
-		messageTypes = append(messageTypes, mt.TypeName())
-		if i == 0 {
-			article = mt.TypeArticle()
-		}
+	for _, id := range session.MessageTypes {
+		messageTypes = append(messageTypes, config.LookupMessageType(id).TypeName())
 	}
-	fmt.Fprintf(&sb, "This practice session %s %s %s sent to %s at %s, %s.",
-		verb1, article, english.Conjoin(messageTypes, "or"), session.CallSign,
-		english.Conjoin(session.ToBBSes, "or"),
-		timerange(session.Start, session.End))
-	switch len(session.DownBBSes) {
-	case 0:
-		break
-	case 1:
-		fmt.Fprintf(&sb, "  %s %s simulated \"down\" for this practice session.",
-			session.DownBBSes[0], verb2)
-	default:
-		fmt.Fprintf(&sb, "  %s %s simulated \"down\" for this practice session.",
-			english.Conjoin(session.DownBBSes, "and"), verb3)
-	}
-	r.Parameters = sb.String()
+	r.MessageTypes = english.Conjoin(messageTypes, "or")
+	r.SentTo = fmt.Sprintf("%s at %s", session.CallSign, english.Conjoin(session.ToBBSes, "or"))
+	r.SentAfter = session.Start.Format("Mon 2006-01-02 15:04")
+	r.SentBefore = session.End.Format("Mon 2006-01-02 15:04")
+	r.NotSentFrom = english.Conjoin(session.DownBBSes, "or")
 	r.Modified = session.Modified
-}
-func timerange(start, end time.Time) string {
-	if start.Year() == end.Year() && start.Month() == end.Month() && start.Day() == end.Day() {
-		return fmt.Sprintf("between %s and %s",
-			start.Format("15:04"),
-			end.Format("15:04 on Monday, January 2, 2006"))
-	}
-	if start.Year() == end.Year() {
-		return fmt.Sprintf("between %s and %s",
-			start.Format("15:04 on Monday, January 2"),
-			end.Format("15:04 on Monday, January 2, 2006"))
-	}
-	return fmt.Sprintf("between %s and %s",
-		start.Format("15:04 on Monday, January 2, 2006"),
-		end.Format("15:04 on Monday, January 2, 2006"))
 }
 
 // generateWeekSummary looks up all sessions that end in the same week as the
@@ -166,6 +125,7 @@ func generateWeekSummary(r *Report, st Store, session *store.Session) {
 // the statistics that we will display.
 func generateStatistics(r *Report, session *store.Session, messages []*store.Message) {
 	var sources = make(map[string]int)
+	var jurisdictions = make(map[string]int)
 
 	r.uniqueCallSigns = make(map[string]struct{})
 	r.TotalMessages = len(messages)
@@ -178,6 +138,11 @@ func generateStatistics(r *Report, session *store.Session, messages []*store.Mes
 			sources["Winlink"]++
 		} else {
 			sources["Email"]++
+		}
+		if m.Jurisdiction != "" {
+			jurisdictions[m.Jurisdiction]++
+		} else {
+			jurisdictions["~~~"]++ // chosen to sort after anything real
 		}
 		if m.FromCallSign != "" {
 			r.uniqueCallSigns[m.FromCallSign] = struct{}{}
@@ -199,6 +164,17 @@ func generateStatistics(r *Report, session *store.Session, messages []*store.Mes
 		})
 	}
 	sort.Slice(r.Sources, func(i, j int) bool { return r.Sources[i].Name < r.Sources[j].Name })
+	r.Jurisdictions = make([]*Jurisdiction, 0, len(jurisdictions))
+	for jurisdiction, count := range jurisdictions {
+		r.Jurisdictions = append(r.Jurisdictions, &Jurisdiction{
+			Name:  jurisdiction,
+			Count: count,
+		})
+	}
+	sort.Slice(r.Jurisdictions, func(i, j int) bool { return r.Jurisdictions[i].Name < r.Jurisdictions[j].Name })
+	if len(r.Jurisdictions) != 0 && r.Jurisdictions[len(r.Jurisdictions)-1].Name == "~~~" {
+		r.Jurisdictions[len(r.Jurisdictions)-1].Name = "???"
+	}
 }
 
 // removeInvalidAndReplaced removes invalid and replaced messages from the list
@@ -247,37 +223,79 @@ func generateMessages(r *Report, session *store.Session, messages []*store.Messa
 		var rm Message
 
 		rm.ID = m.LocalID
-		rm.FromAddress = m.FromAddress
 		rm.FromCallSign = m.FromCallSign
-		if m.FromAddress == "" && m.Subject == "" {
-			rm.Subject = fmt.Sprintf("[unparseable message with hash %s]", m.Hash)
+		if len(m.FromCallSign) > 2 {
+			if m.FromCallSign[1] >= '0' && m.FromCallSign[1] <= '9' {
+				rm.Prefix, rm.Suffix = m.FromCallSign[:2], m.FromCallSign[2:]
+			} else {
+				rm.Prefix, rm.Suffix = m.FromCallSign[:3], m.FromCallSign[3:]
+			}
+		} else if idx := strings.IndexByte(m.FromAddress, '@'); idx > 2 {
+			rm.Prefix, rm.Suffix = m.FromAddress[:3], m.FromAddress[3:idx]
+		} else if idx >= 0 {
+			rm.Prefix = m.FromAddress[:idx]
 		} else {
-			rm.Subject = m.Subject
+			rm.Prefix, rm.Suffix = "???", "???"
+		}
+		if m.FromBBS != "" {
+			rm.Source = m.FromBBS
+		} else if strings.HasSuffix(strings.ToLower(m.FromAddress), "@winlink.org") {
+			rm.Source = "Winlink"
+		} else {
+			rm.Source = "Email"
+		}
+		rm.Jurisdiction = m.Jurisdiction
+		if m.Actions&config.ActionDontCount != 0 {
+			rm.Class = "invalid"
+		} else if m.Actions&config.ActionError != 0 {
+			rm.Class = "error"
+		} else {
+			rm.Class = "ok"
 		}
 		for _, p := range m.Problems {
+			if p == analyze.ProblemMultipleMessagesFromAddress {
+				rm.Multiple = true
+				continue
+			}
 			if act, ok := actions[p]; ok {
-				if act&config.ActionReport != 0 {
-					rm.Problems = append(rm.Problems, analyze.ProblemLabel[p])
+				if act&config.ActionReport == 0 {
+					continue
+				}
+				p = analyze.ProblemLabel[p]
+				if rm.Class == "ok" {
+					rm.Class = "warning"
 				}
 			} else {
 				// Problem was imported from old packet NCO
 				// scripts.
-				rm.Problems = append(rm.Problems, p)
+			}
+			if rm.Problem == "" {
+				rm.Problem = p
+			} else {
+				rm.Problem = "multiple issues"
 			}
 		}
-		if m.Actions&config.ActionDontCount == 0 {
-			r.CountedMessages = append(r.CountedMessages, &rm)
-		} else {
-			r.InvalidMessages = append(r.InvalidMessages, &rm)
-		}
+		r.Messages = append(r.Messages, &rm)
 	}
-	sort.Slice(r.CountedMessages, func(i, j int) bool { return compareMessages(r.CountedMessages[i], r.CountedMessages[j]) })
-	sort.Slice(r.InvalidMessages, func(i, j int) bool { return compareMessages(r.InvalidMessages[i], r.InvalidMessages[j]) })
+	sort.Slice(r.Messages, func(i, j int) bool { return compareMessages(r.Messages[i], r.Messages[j]) })
 }
 func compareMessages(a, b *Message) bool {
-	as := strings.ToLower(a.FromAddress)
-	bs := strings.ToLower(b.FromAddress)
-	return as < bs
+	if a.FromCallSign != "" && b.FromCallSign == "" {
+		return true
+	}
+	if a.FromCallSign == "" && b.FromCallSign != "" {
+		return false
+	}
+	if a.FromCallSign != "" {
+		if a.Suffix != b.Suffix {
+			return a.Suffix < b.Suffix
+		}
+		return a.Prefix < b.Prefix
+	}
+	if a.Prefix != b.Prefix {
+		return a.Prefix < b.Prefix
+	}
+	return a.Suffix < b.Suffix
 }
 
 // removeReplaced removes all but the last message from each address.  If more
