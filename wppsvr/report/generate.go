@@ -204,12 +204,12 @@ func removeInvalidAndReplaced(messages []*store.Message) (out []*store.Message, 
 	outidx = len(messages)
 	for msgidx = len(messages) - 1; msgidx >= 0; msgidx-- {
 		var m = messages[msgidx]
-		if m.Actions&config.ActionDontCount != 0 {
-			invalid++
-			continue
-		}
 		if addresses[m.FromAddress] {
 			replaced++
+			continue
+		}
+		if m.Actions&config.ActionDontCount != 0 {
+			invalid++
 			continue
 		}
 		addresses[m.FromAddress] = true

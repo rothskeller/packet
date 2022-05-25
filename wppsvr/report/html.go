@@ -101,7 +101,7 @@ func (r *Report) htmlStatistics(sb *strings.Builder) {
 	sb.WriteString(`<div class="blocks-line">`)
 	if len(r.Sources) != 0 {
 		var hasDown bool
-		sb.WriteString(`<div class="block"><div class="block-title">Source</div><div class="key-value">`)
+		sb.WriteString(`<div class="block"><div class="block-title">Sources</div><div class="key-value">`)
 		for _, source := range r.Sources {
 			var down string
 			if source.SimulatedDown {
@@ -118,7 +118,7 @@ func (r *Report) htmlStatistics(sb *strings.Builder) {
 	if len(r.Jurisdictions) != 0 {
 		var cols = (len(r.Jurisdictions) + 5) / 6
 		var rows = (len(r.Jurisdictions) + cols - 1) / cols
-		sb.WriteString(`<div class="block"><div class="block-title">Jurisdiction</div><div class="key-value-columns">`)
+		sb.WriteString(`<div class="block"><div class="block-title">Jurisdictions</div><div class="key-value-columns">`)
 		for col := 0; col < len(r.Jurisdictions); col += rows {
 			sb.WriteString(`<div class="key-value">`)
 			for i := col; i < len(r.Jurisdictions) && i < col+rows; i++ {
@@ -129,7 +129,7 @@ func (r *Report) htmlStatistics(sb *strings.Builder) {
 		sb.WriteString(`</div></div>`)
 	}
 	if len(r.MTypeCounts) != 0 {
-		sb.WriteString(`<div class="block"><div class="block-title">Message Types</div><div class="key-value">`)
+		sb.WriteString(`<div class="block"><div class="block-title">Types</div><div class="key-value">`)
 		for _, mtype := range r.MTypeCounts {
 			fmt.Fprintf(sb, `<div>%s</div><div>%d</div>`, html.EscapeString(mtype.Name), mtype.Count)
 		}
