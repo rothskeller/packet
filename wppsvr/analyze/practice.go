@@ -26,7 +26,10 @@ func init() {
 // whitespace also allowed between the fields).  The RE returns the first field
 // (the call sign) and the fourth field (the date) as substrings so that they
 // can be further checked.
-var practiceRE = regexp.MustCompile(`(?i)^Practice\s+([AKNW][A-Z]?[0-9][A-Z]{1,3})\s*,[^,]+,([^,]+),\s*([^,]+?)\s*$`)
+// A comma is allowed after the word "Practice", which doesn't exactly conform
+// to the required syntax, but it is a very common mistake and not worth
+// penalizing.
+var practiceRE = regexp.MustCompile(`(?i)^Practice[,\s]+([AKNW][A-Z]?[0-9][A-Z]{1,3})\s*,[^,]+,([^,]+),\s*([^,]+?)\s*$`)
 
 // dateREs is a map from date format string to regular expression.  There is no
 // standard for the formatting of the date on the subject line, but we try all
