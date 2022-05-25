@@ -116,7 +116,7 @@ func (r *Report) htmlStatistics(sb *strings.Builder) {
 		sb.WriteString(`</div>`)
 	}
 	if len(r.Jurisdictions) != 0 {
-		var cols = len(r.Jurisdictions) + 5/6
+		var cols = (len(r.Jurisdictions) + 5) / 6
 		var rows = (len(r.Jurisdictions) + cols - 1) / cols
 		sb.WriteString(`<div class="block"><div class="block-title">Jurisdiction</div><div class="key-value-columns">`)
 		for col := 0; col < len(r.Jurisdictions); col += rows {
