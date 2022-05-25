@@ -65,10 +65,10 @@ func (msg *Message) Date() (date time.Time) {
 }
 
 // fromCallSignRE extracts the fromCallSign from the return address.  It looks
-// for a call sign at the start of the string, followed either by an @ or the
-// end of the string.  It is not case-sensitive.  The substring returned is the
-// call sign.
-var fromCallSignRE = regexp.MustCompile(`(?i)^([AKNW][A-Z]?[0-9][A-Z]{1,3})(?:@|$)`)
+// for a call sign at the start of the string, followed either by a %, an @, or
+// the end of the string.  It is not case-sensitive.  The substring returned is
+// the call sign.
+var fromCallSignRE = regexp.MustCompile(`(?i)^([AKNW][A-Z]?[0-9][A-Z]{1,3})(?:@|%|$)`)
 
 // FromCallSign extracts a call sign from the message return address.
 func (msg *Message) FromCallSign() string {
@@ -78,16 +78,26 @@ func (msg *Message) FromCallSign() string {
 	return ""
 }
 
-// fromBBSRE extracts the fromBBS from the return address.  It looks for an @,
-// followed by a call sign, optionally followed by either ".ampr.org" or ".#",
-// at the end of the string.  It is not case-sensitive.  The substring returned
-// is the call sign (i.e., the BBS name).
-var fromBBSRE = regexp.MustCompile(`(?i)@([AKNW][A-Z]?[0-9][A-Z]{1,3})(?:\.ampr\.org|\.#.*)?$`)
-
 // FromBBS extracts the sending BBS from the message return address.
 func (msg *Message) FromBBS() string {
-	if match := fromBBSRE.FindStringSubmatch(msg.ReturnAddress()); match != nil {
-		return strings.ToUpper(match[1])
+	domain := msg.ReturnAddress()
+	if at := strings.IndexByte(domain, '@'); at >= 0 {
+		if percent := strings.IndexByte(domain[:at], '%'); percent >= 0 {
+			domain = domain[percent+1 : at]
+		} else {
+			domain = domain[at+1:]
+		}
+		if dothash := strings.Index(domain, ".#"); dothash >= 0 {
+			domain = domain[:dothash]
+		}
+		if strings.HasSuffix(domain, ".ampr.org") {
+			domain = domain[:len(domain)-9]
+		}
+		if fromCallSignRE.MatchString(domain) {
+			return strings.ToUpper(domain)
+		}
 	}
 	return ""
 }
+
+// kg6kzz%n0ary.#nca.ca.usa.noam@w2xsc.ampr.org
