@@ -5,6 +5,8 @@ import (
 	"fmt"
 	"html"
 	"strings"
+
+	"github.com/rothskeller/packet/wppsvr/english"
 )
 
 var contentMarker = "@@CONTENT@@"
@@ -50,9 +52,9 @@ func (r *Report) htmlExpectsResults(sb *strings.Builder) {
 		sb.WriteString(`*`)
 	}
 	sb.WriteString(`</div><div class="key-text"><div>Message type:</div><div>`)
-	sb.WriteString(r.MessageTypes)
+	sb.WriteString(html.EscapeString(english.Conjoin(r.MessageTypes, "or")))
 	sb.WriteString(`</div><div>Sent to:</div><div>`)
-	sb.WriteString(r.SentTo)
+	sb.WriteString(html.EscapeString(r.SentTo))
 	sb.WriteString(`</div><div>Sent between:</div><div style="white-space:normal">`)
 	sb.WriteString(noBreakReplacer.Replace(r.SentAfter))
 	sb.WriteString(`&nbsp;and `)
@@ -71,22 +73,22 @@ func (r *Report) htmlExpectsResults(sb *strings.Builder) {
 	sb.WriteString(`<div class="block"><div class="block-title">Results</div><div class="key-value">`)
 	if r.OKCount+r.WarningCount+r.ErrorCount+r.InvalidCount+r.ReplacedCount+r.DroppedCount != 0 {
 		if r.OKCount != 0 {
-			fmt.Fprintf(sb, `<div>OK:</div><div>%d</div>`, r.OKCount)
+			fmt.Fprintf(sb, `<div>OK</div><div>%d</div>`, r.OKCount)
 		}
 		if r.WarningCount != 0 {
-			fmt.Fprintf(sb, `<div>WARNING:</div><div>%d</div>`, r.WarningCount)
+			fmt.Fprintf(sb, `<div>WARNING</div><div>%d</div>`, r.WarningCount)
 		}
 		if r.ErrorCount != 0 {
-			fmt.Fprintf(sb, `<div>ERROR:</div><div>%d</div>`, r.ErrorCount)
+			fmt.Fprintf(sb, `<div>ERROR</div><div>%d</div>`, r.ErrorCount)
 		}
 		if r.InvalidCount != 0 {
-			fmt.Fprintf(sb, `<div class="gray">NOT COUNTED:</div><div class="gray">%d</div>`, r.InvalidCount)
+			fmt.Fprintf(sb, `<div class="gray">NOT COUNTED</div><div class="gray">%d</div>`, r.InvalidCount)
 		}
 		if r.ReplacedCount != 0 {
-			fmt.Fprintf(sb, `<div class="gray">Duplicate:</div><div class="gray">%d</div>`, r.ReplacedCount)
+			fmt.Fprintf(sb, `<div class="gray">Duplicate</div><div class="gray">%d</div>`, r.ReplacedCount)
 		}
 		if r.DroppedCount != 0 {
-			fmt.Fprintf(sb, `<div class="gray">Delivery rcpt:</div><div class="gray">%d</div>`, r.DroppedCount)
+			fmt.Fprintf(sb, `<div class="gray">Deliv. rcpt.</div><div class="gray">%d</div>`, r.DroppedCount)
 		}
 	} else {
 		sb.WriteString(`<div>Messages:</div><div>0</div>`)

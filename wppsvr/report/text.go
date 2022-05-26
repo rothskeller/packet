@@ -1,116 +1,234 @@
 package report
 
+import (
+	"fmt"
+	"strconv"
+	"strings"
+
+	"github.com/rothskeller/packet/wppsvr/english"
+)
+
+const dashes = "--------------------------------------------------------------------------------"
+const spaces = "                                                                                "
+
 // RenderPlainText renders a report in plain text format.
 func (r *Report) RenderPlainText() string {
-	/*
-		var sb strings.Builder
+	var sb strings.Builder
 
-		r.plainTextTitle(&sb)
-		r.plainTextParams(&sb)
-		r.plainTextStatistics(&sb)
-		r.plainTextMessages(&sb)
-		r.plainTextGenInfo(&sb)
-		return sb.String()
-	*/
-	return ""
+	r.plainTextTitle(&sb)
+	r.plainTextExpectsResults(&sb)
+	r.plainTextStatistics(&sb)
+	r.plainTextMessages(&sb)
+	r.plainTextGenInfo(&sb)
+	return sb.String()
 }
 
-/*
 func (r *Report) plainTextTitle(sb *strings.Builder) {
 	var (
-		line1  string
-		line2  string
-		maxlen int
-		pad1   int
-		pad2   int
+		line string
 	)
-	line1 = "SCCo ARES/RACES Packet Practice Report"
+	sb.WriteString("--------------- SCCo ARES/RACES Packet Practice Report ----------------\n")
+	line = fmt.Sprintf("for %s on %s", r.SessionName, r.SessionDate)
+	fmt.Fprintf(sb, "%*s%s\n", 36-len(line)/2, "", line)
 	if r.Preliminary {
-		line1 = "***PRELIMINARY*** " + line1
+		sb.WriteString("                         *** PRELIMINARY ***\n")
 	}
-	maxlen = len(line1)
-	line2 = fmt.Sprintf("for %s on %s", r.SessionName, r.SessionDate)
-	if len(line2) > maxlen {
-		maxlen = len(line2)
-	}
-	pad1 = (maxlen - len(line1)) / 2
-	pad2 = (maxlen - len(line2)) / 2
-	fmt.Fprintf(sb, "==== %*s%-*s ====\n==== %*s%-*s ====\n\n",
-		pad1, "", maxlen-pad1, line1, pad2, "", maxlen-pad2, line2)
-
-}
-
-func (r *Report) plainTextParams(sb *strings.Builder) {
-	var wr = english.NewWrapper(sb)
-
-	wr.WriteString(r.Parameters)
-	if r.Modified {
-		wr.WriteString("\n\nNOTE: The practice session expectations were changed after some check-in messages were received.  The earlier check-in messages may have been evaluated with different criteria.")
-	}
-	wr.WriteString("\n\n")
-	wr.Close()
-}
-
-func (r *Report) plainTextStatistics(sb *strings.Builder) {
-	var countWidth int
-
-	countWidth = numberWidth(r.TotalMessages)
-	if cw := numberWidth(r.UniqueCallSignsWeek); cw > countWidth {
-		countWidth = cw
-	}
-	fmt.Fprintf(sb, "Total messages:     %*d\n", countWidth, r.TotalMessages)
-	fmt.Fprintf(sb, "Unique addresses:   %*d\n", countWidth, r.UniqueAddresses)
-	if r.UniqueAddresses != 0 {
-		fmt.Fprintf(sb, "Correct messages:   %*d  (%d%%)\n", countWidth, r.UniqueAddressesCorrect, r.PercentCorrect)
-	}
-	fmt.Fprintf(sb, "Unique call signs:  %*d  [report this count to the net]\n", countWidth, r.UniqueCallSigns)
 	if r.UniqueCallSignsWeek != 0 {
-		fmt.Fprintf(sb, "  for the week:     %*d\n", countWidth, r.UniqueCallSignsWeek)
+		line = fmt.Sprintf("%d unique call signs (%d for the week)", r.UniqueCallSigns, r.UniqueCallSignsWeek)
+	} else if r.UniqueCallSigns != 0 {
+		line = fmt.Sprintf("%d unique call signs", r.UniqueCallSigns)
+	} else {
+		line = ""
 	}
-	if len(r.Sources) != 0 {
-		sb.WriteString("Messages from:\n")
+	if line != "" {
+		fmt.Fprintf(sb, "\n%*s%s\n", 36-len(line)/2, "", line)
 	}
-	for _, source := range r.Sources {
-		if source.SimulatedDown {
-			fmt.Fprintf(sb, "  %s:%*s%*d  (simulated down)\n",
-				source.Name, 17-len(source.Name), "", countWidth, source.Count)
-		} else {
-			fmt.Fprintf(sb, "  %s:%*s%*d\n", source.Name, 17-len(source.Name), "", countWidth, source.Count)
+	sb.WriteString("\n\n")
+}
+
+func (r *Report) plainTextExpectsResults(sb *strings.Builder) {
+	var (
+		lines []string
+		col1  []string
+	)
+	switch len(r.MessageTypes) {
+	case 0:
+		break
+	case 1:
+		lines = append(lines, fmt.Sprintf("Message type:  %s", r.MessageTypes[0]))
+	case 2:
+		lines = append(lines, fmt.Sprintf("Message type:  %s or", r.MessageTypes[0]))
+		lines = append(lines, fmt.Sprintf("               %s", r.MessageTypes[1]))
+	default:
+		lines = append(lines, fmt.Sprintf("Message type:  %s,", r.MessageTypes[0]))
+		for i := 1; i < len(r.MessageTypes)-2; i++ {
+			lines = append(lines, fmt.Sprintf("               %s,", r.MessageTypes[i]))
 		}
+		lines = append(lines, fmt.Sprintf("               %s, or", r.MessageTypes[len(r.MessageTypes)-2]))
+		lines = append(lines, fmt.Sprintf("               %s", r.MessageTypes[len(r.MessageTypes)-1]))
+	}
+	lines = append(lines, fmt.Sprintf("Sent to:       %s", r.SentTo))
+	lines = append(lines, fmt.Sprintf("Sent between:  %s and", r.SentAfter))
+	lines = append(lines, fmt.Sprintf("               %s", r.SentBefore))
+	if r.NotSentFrom != "" {
+		lines = append(lines, fmt.Sprintf("Not sent from: %s", r.NotSentFrom))
+	}
+	if r.Modified {
+		lines = append(lines, "(*) modified during session")
+	}
+	if r.Modified {
+		lines = addPlainTextHeading(lines, "EXPECTATIONS(*)")
+	} else {
+		lines = addPlainTextHeading(lines, "EXPECTATIONS")
+	}
+	if r.OKCount+r.WarningCount+r.ErrorCount+r.InvalidCount+r.ReplacedCount+r.DroppedCount != 0 {
+		var col2 []string
+		if r.OKCount != 0 {
+			col1 = append(col1, "OK")
+			col2 = append(col2, strconv.Itoa(r.OKCount))
+		}
+		if r.WarningCount != 0 {
+			col1 = append(col1, "WARNING")
+			col2 = append(col2, strconv.Itoa(r.WarningCount))
+		}
+		if r.ErrorCount != 0 {
+			col1 = append(col1, "ERROR")
+			col2 = append(col2, strconv.Itoa(r.ErrorCount))
+		}
+		if r.InvalidCount != 0 {
+			col1 = append(col1, "NOT COUNTED")
+			col2 = append(col2, strconv.Itoa(r.InvalidCount))
+		}
+		if r.ReplacedCount != 0 {
+			col1 = append(col1, "Duplicate")
+			col2 = append(col2, strconv.Itoa(r.ReplacedCount))
+		}
+		if r.DroppedCount != 0 {
+			col1 = append(col1, "Deliv. rcpt.")
+			col2 = append(col2, strconv.Itoa(r.DroppedCount))
+		}
+		rightAlign(col2)
+		col1 = sideBySide(col1, col2, 2)
+	} else {
+		col1 = append(col1, "Messages  0")
+	}
+	col1 = addPlainTextHeading(col1, "RESULTS")
+	lines = sideBySide(lines, col1, 6)
+	for _, line := range lines {
+		sb.WriteString(line)
+		sb.WriteByte('\n')
 	}
 	sb.WriteByte('\n')
 }
-func numberWidth(i int) int {
-	if i > 99 {
-		return 3 // none of the numbers we deal with are over 999
+
+func (r *Report) plainTextStatistics(sb *strings.Builder) {
+	var lines []string
+
+	if len(r.Sources) == 0 && len(r.Jurisdictions) == 0 && len(r.MTypeCounts) == 0 {
+		return
 	}
-	if i > 9 {
-		return 2
+	if len(r.Sources) != 0 {
+		var col1, col2 []string
+		var hasDown bool
+
+		for _, source := range r.Sources {
+			var down string
+			if source.SimulatedDown {
+				down, hasDown = `*`, true
+			}
+			col1 = append(col1, source.Name+down)
+			col2 = append(col2, strconv.Itoa(source.Count))
+		}
+		rightAlign(col2)
+		lines = sideBySide(col1, col2, 2)
+		if hasDown {
+			lines = append(lines, `* simulated "down"`)
+		}
+		lines = addPlainTextHeading(lines, "SOURCES")
 	}
-	return 1 // none of them are negative, either
+	if len(r.Jurisdictions) != 0 {
+		var jlines []string
+		var cols = (len(r.Jurisdictions) + 5) / 6
+		var rows = (len(r.Jurisdictions) + cols - 1) / cols
+		for col := 0; col < len(r.Jurisdictions); col += rows {
+			var col1, col2 []string
+			for i := col; i < len(r.Jurisdictions) && i < col+rows; i++ {
+				col1 = append(col1, r.Jurisdictions[i].Name)
+				col2 = append(col2, strconv.Itoa(r.Jurisdictions[i].Count))
+			}
+			rightAlign(col2)
+			col1 = sideBySide(col1, col2, 2)
+			if col == 0 {
+				jlines = col1
+			} else {
+				jlines = sideBySide(jlines, col1, 4)
+			}
+		}
+		jlines = addPlainTextHeading(jlines, "JURISDICTIONS")
+		if lines == nil {
+			lines = jlines
+		} else {
+			lines = sideBySide(lines, jlines, 6)
+		}
+	}
+	if len(r.MTypeCounts) != 0 {
+		var col1, col2 []string
+		for _, mtype := range r.MTypeCounts {
+			col1 = append(col1, mtype.Name)
+			col2 = append(col2, strconv.Itoa(mtype.Count))
+		}
+		rightAlign(col2)
+		col1 = sideBySide(col1, col2, 2)
+		col1 = addPlainTextHeading(col1, "TYPES")
+		if lines == nil {
+			lines = col1
+		} else {
+			lines = sideBySide(lines, col1, 6)
+		}
+	}
+	for _, line := range lines {
+		sb.WriteString(line)
+		sb.WriteByte('\n')
+	}
+	sb.WriteByte('\n')
+}
+
+var plainTextClassLabels = map[string]string{
+	"ok":      "OK",
+	"warning": "WARNING: ",
+	"error":   "ERROR: ",
+	"invalid": "NOT COUNTED: ",
 }
 
 func (r *Report) plainTextMessages(sb *strings.Builder) {
-	if len(r.CountedMessages) != 0 {
-		sb.WriteString("---- The following messages were counted in this report: ----\n")
-		for _, m := range r.CountedMessages {
-			fmt.Fprintf(sb, "%-30s %s\n", m.FromAddress, m.Subject)
-			for _, p := range m.Problems {
-				fmt.Fprintf(sb, "  ^ %s\n", p)
-			}
+	var col1, col2, col3, col4, col5 []string
+	var hasMultiple bool
+
+	sb.WriteString("MESSAGES----------------------------------------------------------------\n")
+	for _, m := range r.Messages {
+		var multiple string
+		col1 = append(col1, m.Prefix)
+		col2 = append(col2, m.Suffix)
+		if m.Multiple {
+			multiple, hasMultiple = `*`, true
 		}
+		col3 = append(col3, m.Source+multiple)
+		col4 = append(col4, m.Jurisdiction)
+		col5 = append(col5, plainTextClassLabels[m.Class]+m.Problem)
+	}
+	rightAlign(col1)
+	col1 = sideBySide(col1, col2, 0)
+	col1 = sideBySide(col1, col3, 2)
+	col1 = sideBySide(col1, col4, 2)
+	col1 = sideBySide(col1, col5, 2)
+	for _, line := range col1 {
+		sb.WriteString(line)
 		sb.WriteByte('\n')
 	}
-	if len(r.InvalidMessages) != 0 {
-		sb.WriteString("---- The following messages were not counted in this report: ----\n")
-		for _, m := range r.InvalidMessages {
-			fmt.Fprintf(sb, "%-30s %s\n", m.FromAddress, m.Subject)
-			for _, p := range m.Problems {
-				fmt.Fprintf(sb, "  ^ %s\n", p)
-			}
-		}
-		sb.WriteByte('\n')
+	if hasMultiple {
+		sb.WriteString("* multiple messages from this address; only the last one counts\n")
 	}
+	sb.WriteString("\n\n")
 }
 
 func (r *Report) plainTextGenInfo(sb *strings.Builder) {
@@ -119,4 +237,56 @@ func (r *Report) plainTextGenInfo(sb *strings.Builder) {
 	wr.WriteString("\n")
 	wr.Close()
 }
-*/
+
+func leftAlign(ss []string) {
+	var maxlen = maxlength(ss)
+	for i, s := range ss {
+		if len(s) < maxlen {
+			ss[i] = s + spaces[:maxlen-len(s)]
+		}
+	}
+}
+
+func rightAlign(ss []string) {
+	var maxlen = maxlength(ss)
+	for i, s := range ss {
+		if len(s) < maxlen {
+			ss[i] = spaces[:maxlen-len(s)] + s
+		}
+	}
+}
+
+func sideBySide(block1, block2 []string, gap int) (combined []string) {
+	var (
+		maxlen  int
+		linenum int
+	)
+	maxlen = maxlength(block1)
+	for linenum = 0; linenum < len(block1) && linenum < len(block2); linenum++ {
+		combined = append(combined, fmt.Sprintf("%-*s%s", maxlen+gap, block1[linenum], block2[linenum]))
+	}
+	for ; linenum < len(block1); linenum++ {
+		combined = append(combined, block1[linenum])
+	}
+	for ; linenum < len(block2); linenum++ {
+		combined = append(combined, fmt.Sprintf("%-*s%s", maxlen+gap, "", block2[linenum]))
+	}
+	return combined
+}
+
+func addPlainTextHeading(ss []string, head string) []string {
+	var maxlen = maxlength(ss)
+	if maxlen > len(head) {
+		head = head + dashes[:maxlen-len(head)]
+	}
+	return append([]string{head}, ss...)
+}
+
+func maxlength(ss []string) (maxlen int) {
+	for _, s := range ss {
+		if len(s) > maxlen {
+			maxlen = len(s)
+		}
+	}
+	return maxlen
+}

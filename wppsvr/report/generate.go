@@ -63,12 +63,9 @@ func generateTitle(r *Report, session *store.Session) {
 // generateParams adds a description of the parameters of the practice session
 // to the report.
 func generateParams(r *Report, session *store.Session) {
-	var messageTypes []string
-
 	for _, id := range session.MessageTypes {
-		messageTypes = append(messageTypes, config.LookupMessageType(id).TypeName())
+		r.MessageTypes = append(r.MessageTypes, config.LookupMessageType(id).TypeName())
 	}
-	r.MessageTypes = english.Conjoin(messageTypes, "or")
 	r.SentTo = fmt.Sprintf("%s at %s", session.CallSign, english.Conjoin(session.ToBBSes, "or"))
 	r.SentAfter = session.Start.Format("Mon 2006-01-02 15:04")
 	r.SentBefore = session.End.Format("Mon 2006-01-02 15:04")

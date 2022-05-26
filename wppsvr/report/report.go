@@ -23,7 +23,7 @@ type Report struct {
 	SessionName         string
 	SessionDate         string
 	Preliminary         bool
-	MessageTypes        string
+	MessageTypes        []string
 	SentTo              string
 	SentBefore          string
 	SentAfter           string
