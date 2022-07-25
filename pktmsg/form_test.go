@@ -123,6 +123,17 @@ var parseFormTests = []struct {
 		nil,
 	},
 	{
+		"strict quoting - line continuation",
+		"!SCCoPIFO!\n#T: tt.html\n#V: 1-2\nA: [this is \na test]\n!/ADDON!\n",
+		true,
+		&Form{
+			PIFOVersion: "1",
+			FormType:    "tt.html",
+			FormVersion: "2",
+			Fields:      []FormField{{"A", "this is a test"}},
+		},
+	},
+	{
 		"loose quoting - brackets",
 		"!SCCoPIFO!\n#T: tt.html\n#V: 1-2\nA:   [nl\\nbs\\\\rb`]et`]]]  \n!/ADDON!\n",
 		false,
@@ -192,11 +203,11 @@ var formEncodeTests = []struct {
 			PIFOVersion: "1",
 			FormType:    "tt.html",
 			FormVersion: "2",
-			Fields:      []FormField{{"A", ""}},
+			Fields:      []FormField{{"A", ""}, {"B", "b"}},
 		},
 		nil, nil,
 		false,
-		"!SCCoPIFO!\n#T: tt.html\n#V: 1-2\nA: []\n!/ADDON!\n",
+		"!SCCoPIFO!\n#T: tt.html\n#V: 1-2\nB: [b]\n!/ADDON!\n",
 	},
 	{
 		"minimal loose",
@@ -289,6 +300,20 @@ var formEncodeTests = []struct {
 		nil, nil,
 		true,
 		"!SCCoPIFO!\n#T: tt.html\n#V: 1-2\nAAA:   a\nBBBB:  b\nCCCCC: c\nDDDDDDDDDDDD:  d\nEEEEEEEEEEEEE: e\nFFFFFFFFFFFF:  f\nGGGGGG:        g\n!/ADDON!\n",
+	},
+	{
+		"line continuation",
+		&Form{
+			PIFOVersion: "1",
+			FormType:    "tt.html",
+			FormVersion: "2",
+			Fields: []FormField{
+				{"A", "1234567890 1234567890 1234567890 1234567890 1234567890 1234567890 1234567890 1234567890 1234567890 1234567890 1234567890 1234567890 "},
+			},
+		},
+		nil, nil,
+		false,
+		"!SCCoPIFO!\n#T: tt.html\n#V: 1-2\nA: [1234567890 1234567890 1234567890 1234567890 1234567890 1234567890 1234567890 1234567890 1234567890 1234567890 1234567890 123\n4567890 ]\n!/ADDON!\n",
 	},
 }
 

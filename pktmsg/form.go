@@ -5,20 +5,17 @@ import (
 	"math"
 	"regexp"
 	"strings"
+	"unicode/utf8"
 )
 
-const lastLineMarker = "Ω"
-
-type parseStateFunc func(*Form, string, bool) parseStateFunc
-
 var (
-	typeLineRE      = regexp.MustCompile(`^#T: ([a-z][-a-z0-9]+\.html)$`)
-	versionLineRE   = regexp.MustCompile(`^#V: (\d+(?:\.\d+)*)-(\d+(?:\.\d+)*)$`)
-	fieldLineRE     = regexp.MustCompile(`(?i)^([A-Z0-9][-A-Z0-9.]*):(.*)$`)
-	unquoteSCCoPIFO = strings.NewReplacer(`\\`, `\`, `\n`, "\n", "`]", "]")
-	unquoteLoose    = strings.NewReplacer(`\\`, `\`, `\n`, "\n")
-	quoteSCCoPIFO   = strings.NewReplacer(`\`, `\\`, "\n", `\n`, "]", "`]")
-	quoteLoose      = strings.NewReplacer(`\`, `\\`, "\n", `\n`)
+	headerLine    = "!SCCoPIFO!\n"
+	footerLine    = "!/ADDON!\n"
+	typeLineRE    = regexp.MustCompile(`^#T: ([a-z][-a-z0-9]+\.html)\n`)
+	versionLineRE = regexp.MustCompile(`^#V: (\d+(?:\.\d+)*)-(\d+(?:\.\d+)*)\n`)
+	fieldLineRE   = regexp.MustCompile(`(?i)^([A-Z0-9][-A-Z0-9.]*):`)
+	quoteSCCoPIFO = strings.NewReplacer(`\`, `\\`, "\n", `\n`, "]", "`]")
+	quoteLoose    = strings.NewReplacer(`\`, `\\`, "\n", `\n`)
 )
 
 // IsForm returns whether the supplied message body looks like it has an
@@ -33,104 +30,184 @@ func IsForm(body string) bool {
 // comments, and loose quoting are allowed.
 func ParseForm(body string, strict bool) (f *Form) {
 	f = new(Form)
-	state := expectHeader
-	for _, line := range strings.Split(body, "\n") {
-		if state = state(f, line, strict); state == nil {
-			return nil
+	if f, body = parseFormHeader(body); f == nil {
+		return nil
+	}
+	for {
+		var done bool
+		if f, body, done = parseFormField(f, body, strict); done {
+			break
 		}
 	}
-	if state(f, lastLineMarker, strict) == nil {
-		return nil
+	if f != nil {
+		f = parseFormFooter(f, body)
 	}
 	return f
 }
-func expectHeader(f *Form, line string, _ bool) parseStateFunc {
-	switch line {
-	case "":
-		return expectHeader
-	case "!SCCoPIFO!":
-		return expectType
-	default:
+
+// parseFormHeader parses the three header lines of a form.
+func parseFormHeader(body string) (f *Form, _ string) {
+	body = strings.TrimLeft(body, "\n")
+	if !strings.HasPrefix(body, headerLine) {
+		return nil, body
+	}
+	body = body[len(headerLine):]
+	if match := typeLineRE.FindStringSubmatch(body); match != nil {
+		f = &Form{FormType: match[1]}
+		body = body[len(match[0]):]
+	} else {
+		return nil, body
+	}
+	if match := versionLineRE.FindStringSubmatch(body); match != nil {
+		f.PIFOVersion, f.FormVersion = match[1], match[2]
+		body = body[len(match[0]):]
+	} else {
+		return nil, body
+	}
+	return f, body
+}
+
+// parseFormField parses a single field definition from the form.  It is usually
+// a single line, but can be multiple lines if the value is long.
+func parseFormField(f *Form, body string, strict bool) (_ *Form, _ string, done bool) {
+	var (
+		tag   string
+		value string
+		ok    bool
+	)
+	if match := fieldLineRE.FindStringSubmatch(body); match != nil {
+		tag = match[1]
+		body = body[len(match[0]):]
+	} else {
+		return f, body, true
+	}
+	if dot := strings.LastIndexByte(tag, '.'); dot >= 0 && dot < len(tag)-1 {
+		if strict {
+			return nil, body, true // field annotation not allowed in strict mode
+		}
+		tag = tag[:dot+1] // strip field annotation
+	}
+	if f.Has(tag) {
+		return nil, body, true // multiple values for field
+	}
+	if strict && !strings.HasPrefix(body, " [") {
+		return nil, body, true // strict mode requires bracket after exactly one space
+	}
+	body = strings.TrimLeft(body, " ")
+	if strings.HasPrefix(body, "[") {
+		value, body, ok = parseBracketedValue(body[1:], strict)
+	} else {
+		value, body, ok = parseUnbracketedValue(body)
+	}
+	if !ok {
+		return nil, body, true
+	}
+	f.Set(tag, value)
+	return f, body, false
+}
+
+// parseBracketedValue parses a field value in brackets.  Within the brackets,
+// \n represents a newline, \\ represents a backslash, literal newlines are
+// ignored, `] represents a close bracket, and `]]] represents a backtick at the
+// end of the string.  The final close bracket must be followed by a newline.
+// Spaces are allowed between the close bracket and the newline if we're not in
+// strict mode.
+func parseBracketedValue(body string, strict bool) (value, nbody string, ok bool) {
+	for body != "" {
+		if body[0] == ']' { // close bracket ends the value
+			ok = true
+			body = body[1:]
+			break
+		}
+		if body[0] == '\n' { // newlines are ignored
+			body = body[1:]
+			continue
+		}
+		if len(body) > 1 && body[0] == '\\' && body[1] == '\\' { // escaped backslashes are a single backslash
+			value += "\\"
+			body = body[2:]
+			continue
+		}
+		if len(body) > 1 && body[0] == '\\' && body[1] == 'n' { // escaped 'n's are newlines
+			value += "\n"
+			body = body[2:]
+			continue
+		}
+		if len(body) > 3 && body[0] == '`' && body[1] == ']' && body[2] == ']' && body[3] == ']' {
+			// backtick followed by three close brackets is a backtick that ends the string
+			ok = true
+			value += "`"
+			body = body[4:]
+			break
+		}
+		if len(body) > 1 && body[0] == '`' && body[1] == ']' { // backtick, close bracket is a literal close bracket
+			value += "]"
+			body = body[2:]
+			continue
+		}
+		// anything else is copied literally
+		r, sz := utf8.DecodeRuneInString(body)
+		value += string(r)
+		body = body[sz:]
+	}
+	if !ok { // end of body before end of value
+		return "", body, false
+	}
+	if !strict {
+		body = strings.TrimLeft(body, " ")
+	}
+	if body == "" || body[0] != '\n' { // no newline, or extra text after value
+		return "", body, false
+	}
+	return value, body[1:], true
+}
+
+// parseUnbracketedValue parses an unbracketed value (which is only allowed in
+// non-strict mode).  Leading and trailing blanks are ignored.  A pound sign (#)
+// ends the value, and causes the rest of the line to be ignored; otherwise, the
+// value ends at the end of the line.  \n represents a newline and \\ represents
+// a backslash.
+func parseUnbracketedValue(body string) (value, nbody string, ok bool) {
+	for body != "" {
+		if body[0] == '\n' { // newline ends the value
+			return strings.TrimSpace(value), body[1:], true
+		}
+		if body[0] == '#' { // # ends the value and starts a comment
+			value = strings.TrimSpace(value)
+			if idx := strings.IndexByte(body, '\n'); idx >= 0 {
+				return strings.TrimSpace(value), body[idx+1:], true
+			}
+			return "", "", false
+		}
+		if len(body) > 1 && body[0] == '\\' && body[1] == '\\' { // escaped backslashes are a single backslash
+			value += "\\"
+			body = body[2:]
+			continue
+		}
+		if len(body) > 1 && body[0] == '\\' && body[1] == 'n' { // escaped 'n's are newlines
+			value += "\n"
+			body = body[2:]
+			continue
+		}
+		// anything else is copied literally
+		r, sz := utf8.DecodeRuneInString(body)
+		value += string(r)
+		body = body[sz:]
+	}
+	return "", "", false // end of body before end of value
+}
+
+// parseFormFooter verifies that the only thing left in the body is the footer
+// line, possibly followed by blank lines.
+func parseFormFooter(f *Form, body string) *Form {
+	if !strings.HasPrefix(body, footerLine) {
 		return nil
 	}
-}
-func expectType(f *Form, line string, _ bool) parseStateFunc {
-	if match := typeLineRE.FindStringSubmatch(line); match != nil {
-		f.FormType = match[1]
-		return expectVersion
+	body = body[len(footerLine):]
+	if strings.Trim(body, "\n") != "" {
+		return nil
 	}
-	return nil
-}
-func expectVersion(f *Form, line string, _ bool) parseStateFunc {
-	if match := versionLineRE.FindStringSubmatch(line); match != nil {
-		f.PIFOVersion, f.FormVersion = match[1], match[2]
-		return expectField
-	}
-	return nil
-}
-func expectField(f *Form, line string, strict bool) parseStateFunc {
-	if line == "!/ADDON!" {
-		return expectEOF
-	}
-	if match := fieldLineRE.FindStringSubmatch(line); match != nil {
-		var tag, value = match[1], match[2]
-		if dot := strings.LastIndexByte(tag, '.'); dot >= 0 && dot < len(tag)-1 {
-			if strict {
-				return nil // field annotation not allowed in strict mode
-			}
-			tag = tag[:dot+1] // strip field annotation
-		}
-		if f.Has(tag) {
-			return nil // multiple values for field
-		}
-		if value, ok := unquote(value, strict); ok {
-			f.Set(tag, value)
-			return expectField
-		}
-	}
-	return nil
-}
-func expectEOF(_ *Form, line string, _ bool) parseStateFunc {
-	if line == "" || line == lastLineMarker {
-		return expectEOF
-	}
-	return nil
-}
-func unquote(value string, strict bool) (_ string, ok bool) {
-	// Strict SCCoPIFO has a single space after the colon, and then a value
-	// in square brackets.  Inside the brackets, newlines and backslashes
-	// are escaped with a backslash, and close brackets are escaped with a
-	// backtick.  A backtick at the end of the value is followed by three
-	// close brackets (including the one that ends the value).
-	if strings.HasPrefix(value, " [") && strings.HasSuffix(value, "]") {
-		value = value[2 : len(value)-1]
-		if strings.HasSuffix(value, "`]]") {
-			value = value[:len(value)-2]
-		}
-		return unquoteSCCoPIFO.Replace(value), true
-	}
-	if strict {
-		return "", false
-	}
-	// If we're not in strict mode, we don't care how much whitespace
-	// appears around the square brackets.
-	value = strings.TrimSpace(value)
-	if strings.HasPrefix(value, "[") && strings.HasSuffix(value, "]") {
-		value = value[1 : len(value)-1]
-		if strings.HasSuffix(value, "`]]") {
-			value = value[:len(value)-2]
-		}
-		return unquoteSCCoPIFO.Replace(value), true
-	}
-	// We also allow a value that doesn't have brackets (including an empty
-	// string).  If the value is not bracketed, it's allowed to have a
-	// trailing comment starting with a '#'.  Remove that.
-	if hash := strings.IndexByte(value, '#'); hash >= 0 {
-		value = strings.TrimSpace(value[:hash])
-	}
-	// For unbracketed values, newlines and backslashes have to be escaped
-	// with backslashes, but nothing else is escaped.
-	return unquoteLoose.Replace(value), true
+	return f
 }
 
 // A Form represents a form encoded in a packet message.
@@ -249,11 +326,19 @@ func (f *Form) encodeFields(sb *strings.Builder, annotations, comments map[strin
 	for i, tag := range tags {
 		if values[i] == "" && fcomments != nil && fcomments[i] != "" {
 			fmt.Fprintf(sb, "%s:%*s# %s\n", tag, taglens[i]-len(tag), "", fcomments[i])
+		} else if looseQuoting && !strings.HasPrefix(values[i], "[") && strings.TrimSpace(values[i]) == values[i] {
+			fmt.Fprintf(sb, "%s:%*s%s\n", tag, taglens[i]-len(tag), "", quoteLoose.Replace(values[i]))
 		} else {
-			fmt.Fprintf(sb, "%s:%*s%s\n", tag, taglens[i]-len(tag), "", quote(values[i], looseQuoting))
+			var s = fmt.Sprintf("%s: %s", tag, bracketQuote(values[i]))
+			for len(s) > 128 {
+				fmt.Fprintln(sb, s[:128])
+				s = s[128:]
+			}
+			fmt.Fprintln(sb, s)
 		}
 	}
 }
+
 func alignLengths(lengths []int) {
 	// This algorithm is stolen from go/printer.exprList().  It aligns items
 	// (in this case, annotated field tags) that are of similar size, but
@@ -293,13 +378,11 @@ func alignLengths(lengths []int) {
 		lengths[i] = max
 	}
 }
-func quote(value string, loose bool) string {
-	if !loose || strings.HasPrefix(value, "[") || strings.TrimSpace(value) != value {
-		value = quoteSCCoPIFO.Replace(value)
-		if strings.HasSuffix(value, "`") {
-			value += "]]"
-		}
-		return "[" + value + "]"
+
+func bracketQuote(value string) string {
+	value = quoteSCCoPIFO.Replace(value)
+	if strings.HasSuffix(value, "`") {
+		value += "]]"
 	}
-	return quoteLoose.Replace(value)
+	return "[" + value + "]"
 }
