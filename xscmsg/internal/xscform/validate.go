@@ -106,16 +106,17 @@ func ValidateFrequencyOffset(_ *XSCForm, fd *FieldDefinition, value string, _ bo
 	return value, ""
 }
 
-// ValidateMessageNumber verifies that the value is a message number.
+// ValidateMessageNumber doesn't actually validate the message number, because
+// PackItForms doesn't validate it, and we don't want to be raising errors that
+// PackItForms doesn't.  Instead, we'll raise an error about the message number
+// in the subject line.  However, if the message number is well formed, we can
+// at least canonicalize it.
 func ValidateMessageNumber(_ *XSCForm, fd *FieldDefinition, value string, _ bool) (newval, problem string) {
-	if value == "" {
-		return value, ""
-	}
 	if match := messageNumberRE.FindStringSubmatch(value); match != nil {
 		num, _ := strconv.Atoi(match[2])
 		return fmt.Sprintf("%s%03d%s", strings.ToUpper(match[1]), num, strings.ToUpper(match[3])), ""
 	}
-	return value, fmt.Sprintf("%q is not a valid message number for field %q", value, fd.Tag)
+	return value, ""
 }
 
 // ValidatePhoneNumber verifies that the value is a phone number.
