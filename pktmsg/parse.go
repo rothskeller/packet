@@ -66,6 +66,8 @@ func ParseMessage(rawmsg string) (msg *Message, err error) {
 		msg.Flags |= NotPlainText
 	}
 	msg.Body = string(body)
+	// Handle BBS routing "headers".
+	msg.parseRoutingHeaders()
 	// Handle Outpost flags.
 	err = msg.parseOutpostFlags()
 	return msg, err
@@ -145,6 +147,21 @@ func extractPlainText(header textproto.MIMEHeader, body []byte) (nbody []byte, n
 	// In theory we also ought to check the charset, but we'll elide that
 	// until experience proves a need.
 	return body, notplain, nil
+}
+
+var routingHeaderRE = regexp.MustCompile(`^R:\d{6}/\d{4}z .*\n`)
+
+// parseRoutingHeaders looks for BBS routing headers at the beginning of the
+// message body, and moves them into the message headers if found.
+func (msg *Message) parseRoutingHeaders() {
+	for {
+		if match := routingHeaderRE.FindString(msg.Body); match != "" {
+			msg.Header.Add("X-BBS-Route", strings.TrimSpace(match))
+			msg.Body = msg.Body[len(match):]
+		} else {
+			break
+		}
+	}
 }
 
 // parseOutpostFlags looks for Outpost flags at the beginning of the message
