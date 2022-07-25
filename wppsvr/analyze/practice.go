@@ -88,16 +88,39 @@ func (a *Analysis) checkPracticeSubject() {
 	}
 	var match = practiceRE.FindStringSubmatch(xscsubj.Subject)
 	if match == nil {
-		a.problems = append(a.problems, &problem{
-			code: ProblemPracticeSubjectFormat,
-			response: `
+		switch a.xsc.(type) {
+		case *config.PlainTextMessage:
+			a.problems = append(a.problems, &problem{
+				code: ProblemPracticeSubjectFormat,
+				response: `
 The Subject of this message does not have the correct format.  After the
 message number, handling order, and form type, it should have the word
 "Practice" followed by four comma-separated fields:
-    Practice CallSign, FirstName, Jurisdiction, Date
+	Practice CallSign, FirstName, Jurisdiction, Date
 `,
-			references: refWeeklyPractice,
-		})
+				references: refWeeklyPractice,
+			})
+		case *ics213.Form:
+			a.problems = append(a.problems, &problem{
+				code: ProblemPracticeSubjectFormat,
+				response: `
+The Subject field of this form does not have the correct format.  It should have
+the word "Practice" followed by four comma-separated fields:
+	Practice CallSign, FirstName, Jurisdiction, Date
+`,
+				references: refWeeklyPractice,
+			})
+		case *eoc213rr.Form:
+			a.problems = append(a.problems, &problem{
+				code: ProblemPracticeSubjectFormat,
+				response: `
+The Incident Name field of this form does not have the correct format.  It
+should have the word "Practice" followed by four comma-separated fields:
+	Practice CallSign, FirstName, Jurisdiction, Date
+`,
+				references: refWeeklyPractice,
+			})
+		}
 		return
 	}
 	a.subjectCallSign = strings.ToUpper(match[1])
