@@ -59,7 +59,7 @@ accepted until %s.
 This message is being counted for %s on %s, but the subject line says it's
 intended for a net on %s.  This may indicate that the message was sent to the
 wrong net.
-`, a.session.Name, a.session.Start.Format("January 2"), a.subjectDate.Format("January 2")),
+`, a.session.Name, a.session.End.Format("January 2"), a.subjectDate.Format("January 2")),
 			references: refWeeklyPractice,
 		})
 	}
