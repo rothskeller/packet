@@ -1,0 +1,63 @@
+SCCo ARES/RACES Packet Practice Report For: Monday, July 04, 2022.
+
+----------------------- DAY'S SUMMARY -----------------------
+Totals:
+  All messages:            18 received;  17 ( 94%) correct. [includes duplicates]
+  Unique "from" addresses: 18 received;  17 ( 94%) correct. [unique From: addresses]
+  Unique call signs:       15 received;  15 (100%) correct. [15 reported to main net]
+
+Simulated BBS outage: W1XSC
+  0/18 (0%) incorrectly sent FROM this BBS.
+
+Sources:
+  Santa Clara County BBSs: 16
+       0 W1XSC
+       1 W2XSC
+      12 W3XSC
+       3 W4XSC
+
+  Other: 2
+      1 from BBS Network.
+      1 from E-Mail.
+
+
+Most operators who sent a message that is flagged in the list below
+will automatically receive a reply with additional details and suggested
+corrective actions. If your message is flagged, please retrieve the detailed
+reply message from the BBS, email provider, or other service you used to
+submit the weekly packet practice message before requesting assistance.
+
+----------------------- DAY'S DETAILS -----------------------
+
+##     FROM                                   SUBJECT
+_1 kk6fmq@w4xsc.ampr.org       FMQ-186P_R_EOC213RR_Practice_KK6FMQ_Grant, PAF, 7/4/2022
+_2 kk6fmq@w3xsc.ampr.org       FMQ-523M_R_EOC213RR_Practice_KK6FMQ_Grant, PAF, 7/4/2022
+_3 kt6jk@w4xsc.ampr.org        6JK-724P_R_EOC213RR_Practice KT6JK, Todd, CUP, 20220704
+_4 kk6ekn@w3xsc.ampr.org       EKN-678P_P_EOC213RR_practice KK6EKN, Leslie, MTV, 07-04-2022
+_5 ai6sl@w3xsc.ampr.org        6SL-886P_R_EOC213RR_Practice AI6SL, Wolfgang, Sunnyvale, 20220704
+_6 kg6kzz@w4xsc.ampr.org       KZZ-449P_R_EOC213RR_Practice KG6KZZ, Jason, Almaden, 7/4/22
+_7 kg6kzz@n0ary.#nca.ca.usa.noam !SCCoPIFO!
+     ^^^ Subject line format issue(Missing: Tactical IDTactical ID too short;
+        hyphen; Missing: Message Number; Message Handling Order.)
+_8 kz6dm@w3xsc.ampr.org        6DM-565P_R_EOC213RR_Practice KZ6DM, Poul, Mountain View, 07/04/2022
+_9 kf6zsq@w3xsc.ampr.org       ZSQ-5308P_R_EOC213RR_Practice, KF6ZSQ, Mountain View, 07-04-22
+10 wa1iam@w3xsc.ampr.org       IAM-784P_R_EOC213RR_Practice WA1IAM, Dave, MTV, 7/4/22
+11 ke6ppi@w3xsc.ampr.org       PPI-562P_R_EOC213RR_Practice KE6PPI, Roger, Sunnyvale, 07-04-2022
+12 kn6ghd@w3xsc.ampr.org       GHD-291P_R_EOC213RR_Practice KN6GHD, Tim, Mountain View, 07-04-2022
+13 km6i@w3xsc.ampr.org         M6I-501P_R_EOC213RR_Packet Practice, GOrdon, MTV, 07-04-2022
+14 ki6pur@w3xsc.ampr.org       PUR-114P_P_EOC213RR_Practice KI6PUR, Rick, MTV, 07/04/22
+15 kd6kdl@w3xsc.ampr.org       KDL-849P_R_EOC213RR_Monday night practice
+16 kk6fpp@w3xsc.ampr.org       FPP-217P_R_EOC213RR_Practice KK6FPP, Thomas, Sunnyvale, 20220704
+17 kk6fpp@email3.scc-ares-races.net FPP-218E_R_EOC213RR_Practice KK6FPP, Thomas, Sunnyvale, 20220704
+18 km6mzm@w2xsc.ampr.org       MZM-499P_R_EOC213RR_Practice, KM6MZM, Daniel, Sunnyvale 07/04/2022
+
+Key:
+S: beginning of Subject line differs from Standards for Santa Clara County.
+
+Practice Message count: 1 plain text messages.
+                        17 SCCoPIFO messages.
+
+This list created by KK6FPP, Thomas Leibold
+MonChk002.LrnOpst004.CntInit013.MsgWrap005
+.MsgErr005.Rprt017
+

@@ -1,0 +1,73 @@
+SCCo ARES/RACES Packet Practice Report For: Monday, June 06, 2022.
+
+----------------------- DAY'S SUMMARY -----------------------
+Totals:
+  All messages:            26 received;  25 (96%) correct. [includes duplicates]
+  Unique "from" addresses: 24 received;  23 (96%) correct. [unique From: addresses]
+  Unique call signs:       21 received;  20 (95%) correct. [21 reported to main net]
+
+Simulated BBS outage: W1XSC
+  0/26 (0%) incorrectly sent FROM this BBS.
+
+Sources:
+  Santa Clara County BBSs: 22
+       0 W1XSC
+       1 W2XSC
+      15 W3XSC
+       6 W4XSC
+
+  Other: 2
+      1 from BBS Network.
+      1 from E-Mail.
+
+
+Most operators who sent a message that is flagged in the list below
+will automatically receive a reply with additional details and suggested
+corrective actions. If your message is flagged, please retrieve the detailed
+reply message from the BBS, email provider, or other service you used to
+submit the weekly packet practice message before requesting assistance.
+
+----------------------- DAY'S DETAILS -----------------------
+
+##     FROM                                   SUBJECT
+_1 wa3aw@w3xsc.ampr.org        3AW-890P_R_ICS213_Practice WA3AW, Art, Los Altos, 06/06/2022
+     ^^^ Duplicate check-in
+_2 kg6hi@w3xsc.ampr.org        6HI-1762P_R_ICS213_Practice, KG6HI, Jerry, Sunnyvale, 6 June 2022
+     ^^^ Duplicate check-in
+_3 k6ott@w4xsc.ampr.org        OTT-735P_R_ICS213_Practice K6OTT, Andreas, Sunnyvale, 2022-06-06
+_4 w6bg@w4xsc.ampr.org         6BG-892P_R_ICS213_Practice W6BG, Max, Cupertino, 2022-06-06
+_5 kk6fmq@w3xsc.ampr.org       FMQ-162P_R_ICS213_Check-In KK6FMQ, Grant, PAF, 6/6/2022
+_6 kk6fmq@w4xsc.ampr.org       FMQ-517M_R_ICS213_Check-In KK6FMQ, Grant, PAF, 6/6/2022
+_7 ai6sl@w3xsc.ampr.org        6SL-856P_R_ICS213_Practice AI6SL, Wolfgang, Sunnyvale, 2022-06-06
+_8 kz6dm@w3xsc.ampr.org        6DM-538P_R_ICS213_Practice KZ6DM, Poul, Mountain View, 06/06/2022
+_9 kk6ekn@w3xsc.ampr.org       EKN-641P_R_ICS213_practice KK6EKN, Leslie, MTV, 06-06-2022
+10 kg6tmi@w3xsc.ampr.org       TMI-169P_R_ICS213_Practice KG6TMI, Patrick, PAF, 06/06/22
+11 kt6jk@w4xsc.ampr.org        6JK-684P_R_ICS213_Practice KT6JK, Todd, CUP, 20060606
+12 ag6gx@w4xsc.ampr.org        6GX-1142P_R_ICS213_Practice AG6GX, Brian, Cupertino, June 6, 2022
+13 wu6p@w3xsc.ampr.org         U6P-442P_R_ICS213_Practice WU6P, Nianfeng, Sunnyvale, 06/06/2022
+14 wa3aw@w3xsc.ampr.org        3AW-890P_R_ICS213_Practice WA3AW, Art, Los Altos, 06/06/2022
+15 wa1iam@w4xsc.ampr.org       IAM-778P_R_ICS213_Practice WA1IAM, Dave, MTV, 6/6/22
+16 ki6pur@w3xsc.ampr.org       PUR-388P_R_ICS213_Practice KI6PUR, Rick, MTV, 06/06/22
+17 kg6hi@w3xsc.ampr.org        6HI-1762P_R_ICS213_Practice, KG6HI, Jerry, Sunnyvale, 6 June 2022
+18 kj6gbg@w3xsc.ampr.org       GBG-1281P_R_ICS213_Practice KJ6GBG, Joe, Palo Alto, 06/06/2022
+19 km6i@w3xsc.ampr.org         M6I-496P_R_ICS213_Packet practice KM6I 06-06-2022
+20 kk6fpp@w3xsc.ampr.org       FPP-137P_R_ICS213_Practice KK6FPP, Thomas, Sunnyvale, 20220606
+21 kk6fpp@email3.scc-ares-races.net FPP-138E_R_ICS213_Practice KK6FPP, Thomas, Sunnyvale, 20220606
+22 w6jmk@w3xsc.ampr.org        JMK-408P_R_ICS213_Practice W6JMK, John, Los Altos, 6/6/2022
+23 kg6kzz@n0ary.#nca.ca.usa.noam KZZ-401P_R_ICS213_Practice KG6KZZ, Jason, Almaden, 6/6/2022
+     ^^^ Body issue(malformed SCCoPIFO: 102 lines starting with !SCCoPIFO!
+        found & all 2 SCCoPIFO heading lines detected.)
+24 kn6ghd@w3xsc.ampr.org       GHD-283P_R_ICS213_Practice KN6GHD, Tim, Mountain View, 06/06/2022
+25 kg6kzz@w2xsc.ampr.org       KZZ-401P_R_ICS213_Practice KG6KZZ, Jason, Almaden, 6/6/2022
+26 kj6amm@w3xsc.ampr.org       AMM-621P_R_ICS213_ Practice kj6amm, Paul, Mountain View, 06/06/2022
+
+Key:
+B: Body of message has content issue
+D: Duplicate practice message = same call sign via same BBS/address. (not counted)
+
+Practice Message count: 0 plain text messages.
+                        23 SCCoPIFO messages.
+
+This list created by KK6FPP, Thomas Leibold
+MonChk002.LrnOpst004.CntInit013.MsgWrap005
+.MsgErr005.Rprt017

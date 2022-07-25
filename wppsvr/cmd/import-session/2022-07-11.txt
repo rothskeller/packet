@@ -1,0 +1,74 @@
+SCCo ARES/RACES Packet Practice Report For: Monday, July 11, 2022.
+
+----------------------- DAY'S SUMMARY -----------------------
+Totals:
+  All messages:            28 received;  27 ( 96%) correct. [includes duplicates]
+  Unique "from" addresses: 28 received;  27 ( 96%) correct. [unique From: addresses]
+  Unique call signs:       25 received;  25 (100%) correct. [25 reported to main net]
+
+Simulated BBS outage: W2XSC
+  0/28 (0%) incorrectly sent FROM this BBS.
+  0/28 (0%) incorrectly sent TO this BBS.
+
+Sources:
+  Santa Clara County BBSs: 25
+       7 W1XSC
+       0 W2XSC
+      15 W3XSC
+       3 W4XSC
+
+  Other: 3
+      1 from WINLINK.ORG.
+      1 from BBS Network.
+      1 from E-Mail.
+
+
+Most operators who sent a message that is flagged in the list below
+will automatically receive a reply with additional details and suggested
+corrective actions. If your message is flagged, please retrieve the detailed
+reply message from the BBS, email provider, or other service you used to
+submit the weekly packet practice message before requesting assistance.
+
+----------------------- DAY'S DETAILS -----------------------
+
+##     FROM                                     SUBJECT
+_1 km6ams@w3xsc.ampr.org       AMS-512P_R_EOC213RR_Practice KM6AMS Fred Los Altos 7-4-22
+_2 kg6tmi@w3xsc.ampr.org       TMI-189P_R_EOC213RR_Practice KG6TMI, Patrick, PAF, 07/11/2022
+_3 kk6ekn@w3xsc.ampr.org       EKN-681P_P_EOC213RR_practice KK6EKN, Leslie, MTV, 07-11-2022
+_4 kk6fmq@w1xsc.ampr.org       FMQ-192P_R_EOC213RR_Practice_KK6FMQ_Grant, PAF, 7/11/2022
+_5 kz6dm@w3xsc.ampr.org        6DM-568P_R_EOC213RR_Practice KZ6DM, Poul, Mountain View, 07/11/2022
+_6 kk6fmq@w4xsc.ampr.org       FMQ-525M_R_EOC213RR_Practice_KK6FMQ_Grant, PAF, 7/11/2022
+_7 ai6sl@w1xsc.ampr.org        6SL-893P_R_EOC213RR_Practice AI6SL, Wolfgang, Sunnyvale, 2022/7/11
+_8 km6mzm@w3xsc.ampr.org       MZM-502P_R_EOC213RR_Practice, KM6MZM, Daniel, Sunnyvale 07/11/2022
+_9 wu6p@w1xsc.ampr.org         U6P-462P_R_EOC213RR_Practice WU6P, Nianfeng, Sunnyvale, 7/11/2022
+10 kc6rsc@w1xsc.ampr.org       STR-2740P_R_EOC213RR_Practice KC6RSC, Steve, SNY, 2022-07-11
+11 kg6kzz@w1xsc.ampr.org       KZZ-461P_R_EOC213RR_Practice KG6KZZ, Jason, Almaden, 7/11/22
+12 kg6kzz@n0ary.#nca.ca.usa.noam !SCCoPIFO!
+     ^^^ Subject line format issue(Missing: Tactical IDTactical ID too short;
+        hyphen; Missing: Message Number; Message Handling Order.)
+13 wa1iam@w4xsc.ampr.org       IAM-785P_R_EOC213RR_Practice WA1IAM, Dave, MTV, 7/11/22
+14 ki6pur@w3xsc.ampr.org       PUR-116P_R_EOC213RR_Practice KI6PUR, Rick, MTV, 07/11/22
+15 KG6KZZ@winlink.org          KZZ-463P_R_EOC213RR_Practice KG6KZZ, Jason, Almaden, 7/11/22
+16 k6fjc@w3xsc.ampr.org        FJC-140P_R_EOC213RR_Practice K6FJC, Mark, Redwood City, 20220711
+17 kf6zsq@w3xsc.ampr.org       ZSQ-5310P_R_EOC213RR_Practice, KF6ZSQ, Phil, Mountain View, 07-11-22
+18 kk6fpp@w1xsc.ampr.org       FPP-220P_R_EOC213RR_Practice KK6FPP, Thomas, Sunnyvale, 20220711
+19 kj6gbg@w3xsc.ampr.org       GBG-1285P_R_EOC213RR_Practice KJ6GBG, Joe, Palo Alto, 7/11/2022
+20 k6ott@w4xsc.ampr.org        OTT-769P_R_EOC213RR_Practice K6OTT, Andreas, Sunnyvale, 2022-07-11
+21 km6i@w3xsc.ampr.org         M6I-503P_R_EOC213RR_Packet Practice, Gordon, MTV, 7-1-2022
+22 kk6fpp@email1.scc-ares-races.net FPP-221E_R_EOC213RR_Practice KK6FPP, Thomas, Sunnyvale, 20220711
+23 kn6ghd@w3xsc.ampr.org       GHD-293P_R_EOC213RR_Practice KN6GHD, Tim, Mountain View, 07-11-2022
+24 n9dk@w3xsc.ampr.org         9DK-3527P_R_EOC213RR_Practice N9DK, Dave, MV, 2022-07-11
+25 w6jmk@w3xsc.ampr.org        JMK-532P_R_EOC213RR_Practice W6JMK, John, Los Altos, 7/11/2022
+26 wa3aw@w3xsc.ampr.org        3AW-905P_R_EOC213RR_Practice WA3AW, Art, Los Altos, 07/11/22
+27 kt6jk@w1xsc.ampr.org        6JK-726P_R_EOC213RR_Practice KT6JK, Todd, CUP, 20220711
+28 kd6kdl@w3xsc.ampr.org       KDL-851P_R_EOC213RR_Practice KD6KDL, Sally, Mountain View, 07/11/22
+
+Key:
+S: beginning of Subject line differs from Standards for Santa Clara County.
+
+Practice Message count: 1 plain text messages.
+                        27 SCCoPIFO messages.
+
+This list created by N9DK, Dave
+MonChk002.LrnOpst004.CntInit013.MsgWrap005
+.MsgErr005.Rprt017

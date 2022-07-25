@@ -1,0 +1,66 @@
+SCCo ARES/RACES Packet Practice Report For: Monday, May 30, 2022.
+
+----------------------- DAY'S SUMMARY -----------------------
+Totals:
+  All messages:            24 received;  23 ( 96%) correct. [includes duplicates]
+  Unique "from" addresses: 23 received;  22 ( 96%) correct. [unique From: addresses]
+  Unique call signs:       21 received;  21 (100%) correct. [21 reported to main net]
+Simulated BBS outage: None
+
+Sources:
+  Santa Clara County BBSs: 22
+       6 W1XSC
+       0 W2XSC
+      15 W3XSC
+       1 W4XSC
+
+  Other: 1
+      1 from E-Mail.
+
+
+Most operators who sent a message that is flagged in the list below
+will automatically receive a reply with additional details and suggested
+corrective actions. If your message is flagged, please retrieve the detailed
+reply message from the BBS, email provider, or other service you used to
+submit the weekly packet practice message before requesting assistance.
+
+----------------------- DAY'S DETAILS -----------------------
+
+##     FROM                               SUBJECT
+_1 kk6ekn@w3xsc.ampr.org       EKN-638P_R_practice KK6EKN, Leslie, MTV, 05-31-2022
+_2 kk6fmq@w3xsc.ampr.org       FMQ-154P_R_Practice KK6FMQ, Grant, PAF, 5/30/2022
+_3 ai6sl@w1xsc.ampr.org        6SL-852P_R_Practice AI6SL, Wolfgang, Sunnyvale, 20220530
+_4 kk6fmq@w4xsc.ampr.org
+     ^^^ Subject line format issue(Missing: Tactical IDTactical ID too short;
+        hyphen; Missing: Message Number; Message Handling Order; Subject.)
+_5 w6bg@w1xsc.ampr.org         6BG-848P_R_Practice W6BG, MAX, CUPERTINO, 2022-05-30
+_6 kt6jk@w1xsc.ampr.org        6JK-681P_R_Practice KT6JK, Todd, CUP, 20220530
+_7 kg6tmi@w3xsc.ampr.org       TMI-168P_R_Practice KG6TMI, Patrick, PAF, 05/30/22
+_8 kz6dm@w3xsc.ampr.org        6DM-538P_R_Practice KZ6DM, Poul, Mountain View, 05/30/2022
+_9 wa1iam@w3xsc.ampr.org       IAM-776P_R_Practice WA1IAM, Dave, MTV, 5/30/22
+10 kn6ghd@w3xsc.ampr.org       GHD-281P_R_Practice KN6GHD, Tim, Mountain View, 05-30-2022
+11 kk6fpp@w1xsc.ampr.org       FPP-135P_R_Practice KK6FPP, Thomas, Sunnyvale, 20220530
+12 kk6fpp@email1.scc-ares-races.net FPP-132E_R_Practice KK6FPP, Thomas, Sunnyvale, 20220530
+13 kg6hi@w1xsc.ampr.org        6HI-1758P_R_Practice, KG6HI, Jerry, Sunnyvale, 30 May 2022
+14 ag6gx@w1xsc.ampr.org        6GX-4990P_R_Practice AG6GX, Brian, Cupertino, 05/30/2022
+15 k1jh@w3xsc.ampr.org         1JH-403P_R_Practice K1JH, Jim, Los Altos, 20220530
+16 k6chk@w3xsc.ampr.org        CHK-245P_R_Practice K6CHK, Tom, PAF, 05/30/22
+     ^^^ Duplicate check-in
+17 k6chk@w3xsc.ampr.org        CHK-247P_R_Practice K6CHK, Tom, PAF, 05/30/22
+18 kf6zsq@w3xsc.ampr.org       ZSQ-5292P_R_Practice, KF6ZSQ, Phi. Mountain View, 05-30-22
+19 km6i@w3xsc.ampr.org         M6I-492P_R_Practice KM6I, Gordon, MTV, 05-30-2022
+20 n9dk@w3xsc.ampr.org         9DK-3408P_R_Practice N9DK, Dave, MV, 2022-05-30
+21 kj6gbg@w3xsc.ampr.org       GBG-1279P_R_Practice KJ6GBG, Joe, Palo Alto, 5/30/2022
+22 wa3aw@w3xsc.ampr.org        3AW-888P_R_Practice WA3AW, Art, Los Altos, 5/30/2022
+23 ki6pur@w3xsc.ampr.org       PUR-386P_R_Practice KI6PUR, Rick, MTV, 05/30/22
+24 w6jmk@w3xsc.ampr.org        JMK-391P_R_Practice W6JMK, John, Los Altos, 5/30/2022
+
+Key:
+D: Duplicate practice message = same call sign via same BBS/address. (not counted)
+S: beginning of Subject line differs from Standards for Santa Clara County.
+
+Practice Message count: 23 plain text messages.
+
+This list created by N9DK, Dave
+MonChk002.LrnOpst004.CntInit013.MsgWrap005
+.MsgErr005.Rprt017

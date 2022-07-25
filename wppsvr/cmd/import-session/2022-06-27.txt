@@ -1,0 +1,72 @@
+SCCo ARES/RACES Packet Practice Report For: Monday, June 27, 2022.
+
+----------------------- DAY'S SUMMARY -----------------------
+Totals:
+  All messages:            28 received;  28 (100%) correct. [includes duplicates]
+  Unique "from" addresses: 25 received;  25 (100%) correct. [unique From: addresses]
+  Unique call signs:       23 received;  23 (100%) correct. [23 reported to main net]
+
+Simulated BBS outage: W4XSC
+  0/28 (0%) incorrectly sent FROM this BBS.
+
+Sources:
+  Santa Clara County BBSs: 24
+       9 W1XSC
+       1 W2XSC
+      14 W3XSC
+       0 W4XSC
+
+  Other: 1
+      1 from E-Mail.
+
+
+Most operators who sent a message that is flagged in the list below
+will automatically receive a reply with additional details and suggested
+corrective actions. If your message is flagged, please retrieve the detailed
+reply message from the BBS, email provider, or other service you used to
+submit the weekly packet practice message before requesting assistance.
+
+----------------------- DAY'S DETAILS -----------------------
+
+##     FROM                                   SUBJECT
+_1 n6tae@w1xsc.ampr.org        TAE-424P_P_ICS213_Practice N6TAE, Tae, Cupertino, 6-27-2022
+     ^^^ Duplicate check-in
+_2 ai6sl@w1xsc.ampr.org        6SL-881P_R_ICS213_Practice AI6SL, Wolfgang, Sunnyvale, 20220627
+_3 kk6ekn@w3xsc.ampr.org       EKN-676P_R_ICS213_practice KK6EKN, Leslie, MTV, 06-27-2022
+     ^^^ Duplicate check-in
+_4 kz6dm@w3xsc.ampr.org        6DM-547P_R_ICS213_Practice KZ6DM, Poul, Mountain View, 06/27/2022
+_5 kg6tmi@w3xsc.ampr.org       TMI-187P_R_ICS213_Practice KG6TMI, Patrick, PAF, 06/27/22
+_6 kk6fmq@w3xsc.ampr.org       FMQ-178P_R_ICS213_Practice KK6FMQ_Grant, PAF, 6/27/2022
+_7 kk6fmq@w1xsc.ampr.org       FMQ-521m_R_ICS213_Practice_KK6FMQ_Grant,PAF, 6/27/2022
+_8 kk6ekn@w3xsc.ampr.org       EKN-677P_R_ICS213_practice KK6EKN, Leslie, MTV, 06-27-2022
+_9 ke6ppi@w1xsc.ampr.org       PPI-555P_R_ICS213_Practice KE6PPI, Roger, Sunnyvale, 06-25-2022
+10 ag6gx@w1xsc.ampr.org        6GX-5079P_R_ICS213_Practice AG6GX, Brian, Cupertino, 0/27/2022
+11 wu6p@w1xsc.ampr.org         U6P-458P_R_ICS213_Practice WU6P, Nianfeng, Sunnyvale, 06/27/2022
+12 n0sv@w2xsc.ampr.org         0SV-155P_R_ICS213_Practice N0SV, Dan, Sunnyvale, 06-27-2022
+13 kg6hi@w1xsc.ampr.org        6HI-1777P_R_ICS213_Practice, KG6HI, Jerry, Sunnyvale, 27 June 2022
+14 kf6zsq@w3xsc.ampr.org       ZSQ-5305P_R_ICS213_Practice, KF6ZSQ, Phil, Mountain View
+15 kt6jk@w1xsc.ampr.org        6JK-722P_R_ICS213_Practice KT6JK, Todd, CUP, 20220627
+16 n6tae@w1xsc.ampr.org        TAE-428P_R_ICS213_Practice N6TAE, Tae, Cupertino, 6-27-22
+17 n9dk@w3xsc.ampr.org         9DK-3474P_R_ICS213_Practice N9DK, Dave, MV, 2022-06-27
+18 w6jmk@w3xsc.ampr.org        JMK-424P_R_ICS213_Practice W6JMK, John, Los Altos, 6/27/2022
+19 k1jh@w3xsc.ampr.org         1JH-414P_R_ICS213_Practice K1JH, Jim, Los Altos, 20220627
+20 wu6k@w3xsc.ampr.org         U6K-348P_R_ICS213_Practice WU6K, Jim, Mountain View, 20222000
+     ^^^ Duplicate check-in
+21 k6lct@w3xsc.ampr.org        LCT-381P_R_ICS213_Practice K6LCT, Lisa, Los Altos, 06/27/2022
+22 wu6k@w3xsc.ampr.org         U6K-349P_R_ICS213_Practice WU6K, Jim, Mountain View, 20220627
+23 kj6amm@w3xsc.ampr.org       AMM-626P_R_ICS213_Practice kj6amm, Paul, Mountain View, 06/27/2022
+24 kn6ghd@w3xsc.ampr.org       GHD-289P_R_ICS213_Practice KN6GHD, Tim, Mountain View, 06/27/2022
+25 km6ams@w3xsc.ampr.org       AMS-510P_R_ICS213_Practice KM6AMS Fred Los Altos 6/27/22
+26 kk6fpp@w1xsc.ampr.org       FPP-214P_R_ICS213_Practice KK6FPP, Thomas, Sunnyvale, 20220627
+27 kk6fpp@email1.scc-ares-races.net FPP-215E_R_ICS213_Practice KK6FPP, Thomas, Sunnyvale, 20220627
+28 wa3aw@w3xsc.ampr.org        3AW-902P_R_Practice AW3AW, Art, Los Altos, 06/27/2022
+
+Key:
+D: Duplicate practice message = same call sign via same BBS/address. (not counted)
+
+Practice Message count: 1 plain text messages.
+                        24 SCCoPIFO messages.
+
+This list created by N9DK, Dave
+MonChk002.LrnOpst004.CntInit013.MsgWrap005
+.MsgErr005.Rprt017

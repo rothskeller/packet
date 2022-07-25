@@ -1,0 +1,80 @@
+SCCo ARES/RACES Packet Practice Report For: Monday, July 18, 2022.
+
+----------------------- DAY'S SUMMARY -----------------------
+Totals:
+  All messages:            27 received;  26 ( 96%) correct. [includes duplicates]
+  Unique "from" addresses: 27 received;  26 ( 96%) correct. [unique From: addresses]
+  Unique call signs:       23 received;  23 (100%) correct. [23 reported to main net]
+
+Simulated BBS outage: W3XSC
+  0/27 (0%) incorrectly sent FROM this BBS.
+
+Sources:
+  Santa Clara County BBSs: 23
+      17 W1XSC
+       1 W2XSC
+       0 W3XSC
+       5 W4XSC
+
+  Other: 4
+      1 from WINLINK.ORG.
+      2 from BBS Network.
+      1 from E-Mail.
+
+
+Most operators who sent a message that is flagged in the list below
+will automatically receive a reply with additional details and suggested
+corrective actions. If your message is flagged, please retrieve the detailed
+reply message from the BBS, email provider, or other service you used to
+submit the weekly packet practice message before requesting assistance.
+
+----------------------- DAY'S DETAILS -----------------------
+
+##     FROM                                     SUBJECT
+_1 ai6sl@w1xsc.ampr.org        6SL-894P_R_EOC213RR_Practice AI6SL, Wolfgang, Sunnyvale, 7/18/22
+_2 kk6ekn@w1xsc.ampr.org       EKN-684P_P_EOC213RR_practice KK6EKN, Leslie, MTV, 7-18-22
+_3 w6bg@w1xsc.ampr.org         6BG-949P_R_EOC213RR_Practice W6BG, Max, Cupertino, 2022-07-18
+_4 kk6fmq@w4xsc.ampr.org       FMQ-198P_R_EOC213RR_Practice_KK6FMQ_Grant, PAF, 7/18/2022
+_5 ke6ppi@w1xsc.ampr.org       PPI-567P_R_EOC213RR_Practice KE6PPI, Roger, Sunnyvale, 07-14-2022
+_6 kk6fmq@w1xsc.ampr.org       FMQ-527M_R_EOC213RR_Practice_KK6FMQ_Grant, PAF, 7/18/2022
+_7 kt6jk@w1xsc.ampr.org        6JK-729P_R_EOC213RR_Practice KT6JK, Todd, CUP, 20220718
+_8 kg6kzz@w1xsc.ampr.org       KZZ-480P_R_EOC213RR_Practice KG6KZZ, Jason, Almaden, 07/18/22
+_9 kg6kzz@w1xsc.#nca.ca.usa.noam KZZ-480P_R_EOC213RR_Practice KG6KZZ, Jason, Almaden, 07/18/22
+10 kg6kzz@n0ary.#nca.ca.usa.noam !SCCoPIFO!
+     ^^^ Subject line format issue(Missing: Tactical IDTactical ID too short;
+        hyphen; Missing: Message Number; Message Handling Order.)
+11 KG6KZZ@winlink.org          KZZ-483P_R_EOC213RR_Practice KG6KZZ, Jason, Almaden, 07/18/22
+12 wu6p@w1xsc.ampr.org         U6P-466P_R_EOC213RR_Practice WU6P, Nianfeng, Sunnyvale, 7/18/2022
+13 ag6gx@w1xsc.ampr.org        6GX-5133P_R_EOC213RR_Practice AG6GX, Brian, Cupertino, July18, 2022
+14 kc6rsc@w1xsc.ampr.org       STR-2742P_R_EOC213RR_Practice KC6RSC, Steve, SNY, 2022-07-18
+15 wa1iam@w4xsc.ampr.org       IAM-787P_R_EOC213RR_Practice WA1IAM, Dave, MTV, 7/18/22
+16 kg6hi@w1xsc.ampr.org        6HI-1780P_R_EOC213RR_Practice, KG6HI, Jerry, Sunnyvale, 18 July 2022
+17 km6i@w1xsc.ampr.org         M6I-505P_R_EOC213RR_Packet Practice, Gordon, MTV, 07-18-2022
+18 ki6pur@w1xsc.ampr.org       PUR-118P_R_EOC213RR_Practice KI6PUR, Rick, MTV, 07/18/22
+19 kk6fpp@w1xsc.ampr.org       FPP-227P_R_EOC213RR_Practice KK6FPP, Thomas, Sunnyvale, 20220718
+20 km6mzm@w2xsc.ampr.org       MZM-504P_R_EOC213RR_Practice, KM6MZM, Daniel, Sunnyvale 07/18/2022
+21 kf6zsq@w1xsc.ampr.org       ZSQ-5314P_R_EOC213RR_Practice, KF6ZSQ, Phil, Mountain View, 7-18-22
+22 kk6fpp@email1.scc-ares-races.net FPP-228E_R_EOC213RR_Practice KK6FPP, Thomas, Sunnyvale, 20220718
+23 k6ott@w4xsc.ampr.org        OTT-773P_R_EOC213RR_Practice K6OTT, Andreas, Sunnyvale, 2022-07-18
+24 kj6gbg@w4xsc.ampr.org       GBG-1287P_R_EOC213RR_Practice KJ6GBG, Joe, Palo Alto, 7/18/2022
+25 kn6ghd@w1xsc.ampr.org       GHD-295P_R_EOC213RR_Practice KN6GHD, Tim, Mountain View, 07-18-2022
+26 n9dk@w4xsc.ampr.org         9DK-3573P_R_EOC213RR_Practice N9DK, Dave, MV, 2022-07-18
+27 wu6k@w1xsc.ampr.org         U6K-353P_R_EOC213RR_Practice WU6K, Jim, Mountain View, 20220718
+
+Key:
+S: beginning of Subject line differs from Standards for Santa Clara County.
+
+Practice Message count: 1 plain text messages.
+                        26 SCCoPIFO messages.
+
+
+The following messages were received this week but were not included in the
+above report because they were sent before the start of this week's practice
+period which began Tue Jul 12, 2022 at 00:00:01.
+
+1 n9dk@w3xsc.ampr.org  9DK-3525P_R_EOC213RR_Practice N9DK, Dave, MV, 2022-07-11
+^^ Sent Mon 2022-07-11 at 18:46:38  (0 days, 5.2 hours early.)
+
+This list created by KK6FPP, Thomas Leibold
+MonChk002.LrnOpst004.CntInit013.MsgWrap005
+.MsgErr005.Rprt017

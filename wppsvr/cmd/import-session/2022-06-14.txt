@@ -1,0 +1,83 @@
+SCCo ARES/RACES Packet Practice Report For: Tuesday, June 14, 2022.
+
+---------------------- WEEK'S SUMMARY ----------------------
+Week's unique call signs: 39
+----------------------- DAY'S SUMMARY -----------------------
+Totals:
+  All messages:            28 received;  28 (100%) correct. [includes duplicates]
+  Unique "from" addresses: 27 received;  27 (100%) correct. [unique From: addresses]
+  Unique call signs:       24 received;  24 (100%) correct. [24 reported to main net]
+
+Simulated BBS outage: W2XSC
+  0/28 (0%) incorrectly sent FROM this BBS.
+  0/28 (0%) incorrectly sent TO this BBS.
+
+Sources:
+  Santa Clara County BBSs: 25
+      13 W1XSC
+       0 W2XSC
+       5 W3XSC
+       7 W4XSC
+
+  Other: 2
+      2 from BBS Network.
+
+
+Most operators who sent a message that is flagged in the list below
+will automatically receive a reply with additional details and suggested
+corrective actions. If your message is flagged, please retrieve the detailed
+reply message from the BBS, email provider, or other service you used to
+submit the weekly packet practice message before requesting assistance.
+
+----------------------- DAY'S DETAILS -----------------------
+
+##     FROM                                   SUBJECT
+_1 k6sw@w1xsc.ampr.org         PEB-806P_R_ICS213_Practice K6SW, Pat, San Jose, 2022-06-14
+_2 kk6fmq@w3xsc.ampr.org       FMQ-170P_R_ICS213_Practice KK6FMQ, Grant, PAF, 6/14/2022
+_3 kk6fmq@w1xsc.ampr.org       FMQ-520M_R_ICS213_Practice KK6FMQ, Grant, PAF, 6/14/2022
+_4 km6lry@w1xsc.ampr.org       LRY-502P_R_ICS213_Practice KM6LRY, Les, LG/MS, 06/14/2022
+_5 ak6by@w1xsc.ampr.org        6BY-608P_R_ICS213_Practice AK6BY, Anne, San Jose, 6/14/22
+_6 kt6jk@w1xsc.ampr.org        6JK-693P_R_ICS213_Practice KT6JK, Todd, CUP, 20220614
+     ^^^ Duplicate check-in
+_7 kt6jk@w1xsc.ampr.org        6JK-913M_R_ICS213_Practice KT6JK, Todd, CUP, 20220614
+_8 w6bg@w1xsc.ampr.org         6BG-896P_R_ICS213_Practice W6BG, Max, Cupertino, 2022-06-14
+_9 ai6sl@w1xsc.ampr.org        6SL-860P_R_ICS213_Practice AI6SL, Wolfgang, Sunnyvale, 20220614
+10 ke6ppi@w1xsc.ampr.org       PPI-534P_R_ICS213_Practice KE6PPI, Roger, Sunnyvale, 06-11-2022
+11 aj6lg@w4xsc.ampr.org        JFM-505P_R_ICS213_Practice AJ6LG, Jeff, Los Gatos, 06/14/2022
+12 aj6hm@w1xsc.ampr.org        6HM-787P_R_ICS213_Practice AJ6HM, Steve, Saratoga, 06/14/2022
+13 wu6p@w3xsc.ampr.org         U6P-447P_R_ICS213_Practice WU6P, Nianfeng, Sunnyvale, 06/14/2022
+14 ag6gx@w1xsc.ampr.org        6GX-5011P_R_ICS213_Practice AG6GX, Brian, Cupertino, 06/14/2022
+15 kg6kzz@w1xsc.#nca.ca.usa.noam KZZ-410P_R_ICS213_Practice KG6KZZ, Jason, Almaden, 6/14/2022
+16 kg6kzz@w4xsc.ampr.org       KZZ-411P_R_ICS213_Practice KG6KZZ, Jason, Almaden, 6/14/2022
+17 kg6kzz@n0ary.#nca.ca.usa.noam KZZ-410P_R_ICS213_Practice KG6KZZ, Jason, Almaden, 6/14/20
+18 km6mzm@w3xsc.ampr.org       MZM-494P_R_ICS213_Practice, KM6MZM, Daniel, Sunnyvale 06/14/2022
+19 w6jmk@w3xsc.ampr.org        JMK-412P_R_ICS213_Practice W6JMK, John, Los Altos, 6/14/2022
+20 k6rwy@w4xsc.ampr.org        RWY-2154P_R_ICS213_Practice K6RWY, Bob, San Jose, 06/14/22
+21 km6iao@w4xsc.ampr.org       IAO-579P_R_ICS213_Practice KM6IAO, Paul, Milpitas, 06/14/2022
+22 kk6ebl@w1xsc.ampr.org       EBL-1329P_R_ICS213_Practice KK6EBL, Klaus, LG/MS 06/14/2022
+23 k6ott@w4xsc.ampr.org        OTT-740P_R_ICS213_Practice K6OTT, Andreas, Sunnyvale, 2022-06-14
+24 kg6hi@w1xsc.ampr.org        6HI-1771P_R_ICS213_Practice, KG6HI, Jerry, Sunnyvale, 14 June 2022
+25 aa6pm@w1xsc.ampr.org        PJM-629P_R_ICS213_Practice AA6pm, Peter, Saratoga, 06/14/2022
+26 kj6ace@w4xsc.ampr.org       ACE-790P_R_ICS213_Practice, KJ6ACE, Don, MLP, 220614
+27 ke6tim@w4xsc.ampr.org       TIM-511P_R_ICS213_Practice KE6TIM, TIM, Milpitas, 06/14/2022
+28 k6fjc@w3xsc.ampr.org        FJC-897P_R_ICS213_Practice K6FJC, Mark, Redwood City, 20220614
+
+Key:
+D: Duplicate practice message = same call sign via same BBS/address. (not counted)
+
+Practice Message count: 0 plain text messages.
+                        27 SCCoPIFO messages.
+
+
+The following messages were received this week but were not included in the
+above report because they were sent before the start of this week's practice
+period which began Wed Jun 08, 2022 at 00:00:01.
+
+1 aj6lg@w4xsc.ampr.org  JFM-497P_R_Practice AJ6LG, Jeff, Los Gatos, 05/17/2022
+^^ Sent Mon 2022-05-16 at 17:58:44  (22 days, 6.0 hours early.)
+2 kj6ace@w4xsc.ampr.org  ACE-787P_R_ICS213_Practice, KJ6ACE, Don, MLP, 220607
+^^ Sent Tue 2022-06-07 at 19:11:21  (0 days, 4.8 hours early.)
+
+This list created by AG6GX, Brian Tanner
+TueChk001.LrnOpst004.CntInit013.MsgWrap005
+.MsgErr005.Rprt017

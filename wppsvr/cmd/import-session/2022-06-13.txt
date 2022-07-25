@@ -1,0 +1,76 @@
+SCCo ARES/RACES Packet Practice Report For: Monday, June 13, 2022.
+
+----------------------- DAY'S SUMMARY -----------------------
+Totals:
+  All messages:            30 received;  29 ( 97%) correct. [includes duplicates]
+  Unique "from" addresses: 29 received;  28 ( 97%) correct. [unique From: addresses]
+  Unique call signs:       26 received;  26 (100%) correct. [26 reported to main net]
+
+Simulated BBS outage: W2XSC
+  0/30 (0%) incorrectly sent FROM this BBS.
+  0/30 (0%) incorrectly sent TO this BBS.
+
+Sources:
+  Santa Clara County BBSs: 26
+       9 W1XSC
+       0 W2XSC
+      17 W3XSC
+       0 W4XSC
+
+  Other: 3
+      2 from BBS Network.
+      1 from E-Mail.
+
+
+Most operators who sent a message that is flagged in the list below
+will automatically receive a reply with additional details and suggested
+corrective actions. If your message is flagged, please retrieve the detailed
+reply message from the BBS, email provider, or other service you used to
+submit the weekly packet practice message before requesting assistance.
+
+----------------------- DAY'S DETAILS -----------------------
+
+##     FROM                                   SUBJECT
+_1 kk6fmq@w3xsc.ampr.org       FMQ-169P_R_ICS213_Practice KK6FMQ, Grant, PAF, 6/13/2022
+_2 kz6dm@w3xsc.ampr.org        6DM-544P_R_ICS213_Practice KZ6DM, Poul, Mountain View, 06/13/2022
+_3 kk6fmq@w1xsc.ampr.org       FMQ-519M_R_ICS213_Practice KK6FMQ, Grant, PAF, 6/13/2022
+_4 kt6jk@w1xsc.ampr.org        6JK-692P_R_ICS213_Practice KT6JK, Todd, CUP, 20220613
+_5 w6bg@w1xsc.ampr.org         6BG-895P_R_ICS213_Practice W6BG, Max, Cupertino, 2022-06-13
+_6 kk6ekn@w3xsc.ampr.org       EKN-653P_R_ICS213_practice KK63KN, Leslie, mtv, 06-13-2022
+_7 ai6sl@w1xsc.ampr.org        6SL-860P_R_ICS213_Practice AI6SL, Wolfgang, Sunnyvale, 20220613
+_8 ke6ppi@w1xsc.ampr.org       PPI-533P_R_ICS213_Practice KE6PPI, Roger, Sunnyvale, 06-11-2022
+_9 ki6pur@w3xsc.ampr.org       PUR-109P_R_ICS213_Practice KI6PUR, Rick, MTV, 06/13/22
+10 wa1iam@w3xsc.ampr.org       IAM-780P_R_ICS213_Practice WA1IAM, Dave, MTV, 6/13/22
+11 kg6tmi@w3xsc.ampr.org       TMI-172P_R_ICS213_Practice KG6TMI, Patrick, PAF, 06/13/22
+12 wu6p@w3xsc.ampr.org         U6P-446P_R_ICS213_Practice WU6P, Nianfeng, Sunnyvale, 06/13
+13 ag6gx@w1xsc.ampr.org        6GX-5010P_R_ICS213_Practice AG6GX, Brian, Cupertino, 06/13/2022
+14 kg6kzz@w1xsc.#nca.ca.usa.noam KZZ-409P_R_ICS213_Practice KG6KZZ, Jason, 6/13/2022
+15 kg6kzz@n0ary.#nca.ca.usa.noam KZZ-409P_R_ICS213_Practice KG6KZZ, Jason, 6/13/22
+     ^^^ Message Subject mismatch with Form contents.
+16 kg6hi@w1xsc.ampr.org        6HI-1769P_R_ICS213_Practice, KG6HI, Jerry, Sunnyvale, 13 June 2022
+17 n0sv@w1xsc.ampr.org         0SV-126P_R_Check-In , N0SV , Dan McQueen
+     ^^^ Duplicate check-in
+18 n0sv@w1xsc.ampr.org         0SV-126P_R_Check-In , N0SV , Dan McQueen
+19 km6i@w3xsc.ampr.org         M6I-498P_R_ICS213_Packet Practice, Gordon, MTV
+20 km6mzm@w3xsc.ampr.org       MZM-493P_R_ICS213_Practice, KM6MZM, Daniel, Sunnyvale 06/13/2022
+21 w6vmw@w3xsc.ampr.org        VMW-126P_R_ICS213_Packet Practice, VMware Amateur Radio Club, PAO
+22 kk6fpp@w1xsc.ampr.org       FPP-139P_R_ICS213_Practice KK6FPP,Thomas,Sunnyvale, 20220613
+23 kf6zsq@w3xsc.ampr.org       ZSQ-5297P_R_ICS213_practice, KF6ZSQ, Phil, Mountain View
+24 w6jmk@w3xsc.ampr.org        JMK-411P_R_ICS213_Practice W6JMK, John, Los Altos, 6/13/2022
+25 kj6gbg@w3xsc.ampr.org       GBG-1283P_R_ICS213_Practice KJ6GBG, Joe, Palo Alto, 06/13/2022
+26 kk6fpp@email1.scc-ares-races.net FPP-138E_R_ICS213_Practice KK6FPP,Thomas,Sunnyvale, 20220613
+27 k1jh@w3xsc.ampr.org         1JH-411P_R_ICS213_Practice K1JH, Jim, Los Altos, 20220613
+28 kn6ghd@w3xsc.ampr.org       GHD-285P_R_ICS213_Practice KN6GHD, Tim, Mountain View, 06/13/2022
+29 kd6kdl@w3xsc.ampr.org       KDL-848P_R_ICS213_Practice
+30 wa3aw@w3xsc.ampr.org        3AW-893P_R_ICS213_Practice WA3AW, Art, Los Altos, 6/13/22
+
+Key:
+D: Duplicate practice message = same call sign via same BBS/address. (not counted)
+M: Message Subject mismatch with Form contents.
+
+Practice Message count: 1 plain text messages.
+                        28 SCCoPIFO messages.
+
+This list created by KK6FPP, Thomas Leibold
+MonChk002.LrnOpst004.CntInit013.MsgWrap005
+.MsgErr005.Rprt017

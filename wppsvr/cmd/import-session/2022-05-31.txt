@@ -1,0 +1,75 @@
+SCCo ARES/RACES Packet Practice Report For: Tuesday, May 31, 2022.
+
+---------------------- WEEK'S SUMMARY ----------------------
+Week's unique call signs: 37
+----------------------- DAY'S SUMMARY -----------------------
+Totals:
+  All messages:            26 received;  25 (96%) correct. [includes duplicates]
+  Unique "from" addresses: 26 received;  25 (96%) correct. [unique From: addresses]
+  Unique call signs:       25 received;  24 (96%) correct. [25 reported to main net]
+Simulated BBS outage: None
+
+Sources:
+  Santa Clara County BBSs: 25
+      15 W1XSC
+       1 W2XSC
+       4 W3XSC
+       5 W4XSC
+
+  Other: 1
+      1 from BBS Network.
+
+
+Most operators who sent a message that is flagged in the list below
+will automatically receive a reply with additional details and suggested
+corrective actions. If your message is flagged, please retrieve the detailed
+reply message from the BBS, email provider, or other service you used to
+submit the weekly packet practice message before requesting assistance.
+
+----------------------- DAY'S DETAILS -----------------------
+
+##     FROM                                   SUBJECT
+_1 ak6by@w1xsc.ampr.org        6BY-128P_R_Practice AK6BY, Anne, San Jose, 5/24/22
+_2 ai6sl@w1xsc.ampr.org        6SL-853P_R_Practice AI6SL, Wolfgang, Sunnyvale, 20220531
+_3 kk6fmq@w4xsc.ampr.org       FMQ-516M_R_Practice KK6FMQ, Grant, PAF, 05/31/2022
+_4 w6bg@w1xsc.ampr.org         6BG-849P_R_Practice W6BG, MAX, CUPERTINO, 2022-05-31
+_5 km6lry@w1xsc.ampr.org       LRY-496P_R_Practice KM6LRY, Les, LG/MS, 05/31/2022
+_6 kk6ebl@w1xsc.ampr.org       EBL-1322P_R_Practice KK6EBL, Klaus LG/MS 05/26/2022
+_7 k6sw@w2xsc.ampr.org         PEB-799P_R_Practice K6SW, Pat, San Jose, 2022-05-31
+_8 kt6jk@w1xsc.ampr.org        6JK-682P_R_Practice KT6JK, Todd, CUP, 20220531
+_9 n6ik@w1xsc.ampr.org         6IK-313P_R_Practice N6IK, Dick, Cupertino, 31May2022
+10 aj6hm@w1xsc.ampr.org        6HM-779P_R_Practice AJ6HM, Steve, Saratoga, 05/31/2022
+11 km6clk@w1xsc.ampr.org       CLK-291P_R_PRACTICE KM6CLK, BART, LOS GATOS/MONTE SERENO 5-31-2022
+12 ag6gx@w1xsc.ampr.org        6GX-4989P_R_Practice AG6GX, Brian, Cupertino, 05/31/2022
+13 k1jh@w3xsc.ampr.org         1JH-404P_R_Practice K1JH, Jim, Los Altos, 20220531
+14 n9dk@w3xsc.ampr.org         9DK-3409P_R_Practice N9DK, Dave, MV, 2022-05-31
+15 ke6ppi@w1xsc.ampr.org       PPI-526P_R_Check-In KE6PPI, Roger, Sunnyvale, 05-30-2022
+16 aj6lg@w4xsc.ampr.org        JFM-502P_R_Practice AJ6LG, Jeff, Los Gatos, 05/31/2022
+17 w6jmk@w3xsc.ampr.org        JMK-395P_R_Practice W6JMK, John, Los Altos, 5/31/2022
+18 k6fjc@w3xsc.ampr.org        FJC-135PR_Practice K6FJC, Mark, Redwood City, 20220531
+     ^^^ Subject line format issue(Missing: Message Handling Order.)
+19 k6rwy@w1xsc.ampr.org        RWY-2148P_R_Practice K6RWY, Bob, San Jose, 05/31/22
+20 kg6kzz@w1xsc.ampr.org       KZZ-398P_R_Practice KG6KZZ, Jason, Almaden, 5/31/2022
+21 kg6kzz@w1xsc.#nca.ca.usa.noam KZZ-398P_R_Practice KG6KZZ, Jason, Almaden, 5/31/2022
+22 kg6hi@w1xsc.ampr.org        6HI-1760P_R_Practice, KG6HI, Jerry, Sunnyvale, 31 May 2022
+23 km6iao@w4xsc.ampr.org       IAO-574P_R_Practice KM6IAO, Paul, Milpitas, 05/31/2022
+24 k6ott@w1xsc.ampr.org        OTT-733P_R_Practice K6OTT, Andreas, Sunnyvale, 2022-05-31
+25 ai6ls@w4xsc.ampr.org        WLC-654P_R_Practice AI6LS, Bill, San Jose, 05-31-2022
+26 kj6ace@w4xsc.ampr.org       ACE-771P_R_Practice, KJ6ACE, Don, MLP, 220531
+
+Key:
+S: beginning of Subject line differs from Standards for Santa Clara County.
+
+Practice Message count: 26 plain text messages.
+
+
+The following messages were received this week but were not included in the
+above report because they were sent before the start of this week's practice
+period which began Wed May 25, 2022 at 00:00:01.
+
+1 k6sw@w1xsc.ampr.org  PEB-776P_R_Practice K6SW, Pat, San Jose, 2022-05-31
+^^ Sent Tue 2022-05-24 at 20:44:37  (0 days, 3.3 hours early.)
+
+This list created by W6BG, Max Lanfranconi
+TueChk001.LrnOpst004.CntInit013.MsgWrap005
+.MsgErr005.Rprt017
