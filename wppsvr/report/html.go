@@ -47,7 +47,7 @@ func (r *Report) htmlTitle(sb *strings.Builder) {
 var noBreakReplacer = strings.NewReplacer(" ", "&nbsp;", "-", "&#8209;")
 
 func (r *Report) htmlExpectsResults(sb *strings.Builder) {
-	sb.WriteString(`<div class="blocks-line"><div class="block"><div class="block-title">Expectations`)
+	sb.WriteString(`<div class="blocks-line"><div id="expectations" class="block"><div class="block-title">Expectations`)
 	if r.Modified {
 		sb.WriteString(`*`)
 	}
