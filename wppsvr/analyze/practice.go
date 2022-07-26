@@ -96,7 +96,7 @@ func (a *Analysis) checkPracticeSubject() {
 The Subject of this message does not have the correct format.  After the
 message number, handling order, and form type, it should have the word
 "Practice" followed by four comma-separated fields:
-	Practice CallSign, FirstName, Jurisdiction, Date
+    Practice CallSign, FirstName, Jurisdiction, Date
 `,
 				references: refWeeklyPractice,
 			})
@@ -106,7 +106,7 @@ message number, handling order, and form type, it should have the word
 				response: `
 The Subject field of this form does not have the correct format.  It should have
 the word "Practice" followed by four comma-separated fields:
-	Practice CallSign, FirstName, Jurisdiction, Date
+    Practice CallSign, FirstName, Jurisdiction, Date
 `,
 				references: refWeeklyPractice,
 			})
@@ -116,7 +116,7 @@ the word "Practice" followed by four comma-separated fields:
 				response: `
 The Incident Name field of this form does not have the correct format.  It
 should have the word "Practice" followed by four comma-separated fields:
-	Practice CallSign, FirstName, Jurisdiction, Date
+    Practice CallSign, FirstName, Jurisdiction, Date
 `,
 				references: refWeeklyPractice,
 			})
