@@ -148,7 +148,7 @@ func extractPlainText(header textproto.MIMEHeader, body []byte) (nbody []byte, n
 	return body, notplain, nil
 }
 
-var routingHeaderRE = regexp.MustCompile(`^R:\d{6}/\d{4}z .*\n`)
+var routingHeaderRE = regexp.MustCompile(`^R:\d{6}/\d{4}[Zz]? .*\n`)
 
 // parseRoutingHeaders looks for BBS routing headers at the beginning of the
 // message body, and moves them into the message headers if found.
