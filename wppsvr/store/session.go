@@ -296,3 +296,12 @@ func getConfiguredSessions(start, end time.Time) (list []*Session) {
 	}
 	return list
 }
+
+func (s *Store) DeleteSession(session *Session) {
+	s.mutex.Lock()
+	defer s.mutex.Unlock()
+	if _, err := s.dbh.Exec(`DELETE FROM session WHERE id=?`, session.ID); err != nil {
+		panic(err)
+	}
+
+}

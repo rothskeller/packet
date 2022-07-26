@@ -6,7 +6,7 @@ CREATE TABLE message (
     hash         text     NOT NULL UNIQUE,
     deliverytime datetime NOT NULL,
     message      text     NOT NULL,
-    session      integer  NOT NULL REFERENCES session,
+    session      integer  NOT NULL REFERENCES session ON DELETE CASCADE,
     fromaddress  text     NOT NULL,
     fromcallsign text     NOT NULL,
     frombbs      text     NOT NULL,
@@ -29,7 +29,7 @@ CREATE TABLE msgnum (
 -- The response table stores all outgoing responses to incoming messages.
 CREATE TABLE response (
 	id         text     PRIMARY KEY,
-    responseto text     NOT NULL REFERENCES message,
+    responseto text     NOT NULL REFERENCES message ON DELETE CASCADE,
     sendto     text     NOT NULL,
     subject    text     NOT NULL,
     body       text     NOT NULL,
@@ -42,7 +42,7 @@ CREATE TABLE response (
 -- session, describing the retrieval parameters and the last time that retrieval
 -- was successfully completed.
 CREATE TABLE retrieval (
-    session           integer  REFERENCES session,
+    session           integer  REFERENCES session ON DELETE CASCADE,
     interval          text     NOT NULL,
     bbs               text     NOT NULL,
     mailbox           text     NOT NULL,
