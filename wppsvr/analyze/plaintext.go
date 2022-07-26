@@ -25,16 +25,27 @@ func (a *Analysis) checkPlainText() {
 	// are reflected in the NotPlainText flag set by the pktmsg package
 	// while the message was being parsed.
 	if a.msg.Flags&pktmsg.NotPlainText != 0 {
-		a.problems = append(a.problems, &problem{
-			code: ProblemMessageNotPlainText,
-			response: `
+		if strings.Contains(a.msg.ReturnAddress(), "winlink.org") {
+			a.problems = append(a.problems, &problem{
+				code: ProblemMessageNotPlainText,
+				response: `
+This message is not a plain text message.  All SCCo packet messages should be
+plain text only.  Note: messages from winlink.org are not plain text messages;
+they use an encoding system ("quoted-printable") that Outpost cannot decode.
+`,
+			})
+		} else {
+			a.problems = append(a.problems, &problem{
+				code: ProblemMessageNotPlainText,
+				response: `
 This message is not a plain text message.  All SCCo packet messages should be
 plain text only.  ("Rich text" or HTML-formatted messages, common in email
 systems, are far larger than plain text messages and put too much strain on
 the packet infrastructure.)  Please configure your software to send plain text
 messages when sending to an SCCo BBS.
 `,
-		})
+			})
+		}
 		return
 	}
 	// Check for the body containing non-ASCII characters.
