@@ -39,7 +39,7 @@ _3 km6lry@w1xsc.ampr.org       LRY-511P_R_EOC213RR_Practice KM6LRY, Les, LG/MS, 
 _4 kk6fmq@w1xsc.ampr.org       FMQ-193P_R_EOC213RR_Practice_KK6FMQ_Grant, PAF, 7/12/2022
 _5 kk6fmq@w4xsc.ampr.org       FMQ-526M_R_EOC213RR_Practice_KK6FMQ_Grant, PAF, 7/12/2022
 _6 aj6hm@w1xsc.ampr.org        6HM-814P_P_EOC213RR_Practice AJ6HM, Steve, Saratoga, 07/12/2022
-_7 ai6sl@w1xsc.ampr.org        6SL-893P_R_EOC213RR_Practice AI6SL, Wolfgang, Sunnyvale, 2022/7/11
+_7 ai6sl@w1xsc.ampr.org        6SL-893P_R_EOC213RR_Practice AI6SL, Wolfgang, Sunnyvale, 2022/7/11 [2]
 _8 km6mzm@w3xsc.ampr.org       MZM-503P_R_EOC213RR_Practice, KM6MZM, Daniel, Sunnyvale 07/12/2022
 _9 k6gmg@w4xsc.ampr.org        GMG-316P_R_EOC213RR_Practice K6GMG, Gary, Morgan Hill, 07-12-2022
 10 wu6p@w1xsc.ampr.org         U6P-463P_R_EOC213RR_Practice WU6P, Nianfeng, Sunnyvale, 7/12/2022

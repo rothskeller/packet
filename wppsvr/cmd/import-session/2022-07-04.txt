@@ -36,7 +36,7 @@ _3 kt6jk@w4xsc.ampr.org        6JK-724P_R_EOC213RR_Practice KT6JK, Todd, CUP, 20
 _4 kk6ekn@w3xsc.ampr.org       EKN-678P_P_EOC213RR_practice KK6EKN, Leslie, MTV, 07-04-2022
 _5 ai6sl@w3xsc.ampr.org        6SL-886P_R_EOC213RR_Practice AI6SL, Wolfgang, Sunnyvale, 20220704
 _6 kg6kzz@w4xsc.ampr.org       KZZ-449P_R_EOC213RR_Practice KG6KZZ, Jason, Almaden, 7/4/22
-_7 kg6kzz@n0ary.#nca.ca.usa.noam !SCCoPIFO!
+_7 kg6kzz@n0ary.#nca.ca.usa.noam !SCCoPIFO! [2]
      ^^^ Subject line format issue(Missing: Tactical IDTactical ID too short;
         hyphen; Missing: Message Number; Message Handling Order.)
 _8 kz6dm@w3xsc.ampr.org        6DM-565P_R_EOC213RR_Practice KZ6DM, Poul, Mountain View, 07/04/2022
