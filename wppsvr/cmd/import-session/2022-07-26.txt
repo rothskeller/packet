@@ -1,0 +1,79 @@
+
+SCCo ARES/RACES Packet Practice Report For: Tuesday, July 26, 2022.
+
+---------------------- WEEK'S SUMMARY ----------------------
+Week's unique call signs: 41
+----------------------- DAY'S SUMMARY -----------------------
+Totals:
+  All messages:            33 received;  32 (97%) correct. [includes duplicates]
+  Unique "from" addresses: 33 received;  32 (97%) correct. [unique From: addresses]
+  Unique call signs:       31 received;  30 (97%) correct. [31 reported to main net]
+
+Simulated BBS outage: W4XSC
+  1/33 (3%) incorrectly sent FROM this BBS.
+
+Sources:
+  Santa Clara County BBSs: 31
+      23 W1XSC
+       3 W2XSC
+       4 W3XSC
+       1 W4XSC
+
+  Other: 2
+      1 from WINLINK.ORG.
+      1 from BBS Network.
+
+
+Most operators who sent a message that is flagged in the list below
+will automatically receive a reply with additional details and suggested
+corrective actions. If your message is flagged, please retrieve the detailed
+reply message from the BBS, email provider, or other service you used to
+submit the weekly packet practice message before requesting assistance.
+
+----------------------- DAY'S DETAILS -----------------------
+
+##     FROM                                           SUBJECT
+_1 ak6by@w1xsc.ampr.org        6BY-116P_P_EOC213RR_Practice AK6BY, Anne, San Jose, 7/26/22
+_2 k6sw@w1xsc.ampr.org         PEB-841P_R_EOC213RR_Practice K6SW, Pat, San Jose, 2022-07-26
+_3 kk6fmq@w3xsc.ampr.org       FMQ-201P_R_EOC213RR_Practice_KK6FMQ_Grant, PAF, 7/26/2022
+_4 w6bg@w1xsc.ampr.org         6BG-952P_R_EOC213RR_Practice W6BG, Max, Cupertino, 2022-07-26
+_5 km6lry@w1xsc.ampr.org       LRY-515P_R_EOC213RR_Practice KM6LRY, Les, LG/MS, 07/26/2022
+_6 ke6ppi@w1xsc.ampr.org       PPI-572P_R_EOC213RR_Practice KE6PPI, Roger, Sunnyvale, 07-22-2022
+_7 kk6ebl@w1xsc.ampr.org       EBL-1352P_R_EOC213RR_Practice KK6EBL, Klaus, LG/MS 07/23/2022
+_8 aj6hm@w1xsc.ampr.org        6HM-994P_I_EOC213RR_Practice AJ6HM, Steve, Saratoga, 7/26/2022
+_9 kc6rsc@w1xsc.ampr.org       STR-2803P_R_EOC213RR_Practice KC6RSC, Steve, SNY, 2022-07-25
+10 n6ik@w1xsc.ampr.org         6IK-321P_R_EOC213RR_Practice N6IK, Dick, Cupertino, 26 JULY 2022
+11 n6dxq@w1xsc.ampr.org        DXQ-594P_P_EOC213RR_Practice, N6DXQ, Michael, Campbell, 0726/2022
+12 KG6KZZ@winlink.org          KZZ-511P_R_EOC213RR_Practice KG6KZZ, Jason, Almaden, 07/26/22
+13 ag6gx@w1xsc.ampr.org        6GX-5138P_R_EOC213RR_Practice AG6GX, Brian, Cupertino, July 26, 2022
+14 w6esl@w1xsc.ampr.org        ESL-2272P_R_EOC213RR_Practice, W6ESL, Tom, San Jose, 7/26/2022
+15 aj6lg@w4xsc.ampr.org        JFM-520P_R_EOC213RR_Practice AJ6LG, Jeff, Los Gatos, 07/26/2022
+     ^^^ From BBS simulated as down.
+16 wu6p@w1xsc.ampr.org         U6P-473P_R_EOC213RR_Practice WU6P, Nianfeng, Sunnyvale, 7/26/2022
+17 aj6lg@w1xsc.ampr.org        JFM-520P_R_EOC213RR_Practice AJ6LG, Jeff, Los Gatos, 07/26/2022
+18 kg6kzz@n0ary.#nca.ca.usa.noam KZZ-504P_R_EOC213RR_Practice KG6KZZ, Jason, Almaden, 7/26/2
+19 kt6jk@w1xsc.ampr.org        6JK-732P_R_EOC213RR_Practice KT6JK, Todd, CUP, 20220726
+20 km6mzm@w2xsc.ampr.org       MZM-512P_R_EOC213RR_Practice, KM6MZM, Daniel, Sunnyvale 07/26/2022
+21 n9dk@w3xsc.ampr.org         9DK-3582P_R_EOC213RR_Practice N9DK, Dave, MV, 2022-07-26
+22 w6jmk@w3xsc.ampr.org        JMK-105P_R_EOC213RR_Practice W6JMK, John, Los Altos, 7/26/2022
+23 k6ott@w2xsc.ampr.org        OTT-779P_R_EOC213RR_Practice K6OTT, Andreas, Sunnyvalee, 2022-07-26
+24 kk6fmq@w1xsc.ampr.org       FMQ-530M_R_EOC213RR_Practice_KK6FMQ_Grant, PAF, 7/26/2022
+25 k6gmg@w2xsc.ampr.org        GMG-321P_R_EOC213RR_Practice K6GMG, Gary, Morgan Hill, 7-26-2022
+26 km6iao@w1xsc.ampr.org       IAO-596P_R_EOC213RR_Practice KM6IAO, Paul, Milpitas, 07/26/2022
+27 kg6hi@w1xsc.ampr.org        6HI-1786P_R_EOC213RR_Practice, KG6HI, Jerry, Sunnyvale, 26 July 2022
+28 n6pwd@w1xsc.ampr.org        PWD-1064P_R_EOC213RR_Practice N6PWD, Patrick, Los Gatos/Monte Sereno, 2022-07-26
+29 aa6pm@w1xsc.ampr.org        PJM-648P_R_EOC213RR_Practice AA6PM, Peter, Saratoga, 07/26/2022
+30 n6hdn@w1xsc.ampr.org        HDN-366_P_EOC213RR_Practice N6HDN, Barton, Campbell, 2022-07-26
+31 k6fjc@w3xsc.ampr.org        FJC-849P_R_EOC213RR_Practice K6FJC, Mark, Redwood City, 7/26/2022
+32 kn6pe@w1xsc.ampr.org        6PE-634P_R_EOC213RR_Practice KN6PE, Jim, Cupertino, 7/26/2022
+33 ke6tim@w1xsc.ampr.org       TIM-523P_R_EOC213RR_Practice KE6TIM, Tim, Milpitas, 07/26/2022
+
+Key:
+F: 'From' BBS simulated as down. (total = 1)
+
+Practice Message count: 0 plain text messages.
+                        33 SCCoPIFO messages.
+
+This list created by W6BG, Max Lanfranconi
+TueChk001.LrnOpst004.CntInit013.MsgWrap005
+.MsgErr005.Rprt017

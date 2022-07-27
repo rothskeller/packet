@@ -1,0 +1,69 @@
+
+SCCo ARES/RACES Packet Practice Report For: Monday, July 25, 2022.
+
+----------------------- DAY'S SUMMARY -----------------------
+Totals:
+  All messages:            25 received;  25 (100%) correct. [includes duplicates]
+  Unique "from" addresses: 24 received;  24 (100%) correct. [unique From: addresses]
+  Unique call signs:       23 received;  23 (100%) correct. [23 reported to main net]
+
+Simulated BBS outage: W4XSC
+  0/25 (0%) incorrectly sent FROM this BBS.
+
+Sources:
+  Santa Clara County BBSs: 22
+       8 W1XSC
+       1 W2XSC
+      13 W3XSC
+       0 W4XSC
+
+  Other: 2
+      1 from WINLINK.ORG.
+      1 from E-Mail.
+
+
+Most operators who sent a message that is flagged in the list below
+will automatically receive a reply with additional details and suggested
+corrective actions. If your message is flagged, please retrieve the detailed
+reply message from the BBS, email provider, or other service you used to
+submit the weekly packet practice message before requesting assistance.
+
+----------------------- DAY'S DETAILS -----------------------
+
+##     FROM                                     SUBJECT
+_1 kk6ekn@w3xsc.ampr.org       EKN-686P_P_EOC213RR_practice KK6EKN, Leslie, MTV 07-25-2022
+_2 aj6xz@w3xsc.ampr.org        6XZ-3118P_R_EOC213RR_Practice AJ6XZ, Jeff, MTV, 07/25/2022
+_3 kk6fmq@w3xsc.ampr.org       FMQ-200P_R_EOC213RR_Practice_KK6FMQ_Grant, PAF, 7/25/2022
+_4 kz6dm@w3xsc.ampr.org        6DM-568P_R_EOC213RR_Practice KZ6DM, Poul, Mountain View, 07/25/2022
+_5 w6bg@w1xsc.ampr.org         6BG-951P_R_EOC213RR_Practice W6BG, Max, Cupertino, 2022-07-25
+_6 ke6ppi@w1xsc.ampr.org       PPI-571P_R_EOC213RR_Practice KE6PPI, Roger, Sunnyvale, 07-22-2022
+_7 kc6rsc@w1xsc.ampr.org       STR-2801P_R_EOC213RR_Practice KC6RSC, Steve, SNY, 2022-07-24
+_8 kk6fpp@w1xsc.ampr.org       FPP-229P_R_EOC213RR_Practice KK6FPP, Thomas, Sunnyvale, 20220725
+_9 KG6KZZ@winlink.org          KZZ-509P_R_EOC213RR_Practice KG6KZZ, Jason, Almaden, 07/25/22
+10 ag6gx@w1xsc.ampr.org        6GX-5137P_R_EOC213RR_Practice AG6GX, Brian, Cupertino, July 25, 2022
+11 wu6p@w1xsc.ampr.org         U6P-472P_R_EOC213RR_Practice WU6P, Nianfeng, Sunnyvale, 7/25/2022
+12 wa1iam@w3xsc.ampr.org       IAM-789P_R_EOC213RR_Practice WA1IAM, Dave, MTV, 7/25/22
+13 kt6jk@w1xsc.ampr.org        6JK-731P_R_EOC213RR_Practice KT6JK, Todd, CUP, 20220725
+14 km6ams@w3xsc.ampr.org       AMS-524P_R_EOC213RR_practice KM6AMS Fred Los Altos 7/25/22
+15 k6ott@w3xsc.ampr.org        OTT-777P_R_EOC213RR_Practice K6OTT, Andreas, Sunnyvale, 2022-07-25
+16 kg6hi@w1xsc.ampr.org        6HI-1783P_R_EOC213RR_Practice, KG6HI, Jerry, Sunnyvale, 25 July 2022
+     ^^^ Duplicate check-in
+17 kg6hi@w1xsc.ampr.org        6HI-1785P_R_EOC213RR_Practice, KG6HI, Jerry, Sunnyvale, 25 July 2022
+18 ki6pur@w3xsc.ampr.org       PUR-120P_P_EOC213RR_Practice KI6PUR, Rick, MTV, 07/25/22
+19 k6lct@w3xsc.ampr.org        LCT-385P_R_EOC213RR_Practice LCT, Lisa, Los Altos, 07/25/2022
+20 km6i@w3xsc.ampr.org         M6I-507P_R_EOC213RR_Packet Practice, Gordon, MTV, 07/25/22
+21 km6mzm@w2xsc.ampr.org       MZM-511P_R_EOC213RR_Practice, KM6MZM, Daniel, Sunnyvale 07/25/2022
+22 kk6fpp@email1.scc-ares-races.net FPP-230E_R_EOC213RR_Practice KK6FPP, Thomas, Sunnyvale, 20220725
+23 kn6ghd@w3xsc.ampr.org       GHD-297P_R_EOC213RR_Practice KN6GHD, Tim, Mountain View, 07-25-2022
+24 n9dk@w3xsc.ampr.org         9DK-3580P_R_EOC213RR_Practice N9DK, Dave, MV, 2022-07-25
+25 w6jmk@w3xsc.ampr.org        JMK-104P_R_EOC213RR_Practice W6JMK, John, Los Altos, 7/25/2022
+
+Key:
+D: Duplicate practice message = same call sign via same BBS/address. (not counted)
+
+Practice Message count: 0 plain text messages.
+                        24 SCCoPIFO messages.
+
+This list created by N9DK, Dave
+MonChk002.LrnOpst004.CntInit013.MsgWrap005
+.MsgErr005.Rprt017
