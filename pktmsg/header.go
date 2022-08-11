@@ -99,5 +99,3 @@ func (msg *Message) FromBBS() string {
 	}
 	return ""
 }
-
-// kg6kzz%n0ary.#nca.ca.usa.noam@w2xsc.ampr.org

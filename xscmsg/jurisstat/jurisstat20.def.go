@@ -7,7 +7,7 @@ import "github.com/rothskeller/packet/xscmsg/internal/xscform"
 var jurisstat20 = &xscform.FormDefinition{
 	HTML:                   "form-oa-muni-status.html",
 	Tag:                    "MuniStat",
-	Name:                   "OA jurisdiction status form",
+	Name:                   "OA municipal status form",
 	Article:                "an",
 	Version:                "2.0",
 	OriginNumberField:      "MsgNo",

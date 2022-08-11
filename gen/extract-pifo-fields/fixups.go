@@ -80,8 +80,20 @@ func applyFixups(fd *formDefinition) {
 		fd.Name = "ICS-213 general message form"
 		fd.Article = "an"
 		fd.Annotations["7."] = "to-ics-position"
-	case "JurisStat", "MuniStat":
+	case "JurisStat":
 		fd.Name = "OA jurisdiction status form"
+		fd.Article = "an"
+		fd.Comments["7a."] = "Situation Analysis Unit, Planning Section, ..."
+		if fd.findField("22.") != nil {
+			ff := fd.findField("21.")
+			ff.Default = "(computed)"
+			ff.Values = cities
+			ff.ComputedFromField = "22."
+			ff.Validations = []string{"computed-choice"}
+			fd.Annotations["21."] = "jurisdiction-code"
+		}
+	case "MuniStat":
+		fd.Name = "OA municipal status form"
 		fd.Article = "an"
 		fd.Comments["7a."] = "Situation Analysis Unit, Planning Section, ..."
 		if fd.findField("22.") != nil {
