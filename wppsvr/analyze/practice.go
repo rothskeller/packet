@@ -8,8 +8,12 @@ import (
 	"github.com/rothskeller/packet/pktmsg"
 	"github.com/rothskeller/packet/wppsvr/config"
 	"github.com/rothskeller/packet/xscmsg"
+	"github.com/rothskeller/packet/xscmsg/ahfacstat"
 	"github.com/rothskeller/packet/xscmsg/eoc213rr"
 	"github.com/rothskeller/packet/xscmsg/ics213"
+	"github.com/rothskeller/packet/xscmsg/jurisstat"
+	"github.com/rothskeller/packet/xscmsg/racesmar"
+	"github.com/rothskeller/packet/xscmsg/sheltstat"
 )
 
 // Problem codes
@@ -71,18 +75,15 @@ func (a *Analysis) checkPracticeSubject() {
 	if xscsubj == nil {
 		return // unparseable subject line reported elsewhere
 	}
-	// This check only applies to plain text messages, ICS-213 forms, and
-	// EOC-213RR forms.  All other known form types have different subject
-	// lines, and unknown form types get an error about that instead.
 	switch a.xsc.(type) {
 	case *config.PlainTextMessage:
 		if pktmsg.IsForm(a.msg.Body) { // corrupt form
 			return
 		}
-	case *ics213.Form, *eoc213rr.Form:
-		break
-	default:
-		// Try to extract the jurisdiction from the entire subject.
+	case *jurisstat.Form:
+		// Jurisdiction status messages do not have a full practice
+		// message subject; they only have the jurisdiction in the
+		// subject.
 		a.jurisdiction = jurisdictionMap[strings.ToUpper(xscsubj.Subject)]
 		return
 	}
@@ -115,6 +116,36 @@ the word "Practice" followed by four comma-separated fields:
 				code: ProblemPracticeSubjectFormat,
 				response: `
 The Incident Name field of this form does not have the correct format.  It
+should have the word "Practice" followed by four comma-separated fields:
+    Practice CallSign, FirstName, Jurisdiction, Date
+`,
+				references: refWeeklyPractice,
+			})
+		case *sheltstat.Form:
+			a.problems = append(a.problems, &problem{
+				code: ProblemPracticeSubjectFormat,
+				response: `
+The Shelter Name field of this form does not have the correct format.  It
+should have the word "Practice" followed by four comma-separated fields:
+    Practice CallSign, FirstName, Jurisdiction, Date
+`,
+				references: refWeeklyPractice,
+			})
+		case *ahfacstat.Form:
+			a.problems = append(a.problems, &problem{
+				code: ProblemPracticeSubjectFormat,
+				response: `
+The Facility Name field of this form does not have the correct format.  It
+should have the word "Practice" followed by four comma-separated fields:
+    Practice CallSign, FirstName, Jurisdiction, Date
+`,
+				references: refWeeklyPractice,
+			})
+		case *racesmar.Form:
+			a.problems = append(a.problems, &problem{
+				code: ProblemPracticeSubjectFormat,
+				response: `
+The Agency Name field of this form does not have the correct format.  It
 should have the word "Practice" followed by four comma-separated fields:
     Practice CallSign, FirstName, Jurisdiction, Date
 `,

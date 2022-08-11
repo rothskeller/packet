@@ -1,7 +1,7 @@
 Complain about message numbers with incorrect prefix.
 Send report to one addressee at a time?
-Change where we look for practice message details to account for other forms
 Move jurisdiction map out of code and into config.
+PracticeSubjectFormat message should get field name from form type.
 Analysis should keep any unrecognized jurisdiction.
 Report should change unrecognized jurisdictions to ???.
 Add link to online report to text report.

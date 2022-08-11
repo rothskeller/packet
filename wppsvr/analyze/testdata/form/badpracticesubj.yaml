@@ -1,35 +1,34 @@
-# Form with unknown type.
+# Form message with wrong practice subject.
 
-# Allow ICS213 forms for session:
+# Allow AHFacStat forms for session:
 session:
   messageTypes:
-    - ICS213
+    - AHFacStat
 
 # Message being analyzed:
 message: |
   From: kc6rsc@w1xsc.ampr.org
   To: pkttue@w4xsc.ampr.org
   Date: Sun, 09 Jan 2022 20:00:00 -0800
-  Subject: STR-100P_R_ICS213_Practice KC6RSC, Steve, SNY, 2022-01-11
+  Subject: STR-100P_R_AHFacStat_Practice KC6RSC
 
   !SCCoPIFO!
-  #T: form-unknown.html
-  #V: 3.2-2.1
+  #T: form-allied-health-facility-status.html
+  #V: 3.2-2.3
   MsgNo: [STR-100P]
   1a.: [01/09/2022]
-  4.: [OTHER]
-  5.: [ROUTINE]
   1b.: [2000]
-  7.: [A]
-  8.: [B]
-  9a.: [A]
-  9b.: [B]
-  10.: [Practice KC6RSC, Steve, SNY, 2022-01-11]
-  12.: [Test Message]
-  OpCall: [KC6RSC]
-  Method: [Other]
+  5.: [ROUTINE]
+  7a.: [EMS Unit]
+  8a.: [B]
+  7b.: [MHJOC]
+  8b.: [B]
+  19.: [Update]
+  20.: [Practice KC6RSC]
+  22d.: [01/09/2022]
+  22t.: [2000]
   OpName: [Steve Roth]
-  Other: [Packet]
+  OpCall: [KC6RSC]
   OpDate: [01/09/2022]
   OpTime: [20:00]
   !/ADDON!
@@ -40,24 +39,22 @@ stored:
   fromAddress: kc6rsc@w1xsc.ampr.org
   fromCallSign: KC6RSC
   fromBBS: W1XSC
-  jurisdiction: SNY
-  messageType: UNKNOWN
-  subject: STR-100P_R_ICS213_Practice KC6RSC, Steve, SNY, 2022-01-11
+  messageType: AHFacStat
+  subject: STR-100P_R_AHFacStat_Practice KC6RSC
   problems:
-    - MessageTypeWrong
-  actions: 7
+    - PracticeSubjectFormat
+  actions: 3
 
 # Messages that should be sent in response:
 responses:
   - localID: TUE-101P
     to: kc6rsc@w1xsc.ampr.org
-    subject: 'DELIVERED: STR-100P_R_ICS213_Practice KC6RSC, Steve, SNY, 2022-01-11'
+    subject: 'DELIVERED: STR-100P_R_AHFacStat_Practice KC6RSC'
     bodyREs:
       - ^!LMI!TUE-100P!DR!01/11/2022 20:00:01\n
   - localID: TUE-102P
     to: kc6rsc@w1xsc.ampr.org
-    subject: TUE-102P_R_Incorrect message type
+    subject: TUE-102P_R_Incorrect Practice subject format
     bodyREs:
-      - form of unknown type
-      - ICS-213.*expected
+      - Facility Name field
       - Weekly SPECS/SVECS Packet Practice
