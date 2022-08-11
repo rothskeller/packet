@@ -37,6 +37,13 @@ func (a *Analysis) checkCorrectForm() {
 			return
 		}
 	}
+	if _, ok := a.xsc.(*config.PlainTextMessage); ok {
+		// It's a plain text message and we're expecting a form.  That's
+		// OK if it's coming from somewhere other than one of our BBSes.
+		if _, ok := config.Get().BBSes[a.msg.FromBBS()]; !ok {
+			return
+		}
+	}
 	for i, code := range a.session.MessageTypes {
 		mtype := config.LookupMessageType(code)
 		allowed = append(allowed, mtype.TypeName())

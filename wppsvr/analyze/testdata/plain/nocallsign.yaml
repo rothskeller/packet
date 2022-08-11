@@ -15,6 +15,7 @@ stored:
   fromAddress: steve@w1xsc.ampr.org
   fromBBS: W1XSC
   subject: STR-100P_R_Practice
+  messageType: plain
   problems:
     - PracticeSubjectFormat
     - NoCallSign

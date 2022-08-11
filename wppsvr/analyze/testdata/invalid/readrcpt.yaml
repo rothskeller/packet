@@ -14,6 +14,7 @@ stored:
   deliveryTime: 2022-01-09T20:00:00-08:00
   fromAddress: kc6rsc@w1xsc.ampr.org
   fromBBS: W1XSC
+  messageType: READ
   subject: 'READ: STR-100P_R_Practice KC6RSC, Steve, SNY, 2022-01-11'
   problems:
     - ReadReceipt

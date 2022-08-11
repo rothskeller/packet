@@ -37,6 +37,7 @@ stored:
   deliveryTime: 2022-01-09T20:00:00-08:00
   fromAddress: nobody@w1xsc.ampr.org
   fromBBS: W1XSC
+  messageType: ICS213
   subject: STR-100P_R_ICS213_Practice
   problems:
     - FormInvalid
