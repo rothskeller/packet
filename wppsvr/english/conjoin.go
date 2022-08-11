@@ -18,6 +18,6 @@ func Conjoin(ss []string, conj string) string {
 	case 2:
 		return fmt.Sprintf("%s %s %s", ss[0], conj, ss[1])
 	default:
-		return fmt.Sprintf("%s %s %s", strings.Join(ss[:len(ss)-1], ", "), conj, ss[len(ss)-1])
+		return fmt.Sprintf("%s %s, %s", strings.Join(ss[:len(ss)-1], ", "), conj, ss[len(ss)-1])
 	}
 }
