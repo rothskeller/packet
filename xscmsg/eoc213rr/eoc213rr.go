@@ -37,3 +37,7 @@ func Recognize(msg *pktmsg.Message, form *pktmsg.Form) xscmsg.XSCMessage {
 type Form struct {
 	*xscform.XSCForm
 }
+
+// SubjectFieldName returns the name of the field that gets put into the message
+// subject.
+func (f *Form) SubjectFieldName() string { return "Incident Name" }

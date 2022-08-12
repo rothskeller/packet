@@ -84,3 +84,7 @@ func (f *Form) SetDestinationNumber(msgnum string) {
 func (f *Form) Routing() (pos, loc string) {
 	return f.Get("7."), f.Get("8.")
 }
+
+// SubjectFieldName returns the name of the field that gets put into the message
+// subject.
+func (f *Form) SubjectFieldName() string { return "Subject" }

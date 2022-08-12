@@ -7,17 +7,16 @@ import (
 
 	"github.com/rothskeller/packet/wppsvr/config"
 	"github.com/rothskeller/packet/xscmsg"
-	"github.com/rothskeller/packet/xscmsg/ahfacstat"
-	"github.com/rothskeller/packet/xscmsg/eoc213rr"
-	"github.com/rothskeller/packet/xscmsg/ics213"
 	"github.com/rothskeller/packet/xscmsg/jurisstat"
-	"github.com/rothskeller/packet/xscmsg/racesmar"
-	"github.com/rothskeller/packet/xscmsg/sheltstat"
 )
 
 func init() {
 	Problems[ProbPracticeSubjectFormat.Code] = ProbPracticeSubjectFormat
 	Problems[ProbUnknownJurisdiction.Code] = ProbUnknownJurisdiction
+}
+
+type formWithSubjectField interface {
+	SubjectFieldName() string
 }
 
 // practiceRE matches a correctly formatted practice subject.  The subject must
@@ -74,20 +73,7 @@ var ProbPracticeSubjectFormat = &Problem{
 	},
 	Variables: variableMap{
 		"SUBJECTFIELD": func(a *Analysis) string {
-			switch a.xsc.(type) {
-			case *ics213.Form:
-				return "Subject"
-			case *eoc213rr.Form:
-				return "Incident Name"
-			case *sheltstat.Form:
-				return "Shelter Name"
-			case *ahfacstat.Form:
-				return "Facility Name"
-			case *racesmar.Form:
-				return "Agency Name"
-			default:
-				panic("unknown field name for subject")
-			}
+			return a.xsc.(formWithSubjectField).SubjectFieldName()
 		},
 	},
 }
