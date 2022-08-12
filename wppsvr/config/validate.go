@@ -21,10 +21,7 @@ var variableRE = regexp.MustCompile(`\{[^}]*\}`)
 // If there are any errors, they are logged, and the function returns false.
 // If the configuration is valid, the function returns true.
 func (c *Config) Validate(knownProbs map[string]map[string]struct{}, knownVars map[string]struct{}) (valid bool) {
-	var (
-		err          error
-		sawRetrieval = make(map[string]bool)
-	)
+	var err error
 	valid = true // assume valid until proven otherwise
 
 	// Check each of the BBS configurations.
@@ -71,6 +68,8 @@ func (c *Config) Validate(knownProbs map[string]map[string]struct{}, knownVars m
 
 	// Check each of the session configurations.
 	for toCallSign, session := range c.Sessions {
+		var sawRetrieval = make(map[string]bool)
+
 		if !tacticalCallRE.MatchString(toCallSign) {
 			log.Printf("ERROR: config.sessions: %q is not a valid tactical call sign", toCallSign)
 			valid = false
