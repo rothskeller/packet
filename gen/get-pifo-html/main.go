@@ -35,7 +35,7 @@ var formToPackage = map[string]string{
 	"form-oa-mutual-aid-request-v2.read-only.html": "",
 	"form-oa-mutual-aid-request.html":              "racesmar",
 	"form-oa-shelter-status.html":                  "sheltstat",
-	"form-scco-eoc-213rr-v2.html":                  "eoc213rr",
+	"form-scco-eoc-213rr-v2.html":                  "",
 	"form-scco-eoc-213rr.html":                     "eoc213rr",
 }
 
