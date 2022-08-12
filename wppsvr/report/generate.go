@@ -281,7 +281,7 @@ func generateMessages(r *Report, session *store.Session, messages []*store.Messa
 				if prob.ActionFlags&config.ActionReport == 0 {
 					continue
 				}
-				p = analyze.Problems[p].Label
+				p = prob.Label
 				if rm.Class == "ok" {
 					rm.Class = "warning"
 				}

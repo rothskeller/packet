@@ -41,6 +41,7 @@ type FormRouting struct {
 
 // A ProblemConfig describes how a particular problem is handled.
 type ProblemConfig struct {
+	Label     string            `yaml:"label"`
 	Actions   string            `yaml:"actions"`
 	Response  string            `yaml:"response"`
 	Responses map[string]string `yaml:"responses"`

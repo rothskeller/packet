@@ -23,7 +23,6 @@ type formWithEncodableSubject interface {
 // with what the embedded form would generate.
 var ProbFormSubject = &Problem{
 	Code:  "FormSubject",
-	Label: "message subject doesn't agree with form contents",
 	after: []*Problem{ProbDeliveryReceipt}, // sets a.xsc
 	ifnot: []*Problem{ProbFormInvalid, ProbBounceMessage, ProbDeliveryReceipt, ProbReadReceipt},
 	detect: func(a *Analysis) (bool, string) {
@@ -48,7 +47,6 @@ var ProbFormSubject = &Problem{
 // an unknown handling order code.
 var ProbHandlingOrderCode = &Problem{
 	Code:  "HandlingOrderCode",
-	Label: "unknown handling order code",
 	ifnot: []*Problem{ProbBounceMessage, ProbDeliveryReceipt, ProbReadReceipt},
 	detect: func(a *Analysis) (bool, string) {
 		xscsubj := xscmsg.ParseSubject(a.msg.Header.Get("Subject"))
@@ -66,7 +64,6 @@ var ProbHandlingOrderCode = &Problem{
 // have the proper format.
 var ProbSubjectFormat = &Problem{
 	Code:  "SubjectFormat",
-	Label: "incorrect subject line format",
 	after: []*Problem{ProbDeliveryReceipt}, // sets a.xsc
 	ifnot: []*Problem{ProbFormSubject, ProbBounceMessage, ProbDeliveryReceipt, ProbReadReceipt},
 	detect: func(a *Analysis) (bool, string) {
@@ -96,7 +93,6 @@ var ProbSubjectFormat = &Problem{
 // contains a severity code.
 var ProbSubjectHasSeverity = &Problem{
 	Code:  "SubjectHasSeverity",
-	Label: "severity on subject line",
 	ifnot: []*Problem{ProbBounceMessage, ProbDeliveryReceipt, ProbReadReceipt},
 	detect: func(a *Analysis) (bool, string) {
 		xscsubj := xscmsg.ParseSubject(a.msg.Header.Get("Subject"))

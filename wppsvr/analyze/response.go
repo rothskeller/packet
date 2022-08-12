@@ -80,7 +80,7 @@ func (a *Analysis) responseMessage() (subject, body string) {
 		pdef := problems[p.Code]
 		if pdef.ActionFlags&config.ActionRespond != 0 {
 			count++
-			subject = p.Label
+			subject = pdef.Label
 			references |= p.references
 		}
 		if pdef.ActionFlags&config.ActionDontCount != 0 {

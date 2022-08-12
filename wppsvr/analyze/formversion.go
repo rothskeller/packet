@@ -19,7 +19,6 @@ type form interface {
 // PackItForms version is too old.
 var ProbPIFOVersion = &Problem{
 	Code:  "PIFOVersion",
-	Label: "PackItForms version out of date",
 	after: []*Problem{ProbDeliveryReceipt}, // sets a.xsc
 	ifnot: []*Problem{ProbBounceMessage, ProbDeliveryReceipt, ProbReadReceipt},
 	detect: func(a *Analysis) (bool, string) {
@@ -44,7 +43,6 @@ var ProbPIFOVersion = &Problem{
 // too old.
 var ProbFormVersion = &Problem{
 	Code:  "FormVersion",
-	Label: "form version out of date",
 	after: []*Problem{ProbDeliveryReceipt}, // sets a.xsc
 	ifnot: []*Problem{ProbBounceMessage, ProbDeliveryReceipt, ProbReadReceipt},
 	detect: func(a *Analysis) (bool, string) {

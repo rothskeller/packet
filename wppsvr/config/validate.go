@@ -186,6 +186,10 @@ func (c *Config) Validate(knownProbs map[string]map[string]struct{}, knownVars m
 				valid = false
 				continue
 			}
+			if problem.Label == "" {
+				log.Printf("ERROR: config.problems[%q].label is not specified", code)
+				valid = false
+			}
 			for _, word := range strings.Fields(problem.Actions) {
 				switch word {
 				case "report":

@@ -20,7 +20,6 @@ type validatableForm interface {
 // couldn't be successfully decoded.
 var ProbFormCorrupt = &Problem{
 	Code:  "FormCorrupt",
-	Label: "incorrectly encoded form",
 	after: []*Problem{ProbDeliveryReceipt}, // sets a.xsc
 	ifnot: []*Problem{ProbBounceMessage, ProbDeliveryReceipt, ProbReadReceipt},
 	detect: func(a *Analysis) (bool, string) {
@@ -36,7 +35,6 @@ var ProbFormCorrupt = &Problem{
 // ProbFormInvalid is raised when the form has invalid field values.
 var ProbFormInvalid = &Problem{
 	Code:  "FormInvalid",
-	Label: "invalid form contents",
 	after: []*Problem{ProbDeliveryReceipt}, // sets a.xsc
 	ifnot: []*Problem{ProbFormCorrupt, ProbBounceMessage, ProbDeliveryReceipt, ProbReadReceipt},
 	detect: func(a *Analysis) (bool, string) {

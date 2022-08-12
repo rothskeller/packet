@@ -17,7 +17,6 @@ type formWithRouting interface{ Routing() (string, string) }
 // recommended routing.
 var ProbFormDestination = &Problem{
 	Code:  "FormDestination",
-	Label: "incorrect destination for form",
 	after: []*Problem{ProbDeliveryReceipt}, // sets a.xsc
 	ifnot: []*Problem{ProbBounceMessage, ProbDeliveryReceipt, ProbReadReceipt},
 	detect: func(a *Analysis) (bool, string) {

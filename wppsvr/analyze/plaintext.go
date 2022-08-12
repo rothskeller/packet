@@ -14,7 +14,6 @@ func init() {
 // ProbMessageNotASCII is raised when a message contains non-ASCII characters.
 var ProbMessageNotASCII = &Problem{
 	Code:  "MessageNotASCII",
-	Label: "message has non-ASCII characters",
 	ifnot: []*Problem{ProbBounceMessage, ProbDeliveryReceipt, ProbReadReceipt},
 	detect: func(a *Analysis) (bool, string) {
 		return strings.IndexFunc(a.msg.Body, nonASCII) >= 0, ""
@@ -26,7 +25,6 @@ var ProbMessageNotASCII = &Problem{
 // 8bit.
 var ProbMessageNotPlainText = &Problem{
 	Code:  "MessageNotPlainText",
-	Label: "not a plain text message",
 	ifnot: []*Problem{ProbBounceMessage, ProbDeliveryReceipt, ProbReadReceipt},
 	detect: func(a *Analysis) (bool, string) {
 		if a.msg.Flags&pktmsg.NotPlainText == 0 {

@@ -13,7 +13,6 @@ type formWithOpCall interface {
 // message.
 var ProbNoCallSign = &Problem{
 	Code:  "NoCallSign",
-	Label: "no call sign in message",
 	after: []*Problem{ProbPracticeSubjectFormat, ProbDeliveryReceipt}, // set a.subjectCallSign, a.xsc
 	ifnot: []*Problem{ProbBounceMessage, ProbDeliveryReceipt, ProbReadReceipt},
 	detect: func(a *Analysis) (bool, string) {
@@ -49,7 +48,6 @@ var ProbNoCallSign = &Problem{
 // doesn't match the call sign after "Practice" on the subject line.
 var ProbCallSignConflict = &Problem{
 	Code:  "CallSignConflict",
-	Label: "call sign conflict",
 	after: []*Problem{ProbNoCallSign, ProbDeliveryReceipt}, // set a.fromCallSign, a.xsc
 	ifnot: []*Problem{ProbNoCallSign, ProbBounceMessage, ProbDeliveryReceipt, ProbReadReceipt},
 	detect: func(a *Analysis) (bool, string) {

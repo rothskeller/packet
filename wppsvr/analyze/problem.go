@@ -10,9 +10,6 @@ type Problem struct {
 	// Code is the short string that identifies this problem.  It is a
 	// single word in PascalCase.
 	Code string
-	// Label is the short string that describes this problem in a session
-	// report or in a response message subject line.
-	Label string
 	// Variables is a map from variable names to functions that return the
 	// values of those variables for a particular message.  These variables
 	// can be interpolated into response messages.

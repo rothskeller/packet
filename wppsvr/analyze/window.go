@@ -9,7 +9,6 @@ func init() {
 // ProbMessageTooEarly is raised when
 var ProbMessageTooEarly = &Problem{
 	Code:  "MessageTooEarly",
-	Label: "message before start of practice session",
 	after: []*Problem{ProbPracticeSubjectFormat},
 	ifnot: []*Problem{ProbMessageTooLate, ProbBounceMessage, ProbDeliveryReceipt, ProbReadReceipt},
 	detect: func(a *Analysis) (bool, string) {
@@ -26,7 +25,6 @@ var ProbMessageTooEarly = &Problem{
 // ProbMessageTooLate is raised when
 var ProbMessageTooLate = &Problem{
 	Code:  "MessageTooLate",
-	Label: "message after end of practice session",
 	after: []*Problem{ProbPracticeSubjectFormat},
 	ifnot: []*Problem{ProbBounceMessage, ProbDeliveryReceipt, ProbReadReceipt},
 	detect: func(a *Analysis) (bool, string) {
@@ -43,7 +41,6 @@ var ProbMessageTooLate = &Problem{
 // ProbSessionDate is raised when
 var ProbSessionDate = &Problem{
 	Code:  "SessionDate",
-	Label: "incorrect net date in subject",
 	after: []*Problem{ProbPracticeSubjectFormat},
 	ifnot: []*Problem{ProbMessageTooEarly, ProbMessageTooLate, ProbBounceMessage, ProbDeliveryReceipt, ProbReadReceipt},
 	detect: func(a *Analysis) (bool, string) {

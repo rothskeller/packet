@@ -34,7 +34,6 @@ var practiceRE = regexp.MustCompile(`(?i)^Practice[,\s]+([AKNW][A-Z]?[0-9][A-Z]{
 // subject line have the wrong format.
 var ProbPracticeSubjectFormat = &Problem{
 	Code:  "PracticeSubjectFormat",
-	Label: "incorrect practice message details",
 	after: []*Problem{ProbDeliveryReceipt}, // sets a.xsc
 	ifnot: []*Problem{ProbFormSubject, ProbSubjectFormat, ProbFormCorrupt, ProbBounceMessage, ProbDeliveryReceipt, ProbReadReceipt},
 	detect: func(a *Analysis) (bool, string) {
@@ -98,7 +97,6 @@ var ProbPracticeSubjectFormat = &Problem{
 // of the recognized ones.
 var ProbUnknownJurisdiction = &Problem{
 	Code:  "UnknownJurisdiction",
-	Label: "unknown jurisdiction",
 	after: []*Problem{ProbPracticeSubjectFormat}, // sets a.jurisdiction
 	ifnot: []*Problem{ProbPracticeSubjectFormat, ProbFormSubject, ProbSubjectFormat, ProbFormCorrupt, ProbBounceMessage, ProbDeliveryReceipt, ProbReadReceipt},
 	detect: func(a *Analysis) (bool, string) {

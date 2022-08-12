@@ -10,6 +10,5 @@ func init() {
 // the other problems.
 var ProbMultipleMessagesFromAddress = &Problem{
 	Code:   "MultipleMessagesFromAddress",
-	Label:  "multiple messages from this address",
 	detect: func(*Analysis) (bool, string) { return false, "" },
 }

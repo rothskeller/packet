@@ -99,23 +99,31 @@ minimumVersions:
   RACES-MAR: 2.1
   SheltStat: 2.1
 
-# This section defines how each detected problem is treated.  Each problem
-# must have an "actions" key set to zero or more of the following flags:
-#     report    - the problem gets listed in the report
-#     error     - the message gets counted as an error
-#     dontcount - the message does not get counted as a valid checkin
-#     dropmsg   - drop the entire message from the report
-# In addition, if a response message should be generated for the problem, the
-# problem will have a "response" or "responses" key, giving the text to be put
-# into the response message.  Some problems have several alternative response
-# texts; these are gathered under the "responses" key, indexed by a name that
-# distinguishes them.  Most problems have only one response text, which is put
-# under a "response" key.  The response texts may have interpolated {VARIABLES}
-# in braces.
+# This section defines how each detected problem is treated.  Each problem has
+# the following attributes:
+#   - label (required): this is a short string label for the problem.  It
+#         appears in session reports and in the subject line of problem
+#         responses.
+#   - actions (required): this defines the actions to be taken when the problem
+#         is detected.  It contains zero or more of the following keywords:
+#         report    - the problem gets listed in the report
+#         error     - the message gets counted as an error
+#         dontcount - the message does not get counted as a valid checkin
+#         dropmsg   - drop the entire message from the report
+#   - response (optional): this defines the text describing the problem that
+#         should be included in the problem response.  (A problem response is
+#         sent only if the message has one or more problems with defined
+#         response text).  The response text may include interpolated variables.
+#   - responses (optional): some problems can choose between multiple response
+#         texts based on the specifics of the problem detected.  In those cases,
+#         there will be multiple response texts under the "responses" key rather
+#         than a single response text under the "response" key.
 problems:
   BounceMessage:
+    label: message has no return address (probably auto-response)
     actions: report dontcount
   CallSignConflict:
+    label: call sign conflict
     actions: report error
     response: |
       This message has conflicting call signs.  The Subject line says the call
@@ -123,8 +131,10 @@ problems:
       {OPCALL}.  The two should agree.  (This message will be counted as a
       practice attempt by {FROMCALLSIGN}.)
   DeliveryReceipt:
+    label: DELIVERED receipt message
     actions: dropmsg
   FormCorrupt:
+    label: incorrectly encoded form
     actions: report error
     response: |
       This message appears to contain an encoded form, but the encoding is
@@ -132,6 +142,7 @@ problems:
       than the current PackItForms software.  Please use current PackItForms
       software to encode messages containing forms.
   FormDestination:
+    label: incorrect destination for form
     actions: report error
     responses:
       both: |
@@ -145,18 +156,21 @@ problems:
         This message form is addressed to ICS Position "{ACTUALPOSN}".
         {MSGTYPE}s should be addressed to ICS Position {EXPECTPOSNS}.
   FormHandlingOrder:
+    label: incorrect handling order for form
     actions: report error
     response: |
       This message has handling order {ACTUALHO}.  According to the SCCo
       ARES/RACES Recommended Form Routing document, it should have handling
       order {EXPECTHO}.
   FormInvalid:
+    label: invalid form contents
     actions: report error
     response: |
       This message contains a form with invalid contents:
       {PROBLEMS}
       Please verify the correctness of the form before sending.
   FormSubject:
+    label: message subject doesn't agree with form contents
     actions: report error
     response: |
       This message has
@@ -166,6 +180,7 @@ problems:
       PackItForms automatically generates the Subject line from the form
       contents; it should not be overridden manually.
   FormVersion:
+    label: form version out of date
     actions: report error
     response: |
       This message contains version {ACTUALVER} of the {MSGTYPE}, but that
@@ -173,20 +188,24 @@ problems:
       form.  (You can get the newer form by updating your PackItForms
       installation.)
   FromBBSDown:
+    label: message from incorrect BBS (simulated outage)
     actions: report error
     response: |
       This message was sent from {FROMBBS}, which has a simulated outage for
       {SESSIONNAME} on {SESSIONDATE}.  Practice messages should not be sent from
       BBSes that have a simulated outage.
   HandlingOrderCode:
+    label: unknown handling order code
     actions: report error
     response: |
       The Subject line of this message contains an invalid Handling Order code
       ({HANDLING}). The valid codes are "I" for Immediate, "P" for Priority, and
       "R" for Routine.
   MessageCorrupt:
+    label: message could not be parsed
     actions: report dontcount
   MessageNotASCII:
+    label: message has non-ASCII characters
     actions: report error
     response: |
       This message contains characters that are not in the standard ASCII
@@ -197,6 +216,7 @@ problems:
       If you use message text composed in such software, make sure those
       features are disabled.
   MessageNotPlainText:
+    label: not a plain text message
     actions: report error
     responses:
       normal: |
@@ -211,21 +231,25 @@ problems:
         plain text messages; they use an encoding system ("quoted-printable")
         that Outpost cannot decode.
   MessageTooEarly:
+    label: message before start of practice session
     actions: report dontcount
     response: |
       This message arrived at {TOBBS} on {MSGDATE}.  However, practice messages
       for {SESSIONNAME} aren't accepted until {SESSIONSTART}.
   MessageTooLate:
+    label: message after end of practice session
     actions: report dontcount
     response: |
       This message arrived at {TOBBS} on {MSGDATE}.  That was too late to be
       counted for the {SESSIONNAME} on {SUBJECTDATE}.
   MessageTypeWrong:
+    label: incorrect message type
     actions: report error
     response: |
       This message is {AMSGTYPE}.  For the {SESSIONNAME} on {SESSIONDATE},
       {AEXPECTTYPE} is expected.
   MsgNumFormat:
+    label: incorrect message number format
     actions: report error
     response: |
       The message number of this message is not formatted correctly.  It should
@@ -238,14 +262,17 @@ problems:
       number is set in the Message Settings dialog, which should be configured
       according to county standards.
   MsgNumPrefix:
+    label: incorrect message number prefix
     actions: report
     response: |
       The message number of this message has the prefix "{ACTUALPFX}".  The
       prefix should be the last three characters of your call sign,
       "{EXPECTPFX}".
   MultipleMessagesFromAddress:
+    label: multiple messages from this address
     actions: report
   NoCallSign:
+    label: no call sign in message
     actions: report dontcount
     responses:
       form: |
@@ -260,12 +287,14 @@ problems:
         on the subject line.  In order for a message to count, there must be a
         call sign in at least one of those places.
   PIFOVersion:
+    label: PackItForms version out of date
     actions: report error
     response: |
       This message used version {ACTUALVER} of PackItForms to encode the form,
       but that version is not current.  Please use PackItForms version
       {EXPECTVER} or newer to encode messages containing forms.
   PracticeSubjectFormat:
+    label: incorrect practice message details
     actions: report
     responses:
       form: |
@@ -281,6 +310,7 @@ problems:
             Practice CallSign, FirstName, Jurisdiction, NetDate
         NetDate should be in the form MM/DD/YYYY.
   ReadReceipt:
+    label: unexpected READ receipt message
     actions: report dontcount
     response: |
       This message is an Outpost "read receipt", which should not have been
@@ -289,12 +319,14 @@ problems:
       this setting should be turned off.  You can find it on the Receipts tab of
       the Message Settings dialog in Outpost.
   SessionDate:
+    label: incorrect net date in subject
     actions: report
     response: |
       This message is being counted for {SESSIONNAME} on {SESSIONDATE}, but the
       subject line says it's intended for a net on {SUBJECTDATE}.  This may
       indicate that the message was sent to the wrong net.
   SubjectFormat:
+    label: incorrect subject line format
     actions: report error
     responses:
       parse: |
@@ -320,25 +352,29 @@ problems:
               (handling order)  (call sign)
         Note that there is no underline after the word "Practice".
   SubjectHasSeverity:
+    label: severity on subject line
     actions: report error
     response: |
       The Subject line of this message contains a both a Severity code and a
       Handling Order code ("_{SEVERITY}/{HANDLING}_").  This is an outdated
       Subject line style.  Current SCCo standards include only the Handling
       Order code on the Subject line ("_{HANDLING}_").
-  ToBBSDown:
-    actions: report dontcount
-    response: |
-      This message was sent to {TOCALLSIGN} at {TOBBS}, but {TOBBS} has a
-      simulated outage for {SESSIONNAME} on {SESSIONDATE}.  Practice messages
-      for this session must be sent to {TOCALLSIGN} at {SESSIONBBSES}.
   ToBBS:
+    label: message to incorrect BBS
     actions: report dontcount
     response: |
       This message was sent to {TOCALLSIGN} at {TOBBS}.  Practice messages for
       {SESSIONNAME} on {SESSIONDATE} must be sent to {TOCALLSIGN} at
       {SESSIONBBSES}.
+  ToBBSDown:
+    label: message to incorrect BBS (simulated outage)
+    actions: report dontcount
+    response: |
+      This message was sent to {TOCALLSIGN} at {TOBBS}, but {TOBBS} has a
+      simulated outage for {SESSIONNAME} on {SESSIONDATE}.  Practice messages
+      for this session must be sent to {TOCALLSIGN} at {SESSIONBBSES}.
   UnknownJurisdiction:
+    label: unknown jurisdiction
     actions: report
     response: |
       The jurisdiction "{JURISDICTION}" is not recognized.  Please use one of

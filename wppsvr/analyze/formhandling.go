@@ -17,7 +17,6 @@ type formWithHandlingOrder interface {
 // conform to the recommended form routing.
 var ProbFormHandlingOrder = &Problem{
 	Code:  "FormHandlingOrder",
-	Label: "incorrect handling order for form",
 	after: []*Problem{ProbDeliveryReceipt}, // sets a.xsc
 	ifnot: []*Problem{ProbBounceMessage, ProbDeliveryReceipt, ProbReadReceipt},
 	detect: func(a *Analysis) (bool, string) {

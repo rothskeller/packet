@@ -21,7 +21,6 @@ var msgnumRE = regexp.MustCompile(`^(?:[A-Z][A-Z][A-Z]|[A-Z][0-9][A-Z0-9]|[0-9][
 // standards.
 var ProbMsgNumFormat = &Problem{
 	Code:  "MsgNumFormat",
-	Label: "incorrect message number format",
 	after: []*Problem{ProbDeliveryReceipt}, // sets a.xsc
 	ifnot: []*Problem{ProbBounceMessage, ProbDeliveryReceipt, ProbReadReceipt},
 	detect: func(a *Analysis) (bool, string) {
@@ -47,7 +46,6 @@ var fccCallSignRE = regexp.MustCompile(`^[AKNW][A-Z]?[0-9][A-Z]{1,3}$`)
 // three characters of the sender's call sign.
 var ProbMsgNumPrefix = &Problem{
 	Code:  "MsgNumPrefix",
-	Label: "incorrect message number prefix",
 	after: []*Problem{ProbDeliveryReceipt, ProbNoCallSign}, // set a.xsc, a.fromCallSign
 	ifnot: []*Problem{ProbMsgNumFormat, ProbBounceMessage, ProbDeliveryReceipt, ProbReadReceipt},
 	detect: func(a *Analysis) (bool, string) {

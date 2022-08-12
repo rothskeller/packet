@@ -13,7 +13,6 @@ func init() {
 // expected types for the session, and the message is coming from in-county.
 var ProbMessageTypeWrong = &Problem{
 	Code:  "MessageTypeWrong",
-	Label: "incorrect message type",
 	after: []*Problem{ProbDeliveryReceipt}, // sets a.xsc
 	ifnot: []*Problem{ProbFormCorrupt, ProbBounceMessage, ProbDeliveryReceipt, ProbReadReceipt},
 	detect: func(a *Analysis) (bool, string) {

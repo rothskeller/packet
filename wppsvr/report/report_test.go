@@ -11,9 +11,18 @@ import (
 
 var fakeConfig = config.Config{
 	Problems: map[string]*config.ProblemConfig{
-		"ToBBSDown":                   {ActionFlags: config.ActionDontCount | config.ActionReport},
-		"SubjectFormat":               {ActionFlags: config.ActionError | config.ActionReport},
-		"MultipleMessagesFromAddress": {ActionFlags: config.ActionReport},
+		"ToBBSDown": {
+			Label:       "message to incorrect BBS (simulated outage)",
+			ActionFlags: config.ActionDontCount | config.ActionReport,
+		},
+		"SubjectFormat": {
+			Label:       "incorrect subject format",
+			ActionFlags: config.ActionError | config.ActionReport,
+		},
+		"MultipleMessagesFromAddress": {
+			Label:       "multiple messages from address",
+			ActionFlags: config.ActionReport,
+		},
 	},
 	Jurisdictions: map[string]string{
 		"SNY": "SNY",

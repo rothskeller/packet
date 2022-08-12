@@ -17,7 +17,6 @@ func init() {
 // has the side effect of determining the message type and setting a.xsc.
 var ProbDeliveryReceipt = &Problem{
 	Code:  "DeliveryReceipt",
-	Label: "DELIVERED receipt message",
 	ifnot: []*Problem{ProbBounceMessage},
 	detect: func(a *Analysis) (bool, string) {
 		// Find out whether the message is a known type.  If it's not,
@@ -39,7 +38,6 @@ var ProbDeliveryReceipt = &Problem{
 // ProbReadReceipt is raised for any READ receipt message.
 var ProbReadReceipt = &Problem{
 	Code:  "ReadReceipt",
-	Label: "unexpected READ receipt message",
 	after: []*Problem{ProbDeliveryReceipt}, // sets a.xsc
 	ifnot: []*Problem{ProbBounceMessage},
 	detect: func(a *Analysis) (bool, string) {
