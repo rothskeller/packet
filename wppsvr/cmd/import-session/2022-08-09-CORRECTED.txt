@@ -1,4 +1,3 @@
-
 SCCo ARES/RACES Packet Practice Report For: Tuesday, August 09, 2022.
 
 ---------------------- WEEK'S SUMMARY ----------------------
@@ -62,7 +61,7 @@ _9 w6bg@w1xsc.ampr.org         6BG-1009P_I_JurisStat_Cupertino
 18 kc6rsc@w1xsc.ampr.org       STR-2813P_I_MuniStat_Sunnyvale
      ^^^ Message Subject mismatch with Form contents.
 19 aj6hm@w1xsc.ampr.org        6HM-1047P_I_JurisStat_Saratoga
-20 ai6sl@w1xsc.ampr.org        6SL-903P_R_JurisStat_Sunnyvale
+20 ai6sl@w1xsc.ampr.org        6SL-903[2]P_R_JurisStat_Sunnyvale
 21 kt6jk@w1xsc.ampr.org        6JK-102P_I_JurisStat_Cupertino
 22 n6dxq@w1xsc.ampr.org        DXQ-597P_I_JurisStat_Campbell
 23 aa6pm@w1xsc.ampr.org        PJM-688P_I_JurisStat_Saratoga
