@@ -233,6 +233,25 @@ func (c *Config) Validate(knownProbs map[string]map[string]struct{}, knownVars m
 		}
 	}
 
+	// Verify the jurisdiction abbreviations and fill out the map.
+	if c.Jurisdictions == nil {
+		log.Printf("ERROR: config.jurisdictions is not specified")
+		valid = false
+	} else {
+		for name, abbr := range c.Jurisdictions {
+			if len(abbr) < 1 || len(abbr) > 3 ||
+				strings.IndexFunc(abbr, func(r rune) bool { return r < 'A' || r > 'Z' }) >= 0 {
+				log.Printf("ERROR: config.jurisdictions[%q]: %q is not a valid abbreviation", name, abbr)
+				valid = false
+			}
+			if upcase := strings.ToUpper(name); upcase != name {
+				delete(c.Jurisdictions, name)
+				c.Jurisdictions[upcase] = abbr
+			}
+			c.Jurisdictions[abbr] = abbr
+		}
+	}
+
 	// Check that we have form routing for every form.
 	if c.FormRouting == nil {
 		log.Printf("ERROR: config.formRouting is not specified")

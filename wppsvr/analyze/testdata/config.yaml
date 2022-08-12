@@ -336,6 +336,47 @@ problems:
       This message was sent to {TOCALLSIGN} at {TOBBS}.  Practice messages for
       {SESSIONNAME} on {SESSIONDATE} must be sent to {TOCALLSIGN} at
       {SESSIONBBSES}.
+  UnknownJurisdiction:
+    actions: report
+    response: |
+      The jurisdiction "{JURISDICTION}" is not recognized.  Please use one of
+      the recognized jurisdiction names or abbreviations.
+
+# This section lists the known jurisdiction names and their abbreviations.
+jurisdictions:
+  Alameda County: XAL
+  American Red Cross: ARC
+  CalFIRE Santa Clara Unit: SCU
+  CalOES Coastal Region: COS
+  Campbell: CBL
+  Contra Costa County: XCC
+  Cupertino: CUP
+  Gilroy: GIL
+  Hospitals: HOS
+  Loma Prieta: LMP
+  Los Altos: LOS
+  Los Altos Hills: LAH
+  Los Gatos: LGT
+  Marin County: XMR
+  Milpitas: MLP
+  Monte Sereno: MSO
+  Monterey County: XMY
+  Morgan Hill: MRG
+  Mountain View: MTV
+  NASA/AMES: NAM
+  Palo Alto: PAF
+  San Benito County: XBE
+  San Francisco County: XSF
+  San Jose: SJC
+  San Jose Water Co: SJW
+  San Mateo County: XSM
+  Santa Clara: SNC
+  Santa Clara County: XSC
+  Santa Clara Valley Water District: VWD
+  Santa Cruz County: XCZ
+  Saratoga: SAR
+  Stanford University: STU
+  Sunnyvale: SNY
 
 # This section defines the expected handling order and destination of each of
 # the different form types.  For HandlingOrder, possible values are "computed"

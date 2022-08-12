@@ -24,6 +24,7 @@ type Config struct {
 	Sessions        map[string]*SessionConfig `yaml:"sessions"`
 	MinimumVersions map[string]string         `yaml:"minimumVersions"`
 	Problems        map[string]*ProblemConfig `yaml:"problems"`
+	Jurisdictions   map[string]string         `yaml:"jurisdictions"`
 	FormRouting     map[string]*FormRouting   `yaml:"formRouting"`
 	ListenAddr      string                    `yaml:"listenAddr"`
 	CanViewEveryone []string                  `yaml:"canViewEveryone"`

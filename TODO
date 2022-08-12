@@ -1,7 +1,5 @@
-Complain about unknown jurisdiction.
 Complain about ill-formatted net date.
 Send report to one addressee at a time?
-Move jurisdiction map out of code and into config.
 PracticeSubjectFormat message should get field name from form type.
 Analysis should keep any unrecognized jurisdiction.
 Report should change unrecognized jurisdictions to ???.

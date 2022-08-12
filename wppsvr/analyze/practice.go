@@ -17,6 +17,7 @@ import (
 
 func init() {
 	Problems[ProbPracticeSubjectFormat.Code] = ProbPracticeSubjectFormat
+	Problems[ProbUnknownJurisdiction.Code] = ProbUnknownJurisdiction
 }
 
 // practiceRE matches a correctly formatted practice subject.  The subject must
@@ -61,81 +62,6 @@ var dateREs = map[string]*regexp.Regexp{
 	"Jan-2-06": regexp.MustCompile(`(?i)^(?:jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec)-\d?\d-\d\d$`),
 }
 
-var jurisdictionMap = map[string]string{
-	"ALAMEDA":              "XAL",
-	"ALAMEDA CO.":          "XAL",
-	"ALAMEDA COUNTY":       "XAL",
-	"CAMPBELL":             "CBL",
-	"CBL":                  "CBL",
-	"CONTRA COSTA":         "XCC",
-	"CONTRA COSTA CO.":     "XCC",
-	"CONTRA COSTA COUNTY":  "XCC",
-	"CUP":                  "CUP",
-	"CUPERTINO":            "CUP",
-	"GIL":                  "GIL",
-	"GILROY":               "GIL",
-	"LAH":                  "LAH",
-	"LG/MS":                "LGT",
-	"LGT":                  "LGT",
-	"LMP":                  "LMP",
-	"LOMA PRIETA":          "LMP",
-	"LOS ALTOS HILLS":      "LAH",
-	"LOS ALTOS":            "LOS",
-	"LOS GATOS":            "LGT",
-	"LOS":                  "LOS",
-	"MARIN":                "XMR",
-	"MARIN CO.":            "XMR",
-	"MARIN COUNTY":         "XMR",
-	"MILPITAS":             "MLP",
-	"MLP":                  "MLP",
-	"MONTE SERENO":         "MSO",
-	"MONTEREY":             "XMY",
-	"MONTEREY CO.":         "XMY",
-	"MONTEREY COUNTY":      "XMY",
-	"MORGAN HILL":          "MRG",
-	"MOUNTAIN VIEW":        "MTV",
-	"MRG":                  "MRG",
-	"MSO":                  "MSO",
-	"MTV":                  "MTV",
-	"MV":                   "MTV",
-	"NAM":                  "NAM",
-	"NASA/AMES":            "NAM",
-	"PAF":                  "PAF",
-	"PALO ALTO":            "PAF",
-	"SAN BENITO":           "XBE",
-	"SAN BENITO CO.":       "XBE",
-	"SAN BENITO COUNTY":    "XBE",
-	"SAN FRANCISCO":        "XSF",
-	"SAN FRANCISCO CO.":    "XSF",
-	"SAN FRANCISCO COUNTY": "XSF",
-	"SAN JOSE":             "SJC",
-	"SAN MATEO":            "XSM",
-	"SAN MATEO CO.":        "XSM",
-	"SAN MATEO COUNTY":     "XSM",
-	"SANTA CLARA":          "SNC",
-	"SANTA CRUZ":           "XCZ",
-	"SANTA CRUZ CO.":       "XCZ",
-	"SANTA CRUZ COUNTY":    "XCZ",
-	"SAR":                  "SAR",
-	"SARATOGA":             "SAR",
-	"SJC":                  "SJC",
-	"SNC":                  "SNC",
-	"SNY":                  "SNY",
-	"STANFORD":             "STU",
-	"STANFORD UNIVERSITY":  "STU",
-	"STU":                  "STU",
-	"SUNNYVALE":            "SNY",
-	"XAL":                  "XAL",
-	"XBE":                  "XBE",
-	"XCC":                  "XCC",
-	"XCZ":                  "XCZ",
-	"XMR":                  "XMR",
-	"XMY":                  "XMY",
-	"XSC":                  "XSC",
-	"XSF":                  "XSF",
-	"XSM":                  "XSM",
-}
-
 // ProbPracticeSubjectFormat is raised when the practice message details in the
 // subject line have the wrong format.
 var ProbPracticeSubjectFormat = &Problem{
@@ -144,11 +70,16 @@ var ProbPracticeSubjectFormat = &Problem{
 	after: []*Problem{ProbDeliveryReceipt}, // sets a.xsc
 	ifnot: []*Problem{ProbFormSubject, ProbSubjectFormat, ProbFormCorrupt, ProbBounceMessage, ProbDeliveryReceipt, ProbReadReceipt},
 	detect: func(a *Analysis) (bool, string) {
+		jurisdictionMap := config.Get().Jurisdictions
 		subject := xscmsg.ParseSubject(a.msg.Header.Get("Subject")).Subject
 		// Don't check Jurisdiction Status forms; their subject doesn't
-		// have the full practice details.  It just has the jurisdiction, which we save.
+		// have the full practice details.  It just has the
+		// jurisdiction, which we save.
 		if _, ok := a.xsc.(*jurisstat.Form); ok {
-			a.jurisdiction = jurisdictionMap[strings.ToUpper(subject)]
+			a.jurisdiction = subject
+			if abbr, ok := jurisdictionMap[strings.ToUpper(a.jurisdiction)]; ok {
+				a.jurisdiction = abbr
+			}
 			return false, ""
 		}
 		// Parse the subject line to get the true subject.
@@ -167,7 +98,10 @@ var ProbPracticeSubjectFormat = &Problem{
 		// Yes, we do, so save the information from it for other
 		// analysis steps.
 		a.subjectCallSign = strings.ToUpper(match[1])
-		a.jurisdiction = jurisdictionMap[strings.ToUpper(strings.TrimSpace(match[2]))]
+		a.jurisdiction = strings.TrimSpace(match[2])
+		if abbr, ok := jurisdictionMap[strings.ToUpper(a.jurisdiction)]; ok {
+			a.jurisdiction = abbr
+		}
 		// Look for a date.
 		for fmt, re := range dateREs {
 			if re.MatchString(match[3]) {
@@ -196,6 +130,23 @@ var ProbPracticeSubjectFormat = &Problem{
 				panic("unknown field name for subject")
 			}
 		},
+	},
+	references: refWeeklyPractice,
+}
+
+// ProbUnknownJurisdiction is raised when the provided jurisdiction is not one
+// of the recognized ones.
+var ProbUnknownJurisdiction = &Problem{
+	Code:  "UnknownJurisdiction",
+	Label: "unknown jurisdiction",
+	after: []*Problem{ProbPracticeSubjectFormat}, // sets a.jurisdiction
+	ifnot: []*Problem{ProbPracticeSubjectFormat, ProbFormSubject, ProbSubjectFormat, ProbFormCorrupt, ProbBounceMessage, ProbDeliveryReceipt, ProbReadReceipt},
+	detect: func(a *Analysis) (bool, string) {
+		_, ok := config.Get().Jurisdictions[a.jurisdiction]
+		return !ok, ""
+	},
+	Variables: variableMap{
+		"JURISDICTION": func(a *Analysis) string { return a.jurisdiction },
 	},
 	references: refWeeklyPractice,
 }
