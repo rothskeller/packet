@@ -124,6 +124,7 @@ func generateWeekSummary(r *Report, st Store, session *store.Session) {
 // generateStatistics scans the messages accumulated in the session and computes
 // the statistics that we will display.
 func generateStatistics(r *Report, session *store.Session, messages []*store.Message) {
+	var knownJurisdictions = config.Get().Jurisdictions
 	var sources = make(map[string]int)
 	var jurisdictions = make(map[string]int)
 	var mtypes = make(map[string]int)
@@ -138,7 +139,7 @@ func generateStatistics(r *Report, session *store.Session, messages []*store.Mes
 		} else {
 			sources["Email"]++
 		}
-		if m.Jurisdiction != "" {
+		if knownJurisdictions[m.Jurisdiction] == m.Jurisdiction {
 			jurisdictions[m.Jurisdiction]++
 		} else {
 			jurisdictions["~~~"]++ // chosen to sort after anything real
@@ -231,6 +232,7 @@ func wasSimulatedDown(session *store.Session, bbs string) bool {
 // that appear in the report.
 func generateMessages(r *Report, session *store.Session, messages []*store.Message) {
 	var problems = config.Get().Problems
+	var jurisdictions = config.Get().Jurisdictions
 
 	messages = removeReplaced(messages)
 	for _, m := range messages {
@@ -258,7 +260,11 @@ func generateMessages(r *Report, session *store.Session, messages []*store.Messa
 		} else {
 			rm.Source = "Email"
 		}
-		rm.Jurisdiction = m.Jurisdiction
+		if jurisdictions[m.Jurisdiction] == m.Jurisdiction {
+			rm.Jurisdiction = m.Jurisdiction
+		} else if m.Jurisdiction != "" {
+			rm.Jurisdiction = "???"
+		}
 		if m.Actions&config.ActionDontCount != 0 {
 			rm.Class = "invalid"
 		} else if m.Actions&config.ActionError != 0 {

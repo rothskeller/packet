@@ -15,6 +15,9 @@ var fakeConfig = config.Config{
 		"SubjectFormat":               {ActionFlags: config.ActionError | config.ActionReport},
 		"MultipleMessagesFromAddress": {ActionFlags: config.ActionReport},
 	},
+	Jurisdictions: map[string]string{
+		"SNY": "SNY",
+	},
 }
 
 var fakeSession1 = store.Session{
@@ -83,7 +86,7 @@ func (fakeStore) GetSessionMessages(sessionID int) []*store.Message {
 				FromCallSign: "AA6BT",
 				FromBBS:      "W3XSC",
 				Subject:      "BLAH",
-				Jurisdiction: "SJC",
+				Jurisdiction: "Unknown",
 				MessageType:  "plain",
 				Problems:     []string{"ToBBSDown", "SubjectFormat"},
 				Actions:      config.ActionReport | config.ActionError,
@@ -120,12 +123,12 @@ Sent between:  Wed 2022-04-13 00:00 and
 Not sent from: W3XSC
 
 SOURCES-----------      JURISDICTIONS      TYPES---
-W1XSC   1               SJC  1             plain  2
-W3XSC*  1               SNY  1
+W1XSC   1               SNY  1             plain  2
+W3XSC*  1               ???  1
 * simulated outage
 
 MESSAGES----------------------------------------------------------------
-AA6BT   W3XSC   SJC  ERROR: multiple issues
+AA6BT   W3XSC   ???  ERROR: multiple issues
 KC6RSC  W1XSC*  SNY  OK
 * multiple messages from this address; only the last one counts
 
