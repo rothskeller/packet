@@ -1,0 +1,79 @@
+SCCo ARES/RACES Packet Practice Report For: Monday, January 10, 2022.
+
+----------------------- DAY'S SUMMARY -----------------------
+Totals:
+  All messages:            35 received;  35 (100%) correct. [includes duplicates]
+  Unique "from" addresses: 34 received;  34 (100%) correct. [unique From: addresses]
+  Unique call signs:       32 received;  32 (100%) correct. [32 reported to main net]
+
+Simulated BBS outage: W2XSC
+  0/35 (0%) incorrectly sent FROM this BBS.
+  0/35 (0%) incorrectly sent TO this BBS.
+
+Sources:
+  Santa Clara County BBSs: 32
+      10 W1XSC
+       0 W2XSC
+      19 W3XSC
+       3 W4XSC
+
+  Other: 2
+      1 from BBS Network.
+      1 from E-Mail.
+
+
+Most operators who sent a message that is flagged in the list below
+will automatically receive a reply with additional details and suggested
+corrective actions. If your message is flagged, please retrieve the detailed
+reply message from the BBS, email provider, or other service you used to
+submit the weekly packet practice message before requesting assistance.
+
+----------------------- DAY'S DETAILS -----------------------
+
+##     FROM                               SUBJECT
+_1 k6fjc@w4xsc.ampr.org        FJC-323P_I_MuniStat_Unincorporated
+_2 k9stv@w3xsc.ampr.org        STV-116P_R_MuniStat_Mountain View
+_3 kg6tmi@w3xsc.ampr.org       TMI-006P_R_Practice KG6TMI, Patrick, PAF, 01/10/22
+     ^^^ Duplicate check-in
+_4 w6bg@w1xsc.ampr.org         6BG-411P_R_Practice W6BG, MAX, CUPERTINO, 2022-01-10
+_5 ai6sl@w1xsc.ampr.org        6SL-710P_R_Practice, AI6SL, Wolfgang, Sunnyvale, 2022/01/10
+_6 km6ams@w3xsc.ampr.org       AMS-458P_R_Practice KM6AMS, Fred, Los Altos, 1/10/22
+_7 kk6ekn@w3xsc.ampr.org       EKN-504P_R_practice KK6EKN, Leslie, MTV, 01-10-2022
+_8 ke6ppi@w1xsc.ampr.org       PPI-322P_R_Practice KE6PPI, Roger, Sunnyvale, 01-08-22
+_9 kz6dm@w3xsc.ampr.org        6DM-398P_R_Practice KZ6DM, Poul, Mountain View, 01/10/2022
+10 kc6rsc@w1xsc.ampr.org       STR-2099P_R_Practice KC6RSC, Steve, SNY, 2022-01-10
+11 ag6gx@w1xsc.ampr.org        6GX-541P_R_Practice AG6GX, Brian, Cupertino, Jan, 10, 2022
+12 kg6tmi@w3xsc.ampr.org       TMI-008P_R_Practice KG6TMI, Patrick, PAF, 01/10/22
+13 w6jmk@w3xsc.ampr.org        JMK-434P_R_Practice W6JMK, John, Los Altos, 1/10/2022
+14 wa3aw@w3xsc.ampr.org        3AW-802P_R_Practice WA3AW, Art, Los Altos, 01/10/2022
+15 wa1iam@w3xsc.ampr.org       IAM-603P_R_Practice WA1IAM, Dave, MTV, 1/10/22
+16 ki6pur@w3xsc.ampr.org       PUR-322P_R_Practice KI6PUR, Rick, MTV, 01/10/22
+17 kg6hi@w1xsc.ampr.org        6HI-1670P_R_Practice, KG6HI, Jerry, Sunnyvale, 10 Jan 2022
+18 ki6fwb@w1xsc.ampr.org       FWB-744P_R_Practice KI6FWB, Frank, San Jose, 01/10/2022
+19 k6fjc@w3xsc.ampr.org        FJC-410P_R_Practice K6FJC, Mark, Redwood City, 01/10/2022
+20 kn6ghd@w3xsc.ampr.org       GHD-229P_R_Practice KN6GHD, Tim, Mountain View, 01-10-2022
+21 k6ott@w4xsc.ampr.org        OTT-528P_R_Practice K6OTT, Andreas, Sunnyvale, 2022-01-10
+22 ke7do@w4xsc.ampr.org        7DO-130P_R_Practice KE7DO, Greg, Mountain View, 01/10/2022
+23 k1jh@w3xsc.ampr.org         1JH-311P_R_Practice K1JH, Jim, Los Altos, 20220110
+24 kj6gbg@w3xsc.ampr.org       GBG-1253P_R_Practice KJ6GBG, Joe, Palo Alto, 1/10/2022
+25 wu6k@w3xsc.ampr.org         U6K-276P_R_Practice WU6K, Jim, Mountain View, 20220110
+26 k6lct@w3xsc.ampr.org        LCT-361P_R_Practice K6LCT, Lisa, Los Altos, 01/10/2022
+27 af6ot@w3xsc.ampr.org        PJB-1153P_R_Practice AF6OT, Pat, PalonAlto, 2022-01-10
+28 km6i@w3xsc.ampr.org         M6I-452P_R_Practice KM6I, Gordon, MTV, 1-3-2022
+29 n9dk@w3xsc.ampr.org         9DK-2965P_R_Practice N9DK, Dave, MV, 2022-01-10
+30 kd6kdl@w3xsc.ampr.org       KDL-817P_R_Practice KD6KDL, Sally, Mountain View, 01/10/22
+31 kt6jk@w1xsc.ampr.org        6JK-336P_R_Practice KT6JK, Todd, CUP, 20220110
+32 kg6kzz@n0ary.#nca.ca.usa.noam KZZ-411N_R_Practice KG6KZZ, Jason, Almaden, 01/10/2022
+33 kk6fpp@w1xsc.ampr.org       FPP-345P_R_Practice KK6FPP, Thomas, Sunnyvale, 20220110
+34 kk6fpp@email1.scc-ares-races.net FPP-346E_R_Practice KK6FPP, Thomas, Sunnyvale, 20220110
+35 kn6pe@w1xsc.ampr.org        6PE-425P_R_Practice KN6PE, Jim, Cupertino, 10-Jan-2022
+
+Key:
+D: Duplicate practice message = same call sign via same BBS/address. (not counted)
+
+Practice Message count: 32 plain text messages.
+                        2 SCCoPIFO messages.
+
+This list created by N9DK, Dave
+MonChk002.LrnOpst004.CntInit013.MsgWrap005
+.MsgErr005.Rprt017

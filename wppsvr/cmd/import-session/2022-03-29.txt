@@ -1,0 +1,72 @@
+SCCo ARES/RACES Packet Practice Report For: Tuesday, March 29, 2022.
+
+---------------------- WEEK'S SUMMARY ----------------------
+Week's unique call signs: 40
+----------------------- DAY'S SUMMARY -----------------------
+Totals:
+  All messages:            28 received;  27 (96%) correct. [includes duplicates]
+  Unique "from" addresses: 26 received;  25 (96%) correct. [unique From: addresses]
+  Unique call signs:       25 received;  24 (96%) correct. [25 reported to main net]
+Simulated BBS outage: None
+
+Sources:
+  Santa Clara County BBSs: 26
+      16 W1XSC
+       2 W2XSC
+       5 W3XSC
+       3 W4XSC
+
+  Other: 0
+
+
+Most operators who sent a message that is flagged in the list below
+will automatically receive a reply with additional details and suggested
+corrective actions. If your message is flagged, please retrieve the detailed
+reply message from the BBS, email provider, or other service you used to
+submit the weekly packet practice message before requesting assistance.
+
+----------------------- DAY'S DETAILS -----------------------
+
+##     FROM                                          SUBJECT
+_1 w6bg@w1xsc.ampr.org         6BG-714P_R_EOC213RR_Practice W6BG, Max, Cupertino, 2022-03-29
+_2 k6sw@w1xsc.ampr.org         PEB-718P_R_EOC213RR_Practice K6SW, Pat, San Jose, 2022-03-29
+_3 kk6fmq@w1xsc.ampr.org       FMQ-629_R_EOC213RR_Practice KK6FMQ_Grant, PAF, 3/29/2022
+     ^^^ Duplicate check-in
+_4 kk6fmq@w1xsc.ampr.org       FMQ-629R_R_EOC213RR_Practice KK6FMQ_Grant, PAF, 3/29/2022
+_5 kk6fmq@w3xsc.ampr.org       FMQ-632P_R_EOC213RR_Practice KK6FMQ_Grant, PAF, 3/29/2022
+_6 km6lry@w1xsc.ampr.org       LRY-468P_R_EOC213RR_Practice KM6LRY, Les, LG/MS, 03/29/2022
+_7 kt6jk@w1xsc.ampr.org        6JK-657P_R_EOC213RR_Practice KT6JK, Todd, CUP, 20220329
+_8 ag6gx@w1xsc.ampr.org        6GX-586P_R_EOC213RR_Practice AG6GX, Brian, Cupertino, March 29, 2022
+_9 km6clk@w1xsc.ampr.org       CLK-264P_Practice KM6CLK, Bart, Los Gatos/Monte Sereno, 3-29-2022_R_EOC213RR_eee
+     ^^^ Subject line format issue(Missing: Message Handling Order.)
+10 kg6kzz@w2xsc.ampr.org       KZZ-354P_R_EOC213RR_Practice KG6KZZ, Jason, Almaden, 03/29/2022
+     ^^^ Duplicate check-in
+11 kg6kzz@w2xsc.ampr.org       KZZ-354P_R_EOC213RR_Practice KG6KZZ, Jason, Almaden, 03/29/2022
+12 kc6rsc@w1xsc.ampr.org       STR-2466P_R_EOC213RR_Practice KC6RSC, Steve, SNY, 2022-03-29
+13 wu6p@w1xsc.ampr.org         U6P-399P_R_EOC213RR_Practice WU6P, Nianfeng, Sunnyvale, 3/29/2022
+14 k6rwy@w4xsc.ampr.org        RWY-2119P_R_EOC213RR_Practice K6RWY, Bob, San Jose, 03/29/22
+15 ke6ppi@w3xsc.ampr.org       PPI-446P_R_MuniStat_Sunnyvale
+16 af6ot@w3xsc.ampr.org        PJB-1214P_R_EOC213RR_Practice AF6OT, Pat, Palo Alto, 2022-03-29
+17 kk6ebl@w1xsc.ampr.org       EBL-1288P_R_EOC213RR_Practice KK6EBL, Klaus, LG/MS 03/28/2022
+18 k6fjc@w3xsc.ampr.org        FJC-664P_R_EOC213RR_Practice K6FJC, Mark, Redwood City, 3/29/2022
+19 n6crc@w1xsc.ampr.org        CRC-219P_R_EOC213RR_Practice N6CRC, Chris, Campbell, 03-29-2022
+20 km6mzm@w3xsc.ampr.org       MZM-423P_R_EOC213RR_Practice, KM6MZM, Daniel, Sunnyvale 03/29/2022
+21 km6iao@w4xsc.ampr.org       IAO-555P_R_EOC213RR_Practice KM6IAO, Paul, Milpitas, 03/29/2022
+22 kg6hi@w1xsc.ampr.org        6HI-1719P_R_EOC213RR_Practice, KG6HI, Jerry, Sunnyvale, 29 Mar 2022
+23 n6ik@w1xsc.ampr.org         6IK-360P_R_EOC213RR_Practice N6IK, Dick, Cupertino, 29 Mar 2022
+24 aa6pm@w1xsc.ampr.org        PJM-608P_R_EOC213RR_Practice AA6PM, Peter, Saratoga, 20220329
+25 aj6hm@w1xsc.ampr.org        6HM-714P_R_EOC213RR_Practice AJ6HM, Steve Saratoga, 03/28/2022
+26 ai6ls@w4xsc.ampr.org        WLC-628P_R_EOC213RR_Practice AI6LS, Bill, San Jose, 03/29/2022
+27 xbeeoc@w2xsc.ampr.org       XBE-1354P_R_EOC213RR_Practice N6SBC, Timothy, San Benito County, 03/29/2022
+28 k6ott@w1xsc.ampr.org        OTT-637P_R_EOC213RR_Practice K6OTT, Andreas, Sunnyvale, 2022-03-29
+
+Key:
+D: Duplicate practice message = same call sign via same BBS/address. (not counted)
+S: beginning of Subject line differs from Standards for Santa Clara County.
+
+Practice Message count: 0 plain text messages.
+                        26 SCCoPIFO messages.
+
+This list created by AG6GX, Brian Tanner
+TueChk001.LrnOpst004.CntInit013.MsgWrap005
+.MsgErr005.Rprt017

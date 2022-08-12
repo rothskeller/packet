@@ -1,0 +1,77 @@
+SCCo ARES/RACES Packet Practice Report For: Monday, April 04, 2022.
+
+----------------------- DAY'S SUMMARY -----------------------
+Totals:
+  All messages:            28 received;  25 (89%) correct. [includes duplicates]
+  Unique "from" addresses: 27 received;  24 (89%) correct. [unique From: addresses]
+  Unique call signs:       25 received;  23 (92%) correct. [25 reported to main net]
+
+Simulated BBS outage: W1XSC
+  0/28 (0%) incorrectly sent FROM this BBS.
+
+Sources:
+  Santa Clara County BBSs: 26
+       0 W1XSC
+       2 W2XSC
+      20 W3XSC
+       4 W4XSC
+
+  Other: 1
+      1 from E-Mail.
+
+
+Most operators who sent a message that is flagged in the list below
+will automatically receive a reply with additional details and suggested
+corrective actions. If your message is flagged, please retrieve the detailed
+reply message from the BBS, email provider, or other service you used to
+submit the weekly packet practice message before requesting assistance.
+
+----------------------- DAY'S DETAILS -----------------------
+
+##     FROM                                          SUBJECT
+_1 km6ams@w3xsc.ampr.org       AMS-499P_R_MuniStat_Los Altos
+_2 w6bg@w4xsc.ampr.org         6BG-718P_I_MuniStat_Cupertino
+_3 kk6ekn@w3xsc.ampr.org       EKN-566P_I_MuniStat_Mountain View
+     ^^^ Duplicate check-in
+_4 kk6fmq@w3xsc.ampr.org       FMQ-641P_R_MuniStat_Palo Alto
+_5 kk6fmq@w4xsc.ampr.org       FMQ-644M_R_MuniStat_Palo Alto_Practice KK6FMQ, 4/5/2022
+     ^^^ Message Subject mismatch with Form contents.
+_6 kz6dm@w3xsc.ampr.org        6DM-466P_I_MuniStat_Mountain View
+_7 kt6jk@w4xsc.ampr.org        6JK-659P_I_MuniStat_Cupertino
+_8 kg6kzz@w2xsc.ampr.org       KZZ-361P_R_MuniStat_San Jose
+_9 ke6ppi@w3xsc.ampr.org       PPI-448P_R_MuniStat_Sunnyvale
+10 kk6ekn@w3xsc.ampr.org       EKN-105M_I_MuniStat_Mountain View
+     ^^^ Packet Form version incorrect.
+11 wu6p@w3xsc.ampr.org         U6P-403P_R_MuniStat_Sunnyvale
+12 kc6rsc@w3xsc.ampr.org       STR-2472P_I_MuniStat_Sunnyvale
+13 ki6pur@w3xsc.ampr.org       PUR-368P_R_MuniStat_Mountain View
+14 km6mzm@w3xsc.ampr.org       MZM-425P_R_MuniStat_Sunnyvale
+15 w6jmk@w3xsc.ampr.org        JMK-334P_I_MuniStat_Los Altos
+16 kn6ghd@w3xsc.ampr.org       GHD-266P_I_MuniStat_Mountain View
+17 k6ott@w4xsc.ampr.org        OTT-640P_I_MuniStat_Sunnyvale
+18 wb6pvu@w2xsc.ampr.org       PVU-237P_R_MuniStat_Sunnyvale
+19 kg6hi@w3xsc.ampr.org        6HI-1723P_R_MuniStat_Sunnyvale
+20 k6lct@w3xsc.ampr.org        LCT-368P_I_MuniStat_Los Altos
+21 kg6yhs@w3xsc.ampr.org       YHS-208P_I_MuniStat_Palo Alto
+22 kk6fpp@w3xsc.ampr.org       FPP-469P_R_MuniStat_Sunnyvale
+23 kk6fpp@email3.scc-ares-races.net FPP-468E_R_MuniStat_Sunnyvale
+24 n9dk@w3xsc.ampr.org         9DK-3257P_R_MuniStat_Mountain View
+25 af6ot@w3xsc.ampr.org        PJB-1215P_R_MuniStat_Palo Alto
+26 wa3aw@w3xsc.ampr.org        3AW-845P_I_MuniStat_Los Altos
+27 k1jh@w3xsc.ampr.org         1JH-382P_R_MuniStat_Los Altos
+28 wu6k@w3xsc.ampr.org         U6K-342P_U/I_OAMuniStat_Mountain View_Practice WU6K, Jim, Mountain View 20220404
+     ^^^ Packet Form version incorrect.
+
+Key:
+D: Duplicate practice message = same call sign via same BBS/address. (not counted)
+P: incorrect version of SCCoPIFO; Correct version is 2.17
+P: incorrect version of PACF; Correct version is None
+M: Message Subject mismatch with Form contents.
+
+Practice Message count: 0 plain text messages.
+                        26 SCCoPIFO messages.
+                        1 PACF messages.
+
+This list created by N9DK, Dave
+MonChk002.LrnOpst004.CntInit013.MsgWrap005
+.MsgErr005.Rprt017

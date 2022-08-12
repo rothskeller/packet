@@ -1,0 +1,91 @@
+SCCo ARES/RACES Packet Practice Report For: Monday, August 01, 2022.
+
+----------------------- DAY'S SUMMARY -----------------------
+Totals:
+  All messages:            33 received;  23 (70%) correct. [includes duplicates]
+  Unique "from" addresses: 30 received;  20 (67%) correct. [unique From: addresses]
+  Unique call signs:       27 received;  18 (67%) correct. [27 reported to main net]
+
+Simulated BBS outage: W1XSC
+  0/33 (0%) incorrectly sent FROM this BBS.
+
+Sources:
+  Santa Clara County BBSs: 27
+       0 W1XSC
+       3 W2XSC
+      18 W3XSC
+       6 W4XSC
+
+  Other: 3
+      1 from WINLINK.ORG.
+      1 from BBS Network.
+      1 from E-Mail.
+
+
+Most operators who sent a message that is flagged in the list below
+will automatically receive a reply with additional details and suggested
+corrective actions. If your message is flagged, please retrieve the detailed
+reply message from the BBS, email provider, or other service you used to
+submit the weekly packet practice message before requesting assistance.
+
+----------------------- DAY'S DETAILS -----------------------
+
+##     FROM                                   SUBJECT
+_1 wa1iam@w4xsc.ampr.org       IAM-792P_R_MuniStat_Mountain View
+     ^^^ Duplicate check-in
+_2 km6i@w3xsc.ampr.org         M6I-509P_R_MuniStat_Mountain View
+     ^^^ Duplicate check-in
+_3 kt6jk@w4xsc.ampr.org        6JK-733P_I_JurisStat_Cupertino
+     ^^^ Duplicate check-in
+_4 w6bg@w4xsc.ampr.org         6BG-1004P_I_JurisStat_Cupertino
+_5 ke6ppi@w3xsc.ampr.org       PPI-576P_R_JurisStat_Sunnyvale
+_6 kz6dm@w3xsc.ampr.org        6DM-575P_I_JurisStat_Mountain View
+_7 km6ams@w3xsc.ampr.org       AMS-525P_R_EOC213RR_Practice KM6AMS Fred Los Altos 7/31/22
+_8 kg6tmi@w3xsc.ampr.org       TMI-192P_R_JurisStat_Palo Alto
+_9 n6tae@w4xsc.ampr.org        TAE-434P_P_MuniStat_Cupertino
+     ^^^ Message Subject mismatch with Form contents.
+10 kk6fmq@w3xsc.ampr.org       FMQ-210P_R_JurisStat_Palo Alto
+11 kk6fmq@w4xsc.ampr.org       FMQ531M_R_JurisStat_Palo Alto
+     ^^^ Subject line format issue(Missing: hyphen)
+12 kk6ekn@w3xsc.ampr.org       EKN-688P_I_JurisStat_Mountain View
+13 kg6kzz@n0ary.#nca.ca.usa.noam KZZ-512P_I_JurisStat_San Jose
+14 ai6sl@w3xsc.ampr.org        6SL-900P_R_JurisStat_Sunnyvale
+15 wa1iam@w4xsc.ampr.org       IAM-792P_R_MuniStat_Mountain View
+     ^^^ Message Subject mismatch with Form contents.
+16 ag6gx@w4xsc.ampr.org        6GX-1151P_I_JurisStat_Cupertino
+17 wu6p@w3xsc.ampr.org         U6P-476P_R_MuniStat_Sunnyvale
+     ^^^ Message Subject mismatch with Form contents.
+18 kc6rsc@w3xsc.ampr.org       STR-2806P_I_MuniStat_Sunnyvale
+     ^^^ Message Subject mismatch with Form contents.
+19 kg6kzz@w2xsc.ampr.org       KZZ-513P_R_JurisStat_San Jose
+20 KG6KZZ@winlink.org          KZZ-520P_R_JurisStat_San Jose
+21 ki6pur@w3xsc.ampr.org       PUR-122P_R_JurisStat_Mountain View
+22 w6vmw@w3xsc.ampr.org        VMW-128P_R_MuniStat_Palo Alto
+     ^^^ Message Subject mismatch with Form contents.
+23 kg6hi@w3xsc.ampr.org        6HI-1789P_I_JurisStat_Sunnyvale
+24 km6mzm@w2xsc.ampr.org       MZM-514P_R_MuniStat_Sunnyvale
+     ^^^ Message Subject mismatch with Form contents.
+25 w6jmk@w3xsc.ampr.org        JMK-107P_R_JurisStat_Los Altos
+26 km6i@w3xsc.ampr.org         M6I-509P_R_MuniStat_Mountain View
+     ^^^ Message Subject mismatch with Form contents.
+27 k6ott@w2xsc.ampr.org        OTT-782P_I_JurisStat_Sunnyvale
+28 n9dk@w3xsc.ampr.org         9DK-3623P_R_MuniStat_Mountain View
+     ^^^ Message Subject mismatch with Form contents.
+29 kj6gbg@w3xsc.ampr.org       GBG-1291P_I_MuniStat_Palo Alto
+     ^^^ Message Subject mismatch with Form contents.
+30 kn6ghd@w3xsc.ampr.org       GHD-299P_I_JurisStat_Mountain View
+31 kt6jk@w4xsc.ampr.org        6JK-733P_I_JurisStat_Cupertino
+32 kk6fpp@w3xsc.ampr.org       FPP-231P_I_JurisStat_Practice KK6FPP, Thomas, Sunnyvale, 20220801
+33 kk6fpp@email3.scc-ares-races.net FPP-232E_I_JurisStat_Practice KK6FPP, Thomas, Sunnyvale, 20220801
+
+Key:
+D: Duplicate practice message = same call sign via same BBS/address. (not counted)
+S: beginning of Subject line differs from Standards for Santa Clara County.
+M: Message Subject mismatch with Form contents.
+
+Practice Message count: 0 plain text messages.
+                        30 SCCoPIFO messages.
+
+This list created by KK6FPP, Thomas Leibold
+MonChk002.LrnOpst004.CntInit013.MsgWrap005
+.MsgErr005.Rprt017
