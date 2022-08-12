@@ -47,5 +47,4 @@ var ProbMessageTypeWrong = &Problem{
 			return article + " " + english.Conjoin(allowed, "or")
 		},
 	},
-	references: refWeeklyPractice,
 }

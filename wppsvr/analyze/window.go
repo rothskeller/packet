@@ -19,7 +19,6 @@ var ProbMessageTooEarly = &Problem{
 			return a.session.Start.Format("2006-01-02 at 15:04")
 		},
 	},
-	references: refWeeklyPractice,
 }
 
 // ProbMessageTooLate is raised when
@@ -35,7 +34,6 @@ var ProbMessageTooLate = &Problem{
 			return a.subjectDate.Format("January 2")
 		},
 	},
-	references: refWeeklyPractice,
 }
 
 // ProbSessionDate is raised when
@@ -55,5 +53,4 @@ var ProbSessionDate = &Problem{
 			return a.subjectDate.Format("January 2")
 		},
 	},
-	references: refWeeklyPractice,
 }

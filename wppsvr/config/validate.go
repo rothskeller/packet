@@ -228,6 +228,14 @@ func (c *Config) Validate(knownProbs map[string]map[string]struct{}, knownVars m
 					valid = false
 				}
 			}
+			if c.References != nil {
+				for _, word := range strings.Fields(problem.References) {
+					if c.References[word] == "" {
+						log.Printf("ERROR: config.problems[%q].references contains %q, but config.references does not", code, word)
+						valid = false
+					}
+				}
+			}
 		}
 		for code := range knownProbs {
 			if _, ok := c.Problems[code]; !ok {
@@ -235,6 +243,15 @@ func (c *Config) Validate(knownProbs map[string]map[string]struct{}, knownVars m
 				valid = false
 			}
 		}
+	}
+
+	// Verify the presence of references, especially the required one.
+	if c.References == nil {
+		log.Printf("ERROR: config.references is not specified")
+		valid = false
+	} else if c.References["packetGroup"] == "" {
+		log.Printf("ERROR: config.references[\"packetGroup\"] is not specified")
+		valid = false
 	}
 
 	// Verify the jurisdiction abbreviations and fill out the map.

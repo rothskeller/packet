@@ -24,6 +24,7 @@ type Config struct {
 	Sessions        map[string]*SessionConfig `yaml:"sessions"`
 	MinimumVersions map[string]string         `yaml:"minimumVersions"`
 	Problems        map[string]*ProblemConfig `yaml:"problems"`
+	References      map[string]string         `yaml:"references"`
 	Jurisdictions   map[string]string         `yaml:"jurisdictions"`
 	FormRouting     map[string]*FormRouting   `yaml:"formRouting"`
 	ListenAddr      string                    `yaml:"listenAddr"`
@@ -41,10 +42,11 @@ type FormRouting struct {
 
 // A ProblemConfig describes how a particular problem is handled.
 type ProblemConfig struct {
-	Label     string            `yaml:"label"`
-	Actions   string            `yaml:"actions"`
-	Response  string            `yaml:"response"`
-	Responses map[string]string `yaml:"responses"`
+	Label      string            `yaml:"label"`
+	Actions    string            `yaml:"actions"`
+	Response   string            `yaml:"response"`
+	Responses  map[string]string `yaml:"responses"`
+	References string            `yaml:"references"`
 
 	ActionFlags Action `yaml:"-"`
 }

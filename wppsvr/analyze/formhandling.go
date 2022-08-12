@@ -59,5 +59,4 @@ var ProbFormHandlingOrder = &Problem{
 			return expectstr
 		},
 	},
-	references: refFormRouting,
 }

@@ -25,9 +25,6 @@ type Problem struct {
 	// whether this problem exists with the message, and if so, which
 	// response message should be used.
 	detect func(*Analysis) (bool, string)
-	// references is a (possibly empty) bitmask of references that should be
-	// mentioned in the response message.
-	references reference
 }
 
 type variableMap map[string]func(*Analysis) string

@@ -44,5 +44,4 @@ var ProbReadReceipt = &Problem{
 		_, ok := a.xsc.(*readrcpt.ReadReceipt)
 		return ok, ""
 	},
-	references: refOutpostConfig,
 }

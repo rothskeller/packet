@@ -37,7 +37,6 @@ var ProbMsgNumFormat = &Problem{
 		// reported elsewhere as a bad subject line.
 		return false, ""
 	},
-	references: refOutpostConfig,
 }
 
 var fccCallSignRE = regexp.MustCompile(`^[AKNW][A-Z]?[0-9][A-Z]{1,3}$`)
@@ -75,5 +74,4 @@ var ProbMsgNumPrefix = &Problem{
 			return a.fromCallSign[len(a.fromCallSign)-3:]
 		},
 	},
-	references: refSubjectLine,
 }

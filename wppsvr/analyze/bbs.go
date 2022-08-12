@@ -19,7 +19,6 @@ var ProbFromBBSDown = &Problem{
 		}
 		return false, ""
 	},
-	references: refWeeklyPractice,
 }
 
 // ProbToBBSDown is raised when a message is sent to a BBS that is simulated
@@ -35,7 +34,6 @@ var ProbToBBSDown = &Problem{
 		}
 		return false, ""
 	},
-	references: refWeeklyPractice,
 }
 
 // ProbToBBS is raised when a message is sent to a BBS that is not a correct BBS
@@ -51,5 +49,4 @@ var ProbToBBS = &Problem{
 		}
 		return true, ""
 	},
-	references: refWeeklyPractice,
 }

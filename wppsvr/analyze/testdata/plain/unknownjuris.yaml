@@ -34,4 +34,5 @@ responses:
     subject: TUE-102P_R_Unknown jurisdiction
     bodyREs:
       - jurisdiction "Nowhere"
+      - list of the known
       - Weekly SPECS/SVECS Packet Practice

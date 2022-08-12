@@ -57,7 +57,6 @@ var ProbHandlingOrderCode = &Problem{
 			return xscmsg.ParseSubject(a.msg.Header.Get("Subject")).HandlingOrderCode
 		},
 	},
-	references: refSubjectLine,
 }
 
 // ProbSubjectFormat is raised when the subject line of the message does not
@@ -86,7 +85,6 @@ var ProbSubjectFormat = &Problem{
 		}
 		return false, ""
 	},
-	references: refWeeklyPractice | refSubjectLine,
 }
 
 // ProbSubjectHasSeverity is raised when the subject line of the message
@@ -106,5 +104,4 @@ var ProbSubjectHasSeverity = &Problem{
 			return xscmsg.ParseSubject(a.msg.Header.Get("Subject")).SeverityCode
 		},
 	},
-	references: refSubjectLine,
 }

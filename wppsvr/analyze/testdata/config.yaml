@@ -155,6 +155,7 @@ problems:
       pos: |
         This message form is addressed to ICS Position "{ACTUALPOSN}".
         {MSGTYPE}s should be addressed to ICS Position {EXPECTPOSNS}.
+    references: formRouting
   FormHandlingOrder:
     label: incorrect handling order for form
     actions: report error
@@ -162,6 +163,7 @@ problems:
       This message has handling order {ACTUALHO}.  According to the SCCo
       ARES/RACES Recommended Form Routing document, it should have handling
       order {EXPECTHO}.
+    references: formRouting
   FormInvalid:
     label: invalid form contents
     actions: report error
@@ -194,6 +196,7 @@ problems:
       This message was sent from {FROMBBS}, which has a simulated outage for
       {SESSIONNAME} on {SESSIONDATE}.  Practice messages should not be sent from
       BBSes that have a simulated outage.
+    references: weeklyPractice
   HandlingOrderCode:
     label: unknown handling order code
     actions: report error
@@ -201,6 +204,7 @@ problems:
       The Subject line of this message contains an invalid Handling Order code
       ({HANDLING}). The valid codes are "I" for Immediate, "P" for Priority, and
       "R" for Routine.
+    references: subjectLine
   MessageCorrupt:
     label: message could not be parsed
     actions: report dontcount
@@ -236,18 +240,21 @@ problems:
     response: |
       This message arrived at {TOBBS} on {MSGDATE}.  However, practice messages
       for {SESSIONNAME} aren't accepted until {SESSIONSTART}.
+    references: weeklyPractice
   MessageTooLate:
     label: message after end of practice session
     actions: report dontcount
     response: |
       This message arrived at {TOBBS} on {MSGDATE}.  That was too late to be
       counted for the {SESSIONNAME} on {SUBJECTDATE}.
+    references: weeklyPractice
   MessageTypeWrong:
     label: incorrect message type
     actions: report error
     response: |
       This message is {AMSGTYPE}.  For the {SESSIONNAME} on {SESSIONDATE},
       {AEXPECTTYPE} is expected.
+    references: weeklyPractice
   MsgNumFormat:
     label: incorrect message number format
     actions: report error
@@ -261,6 +268,7 @@ problems:
       All letters should be upper case.  In Outpost, the format of the message
       number is set in the Message Settings dialog, which should be configured
       according to county standards.
+    references: outpostConfig subjectLine
   MsgNumPrefix:
     label: incorrect message number prefix
     actions: report
@@ -268,6 +276,7 @@ problems:
       The message number of this message has the prefix "{ACTUALPFX}".  The
       prefix should be the last three characters of your call sign,
       "{EXPECTPFX}".
+    references: subjectLine
   MultipleMessagesFromAddress:
     label: multiple messages from this address
     actions: report
@@ -309,6 +318,7 @@ problems:
         "Practice" followed by four comma-separated fields:
             Practice CallSign, FirstName, Jurisdiction, NetDate
         NetDate should be in the form MM/DD/YYYY.
+    references: weeklyPractice
   ReadReceipt:
     label: unexpected READ receipt message
     actions: report dontcount
@@ -318,6 +328,7 @@ problems:
       setting turned on.  The SCCo-standard Outpost configuration specifies that
       this setting should be turned off.  You can find it on the Receipts tab of
       the Message Settings dialog in Outpost.
+    references: outpostConfig
   SessionDate:
     label: incorrect net date in subject
     actions: report
@@ -325,6 +336,7 @@ problems:
       This message is being counted for {SESSIONNAME} on {SESSIONDATE}, but the
       subject line says it's intended for a net on {SUBJECTDATE}.  This may
       indicate that the message was sent to the wrong net.
+    references: weeklyPractice
   SubjectFormat:
     label: incorrect subject line format
     actions: report error
@@ -351,6 +363,7 @@ problems:
             (msgnum) |            |    (name)   (city)        (net date)
               (handling order)  (call sign)
         Note that there is no underline after the word "Practice".
+    references: subjectLine weeklyPractice
   SubjectHasSeverity:
     label: severity on subject line
     actions: report error
@@ -359,6 +372,7 @@ problems:
       Handling Order code ("_{SEVERITY}/{HANDLING}_").  This is an outdated
       Subject line style.  Current SCCo standards include only the Handling
       Order code on the Subject line ("_{HANDLING}_").
+    references: subjectLine
   ToBBS:
     label: message to incorrect BBS
     actions: report dontcount
@@ -366,6 +380,7 @@ problems:
       This message was sent to {TOCALLSIGN} at {TOBBS}.  Practice messages for
       {SESSIONNAME} on {SESSIONDATE} must be sent to {TOCALLSIGN} at
       {SESSIONBBSES}.
+    references: weeklyPractice
   ToBBSDown:
     label: message to incorrect BBS (simulated outage)
     actions: report dontcount
@@ -373,12 +388,51 @@ problems:
       This message was sent to {TOCALLSIGN} at {TOBBS}, but {TOBBS} has a
       simulated outage for {SESSIONNAME} on {SESSIONDATE}.  Practice messages
       for this session must be sent to {TOCALLSIGN} at {SESSIONBBSES}.
+    references: weeklyPractice
   UnknownJurisdiction:
     label: unknown jurisdiction
     actions: report
     response: |
       The jurisdiction "{JURISDICTION}" is not recognized.  Please use one of
       the recognized jurisdiction names or abbreviations.
+    references: bbsList weeklyPractice
+
+# This section defines the text for each of the references that can be mentioned
+# in a problem response.  Note that the last one, packetGroup, is mentioned in
+# every problem response.
+references:
+  bbsList: |
+    * The "County Packet Frequency List and BBS Info" page on the county
+      ARES/RACES website gives a list of the known jurisdiction names and their
+      abbreviations.  It is available at
+      https://www.scc-ares-races.org/freqs/packet/freqs.html#assignments
+  formRouting: |
+    * The "SCCo ARES/RACES Recommended Form Routing" document gives
+      recommendations for, among other things, what handling orders should be
+      used for different types of forms, and what positions and locations they
+      should be sent to.  It is available from the "Go Kit Forms" page at
+      https://www.scc-ares-races.org/operations/go-kit-forms.html
+  outpostConfig: |
+    * The "Standard Outpost Configuration Instructions" document describes how
+      to configure the Outpost messaging software to send messages following
+      county standards.  It is available from the "Packet BBS Service" page at
+      https://www.scc-ares-races.org/data/packet/index.html
+  subjectLine: |
+    * The "Standard Packet Message Subject Line" document describes how to
+      compose the subject line of a packet message following county standards.
+      It is available from the "Packet BBS Service" page at
+      https://www.scc-ares-races.org/data/packet/index.html
+  weeklyPractice: |
+    * The "Weekly SPECS/SVECS Packet Practice" page on the county ARES/RACES
+      website gives details of the packet practice exercise, including the net
+      practice schedules, the schedule of what type of message to send, the
+      schedule of simulated outages of BBS systems, and the format of the subject
+      line for practice messages.  It is available at
+      https://www.scc-ares-races.org/data/packet/weekly-packet-practice.html
+  packetGroup: |
+    * If you need assistance, you can request it in the packet discussion group.
+      To sign up for this group, see the Discussion Groups page at
+      https://www.scc-ares-races.org/discuss-groups.html
 
 # This section lists the known jurisdiction names and their abbreviations.
 jurisdictions:

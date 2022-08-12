@@ -71,7 +71,8 @@ func (a *Analysis) responseMessage() (subject, body string) {
 		rbody      strings.Builder
 		wrapper    *english.Wrapper
 		problems   = config.Get().Problems
-		references = refPacketGroup
+		reftext    = config.Get().References
+		references = map[string]bool{}
 	)
 	// Count the number of problems to include in the message, and note
 	// whether any of them prevent the message from counting.  We need that
@@ -81,10 +82,12 @@ func (a *Analysis) responseMessage() (subject, body string) {
 		if pdef.ActionFlags&config.ActionRespond != 0 {
 			count++
 			subject = pdef.Label
-			references |= p.references
 		}
 		if pdef.ActionFlags&config.ActionDontCount != 0 {
 			invalid = true
+		}
+		for _, ref := range strings.Fields(pdef.References) {
+			references[ref] = true
 		}
 	}
 	switch count {
@@ -120,14 +123,20 @@ has the following issue%s.%s
 		}
 	}
 	// Add the references.
-	wrapper.WriteString("\nFor more information:")
-	for _, r := range allReferences {
-		if references&r != 0 {
-			wrapper.WriteString(referenceText[r])
+	wrapper.WriteString("\nFor more information:\n")
+	for ref := range references {
+		if ref != "packetGroup" { // save it for last
+			writeReference(wrapper, reftext[ref])
 		}
 	}
+	writeReference(wrapper, reftext["packetGroup"])
 	wrapper.Close()
 	return subject, rbody.String()
+}
+func writeReference(wrapper *english.Wrapper, reftext string) {
+	for _, line := range strings.Split(strings.TrimSpace(reftext), "\n") {
+		wrapper.WriteString("  " + line + "\n")
+	}
 }
 
 var variableRE = regexp.MustCompile(`\{([^}]*)\}`)

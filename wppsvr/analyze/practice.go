@@ -90,7 +90,6 @@ var ProbPracticeSubjectFormat = &Problem{
 			}
 		},
 	},
-	references: refWeeklyPractice,
 }
 
 // ProbUnknownJurisdiction is raised when the provided jurisdiction is not one
@@ -106,5 +105,4 @@ var ProbUnknownJurisdiction = &Problem{
 	Variables: variableMap{
 		"JURISDICTION": func(a *Analysis) string { return a.jurisdiction },
 	},
-	references: refWeeklyPractice,
 }

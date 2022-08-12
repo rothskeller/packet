@@ -60,5 +60,4 @@ var ProbFormDestination = &Problem{
 			return english.Conjoin(positions, "or")
 		},
 	},
-	references: refFormRouting,
 }
