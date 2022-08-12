@@ -10,10 +10,10 @@ import (
 )
 
 var fakeConfig = config.Config{
-	ProblemActionFlags: map[string]config.Action{
-		"ToBBSDown":                   config.ActionDontCount | config.ActionReport,
-		"SubjectFormat":               config.ActionError | config.ActionReport,
-		"MultipleMessagesFromAddress": config.ActionReport,
+	Problems: map[string]*config.ProblemConfig{
+		"ToBBSDown":                   {ActionFlags: config.ActionDontCount | config.ActionReport},
+		"SubjectFormat":               {ActionFlags: config.ActionError | config.ActionReport},
+		"MultipleMessagesFromAddress": {ActionFlags: config.ActionReport},
 	},
 }
 
@@ -65,6 +65,8 @@ func (fakeStore) GetSessionMessages(sessionID int) []*store.Message {
 				FromCallSign: "KC6RSC",
 				FromBBS:      "W1XSC",
 				Subject:      "STR-100P_I_MuniStat_Sunnyvale",
+				Jurisdiction: "SNY",
+				MessageType:  "plain",
 				Problems:     nil,
 			},
 			{
@@ -72,6 +74,8 @@ func (fakeStore) GetSessionMessages(sessionID int) []*store.Message {
 				FromCallSign: "KC6RSC",
 				FromBBS:      "W1XSC",
 				Subject:      "STR-100P_I_MuniStat_Sunnyvale",
+				Jurisdiction: "SNY",
+				MessageType:  "plain",
 				Problems:     nil,
 			},
 			{
@@ -79,6 +83,8 @@ func (fakeStore) GetSessionMessages(sessionID int) []*store.Message {
 				FromCallSign: "AA6BT",
 				FromBBS:      "W3XSC",
 				Subject:      "BLAH",
+				Jurisdiction: "SJC",
+				MessageType:  "plain",
 				Problems:     []string{"ToBBSDown", "SubjectFormat"},
 				Actions:      config.ActionReport | config.ActionError,
 			},
@@ -99,29 +105,30 @@ func (fakeStore) GetSessions(start, end time.Time) []*store.Session {
 func (fakeStore) UpdateSession(*store.Session) { panic("not implemented") }
 func (fakeStore) NextMessageID(string) string  { panic("not implemented") }
 
-const expected = `====  SCCo ARES/RACES Packet Practice Report  ====
-==== for SVECS Net on Tuesday, April 19, 2022 ====
+const expected = `--------------- SCCo ARES/RACES Packet Practice Report ----------------
+                for SVECS Net on Tuesday, April 19, 2022
 
-This practice session expected an OA jurisdiction status form or plain text
-message sent to PKTTUE at W2XSC, between 00:00 on Wednesday, April 13 and
-20:00 on Tuesday, April 19, 2022.  W3XSC was simulated "down" for this
-practice session.
+                  2 unique call signs (3 for the week)
 
-Total messages:     3
-Unique addresses:   2
-Correct messages:   1  (50%)
-Unique call signs:  2  [report this count to the net]
-  for the week:     3
-Messages from:
-  W1XSC:            1
-  W3XSC:            1  (simulated down)
 
----- The following messages were counted in this report: ----
-aa6bt@w3xsc.ampr.org           BLAH
-  ^ message to incorrect BBS (simulated down)
-  ^ incorrect subject line format
-kc6rsc@w1xsc.ampr.org          STR-100P_I_MuniStat_Sunnyvale
-  ^ multiple messages from this address
+EXPECTATIONS------------------------------      RESULTS-----
+Message type:  OA municipal status form or      OK         1
+               plain text message               ERROR      1
+Sent to:       PKTTUE at W2XSC                  Duplicate  1
+Sent between:  Wed 2022-04-13 00:00 and
+               Tue 2022-04-19 20:00
+Not sent from: W3XSC
+
+SOURCES-----------      JURISDICTIONS      TYPES---
+W1XSC   1               SJC  1             plain  2
+W3XSC*  1               SNY  1
+* simulated outage
+
+MESSAGES----------------------------------------------------------------
+AA6BT   W3XSC   SJC  ERROR: multiple issues
+KC6RSC  W1XSC*  SNY  OK
+* multiple messages from this address; only the last one counts
+
 
 This report was generated on Tuesday, April 19, 2022 at 20:00 by wppsvr.
 `

@@ -1,57 +1,68 @@
 package analyze
 
 import (
-	"fmt"
-
 	"github.com/rothskeller/packet/pktmsg"
 	"github.com/rothskeller/packet/wppsvr/config"
 	"github.com/rothskeller/packet/xscmsg"
 )
 
-// Problem codes
-const (
-	ProblemPIFOVersion = "PIFOVersion"
-	ProblemFormVersion = "FormVersion"
-)
-
 func init() {
-	ProblemLabel[ProblemPIFOVersion] = "PackItForms version out of date"
-	ProblemLabel[ProblemFormVersion] = "form version out of date"
+	Problems[ProbPIFOVersion.Code] = ProbPIFOVersion
+	Problems[ProbFormVersion.Code] = ProbFormVersion
 }
 
-// checkFormVersion makes sure that the form embedded in the message (if any)
-// used a current version of the form template.
-func (a *Analysis) checkFormVersion() {
-	var form *pktmsg.Form
+type form interface {
+	Form() *pktmsg.Form
+}
 
-	if xsc, ok := a.xsc.(interface{ Form() *pktmsg.Form }); ok {
-		form = xsc.Form()
-	} else {
-		return
-	}
-	// Check the version of the PackItForms encoding.
-	minimums := config.Get().MinimumVersions
-	if xscmsg.OlderVersion(form.PIFOVersion, minimums["PackItForms"]) {
-		a.problems = append(a.problems, &problem{
-			code: ProblemPIFOVersion,
-			response: fmt.Sprintf(`
-This message used version %s of PackItForms to encode the form, but that
-version is not current.  Please use PackItForms version %s or newer to encode
-messages containing forms.
-`, form.PIFOVersion, minimums[config.PackItForms]),
-		})
-	}
-	// Check the version of the specific form type.
-	if min := minimums[a.xsc.TypeTag()]; min != "" {
-		if xscmsg.OlderVersion(form.FormVersion, min) {
-			a.problems = append(a.problems, &problem{
-				code: ProblemFormVersion,
-				response: fmt.Sprintf(`
-This message contains version %s of the %s, but that version is not current.
-Please use version %s or newer of the form.  (You can get the newer form by
-updating your PackItForms installation.)
-`, form.FormVersion, a.xsc.TypeName(), min),
-			})
+// ProbPIFOVersion is raised when the message contains a PackItForms form whose
+// PackItForms version is too old.
+var ProbPIFOVersion = &Problem{
+	Code:  "PIFOVersion",
+	Label: "PackItForms version out of date",
+	after: []*Problem{ProbDeliveryReceipt}, // sets a.xsc
+	ifnot: []*Problem{ProbBounceMessage, ProbDeliveryReceipt, ProbReadReceipt},
+	detect: func(a *Analysis) (bool, string) {
+		var f *pktmsg.Form
+		if xsc, ok := a.xsc.(form); ok {
+			f = xsc.Form()
+			return xscmsg.OlderVersion(f.PIFOVersion, config.Get().MinimumVersions["PackItForms"]), ""
 		}
-	}
+		return false, ""
+	},
+	Variables: variableMap{
+		"ACTUALVER": func(a *Analysis) string {
+			return a.xsc.(form).Form().PIFOVersion
+		},
+		"EXPECTVER": func(a *Analysis) string {
+			return config.Get().MinimumVersions["PackItForms"]
+		},
+	},
+}
+
+// ProbFormVersion is raised when the message contains a form whose version is
+// too old.
+var ProbFormVersion = &Problem{
+	Code:  "FormVersion",
+	Label: "form version out of date",
+	after: []*Problem{ProbDeliveryReceipt}, // sets a.xsc
+	ifnot: []*Problem{ProbBounceMessage, ProbDeliveryReceipt, ProbReadReceipt},
+	detect: func(a *Analysis) (bool, string) {
+		var f *pktmsg.Form
+		if xsc, ok := a.xsc.(form); ok {
+			f = xsc.Form()
+			if min := config.Get().MinimumVersions[a.xsc.TypeTag()]; min != "" {
+				return xscmsg.OlderVersion(f.FormVersion, min), ""
+			}
+		}
+		return false, ""
+	},
+	Variables: variableMap{
+		"ACTUALVER": func(a *Analysis) string {
+			return a.xsc.(form).Form().FormVersion
+		},
+		"EXPECTVER": func(a *Analysis) string {
+			return config.Get().MinimumVersions[a.xsc.TypeTag()]
+		},
+	},
 }

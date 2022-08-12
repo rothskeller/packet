@@ -1,7 +1,6 @@
 package analyze
 
 import (
-	"fmt"
 	"strings"
 
 	"github.com/rothskeller/packet/pktmsg"
@@ -9,119 +8,107 @@ import (
 	"github.com/rothskeller/packet/xscmsg"
 )
 
-// Problem codes
-const (
-	ProblemFormSubject        = "FormSubject"
-	ProblemHandlingOrderCode  = "HandlingOrderCode"
-	ProblemSubjectFormat      = "SubjectFormat"
-	ProblemSubjectHasSeverity = "SubjectHasSeverity"
-)
-
 func init() {
-	ProblemLabel[ProblemFormSubject] = "message subject doesn't agree with form contents"
-	ProblemLabel[ProblemHandlingOrderCode] = "unknown handling order code"
-	ProblemLabel[ProblemSubjectFormat] = "incorrect subject line format"
-	ProblemLabel[ProblemSubjectHasSeverity] = "severity on subject line"
+	Problems[ProbFormSubject.Code] = ProbFormSubject
+	Problems[ProbHandlingOrderCode.Code] = ProbHandlingOrderCode
+	Problems[ProbSubjectFormat.Code] = ProbSubjectFormat
+	Problems[ProbSubjectHasSeverity.Code] = ProbSubjectHasSeverity
 }
 
-// checkSubjectLine checks for problems with the Subject line of the message.
-// (Specifically, the SCCo-standard parts of it, not the weekly practice parts
-// of it.)
-func (a *Analysis) checkSubjectLine() {
-	// Is the message of a type where the subject line can be derived from
-	// the content (i.e., a known form type)?
-	if es, ok := a.xsc.(interface{ EncodeSubject() string }); ok {
-		// Yes.  But we only want to do so if the form validates.  If it
-		// doesn't, the validation errors are enough and subject errors
-		// would be redundant.
-		if xsc, ok := a.xsc.(interface{ Validate(bool) []string }); ok {
-			if problems := xsc.Validate(true); len(problems) != 0 {
-				return
-			}
+type formWithEncodableSubject interface {
+	EncodeSubject() string
+}
+
+// ProbFormSubject is raised when the subject line of the message does not agree
+// with what the embedded form would generate.
+var ProbFormSubject = &Problem{
+	Code:  "FormSubject",
+	Label: "message subject doesn't agree with form contents",
+	after: []*Problem{ProbDeliveryReceipt}, // sets a.xsc
+	ifnot: []*Problem{ProbFormInvalid, ProbBounceMessage, ProbDeliveryReceipt, ProbReadReceipt},
+	detect: func(a *Analysis) (bool, string) {
+		// Is the message of a type where the subject line can be
+		// derived from the content (i.e., a known form type)?
+		if es, ok := a.xsc.(formWithEncodableSubject); ok {
+			return es.EncodeSubject() != a.msg.Header.Get("Subject"), ""
 		}
-		// What should the subject line be, and what is it?
-		want := es.EncodeSubject()
-		have := a.msg.Header.Get("Subject")
-		if have != want {
-			a.problems = append(a.problems, &problem{
-				code: ProblemFormSubject,
-				response: fmt.Sprintf(`
-This message has
-    Subject: %s
-but, based on the contents of the form, it should have
-    Subject: %s
-PackItForms automatically generates the Subject line from the form contents; it
-should not be overridden manually.
-`, have, want),
-			})
+		return false, ""
+	},
+	Variables: variableMap{
+		"ACTUALSUBJ": func(a *Analysis) string {
+			return a.msg.Header.Get("Subject")
+		},
+		"EXPECTSUBJ": func(a *Analysis) string {
+			return a.xsc.(formWithEncodableSubject).EncodeSubject()
+		},
+	},
+}
+
+// ProbHandlingOrderCode is raised when the subject line of the message contains
+// an unknown handling order code.
+var ProbHandlingOrderCode = &Problem{
+	Code:  "HandlingOrderCode",
+	Label: "unknown handling order code",
+	ifnot: []*Problem{ProbBounceMessage, ProbDeliveryReceipt, ProbReadReceipt},
+	detect: func(a *Analysis) (bool, string) {
+		xscsubj := xscmsg.ParseSubject(a.msg.Header.Get("Subject"))
+		return xscsubj != nil && xscsubj.HandlingOrder == 0, ""
+	},
+	Variables: variableMap{
+		"HANDLING": func(a *Analysis) string {
+			return xscmsg.ParseSubject(a.msg.Header.Get("Subject")).HandlingOrderCode
+		},
+	},
+	references: refSubjectLine,
+}
+
+// ProbSubjectFormat is raised when the subject line of the message does not
+// have the proper format.
+var ProbSubjectFormat = &Problem{
+	Code:  "SubjectFormat",
+	Label: "incorrect subject line format",
+	after: []*Problem{ProbDeliveryReceipt}, // sets a.xsc
+	ifnot: []*Problem{ProbFormSubject, ProbBounceMessage, ProbDeliveryReceipt, ProbReadReceipt},
+	detect: func(a *Analysis) (bool, string) {
+		xscsubj := xscmsg.ParseSubject(a.msg.Header.Get("Subject"))
+		if xscsubj == nil {
+			return true, "parse"
 		}
-		return
-	}
-	// Parse the subject line.  If we're not able to parse it, report that
-	// problem.
-	xscsubj := xscmsg.ParseSubject(a.msg.Header.Get("Subject"))
-	if xscsubj == nil {
-		a.problems = append(a.problems, problemSubjectFormat(""))
-		return
-	}
-	// The message number is checked elsewhere.
-	// Check for a severity code.  There shouldn't be one.
-	if xscsubj.SeverityCode != "" {
-		a.problems = append(a.problems, &problem{
-			code: ProblemSubjectHasSeverity,
-			response: fmt.Sprintf(`
-The Subject line of this message contains a both a Severity code and a
-Handling Order code ("_%s/%s_").  This is an outdated Subject line style.
-Current SCCo standards include only the Handling Order code on the Subject
-line ("_%s_").
-`, xscsubj.SeverityCode, xscsubj.HandlingOrderCode, xscsubj.HandlingOrderCode),
-			references: refSubjectLine,
-		})
-	}
-	// Make sure the handling order code is valid.
-	if xscsubj.HandlingOrder == 0 {
-		a.problems = append(a.problems, &problem{
-			code: ProblemHandlingOrderCode,
-			response: fmt.Sprintf(`
-The Subject line of this message contains an invalid Handling Order code (%s).
-The valid codes are "I" for Immediate, "P" for Priority, and "R" for Routine.
-`, xscsubj.HandlingOrderCode),
-			references: refSubjectLine,
-		})
-	}
-	// If this is a plain text message, there shouldn't be a form name in
-	// the subject line.
-	if _, ok := a.xsc.(*config.PlainTextMessage); ok {
-		if xscsubj.FormTag != "" {
+		if _, ok := a.xsc.(*config.PlainTextMessage); ok && xscsubj.FormTag != "" {
 			// Empirically, 90% of the time this happens because the subject
 			// erroneously has an underscore after the word "Practice", and
 			// so "Practice" got reported as the form name.
 			if strings.EqualFold(xscsubj.FormTag, "Practice") {
-				a.problems = append(a.problems, problemSubjectFormat(`
-Note that there is no underline after the word "Practice".`))
-			} else if pktmsg.IsForm(a.msg.Body) {
-				// It's a corrupt form.  That gets reported
-				// elsewhere, no need to pile on here.
-			} else {
-				a.problems = append(a.problems, problemSubjectFormat(`
-Note that there is no form name between the handling order and the word
-"Practice" for plain text messages.  If this is in fact a form message, it
-is improperly encoded and was not recognized as a form.`))
+				return true, "practice"
 			}
+			if !pktmsg.IsForm(a.msg.Body) {
+				return true, "plainform"
+			}
+			// It's a corrupt form.  That gets reported
+			// elsewhere, no need to pile on here.
 		}
-	}
+		return false, ""
+	},
+	references: refWeeklyPractice | refSubjectLine,
 }
 
-func problemSubjectFormat(note string) *problem {
-	return &problem{
-		code: ProblemSubjectFormat,
-		response: fmt.Sprintf(`
-This message has an incorrect subject line format.  According to SCCo
-standards, the subject should look like
-    AAA-111P_R_Practice A6AAA, Charlie, Nowhereville, 2019-03-16
-    (msgnum) |            |    (name)   (city)        (net date)
-      (handling order)  (call sign)%s
-`, note),
-		references: refWeeklyPractice | refSubjectLine,
-	}
+// ProbSubjectHasSeverity is raised when the subject line of the message
+// contains a severity code.
+var ProbSubjectHasSeverity = &Problem{
+	Code:  "SubjectHasSeverity",
+	Label: "severity on subject line",
+	ifnot: []*Problem{ProbBounceMessage, ProbDeliveryReceipt, ProbReadReceipt},
+	detect: func(a *Analysis) (bool, string) {
+		xscsubj := xscmsg.ParseSubject(a.msg.Header.Get("Subject"))
+		return xscsubj != nil && xscsubj.SeverityCode != "", ""
+	},
+	Variables: variableMap{
+		"HANDLING": func(a *Analysis) string {
+			return xscmsg.ParseSubject(a.msg.Header.Get("Subject")).HandlingOrderCode
+		},
+		"SEVERITY": func(a *Analysis) string {
+			return xscmsg.ParseSubject(a.msg.Header.Get("Subject")).SeverityCode
+		},
+	},
+	references: refSubjectLine,
 }

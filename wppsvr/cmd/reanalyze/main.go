@@ -24,7 +24,7 @@ func main() {
 		messages []*store.Message
 		err      error
 	)
-	if err = config.Read(); err != nil {
+	if err = config.Read(analyze.KnownProblems()); err != nil {
 		log.Fatal(err)
 	}
 	if st, err = store.Open(); err != nil {

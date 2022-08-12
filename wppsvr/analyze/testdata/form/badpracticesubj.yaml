@@ -54,7 +54,7 @@ responses:
       - ^!LMI!TUE-100P!DR!01/11/2022 20:00:01\n
   - localID: TUE-102P
     to: kc6rsc@w1xsc.ampr.org
-    subject: TUE-102P_R_Incorrect Practice subject format
+    subject: TUE-102P_R_Incorrect practice message details
     bodyREs:
       - Facility Name field
       - Weekly SPECS/SVECS Packet Practice

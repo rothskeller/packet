@@ -19,7 +19,6 @@ stored:
   subject: STR-100P_R_Practice_KC6RSC, Steve, SNY, 2022-01-11
   problems:
     - SubjectFormat
-    - PracticeSubjectFormat
   actions: 7
 
 # Messages that should be sent in response:
@@ -31,9 +30,8 @@ responses:
       - ^!LMI!TUE-100P!DR!01/11/2022 20:00:01\n
   - localID: TUE-102P
     to: kc6rsc@w1xsc.ampr.org
-    subject: TUE-102P_R_Issues with packet practice message
+    subject: TUE-102P_R_Incorrect subject line format
     bodyREs:
       - incorrect subject line format
       - no underline after the word "Practice"
-      - four comma-separated fields
       - Standard Packet Message Subject Line

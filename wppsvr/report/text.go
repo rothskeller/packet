@@ -142,7 +142,7 @@ func (r *Report) plainTextStatistics(sb *strings.Builder) {
 		rightAlign(col2)
 		lines = sideBySide(col1, col2, 2)
 		if hasDown {
-			lines = append(lines, `* simulated "down"`)
+			lines = append(lines, `* simulated outage`)
 		}
 		lines = addPlainTextHeading(lines, "SOURCES")
 	}

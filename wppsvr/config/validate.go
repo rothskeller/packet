@@ -15,11 +15,12 @@ var fccCallRE = regexp.MustCompile(`^[AKNW][A-Z]?[0-9][A-Z]{1,3}$`)
 var ax25RE = regexp.MustCompile(`^([AKNW][A-Z]?[0-9][A-Z]{1,3})-(?:[0-9]|1[0-5])$`)
 var tacticalCallRE = regexp.MustCompile(`^[A-Z][A-Z0-9]{0,5}$`)
 var prefixRE = regexp.MustCompile(`^(?:[A-Z]{3}|[A-Z][0-9][A-Z]|[0-9][A-Z]{2})$`)
+var variableRE = regexp.MustCompile(`\{[^}]*\}`)
 
 // Validate checks the configuration to make sure all fields have valid values.
 // If there are any errors, they are logged, and the function returns false.
 // If the configuration is valid, the function returns true.
-func (c *Config) Validate() (valid bool) {
+func (c *Config) Validate(knownProbs map[string]map[string]struct{}, knownVars map[string]struct{}) (valid bool) {
 	var (
 		err          error
 		sawRetrieval = make(map[string]bool)
@@ -173,33 +174,62 @@ func (c *Config) Validate() (valid bool) {
 		}
 	}
 
-	// Parse the problem actions.
-	if c.ProblemActions == nil {
-		log.Printf("ERROR: config.problemActions is not specified")
+	// Parse the problems.
+	if c.Problems == nil {
+		log.Printf("ERROR: config.problems is not specified")
 		valid = false
 	} else {
-		c.ProblemActionFlags = make(map[string]Action, len(c.ProblemActions))
-		for problem, actions := range c.ProblemActions {
-			var flags Action
-
-			for _, word := range strings.Fields(actions) {
+		for code, problem := range c.Problems {
+			probVars, ok := knownProbs[code]
+			if !ok {
+				log.Printf("ERROR: config.problems has entry for unknown problem %q", code)
+				valid = false
+				continue
+			}
+			for _, word := range strings.Fields(problem.Actions) {
 				switch word {
-				case "respond":
-					flags |= ActionRespond
 				case "report":
-					flags |= ActionReport
+					problem.ActionFlags |= ActionReport
 				case "error":
-					flags |= ActionError
+					problem.ActionFlags |= ActionError
 				case "dontcount":
-					flags |= ActionDontCount
+					problem.ActionFlags |= ActionDontCount
 				case "dropmsg":
-					flags |= ActionDropMsg
+					problem.ActionFlags |= ActionDropMsg
 				default:
-					log.Printf("ERROR: config.problemActions[%q] contains %q, which is not recognized", problem, word)
+					log.Printf("ERROR: config.problems[%q].actions contains %q, which is not recognized", code, word)
 					valid = false
 				}
 			}
-			c.ProblemActionFlags[problem] = flags
+			if problem.Response != "" {
+				if problem.Responses == nil {
+					problem.Responses = make(map[string]string)
+				}
+				problem.Responses[""] = problem.Response
+			}
+			if len(problem.Responses) != 0 {
+				problem.ActionFlags |= ActionRespond
+			}
+			for resptag, response := range problem.Responses {
+				for _, variable := range variableRE.FindAllString(response, -1) {
+					if probVars != nil {
+						if _, ok := probVars[variable[1:len(variable)-1]]; ok {
+							continue
+						}
+					}
+					if _, ok := knownVars[variable[1:len(variable)-1]]; ok {
+						continue
+					}
+					log.Printf("ERROR: config.problems[%q].responses[%q] refers to unknown variable %q", code, resptag, variable)
+					valid = false
+				}
+			}
+		}
+		for code := range knownProbs {
+			if _, ok := c.Problems[code]; !ok {
+				log.Printf("ERROR: config.problems has no entry for problem %q", code)
+				valid = false
+			}
 		}
 	}
 

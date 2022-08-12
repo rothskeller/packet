@@ -35,8 +35,8 @@ responses:
   - localID: TUE-102P
     to: kc6rsc@w1xsc.ampr.org
     senderBBS: W2XSC
-    subject: TUE-102P_R_Message to incorrect BBS (simulated down)
+    subject: TUE-102P_R_Message to incorrect BBS (simulated outage)
     bodyREs:
       - will not be counted
-      - W2XSC is simulated down
+      - W2XSC.*simulated outage
       - Weekly SPECS/SVECS Packet Practice

@@ -113,7 +113,7 @@ func (r *Report) htmlStatistics(sb *strings.Builder) {
 		}
 		sb.WriteString(`</div>`)
 		if hasDown {
-			sb.WriteString(`<div>*Simulated "down"</div>`)
+			sb.WriteString(`<div>*Simulated outage</div>`)
 		}
 		sb.WriteString(`</div>`)
 	}

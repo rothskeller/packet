@@ -149,7 +149,7 @@ func generateStatistics(r *Report, session *store.Session, messages []*store.Mes
 		}
 		if m.Actions&config.ActionError != 0 {
 			r.ErrorCount++
-		} else if len(m.Problems) > 1 || (len(m.Problems) == 1 && m.Problems[0] != analyze.ProblemMultipleMessagesFromAddress) {
+		} else if len(m.Problems) > 1 || (len(m.Problems) == 1 && m.Problems[0] != analyze.ProbMultipleMessagesFromAddress.Code) {
 			r.WarningCount++
 		} else {
 			r.OKCount++
@@ -230,7 +230,7 @@ func wasSimulatedDown(session *store.Session, bbs string) bool {
 // generateMessages generates the lists of valid and invalid check-in messages
 // that appear in the report.
 func generateMessages(r *Report, session *store.Session, messages []*store.Message) {
-	var actions = config.Get().ProblemActionFlags
+	var problems = config.Get().Problems
 
 	messages = removeReplaced(messages)
 	for _, m := range messages {
@@ -267,15 +267,15 @@ func generateMessages(r *Report, session *store.Session, messages []*store.Messa
 			rm.Class = "ok"
 		}
 		for _, p := range m.Problems {
-			if p == analyze.ProblemMultipleMessagesFromAddress {
+			if p == analyze.ProbMultipleMessagesFromAddress.Code {
 				rm.Multiple = true
 				continue
 			}
-			if act, ok := actions[p]; ok {
-				if act&config.ActionReport == 0 {
+			if prob, ok := problems[p]; ok {
+				if prob.ActionFlags&config.ActionReport == 0 {
 					continue
 				}
-				p = analyze.ProblemLabel[p]
+				p = analyze.Problems[p].Label
 				if rm.Class == "ok" {
 					rm.Class = "warning"
 				}
@@ -335,8 +335,8 @@ func removeReplaced(messages []*store.Message) (out []*store.Message) {
 			out[outidx] = m
 			addresses[m.FromAddress] = m
 		} else if len(keeper.Problems) == 0 ||
-			keeper.Problems[len(keeper.Problems)-1] != analyze.ProblemMultipleMessagesFromAddress {
-			keeper.Problems = append(keeper.Problems, analyze.ProblemMultipleMessagesFromAddress)
+			keeper.Problems[len(keeper.Problems)-1] != analyze.ProbMultipleMessagesFromAddress.Code {
+			keeper.Problems = append(keeper.Problems, analyze.ProbMultipleMessagesFromAddress.Code)
 		}
 	}
 	return out[outidx:]

@@ -1,101 +1,65 @@
 package analyze
 
 import (
-	"fmt"
 	"strconv"
 
 	"github.com/rothskeller/packet/wppsvr/config"
 	"github.com/rothskeller/packet/wppsvr/english"
 )
 
-// Problem codes
-const (
-	ProblemFormDestination = "FormDestination"
-)
-
 func init() {
-	ProblemLabel[ProblemFormDestination] = "incorrect destination for form"
+	Problems[ProbFormDestination.Code] = ProbFormDestination
 }
 
-// checkFormDestination determines whether the message has the correct
-// destination.
-func (a *Analysis) checkFormDestination() {
-	var (
-		foundPosition bool
-		foundLocation bool
-		havePos       string
-		haveLoc       string
-		want          = config.Get().FormRouting[a.xsc.TypeTag()]
-	)
-	if f, ok := a.xsc.(interface{ Routing() (string, string) }); ok {
-		havePos, haveLoc = f.Routing()
-	} else {
-		return
-	}
-	if len(want.ToICSPosition) == 0 {
-		foundPosition = true
-	} else {
-		for _, wantPos := range want.ToICSPosition {
-			if havePos == wantPos {
-				foundPosition = true
-				break
+type formWithRouting interface{ Routing() (string, string) }
+
+// ProbFormDestination is raised when a form's destination doesn't match the
+// recommended routing.
+var ProbFormDestination = &Problem{
+	Code:  "FormDestination",
+	Label: "incorrect destination for form",
+	after: []*Problem{ProbDeliveryReceipt}, // sets a.xsc
+	ifnot: []*Problem{ProbBounceMessage, ProbDeliveryReceipt, ProbReadReceipt},
+	detect: func(a *Analysis) (bool, string) {
+		want := config.Get().FormRouting[a.xsc.TypeTag()]
+		if want == nil || len(want.ToICSPosition) == 0 && len(want.ToLocation) == 0 {
+			return false, ""
+		}
+		actpos, actloc := a.xsc.(formWithRouting).Routing()
+		if len(want.ToICSPosition) != 0 && !inList(want.ToICSPosition, actpos) {
+			if len(want.ToLocation) != 0 && !inList(want.ToLocation, actloc) {
+				return true, "both"
 			}
+			return true, "pos"
 		}
-	}
-	if len(want.ToLocation) == 0 {
-		foundLocation = true
-	} else {
-		for _, wantLoc := range want.ToLocation {
-			if haveLoc == wantLoc {
-				foundLocation = true
-				break
+		if len(want.ToLocation) != 0 && !inList(want.ToLocation, actloc) {
+			return true, "loc"
+		}
+		return false, ""
+	},
+	Variables: variableMap{
+		"ACTUALLOC": func(a *Analysis) string {
+			_, actloc := a.xsc.(formWithRouting).Routing()
+			return actloc
+		},
+		"ACTUALPOSN": func(a *Analysis) string {
+			actpos, _ := a.xsc.(formWithRouting).Routing()
+			return actpos
+		},
+		"EXPECTLOCS": func(a *Analysis) string {
+			var locations []string
+			for _, loc := range config.Get().FormRouting[a.xsc.TypeTag()].ToLocation {
+				locations = append(locations, strconv.Quote(loc))
 			}
-		}
-	}
-	if !foundPosition && !foundLocation {
-		var positions = make([]string, len(want.ToICSPosition))
-		for i, p := range want.ToICSPosition {
-			positions[i] = strconv.Quote(p)
-		}
-		var locations = make([]string, len(want.ToLocation))
-		for i, p := range want.ToLocation {
-			locations[i] = strconv.Quote(p)
-		}
-		a.problems = append(a.problems, &problem{
-			code: ProblemFormDestination,
-			response: fmt.Sprintf(`
-This message form is addressed to ICS Position %q at Location %q.  %ss
-should be addressed to %s at %s.
-`, havePos, haveLoc, a.xsc.TypeName(), english.Conjoin(positions, "or"), english.Conjoin(locations, "or")),
-			references: refFormRouting,
-		})
-	}
-	if !foundPosition && foundLocation {
-		var positions = make([]string, len(want.ToICSPosition))
-		for i, p := range want.ToICSPosition {
-			positions[i] = strconv.Quote(p)
-		}
-		a.problems = append(a.problems, &problem{
-			code: ProblemFormDestination,
-			response: fmt.Sprintf(`
-This message form is addressed to ICS Position %q.  %ss should be addressed to
-ICS Position %s.
-`, havePos, a.xsc.TypeName(), english.Conjoin(positions, "or")),
-			references: refFormRouting,
-		})
-	}
-	if foundPosition && !foundLocation {
-		var locations = make([]string, len(want.ToLocation))
-		for i, p := range want.ToLocation {
-			locations[i] = strconv.Quote(p)
-		}
-		a.problems = append(a.problems, &problem{
-			code: ProblemFormDestination,
-			response: fmt.Sprintf(`
-This message form is addressed to Location %q.  %ss should be addressed to
-Location %s.
-`, haveLoc, a.xsc.TypeName(), english.Conjoin(locations, "or")),
-			references: refFormRouting,
-		})
-	}
+			return english.Conjoin(locations, "or")
+		},
+		"EXPECTPOSNS": func(a *Analysis) string {
+			var positions []string
+			for _, pos := range config.Get().FormRouting[a.xsc.TypeTag()].ToICSPosition {
+				positions = append(positions, strconv.Quote(pos))
+			}
+			return english.Conjoin(positions, "or")
+		},
+	},
+	references: refFormRouting,
 }

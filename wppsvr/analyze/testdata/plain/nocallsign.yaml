@@ -17,8 +17,8 @@ stored:
   subject: STR-100P_R_Practice
   messageType: plain
   problems:
-    - PracticeSubjectFormat
     - NoCallSign
+    - PracticeSubjectFormat
   actions: 11
 
 # Messages that should be sent in response:

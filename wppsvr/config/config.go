@@ -23,13 +23,11 @@ type Config struct {
 	SessionDefaults *SessionConfig            `yaml:"sessionDefaults"`
 	Sessions        map[string]*SessionConfig `yaml:"sessions"`
 	MinimumVersions map[string]string         `yaml:"minimumVersions"`
-	ProblemActions  map[string]string         `yaml:"problemActions"`
+	Problems        map[string]*ProblemConfig `yaml:"problems"`
 	FormRouting     map[string]*FormRouting   `yaml:"formRouting"`
 	ListenAddr      string                    `yaml:"listenAddr"`
 	CanViewEveryone []string                  `yaml:"canViewEveryone"`
 	CanEditSessions []string                  `yaml:"canEditSessions"`
-
-	ProblemActionFlags map[string]Action `yaml:"-"`
 }
 
 // A FormRouting structure specifies the required form routing for a particular
@@ -38,6 +36,15 @@ type FormRouting struct {
 	HandlingOrder string   `yaml:"HandlingOrder"`
 	ToICSPosition []string `yaml:"ToICSPosition"`
 	ToLocation    []string `yaml:"ToLocation"`
+}
+
+// A ProblemConfig describes how a particular problem is handled.
+type ProblemConfig struct {
+	Actions   string            `yaml:"actions"`
+	Response  string            `yaml:"response"`
+	Responses map[string]string `yaml:"responses"`
+
+	ActionFlags Action `yaml:"-"`
 }
 
 // Action is a flag, or a bitmask of flags, describing the action(s) to take in
@@ -113,7 +120,7 @@ func Get() *Config {
 
 // Read reads the system configuration from the config.yaml file.  If an error
 // occurs, the previous configuration is retained and the error is returned.
-func Read() (err error) {
+func Read(knownProbs map[string]map[string]struct{}, knownVars map[string]struct{}) (err error) {
 	var (
 		newconfig Config
 		configFH  *os.File
@@ -131,7 +138,7 @@ func Read() (err error) {
 		return err
 	}
 	newconfig.applySessionDefaults()
-	if !newconfig.Validate() {
+	if !newconfig.Validate(knownProbs, knownVars) {
 		return errors.New("invalid configuration data")
 	}
 	SetConfig(&newconfig)

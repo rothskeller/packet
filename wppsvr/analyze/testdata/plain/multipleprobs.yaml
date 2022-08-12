@@ -19,8 +19,8 @@ stored:
   messageType: plain
   subject: STR-100P_O/R_Practice KC6RSC Steve SNY 2022-01-11
   problems:
-    - SubjectHasSeverity
     - PracticeSubjectFormat
+    - SubjectHasSeverity
   actions: 7
 
 # Messages that should be sent in response:

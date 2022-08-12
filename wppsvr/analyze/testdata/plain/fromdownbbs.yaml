@@ -31,7 +31,7 @@ responses:
       - ^!LMI!TUE-100P!DR!01/11/2022 20:00:01\n
   - localID: TUE-102P
     to: kc6rsc@w2xsc.ampr.org
-    subject: TUE-102P_R_Message from incorrect BBS (simulated down)
+    subject: TUE-102P_R_Message from incorrect BBS (simulated outage)
     bodyREs:
-      - W2XSC.*simulated down
+      - W2XSC.*simulated outage
       - Weekly SPECS/SVECS Packet Practice

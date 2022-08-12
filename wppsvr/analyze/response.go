@@ -2,7 +2,7 @@ package analyze
 
 import (
 	"fmt"
-	"log"
+	"regexp"
 	"strings"
 	"time"
 
@@ -70,23 +70,20 @@ func (a *Analysis) responseMessage() (subject, body string) {
 		invalids   string
 		rbody      strings.Builder
 		wrapper    *english.Wrapper
-		actions    = config.Get().ProblemActionFlags
+		problems   = config.Get().Problems
 		references = refPacketGroup
 	)
 	// Count the number of problems to include in the message, and note
 	// whether any of them prevent the message from counting.  We need that
 	// information for the header of the message.
-	for _, p := range a.problems {
-		action, ok := actions[p.code]
-		if !ok {
-			log.Printf("ERROR: config doesn't specify how to handle %s; ignoring", p.code)
-		}
-		if action&config.ActionRespond != 0 {
+	for p := range a.problems {
+		pdef := problems[p.Code]
+		if pdef.ActionFlags&config.ActionRespond != 0 {
 			count++
-			subject = ProblemLabel[p.code]
+			subject = p.Label
 			references |= p.references
 		}
-		if action&config.ActionDontCount != 0 {
+		if pdef.ActionFlags&config.ActionDontCount != 0 {
 			invalid = true
 		}
 	}
@@ -117,9 +114,9 @@ has the following issue%s.%s
 		a.msg.Header.Get("Date"),
 		counts, invalids)
 	// Add the paragraphs describing each problem.
-	for _, p := range a.problems {
-		if actions[p.code]&config.ActionRespond != 0 {
-			wrapper.WriteString(p.response)
+	for p, rk := range a.problems {
+		if problems[p.Code].ActionFlags&config.ActionRespond != 0 {
+			writeProblemResponse(a, p, problems[p.Code].Responses[rk], wrapper)
 		}
 	}
 	// Add the references.
@@ -131,4 +128,24 @@ has the following issue%s.%s
 	}
 	wrapper.Close()
 	return subject, rbody.String()
+}
+
+var variableRE = regexp.MustCompile(`\{([^}]*)\}`)
+
+func writeProblemResponse(a *Analysis, p *Problem, response string, wrapper *english.Wrapper) {
+	wrapper.WriteString("\n")
+	for {
+		if match := variableRE.FindStringIndex(response); match != nil {
+			wrapper.WriteString(response[:match[0]])
+			if fn, ok := p.Variables[response[match[0]+1:match[1]-1]]; ok && fn != nil {
+				wrapper.WriteString(fn(a))
+			} else {
+				wrapper.WriteString(Variables[response[match[0]+1:match[1]-1]](a))
+			}
+			response = response[match[1]:]
+		} else {
+			wrapper.WriteString(response)
+			return
+		}
+	}
 }

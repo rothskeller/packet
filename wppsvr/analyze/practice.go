@@ -5,7 +5,6 @@ import (
 	"strings"
 	"time"
 
-	"github.com/rothskeller/packet/pktmsg"
 	"github.com/rothskeller/packet/wppsvr/config"
 	"github.com/rothskeller/packet/xscmsg"
 	"github.com/rothskeller/packet/xscmsg/ahfacstat"
@@ -16,13 +15,8 @@ import (
 	"github.com/rothskeller/packet/xscmsg/sheltstat"
 )
 
-// Problem codes
-const (
-	ProblemPracticeSubjectFormat = "PracticeSubjectFormat"
-)
-
 func init() {
-	ProblemLabel[ProblemPracticeSubjectFormat] = "incorrect Practice subject format"
+	Problems[ProbPracticeSubjectFormat.Code] = ProbPracticeSubjectFormat
 }
 
 // practiceRE matches a correctly formatted practice subject.  The subject must
@@ -65,106 +59,6 @@ var dateREs = map[string]*regexp.Regexp{
 	"060102":   regexp.MustCompile(`^\d\d\d\d\d\d$`),
 	"2Jan06":   regexp.MustCompile(`(?i)^\d?\d(?:jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec)\d\d$`),
 	"Jan-2-06": regexp.MustCompile(`(?i)^(?:jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec)-\d?\d-\d\d$`),
-}
-
-// checkPracticeSubject makes sure that the subject starts with the word
-// Practice followed by appropriate data.
-func (a *Analysis) checkPracticeSubject() {
-	// Parse the subject line to get the true subject.
-	xscsubj := xscmsg.ParseSubject(a.msg.Header.Get("Subject"))
-	if xscsubj == nil {
-		return // unparseable subject line reported elsewhere
-	}
-	switch a.xsc.(type) {
-	case *config.PlainTextMessage:
-		if pktmsg.IsForm(a.msg.Body) { // corrupt form
-			return
-		}
-	case *jurisstat.Form:
-		// Jurisdiction status messages do not have a full practice
-		// message subject; they only have the jurisdiction in the
-		// subject.
-		a.jurisdiction = jurisdictionMap[strings.ToUpper(xscsubj.Subject)]
-		return
-	}
-	var match = practiceRE.FindStringSubmatch(xscsubj.Subject)
-	if match == nil {
-		switch a.xsc.(type) {
-		case *config.PlainTextMessage:
-			a.problems = append(a.problems, &problem{
-				code: ProblemPracticeSubjectFormat,
-				response: `
-The Subject of this message does not have the correct format.  After the
-message number, handling order, and form type, it should have the word
-"Practice" followed by four comma-separated fields:
-    Practice CallSign, FirstName, Jurisdiction, Date
-`,
-				references: refWeeklyPractice,
-			})
-		case *ics213.Form:
-			a.problems = append(a.problems, &problem{
-				code: ProblemPracticeSubjectFormat,
-				response: `
-The Subject field of this form does not have the correct format.  It should have
-the word "Practice" followed by four comma-separated fields:
-    Practice CallSign, FirstName, Jurisdiction, Date
-`,
-				references: refWeeklyPractice,
-			})
-		case *eoc213rr.Form:
-			a.problems = append(a.problems, &problem{
-				code: ProblemPracticeSubjectFormat,
-				response: `
-The Incident Name field of this form does not have the correct format.  It
-should have the word "Practice" followed by four comma-separated fields:
-    Practice CallSign, FirstName, Jurisdiction, Date
-`,
-				references: refWeeklyPractice,
-			})
-		case *sheltstat.Form:
-			a.problems = append(a.problems, &problem{
-				code: ProblemPracticeSubjectFormat,
-				response: `
-The Shelter Name field of this form does not have the correct format.  It
-should have the word "Practice" followed by four comma-separated fields:
-    Practice CallSign, FirstName, Jurisdiction, Date
-`,
-				references: refWeeklyPractice,
-			})
-		case *ahfacstat.Form:
-			a.problems = append(a.problems, &problem{
-				code: ProblemPracticeSubjectFormat,
-				response: `
-The Facility Name field of this form does not have the correct format.  It
-should have the word "Practice" followed by four comma-separated fields:
-    Practice CallSign, FirstName, Jurisdiction, Date
-`,
-				references: refWeeklyPractice,
-			})
-		case *racesmar.Form:
-			a.problems = append(a.problems, &problem{
-				code: ProblemPracticeSubjectFormat,
-				response: `
-The Agency Name field of this form does not have the correct format.  It
-should have the word "Practice" followed by four comma-separated fields:
-    Practice CallSign, FirstName, Jurisdiction, Date
-`,
-				references: refWeeklyPractice,
-			})
-		}
-		return
-	}
-	a.subjectCallSign = strings.ToUpper(match[1])
-	a.jurisdiction = jurisdictionMap[strings.ToUpper(strings.TrimSpace(match[2]))]
-	// Look for a date.
-	for fmt, re := range dateREs {
-		if re.MatchString(match[3]) {
-			if date, err := time.ParseInLocation(fmt, match[3], time.Local); err == nil {
-				a.subjectDate = date
-				break
-			}
-		}
-	}
 }
 
 var jurisdictionMap = map[string]string{
@@ -240,4 +134,68 @@ var jurisdictionMap = map[string]string{
 	"XSC":                  "XSC",
 	"XSF":                  "XSF",
 	"XSM":                  "XSM",
+}
+
+// ProbPracticeSubjectFormat is raised when the practice message details in the
+// subject line have the wrong format.
+var ProbPracticeSubjectFormat = &Problem{
+	Code:  "PracticeSubjectFormat",
+	Label: "incorrect practice message details",
+	after: []*Problem{ProbDeliveryReceipt}, // sets a.xsc
+	ifnot: []*Problem{ProbFormSubject, ProbSubjectFormat, ProbFormCorrupt, ProbBounceMessage, ProbDeliveryReceipt, ProbReadReceipt},
+	detect: func(a *Analysis) (bool, string) {
+		subject := xscmsg.ParseSubject(a.msg.Header.Get("Subject")).Subject
+		// Don't check Jurisdiction Status forms; their subject doesn't
+		// have the full practice details.  It just has the jurisdiction, which we save.
+		if _, ok := a.xsc.(*jurisstat.Form); ok {
+			a.jurisdiction = jurisdictionMap[strings.ToUpper(subject)]
+			return false, ""
+		}
+		// Parse the subject line to get the true subject.
+		xscsubj := xscmsg.ParseSubject(a.msg.Header.Get("Subject"))
+		if xscsubj == nil {
+			return false, "" // unparseable subject line reported elsewhere
+		}
+		// Do we have a valid practice message subject?
+		var match = practiceRE.FindStringSubmatch(subject)
+		if match == nil {
+			if _, ok := a.xsc.(*config.PlainTextMessage); ok {
+				return true, "plain"
+			}
+			return true, "form"
+		}
+		// Yes, we do, so save the information from it for other
+		// analysis steps.
+		a.subjectCallSign = strings.ToUpper(match[1])
+		a.jurisdiction = jurisdictionMap[strings.ToUpper(strings.TrimSpace(match[2]))]
+		// Look for a date.
+		for fmt, re := range dateREs {
+			if re.MatchString(match[3]) {
+				if date, err := time.ParseInLocation(fmt, match[3], time.Local); err == nil {
+					a.subjectDate = date
+					break
+				}
+			}
+		}
+		return false, ""
+	},
+	Variables: variableMap{
+		"SUBJECTFIELD": func(a *Analysis) string {
+			switch a.xsc.(type) {
+			case *ics213.Form:
+				return "Subject"
+			case *eoc213rr.Form:
+				return "Incident Name"
+			case *sheltstat.Form:
+				return "Shelter Name"
+			case *ahfacstat.Form:
+				return "Facility Name"
+			case *racesmar.Form:
+				return "Agency Name"
+			default:
+				panic("unknown field name for subject")
+			}
+		},
+	},
+	references: refWeeklyPractice,
 }

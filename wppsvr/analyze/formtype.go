@@ -1,62 +1,52 @@
 package analyze
 
 import (
-	"fmt"
-
-	"github.com/rothskeller/packet/pktmsg"
 	"github.com/rothskeller/packet/wppsvr/config"
 	"github.com/rothskeller/packet/wppsvr/english"
 )
 
-// Problem codes
-const (
-	ProblemMessageTypeWrong = "MessageTypeWrong"
-)
-
 func init() {
-	ProblemLabel[ProblemMessageTypeWrong] = "incorrect message type"
+	Problems[ProbMessageTypeWrong.Code] = ProbMessageTypeWrong
 }
 
-// checkCorrectForm verifies that the received form has the expected type for
-// the practice session.
-func (a *Analysis) checkCorrectForm() {
-	var (
-		tag     string
-		allowed []string
-		article string
-	)
-	if _, ok := a.xsc.(*config.PlainTextMessage); ok && pktmsg.IsForm(a.msg.Body) {
-		// It's a corrupt form.  That's reported elsewhere.  We can't
-		// really know what type of form it is, so we can't say whether
-		// it's correct.
-		return
-	}
-	tag = a.xsc.TypeTag()
-	for _, mtype := range a.session.MessageTypes {
-		if mtype == tag {
-			return
+// ProbMessageTypeWrong is raised when the message type is not one of the
+// expected types for the session, and the message is coming from in-county.
+var ProbMessageTypeWrong = &Problem{
+	Code:  "MessageTypeWrong",
+	Label: "incorrect message type",
+	after: []*Problem{ProbDeliveryReceipt}, // sets a.xsc
+	ifnot: []*Problem{ProbFormCorrupt, ProbBounceMessage, ProbDeliveryReceipt, ProbReadReceipt},
+	detect: func(a *Analysis) (bool, string) {
+		var tag = a.xsc.TypeTag()
+		for _, mtype := range a.session.MessageTypes {
+			if mtype == tag {
+				return false, ""
+			}
 		}
-	}
-	if _, ok := a.xsc.(*config.PlainTextMessage); ok {
-		// It's a plain text message and we're expecting a form.  That's
-		// OK if it's coming from somewhere other than one of our BBSes.
-		if _, ok := config.Get().BBSes[a.msg.FromBBS()]; !ok {
-			return
+		if _, ok := a.xsc.(*config.PlainTextMessage); ok {
+			// It's a plain text message and we're expecting a form.  That's
+			// OK if it's coming from somewhere other than one of our BBSes.
+			if _, ok := config.Get().BBSes[a.msg.FromBBS()]; !ok {
+				return false, ""
+			}
 		}
-	}
-	for i, code := range a.session.MessageTypes {
-		mtype := config.LookupMessageType(code)
-		allowed = append(allowed, mtype.TypeName())
-		if i == 0 {
-			article = mtype.TypeArticle()
-		}
-	}
-	a.problems = append(a.problems, &problem{
-		code: ProblemMessageTypeWrong,
-		response: fmt.Sprintf(`
-This message is %s %s.  For the %s on %s, %s %s is expected.
-`, a.xsc.TypeArticle(), a.xsc.TypeName(), a.session.Name, a.session.End.Format("January 2"), article,
-			english.Conjoin(allowed, "or")),
-		references: refWeeklyPractice,
-	})
+		return true, ""
+	},
+	Variables: variableMap{
+		"AEXPECTTYPE": func(a *Analysis) string {
+			var (
+				allowed []string
+				article string
+			)
+			for i, code := range a.session.MessageTypes {
+				mtype := config.LookupMessageType(code)
+				allowed = append(allowed, mtype.TypeName())
+				if i == 0 {
+					article = mtype.TypeArticle()
+				}
+			}
+			return article + " " + english.Conjoin(allowed, "or")
+		},
+	},
+	references: refWeeklyPractice,
 }
