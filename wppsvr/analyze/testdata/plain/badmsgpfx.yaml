@@ -1,16 +1,11 @@
-# Plain text when form expected: should be problem because comes from in county.
-
-# Expect ICS213 forms for session:
-session:
-  messageTypes:
-    - ICS213
+# Invalid message number prefix.
 
 # Message being analyzed:
 message: |
   From: kc6rsc@w1xsc.ampr.org
   To: pkttue@w4xsc.ampr.org
   Date: Sun, 09 Jan 2022 20:00:00 -0800
-  Subject: RSC-100P_R_Practice KC6RSC, Steve, SNY, 2022-01-11
+  Subject: STR-100P_R_Practice KC6RSC, Steve, SNY, 2022-01-11
 
   Test message
 
@@ -22,21 +17,22 @@ stored:
   fromBBS: W1XSC
   jurisdiction: SNY
   messageType: plain
-  subject: RSC-100P_R_Practice KC6RSC, Steve, SNY, 2022-01-11
+  subject: STR-100P_R_Practice KC6RSC, Steve, SNY, 2022-01-11
   problems:
-    - MessageTypeWrong
-  actions: 7
+    - MsgNumPrefix
+  actions: 3
 
 # Messages that should be sent in response:
 responses:
   - localID: TUE-101P
     to: kc6rsc@w1xsc.ampr.org
-    subject: 'DELIVERED: RSC-100P_R_Practice KC6RSC, Steve, SNY, 2022-01-11'
+    subject: 'DELIVERED: STR-100P_R_Practice KC6RSC, Steve, SNY, 2022-01-11'
     bodyREs:
       - ^!LMI!TUE-100P!DR!01/11/2022 20:00:01\n
   - localID: TUE-102P
     to: kc6rsc@w1xsc.ampr.org
-    subject: TUE-102P_R_Incorrect message type
+    subject: TUE-102P_R_Incorrect message number prefix
     bodyREs:
-      - ICS-213.* is expected
-      - Weekly SPECS/SVECS Packet Practice
+      - has the prefix "STR"
+      - last three characters of your call sign, "RSC"
+      - Standard Packet Message Subject Line

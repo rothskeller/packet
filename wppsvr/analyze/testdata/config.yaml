@@ -237,6 +237,12 @@ problems:
       All letters should be upper case.  In Outpost, the format of the message
       number is set in the Message Settings dialog, which should be configured
       according to county standards.
+  MsgNumPrefix:
+    actions: report
+    response: |
+      The message number of this message has the prefix "{ACTUALPFX}".  The
+      prefix should be the last three characters of your call sign,
+      "{EXPECTPFX}".
   MultipleMessagesFromAddress:
     actions: report
   NoCallSign:
@@ -330,43 +336,6 @@ problems:
       This message was sent to {TOCALLSIGN} at {TOBBS}.  Practice messages for
       {SESSIONNAME} on {SESSIONDATE} must be sent to {TOCALLSIGN} at
       {SESSIONBBSES}.
-
-# This section defines how each detected problem is treated.  Each problem
-# should have zero or more of the following flags:
-#     respond   - the sender gets a response message with the problem
-#     report    - the problem gets listed in the report
-#     error     - the message gets counted as an error
-#     dontcount - the message does not get counted as a valid checkin
-#     dropmsg   - drop the entire message from the report
-problemActions:
-  BounceMessage: report dontcount
-  CallSignConflict: respond report error
-  DeliveryReceipt: dropmsg
-  FormCorrupt: respond report error
-  FormDestination: respond report error
-  FormHandlingOrder: respond report error
-  FormInvalid: respond report error
-  FormSubject: respond report error
-  FormVersion: respond report error
-  FromBBSDown: respond report error
-  HandlingOrderCode: respond report error
-  MessageCorrupt: report dontcount
-  MessageNotASCII: respond report error
-  MessageNotPlainText: respond report error
-  MessageTooEarly: respond report dontcount
-  MessageTooLate: respond report dontcount
-  MessageTypeWrong: respond report error
-  MsgNumFormat: respond report error
-  MultipleMessagesFromAddress: report
-  NoCallSign: respond report dontcount
-  PIFOVersion: respond report error
-  PracticeSubjectFormat: respond report
-  ReadReceipt: respond report dontcount
-  SessionDate: respond report
-  SubjectFormat: respond report error
-  SubjectHasSeverity: respond report error
-  ToBBSDown: respond report dontcount
-  ToBBS: respond report dontcount
 
 # This section defines the expected handling order and destination of each of
 # the different form types.  For HandlingOrder, possible values are "computed"

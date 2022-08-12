@@ -10,12 +10,12 @@ message: |
   From: kc6rsc@w1xsc.ampr.org
   To: pkttue@w4xsc.ampr.org
   Date: Sun, 09 Jan 2022 20:00:00 -0800
-  Subject: STR-100P_R_AHFacStat_Practice KC6RSC
+  Subject: RSC-100P_R_AHFacStat_Practice KC6RSC
 
   !SCCoPIFO!
   #T: form-allied-health-facility-status.html
   #V: 3.2-2.3
-  MsgNo: [STR-100P]
+  MsgNo: [RSC-100P]
   1a.: [01/09/2022]
   1b.: [2000]
   5.: [ROUTINE]
@@ -40,7 +40,7 @@ stored:
   fromCallSign: KC6RSC
   fromBBS: W1XSC
   messageType: AHFacStat
-  subject: STR-100P_R_AHFacStat_Practice KC6RSC
+  subject: RSC-100P_R_AHFacStat_Practice KC6RSC
   problems:
     - PracticeSubjectFormat
   actions: 3
@@ -49,7 +49,7 @@ stored:
 responses:
   - localID: TUE-101P
     to: kc6rsc@w1xsc.ampr.org
-    subject: 'DELIVERED: STR-100P_R_AHFacStat_Practice KC6RSC'
+    subject: 'DELIVERED: RSC-100P_R_AHFacStat_Practice KC6RSC'
     bodyREs:
       - ^!LMI!TUE-100P!DR!01/11/2022 20:00:01\n
   - localID: TUE-102P

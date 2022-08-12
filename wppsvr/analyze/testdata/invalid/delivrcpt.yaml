@@ -5,7 +5,7 @@ message: |
   From: kc6rsc@w1xsc.ampr.org
   To: pkttue@w4xsc.ampr.org
   Date: Sun, 09 Jan 2022 20:00:00 -0800
-  Subject: DELIVERED: STR-100P_R_Practice KC6RSC, Steve, SNY, 2022-01-11
+  Subject: DELIVERED: RSC-100P_R_Practice KC6RSC, Steve, SNY, 2022-01-11
 
   It was delivered!
 
@@ -15,7 +15,7 @@ stored:
   fromAddress: kc6rsc@w1xsc.ampr.org
   fromBBS: W1XSC
   messageType: DELIVERED
-  subject: 'DELIVERED: STR-100P_R_Practice KC6RSC, Steve, SNY, 2022-01-11'
+  subject: 'DELIVERED: RSC-100P_R_Practice KC6RSC, Steve, SNY, 2022-01-11'
   problems:
     - DeliveryReceipt
   actions: 16

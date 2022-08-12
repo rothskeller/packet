@@ -8,6 +8,7 @@ import (
 
 func init() {
 	Problems[ProbMsgNumFormat.Code] = ProbMsgNumFormat
+	Problems[ProbMsgNumPrefix.Code] = ProbMsgNumPrefix
 }
 
 type formWithOriginNumber interface {
@@ -38,4 +39,43 @@ var ProbMsgNumFormat = &Problem{
 		return false, ""
 	},
 	references: refOutpostConfig,
+}
+
+var fccCallSignRE = regexp.MustCompile(`^[AKNW][A-Z]?[0-9][A-Z]{1,3}$`)
+
+// ProbMsgNumPrefix is raised when the message number prefix is not the last
+// three characters of the sender's call sign.
+var ProbMsgNumPrefix = &Problem{
+	Code:  "MsgNumPrefix",
+	Label: "incorrect message number prefix",
+	after: []*Problem{ProbDeliveryReceipt, ProbNoCallSign}, // set a.xsc, a.fromCallSign
+	ifnot: []*Problem{ProbMsgNumFormat, ProbBounceMessage, ProbDeliveryReceipt, ProbReadReceipt},
+	detect: func(a *Analysis) (bool, string) {
+		var msgnum string
+
+		if !fccCallSignRE.MatchString(a.fromCallSign) {
+			return false, "" // prefix not checked for tactical calls
+		}
+		if xsc, ok := a.xsc.(formWithOriginNumber); ok {
+			msgnum = xsc.OriginNumber()
+		} else if xscsubj := xscmsg.ParseSubject(a.msg.Header.Get("Subject")); xscsubj != nil {
+			msgnum = xscsubj.MessageNumber
+		} else {
+			return false, ""
+		}
+		return msgnum[:3] != a.fromCallSign[len(a.fromCallSign)-3:], ""
+	},
+	Variables: variableMap{
+		"ACTUALPFX": func(a *Analysis) string {
+			if xsc, ok := a.xsc.(formWithOriginNumber); ok {
+				return xsc.OriginNumber()[:3]
+			}
+			xscsubj := xscmsg.ParseSubject(a.msg.Header.Get("Subject"))
+			return xscsubj.MessageNumber[:3]
+		},
+		"EXPECTPFX": func(a *Analysis) string {
+			return a.fromCallSign[len(a.fromCallSign)-3:]
+		},
+	},
+	references: refSubjectLine,
 }
