@@ -22,6 +22,12 @@ func Send(st Store, conn *jnos.Conn, session *store.Session) {
 	var rm = pktmsg.New()
 	rm.Body = session.Report
 	subject := xscmsg.EncodeSubject(st.NextMessageID(session.Prefix), xscmsg.HandlingRoutine, "", "SCCo Packet Practice Report")
-	conn.Send(subject, rm.EncodeBody(false), sendTo...)
+	body := rm.EncodeBody(false)
+	// To avoid potential problems with JNOS line length limits, we
+	// send to each recipient separately.
+	// conn.Send(subject, body, sendTo...)
+	for _, addr := range sendTo {
+		conn.Send(subject, body, addr)
+	}
 	log.Printf("Sent report for %s on %s.", session.Name, session.End.Format("2006-01-02"))
 }
