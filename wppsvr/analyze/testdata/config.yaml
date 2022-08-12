@@ -272,12 +272,14 @@ problems:
         The {SUBJECTFIELD} field of this form does not have the correct format.
         It should have the word "Practice" followed by four comma-separated
         fields:
-            Practice CallSign, FirstName, Jurisdiction, Date
+            Practice CallSign, FirstName, Jurisdiction, NetDate
+        NetDate should be in the form MM/DD/YYYY.
       plain: |
         The Subject of this message does not have the correct format.  After the
         message number and handling order, it should have the word
         "Practice" followed by four comma-separated fields:
-            Practice CallSign, FirstName, Jurisdiction, Date
+            Practice CallSign, FirstName, Jurisdiction, NetDate
+        NetDate should be in the form MM/DD/YYYY.
   ReadReceipt:
     actions: report dontcount
     response: |
@@ -298,13 +300,13 @@ problems:
       parse: |
         This message has an incorrect subject line format.  According to SCCo
         standards, the subject should look like
-            AAA-111P_R_Practice A6AAA, Charlie, Nowhereville, 2019-03-16
+            AAA-111P_R_Practice A6AAA, Charlie, Nowhereville, 03/16/2019
             (msgnum) |            |    (name)   (city)        (net date)
               (handling order)  (call sign)
       plainform: |
         This message has an incorrect subject line format.  According to SCCo
         standards, the subject should look like
-            AAA-111P_R_Practice A6AAA, Charlie, Nowhereville, 2019-03-16
+            AAA-111P_R_Practice A6AAA, Charlie, Nowhereville, 03/16/2019
             (msgnum) |            |    (name)   (city)        (net date)
               (handling order)  (call sign)
         Note that there is no form name between the handling order and the word
@@ -313,7 +315,7 @@ problems:
       practice: |
         This message has an incorrect subject line format.  According to SCCo
         standards, the subject should look like
-            AAA-111P_R_Practice A6AAA, Charlie, Nowhereville, 2019-03-16
+            AAA-111P_R_Practice A6AAA, Charlie, Nowhereville, 03/16/2019
             (msgnum) |            |    (name)   (city)        (net date)
               (handling order)  (call sign)
         Note that there is no underline after the word "Practice".

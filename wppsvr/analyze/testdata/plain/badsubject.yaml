@@ -5,7 +5,7 @@ message: |
   From: kc6rsc@w1xsc.ampr.org
   To: pkttue@w4xsc.ampr.org
   Date: Sun, 09 Jan 2022 20:00:00 -0800
-  Subject: Practice KC6RSC, Steve, SNY, 2022-01-11
+  Subject: Practice KC6RSC, Steve, SNY, 1/11/2022
 
   Test message
 
@@ -16,7 +16,7 @@ stored:
   fromCallSign: KC6RSC
   fromBBS: W1XSC
   messageType: plain
-  subject: Practice KC6RSC, Steve, SNY, 2022-01-11
+  subject: Practice KC6RSC, Steve, SNY, 1/11/2022
   problems:
     - SubjectFormat
   actions: 7
@@ -25,7 +25,7 @@ stored:
 responses:
   - localID: TUE-101P
     to: kc6rsc@w1xsc.ampr.org
-    subject: 'DELIVERED: Practice KC6RSC, Steve, SNY, 2022-01-11'
+    subject: 'DELIVERED: Practice KC6RSC, Steve, SNY, 1/11/2022'
     bodyREs:
       - ^!LMI!TUE-100P!DR!01/11/2022 20:00:01\n
   - localID: TUE-102P

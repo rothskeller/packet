@@ -6,7 +6,7 @@ message: |
   From: kc6rsc@w1xsc.ampr.org
   To: pkttue@w2xsc.ampr.org
   Date: Sun, 09 Jan 2022 20:00:00 -0800
-  Subject: RSC-100P_R_Practice KC6RSC, Steve, SNY, 2022-01-11
+  Subject: RSC-100P_R_Practice KC6RSC, Steve, SNY, 1/11/2022
 
   Test message
 
@@ -19,7 +19,7 @@ stored:
   toBBS: W2XSC
   jurisdiction: SNY
   messageType: plain
-  subject: RSC-100P_R_Practice KC6RSC, Steve, SNY, 2022-01-11
+  subject: RSC-100P_R_Practice KC6RSC, Steve, SNY, 1/11/2022
   problems:
     - ToBBSDown
   actions: 11
@@ -29,7 +29,7 @@ responses:
   - localID: TUE-101P
     to: kc6rsc@w1xsc.ampr.org
     senderBBS: W2XSC
-    subject: 'DELIVERED: RSC-100P_R_Practice KC6RSC, Steve, SNY, 2022-01-11'
+    subject: 'DELIVERED: RSC-100P_R_Practice KC6RSC, Steve, SNY, 1/11/2022'
     bodyREs:
       - ^!LMI!TUE-100P!DR!01/11/2022 20:00:01\n
   - localID: TUE-102P

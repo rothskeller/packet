@@ -5,7 +5,7 @@ message: |
   From: kc6rsc@w1xsc.ampr.org
   To: pkttue@w4xsc.ampr.org
   Date: Sun, 09 Jan 2022 20:00:00 -0800
-  Subject: RSC-100P_R_Practice KC6RSC, Steve, Nowhere, 2022-01-11
+  Subject: RSC-100P_R_Practice KC6RSC, Steve, Nowhere, 1/11/2022
 
   Test message
 
@@ -17,7 +17,7 @@ stored:
   fromBBS: W1XSC
   jurisdiction: Nowhere
   messageType: plain
-  subject: RSC-100P_R_Practice KC6RSC, Steve, Nowhere, 2022-01-11
+  subject: RSC-100P_R_Practice KC6RSC, Steve, Nowhere, 1/11/2022
   problems:
     - UnknownJurisdiction
   actions: 3
@@ -26,7 +26,7 @@ stored:
 responses:
   - localID: TUE-101P
     to: kc6rsc@w1xsc.ampr.org
-    subject: 'DELIVERED: RSC-100P_R_Practice KC6RSC, Steve, Nowhere, 2022-01-11'
+    subject: 'DELIVERED: RSC-100P_R_Practice KC6RSC, Steve, Nowhere, 1/11/2022'
     bodyREs:
       - ^!LMI!TUE-100P!DR!01/11/2022 20:00:01\n
   - localID: TUE-102P
