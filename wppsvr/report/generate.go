@@ -350,7 +350,7 @@ func removeReplaced(messages []*store.Message) (out []*store.Message) {
 
 // generateGenInfo records when then report was generated and by what software.
 func generateGenInfo(r *Report) {
-	if bi, ok := debug.ReadBuildInfo(); ok && bi.Main.Version != "" {
+	if bi, ok := debug.ReadBuildInfo(); ok && bi.Main.Version != "" && bi.Main.Version != "(devel)" {
 		r.GenerationInfo = fmt.Sprintf("This report was generated on %s by wppsvr version %s.",
 			now().Format("Monday, January 2, 2006 at 15:04"), bi.Main.Version)
 	} else {
