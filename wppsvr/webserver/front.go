@@ -52,7 +52,7 @@ func (ws *webserver) emitFrontJSON(w io.Writer) {
 	io.WriteString(w, "{")
 	ws.emitFrontJSONWeek(w, "week1", week1)
 	nextUpdate = ws.emitFrontJSONWeek(w, "week2", week2)
-	reload = time.Until(nextUpdate)
+	reload = time.Until(nextUpdate) + time.Minute
 	if reload > 5*time.Minute {
 		reload = 5 * time.Minute
 	}
