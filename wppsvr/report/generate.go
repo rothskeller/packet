@@ -139,7 +139,7 @@ func generateStatistics(r *Report, session *store.Session, messages []*store.Mes
 		} else {
 			sources["Email"]++
 		}
-		if knownJurisdictions[m.Jurisdiction] == m.Jurisdiction {
+		if m.Jurisdiction != "" && knownJurisdictions[m.Jurisdiction] == m.Jurisdiction {
 			jurisdictions[m.Jurisdiction]++
 		} else {
 			jurisdictions["~~~"]++ // chosen to sort after anything real
@@ -260,7 +260,7 @@ func generateMessages(r *Report, session *store.Session, messages []*store.Messa
 		} else {
 			rm.Source = "Email"
 		}
-		if jurisdictions[m.Jurisdiction] == m.Jurisdiction {
+		if m.Jurisdiction != "" && jurisdictions[m.Jurisdiction] == m.Jurisdiction {
 			rm.Jurisdiction = m.Jurisdiction
 		} else if m.Jurisdiction != "" {
 			rm.Jurisdiction = "???"
