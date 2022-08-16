@@ -17,178 +17,75 @@ func (r *Report) RenderPlainText() string {
 
 	r.plainTextTitle(&sb)
 	r.plainTextExpectsResults(&sb)
-	r.plainTextStatistics(&sb)
 	r.plainTextMessages(&sb)
+	r.plainTextStatistics(&sb)
 	r.plainTextGenInfo(&sb)
 	return sb.String()
 }
 
 func (r *Report) plainTextTitle(sb *strings.Builder) {
-	var (
-		line string
-	)
-	sb.WriteString("--------------- SCCo ARES/RACES Packet Practice Report ----------------\n")
-	line = fmt.Sprintf("for %s on %s", r.SessionName, r.SessionDate)
-	fmt.Fprintf(sb, "%*s%s\n", 36-len(line)/2, "", line)
+	fmt.Fprintf(sb, "==== SCCo ARES/RACES Packet Practice Report\n==== for %s on %s", r.SessionName, r.SessionDate)
 	if r.Preliminary {
-		sb.WriteString("                         *** PRELIMINARY ***\n")
+		sb.WriteString(" (PRELIMINARY)")
 	}
 	if r.UniqueCallSignsWeek != 0 {
-		line = fmt.Sprintf("%d unique call signs (%d for the week)", r.UniqueCallSigns, r.UniqueCallSignsWeek)
+		fmt.Fprintf(sb, "\n\n%d unique call signs (%d for the week)\n\n", r.UniqueCallSigns, r.UniqueCallSignsWeek)
 	} else if r.UniqueCallSigns != 0 {
-		line = fmt.Sprintf("%d unique call signs", r.UniqueCallSigns)
+		fmt.Fprintf(sb, "\n\n%d unique call signs\n\n", r.UniqueCallSigns)
 	} else {
-		line = ""
+		sb.WriteString("\n\n")
 	}
-	if line != "" {
-		fmt.Fprintf(sb, "\n%*s%s\n", 36-len(line)/2, "", line)
-	}
-	sb.WriteString("\n\n")
 }
 
 func (r *Report) plainTextExpectsResults(sb *strings.Builder) {
-	var (
-		lines []string
-		col1  []string
-	)
-	switch len(r.MessageTypes) {
-	case 0:
-		break
-	case 1:
-		lines = append(lines, fmt.Sprintf("Message type:  %s", r.MessageTypes[0]))
-	case 2:
-		lines = append(lines, fmt.Sprintf("Message type:  %s or", r.MessageTypes[0]))
-		lines = append(lines, fmt.Sprintf("               %s", r.MessageTypes[1]))
-	default:
-		lines = append(lines, fmt.Sprintf("Message type:  %s,", r.MessageTypes[0]))
-		for i := 1; i < len(r.MessageTypes)-2; i++ {
-			lines = append(lines, fmt.Sprintf("               %s,", r.MessageTypes[i]))
-		}
-		lines = append(lines, fmt.Sprintf("               %s, or", r.MessageTypes[len(r.MessageTypes)-2]))
-		lines = append(lines, fmt.Sprintf("               %s", r.MessageTypes[len(r.MessageTypes)-1]))
-	}
-	lines = append(lines, fmt.Sprintf("Sent to:       %s", r.SentTo))
-	lines = append(lines, fmt.Sprintf("Sent between:  %s and", r.SentAfter))
-	lines = append(lines, fmt.Sprintf("               %s", r.SentBefore))
+	var wrapper = english.NewWrapper(sb)
+	fmt.Fprintf(wrapper, "EXPECTATIONS:  %s sent to %s between %s and %s",
+		english.Conjoin(r.MessageTypes, "or"), r.SentTo, r.SentAfter, r.SentBefore)
 	if r.NotSentFrom != "" {
-		lines = append(lines, fmt.Sprintf("Not sent from: %s", r.NotSentFrom))
+		fmt.Fprintf(wrapper, "; not sent from %s", r.NotSentFrom)
 	}
+	wrapper.WriteString(".")
 	if r.Modified {
-		lines = append(lines, "(*) modified during session")
+		wrapper.WriteString("  Expectations were modified during session; some early messages may have been evaluated against different expectations.")
 	}
-	if r.Modified {
-		lines = addPlainTextHeading(lines, "EXPECTATIONS(*)")
-	} else {
-		lines = addPlainTextHeading(lines, "EXPECTATIONS")
-	}
+	wrapper.WriteString("\n\n")
+	wrapper.Close()
+
+	sb.WriteString("---- RESULTS\n")
 	if r.OKCount+r.WarningCount+r.ErrorCount+r.InvalidCount+r.ReplacedCount+r.DroppedCount != 0 {
-		var col2 []string
+		var lines, col1, col2 []string
 		if r.OKCount != 0 {
-			col1 = append(col1, "OK")
-			col2 = append(col2, strconv.Itoa(r.OKCount))
+			col1 = append(col1, strconv.Itoa(r.OKCount))
+			col2 = append(col2, "OK")
 		}
 		if r.WarningCount != 0 {
-			col1 = append(col1, "WARNING")
-			col2 = append(col2, strconv.Itoa(r.WarningCount))
+			col1 = append(col1, strconv.Itoa(r.WarningCount))
+			col2 = append(col2, "WARNING")
 		}
 		if r.ErrorCount != 0 {
-			col1 = append(col1, "ERROR")
-			col2 = append(col2, strconv.Itoa(r.ErrorCount))
+			col1 = append(col1, strconv.Itoa(r.ErrorCount))
+			col2 = append(col2, "ERROR")
 		}
 		if r.InvalidCount != 0 {
-			col1 = append(col1, "NOT COUNTED")
-			col2 = append(col2, strconv.Itoa(r.InvalidCount))
+			col1 = append(col1, strconv.Itoa(r.InvalidCount))
+			col2 = append(col2, "NOT COUNTED")
 		}
 		if r.ReplacedCount != 0 {
-			col1 = append(col1, "Duplicate")
-			col2 = append(col2, strconv.Itoa(r.ReplacedCount))
+			col1 = append(col1, strconv.Itoa(r.ReplacedCount))
+			col2 = append(col2, "Duplicate")
 		}
 		if r.DroppedCount != 0 {
-			col1 = append(col1, "Deliv. rcpt.")
-			col2 = append(col2, strconv.Itoa(r.DroppedCount))
+			col1 = append(col1, strconv.Itoa(r.DroppedCount))
+			col2 = append(col2, "Delivery receipt")
 		}
-		rightAlign(col2)
-		col1 = sideBySide(col1, col2, 2)
-	} else {
-		col1 = append(col1, "Messages  0")
-	}
-	col1 = addPlainTextHeading(col1, "RESULTS")
-	lines = sideBySide(lines, col1, 6)
-	for _, line := range lines {
-		sb.WriteString(line)
-		sb.WriteByte('\n')
-	}
-	sb.WriteByte('\n')
-}
-
-func (r *Report) plainTextStatistics(sb *strings.Builder) {
-	var lines []string
-
-	if len(r.Sources) == 0 && len(r.Jurisdictions) == 0 && len(r.MTypeCounts) == 0 {
-		return
-	}
-	if len(r.Sources) != 0 {
-		var col1, col2 []string
-		var hasDown bool
-
-		for _, source := range r.Sources {
-			var down string
-			if source.SimulatedDown {
-				down, hasDown = `*`, true
-			}
-			col1 = append(col1, source.Name+down)
-			col2 = append(col2, strconv.Itoa(source.Count))
-		}
-		rightAlign(col2)
+		rightAlign(col1)
 		lines = sideBySide(col1, col2, 2)
-		if hasDown {
-			lines = append(lines, `* simulated outage`)
+		for _, line := range lines {
+			sb.WriteString(line)
+			sb.WriteByte('\n')
 		}
-		lines = addPlainTextHeading(lines, "SOURCES")
-	}
-	if len(r.Jurisdictions) != 0 {
-		var jlines []string
-		var cols = (len(r.Jurisdictions) + 5) / 6
-		var rows = (len(r.Jurisdictions) + cols - 1) / cols
-		for col := 0; col < len(r.Jurisdictions); col += rows {
-			var col1, col2 []string
-			for i := col; i < len(r.Jurisdictions) && i < col+rows; i++ {
-				col1 = append(col1, r.Jurisdictions[i].Name)
-				col2 = append(col2, strconv.Itoa(r.Jurisdictions[i].Count))
-			}
-			rightAlign(col2)
-			col1 = sideBySide(col1, col2, 2)
-			if col == 0 {
-				jlines = col1
-			} else {
-				jlines = sideBySide(jlines, col1, 4)
-			}
-		}
-		jlines = addPlainTextHeading(jlines, "JURISDICTIONS")
-		if lines == nil {
-			lines = jlines
-		} else {
-			lines = sideBySide(lines, jlines, 6)
-		}
-	}
-	if len(r.MTypeCounts) != 0 {
-		var col1, col2 []string
-		for _, mtype := range r.MTypeCounts {
-			col1 = append(col1, mtype.Name)
-			col2 = append(col2, strconv.Itoa(mtype.Count))
-		}
-		rightAlign(col2)
-		col1 = sideBySide(col1, col2, 2)
-		col1 = addPlainTextHeading(col1, "TYPES")
-		if lines == nil {
-			lines = col1
-		} else {
-			lines = sideBySide(lines, col1, 6)
-		}
-	}
-	for _, line := range lines {
-		sb.WriteString(line)
-		sb.WriteByte('\n')
+	} else {
+		sb.WriteString("0  Messages")
 	}
 	sb.WriteByte('\n')
 }
@@ -204,7 +101,10 @@ func (r *Report) plainTextMessages(sb *strings.Builder) {
 	var col1, col2, col3, col4, col5 []string
 	var hasMultiple bool
 
-	sb.WriteString("MESSAGES----------------------------------------------------------------\n")
+	if len(r.Messages) == 0 {
+		return
+	}
+	sb.WriteString("---- MESSAGES\n")
 	for _, m := range r.Messages {
 		var multiple string
 		col1 = append(col1, m.Prefix)
@@ -212,8 +112,8 @@ func (r *Report) plainTextMessages(sb *strings.Builder) {
 		if m.Multiple {
 			multiple, hasMultiple = `*`, true
 		}
-		col3 = append(col3, m.Source+multiple)
-		col4 = append(col4, m.Jurisdiction)
+		col3 = append(col3, "@"+m.Source+multiple)
+		col4 = append(col4, "("+m.Jurisdiction+")")
 		col5 = append(col5, plainTextClassLabels[m.Class]+m.Problem)
 	}
 	rightAlign(col1)
@@ -228,7 +128,62 @@ func (r *Report) plainTextMessages(sb *strings.Builder) {
 	if hasMultiple {
 		sb.WriteString("* multiple messages from this address; only the last one counts\n")
 	}
-	sb.WriteString("\n\n")
+	sb.WriteString("\n")
+}
+
+func (r *Report) plainTextStatistics(sb *strings.Builder) {
+	if len(r.Sources) != 0 {
+		var lines, col1, col2 []string
+
+		for _, source := range r.Sources {
+			var down string
+			if source.SimulatedDown {
+				down = " (simulated outage)"
+			}
+			col1 = append(col1, strconv.Itoa(source.Count))
+			col2 = append(col2, source.Name+down)
+		}
+		rightAlign(col1)
+		lines = sideBySide(col1, col2, 2)
+		sb.WriteString("---- SENT FROM\n")
+		for _, line := range lines {
+			sb.WriteString(line)
+			sb.WriteByte('\n')
+		}
+		sb.WriteString("\n")
+	}
+	if len(r.Jurisdictions) != 0 {
+		var lines, col1, col2 []string
+
+		for _, juris := range r.Jurisdictions {
+			col1 = append(col1, strconv.Itoa(juris.Count))
+			col2 = append(col2, juris.Name)
+		}
+		rightAlign(col1)
+		lines = sideBySide(col1, col2, 2)
+		sb.WriteString("---- JURISDICTION\n")
+		for _, line := range lines {
+			sb.WriteString(line)
+			sb.WriteByte('\n')
+		}
+		sb.WriteString("\n")
+	}
+	if len(r.MTypeCounts) != 0 {
+		var lines, col1, col2 []string
+
+		for _, mtype := range r.MTypeCounts {
+			col1 = append(col1, strconv.Itoa(mtype.Count))
+			col2 = append(col2, mtype.Name)
+		}
+		rightAlign(col1)
+		lines = sideBySide(col1, col2, 2)
+		sb.WriteString("---- MESSAGE TYPE\n")
+		for _, line := range lines {
+			sb.WriteString(line)
+			sb.WriteByte('\n')
+		}
+		sb.WriteString("\n")
+	}
 }
 
 func (r *Report) plainTextGenInfo(sb *strings.Builder) {

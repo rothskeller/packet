@@ -117,30 +117,35 @@ func (fakeStore) GetSessions(start, end time.Time) []*store.Session {
 func (fakeStore) UpdateSession(*store.Session) { panic("not implemented") }
 func (fakeStore) NextMessageID(string) string  { panic("not implemented") }
 
-const expected = `--------------- SCCo ARES/RACES Packet Practice Report ----------------
-                for SVECS Net on Tuesday, April 19, 2022
+const expected = `==== SCCo ARES/RACES Packet Practice Report
+==== for SVECS Net on Tuesday, April 19, 2022
 
-                  2 unique call signs (3 for the week)
+2 unique call signs (3 for the week)
 
+EXPECTATIONS:  OA municipal status form or plain text message sent to PKTTUE
+at W2XSC between Wed 2022-04-13 00:00 and Tue 2022-04-19 20:00; not sent from
+W3XSC.
 
-EXPECTATIONS------------------------------      RESULTS-----
-Message type:  OA municipal status form or      OK         1
-               plain text message               ERROR      1
-Sent to:       PKTTUE at W2XSC                  Duplicate  1
-Sent between:  Wed 2022-04-13 00:00 and
-               Tue 2022-04-19 20:00
-Not sent from: W3XSC
+---- RESULTS
+1  OK
+1  ERROR
+1  Duplicate
 
-SOURCES-----------      JURISDICTIONS      TYPES---
-W1XSC   1               SNY  1             plain  2
-W3XSC*  1               ???  1
-* simulated outage
-
-MESSAGES----------------------------------------------------------------
-AA6BT   W3XSC   ???  ERROR: multiple issues
-KC6RSC  W1XSC*  SNY  OK
+---- MESSAGES
+AA6BT   @W3XSC   (???)  ERROR: multiple issues
+KC6RSC  @W1XSC*  (SNY)  OK
 * multiple messages from this address; only the last one counts
 
+---- SENT FROM
+1  W1XSC
+1  W3XSC (simulated outage)
+
+---- JURISDICTION
+1  SNY
+1  ???
+
+---- MESSAGE TYPE
+2  plain
 
 This report was generated on Tuesday, April 19, 2022 at 20:00 by wppsvr.
 `
