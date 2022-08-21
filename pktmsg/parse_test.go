@@ -109,16 +109,6 @@ var parseMessageTests = []struct {
 		}, false,
 	},
 	{
-		"Routing headers",
-		"From: <nobody@nowhere>\n\nR:123456/1234z foo bar\nR:234567/2345z baz bat\n\nnothing\n",
-		&Message{
-			Header: textproto.MIMEHeader{
-				"From":        []string{"<nobody@nowhere>"},
-				"X-Bbs-Route": []string{"R:123456/1234z foo bar", "R:234567/2345z baz bat"}},
-			Body: "\nnothing\n",
-		}, false,
-	},
-	{
 		"Outpost flags",
 		"From: <nobody@nowhere>\n\n!RDR!!RRR!!URG!nothing\n",
 		&Message{

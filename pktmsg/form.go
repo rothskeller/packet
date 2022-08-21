@@ -45,13 +45,14 @@ func ParseForm(body string, strict bool) (f *Form) {
 	return f
 }
 
-// parseFormHeader parses the three header lines of a form.
+// parseFormHeader parses the three header lines of a form.  Any text can come
+// before the header.  (Some BBSes add routing pseudo-headers, for example.)
 func parseFormHeader(body string) (f *Form, _ string) {
-	body = strings.TrimLeft(body, "\n")
-	if !strings.HasPrefix(body, headerLine) {
+	idx := strings.Index(body, headerLine)
+	if idx < 0 || (idx > 0 && body[idx-1] != '\n') {
 		return nil, body
 	}
-	body = body[len(headerLine):]
+	body = body[idx+len(headerLine):]
 	if match := typeLineRE.FindStringSubmatch(body); match != nil {
 		f = &Form{FormType: match[1]}
 		body = body[len(match[0]):]
@@ -197,14 +198,11 @@ func parseUnbracketedValue(body string) (value, nbody string, ok bool) {
 	return "", "", false // end of body before end of value
 }
 
-// parseFormFooter verifies that the only thing left in the body is the footer
-// line, possibly followed by blank lines.
+// parseFormFooter verifies that the next thing in the body is the footer line.
+// Anything after that is ignored.  (This is because some email clients add
+// their own footers that the sender can't control.)
 func parseFormFooter(f *Form, body string) *Form {
 	if !strings.HasPrefix(body, footerLine) {
-		return nil
-	}
-	body = body[len(footerLine):]
-	if strings.Trim(body, "\n") != "" {
 		return nil
 	}
 	return f

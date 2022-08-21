@@ -29,6 +29,28 @@ var parseFormTests = []struct {
 		},
 	},
 	{
+		"form with stuff before it",
+		"Hello, world!\n!SCCoPIFO!\n#T: tt.html\n#V: 1-2\nA:\n!/ADDON!\n",
+		false,
+		&Form{
+			PIFOVersion: "1",
+			FormType:    "tt.html",
+			FormVersion: "2",
+			Fields:      []FormField{{"A", ""}},
+		},
+	},
+	{
+		"form with stuff after it",
+		"!SCCoPIFO!\n#T: tt.html\n#V: 1-2\nA:\n!/ADDON!\nGoodbye, cruel world!\n",
+		false,
+		&Form{
+			PIFOVersion: "1",
+			FormType:    "tt.html",
+			FormVersion: "2",
+			Fields:      []FormField{{"A", ""}},
+		},
+	},
+	{
 		"missing header",
 		"#T: tt.html\n#V: 1-2\nA:\n!/ADDON!\n",
 		false,
@@ -67,12 +89,6 @@ var parseFormTests = []struct {
 	{
 		"missing footer",
 		"!SCCoPIFO!\n#T: tt.html\n#V: 1-2\nA:\n",
-		false,
-		nil,
-	},
-	{
-		"extra stuff after footer",
-		"!SCCoPIFO!\n#T: tt.html\n#V: 1-2\nA:\n!/ADDON!\nX\n",
 		false,
 		nil,
 	},
