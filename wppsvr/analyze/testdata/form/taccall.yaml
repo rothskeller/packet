@@ -1,4 +1,4 @@
-# No call sign anywhere.
+# Correct forms-based practice message.
 
 # Allow ICS213 forms for session:
 session:
@@ -7,10 +7,10 @@ session:
 
 # Message being analyzed:
 message: |
-  From: a@w1xsc.ampr.org
+  From: kc6rsc@w1xsc.ampr.org
   To: pkttue@w4xsc.ampr.org
   Date: Sun, 09 Jan 2022 20:00:00 -0800
-  Subject: RSC-100P_R_ICS213_Practice
+  Subject: RSC-100P_R_ICS213_Practice TACCAL, Steve, SNY, 1/11/2022
 
   !SCCoPIFO!
   #T: form-ics213.html
@@ -24,9 +24,11 @@ message: |
   8.: [B]
   9a.: [A]
   9b.: [B]
-  10.: [Practice]
+  10.: [Practice TACCAL, Steve, SNY, 1/11/2022]
   12.: [Test Message]
+  OpCall: [KC6RSC]
   Method: [Other]
+  OpName: [Steve Roth]
   Other: [Packet]
   OpDate: [01/09/2022]
   OpTime: [20:00]
@@ -35,30 +37,18 @@ message: |
 # Analysis that should be stored:
 stored:
   deliveryTime: 2022-01-09T20:00:00-08:00
-  fromAddress: a@w1xsc.ampr.org
+  fromAddress: kc6rsc@w1xsc.ampr.org
+  fromCallSign: TACCAL
   fromBBS: W1XSC
+  jurisdiction: SNY
   messageType: ICS213
-  subject: RSC-100P_R_ICS213_Practice
-  problems:
-    - FormInvalid
-    - NoCallSign
-    - PracticeSubjectFormat
-  actions: 15
+  subject: RSC-100P_R_ICS213_Practice TACCAL, Steve, SNY, 1/11/2022
+  actions: 0
 
 # Messages that should be sent in response:
 responses:
   - localID: TUE-101P
-    to: a@w1xsc.ampr.org
-    subject: 'DELIVERED: RSC-100P_R_ICS213_Practice'
+    to: kc6rsc@w1xsc.ampr.org
+    subject: 'DELIVERED: RSC-100P_R_ICS213_Practice TACCAL, Steve, SNY, 1/11/2022'
     bodyREs:
       - ^!LMI!TUE-100P!DR!01/11/2022 20:00:01\n
-  - localID: TUE-102P
-    to: a@w1xsc.ampr.org
-    subject: TUE-102P_R_Issues with packet practice message
-    bodyREs:
-      - will not be counted
-      - form with invalid contents
-      - four comma-separated fields
-      - no call sign in
-      - in the Operator Call field of the form
-      - Weekly SPECS/SVECS Packet Practice

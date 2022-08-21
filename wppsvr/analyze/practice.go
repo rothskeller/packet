@@ -27,7 +27,7 @@ type formWithSubjectField interface {
 // A comma is allowed after the word "Practice", which doesn't exactly conform
 // to the required syntax, but it is a very common mistake and not worth
 // penalizing.
-var practiceRE = regexp.MustCompile(`(?i)^Practice[,\s]+([AKNW][A-Z]?[0-9][A-Z]{1,3})\s*,[^,]+,([^,]+),\s*((?:0?[1-9]|1[0-2])/(?:0?[1-9]|[12]\d|3[01])/20\d\d)\s*$`)
+var practiceRE = regexp.MustCompile(`(?i)^Practice[,\s]+([AKNW][A-Z]?[0-9][A-Z]{1,3}|[A-Z][A-Z0-9]{5})\s*,[^,]+,([^,]+),\s*((?:0?[1-9]|1[0-2])/(?:0?[1-9]|[12]\d|3[01])/20\d\d)\s*$`)
 
 // ProbPracticeSubjectFormat is raised when the practice message details in the
 // subject line have the wrong format.
