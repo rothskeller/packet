@@ -59,7 +59,13 @@ var ProbPracticeSubjectFormat = &Problem{
 			if _, ok := a.xsc.(*config.PlainTextMessage); ok {
 				return true, "plain"
 			}
-			return true, "form"
+			if _, ok := a.xsc.(formWithSubjectField); ok {
+				return true, "form"
+			}
+			// It's a form that can't be used for weekly practice
+			// (e.g. check-in form).  We'll ignore the bad subject
+			// and just give them the "wrong form" message.
+			return false, ""
 		}
 		// Yes, we do, so save the information from it for other
 		// analysis steps.
