@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"log"
 	"net"
+	"net/mail"
 	"regexp"
 	"strings"
 
@@ -23,6 +24,7 @@ var variableRE = regexp.MustCompile(`\{[^}]*\}`)
 func (c *Config) Validate(knownProbs map[string]map[string]struct{}, knownVars map[string]struct{}) (valid bool) {
 	var err error
 	valid = true // assume valid until proven otherwise
+	var haveHTMLReports bool
 
 	// Check each of the BBS configurations.
 	for bbsCall, bbsConf := range c.BBSes {
@@ -150,6 +152,9 @@ func (c *Config) Validate(knownProbs map[string]map[string]struct{}, knownVars m
 					toCallSign, i, item.Then)
 				valid = false
 			}
+		}
+		if len(session.ReportTo.HTML) != 0 {
+			haveHTMLReports = true
 		}
 	}
 
@@ -306,6 +311,35 @@ func (c *Config) Validate(knownProbs map[string]map[string]struct{}, knownVars m
 	// Check that we have a listen address for the web server.
 	if c.ListenAddr == "" {
 		log.Printf("ERROR: config.listenAddr is not specified")
+		valid = false
+	}
+
+	// Check the SMTP configuration.
+	if c.SMTP != nil {
+		if c.SMTP.From == "" {
+			log.Printf("ERROR: config.smtp.from is not specified")
+			valid = false
+		} else if _, err := mail.ParseAddress(c.SMTP.From); err != nil {
+			log.Printf("ERROR: config.smtp.from is not a valid email address")
+			valid = false
+		}
+		if c.SMTP.Server == "" {
+			log.Printf("ERROR: config.smtp.server is not specified")
+			valid = false
+		} else if _, _, err := net.SplitHostPort(c.SMTP.Server); err != nil {
+			log.Printf("ERROR: config.smtp.server is not a valid host:port")
+			valid = false
+		}
+		if c.SMTP.Username == "" {
+			log.Printf("ERROR: config.smtp.username is not specified")
+			valid = false
+		}
+		if c.SMTP.Password == "" {
+			log.Printf("ERROR: config.smtp.password is not specified")
+			valid = false
+		}
+	} else if haveHTMLReports {
+		log.Printf("ERROR: config.smtp is needed and not specified")
 		valid = false
 	}
 

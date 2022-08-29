@@ -19,7 +19,7 @@ func closeSessions(st *store.Store) {
 			session.Running = false
 			st.UpdateSession(session)
 			log.Printf("Closed session for %s ending %s.", session.Name, session.End.Format("2006-01-02 15:04"))
-			if len(session.ReportTo) != 0 || st.SessionHasMessages(session.ID) {
+			if len(session.ReportToText) != 0 || len(session.ReportToHTML) != 0 || st.SessionHasMessages(session.ID) {
 				var conn = retrieve.ConnectToBBS(session.ToBBSes[0], session.CallSign)
 				report.Send(st, conn, session)
 				conn.Close()

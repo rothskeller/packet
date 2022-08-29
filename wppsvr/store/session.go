@@ -27,7 +27,8 @@ type Session struct {
 	Start           time.Time    `yaml:"start"`
 	End             time.Time    `yaml:"end"`
 	ExcludeFromWeek bool         `yaml:"-"`
-	ReportTo        []string     `yaml:"-"`
+	ReportToText    []string     `yaml:"-"`
+	ReportToHTML    []string     `yaml:"-"`
 	ToBBSes         []string     `yaml:"toBBSes"`
 	DownBBSes       []string     `yaml:"downBBSes"`
 	Retrieve        []*Retrieval `yaml:"retrieve"`
@@ -133,24 +134,26 @@ func (s *Store) getSessionsWhere(where string, args ...interface{}) (list []*Ses
 	)
 	s.mutex.RLock()
 	defer s.mutex.RUnlock()
-	rows, err = s.dbh.Query("SELECT id, callsign, name, prefix, start, end, excludefromweek, reportto, tobbses, downbbses, messagetypes, modified, running, imported, report FROM session WHERE "+where, args...)
+	rows, err = s.dbh.Query("SELECT id, callsign, name, prefix, start, end, excludefromweek, reporttotext, reporttohtml, tobbses, downbbses, messagetypes, modified, running, imported, report FROM session WHERE "+where, args...)
 	if err != nil {
 		panic(err)
 	}
 	for rows.Next() {
 		var (
 			session      Session
-			reportto     string
+			reporttotext string
+			reporttohtml string
 			tobbses      string
 			downbbses    string
 			messagetypes string
 			rows2        *sql.Rows
 		)
-		err = rows.Scan(&session.ID, &session.CallSign, &session.Name, &session.Prefix, &session.Start, &session.End, &session.ExcludeFromWeek, &reportto, &tobbses, &downbbses, &messagetypes, &session.Modified, &session.Running, &session.Imported, &session.Report)
+		err = rows.Scan(&session.ID, &session.CallSign, &session.Name, &session.Prefix, &session.Start, &session.End, &session.ExcludeFromWeek, &reporttotext, &reporttohtml, &tobbses, &downbbses, &messagetypes, &session.Modified, &session.Running, &session.Imported, &session.Report)
 		if err != nil {
 			panic(err)
 		}
-		session.ReportTo = split(reportto)
+		session.ReportToText = split(reporttotext)
+		session.ReportToHTML = split(reporttohtml)
 		session.ToBBSes = split(tobbses)
 		session.DownBBSes = split(downbbses)
 		session.MessageTypes = split(messagetypes)
@@ -189,9 +192,9 @@ func (s *Store) CreateSession(session *Session) {
 	s.mutex.Lock()
 	defer s.mutex.Unlock()
 	tx, err = s.dbh.Begin()
-	result, err = tx.Exec("INSERT INTO session (callsign, name, prefix, start, end, excludefromweek, reportto, tobbses, downbbses, messagetypes, modified, running, imported, report) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?)",
+	result, err = tx.Exec("INSERT INTO session (callsign, name, prefix, start, end, excludefromweek, reporttotext, reporttohtml, tobbses, downbbses, messagetypes, modified, running, imported, report) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)",
 		session.CallSign, session.Name, session.Prefix, session.Start, session.End, session.ExcludeFromWeek,
-		strings.Join(session.ReportTo, ";"), strings.Join(session.ToBBSes, ";"),
+		strings.Join(session.ReportToText, ";"), strings.Join(session.ReportToHTML, ";"), strings.Join(session.ToBBSes, ";"),
 		strings.Join(session.DownBBSes, ";"), strings.Join(session.MessageTypes, ";"),
 		session.Modified, session.Running, session.Imported, session.Report)
 	if err != nil {
@@ -230,9 +233,9 @@ func (s *Store) UpdateSession(session *Session) {
 	if tx, err = s.dbh.Begin(); err != nil {
 		panic(err)
 	}
-	_, err = tx.Exec("UPDATE session SET (callsign, name, prefix, start, end, excludefromweek, reportto, tobbses, downbbses, messagetypes, modified, running, imported, report) = (?,?,?,?,?,?,?,?,?,?,?,?,?,?) WHERE id=?",
+	_, err = tx.Exec("UPDATE session SET (callsign, name, prefix, start, end, excludefromweek, reporttotext, reporttohtml, tobbses, downbbses, messagetypes, modified, running, imported, report) = (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?) WHERE id=?",
 		session.CallSign, session.Name, session.Prefix, session.Start, session.End, session.ExcludeFromWeek,
-		strings.Join(session.ReportTo, ";"), strings.Join(session.ToBBSes, ";"),
+		strings.Join(session.ReportToText, ";"), strings.Join(session.ReportToHTML, ";"), strings.Join(session.ToBBSes, ";"),
 		strings.Join(session.DownBBSes, ";"), strings.Join(session.MessageTypes, ";"),
 		session.Modified, session.Running, session.Imported, session.Report, session.ID)
 	if err != nil {
@@ -275,7 +278,8 @@ func getConfiguredSessions(start, end time.Time) (list []*Session) {
 			session.End = sessend
 			for session.Start = sessend.Add(-time.Minute); !params.StartInterval.Match(session.Start); session.Start = session.Start.Add(-time.Minute) {
 			}
-			session.ReportTo = params.ReportTo
+			session.ReportToText = params.ReportTo.Text
+			session.ReportToHTML = params.ReportTo.HTML
 			session.ExcludeFromWeek = params.ExcludeFromWeek
 			session.ToBBSes = params.ToBBSes.AllFor(session.End)
 			session.DownBBSes = params.DownBBSes.AllFor(session.End)
@@ -297,11 +301,11 @@ func getConfiguredSessions(start, end time.Time) (list []*Session) {
 	return list
 }
 
+// DeleteSession deletes a session.
 func (s *Store) DeleteSession(session *Session) {
 	s.mutex.Lock()
 	defer s.mutex.Unlock()
 	if _, err := s.dbh.Exec(`DELETE FROM session WHERE id=?`, session.ID); err != nil {
 		panic(err)
 	}
-
 }

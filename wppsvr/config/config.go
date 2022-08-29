@@ -28,8 +28,17 @@ type Config struct {
 	Jurisdictions   map[string]string         `yaml:"jurisdictions"`
 	FormRouting     map[string]*FormRouting   `yaml:"formRouting"`
 	ListenAddr      string                    `yaml:"listenAddr"`
+	SMTP            *SMTPConfig               `yaml:"smtp"`
 	CanViewEveryone []string                  `yaml:"canViewEveryone"`
 	CanEditSessions []string                  `yaml:"canEditSessions"`
+}
+
+// An SMTPConfig describes how to send email via SMTP.
+type SMTPConfig struct {
+	From     string `yaml:"from"`
+	Server   string `yaml:"server"`
+	Username string `yaml:"username"`
+	Password string `yaml:"password"`
 }
 
 // A FormRouting structure specifies the required form routing for a particular
@@ -78,7 +87,7 @@ type SessionConfig struct {
 	Prefix          string         `yaml:"prefix"`
 	Start           string         `yaml:"start"`
 	End             string         `yaml:"end"`
-	ReportTo        []string       `yaml:"reportTo"`
+	ReportTo        ReportToLists  `yaml:"reportTo"`
 	ExcludeFromWeek bool           `yaml:"excludeFromWeek"`
 	ToBBSes         ScheduledValue `yaml:"toBBSes"`
 	DownBBSes       ScheduledValue `yaml:"downBBSes"`
@@ -87,6 +96,12 @@ type SessionConfig struct {
 
 	StartInterval interval.Interval `yaml:"-"`
 	EndInterval   interval.Interval `yaml:"-"`
+}
+
+// ReportToLists holds the lists of reporting targets.
+type ReportToLists struct {
+	Text []string `yaml:"text"`
+	HTML []string `yaml:"html"`
 }
 
 // Retrieval holds the configuration of a single retrieval for a session.
@@ -165,7 +180,7 @@ func (c *Config) applySessionDefaults() {
 		return
 	}
 	for _, session := range c.Sessions {
-		if session.ReportTo == nil {
+		if session.ReportTo.Text == nil && session.ReportTo.HTML == nil {
 			session.ReportTo = c.SessionDefaults.ReportTo
 		}
 		if session.ToBBSes == nil {
