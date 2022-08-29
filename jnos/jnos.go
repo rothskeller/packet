@@ -67,7 +67,7 @@ type Conn struct {
 }
 
 // jnosPromptRE is a regular expression matching the JNOS prompt.
-var jnosPromptRE = regexp.MustCompile(`^\(#\d+\) >$`)
+var jnosPromptRE = regexp.MustCompile(`^(?:Area: [A-Za-z0-9]+ )?\(#\d+\) >$`)
 
 // Connect connects to the JNOS BBS over the supplied open Transport.
 func Connect(t Transport) (c *Conn, err error) {
