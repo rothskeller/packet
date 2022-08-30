@@ -153,7 +153,7 @@ func (r *Report) emailMessages(w *quotedprintable.Writer) {
 		if m.Multiple {
 			multiple, hasMultiple = `*`, true
 		}
-		fmt.Fprintf(w, `<td style="padding:4px 0 0 16px">%s%s</td><td style="padding:4px 0 0 16px">%s</td><td style="padding:4px 0 0 16px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:%s">%s%s</div>`,
+		fmt.Fprintf(w, `<td style="padding:4px 0 0 16px">%s%s</td><td style="padding:4px 0 0 16px">%s</td><td style="padding:4px 0 0 16px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:%s">%s%s</td></tr>`,
 			m.Source, multiple, m.Jurisdiction, classColor[m.Class], classLabel[m.Class], m.Problem)
 	}
 	io.WriteString(w, `</table>`)
