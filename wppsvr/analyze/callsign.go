@@ -1,5 +1,7 @@
 package analyze
 
+import "strings"
+
 func init() {
 	Problems[ProbCallSignConflict.Code] = ProbCallSignConflict
 	Problems[ProbNoCallSign.Code] = ProbNoCallSign
@@ -22,6 +24,7 @@ var ProbNoCallSign = &Problem{
 		// if any.
 		if op, ok := a.xsc.(formWithOpCall); ok {
 			_, formCS = op.Operator()
+			formCS = strings.ToUpper(formCS)
 		}
 		// Extract the call sign from the From address of the message.
 		// If we find a non-FCC call and the message is coming from
@@ -70,6 +73,7 @@ var ProbCallSignConflict = &Problem{
 		}
 		if op, ok := a.xsc.(formWithOpCall); ok {
 			_, formCS := op.Operator()
+			formCS = strings.ToUpper(formCS)
 			if formCS != "" && formCS != a.fromCallSign {
 				return true, ""
 			}
@@ -79,7 +83,7 @@ var ProbCallSignConflict = &Problem{
 	Variables: variableMap{
 		"OPCALL": func(a *Analysis) string {
 			_, formCS := a.xsc.(formWithOpCall).Operator()
-			return formCS
+			return strings.ToUpper(formCS)
 		},
 	},
 }
