@@ -15,7 +15,7 @@ type formWithOriginNumber interface {
 	OriginNumber() string
 }
 
-var msgnumRE = regexp.MustCompile(`^(?:[A-Z][A-Z][A-Z]|[A-Z][0-9][A-Z0-9]|[0-9][A-Z][A-Z])-\d\d\d+[PM]$`)
+var msgnumRE = regexp.MustCompile(`^(?:[A-Z][A-Z][A-Z]|[A-Z][0-9][A-Z0-9]|[0-9][A-Z][A-Z])-\d\d\d+[PMR]$`)
 
 // ProbMsgNumFormat is raised when the message number does not meet county
 // standards.
