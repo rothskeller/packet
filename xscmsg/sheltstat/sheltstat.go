@@ -10,9 +10,7 @@ import (
 )
 
 // Tag identifies shelter status forms.
-const (
-	Tag = "SheltStat"
-)
+const Tag = "SheltStat"
 
 var (
 	frequencyRE       = regexp.MustCompile(`^[0-9]+(\.[0-9]+)?$`)
@@ -22,504 +20,376 @@ var (
 func init() {
 	xscmsg.RegisterCreate(Tag, create)
 	xscmsg.RegisterType(recognize)
+
+	// Our handling, toICSPosition, and toLocation fields are variants of
+	// the standard ones, adding default values to them.
+	handlingDef = new(xscmsg.FieldDef)
+	*handlingDef = *xscform.HandlingDef
+	handlingDef.DefaultValue = "PRIORITY"
+	toICSPositionDef = new(xscmsg.FieldDef)
+	*toICSPositionDef = *xscform.ToICSPositionDef
+	toICSPositionDef.DefaultValue = "Mass Care and Shelter Unit"
+	toICSPositionDef.Comment = "required: Mass Care and Shelter Unit, Care and Shelter Branch, Operations Section, ..."
+	toLocationDef = new(xscmsg.FieldDef)
+	*toLocationDef = *xscform.ToLocationDef
+	toLocationDef.DefaultValue = "County EOC"
+	toLocationDef.Comment = "required: County EOC, ..."
 }
 
-func create() xscmsg.Message {
-	return xscform.CreateForm(formtype22, makeFields22())
+func create() *xscmsg.Message {
+	return xscform.CreateForm(formtype, fieldDefsV22)
 }
 
-func recognize(msg *pktmsg.Message, form *pktmsg.Form) xscmsg.Message {
-	if form == nil || form.FormType != formtype22.HTML {
+func recognize(msg *pktmsg.Message, form *pktmsg.Form) *xscmsg.Message {
+	if form == nil || form.FormType != formtype.HTML {
 		return nil
 	}
 	if !xscmsg.OlderVersion(form.FormVersion, "2.2") {
-		return xscform.AdoptForm(formtype22, makeFields22(), msg, form)
+		return xscform.AdoptForm(formtype, fieldDefsV22, msg, form)
 	}
 	if !xscmsg.OlderVersion(form.FormVersion, "2.0") {
-		return xscform.AdoptForm(formtype20, makeFields20(), msg, form)
+		return xscform.AdoptForm(formtype, fieldDefsV21, msg, form)
 	}
 	return nil
 }
 
-var formtype22 = &xscmsg.MessageType{
-	Tag:     Tag,
-	Name:    "OA jurisdiction status form",
-	Article: "an",
-	HTML:    "form-oa-shelter-status.html",
-	Version: "2.2",
+var formtype = &xscmsg.MessageType{
+	Tag:         Tag,
+	Name:        "OA shelter status form",
+	Article:     "an",
+	HTML:        "form-oa-shelter-status.html",
+	Version:     "2.2",
+	SubjectFunc: xscform.EncodeSubject,
+	BodyFunc:    xscform.EncodeBody,
 }
 
-func makeFields22() []xscmsg.Field {
-	return []xscmsg.Field{
-		xscform.FOriginMessageNumber(),
-		xscform.FDestinationMessageNumber(),
-		xscform.FMessageDate(),
-		xscform.FMessageTime(),
-		&handlingField{ChoicesField: *xscform.FHandling().(*xscform.ChoicesField)},
-		&toICSPositionField{*xscform.FToICSPosition().(*xscform.Field)},
-		xscform.FFromICSPosition(),
-		&toLocationField{*xscform.FToLocation().(*xscform.Field)},
-		xscform.FFromLocation(),
-		xscform.FToName(),
-		xscform.FFromName(),
-		xscform.FToContact(),
-		xscform.FFromContact(),
-		&xscform.ChoicesField{Field: *xscform.NewField(reportTypeID, true), Choices: reportTypeChoices},
-		xscform.NewField(shelterNameID, true),
-		&requiredForCompleteChoicesField{ChoicesField: xscform.ChoicesField{Field: *xscform.NewField(shelterTypeID, false), Choices: shelterTypeChoices}},
-		&requiredForCompleteChoicesField{ChoicesField: xscform.ChoicesField{Field: *xscform.NewField(shelterStatusID, false), Choices: shelterStatusChoices}},
-		&requiredForCompleteField{Field: *xscform.NewField(shelterAddressID, false)},
-		&shelterCityCodeField{ChoicesField: xscform.ChoicesField{Field: *xscform.NewField(shelterCityCodeID, false), Choices: shelterCityChoices}},
-		&requiredForCompleteField{Field: *xscform.NewField(shelterCityID22, false)},
-		&requiredForCompleteField{Field: *xscform.NewField(shelterStateID, false)},
-		xscform.NewField(shelterZipID, false),
-		&xscform.RealNumberField{Field: *xscform.NewField(latitudeID, false)},
-		&xscform.RealNumberField{Field: *xscform.NewField(longitudeID, false)},
-		&requiredForCompleteCardinalNumberField{CardinalNumberField: xscform.CardinalNumberField{Field: *xscform.NewField(capacityID, false)}},
-		&requiredForCompleteCardinalNumberField{CardinalNumberField: xscform.CardinalNumberField{Field: *xscform.NewField(occupancyID, false)}},
-		xscform.NewField(mealsID, false),
-		xscform.NewField(nssID, false),
-		&xscform.ChoicesField{Field: *xscform.NewField(petFriendlyID, false), Choices: checkedFalseChoices},
-		&xscform.ChoicesField{Field: *xscform.NewField(basicSafetyID, false), Choices: checkedFalseChoices},
-		&xscform.ChoicesField{Field: *xscform.NewField(atc20ID, false), Choices: checkedFalseChoices},
-		xscform.NewField(availableServicesID, false),
-		xscform.NewField(mouID, false),
-		xscform.NewField(floorPlanID, false),
-		&managedByCodeField{ChoicesField: xscform.ChoicesField{Field: *xscform.NewField(managedByCodeID, false), Choices: managedByChoices}},
-		&requiredForCompleteField{Field: *xscform.NewField(managedByID22, false)},
-		xscform.NewField(managedByDetailID, false),
-		&requiredForCompleteField{Field: *xscform.NewField(primaryContactID, false)},
-		&requiredForCompletePhoneNumberField{PhoneNumberField: xscform.PhoneNumberField{Field: *xscform.NewField(primaryPhoneID, false)}},
-		xscform.NewField(secondaryContactID, false),
-		&xscform.PhoneNumberField{Field: *xscform.NewField(secondaryPhoneID, false)},
-		xscform.NewField(tacticalCallID, false),
-		&xscform.CallSignField{Field: *xscform.NewField(repeaterCallID, false)},
-		&frequencyField{Field: *xscform.NewField(repeaterInputID, false)},
-		xscform.NewField(repeaterInputToneID, false),
-		&frequencyField{Field: *xscform.NewField(repeaterOutputID, false)},
-		xscform.NewField(repeaterOutputToneID, false),
-		&frequencyOffsetField{Field: *xscform.NewField(repeaterOffsetID, false)},
-		xscform.NewField(commentsID, false),
-		&xscform.BooleanField{Field: *xscform.NewField(removeFromActiveListID, false)},
-		xscform.FOpRelayRcvd(),
-		xscform.FOpRelaySent(),
-		xscform.FOpName(),
-		xscform.FOpCall(),
-		xscform.FOpDate(),
-		xscform.FOpTime(),
-	}
+// fieldDefsV22 adds shelterCityCode and managedByCode, and changes from V21 to
+// V22 for shelterCity and managedBy.
+var fieldDefsV22 = []*xscmsg.FieldDef{
+	// Standard header
+	xscform.OriginMessageNumberDef, xscform.DestinationMessageNumberDef, xscform.MessageDateDef, xscform.MessageTimeDef,
+	handlingDef, toICSPositionDef, xscform.FromICSPositionDef, toLocationDef, xscform.FromLocationDef, xscform.ToNameDef,
+	xscform.FromNameDef, xscform.ToContactDef, xscform.FromContactDef,
+	// Shelter Status fields
+	reportTypeDef, shelterNameDef, shelterTypeDef, shelterStatusDef, shelterAddressDef, shelterCityCodeDef, shelterCityDefV22,
+	shelterStateDef, shelterZipDef, latitudeDef, longitudeDef, capacityDef, occupancyDef, mealsDef, nssDef, petFriendlyDef,
+	basicSafetyDef, atc20Def, availableServicesDef, mouDef, floorPlanDef, managedByCodeDef, managedByDefV22, managedByDetailDef,
+	primaryContactDef, primaryPhoneDef, secondaryContactDef, secondaryPhoneDef, tacticalCallDef, repeaterCallDef,
+	repeaterInputDef, repeaterInputToneDef, repeaterOutputDef, repeaterOutputToneDef, repeaterOffsetDef, commentsDef,
+	removeFromActiveListDef,
+	// Standard footer
+	xscform.OpRelayRcvdDef, xscform.OpRelaySentDef, xscform.OpNameDef, xscform.OpCallDef, xscform.OpDateDef, xscform.OpTimeDef,
 }
 
-var formtype20 = &xscmsg.MessageType{
-	Tag:     Tag,
-	Name:    "OA jurisdiction status form",
-	Article: "an",
-	HTML:    "form-oa-shelter-status.html",
-	Version: "2.1",
-}
-
-func makeFields20() []xscmsg.Field {
-	return []xscmsg.Field{
-		xscform.FOriginMessageNumber(),
-		xscform.FDestinationMessageNumber(),
-		xscform.FMessageDate(),
-		xscform.FMessageTime(),
-		&handlingField{ChoicesField: *xscform.FHandling().(*xscform.ChoicesField)},
-		&toICSPositionField{*xscform.FToICSPosition().(*xscform.Field)},
-		xscform.FFromICSPosition(),
-		&toLocationField{*xscform.FToLocation().(*xscform.Field)},
-		xscform.FFromLocation(),
-		xscform.FToName(),
-		xscform.FFromName(),
-		xscform.FToContact(),
-		xscform.FFromContact(),
-		&xscform.ChoicesField{Field: *xscform.NewField(reportTypeID, true), Choices: reportTypeChoices},
-		xscform.NewField(shelterNameID, true),
-		&requiredForCompleteChoicesField{ChoicesField: xscform.ChoicesField{Field: *xscform.NewField(shelterTypeID, false), Choices: shelterTypeChoices}},
-		&requiredForCompleteChoicesField{ChoicesField: xscform.ChoicesField{Field: *xscform.NewField(shelterStatusID, false), Choices: shelterStatusChoices}},
-		&requiredForCompleteField{Field: *xscform.NewField(shelterAddressID, false)},
-		&requiredForCompleteChoicesField{ChoicesField: xscform.ChoicesField{Field: *xscform.NewField(shelterCityID20, false), Choices: shelterCityChoices}},
-		&requiredForCompleteField{Field: *xscform.NewField(shelterStateID, false)},
-		xscform.NewField(shelterZipID, false),
-		&xscform.RealNumberField{Field: *xscform.NewField(latitudeID, false)},
-		&xscform.RealNumberField{Field: *xscform.NewField(longitudeID, false)},
-		&requiredForCompleteCardinalNumberField{CardinalNumberField: xscform.CardinalNumberField{Field: *xscform.NewField(capacityID, false)}},
-		&requiredForCompleteCardinalNumberField{CardinalNumberField: xscform.CardinalNumberField{Field: *xscform.NewField(occupancyID, false)}},
-		xscform.NewField(mealsID, false),
-		xscform.NewField(nssID, false),
-		&xscform.ChoicesField{Field: *xscform.NewField(petFriendlyID, false), Choices: checkedFalseChoices},
-		&xscform.ChoicesField{Field: *xscform.NewField(basicSafetyID, false), Choices: checkedFalseChoices},
-		&xscform.ChoicesField{Field: *xscform.NewField(atc20ID, false), Choices: checkedFalseChoices},
-		xscform.NewField(availableServicesID, false),
-		xscform.NewField(mouID, false),
-		xscform.NewField(floorPlanID, false),
-		&requiredForCompleteChoicesField{ChoicesField: xscform.ChoicesField{Field: *xscform.NewField(managedByID20, false), Choices: managedByChoices}},
-		xscform.NewField(managedByDetailID, false),
-		&requiredForCompleteField{Field: *xscform.NewField(primaryContactID, false)},
-		&requiredForCompletePhoneNumberField{PhoneNumberField: xscform.PhoneNumberField{Field: *xscform.NewField(primaryPhoneID, false)}},
-		xscform.NewField(secondaryContactID, false),
-		&xscform.PhoneNumberField{Field: *xscform.NewField(secondaryPhoneID, false)},
-		xscform.NewField(tacticalCallID, false),
-		&xscform.CallSignField{Field: *xscform.NewField(repeaterCallID, false)},
-		&frequencyField{Field: *xscform.NewField(repeaterInputID, false)},
-		xscform.NewField(repeaterInputToneID, false),
-		&frequencyField{Field: *xscform.NewField(repeaterOutputID, false)},
-		xscform.NewField(repeaterOutputToneID, false),
-		&frequencyOffsetField{Field: *xscform.NewField(repeaterOffsetID, false)},
-		xscform.NewField(commentsID, false),
-		&xscform.BooleanField{Field: *xscform.NewField(removeFromActiveListID, false)},
-		xscform.FOpRelayRcvd(),
-		xscform.FOpRelaySent(),
-		xscform.FOpName(),
-		xscform.FOpCall(),
-		xscform.FOpDate(),
-		xscform.FOpTime(),
-	}
+var fieldDefsV21 = []*xscmsg.FieldDef{
+	// Standard header
+	xscform.OriginMessageNumberDef, xscform.DestinationMessageNumberDef, xscform.MessageDateDef, xscform.MessageTimeDef,
+	handlingDef, toICSPositionDef, xscform.FromICSPositionDef, toLocationDef, xscform.FromLocationDef, xscform.ToNameDef,
+	xscform.FromNameDef, xscform.ToContactDef, xscform.FromContactDef,
+	// Shelter Status fields
+	reportTypeDef, shelterNameDef, shelterTypeDef, shelterStatusDef, shelterAddressDef, shelterCityDefV21,
+	shelterStateDef, shelterZipDef, latitudeDef, longitudeDef, capacityDef, occupancyDef, mealsDef, nssDef, petFriendlyDef,
+	basicSafetyDef, atc20Def, availableServicesDef, mouDef, floorPlanDef, managedByDefV21, managedByDetailDef,
+	primaryContactDef, primaryPhoneDef, secondaryContactDef, secondaryPhoneDef, tacticalCallDef, repeaterCallDef,
+	repeaterInputDef, repeaterInputToneDef, repeaterOutputDef, repeaterOutputToneDef, repeaterOffsetDef, commentsDef,
+	removeFromActiveListDef,
+	// Standard footer
+	xscform.OpRelayRcvdDef, xscform.OpRelaySentDef, xscform.OpNameDef, xscform.OpCallDef, xscform.OpDateDef, xscform.OpTimeDef,
 }
 
 var (
-	reportTypeID = &xscmsg.FieldID{
+	handlingDef      *xscmsg.FieldDef // set in func init
+	toICSPositionDef *xscmsg.FieldDef // set in func init
+	toLocationDef    *xscmsg.FieldDef // set in func init
+	reportTypeDef    = &xscmsg.FieldDef{
 		Tag:        "19.",
 		Annotation: "report-type",
 		Label:      "Report Type",
 		Comment:    "required: Update, Complete",
+		Validators: []xscmsg.Validator{xscform.ValidateRequired, xscform.ValidateChoices},
+		Choices:    []string{"Update", "Complete"},
 	}
-	reportTypeChoices = []string{"Update", "Complete"}
-	shelterNameID     = &xscmsg.FieldID{
+	shelterNameDef = &xscmsg.FieldDef{
 		Tag:        "32.",
 		Annotation: "shelter-name",
 		Label:      "Shelter Name",
 		Comment:    "required",
+		Validators: []xscmsg.Validator{xscform.ValidateRequired},
 		Canonical:  xscmsg.FSubject,
 	}
-	shelterTypeID = &xscmsg.FieldID{
+	shelterTypeDef = &xscmsg.FieldDef{
 		Tag:        "30.",
 		Annotation: "shelter-type",
 		Label:      "Shelter Type",
 		Comment:    "required-for-complete: Type 1, Type 2, Type 3, Type 4",
+		Validators: []xscmsg.Validator{requiredForComplete, xscform.ValidateChoices},
+		Choices:    []string{"Type 1", "Type 2", "Type 3", "Type 4"},
 	}
-	shelterTypeChoices = []string{"Type 1", "Type 2", "Type 3", "Type 4"}
-	shelterStatusID    = &xscmsg.FieldID{
+	shelterStatusDef = &xscmsg.FieldDef{
 		Tag:        "31.",
 		Annotation: "shelter-status",
 		Label:      "Status",
 		Comment:    "required-for-complete: Open, Closed, Full",
+		Validators: []xscmsg.Validator{requiredForComplete, xscform.ValidateChoices},
+		Choices:    []string{"Open", "Closed", "Full"},
 	}
-	shelterStatusChoices = []string{"Open", "Closed", "Full"}
-	shelterAddressID     = &xscmsg.FieldID{
+	shelterAddressDef = &xscmsg.FieldDef{
 		Tag:        "33a.",
 		Annotation: "shelter-address",
 		Label:      "Address",
 		Comment:    "required-for-complete",
+		Validators: []xscmsg.Validator{requiredForComplete},
 	}
-	shelterCityCodeID = &xscmsg.FieldID{
+	shelterCityCodeDef = &xscmsg.FieldDef{
 		Tag:        "33b.",
 		Annotation: "shelter-city-code",
 		Comment:    "required-for-complete",
 		ReadOnly:   true,
+		Validators: []xscmsg.Validator{setShelterCityCode, xscform.ValidateChoices},
+		Choices:    []string{"Campbell", "Cupertino", "Gilroy", "Los Altos", "Los Altos Hills", "Los Gatos", "Milpitas", "Monte Sereno", "Morgan Hill", "Mountain View", "Palo Alto", "San Jose", "Santa Clara", "Saratoga", "Sunnyvale", "Unincorporated"},
 	}
-	shelterCityID20 = &xscmsg.FieldID{
+	shelterCityDefV21 = &xscmsg.FieldDef{
 		Tag:        "33b.",
 		Annotation: "shelter-city",
 		Label:      "City",
 		Comment:    "required-for-complete: Campbell, Cupertino, Gilroy, Los Altos, Los Altos Hills, Los Gatos, Milpitas, Monte Sereno, Morgan Hill, Mountain View, Palo Alto, San Jose, Santa Clara, Saratoga, Sunnyvale, Unincorporated",
+		Validators: []xscmsg.Validator{requiredForComplete, xscform.ValidateChoices},
+		Choices:    []string{"Campbell", "Cupertino", "Gilroy", "Los Altos", "Los Altos Hills", "Los Gatos", "Milpitas", "Monte Sereno", "Morgan Hill", "Mountain View", "Palo Alto", "San Jose", "Santa Clara", "Saratoga", "Sunnyvale", "Unincorporated"},
 	}
-	shelterCityChoices = []string{"Campbell", "Cupertino", "Gilroy", "Los Altos", "Los Altos Hills", "Los Gatos", "Milpitas", "Monte Sereno", "Morgan Hill", "Mountain View", "Palo Alto", "San Jose", "Santa Clara", "Saratoga", "Sunnyvale", "Unincorporated"}
-	shelterCityID22    = &xscmsg.FieldID{
+	shelterCityDefV22 = &xscmsg.FieldDef{
 		Tag:        "34b.",
 		Annotation: "shelter-city",
 		Label:      "City",
 		Comment:    "required-for-complete: Campbell, Cupertino, Gilroy, Los Altos, Los Altos Hills, Los Gatos, Milpitas, Monte Sereno, Morgan Hill, Mountain View, Palo Alto, San Jose, Santa Clara, Saratoga, Sunnyvale, ...",
+		Validators: []xscmsg.Validator{requiredForComplete},
 	}
-	shelterStateID = &xscmsg.FieldID{
+	shelterStateDef = &xscmsg.FieldDef{
 		Tag:        "33c.",
 		Annotation: "shelter-state",
 		Label:      "State",
 	}
-	shelterZipID = &xscmsg.FieldID{
+	shelterZipDef = &xscmsg.FieldDef{
 		Tag:        "33d.",
 		Annotation: "shelter-zip",
 		Label:      "Zip",
 	}
-	latitudeID = &xscmsg.FieldID{
+	latitudeDef = &xscmsg.FieldDef{
 		Tag:        "37a.",
 		Annotation: "latitude",
 		Label:      "Latitude",
 		Comment:    "real-number",
+		Validators: []xscmsg.Validator{xscform.ValidateRealNumber},
 	}
-	longitudeID = &xscmsg.FieldID{
+	longitudeDef = &xscmsg.FieldDef{
 		Tag:        "37b.",
 		Annotation: "longitude",
 		Label:      "Longitude",
 		Comment:    "real-number",
+		Validators: []xscmsg.Validator{xscform.ValidateRealNumber},
 	}
-	capacityID = &xscmsg.FieldID{
+	capacityDef = &xscmsg.FieldDef{
 		Tag:        "40a.",
 		Annotation: "capacity",
 		Label:      "Capacity",
 		Comment:    "cardinal-number required-for-complete",
+		Validators: []xscmsg.Validator{requiredForComplete, xscform.ValidateCardinalNumber},
 	}
-	occupancyID = &xscmsg.FieldID{
+	occupancyDef = &xscmsg.FieldDef{
 		Tag:        "40b.",
 		Annotation: "occupancy",
 		Label:      "Occupancy",
 		Comment:    "cardinal-number required-for-complete",
+		Validators: []xscmsg.Validator{requiredForComplete, xscform.ValidateCardinalNumber},
 	}
-	mealsID = &xscmsg.FieldID{
+	mealsDef = &xscmsg.FieldDef{
 		Tag:        "41.",
 		Annotation: "meals",
 		Label:      "Meals Served (last 24 hours)",
 	}
-	nssID = &xscmsg.FieldID{
+	nssDef = &xscmsg.FieldDef{
 		Tag:        "42.",
 		Annotation: "NSS",
 		Label:      "NSS Number",
 	}
-	petFriendlyID = &xscmsg.FieldID{
+	petFriendlyDef = &xscmsg.FieldDef{
 		Tag:        "43a.",
 		Annotation: "pet-friendly",
 		Label:      "Pet Friendly",
 		Comment:    "checked, false",
+		Validators: []xscmsg.Validator{xscform.ValidateChoices},
+		Choices:    []string{"checked", "false"},
 	}
-	basicSafetyID = &xscmsg.FieldID{
+	basicSafetyDef = &xscmsg.FieldDef{
 		Tag:        "43b.",
 		Annotation: "basic-safety",
 		Label:      "Basic Safety Inspection",
 		Comment:    "checked, false",
+		Validators: []xscmsg.Validator{xscform.ValidateChoices},
+		Choices:    []string{"checked", "false"},
 	}
-	atc20ID = &xscmsg.FieldID{
+	atc20Def = &xscmsg.FieldDef{
 		Tag:        "43c.",
 		Annotation: "ATC-20",
 		Label:      "ATC 20 Inspection",
 		Comment:    "checked, false",
+		Validators: []xscmsg.Validator{xscform.ValidateChoices},
+		Choices:    []string{"checked", "false"},
 	}
-	checkedFalseChoices = []string{"checked", "false"}
-	availableServicesID = &xscmsg.FieldID{
+	availableServicesDef = &xscmsg.FieldDef{
 		Tag:        "44.",
 		Annotation: "available-services",
 		Label:      "Available Services",
 	}
-	mouID = &xscmsg.FieldID{
+	mouDef = &xscmsg.FieldDef{
 		Tag:        "45.",
 		Annotation: "MOU",
 		Label:      "",
 	}
-	floorPlanID = &xscmsg.FieldID{
+	floorPlanDef = &xscmsg.FieldDef{
 		Tag:        "46.",
 		Annotation: "floor-plan",
 		Label:      "Floor Plan",
 	}
-	managedByCodeID = &xscmsg.FieldID{
+	managedByCodeDef = &xscmsg.FieldDef{
 		Tag:        "50a.",
 		Annotation: "managed-by-code",
 		ReadOnly:   true,
+		Validators: []xscmsg.Validator{setManagedByCode, xscform.ValidateChoices},
+		Choices:    []string{"American Red Cross", "Private", "Community", "Government", "Other"},
 	}
-	managedByID20 = &xscmsg.FieldID{
+	managedByDefV21 = &xscmsg.FieldDef{
 		Tag:        "50a.",
 		Annotation: "managed-by",
 		Label:      "Managed By",
 		Comment:    "required-for-complete: American Red Cross, Private, Community, Government, Other",
+		Validators: []xscmsg.Validator{requiredForComplete, xscform.ValidateChoices},
+		Choices:    []string{"American Red Cross", "Private", "Community", "Government", "Other"},
 	}
-	managedByChoices = []string{"American Red Cross", "Private", "Community", "Government", "Other"}
-	managedByID22    = &xscmsg.FieldID{
+	managedByDefV22 = &xscmsg.FieldDef{
 		Tag:        "49a.",
 		Annotation: "managed-by",
 		Label:      "Managed By",
 		Comment:    "required-for-complete: American Red Cross, Private, Community, Government, ...",
+		Validators: []xscmsg.Validator{requiredForComplete},
 	}
-	managedByDetailID = &xscmsg.FieldID{
+	managedByDetailDef = &xscmsg.FieldDef{
 		Tag:        "50b.",
 		Annotation: "managed-by-detail",
 		Label:      "Managed By Detail",
 	}
-	primaryContactID = &xscmsg.FieldID{
+	primaryContactDef = &xscmsg.FieldDef{
 		Tag:        "51a.",
 		Annotation: "primary-contact",
 		Label:      "Primary Contact",
 		Comment:    "required-for-complete",
+		Validators: []xscmsg.Validator{requiredForComplete},
 	}
-	primaryPhoneID = &xscmsg.FieldID{
+	primaryPhoneDef = &xscmsg.FieldDef{
 		Tag:        "51b.",
 		Annotation: "primary-phone",
 		Label:      "Primary Contact Phone",
 		Comment:    "phone-number required-for-complete",
+		Validators: []xscmsg.Validator{requiredForComplete, xscform.ValidatePhoneNumber},
 	}
-	secondaryContactID = &xscmsg.FieldID{
+	secondaryContactDef = &xscmsg.FieldDef{
 		Tag:        "52a.",
 		Annotation: "secondary-contact",
 		Label:      "Secondary Contact",
 	}
-	secondaryPhoneID = &xscmsg.FieldID{
+	secondaryPhoneDef = &xscmsg.FieldDef{
 		Tag:        "52b.",
 		Annotation: "secondary-phone",
 		Label:      "Secondary Contact Phone",
 		Comment:    "phone-number",
+		Validators: []xscmsg.Validator{xscform.ValidatePhoneNumber},
 	}
-	tacticalCallID = &xscmsg.FieldID{
+	tacticalCallDef = &xscmsg.FieldDef{
 		Tag:        "60.",
 		Annotation: "tactical-call",
 		Label:      "Tactical Call Sign",
 	}
-	repeaterCallID = &xscmsg.FieldID{
+	repeaterCallDef = &xscmsg.FieldDef{
 		Tag:        "61.",
 		Annotation: "repeater-call",
 		Label:      "Repeater Call Sign",
 		Comment:    "call-sign",
+		Validators: []xscmsg.Validator{xscform.ValidateCallSign},
 	}
-	repeaterInputID = &xscmsg.FieldID{
+	repeaterInputDef = &xscmsg.FieldDef{
 		Tag:        "62a.",
 		Annotation: "repeater-input",
 		Label:      "Repeater Input (MHz)",
 		Comment:    "frequency",
+		Validators: []xscmsg.Validator{validateFrequency},
 	}
-	repeaterInputToneID = &xscmsg.FieldID{
+	repeaterInputToneDef = &xscmsg.FieldDef{
 		Tag:        "62b.",
 		Annotation: "repeater-input-tone",
 		Label:      "Repeater Input Tone or Code",
 	}
-	repeaterOutputID = &xscmsg.FieldID{
+	repeaterOutputDef = &xscmsg.FieldDef{
 		Tag:        "63a.",
 		Annotation: "repeater-output",
 		Label:      "Repeater Output (MHz)",
 		Comment:    "frequency",
+		Validators: []xscmsg.Validator{validateFrequency},
 	}
-	repeaterOutputToneID = &xscmsg.FieldID{
+	repeaterOutputToneDef = &xscmsg.FieldDef{
 		Tag:        "63b.",
 		Annotation: "repeater-output-tone",
 		Label:      "Repeater Output Tone or Code",
 	}
-	repeaterOffsetID = &xscmsg.FieldID{
+	repeaterOffsetDef = &xscmsg.FieldDef{
 		Tag:        "62c.",
 		Annotation: "repeater-offset",
 		Label:      "Repeater Offset (MHz or \"+\" or \"-\" for standard)",
 		Comment:    "frequency-offset",
+		Validators: []xscmsg.Validator{validateFrequencyOffset},
 	}
-	commentsID = &xscmsg.FieldID{
+	commentsDef = &xscmsg.FieldDef{
 		Tag:        "70.",
 		Annotation: "comments",
 		Label:      "Comments",
 	}
-	removeFromActiveListID = &xscmsg.FieldID{
+	removeFromActiveListDef = &xscmsg.FieldDef{
 		Tag:        "71.",
 		Annotation: "remove-from-active-list",
 		Label:      "Remove from List",
 		Comment:    "boolean",
+		Validators: []xscmsg.Validator{xscform.ValidateBoolean},
 	}
 )
 
-type handlingField struct{ xscform.ChoicesField }
-
-func (f *handlingField) Default() string { return "PRIORITY" }
-
-type toICSPositionField struct{ xscform.Field }
-
-func (f *toICSPositionField) Default() string { return "Mass Care and Shelter Unit" }
-
-type toLocationField struct{ xscform.Field }
-
-func (f *toLocationField) Default() string { return "County EOC" }
-
-type shelterCityCodeField struct{ xscform.ChoicesField }
-
-func (f *shelterCityCodeField) Validate(msg xscmsg.Message, strict bool) string {
-	if f.Get() == "" {
-		j := msg.Field("34b.").Get()
-		if j != "" {
-			for _, choice := range shelterCityChoices {
-				if j == choice {
-					f.Set(j)
-					break
-				}
-			}
-			if f.Get() == "" {
-				f.Set(shelterCityChoices[len(shelterCityChoices)-1])
-			}
-		}
-	}
-	return f.ChoicesField.Validate(msg, strict)
+func setShelterCityCode(f *xscmsg.Field, m *xscmsg.Message, _ bool) string {
+	xscform.SetChoiceFieldFromValue(f, m.Field("34b.").Value)
+	return ""
 }
 
-type managedByCodeField struct{ xscform.ChoicesField }
-
-func (f *managedByCodeField) Validate(msg xscmsg.Message, strict bool) string {
-	if f.Get() == "" {
-		j := msg.Field("49a.").Get()
-		if j != "" {
-			for _, choice := range managedByChoices {
-				if j == choice {
-					f.Set(j)
-					break
-				}
-			}
-			if f.Get() == "" {
-				f.Set(managedByChoices[len(managedByChoices)-1])
-			}
-		}
-	}
-	return f.ChoicesField.Validate(msg, strict)
+func setManagedByCode(f *xscmsg.Field, m *xscmsg.Message, _ bool) string {
+	xscform.SetChoiceFieldFromValue(f, m.Field("49a.").Value)
+	return ""
 }
 
-// frequencyField is a field with a frequency value.
-type frequencyField struct{ xscform.Field }
-
-// Validate ensures that the value is a properly-formatted frequency value.
-func (f *frequencyField) Validate(msg xscmsg.Message, strict bool) string {
-	if v := f.Get(); v != "" && !frequencyRE.MatchString(v) {
-		return fmt.Sprintf("%q is not a valid frequency value for field %q", v, f.ID().Tag)
+func validateFrequency(f *xscmsg.Field, _ *xscmsg.Message, _ bool) string {
+	if f.Value != "" && !frequencyRE.MatchString(f.Value) {
+		return fmt.Sprintf("%q is not a valid frequency value for field %q", f.Value, f.Def.Tag)
 	}
 	return ""
 }
 
-// frequencyOffsetField is a field with a frequency offset value.
-type frequencyOffsetField struct{ xscform.Field }
-
-// Validate ensures that the value is a properly-formatted frequencyOffset value.
-func (f *frequencyOffsetField) Validate(msg xscmsg.Message, strict bool) string {
-	if v := f.Get(); v != "" && !frequencyOffsetRE.MatchString(v) {
-		return fmt.Sprintf("%q is not a valid frequency offset value for field %q", v, f.ID().Tag)
+func validateFrequencyOffset(f *xscmsg.Field, _ *xscmsg.Message, _ bool) string {
+	if f.Value != "" && !frequencyOffsetRE.MatchString(f.Value) {
+		return fmt.Sprintf("%q is not a valid frequency offset value for field %q", f.Value, f.Def.Tag)
 	}
 	return ""
 }
 
-type requiredForCompleteField struct{ xscform.Field }
-
-func (f *requiredForCompleteField) Validate(msg xscmsg.Message, strict bool) string {
-	if err := validateRequiredIfComplete(f, msg); err != "" {
-		return err
+func requiredForComplete(f *xscmsg.Field, m *xscmsg.Message, _ bool) string {
+	if m.Field("19.").Value != "Complete" {
+		return ""
 	}
-	return f.Field.Validate(msg, strict)
-}
-
-type requiredForCompleteCardinalNumberField struct{ xscform.CardinalNumberField }
-
-func (f *requiredForCompleteCardinalNumberField) Validate(msg xscmsg.Message, strict bool) string {
-	if err := validateRequiredIfComplete(f, msg); err != "" {
-		return err
-	}
-	return f.CardinalNumberField.Validate(msg, strict)
-}
-
-type requiredForCompleteChoicesField struct{ xscform.ChoicesField }
-
-func (f *requiredForCompleteChoicesField) Validate(msg xscmsg.Message, strict bool) string {
-	if err := validateRequiredIfComplete(f, msg); err != "" {
-		return err
-	}
-	return f.ChoicesField.Validate(msg, strict)
-}
-
-type requiredForCompletePhoneNumberField struct{ xscform.PhoneNumberField }
-
-func (f *requiredForCompletePhoneNumberField) Validate(msg xscmsg.Message, strict bool) string {
-	if err := validateRequiredIfComplete(f, msg); err != "" {
-		return err
-	}
-	return f.PhoneNumberField.Validate(msg, strict)
-}
-
-func validateRequiredIfComplete(f xscmsg.Field, msg xscmsg.Message) string {
-	if f.Get() == "" && msg.Field("19.").Get() == "Complete" {
-		return fmt.Sprintf("field %q needs a value when field \"19.\" is \"Complete\"", f.ID().Tag)
+	if f.Value == "" {
+		return fmt.Sprintf("The %q field must have a value when the \"19.\" field is set to \"Complete\".", f.Def.Tag)
 	}
 	return ""
 }

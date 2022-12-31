@@ -1,264 +1,176 @@
 package xscform
 
 import (
-	"fmt"
-
 	"github.com/rothskeller/packet/xscmsg"
 )
 
-// FOriginMessageNumber creates an XSC-standard Origin Message Number field.
-func FOriginMessageNumber() xscmsg.Field {
-	return &MessageNumberField{Field: newField(originMessageNumberID, true)}
+// OriginMessageNumberDef is the definition of the XSC-standard Origin Message
+// Number field.
+var OriginMessageNumberDef = &xscmsg.FieldDef{
+	Tag:        "MsgNo",
+	Label:      "Origin Message Number",
+	Comment:    "required message-number",
+	Canonical:  xscmsg.FOriginMsgNo,
+	Validators: []xscmsg.Validator{ValidateRequired, ValidateMessageNumber},
 }
 
-var originMessageNumberID = &xscmsg.FieldID{
-	Tag:       "MsgNo",
-	Label:     "Origin Message Number",
-	Comment:   "required message-number",
-	Canonical: xscmsg.FOriginMsgNo,
+// DestinationMessageNumberDef is the definition of the XSC-standard Destination
+// Message Number field.
+var DestinationMessageNumberDef = &xscmsg.FieldDef{
+	Tag:        "DestMsgNo",
+	Label:      "Destination Message Number",
+	Comment:    "message-number",
+	Canonical:  xscmsg.FDestinationMsgNo,
+	ReadOnly:   true,
+	Validators: []xscmsg.Validator{ValidateMessageNumber},
 }
 
-// FDestinationMessageNumber creates an XSC-standard Destination Message Number
-// field.
-func FDestinationMessageNumber() xscmsg.Field {
-	return &MessageNumberField{Field: newField(destinationMessageNumberID, false)}
+// MessageDateDef is the definition of the XSC-standard Message Date field.
+var MessageDateDef = &xscmsg.FieldDef{
+	Tag:         "1a.",
+	Annotation:  "date",
+	Label:       "Date",
+	Comment:     "required date",
+	Canonical:   xscmsg.FMessageDate,
+	Validators:  []xscmsg.Validator{ValidateRequired, ValidateDate},
+	DefaultFunc: DefaultDate,
 }
 
-var destinationMessageNumberID = &xscmsg.FieldID{
-	Tag:       "DestMsgNo",
-	Label:     "Destination Message Number",
-	Comment:   "message-number",
-	Canonical: xscmsg.FDestinationMsgNo,
-	ReadOnly:  true,
+// MessageTimeDef is the definition of the XSC-standard Message Time field.
+var MessageTimeDef = &xscmsg.FieldDef{
+	Tag:         "1b.",
+	Annotation:  "time",
+	Label:       "Time",
+	Comment:     "required time",
+	Canonical:   xscmsg.FMessageTime,
+	Validators:  []xscmsg.Validator{ValidateRequired, ValidateTime},
+	DefaultFunc: DefaultTime,
 }
 
-// FMessageDate creates an XSC-standard Message Date field.
-func FMessageDate() xscmsg.Field {
-	return &DateFieldDefaultNow{DateField{Field: newField(messageDateID, true)}}
-}
-
-var messageDateID = &xscmsg.FieldID{
-	Tag:        "1a.",
-	Annotation: "date",
-	Label:      "Date",
-	Comment:    "required date",
-	Canonical:  xscmsg.FMessageDate,
-}
-
-// FMessageTime creates an XSC-standard Message Time field.
-func FMessageTime() xscmsg.Field {
-	return &TimeFieldDefaultNow{TimeField{Field: newField(messageTimeID, true)}}
-}
-
-var messageTimeID = &xscmsg.FieldID{
-	Tag:        "1b.",
-	Annotation: "time",
-	Label:      "Time",
-	Comment:    "required time",
-	Canonical:  xscmsg.FMessageTime,
-}
-
-// FHandling creates an XSC-standard Handling field.
-func FHandling() xscmsg.Field {
-	return &ChoicesField{Field: newField(handlingID, true), Choices: handlingChoices}
-}
-
-var handlingID = &xscmsg.FieldID{
+// HandlingDef is the definition of the XSC-standard Handling field.
+var HandlingDef = &xscmsg.FieldDef{
 	Tag:        "5.",
 	Annotation: "handling",
 	Label:      "Handling",
 	Comment:    "required: IMMEDIATE, PRIORITY, ROUTINE",
 	Canonical:  xscmsg.FHandling,
+	Validators: []xscmsg.Validator{ValidateRequired, ValidateChoices},
+	Choices:    []string{"IMMEDIATE", "PRIORITY", "ROUTINE"},
 }
 
-var handlingChoices = []string{"IMMEDIATE", "PRIORITY", "ROUTINE"}
-
-// FToICSPosition creates an XSC-standard To ICS Position field.
-func FToICSPosition() xscmsg.Field {
-	return NewField(toICSPositionID, true)
-}
-
-var toICSPositionID = &xscmsg.FieldID{
+// ToICSPositionDef is the definition of the XSC-standard To ICS Position field.
+var ToICSPositionDef = &xscmsg.FieldDef{
 	Tag:        "7a.",
 	Annotation: "to-ics-position",
 	Label:      "To ICS Position",
 	Comment:    "required",
 	Canonical:  xscmsg.FToICSPosition,
+	Validators: []xscmsg.Validator{ValidateRequired},
 }
 
-// FFromICSPosition creates an XSC-standard From ICS Position field.
-func FFromICSPosition() xscmsg.Field {
-	return NewField(fromICSPositionID, true)
-}
-
-var fromICSPositionID = &xscmsg.FieldID{
+// FromICSPositionDef is the definition of the XSC-standard From ICS Position
+// field.
+var FromICSPositionDef = &xscmsg.FieldDef{
 	Tag:        "8a.",
 	Annotation: "from-ics-position",
 	Label:      "From ICS Position",
 	Comment:    "required",
+	Validators: []xscmsg.Validator{ValidateRequired},
 }
 
-// FToLocation creates an XSC-standard To Location field.
-func FToLocation() xscmsg.Field {
-	return NewField(toLocationID, true)
-}
-
-var toLocationID = &xscmsg.FieldID{
+// ToLocationDef is the definition of the XSC-standard To Location field.
+var ToLocationDef = &xscmsg.FieldDef{
 	Tag:        "7b.",
 	Annotation: "to-location",
 	Label:      "To Location",
 	Comment:    "required",
 	Canonical:  xscmsg.FToLocation,
+	Validators: []xscmsg.Validator{ValidateRequired},
 }
 
-// FFromLocation creates an XSC-standard From Location field.
-func FFromLocation() xscmsg.Field {
-	return NewField(fromLocationID, true)
-}
-
-var fromLocationID = &xscmsg.FieldID{
+// FromLocationDef is the definition of the XSC-standard From Location field.
+var FromLocationDef = &xscmsg.FieldDef{
 	Tag:        "8b.",
 	Annotation: "from-location",
 	Label:      "From Location",
 	Comment:    "required",
+	Validators: []xscmsg.Validator{ValidateRequired},
 }
 
-// FToName creates an XSC-standard To Name field.
-func FToName() xscmsg.Field {
-	return NewField(toNameID, false)
-}
-
-var toNameID = &xscmsg.FieldID{
+// ToNameDef is the definition of the XSC-standard To Name field.
+var ToNameDef = &xscmsg.FieldDef{
 	Tag:        "7c.",
 	Annotation: "to-name",
 	Label:      "To Name",
 }
 
-// FFromName creates an XSC-standard From Name field.
-func FFromName() xscmsg.Field {
-	return NewField(fromNameID, false)
-}
-
-var fromNameID = &xscmsg.FieldID{
+// FromNameDef is the definition of the XSC-standard From Name field.
+var FromNameDef = &xscmsg.FieldDef{
 	Tag:        "8c.",
 	Annotation: "from-name",
 	Label:      "From Name",
 }
 
-// FToContact creates an XSC-standard To Contact field.
-func FToContact() xscmsg.Field {
-	return NewField(toContactID, false)
-}
-
-var toContactID = &xscmsg.FieldID{
+// ToContactDef is the definition of the XSC-standard To Contact field.
+var ToContactDef = &xscmsg.FieldDef{
 	Tag:        "7d.",
 	Annotation: "to-contact",
 	Label:      "To Contact Info",
 }
 
-// FFromContact creates an XSC-standard From Contact field.
-func FFromContact() xscmsg.Field {
-	return NewField(fromContactID, false)
-}
-
-var fromContactID = &xscmsg.FieldID{
+// FromContactDef is the definition of the XSC-standard From Contact field.
+var FromContactDef = &xscmsg.FieldDef{
 	Tag:        "8d.",
 	Annotation: "from-contact",
 	Label:      "From Contact Info",
 }
 
-// FOpRelayRcvd creates an XSC-standard Operator Relay Received field.
-func FOpRelayRcvd() xscmsg.Field {
-	return NewField(opRelayRcvdID, false)
-}
-
-var opRelayRcvdID = &xscmsg.FieldID{
+// OpRelayRcvdDef is the definition of the XSC-standard Operator Relay Received
+// field.
+var OpRelayRcvdDef = &xscmsg.FieldDef{
 	Tag:   "OpRelayRcvd",
 	Label: "Relay Rcvd",
 }
 
-// FOpRelaySent creates an XSC-standard Operator Relay Sent field.
-func FOpRelaySent() xscmsg.Field {
-	return NewField(opRelaySentID, false)
-}
-
-var opRelaySentID = &xscmsg.FieldID{
+// OpRelaySentDef is the definition of the XSC-standard Operator Relay Sent
+// field.
+var OpRelaySentDef = &xscmsg.FieldDef{
 	Tag:   "OpRelaySent",
 	Label: "Relay Sent",
 }
 
-// FOpName creates an XSC-standard Operator Name field.
-func FOpName() xscmsg.Field {
-	return NewField(opNameID, true)
-}
-
-var opNameID = &xscmsg.FieldID{
+// OpNameDef is the definition of the XSC-standard Operator Name field.
+var OpNameDef = &xscmsg.FieldDef{
 	Tag:       "OpName",
 	Label:     "Operator Name",
 	Canonical: xscmsg.FOpName,
 }
 
-// FOpCall creates an XSC-standard Operator Call field.
-func FOpCall() xscmsg.Field {
-	return &CallSignField{Field: newField(opCallID, true)}
+// OpCallDef is the definition of the XSC-standard Operator Call field.
+var OpCallDef = &xscmsg.FieldDef{
+	Tag:        "OpCall",
+	Label:      "Operator Call Sign",
+	Comment:    "required call-sign",
+	Canonical:  xscmsg.FOpCall,
+	Validators: []xscmsg.Validator{ValidateRequired, ValidateCallSign},
 }
 
-var opCallID = &xscmsg.FieldID{
-	Tag:       "OpCall",
-	Label:     "Operator Call Sign",
-	Comment:   "required call-sign",
-	Canonical: xscmsg.FOpCall,
+// OpDateDef is the definition of the XSC-standard Operator Date field.
+var OpDateDef = &xscmsg.FieldDef{
+	Tag:         "OpDate",
+	Label:       "Operator Date",
+	Comment:     "date",
+	Canonical:   xscmsg.FOpDate,
+	Validators:  []xscmsg.Validator{ValidateDate},
+	DefaultFunc: DefaultDate,
 }
 
-// FOpDate creates an XSC-standard Operator Date field.
-func FOpDate() xscmsg.Field {
-	return &DateFieldDefaultNow{DateField{Field: newField(opDateID, false)}}
+// OpTimeDef is the definition of the XSC-standard Operator Time field.
+var OpTimeDef = &xscmsg.FieldDef{
+	Tag:         "OpTime",
+	Label:       "Operator Time",
+	Comment:     "time",
+	Canonical:   xscmsg.FOpTime,
+	Validators:  []xscmsg.Validator{ValidateTime},
+	DefaultFunc: DefaultTime,
 }
-
-var opDateID = &xscmsg.FieldID{
-	Tag:       "OpDate",
-	Label:     "Operator Date",
-	Comment:   "date",
-	Canonical: xscmsg.FOpDate,
-}
-
-// FOpTime creates an XSC-standard Operator Time field.
-func FOpTime() xscmsg.Field {
-	return &TimeFieldDefaultNow{TimeField{Field: newField(opTimeID, false)}}
-}
-
-var opTimeID = &xscmsg.FieldID{
-	Tag:       "OpTime",
-	Label:     "Operator Time",
-	Comment:   "time",
-	Canonical: xscmsg.FOpTime,
-}
-
-// unknownField is a field that was found while decoding a received form, that
-// we did not expect to find in the form and have no field definition for.
-type unknownField struct {
-	tag   string
-	value string
-}
-
-// ID returns the identification of the field.
-func (f *unknownField) ID() *xscmsg.FieldID {
-	return &xscmsg.FieldID{
-		Tag:   f.tag,
-		Label: f.tag,
-	}
-}
-
-// Validate always fails for unknown fields.
-func (f *unknownField) Validate(_ xscmsg.Message, _ bool) string {
-	return fmt.Sprintf("form has a value for an unknown field %q", f.tag)
-}
-
-// Get returns the value of the field.
-func (f *unknownField) Get() string { return f.value }
-
-// Set sets the value of the field.
-func (f *unknownField) Set(v string) { f.value = v }
-
-// Default returns the default value of the field.
-func (f *unknownField) Default() string { return "" }

@@ -9,731 +9,736 @@ import (
 )
 
 // Tag identifies allied health facility status forms.
-const (
-	Tag = "AHFacStat"
-)
+const Tag = "AHFacStat"
 
 func init() {
 	xscmsg.RegisterCreate(Tag, create)
 	xscmsg.RegisterType(recognize)
+
+	// Our handling, toICSPosition, and toLocation fields are variants of
+	// the standard ones, adding default values to them.
+	handlingDef = new(xscmsg.FieldDef)
+	*handlingDef = *xscform.HandlingDef
+	handlingDef.DefaultValue = "ROUTINE"
+	toICSPositionDef = new(xscmsg.FieldDef)
+	*toICSPositionDef = *xscform.ToICSPositionDef
+	toICSPositionDef.DefaultValue = "EMS Unit"
+	toICSPositionDef.Comment = "required: EMS Unit, Public Health Unit, Medical Health Branch, Operations Section, ..."
+	toLocationDef = new(xscmsg.FieldDef)
+	*toLocationDef = *xscform.ToLocationDef
+	toLocationDef.DefaultValue = "MHJOC"
+	toLocationDef.Comment = "required: MHJOC, County EOC, ..."
 }
 
-func create() xscmsg.Message {
-	return xscform.CreateForm(formtype, makeFields())
+func create() *xscmsg.Message {
+	return xscform.CreateForm(formtype, fieldDefs)
 }
 
-func recognize(msg *pktmsg.Message, form *pktmsg.Form) xscmsg.Message {
+func recognize(msg *pktmsg.Message, form *pktmsg.Form) *xscmsg.Message {
 	if form == nil || form.FormType != formtype.HTML || xscmsg.OlderVersion(form.FormVersion, "2.0") {
 		return nil
 	}
-	return xscform.AdoptForm(formtype, makeFields(), msg, form)
+	return xscform.AdoptForm(formtype, fieldDefs, msg, form)
 }
 
 var formtype = &xscmsg.MessageType{
-	Tag:     Tag,
-	Name:    "allied health facility status report",
-	Article: "an",
-	HTML:    "form-allied-health-facility-status.html",
-	Version: "2.3",
+	Tag:         Tag,
+	Name:        "allied health facility status report",
+	Article:     "an",
+	HTML:        "form-allied-health-facility-status.html",
+	Version:     "2.3",
+	SubjectFunc: xscform.EncodeSubject,
+	BodyFunc:    xscform.EncodeBody,
 }
 
-func makeFields() []xscmsg.Field {
-	return []xscmsg.Field{
-		xscform.FOriginMessageNumber(),
-		xscform.FDestinationMessageNumber(),
-		xscform.FMessageDate(),
-		xscform.FMessageTime(),
-		&handlingField{ChoicesField: *xscform.FHandling().(*xscform.ChoicesField)},
-		&toICSPositionField{*xscform.FToICSPosition().(*xscform.Field)},
-		xscform.FFromICSPosition(),
-		&toLocationField{*xscform.FToLocation().(*xscform.Field)},
-		xscform.FFromLocation(),
-		xscform.FToName(),
-		xscform.FFromName(),
-		xscform.FToContact(),
-		xscform.FFromContact(),
-		&xscform.ChoicesField{Field: *xscform.NewField(reportTypeID, true), Choices: reportTypeChoices},
-		xscform.NewField(facilityID, true),
-		&requiredForComplete[*xscform.Field]{f: xscform.NewField(facilityTypeID, false)},
-		&xscform.DateFieldDefaultNow{DateField: xscform.DateField{Field: *xscform.NewField(dateID, true)}},
-		&xscform.TimeField{Field: *xscform.NewField(timeID, true)},
-		&requiredForComplete[*xscform.Field]{f: xscform.NewField(contactID, false)},
-		&requiredForComplete[*xscform.PhoneNumberField]{f: &xscform.PhoneNumberField{Field: *xscform.NewField(contactPhoneID, false)}},
-		&xscform.PhoneNumberField{Field: *xscform.NewField(contactFaxID, false)},
-		xscform.NewField(otherContactID, false),
-		&requiredForComplete[*xscform.Field]{f: xscform.NewField(incidentID, false)},
-		&requiredForComplete[*xscform.DateField]{f: &xscform.DateField{Field: *xscform.NewField(incidentDateID, false)}},
-		&requiredForComplete[*xscform.ChoicesField]{f: &xscform.ChoicesField{Field: *xscform.NewField(statusID, false), Choices: statusChoices}},
-		&xscform.ChoicesField{Field: *xscform.NewField(attachOrgChartID, false), Choices: yesNoChoices},
-		&requiredForComplete[*xscform.ChoicesField]{f: &xscform.ChoicesField{Field: *xscform.NewField(attachRrID, false), Choices: yesNoChoices}},
-		&xscform.ChoicesField{Field: *xscform.NewField(attachStatusID, false), Choices: yesNoChoices},
-		&xscform.ChoicesField{Field: *xscform.NewField(attachActionPlanID, false), Choices: yesNoChoices},
-		&requiredForComplete[*xscform.PhoneNumberField]{f: &xscform.PhoneNumberField{Field: *xscform.NewField(eocPhoneID, false)}},
-		&xscform.ChoicesField{Field: *xscform.NewField(attachDirectoryID, false), Choices: yesNoChoices},
-		&xscform.PhoneNumberField{Field: *xscform.NewField(eocFaxID, false)},
-		&requiredForComplete[*xscform.Field]{f: xscform.NewField(liaisonID, false)},
-		xscform.NewField(summaryID, false),
-		&xscform.PhoneNumberField{Field: *xscform.NewField(liaisonPhoneID, false)},
-		xscform.NewField(infoOfficerID, false),
-		&xscform.PhoneNumberField{Field: *xscform.NewField(infoOfficerPhoneID, false)},
-		xscform.NewField(infoOfficerEmailID, false),
-		&requiredForComplete[*xscform.Field]{f: xscform.NewField(eocClosedContactID, false)},
-		&requiredForComplete[*xscform.PhoneNumberField]{f: &xscform.PhoneNumberField{Field: *xscform.NewField(eocPhone2ID, false)}},
-		&xscform.CardinalNumberField{Field: *xscform.NewField(skilledNursingBedsStaffedMID, false)},
-		&xscform.CardinalNumberField{Field: *xscform.NewField(skilledNursingBedsStaffedFID, false)},
-		&xscform.CardinalNumberField{Field: *xscform.NewField(skilledNursingBedsVacantMID, false)},
-		&xscform.CardinalNumberField{Field: *xscform.NewField(skilledNursingBedsVacantFID, false)},
-		&xscform.CardinalNumberField{Field: *xscform.NewField(skilledNursingBedsSurgeID, false)},
-		&requiredForComplete[*xscform.Field]{f: xscform.NewField(eocEmailID, false)},
-		&xscform.CardinalNumberField{Field: *xscform.NewField(assistedLivingBedsStaffedMID, false)},
-		&xscform.CardinalNumberField{Field: *xscform.NewField(assistedLivingBedsStaffedFID, false)},
-		&xscform.CardinalNumberField{Field: *xscform.NewField(assistedLivingBedsVacantMID, false)},
-		&xscform.CardinalNumberField{Field: *xscform.NewField(assistedLivingBedsVacantFID, false)},
-		&xscform.CardinalNumberField{Field: *xscform.NewField(assistedLivingBedsSurgeID, false)},
-		&xscform.CardinalNumberField{Field: *xscform.NewField(subAcuteBedsStaffedMID, false)},
-		&xscform.CardinalNumberField{Field: *xscform.NewField(subAcuteBedsStaffedFID, false)},
-		&xscform.CardinalNumberField{Field: *xscform.NewField(subAcuteBedsVacantMID, false)},
-		&xscform.CardinalNumberField{Field: *xscform.NewField(subAcuteBedsVacantFID, false)},
-		&xscform.CardinalNumberField{Field: *xscform.NewField(subAcuteBedsSurgeID, false)},
-		&xscform.CardinalNumberField{Field: *xscform.NewField(toEvacuateID, false)},
-		&xscform.CardinalNumberField{Field: *xscform.NewField(alzheimersBedsStaffedMID, false)},
-		&xscform.CardinalNumberField{Field: *xscform.NewField(alzheimersBedsStaffedFID, false)},
-		&xscform.CardinalNumberField{Field: *xscform.NewField(alzheimersBedsVacantMID, false)},
-		&xscform.CardinalNumberField{Field: *xscform.NewField(alzheimersBedsVacantFID, false)},
-		&xscform.CardinalNumberField{Field: *xscform.NewField(alzheimersBedsSurgeID, false)},
-		&xscform.CardinalNumberField{Field: *xscform.NewField(injuredID, false)},
-		&xscform.CardinalNumberField{Field: *xscform.NewField(pedSubAcuteBedsStaffedMID, false)},
-		&xscform.CardinalNumberField{Field: *xscform.NewField(pedSubAcuteBedsStaffedFID, false)},
-		&xscform.CardinalNumberField{Field: *xscform.NewField(pedSubAcuteBedsVacantMID, false)},
-		&xscform.CardinalNumberField{Field: *xscform.NewField(pedSubAcuteBedsVacantFID, false)},
-		&xscform.CardinalNumberField{Field: *xscform.NewField(pedSubAcuteBedsSurgeID, false)},
-		&xscform.CardinalNumberField{Field: *xscform.NewField(transferredID, false)},
-		&xscform.CardinalNumberField{Field: *xscform.NewField(psychiatricBedsStaffedMID, false)},
-		&xscform.CardinalNumberField{Field: *xscform.NewField(psychiatricBedsStaffedFID, false)},
-		&xscform.CardinalNumberField{Field: *xscform.NewField(psychiatricBedsVacantMID, false)},
-		&xscform.CardinalNumberField{Field: *xscform.NewField(psychiatricBedsVacantFID, false)},
-		&xscform.CardinalNumberField{Field: *xscform.NewField(psychiatricBedsSurgeID, false)},
-		xscform.NewField(otherCareID, false),
-		xscform.NewField(bedResourceID, false),
-		&xscform.CardinalNumberField{Field: *xscform.NewField(otherCareBedsStaffedMID, false)},
-		&xscform.CardinalNumberField{Field: *xscform.NewField(otherCareBedsStaffedFID, false)},
-		&xscform.CardinalNumberField{Field: *xscform.NewField(otherCareBedsVacantMID, false)},
-		&xscform.CardinalNumberField{Field: *xscform.NewField(otherCareBedsVacantFID, false)},
-		&xscform.CardinalNumberField{Field: *xscform.NewField(otherCareBedsSurgeID, false)},
-		&xscform.CardinalNumberField{Field: *xscform.NewField(dialysisChairsID, false)},
-		&xscform.CardinalNumberField{Field: *xscform.NewField(dialysisVacantChairsID, false)},
-		&xscform.CardinalNumberField{Field: *xscform.NewField(dialysisFrontStaffID, false)},
-		&xscform.CardinalNumberField{Field: *xscform.NewField(dialysisSupportStaffID, false)},
-		&xscform.CardinalNumberField{Field: *xscform.NewField(dialysisProvidersID, false)},
-		&xscform.CardinalNumberField{Field: *xscform.NewField(surgicalChairsID, false)},
-		&xscform.CardinalNumberField{Field: *xscform.NewField(surgicalVacantChairsID, false)},
-		&xscform.CardinalNumberField{Field: *xscform.NewField(surgicalFrontStaffID, false)},
-		&xscform.CardinalNumberField{Field: *xscform.NewField(surgicalSupportStaffID, false)},
-		&xscform.CardinalNumberField{Field: *xscform.NewField(surgicalProvidersID, false)},
-		&xscform.CardinalNumberField{Field: *xscform.NewField(clinicChairsID, false)},
-		&xscform.CardinalNumberField{Field: *xscform.NewField(clinicVacantChairsID, false)},
-		&xscform.CardinalNumberField{Field: *xscform.NewField(clinicFrontStaffID, false)},
-		&xscform.CardinalNumberField{Field: *xscform.NewField(clinicSupportStaffID, false)},
-		&xscform.CardinalNumberField{Field: *xscform.NewField(clinicProvidersID, false)},
-		&xscform.CardinalNumberField{Field: *xscform.NewField(homeHealthChairsID, false)},
-		&xscform.CardinalNumberField{Field: *xscform.NewField(homeHealthVacantChairsID, false)},
-		&xscform.CardinalNumberField{Field: *xscform.NewField(homeHealthFrontStaffID, false)},
-		&xscform.CardinalNumberField{Field: *xscform.NewField(homeHealthSupportStaffID, false)},
-		&xscform.CardinalNumberField{Field: *xscform.NewField(homeHealthProvidersID, false)},
-		&xscform.CardinalNumberField{Field: *xscform.NewField(adultDayCtrChairsID, false)},
-		&xscform.CardinalNumberField{Field: *xscform.NewField(adultDayCtrVacantChairsID, false)},
-		&xscform.CardinalNumberField{Field: *xscform.NewField(adultDayCtrFrontStaffID, false)},
-		&xscform.CardinalNumberField{Field: *xscform.NewField(adultDayCtrSupportStaffID, false)},
-		&xscform.CardinalNumberField{Field: *xscform.NewField(adultDayCtrProvidersID, false)},
-		xscform.FOpRelayRcvd(),
-		xscform.FOpRelaySent(),
-		xscform.FOpName(),
-		xscform.FOpCall(),
-		xscform.FOpDate(),
-		xscform.FOpTime(),
-	}
+var fieldDefs = []*xscmsg.FieldDef{
+	// Standard header
+	xscform.OriginMessageNumberDef, xscform.DestinationMessageNumberDef, xscform.MessageDateDef, xscform.MessageTimeDef,
+	handlingDef, toICSPositionDef, xscform.FromICSPositionDef, toLocationDef, xscform.FromLocationDef, xscform.ToNameDef,
+	xscform.FromNameDef, xscform.ToContactDef, xscform.FromContactDef,
+	// Allied Health Facility Status fields
+	reportTypeDef, facilityDef, facilityTypeDef, dateDef, timeDef, contactDef, contactPhoneDef, contactFaxDef, otherContactDef,
+	incidentDef, incidentDateDef, statusDef, attachOrgChartDef, attachRrDef, attachStatusDef, attachActionPlanDef, eocPhoneDef,
+	attachDirectoryDef, eocFaxDef, liaisonDef, summaryDef, liaisonPhoneDef, infoOfficerDef, infoOfficerPhoneDef,
+	infoOfficerEmailDef, eocClosedContactDef, eocPhone2Def, skilledNursingBedsStaffedMDef, skilledNursingBedsStaffedFDef,
+	skilledNursingBedsVacantMDef, skilledNursingBedsVacantFDef, skilledNursingBedsSurgeDef, eocEmailDef,
+	assistedLivingBedsStaffedMDef, assistedLivingBedsStaffedFDef, assistedLivingBedsVacantMDef, assistedLivingBedsVacantFDef,
+	assistedLivingBedsSurgeDef, subAcuteBedsStaffedMDef, subAcuteBedsStaffedFDef, subAcuteBedsVacantMDef,
+	subAcuteBedsVacantFDef, subAcuteBedsSurgeDef, toEvacuateDef, alzheimersBedsStaffedMDef, alzheimersBedsStaffedFDef,
+	alzheimersBedsVacantMDef, alzheimersBedsVacantFDef, alzheimersBedsSurgeDef, injuredDef, pedSubAcuteBedsStaffedMDef,
+	pedSubAcuteBedsStaffedFDef, pedSubAcuteBedsVacantMDef, pedSubAcuteBedsVacantFDef, pedSubAcuteBedsSurgeDef, transferredDef,
+	psychiatricBedsStaffedMDef, psychiatricBedsStaffedFDef, psychiatricBedsVacantMDef, psychiatricBedsVacantFDef,
+	psychiatricBedsSurgeDef, otherCareDef, bedResourceDef, otherCareBedsStaffedMDef, otherCareBedsStaffedFDef,
+	otherCareBedsVacantMDef, otherCareBedsVacantFDef, otherCareBedsSurgeDef, dialysisChairsDef, dialysisVacantChairsDef,
+	dialysisFrontStaffDef, dialysisSupportStaffDef, dialysisProvidersDef, surgicalChairsDef, surgicalVacantChairsDef,
+	surgicalFrontStaffDef, surgicalSupportStaffDef, surgicalProvidersDef, clinicChairsDef, clinicVacantChairsDef,
+	clinicFrontStaffDef, clinicSupportStaffDef, clinicProvidersDef, homeHealthChairsDef, homeHealthVacantChairsDef,
+	homeHealthFrontStaffDef, homeHealthSupportStaffDef, homeHealthProvidersDef, adultDayCtrChairsDef,
+	adultDayCtrVacantChairsDef, adultDayCtrFrontStaffDef, adultDayCtrSupportStaffDef, adultDayCtrProvidersDef,
+	// Standard footer
+	xscform.OpRelayRcvdDef, xscform.OpRelaySentDef, xscform.OpNameDef, xscform.OpCallDef, xscform.OpDateDef, xscform.OpTimeDef,
 }
 
 var (
-	reportTypeID = &xscmsg.FieldID{
+	handlingDef      *xscmsg.FieldDef // set in func init
+	toICSPositionDef *xscmsg.FieldDef // set in func init
+	toLocationDef    *xscmsg.FieldDef // set in func init
+	reportTypeDef    = &xscmsg.FieldDef{
 		Tag:        "19.",
 		Annotation: "report-type",
 		Label:      "Report Type",
 		Comment:    "required: Update, Complete",
+		Validators: []xscmsg.Validator{xscform.ValidateRequired, xscform.ValidateChoices},
+		Choices:    []string{"Update", "Complete"},
 	}
-	reportTypeChoices = []string{"Update", "Complete"}
-	facilityID        = &xscmsg.FieldID{
+	facilityDef = &xscmsg.FieldDef{
 		Tag:        "20.",
 		Annotation: "facility",
 		Label:      "Facility Name",
 		Comment:    "required",
 		Canonical:  xscmsg.FSubject,
+		Validators: []xscmsg.Validator{xscform.ValidateRequired},
 	}
-	facilityTypeID = &xscmsg.FieldID{
+	facilityTypeDef = &xscmsg.FieldDef{
 		Tag:        "21.",
 		Annotation: "facility-type",
 		Label:      "Facility Type",
 		Comment:    "required-for-complete",
+		Validators: []xscmsg.Validator{requiredForComplete},
 	}
-	dateID = &xscmsg.FieldID{
-		Tag:        "22d.",
-		Annotation: "date",
-		Label:      "Date",
-		Comment:    "required date",
+	dateDef = &xscmsg.FieldDef{
+		Tag:         "22d.",
+		Annotation:  "date",
+		Label:       "Date",
+		Comment:     "required date",
+		Validators:  []xscmsg.Validator{xscform.ValidateRequired, xscform.ValidateDate},
+		DefaultFunc: xscform.DefaultDate,
 	}
-	timeID = &xscmsg.FieldID{
+	timeDef = &xscmsg.FieldDef{
 		Tag:        "22t.",
 		Annotation: "time",
 		Label:      "Time",
 		Comment:    "required time",
+		Validators: []xscmsg.Validator{xscform.ValidateRequired, xscform.ValidateTime},
 	}
-	contactID = &xscmsg.FieldID{
+	contactDef = &xscmsg.FieldDef{
 		Tag:        "23.",
 		Annotation: "contact",
 		Label:      "Contact Name",
 		Comment:    "required-for-complete",
+		Validators: []xscmsg.Validator{requiredForComplete},
 	}
-	contactPhoneID = &xscmsg.FieldID{
+	contactPhoneDef = &xscmsg.FieldDef{
 		Tag:        "23p.",
 		Annotation: "contact-phone",
 		Label:      "Contact Phone #",
 		Comment:    "phone-number required-for-complete",
+		Validators: []xscmsg.Validator{requiredForComplete, xscform.ValidatePhoneNumber},
 	}
-	contactFaxID = &xscmsg.FieldID{
+	contactFaxDef = &xscmsg.FieldDef{
 		Tag:        "23f.",
 		Annotation: "contact-fax",
 		Label:      "Contact Fax #",
 		Comment:    "phone-number",
+		Validators: []xscmsg.Validator{xscform.ValidatePhoneNumber},
 	}
-	otherContactID = &xscmsg.FieldID{
+	otherContactDef = &xscmsg.FieldDef{
 		Tag:        "24.",
 		Annotation: "other-contact",
 		Label:      "Other Phone, Fax, Cell Phone, Radio",
 	}
-	incidentID = &xscmsg.FieldID{
+	incidentDef = &xscmsg.FieldDef{
 		Tag:        "25.",
 		Annotation: "incident",
 		Label:      "Incident Name",
 		Comment:    "required-for-complete",
+		Validators: []xscmsg.Validator{requiredForComplete},
 	}
-	incidentDateID = &xscmsg.FieldID{
+	incidentDateDef = &xscmsg.FieldDef{
 		Tag:        "25d.",
 		Annotation: "incident-date",
 		Label:      "Incident Date",
 		Comment:    "date required-for-complete",
+		Validators: []xscmsg.Validator{requiredForComplete, xscform.ValidateDate},
 	}
-	statusID = &xscmsg.FieldID{
+	statusDef = &xscmsg.FieldDef{
 		Tag:        "35.",
 		Annotation: "status",
 		Label:      "Facility Status",
 		Comment:    "required-for-complete: Fully Functional, Limited Services, Impaired/Closed",
+		Validators: []xscmsg.Validator{requiredForComplete, xscform.ValidateChoices},
+		Choices:    []string{"Fully Functional", "Limited Services", "Impaired/Closed"},
 	}
-	statusChoices    = []string{"Fully Functional", "Limited Services", "Impaired/Closed"}
-	attachOrgChartID = &xscmsg.FieldID{
+	attachOrgChartDef = &xscmsg.FieldDef{
 		Tag:        "26a.",
 		Annotation: "attach-org-chart",
 		Label:      "NHICS/ICS Organization Chart Attached",
 		Comment:    "Yes, No",
+		Validators: []xscmsg.Validator{xscform.ValidateChoices},
+		Choices:    []string{"Yes", "No"},
 	}
-	attachRrID = &xscmsg.FieldID{
+	attachRrDef = &xscmsg.FieldDef{
 		Tag:        "26b.",
 		Annotation: "attach-RR",
 		Label:      "DEOC-9A Resource Request Forms Attached",
 		Comment:    "required-for-complete: Yes, No",
+		Validators: []xscmsg.Validator{requiredForComplete, xscform.ValidateChoices},
+		Choices:    []string{"Yes", "No"},
 	}
-	attachStatusID = &xscmsg.FieldID{
+	attachStatusDef = &xscmsg.FieldDef{
 		Tag:        "26c.",
 		Annotation: "attach-status",
 		Label:      "NHICS/ICS Status Report Form - Standard Attached",
 		Comment:    "Yes, No",
+		Validators: []xscmsg.Validator{xscform.ValidateChoices},
+		Choices:    []string{"Yes", "No"},
 	}
-	attachActionPlanID = &xscmsg.FieldID{
+	attachActionPlanDef = &xscmsg.FieldDef{
 		Tag:        "26d.",
 		Annotation: "attach-action-plan",
 		Label:      "NHICS/ICS Incident Action Plan Attached",
 		Comment:    "Yes, No",
+		Validators: []xscmsg.Validator{xscform.ValidateChoices},
+		Choices:    []string{"Yes", "No"},
 	}
-	eocPhoneID = &xscmsg.FieldID{
+	eocPhoneDef = &xscmsg.FieldDef{
 		Tag:        "27p.",
 		Annotation: "eoc-phone",
 		Label:      "Facility EOC Main Contact Number",
 		Comment:    "phone-number required-for-complete",
+		Validators: []xscmsg.Validator{requiredForComplete, xscform.ValidatePhoneNumber},
 	}
-	attachDirectoryID = &xscmsg.FieldID{
+	attachDirectoryDef = &xscmsg.FieldDef{
 		Tag:        "26e.",
 		Annotation: "attach-directory",
 		Label:      "Phone/Communications Directory Attached",
 		Comment:    "Yes, No",
+		Validators: []xscmsg.Validator{xscform.ValidateChoices},
+		Choices:    []string{"Yes", "No"},
 	}
-	yesNoChoices = []string{"Yes", "No"}
-	eocFaxID     = &xscmsg.FieldID{
+	eocFaxDef = &xscmsg.FieldDef{
 		Tag:        "27f.",
 		Annotation: "eoc-fax",
 		Label:      "Facility EOC Main Contact Fax",
 		Comment:    "phone-number",
+		Validators: []xscmsg.Validator{xscform.ValidatePhoneNumber},
 	}
-	liaisonID = &xscmsg.FieldID{
+	liaisonDef = &xscmsg.FieldDef{
 		Tag:        "28.",
 		Annotation: "liaison",
 		Label:      "Facility Liaison Officer Name: Liaison to Public Health/Medical Health Branch",
 		Comment:    "required-for-complete",
+		Validators: []xscmsg.Validator{requiredForComplete},
 	}
-	summaryID = &xscmsg.FieldID{
+	summaryDef = &xscmsg.FieldDef{
 		Tag:        "34.",
 		Annotation: "summary",
 		Label:      "General Summary of Situation/Conditions",
 	}
-	liaisonPhoneID = &xscmsg.FieldID{
+	liaisonPhoneDef = &xscmsg.FieldDef{
 		Tag:        "28p.",
 		Annotation: "liaison-phone",
 		Label:      "Facility Liaison Contact Number",
 		Comment:    "phone-number",
+		Validators: []xscmsg.Validator{xscform.ValidatePhoneNumber},
 	}
-	infoOfficerID = &xscmsg.FieldID{
+	infoOfficerDef = &xscmsg.FieldDef{
 		Tag:        "29.",
 		Annotation: "info-officer",
 		Label:      "Facility Information Officer Name",
 	}
-	infoOfficerPhoneID = &xscmsg.FieldID{
+	infoOfficerPhoneDef = &xscmsg.FieldDef{
 		Tag:        "29p.",
 		Annotation: "info-officer-phone",
 		Label:      "Facility Information Officer Contact Number",
 		Comment:    "phone-number",
+		Validators: []xscmsg.Validator{xscform.ValidatePhoneNumber},
 	}
-	infoOfficerEmailID = &xscmsg.FieldID{
+	infoOfficerEmailDef = &xscmsg.FieldDef{
 		Tag:        "29e.",
 		Annotation: "info-officer-email",
 		Label:      "Facility Information Officer Contact Email",
 	}
-	eocClosedContactID = &xscmsg.FieldID{
+	eocClosedContactDef = &xscmsg.FieldDef{
 		Tag:        "30.",
 		Annotation: "eoc-closed-contact",
 		Label:      "If Facility EOC is Not Activated, Who Should be Contacted for Questions/Requests",
 		Comment:    "required-for-complete",
+		Validators: []xscmsg.Validator{requiredForComplete},
 	}
-	eocPhone2ID = &xscmsg.FieldID{
+	eocPhone2Def = &xscmsg.FieldDef{
 		Tag:        "30p.",
 		Annotation: "eoc-phone",
 		Label:      "Facility Contact Number",
 		Comment:    "phone-number required-for-complete",
+		Validators: []xscmsg.Validator{requiredForComplete, xscform.ValidatePhoneNumber},
 	}
-	skilledNursingBedsStaffedMID = &xscmsg.FieldID{
+	skilledNursingBedsStaffedMDef = &xscmsg.FieldDef{
 		Tag:        "40a.",
 		Annotation: "skilled-nursing-beds-staffed-m",
 		Label:      "Skilled Nursing Beds Staffed M",
 		Comment:    "cardinal-number",
+		Validators: []xscmsg.Validator{xscform.ValidateCardinalNumber},
 	}
-	skilledNursingBedsStaffedFID = &xscmsg.FieldID{
+	skilledNursingBedsStaffedFDef = &xscmsg.FieldDef{
 		Tag:        "40b.",
 		Annotation: "skilled-nursing-beds-staffed-f",
 		Label:      "Skilled Nursing Beds Staffed F",
 		Comment:    "cardinal-number",
+		Validators: []xscmsg.Validator{xscform.ValidateCardinalNumber},
 	}
-	skilledNursingBedsVacantMID = &xscmsg.FieldID{
+	skilledNursingBedsVacantMDef = &xscmsg.FieldDef{
 		Tag:        "40c.",
 		Annotation: "skilled-nursing-beds-vacant-m",
 		Label:      "Skilled Nursing Beds Vacant M",
 		Comment:    "cardinal-number",
+		Validators: []xscmsg.Validator{xscform.ValidateCardinalNumber},
 	}
-	skilledNursingBedsVacantFID = &xscmsg.FieldID{
+	skilledNursingBedsVacantFDef = &xscmsg.FieldDef{
 		Tag:        "40d.",
 		Annotation: "skilled-nursing-beds-vacant-f",
 		Label:      "Skilled Nursing Beds Vacant F",
 		Comment:    "cardinal-number",
+		Validators: []xscmsg.Validator{xscform.ValidateCardinalNumber},
 	}
-	skilledNursingBedsSurgeID = &xscmsg.FieldID{
+	skilledNursingBedsSurgeDef = &xscmsg.FieldDef{
 		Tag:        "40e.",
 		Annotation: "skilled-nursing-beds-surge",
 		Label:      "Skilled Nursing Beds Surge",
 		Comment:    "cardinal-number",
+		Validators: []xscmsg.Validator{xscform.ValidateCardinalNumber},
 	}
-	eocEmailID = &xscmsg.FieldID{
+	eocEmailDef = &xscmsg.FieldDef{
 		Tag:        "30e.",
 		Annotation: "eoc-email",
 		Label:      "Facility Contact Email",
 		Comment:    "required-for-complete",
+		Validators: []xscmsg.Validator{requiredForComplete},
 	}
-	assistedLivingBedsStaffedMID = &xscmsg.FieldID{
+	assistedLivingBedsStaffedMDef = &xscmsg.FieldDef{
 		Tag:        "41a.",
 		Annotation: "assisted-living-beds-staffed-m",
 		Label:      "Assisted Living Beds Staffed M",
 		Comment:    "cardinal-number",
+		Validators: []xscmsg.Validator{xscform.ValidateCardinalNumber},
 	}
-	assistedLivingBedsStaffedFID = &xscmsg.FieldID{
+	assistedLivingBedsStaffedFDef = &xscmsg.FieldDef{
 		Tag:        "41b.",
 		Annotation: "assisted-living-beds-staffed-f",
 		Label:      "Assisted Living Beds Staffed F",
 		Comment:    "cardinal-number",
+		Validators: []xscmsg.Validator{xscform.ValidateCardinalNumber},
 	}
-	assistedLivingBedsVacantMID = &xscmsg.FieldID{
+	assistedLivingBedsVacantMDef = &xscmsg.FieldDef{
 		Tag:        "41c.",
 		Annotation: "assisted-living-beds-vacant-m",
 		Label:      "Assisted Living Beds Vacant M",
 		Comment:    "cardinal-number",
+		Validators: []xscmsg.Validator{xscform.ValidateCardinalNumber},
 	}
-	assistedLivingBedsVacantFID = &xscmsg.FieldID{
+	assistedLivingBedsVacantFDef = &xscmsg.FieldDef{
 		Tag:        "41d.",
 		Annotation: "assisted-living-beds-vacant-f",
 		Label:      "Assisted Living Beds Vacant F",
 		Comment:    "cardinal-number",
+		Validators: []xscmsg.Validator{xscform.ValidateCardinalNumber},
 	}
-	assistedLivingBedsSurgeID = &xscmsg.FieldID{
+	assistedLivingBedsSurgeDef = &xscmsg.FieldDef{
 		Tag:        "41e.",
 		Annotation: "assisted-living-beds-surge",
 		Label:      "Assisted Living Beds Surge",
 		Comment:    "cardinal-number",
+		Validators: []xscmsg.Validator{xscform.ValidateCardinalNumber},
 	}
-	subAcuteBedsStaffedMID = &xscmsg.FieldID{
+	subAcuteBedsStaffedMDef = &xscmsg.FieldDef{
 		Tag:        "42a.",
 		Annotation: "sub-acute-beds-staffed-m",
 		Label:      "Sub-Acute Beds Staffed M",
 		Comment:    "cardinal-number",
+		Validators: []xscmsg.Validator{xscform.ValidateCardinalNumber},
 	}
-	subAcuteBedsStaffedFID = &xscmsg.FieldID{
+	subAcuteBedsStaffedFDef = &xscmsg.FieldDef{
 		Tag:        "42b.",
 		Annotation: "sub-acute-beds-staffed-f",
 		Label:      "Sub-Acute Beds Staffed F",
 		Comment:    "cardinal-number",
+		Validators: []xscmsg.Validator{xscform.ValidateCardinalNumber},
 	}
-	subAcuteBedsVacantMID = &xscmsg.FieldID{
+	subAcuteBedsVacantMDef = &xscmsg.FieldDef{
 		Tag:        "42c.",
 		Annotation: "sub-acute-beds-vacant-m",
 		Label:      "Sub-Acute Beds Vacant M",
 		Comment:    "cardinal-number",
+		Validators: []xscmsg.Validator{xscform.ValidateCardinalNumber},
 	}
-	subAcuteBedsVacantFID = &xscmsg.FieldID{
+	subAcuteBedsVacantFDef = &xscmsg.FieldDef{
 		Tag:        "42d.",
 		Annotation: "sub-acute-beds-vacant-f",
 		Label:      "Sub-Acute Beds Vacant F",
 		Comment:    "cardinal-number",
+		Validators: []xscmsg.Validator{xscform.ValidateCardinalNumber},
 	}
-	subAcuteBedsSurgeID = &xscmsg.FieldID{
+	subAcuteBedsSurgeDef = &xscmsg.FieldDef{
 		Tag:        "42e.",
 		Annotation: "sub-acute-beds-surge",
 		Label:      "Sub-Acute Beds Surge",
 		Comment:    "cardinal-number",
+		Validators: []xscmsg.Validator{xscform.ValidateCardinalNumber},
 	}
-	toEvacuateID = &xscmsg.FieldID{
+	toEvacuateDef = &xscmsg.FieldDef{
 		Tag:        "31a.",
 		Annotation: "to-evacuate",
 		Label:      "Facility Patients to Evacuate",
 		Comment:    "cardinal-number",
+		Validators: []xscmsg.Validator{xscform.ValidateCardinalNumber},
 	}
-	alzheimersBedsStaffedMID = &xscmsg.FieldID{
+	alzheimersBedsStaffedMDef = &xscmsg.FieldDef{
 		Tag:        "43a.",
 		Annotation: "alzheimers-beds-staffed-m",
 		Label:      "Alzheimers/Dementia Beds Staffed M",
 		Comment:    "cardinal-number",
+		Validators: []xscmsg.Validator{xscform.ValidateCardinalNumber},
 	}
-	alzheimersBedsStaffedFID = &xscmsg.FieldID{
+	alzheimersBedsStaffedFDef = &xscmsg.FieldDef{
 		Tag:        "43b.",
 		Annotation: "alzheimers-beds-staffed-f",
 		Label:      "Alzheimers/Dementia Beds Staffed F",
 		Comment:    "cardinal-number",
+		Validators: []xscmsg.Validator{xscform.ValidateCardinalNumber},
 	}
-	alzheimersBedsVacantMID = &xscmsg.FieldID{
+	alzheimersBedsVacantMDef = &xscmsg.FieldDef{
 		Tag:        "43c.",
 		Annotation: "alzheimers-beds-vacant-m",
 		Label:      "Alzheimers/Dementia Beds Vacant M",
 		Comment:    "cardinal-number",
+		Validators: []xscmsg.Validator{xscform.ValidateCardinalNumber},
 	}
-	alzheimersBedsVacantFID = &xscmsg.FieldID{
+	alzheimersBedsVacantFDef = &xscmsg.FieldDef{
 		Tag:        "43d.",
 		Annotation: "alzheimers-beds-vacant-f",
 		Label:      "Alzheimers/Dementia Beds Vacant F",
 		Comment:    "cardinal-number",
+		Validators: []xscmsg.Validator{xscform.ValidateCardinalNumber},
 	}
-	alzheimersBedsSurgeID = &xscmsg.FieldID{
+	alzheimersBedsSurgeDef = &xscmsg.FieldDef{
 		Tag:        "43e.",
 		Annotation: "alzheimers-beds-surge",
 		Label:      "Alzheimers/Dementia Beds Surge",
 		Comment:    "cardinal-number",
+		Validators: []xscmsg.Validator{xscform.ValidateCardinalNumber},
 	}
-	injuredID = &xscmsg.FieldID{
+	injuredDef = &xscmsg.FieldDef{
 		Tag:        "31b.",
 		Annotation: "injured",
 		Label:      "Facility Patients Injured - Minor",
 		Comment:    "cardinal-number",
+		Validators: []xscmsg.Validator{xscform.ValidateCardinalNumber},
 	}
-	pedSubAcuteBedsStaffedMID = &xscmsg.FieldID{
+	pedSubAcuteBedsStaffedMDef = &xscmsg.FieldDef{
 		Tag:        "44a.",
 		Annotation: "ped-sub-acute-beds-staffed-m",
 		Label:      "Pediatric-Sub Acute Beds Staffed M",
 		Comment:    "cardinal-number",
+		Validators: []xscmsg.Validator{xscform.ValidateCardinalNumber},
 	}
-	pedSubAcuteBedsStaffedFID = &xscmsg.FieldID{
+	pedSubAcuteBedsStaffedFDef = &xscmsg.FieldDef{
 		Tag:        "44b.",
 		Annotation: "ped-sub-acute-beds-staffed-f",
 		Label:      "Pediatric-Sub Acute Beds Staffed F",
 		Comment:    "cardinal-number",
+		Validators: []xscmsg.Validator{xscform.ValidateCardinalNumber},
 	}
-	pedSubAcuteBedsVacantMID = &xscmsg.FieldID{
+	pedSubAcuteBedsVacantMDef = &xscmsg.FieldDef{
 		Tag:        "44c.",
 		Annotation: "ped-sub-acute-beds-vacant-m",
 		Label:      "Pediatric-Sub Acute Beds Vacant M",
 		Comment:    "cardinal-number",
+		Validators: []xscmsg.Validator{xscform.ValidateCardinalNumber},
 	}
-	pedSubAcuteBedsVacantFID = &xscmsg.FieldID{
+	pedSubAcuteBedsVacantFDef = &xscmsg.FieldDef{
 		Tag:        "44d.",
 		Annotation: "ped-sub-acute-beds-vacant-f",
 		Label:      "Pediatric-Sub Acute Beds Vacant F",
 		Comment:    "cardinal-number",
+		Validators: []xscmsg.Validator{xscform.ValidateCardinalNumber},
 	}
-	pedSubAcuteBedsSurgeID = &xscmsg.FieldID{
+	pedSubAcuteBedsSurgeDef = &xscmsg.FieldDef{
 		Tag:        "44e.",
 		Annotation: "ped-sub-acute-beds-surge",
 		Label:      "Pediatric-Sub Acute Beds Surge",
 		Comment:    "cardinal-number",
+		Validators: []xscmsg.Validator{xscform.ValidateCardinalNumber},
 	}
-	transferredID = &xscmsg.FieldID{
+	transferredDef = &xscmsg.FieldDef{
 		Tag:        "31c.",
 		Annotation: "transferred",
 		Label:      "Facility Patients Transferred Out of County",
 		Comment:    "cardinal-number",
+		Validators: []xscmsg.Validator{xscform.ValidateCardinalNumber},
 	}
-	psychiatricBedsStaffedMID = &xscmsg.FieldID{
+	psychiatricBedsStaffedMDef = &xscmsg.FieldDef{
 		Tag:        "45a.",
 		Annotation: "psychiatric-beds-staffed-m",
 		Label:      "Psychiatric Beds Staffed M",
 		Comment:    "cardinal-number",
+		Validators: []xscmsg.Validator{xscform.ValidateCardinalNumber},
 	}
-	psychiatricBedsStaffedFID = &xscmsg.FieldID{
+	psychiatricBedsStaffedFDef = &xscmsg.FieldDef{
 		Tag:        "45b.",
 		Annotation: "psychiatric-beds-staffed-f",
 		Label:      "Psychiatric Beds Staffed F",
 		Comment:    "cardinal-number",
+		Validators: []xscmsg.Validator{xscform.ValidateCardinalNumber},
 	}
-	psychiatricBedsVacantMID = &xscmsg.FieldID{
+	psychiatricBedsVacantMDef = &xscmsg.FieldDef{
 		Tag:        "45c.",
 		Annotation: "psychiatric-beds-vacant-m",
 		Label:      "Psychiatric Beds Vacant M",
 		Comment:    "cardinal-number",
+		Validators: []xscmsg.Validator{xscform.ValidateCardinalNumber},
 	}
-	psychiatricBedsVacantFID = &xscmsg.FieldID{
+	psychiatricBedsVacantFDef = &xscmsg.FieldDef{
 		Tag:        "45d.",
 		Annotation: "psychiatric-beds-vacant-f",
 		Label:      "Psychiatric Beds Vacant F",
 		Comment:    "cardinal-number",
+		Validators: []xscmsg.Validator{xscform.ValidateCardinalNumber},
 	}
-	psychiatricBedsSurgeID = &xscmsg.FieldID{
+	psychiatricBedsSurgeDef = &xscmsg.FieldDef{
 		Tag:        "45e.",
 		Annotation: "psychiatric-beds-surge",
 		Label:      "Psychiatric Beds Surge",
 		Comment:    "cardinal-number",
+		Validators: []xscmsg.Validator{xscform.ValidateCardinalNumber},
 	}
-	otherCareID = &xscmsg.FieldID{
+	otherCareDef = &xscmsg.FieldDef{
 		Tag:        "33.",
 		Annotation: "other-care",
 		Label:      "Other Facility Patient Care Information",
 	}
-	bedResourceID = &xscmsg.FieldID{
+	bedResourceDef = &xscmsg.FieldDef{
 		Tag:        "46.",
 		Annotation: "bed-resource",
 		Label:      "Other Care",
 	}
-	otherCareBedsStaffedMID = &xscmsg.FieldID{
+	otherCareBedsStaffedMDef = &xscmsg.FieldDef{
 		Tag:        "46a.",
 		Annotation: "other-care-beds-staffed-m",
 		Label:      "Other Care Beds Staffed M",
 		Comment:    "cardinal-number",
+		Validators: []xscmsg.Validator{xscform.ValidateCardinalNumber},
 	}
-	otherCareBedsStaffedFID = &xscmsg.FieldID{
+	otherCareBedsStaffedFDef = &xscmsg.FieldDef{
 		Tag:        "46b.",
 		Annotation: "other-care-beds-staffed-f",
 		Label:      "Other Care Beds Staffed F",
 		Comment:    "cardinal-number",
+		Validators: []xscmsg.Validator{xscform.ValidateCardinalNumber},
 	}
-	otherCareBedsVacantMID = &xscmsg.FieldID{
+	otherCareBedsVacantMDef = &xscmsg.FieldDef{
 		Tag:        "46c.",
 		Annotation: "other-care-beds-vacant-m",
 		Label:      "Other Care Beds Vacant M",
 		Comment:    "cardinal-number",
+		Validators: []xscmsg.Validator{xscform.ValidateCardinalNumber},
 	}
-	otherCareBedsVacantFID = &xscmsg.FieldID{
+	otherCareBedsVacantFDef = &xscmsg.FieldDef{
 		Tag:        "46d.",
 		Annotation: "other-care-beds-vacant-f",
 		Label:      "Other Care Beds Vacant F",
 		Comment:    "cardinal-number",
+		Validators: []xscmsg.Validator{xscform.ValidateCardinalNumber},
 	}
-	otherCareBedsSurgeID = &xscmsg.FieldID{
+	otherCareBedsSurgeDef = &xscmsg.FieldDef{
 		Tag:        "46e.",
 		Annotation: "other-care-beds-surge",
 		Label:      "Other Care Beds Surge",
 		Comment:    "cardinal-number",
+		Validators: []xscmsg.Validator{xscform.ValidateCardinalNumber},
 	}
-	dialysisChairsID = &xscmsg.FieldID{
+	dialysisChairsDef = &xscmsg.FieldDef{
 		Tag:        "50a.",
 		Annotation: "dialysis-chairs",
 		Label:      "Dialysis Chairs/Room",
 		Comment:    "cardinal-number",
+		Validators: []xscmsg.Validator{xscform.ValidateCardinalNumber},
 	}
-	dialysisVacantChairsID = &xscmsg.FieldID{
+	dialysisVacantChairsDef = &xscmsg.FieldDef{
 		Tag:        "50b.",
 		Annotation: "dialysis-vacant-chairs",
 		Label:      "Dialysis Vacant Chairs/Room",
 		Comment:    "cardinal-number",
+		Validators: []xscmsg.Validator{xscform.ValidateCardinalNumber},
 	}
-	dialysisFrontStaffID = &xscmsg.FieldID{
+	dialysisFrontStaffDef = &xscmsg.FieldDef{
 		Tag:        "50c.",
 		Annotation: "dialysis-front-staff",
 		Label:      "Dialysis Front Desk Staff",
 		Comment:    "cardinal-number",
+		Validators: []xscmsg.Validator{xscform.ValidateCardinalNumber},
 	}
-	dialysisSupportStaffID = &xscmsg.FieldID{
+	dialysisSupportStaffDef = &xscmsg.FieldDef{
 		Tag:        "50d.",
 		Annotation: "dialysis-support-staff",
 		Label:      "Dialysis Medical Support Staff",
 		Comment:    "cardinal-number",
+		Validators: []xscmsg.Validator{xscform.ValidateCardinalNumber},
 	}
-	dialysisProvidersID = &xscmsg.FieldID{
+	dialysisProvidersDef = &xscmsg.FieldDef{
 		Tag:        "50e.",
 		Annotation: "dialysis-providers",
 		Label:      "Dialysis Provider Staff",
 		Comment:    "cardinal-number",
+		Validators: []xscmsg.Validator{xscform.ValidateCardinalNumber},
 	}
-	surgicalChairsID = &xscmsg.FieldID{
+	surgicalChairsDef = &xscmsg.FieldDef{
 		Tag:        "51a.",
 		Annotation: "surgical-chairs",
 		Label:      "Surgical Chairs/Room",
 		Comment:    "cardinal-number",
+		Validators: []xscmsg.Validator{xscform.ValidateCardinalNumber},
 	}
-	surgicalVacantChairsID = &xscmsg.FieldID{
+	surgicalVacantChairsDef = &xscmsg.FieldDef{
 		Tag:        "51b.",
 		Annotation: "surgical-vacant-chairs",
 		Label:      "Surgical Vacant Chairs/Room",
 		Comment:    "cardinal-number",
+		Validators: []xscmsg.Validator{xscform.ValidateCardinalNumber},
 	}
-	surgicalFrontStaffID = &xscmsg.FieldID{
+	surgicalFrontStaffDef = &xscmsg.FieldDef{
 		Tag:        "51c.",
 		Annotation: "surgical-front-staff",
 		Label:      "Surgical Front Desk Staff",
 		Comment:    "cardinal-number",
+		Validators: []xscmsg.Validator{xscform.ValidateCardinalNumber},
 	}
-	surgicalSupportStaffID = &xscmsg.FieldID{
+	surgicalSupportStaffDef = &xscmsg.FieldDef{
 		Tag:        "51d.",
 		Annotation: "surgical-support-staff",
 		Label:      "Surgical Medical Support Staff",
 		Comment:    "cardinal-number",
+		Validators: []xscmsg.Validator{xscform.ValidateCardinalNumber},
 	}
-	surgicalProvidersID = &xscmsg.FieldID{
+	surgicalProvidersDef = &xscmsg.FieldDef{
 		Tag:        "51e.",
 		Annotation: "surgical-providers",
 		Label:      "Surgical Provider Staff",
 		Comment:    "cardinal-number",
+		Validators: []xscmsg.Validator{xscform.ValidateCardinalNumber},
 	}
-	clinicChairsID = &xscmsg.FieldID{
+	clinicChairsDef = &xscmsg.FieldDef{
 		Tag:        "52a.",
 		Annotation: "clinic-chairs",
 		Label:      "Clinic Chairs/Room",
 		Comment:    "cardinal-number",
+		Validators: []xscmsg.Validator{xscform.ValidateCardinalNumber},
 	}
-	clinicVacantChairsID = &xscmsg.FieldID{
+	clinicVacantChairsDef = &xscmsg.FieldDef{
 		Tag:        "52b.",
 		Annotation: "clinic-vacant-chairs",
 		Label:      "Clinic Vacant Chairs/Room",
 		Comment:    "cardinal-number",
+		Validators: []xscmsg.Validator{xscform.ValidateCardinalNumber},
 	}
-	clinicFrontStaffID = &xscmsg.FieldID{
+	clinicFrontStaffDef = &xscmsg.FieldDef{
 		Tag:        "52c.",
 		Annotation: "clinic-front-staff",
 		Label:      "Clinic Front Desk Staff",
 		Comment:    "cardinal-number",
+		Validators: []xscmsg.Validator{xscform.ValidateCardinalNumber},
 	}
-	clinicSupportStaffID = &xscmsg.FieldID{
+	clinicSupportStaffDef = &xscmsg.FieldDef{
 		Tag:        "52d.",
 		Annotation: "clinic-support-staff",
 		Label:      "Clinic Medical Support Staff",
 		Comment:    "cardinal-number",
+		Validators: []xscmsg.Validator{xscform.ValidateCardinalNumber},
 	}
-	clinicProvidersID = &xscmsg.FieldID{
+	clinicProvidersDef = &xscmsg.FieldDef{
 		Tag:        "52e.",
 		Annotation: "clinic-providers",
 		Label:      "Clinic Provider Staff",
 		Comment:    "cardinal-number",
+		Validators: []xscmsg.Validator{xscform.ValidateCardinalNumber},
 	}
-	homeHealthChairsID = &xscmsg.FieldID{
+	homeHealthChairsDef = &xscmsg.FieldDef{
 		Tag:        "53a.",
 		Annotation: "home-health-chairs",
 		Label:      "Home Health Chairs/Room",
 		Comment:    "cardinal-number",
+		Validators: []xscmsg.Validator{xscform.ValidateCardinalNumber},
 	}
-	homeHealthVacantChairsID = &xscmsg.FieldID{
+	homeHealthVacantChairsDef = &xscmsg.FieldDef{
 		Tag:        "53b.",
 		Annotation: "home-health-vacant-chairs",
 		Label:      "Home Health Vacant Chairs/Room",
 		Comment:    "cardinal-number",
+		Validators: []xscmsg.Validator{xscform.ValidateCardinalNumber},
 	}
-	homeHealthFrontStaffID = &xscmsg.FieldID{
+	homeHealthFrontStaffDef = &xscmsg.FieldDef{
 		Tag:        "53c.",
 		Annotation: "home-health-front-staff",
 		Label:      "Home Health Front Desk Staff",
 		Comment:    "cardinal-number",
+		Validators: []xscmsg.Validator{xscform.ValidateCardinalNumber},
 	}
-	homeHealthSupportStaffID = &xscmsg.FieldID{
+	homeHealthSupportStaffDef = &xscmsg.FieldDef{
 		Tag:        "53d.",
 		Annotation: "home-health-support-staff",
 		Label:      "Home Health Medical Support Staff",
 		Comment:    "cardinal-number",
+		Validators: []xscmsg.Validator{xscform.ValidateCardinalNumber},
 	}
-	homeHealthProvidersID = &xscmsg.FieldID{
+	homeHealthProvidersDef = &xscmsg.FieldDef{
 		Tag:        "53e.",
 		Annotation: "home-health-providers",
 		Label:      "Home Health Provider Staff",
 		Comment:    "cardinal-number",
+		Validators: []xscmsg.Validator{xscform.ValidateCardinalNumber},
 	}
-	adultDayCtrChairsID = &xscmsg.FieldID{
+	adultDayCtrChairsDef = &xscmsg.FieldDef{
 		Tag:        "54a.",
 		Annotation: "adult-day-ctr-chairs",
 		Label:      "Adult Day Ctr Chairs/Room",
 		Comment:    "cardinal-number",
+		Validators: []xscmsg.Validator{xscform.ValidateCardinalNumber},
 	}
-	adultDayCtrVacantChairsID = &xscmsg.FieldID{
+	adultDayCtrVacantChairsDef = &xscmsg.FieldDef{
 		Tag:        "54b.",
 		Annotation: "adult-day-ctr-vacant-chairs",
 		Label:      "Adult Day Ctr Vacant Chairs/Room",
 		Comment:    "cardinal-number",
+		Validators: []xscmsg.Validator{xscform.ValidateCardinalNumber},
 	}
-	adultDayCtrFrontStaffID = &xscmsg.FieldID{
+	adultDayCtrFrontStaffDef = &xscmsg.FieldDef{
 		Tag:        "54c.",
 		Annotation: "adult-day-ctr-front-staff",
 		Label:      "Adult Day Ctr Front Desk Staff",
 		Comment:    "cardinal-number",
+		Validators: []xscmsg.Validator{xscform.ValidateCardinalNumber},
 	}
-	adultDayCtrSupportStaffID = &xscmsg.FieldID{
+	adultDayCtrSupportStaffDef = &xscmsg.FieldDef{
 		Tag:        "54d.",
 		Annotation: "adult-day-ctr-support-staff",
 		Label:      "Adult Day Ctr Medical Support Staff",
 		Comment:    "cardinal-number",
+		Validators: []xscmsg.Validator{xscform.ValidateCardinalNumber},
 	}
-	adultDayCtrProvidersID = &xscmsg.FieldID{
+	adultDayCtrProvidersDef = &xscmsg.FieldDef{
 		Tag:        "54e.",
 		Annotation: "adult-day-ctr-providers",
 		Label:      "Adult Day Ctr Provider Staff",
 		Comment:    "cardinal-number",
+		Validators: []xscmsg.Validator{xscform.ValidateCardinalNumber},
 	}
 )
 
-type handlingField struct{ xscform.ChoicesField }
-
-func (f *handlingField) Default() string { return "ROUTINE" }
-
-type toICSPositionField struct{ xscform.Field }
-
-func (f *toICSPositionField) Default() string { return "EMS Unit" }
-
-type toLocationField struct{ xscform.Field }
-
-func (f *toLocationField) Default() string { return "MHJOC" }
-
-type requiredForComplete[T xscmsg.Field] struct{ f T }
-
-func (f *requiredForComplete[T]) Validate(msg xscmsg.Message, strict bool) string {
-	if f.f.Get() == "" && msg.Field("19.").Get() == "Complete" {
-		return fmt.Sprintf("field %q needs a value when field \"19.\" is \"Complete\"", f.ID().Tag)
+func requiredForComplete(f *xscmsg.Field, m *xscmsg.Message, _ bool) string {
+	if m.Field("19.").Value != "Complete" {
+		return ""
 	}
-	return f.f.Validate(msg, strict)
+	if f.Value == "" {
+		return fmt.Sprintf("The %q field must have a value when the \"19.\" field is set to \"Complete\".", f.Def.Tag)
+	}
+	return ""
 }
-func (f *requiredForComplete[T]) ID() *xscmsg.FieldID { return f.f.ID() }
-func (f *requiredForComplete[T]) Get() string         { return f.f.Get() }
-func (f *requiredForComplete[T]) Set(v string)        { f.f.Set(v) }
-func (f *requiredForComplete[T]) Default() string     { return f.f.Default() }

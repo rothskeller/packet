@@ -12,228 +12,218 @@ const Tag = "EOC213RR"
 func init() {
 	xscmsg.RegisterCreate(Tag, create)
 	xscmsg.RegisterType(recognize)
+
+	// Our toICSPosition and toLocation fields are variants of the standard
+	// ones, adding default values to them.
+	toICSPositionDef = new(xscmsg.FieldDef)
+	*toICSPositionDef = *xscform.ToICSPositionDef
+	toICSPositionDef.DefaultValue = "Planning Section"
+	toICSPositionDef.Comment = "required: Planning Section, ..."
+	toLocationDef = new(xscmsg.FieldDef)
+	*toLocationDef = *xscform.ToLocationDef
+	toLocationDef.DefaultValue = "County EOC"
+	toLocationDef.Comment = "required: County EOC, ..."
 }
 
-func create() xscmsg.Message {
-	return xscform.CreateForm(formtype, makeFields())
+func create() *xscmsg.Message {
+	return xscform.CreateForm(formtype, fieldDefs)
 }
 
-func recognize(msg *pktmsg.Message, form *pktmsg.Form) xscmsg.Message {
+func recognize(msg *pktmsg.Message, form *pktmsg.Form) *xscmsg.Message {
 	if form == nil || form.FormType != formtype.HTML || xscmsg.OlderVersion(form.FormVersion, "2.0") {
 		return nil
 	}
-	return xscform.AdoptForm(formtype, makeFields(), msg, form)
+	return xscform.AdoptForm(formtype, fieldDefs, msg, form)
 }
 
 var formtype = &xscmsg.MessageType{
-	Tag:     Tag,
-	Name:    "EOC-213RR resource request form",
-	Article: "an",
-	HTML:    "form-scco-eoc-213rr.html",
-	Version: "2.3",
+	Tag:         Tag,
+	Name:        "EOC-213RR resource request form",
+	Article:     "an",
+	HTML:        "form-scco-eoc-213rr.html",
+	Version:     "2.3",
+	SubjectFunc: xscform.EncodeSubject,
+	BodyFunc:    xscform.EncodeBody,
 }
 
-func makeFields() []xscmsg.Field {
-	return []xscmsg.Field{
-		xscform.FOriginMessageNumber(),
-		xscform.FDestinationMessageNumber(),
-		xscform.FMessageDate(),
-		xscform.FMessageTime(),
-		xscform.FHandling(),
-		&toICSPositionField{*xscform.FToICSPosition().(*xscform.Field)},
-		xscform.FFromICSPosition(),
-		&toLocationField{*xscform.FToLocation().(*xscform.Field)},
-		xscform.FFromLocation(),
-		xscform.FToName(),
-		xscform.FFromName(),
-		xscform.FToContact(),
-		xscform.FFromContact(),
-		xscform.NewField(incidentNameID, true),
-		&xscform.DateField{Field: *xscform.NewField(dateInitiatedID, true)},
-		&xscform.TimeField{Field: *xscform.NewField(timeInitiatedID, true)},
-		xscform.NewField(trackingNumberID, false),
-		xscform.NewField(requestedByID, true),
-		xscform.NewField(preparedByID, false),
-		xscform.NewField(approvedByID, false),
-		xscform.NewField(qtyUnitID, true),
-		xscform.NewField(resourceDescriptionID, true),
-		xscform.NewField(resourceArrivalID, true),
-		&xscform.ChoicesField{Field: *xscform.NewField(priorityID, true), Choices: priorityChoices},
-		xscform.NewField(estdCostID, false),
-		xscform.NewField(deliverToID, true),
-		xscform.NewField(deliverToLocationID, true),
-		xscform.NewField(substitutesID, false),
-		&xscform.BooleanField{Field: *xscform.NewField(equipmentOperatorID, false)},
-		&xscform.BooleanField{Field: *xscform.NewField(lodgingID, false)},
-		&xscform.BooleanField{Field: *xscform.NewField(fuelID, false)},
-		xscform.NewField(fuelTypeID, false),
-		&xscform.BooleanField{Field: *xscform.NewField(powerID, false)},
-		&xscform.BooleanField{Field: *xscform.NewField(mealsID, false)},
-		&xscform.BooleanField{Field: *xscform.NewField(maintenanceID, false)},
-		&xscform.BooleanField{Field: *xscform.NewField(waterID, false)},
-		&xscform.BooleanField{Field: *xscform.NewField(otherID, false)},
-		xscform.NewField(instructionsID, false),
-		xscform.FOpRelayRcvd(),
-		xscform.FOpRelaySent(),
-		xscform.FOpName(),
-		xscform.FOpCall(),
-		xscform.FOpDate(),
-		xscform.FOpTime(),
-	}
+var fieldDefs = []*xscmsg.FieldDef{
+	// Standard header
+	xscform.OriginMessageNumberDef, xscform.DestinationMessageNumberDef, xscform.MessageDateDef, xscform.MessageTimeDef,
+	xscform.HandlingDef, toICSPositionDef, xscform.FromICSPositionDef, toLocationDef, xscform.FromLocationDef,
+	xscform.ToNameDef, xscform.FromNameDef, xscform.ToContactDef, xscform.FromContactDef,
+	// EOC-213RR fields
+	incidentNameDef, dateInitiatedDef, timeInitiatedDef, trackingNumberDef, requestedByDef, preparedByDef, approvedByDef,
+	qtyUnitDef, resourceDescriptionDef, resourceArrivalDef, priorityDef, estdCostDef, deliverToDef, deliverToLocationDef,
+	substitutesDef, equipmentOperatorDef, lodgingDef, fuelDef, fuelTypeDef, powerDef, mealsDef, maintenanceDef, waterDef,
+	otherDef, instructionsDef,
+	// Standard footer
+	xscform.OpRelayRcvdDef, xscform.OpRelaySentDef, xscform.OpNameDef, xscform.OpCallDef, xscform.OpDateDef, xscform.OpTimeDef,
 }
 
 var (
-	incidentNameID = &xscmsg.FieldID{
+	toICSPositionDef *xscmsg.FieldDef // set in func init
+	toLocationDef    *xscmsg.FieldDef // set in func init
+	incidentNameDef  = &xscmsg.FieldDef{
 		Tag:        "21.",
 		Annotation: "incident-name",
 		Label:      "1. Incident Name",
 		Comment:    "required",
 		Canonical:  xscmsg.FSubject,
+		Validators: []xscmsg.Validator{xscform.ValidateRequired},
 	}
-	dateInitiatedID = &xscmsg.FieldID{
+	dateInitiatedDef = &xscmsg.FieldDef{
 		Tag:        "22.",
 		Annotation: "date",
 		Label:      "2. Date Initiated",
 		Comment:    "required date",
+		Validators: []xscmsg.Validator{xscform.ValidateRequired, xscform.ValidateDate},
 	}
-	timeInitiatedID = &xscmsg.FieldID{
+	timeInitiatedDef = &xscmsg.FieldDef{
 		Tag:        "23.",
 		Annotation: "time",
 		Label:      "3. Time Initiated",
 		Comment:    "required time",
+		Validators: []xscmsg.Validator{xscform.ValidateRequired, xscform.ValidateTime},
 	}
-	trackingNumberID = &xscmsg.FieldID{
+	trackingNumberDef = &xscmsg.FieldDef{
 		Tag:        "24.",
 		Annotation: "tracking-number",
 		Label:      "4. Tracking Number (OA EOC)",
 	}
-	requestedByID = &xscmsg.FieldID{
+	requestedByDef = &xscmsg.FieldDef{
 		Tag:        "25.",
 		Annotation: "requested-by",
 		Label:      "5. Requested by (name, agency, position, email, phone)",
 		Comment:    "required",
+		Validators: []xscmsg.Validator{xscform.ValidateRequired},
 	}
-	preparedByID = &xscmsg.FieldID{
+	preparedByDef = &xscmsg.FieldDef{
 		Tag:        "26.",
 		Annotation: "prepared-by",
 		Label:      "6. Prepared by (name, position, email, phone)",
 	}
-	approvedByID = &xscmsg.FieldID{
+	approvedByDef = &xscmsg.FieldDef{
 		Tag:        "27.",
 		Annotation: "approved-by",
 		Label:      "7. Approved By (name, position, email, phone)",
 	}
-	qtyUnitID = &xscmsg.FieldID{
+	qtyUnitDef = &xscmsg.FieldDef{
 		Tag:        "28.",
 		Annotation: "qty-unit",
 		Label:      "8. Qty/Unit",
 		Comment:    "required",
+		Validators: []xscmsg.Validator{xscform.ValidateRequired},
 	}
-	resourceDescriptionID = &xscmsg.FieldID{
+	resourceDescriptionDef = &xscmsg.FieldDef{
 		Tag:        "29.",
 		Annotation: "resource-description",
 		Label:      "9. Resource Description (kind/type if applicable)",
 		Comment:    "required",
+		Validators: []xscmsg.Validator{xscform.ValidateRequired},
 	}
-	resourceArrivalID = &xscmsg.FieldID{
+	resourceArrivalDef = &xscmsg.FieldDef{
 		Tag:        "30.",
 		Annotation: "resource-arrival",
 		Label:      "10. Arrival (date/time)",
 		Comment:    "required",
+		Validators: []xscmsg.Validator{xscform.ValidateRequired},
 	}
-	priorityID = &xscmsg.FieldID{
+	priorityDef = &xscmsg.FieldDef{
 		Tag:        "31.",
 		Annotation: "priority",
 		Label:      "11. Priority",
 		Comment:    "required: Now, High, Medium, Low",
+		Validators: []xscmsg.Validator{xscform.ValidateRequired, xscform.ValidateChoices},
+		Choices:    []string{"Now", "High", "Medium", "Low"},
 	}
-	priorityChoices = []string{"Now", "High", "Medium", "Low"}
-	estdCostID      = &xscmsg.FieldID{
+	estdCostDef = &xscmsg.FieldDef{
 		Tag:        "32.",
 		Annotation: "estd-cost", // it's resource-priority in PackItForms, but that's clearly wrong
 		Label:      "12. Est'd Cost",
 	}
-	deliverToID = &xscmsg.FieldID{
+	deliverToDef = &xscmsg.FieldDef{
 		Tag:        "33.",
 		Annotation: "deliver-to",
 		Label:      "13. Deliver to (name, agency, position, email, phone)",
 		Comment:    "required",
+		Validators: []xscmsg.Validator{xscform.ValidateRequired},
 	}
-	deliverToLocationID = &xscmsg.FieldID{
+	deliverToLocationDef = &xscmsg.FieldDef{
 		Tag:        "34.",
 		Annotation: "deliver-to-location",
 		Label:      "14. Location (address or lat/long, site type)",
 		Comment:    "required",
+		Validators: []xscmsg.Validator{xscform.ValidateRequired},
 	}
-	substitutesID = &xscmsg.FieldID{
+	substitutesDef = &xscmsg.FieldDef{
 		Tag:        "35.",
 		Annotation: "substitutes",
 		Label:      "15. Substitute/Suggested Sources (name, phone, website)",
 	}
-	equipmentOperatorID = &xscmsg.FieldID{
+	equipmentOperatorDef = &xscmsg.FieldDef{
 		Tag:        "36a.",
 		Annotation: "equipment-operator",
 		Label:      "16. Supplemental Requirements: Equipment Operator",
 		Comment:    "boolean",
+		Validators: []xscmsg.Validator{xscform.ValidateBoolean},
 	}
-	lodgingID = &xscmsg.FieldID{
+	lodgingDef = &xscmsg.FieldDef{
 		Tag:        "36b.",
 		Annotation: "lodging",
 		Label:      "16. Supplemental Requirements: Lodging",
 		Comment:    "boolean",
+		Validators: []xscmsg.Validator{xscform.ValidateBoolean},
 	}
-	fuelID = &xscmsg.FieldID{
+	fuelDef = &xscmsg.FieldDef{
 		Tag:        "36c.",
 		Annotation: "fuel",
 		Label:      "16. Supplemental Requirements: Fuel",
 		Comment:    "boolean",
+		Validators: []xscmsg.Validator{xscform.ValidateBoolean},
 	}
-	fuelTypeID = &xscmsg.FieldID{
+	fuelTypeDef = &xscmsg.FieldDef{
 		Tag:        "36d.",
 		Annotation: "fuel-type",
 		Label:      "16. Supplemental Requirements: Fuel Type",
 	}
-	powerID = &xscmsg.FieldID{
+	powerDef = &xscmsg.FieldDef{
 		Tag:        "36e.",
 		Annotation: "power",
 		Label:      "16. Supplemental Requirements: Power",
 		Comment:    "boolean",
+		Validators: []xscmsg.Validator{xscform.ValidateBoolean},
 	}
-	mealsID = &xscmsg.FieldID{
+	mealsDef = &xscmsg.FieldDef{
 		Tag:        "36f.",
 		Annotation: "meals",
 		Label:      "16. Supplemental Requirements: Meals",
 		Comment:    "boolean",
+		Validators: []xscmsg.Validator{xscform.ValidateBoolean},
 	}
-	maintenanceID = &xscmsg.FieldID{
+	maintenanceDef = &xscmsg.FieldDef{
 		Tag:        "36g.",
 		Annotation: "maintenance",
 		Label:      "16. Supplemental Requirements: Maintenance",
 		Comment:    "boolean",
+		Validators: []xscmsg.Validator{xscform.ValidateBoolean},
 	}
-	waterID = &xscmsg.FieldID{
+	waterDef = &xscmsg.FieldDef{
 		Tag:        "36h.",
 		Annotation: "water",
 		Label:      "16. Supplemental Requirements: Water",
 		Comment:    "boolean",
+		Validators: []xscmsg.Validator{xscform.ValidateBoolean},
 	}
-	otherID = &xscmsg.FieldID{
+	otherDef = &xscmsg.FieldDef{
 		Tag:        "36i.",
 		Annotation: "other",
 		Label:      "16. Supplemental Requirements: Other",
 		Comment:    "boolean",
+		Validators: []xscmsg.Validator{xscform.ValidateBoolean},
 	}
-	instructionsID = &xscmsg.FieldID{
+	instructionsDef = &xscmsg.FieldDef{
 		Tag:        "37.",
 		Annotation: "instructions",
 		Label:      "17. Special Instructions",
 	}
 )
-
-type toICSPositionField struct{ xscform.Field }
-
-func (f *toICSPositionField) Default() string { return "Planning Section" }
-
-type toLocationField struct{ xscform.Field }
-
-func (f *toLocationField) Default() string { return "County EOC" }
