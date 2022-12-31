@@ -9,7 +9,7 @@ import (
 	"github.com/rothskeller/packet/xscmsg/internal/xscform"
 )
 
-// Tag identifies shelter status forms.
+// Tag identifies RACES MAR forms.
 const (
 	Tag = "RACES-MAR"
 )

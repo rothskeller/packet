@@ -10,161 +10,126 @@ import (
 	"github.com/rothskeller/packet/xscmsg/internal/xscform"
 )
 
-func init() {
-	xscmsg.RegisterType(Create, Recognize)
-}
-
-var checkout = &xscform.FormDefinition{
-	HTML:              "check-out.html", // fake, not really
-	Tag:               "Check-Out",
-	Name:              "check-out message",
-	Article:           "a",
-	Version:           "1.0",
-	OriginNumberField: "MsgNo",
-	OperatorNameField: "OpName",
-	OperatorCallField: "OpCall",
-	Fields: []*xscform.FieldDefinition{
-		{
-			Tag:         "MsgNo",
-			Validations: []xscform.ValidateFunc{xscform.ValidateRequired, xscform.ValidateMessageNumber},
-		},
-		{Tag: "TacCall"},
-		{Tag: "TacName"},
-		{
-			Tag:         "OpCall",
-			Validations: []xscform.ValidateFunc{xscform.ValidateRequired, xscform.ValidateCallSign},
-		},
-		{
-			Tag:         "OpName",
-			Validations: []xscform.ValidateFunc{xscform.ValidateRequired},
-		},
-	},
-}
-
-// Create creates a new message of the type identified by the supplied tag.  If
-// the tag is not recognized by this package, Create returns nil.
-func Create(tag string) xscmsg.XSCMessage {
-	if tag == checkout.Tag {
-		return &CheckOut{xscform.CreateForm(checkout)}
-	}
-	return nil
-}
+// Tag identifies check-out messages.
+const Tag = "Check-Out"
+const html = "check-out.html"
 
 var checkOutRE = regexp.MustCompile(`(?i)^Check-Out\s+([A-Z][A-Z0-9]{2,5})\s*,(.*)(?:\n([AKNW][A-Z0-9]{2,5})\s*,(.*))?`)
 
-// Recognize examines the supplied Message to see if it is of the type defined
-// in this package.  If so, it returns the appropriate XSCMessage implementation
-// wrapping it.  If not, it returns nil.
-func Recognize(msg *pktmsg.Message, form *pktmsg.Form) xscmsg.XSCMessage {
-	if xf := xscform.RecognizeForm(checkout, msg, form); xf != nil {
-		return &CheckOut{xf}
-	}
-	if subject := xscmsg.ParseSubject(msg.Header.Get("Subject")); subject != nil && subject.FormTag == "" {
-		if strings.HasPrefix(strings.ToLower(subject.Subject), "check-out ") {
-			var co = &CheckOut{xscform.CreateForm(checkout)}
-			co.SetOriginNumber(subject.MessageNumber)
-			if match := checkOutRE.FindStringSubmatch(msg.Body); match != nil {
-				if match[3] != "" {
-					co.SetTactical(strings.TrimSpace(match[2]), match[1])
-					co.SetOperator(strings.TrimSpace(match[4]), match[3])
-				} else {
-					co.SetOperator(strings.TrimSpace(match[2]), match[1])
-				}
-			}
-			return co
-		}
-	}
-	return nil
+func init() {
+	xscmsg.RegisterCreate(Tag, create)
+	xscmsg.RegisterType(recognize)
 }
 
-// CheckOut is a check-out message.
-type CheckOut struct {
-	form *xscform.XSCForm
+func create() *xscmsg.Message {
+	return xscform.CreateForm(formtype, fieldDefs)
 }
 
-// TypeTag returns the tag string used to identify the message type.
-func (co *CheckOut) TypeTag() string { return checkout.Tag }
-
-// TypeName returns the English name of the message type.  It is a noun
-// phrase in prose case, such as "foo message" or "bar form".
-func (co *CheckOut) TypeName() string { return checkout.Name }
-
-// TypeArticle returns the indefinite article ("a" or "an") to be used
-// preceding the TypeName, in a sentence that needs one.
-func (co *CheckOut) TypeArticle() string { return checkout.Article }
-
-// Validate ensures that the contents of the message are correct.  It returns a
-// list of problems, which is empty if the message is fine.  If strict is true,
-// the message must be exactly correct; otherwise, some trivial issues are
-// corrected and not reported.
-func (co *CheckOut) Validate(strict bool) (problems []string) {
-	problems = co.form.Validate(strict)
-	if (co.Get("TacCall") == "") != (co.Get("TacName") == "") {
-		problems = append(problems, "must set both or neither of TacCall and TacName")
+func recognize(msg *pktmsg.Message, form *pktmsg.Form) *xscmsg.Message {
+	if form != nil && form.FormType == html && !xscmsg.OlderVersion(form.FormVersion, "1.0") {
+		return xscform.AdoptForm(formtype, fieldDefs, msg, form)
 	}
-	return problems
-}
-
-// Message returns the encoded message.  If human is true, it is encoded for
-// human reading or editing; if false, it is encoded for transmission.  If the
-// XSCMessage was originally created by a call to Recognize, the Message
-// structure passed to it is updated and reused; otherwise, a new Message
-// structure is created and filled in.
-func (co *CheckOut) Message(human bool) (msg *pktmsg.Message) {
-	opname, opcall := co.Operator()
-	tacname, taccall := co.Tactical()
-	if human {
-		msg = co.form.Message(human)
-	} else {
-		msg = pktmsg.New()
-		if taccall != "" {
-			msg.Body = fmt.Sprintf("Check-Out %s, %s\n%s, %s\n", taccall, tacname, opcall, opname)
+	subject := xscmsg.ParseSubject(msg.Header.Get("Subject"))
+	if subject == nil || subject.FormTag != "" || !strings.HasPrefix(strings.ToLower(subject.Subject), "check-out ") {
+		return nil
+	}
+	var m = create()
+	m.Field("MsgNo").Value = subject.MessageNumber
+	if match := checkOutRE.FindStringSubmatch(msg.Body); match != nil {
+		if match[3] != "" {
+			m.Field("TacCall").Value = match[1]
+			m.Field("TacName").Value = match[2]
+			m.Field("OpCall").Value = match[3]
+			m.Field("OpName").Value = match[4]
 		} else {
-			msg.Body = fmt.Sprintf("Check-Out %s, %s", opcall, opname)
+			m.Field("OpCall").Value = match[1]
+			m.Field("OpName").Value = match[2]
 		}
 	}
-	msg.Header.Set("Subject", co.EncodeSubject())
-	return msg
+	return m
 }
 
-// EncodeSubject returns the encoded subject line of the message based on its
-// contents.
-func (co *CheckOut) EncodeSubject() string {
-	var priname, pricall string
-	tacname, taccall := co.Tactical()
-	if taccall != "" {
-		priname, pricall = tacname, taccall
-	} else {
-		priname, pricall = co.Operator()
+var formtype = &xscmsg.MessageType{
+	Tag:         Tag,
+	Name:        "check-out message",
+	Article:     "a",
+	HTML:        html,
+	Version:     "1.0",
+	SubjectFunc: encodeSubject,
+	BodyFunc:    encodeBody,
+}
+
+func encodeBody(m *xscmsg.Message, human bool) string {
+	if human {
+		return xscform.EncodeBody(m, human)
 	}
-	return xscmsg.EncodeSubject(co.OriginNumber(), xscmsg.HandlingRoutine, "",
-		fmt.Sprintf("Check-Out %s, %s", pricall, priname))
+	opname := m.Field("OpName").Value
+	opcall := m.Field("OpCall").Value
+	taccall := m.Field("TacCall").Value
+	if taccall != "" {
+		tacname := m.Field("TacName").Value
+		return fmt.Sprintf("Check-Out %s, %s\n%s, %s\n", taccall, tacname, opcall, opname)
+	}
+	return fmt.Sprintf("Check-Out %s, %s", opcall, opname)
 }
 
-// Get returns the value of the named form field.
-func (co *CheckOut) Get(s string) string { return co.form.Get(s) }
+func encodeSubject(m *xscmsg.Message) string {
+	var name, call string
+	call = m.Field("TacCall").Value
+	if call != "" {
+		name = m.Field("TacName").Value
+	} else {
+		name = m.Field("OpName").Value
+		call = m.Field("OpCall").Value
+	}
+	msgno := m.Field("MsgNo").Value
+	return xscmsg.EncodeSubject(msgno, xscmsg.HandlingRoutine, "", fmt.Sprintf("Check-Out %s, %s", call, name))
+}
 
-// Set sets the value of the named form field
-func (co *CheckOut) Set(name, value string) { co.form.Set(name, value) }
+var fieldDefs = []*xscmsg.FieldDef{
+	msgNoDef, tacCallDef, tacNameDef, opCallDef, opNameDef,
+}
 
-// OriginNumber returns the origin message number of the message, if any.
-func (co *CheckOut) OriginNumber() string { return co.form.OriginNumber() }
+var (
+	msgNoDef = &xscmsg.FieldDef{
+		Tag:        "MsgNo",
+		Label:      "Message Number",
+		Comment:    "required",
+		Canonical:  xscmsg.FOriginMsgNo,
+		Validators: []xscmsg.Validator{xscform.ValidateRequired, xscform.ValidateMessageNumber},
+	}
+	tacCallDef = &xscmsg.FieldDef{
+		Tag:   "TacCall",
+		Label: "Tactical Call Sign",
+	}
+	tacNameDef = &xscmsg.FieldDef{
+		Tag:        "TacName",
+		Label:      "Tactical Station Name",
+		Validators: []xscmsg.Validator{validateBothOrNone},
+	}
+	opCallDef = &xscmsg.FieldDef{
+		Tag:        "OpCall",
+		Label:      "Operator Call Sign",
+		Comment:    "required call-sign",
+		Canonical:  xscmsg.FOpCall,
+		Validators: []xscmsg.Validator{xscform.ValidateRequired, xscform.ValidateCallSign},
+	}
+	opNameDef = &xscmsg.FieldDef{
+		Tag:        "OpName",
+		Label:      "Operator Name",
+		Comment:    "required",
+		Canonical:  xscmsg.FOpName,
+		Validators: []xscmsg.Validator{xscform.ValidateRequired},
+	}
+)
 
-// SetOriginNumber sets the origin message number of the message, if the message
-// type supports that.
-func (co *CheckOut) SetOriginNumber(s string) { co.form.SetOriginNumber(s) }
-
-// Operator returns the operator name and call sign from the message.
-func (co *CheckOut) Operator() (name, callSign string) { return co.form.Operator() }
-
-// SetOperator sets the operator name and call sign in the message.
-func (co *CheckOut) SetOperator(name, callSign string) { co.form.SetOperator(name, callSign) }
-
-// Tactical returns the tactical name and call sign from the message.
-func (co *CheckOut) Tactical() (name, callSign string) { return co.Get("TacName"), co.Get("TacCall") }
-
-// SetTactical sets the tactical name and call sign in the message.
-func (co *CheckOut) SetTactical(name, callSign string) {
-	co.Set("TacName", name)
-	co.Set("TacCall", callSign)
+func validateBothOrNone(f *xscmsg.Field, msg *xscmsg.Message, _ bool) string {
+	taccall := msg.Field("TacCall").Value
+	if (taccall == "") != (f.Value == "") {
+		if taccall == "" {
+			return "The TacName field is set but the TacCall field is not."
+		}
+		return "The TacCall field is set but the TacName field is not."
+	}
+	return ""
 }
