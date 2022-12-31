@@ -1,86 +1,133 @@
 package xscform
 
 import (
-	"fmt"
-	"time"
-
 	"github.com/rothskeller/packet/pktmsg"
 	"github.com/rothskeller/packet/xscmsg"
 )
 
-// A FormDefinition defines the characteristics of a form such that the base
-// XSCForm implementation can work with it.  FormDefinitions are generally
-// auto-generated from SCCoPIFO HTML files with the extract-pifo-fields build
-// tool.
-type FormDefinition struct {
-	HTML                   string
-	Tag                    string
-	Name                   string
-	Article                string
-	Version                string
-	OriginNumberField      string
-	DestinationNumberField string
-	HandlingOrderField     string
-	SubjectField           string
-	OperatorNameField      string
-	OperatorCallField      string
-	ActionDateField        string
-	ActionTimeField        string
-	Fields                 []*FieldDefinition
-	Annotations            map[string]string
-	Comments               map[string]string
-}
-
-// A FieldDefinition is the definition of a single field in a FormDefinition.
-type FieldDefinition struct {
-	Tag               string
-	Values            []string
-	Validations       []ValidateFunc
-	Default           string
-	ComputedFromField string
-}
-
-// A ValidateFunc is a function that validates the value of a field in a form.
-// It takes the form, field definition, and value to be validated as input.  It
-// returns the value — which may have been corrected — and a problem string.
-// The problem string will describe any uncorrectable issue and will otherwise
-// be empty.  Note that any correction of the value will be considered an error
-// when validating in strict mode.
-type ValidateFunc func(xf *XSCForm, fd *FieldDefinition, value string, strict bool) (newval, problem string)
+var fieldAnnotations = make(map[*xscmsg.MessageType]map[string]string)
+var fieldComments = make(map[*xscmsg.MessageType]map[string]string)
 
 // CreateForm creates a new XSCForm with the specified form definition, filling
 // in the defaults.
-func CreateForm(def *FormDefinition) *XSCForm {
-	var xf = XSCForm{def: def, form: new(pktmsg.Form)}
-	xf.form.FormType = def.HTML
-	xf.form.FormVersion = def.Version
-	for _, field := range def.Fields {
-		var val = field.Default
-		if val == "«date»" {
-			val = time.Now().Format("01/02/2006")
+func CreateForm(mtype *xscmsg.MessageType, fields []xscmsg.Field) *XSCForm {
+	var xf = XSCForm{mtype: mtype, fields: fields, form: new(pktmsg.Form)}
+	xf.form.FormType = mtype.HTML
+	xf.form.FormVersion = mtype.Version
+	for _, field := range xf.fields {
+		if val := field.Default(); val != "" {
+			field.Set(val)
 		}
-		xf.form.Set(field.Tag, val)
 	}
 	return &xf
 }
 
-// RecognizeForm returns a new XSCForm for the specified message if it contains
-// a form matching the specified form definition.  The form version must be the
-// same as or newer than that of the form definition.
-func RecognizeForm(def *FormDefinition, msg *pktmsg.Message, form *pktmsg.Form) *XSCForm {
-	if form == nil || form.FormType != def.HTML || xscmsg.OlderVersion(form.FormVersion, def.Version) {
-		return nil
+// AdoptForm returns a new XSCForm for the specified message.
+func AdoptForm(mtype *xscmsg.MessageType, fields []xscmsg.Field, msg *pktmsg.Message, form *pktmsg.Form) *XSCForm {
+	var xf = XSCForm{mtype: mtype, fields: fields, msg: msg, form: form}
+	for _, f := range form.Fields {
+		nf := xf.Field(f.Tag)
+		if nf == nil {
+			if f.Value == "" {
+				continue // ignore unknown fields with no value
+			}
+			nf = &unknownField{tag: f.Tag}
+			xf.fields = append(xf.fields, nf)
+		}
+		nf.Set(f.Value)
 	}
-	return &XSCForm{def: def, msg: msg, form: form}
+	return &xf
 }
 
 // XSCForm is the base implementation of all XSC form types.
 type XSCForm struct {
-	def  *FormDefinition
-	msg  *pktmsg.Message
-	form *pktmsg.Form
+	mtype  *xscmsg.MessageType
+	fields []xscmsg.Field
+	msg    *pktmsg.Message
+	form   *pktmsg.Form
 }
 
+// Type returns the message type definition.
+func (xf *XSCForm) Type() *xscmsg.MessageType { return xf.mtype }
+
+// Fields returns the list of fields in the message.
+func (xf *XSCForm) Fields() []xscmsg.Field { return xf.fields }
+
+// Field returns the field with the specified name, or nil if there is
+// no such field.
+func (xf *XSCForm) Field(name string) xscmsg.Field {
+	for _, f := range xf.fields {
+		id := f.ID()
+		if id.Tag == name || id.Canonical == name {
+			return f
+		}
+	}
+	return nil
+}
+
+// Validate ensures that the contents of the message are correct.  It
+// returns a list of problems, which is empty if the message is fine.
+// If strict is true, the message must be exactly correct; otherwise,
+// some trivial issues are corrected and not reported.
+func (xf *XSCForm) Validate(strict bool) (problems []string) {
+	for _, f := range xf.fields {
+		if err := f.Validate(xf, strict); err != "" {
+			problems = append(problems, err)
+		}
+	}
+	return problems
+}
+
+// EncodeSubject returns the encoded subject of the message.
+func (xf *XSCForm) EncodeSubject() string {
+	ho, _ := xscmsg.ParseHandlingOrder(xf.Field(xscmsg.FHandling).Get())
+	omsgno := xf.Field(xscmsg.FOriginMsgNo).Get()
+	subject := xf.Field(xscmsg.FSubject).Get()
+	return xscmsg.EncodeSubject(omsgno, ho, xf.mtype.Tag, subject)
+}
+
+// EncodeBody returns the encoded body of the message.  If human is true, it is
+// encoded for human reading or editing; if false, it is encoded for
+// transmission.
+func (xf *XSCForm) EncodeBody(human bool) string {
+	xf.form.Fields = xf.form.Fields[:0]
+	for _, f := range xf.fields {
+		value := f.Get()
+		if value != "" || (human && !f.ID().ReadOnly) {
+			xf.form.Fields = append(xf.form.Fields, pktmsg.FormField{Tag: f.ID().Tag, Value: value})
+		}
+	}
+	if human {
+		annotations, comments := generateFieldAnnotationsAndComments(xf.mtype, xf.fields)
+		return xf.form.Encode(annotations, comments, true)
+	}
+	return xf.form.Encode(nil, nil, false)
+}
+
+// generateFieldAnnotationAndComments generates (or returns cached) maps from
+// field tag to field annotation and to field comment for the specified message
+// type.
+func generateFieldAnnotationsAndComments(mtype *xscmsg.MessageType, fields []xscmsg.Field) (m, c map[string]string) {
+	if m = fieldAnnotations[mtype]; m != nil {
+		return m, fieldComments[mtype]
+	}
+	m = make(map[string]string)
+	c = make(map[string]string)
+	for _, f := range fields {
+		id := f.ID()
+		if id.Annotation != "" {
+			m[id.Tag] = id.Annotation
+		}
+		if id.Comment != "" {
+			c[id.Tag] = id.Comment
+		}
+	}
+	fieldAnnotations[mtype] = m
+	fieldComments[mtype] = c
+	return m, c
+}
+
+/*
 // TypeTag returns the tag string used to identify the message type.
 func (xf *XSCForm) TypeTag() string { return xf.def.Tag }
 
@@ -251,3 +298,4 @@ func (fd *FormDefinition) FindField(tag string) *FieldDefinition {
 	}
 	return nil
 }
+*/

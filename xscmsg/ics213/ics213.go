@@ -6,85 +6,362 @@ import (
 	"github.com/rothskeller/packet/xscmsg/internal/xscform"
 )
 
+// Tag identifies ICS-213 forms.
+const Tag = "ICS213"
+
 func init() {
-	xscmsg.RegisterType(Create, Recognize)
+	xscmsg.RegisterCreate(Tag, create)
+	xscmsg.RegisterType(recognize)
 }
 
-// Create creates a new message of the type identified by the supplied tag.  If
-// the tag is not recognized by this package, Create returns nil.
-func Create(tag string) xscmsg.XSCMessage {
-	for _, fd := range formDefinitions {
-		if tag == fd.Tag && fd != ics213v22 {
-			return &Form{xscform.CreateForm(fd)}
-		}
+func create() xscmsg.Message {
+	return xscform.CreateForm(formtype22, makeFields22())
+}
+
+func recognize(msg *pktmsg.Message, form *pktmsg.Form) xscmsg.Message {
+	if form == nil || form.FormType != formtype22.HTML {
+		return nil
 	}
-	return nil
-}
-
-// Recognize examines the supplied Message to see if it is of the type defined
-// in this package.  If so, it returns the appropriate XSCMessage implementation
-// wrapping it.  If not, it returns nil.
-func Recognize(msg *pktmsg.Message, form *pktmsg.Form) xscmsg.XSCMessage {
-	for _, fd := range formDefinitions {
-		if xf := xscform.RecognizeForm(fd, msg, form); xf != nil {
-			return &Form{xf}
-		}
+	if !xscmsg.OlderVersion(form.FormVersion, "2.2") {
+		return xscform.AdoptForm(formtype22, makeFields22(), msg, form)
 	}
-	return nil
-}
-
-// Form is an ICS-213 general message form.
-type Form struct {
-	*xscform.XSCForm
-}
-
-// EncodeSubject returns the encoded subject line of the message based on its
-// contents.
-func (f *Form) EncodeSubject() string {
-	// We have to override the XSCForm implementation because we want to use
-	// the message number from MsgNo, which is not marked as the origin
-	// message number in the field definitions.
-	ho, _ := xscmsg.ParseHandlingOrder(f.Get("5."))
-	return xscmsg.EncodeSubject(f.Get("MsgNo"), ho, "ICS213", f.Get("10."))
-}
-
-// OriginNumber returns the origin message number of the message, if any.
-func (f *Form) OriginNumber() string {
-	if msgnum := f.Get("2."); msgnum != "" {
-		return msgnum
+	if xscmsg.OlderVersion(form.FormVersion, "2.0") {
+		return nil
 	}
-	return f.Get("MsgNo")
-}
-
-// SetOriginNumber sets the originmessage number of the message, if the message
-// type supports that.
-func (f *Form) SetOriginNumber(msgnum string) { f.Set("MsgNo", msgnum) }
-
-// DestinationNumber returns the destination message number of the message, if
-// any.
-func (f *Form) DestinationNumber() string {
-	if f.Get("2.") != "" {
-		return f.Get("MsgNo")
+	// We have a version 2.0 or 2.1 form.  The set of fields we choose
+	// depends on whether it is a form we are receiving or sending.  If it
+	// has a value in field 3, we'll consider it sent.  Otherwise, we'll
+	// consider it received.
+	if form.Get("3.") != "" {
+		return xscform.AdoptForm(formtype20, makeFields20Tx(), msg, form)
 	}
-	return f.Get("3.")
+	return xscform.AdoptForm(formtype20, makeFields20Rx(), msg, form)
 }
 
-// SetDestinationNumber sets the destination message number of the message, if
-// the message type supports that.
-func (f *Form) SetDestinationNumber(msgnum string) {
-	if f.Get("2.") != "" {
-		f.Set("MsgNo", msgnum)
-	} else {
-		f.Set("3.", msgnum)
+var formtype22 = &xscmsg.MessageType{
+	Tag:     Tag,
+	Name:    "ICS-213 general message form",
+	Article: "an",
+	HTML:    "form-ics213.html",
+	Version: "2.2",
+}
+
+func makeFields22() []xscmsg.Field {
+	return []xscmsg.Field{
+		&xscform.MessageNumberField{Field: *xscform.NewField(originMessageNumberID, true)},
+		&xscform.MessageNumberField{Field: *xscform.NewField(destinationMessageNumberID, false)},
+		&xscform.DateFieldDefaultNow{DateField: xscform.DateField{Field: *xscform.NewField(dateID, true)}},
+		&xscform.TimeFieldDefaultNow{TimeField: xscform.TimeField{Field: *xscform.NewField(timeID, true)}},
+		&xscform.ChoicesField{Field: *xscform.NewField(handlingID22, true), Choices: handlingChoices},
+		&xscform.ChoicesField{Field: *xscform.NewField(takeActionID, false), Choices: yesNoChoices},
+		&xscform.ChoicesField{Field: *xscform.NewField(replyID, false), Choices: yesNoChoices},
+		xscform.NewField(replyByID, false),
+		xscform.NewField(toICSPositionID, true),
+		xscform.NewField(fromICSPositionID, true),
+		xscform.NewField(toLocationID, true),
+		xscform.NewField(fromLocationID, true),
+		xscform.NewField(toNameID, false),
+		xscform.NewField(fromNameID, false),
+		xscform.NewField(toTelID, false),
+		xscform.NewField(fromTelID, false),
+		xscform.NewField(subjectID, true),
+		xscform.NewField(referenceID, false),
+		xscform.NewField(messageID, true),
+		xscform.FOpRelayRcvd(),
+		xscform.FOpRelaySent(),
+		&recSentField{xscform.ChoicesField{Field: *xscform.NewField(recSentID, false), Choices: recSentChoices}},
+		xscform.FOpCall(),
+		&methodField{xscform.ChoicesField{Field: *xscform.NewField(methodID, false), Choices: methodChoices}},
+		xscform.FOpName(),
+		&otherField{*xscform.NewField(otherID, false)},
+		xscform.FOpDate(),
+		xscform.FOpTime(),
 	}
 }
 
-// Routing returns the To ICS Position and To Location fields of the form, if
-// it has them.
-func (f *Form) Routing() (pos, loc string) {
-	return f.Get("7."), f.Get("8.")
+var formtype20 = &xscmsg.MessageType{
+	Tag:     Tag,
+	Name:    "ICS-213 general message form",
+	Article: "an",
+	HTML:    "form-ics213.html",
+	Version: "2.1",
 }
 
-// SubjectFieldName returns the name of the field that gets put into the message
-// subject.
-func (f *Form) SubjectFieldName() string { return "Subject" }
+func makeFields20Rx() []xscmsg.Field {
+	return []xscmsg.Field{
+		&xscform.MessageNumberField{Field: *xscform.NewField(senderMessageNumberRxID, false)},
+		&xscform.MessageNumberField{Field: *xscform.NewField(myMessageNumberRxID, true)},
+		&xscform.MessageNumberField{Field: *xscform.NewField(receiverMessageNumberRxID, false)},
+		&xscform.DateFieldDefaultNow{DateField: xscform.DateField{Field: *xscform.NewField(dateID, true)}},
+		&xscform.TimeFieldDefaultNow{TimeField: xscform.TimeField{Field: *xscform.NewField(timeID, true)}},
+		&xscform.ChoicesField{Field: *xscform.NewField(severityID, true), Choices: severityChoices},
+		&xscform.ChoicesField{Field: *xscform.NewField(handlingID20, true), Choices: handlingChoices},
+		&xscform.ChoicesField{Field: *xscform.NewField(takeActionID, false), Choices: yesNoChoices},
+		&xscform.ChoicesField{Field: *xscform.NewField(replyID, false), Choices: yesNoChoices},
+		&xscform.BooleanField{Field: *xscform.NewField(fyiID, false)},
+		xscform.NewField(replyByID, false),
+		xscform.NewField(toICSPositionID, true),
+		xscform.NewField(fromICSPositionID, true),
+		xscform.NewField(toLocationID, true),
+		xscform.NewField(fromLocationID, true),
+		xscform.NewField(toNameID, false),
+		xscform.NewField(fromNameID, false),
+		xscform.NewField(toTelID, false),
+		xscform.NewField(fromTelID, false),
+		xscform.NewField(subjectID, true),
+		xscform.NewField(referenceID, false),
+		xscform.NewField(messageID, true),
+		xscform.FOpRelayRcvd(),
+		xscform.FOpRelaySent(),
+		&recSentField{xscform.ChoicesField{Field: *xscform.NewField(recSentID, false), Choices: recSentChoices}},
+		xscform.FOpCall(),
+		&methodField{xscform.ChoicesField{Field: *xscform.NewField(methodID, false), Choices: methodChoices}},
+		xscform.FOpName(),
+		&otherField{*xscform.NewField(otherID, false)},
+		xscform.FOpDate(),
+		xscform.FOpTime(),
+	}
+}
+
+func makeFields20Tx() []xscmsg.Field {
+	return []xscmsg.Field{
+		&xscform.MessageNumberField{Field: *xscform.NewField(senderMessageNumberTxID, false)},
+		&xscform.MessageNumberField{Field: *xscform.NewField(myMessageNumberTxID, true)},
+		&xscform.MessageNumberField{Field: *xscform.NewField(receiverMessageNumberTxID, false)},
+		&xscform.DateFieldDefaultNow{DateField: xscform.DateField{Field: *xscform.NewField(dateID, true)}},
+		&xscform.TimeFieldDefaultNow{TimeField: xscform.TimeField{Field: *xscform.NewField(timeID, true)}},
+		&xscform.ChoicesField{Field: *xscform.NewField(severityID, true), Choices: severityChoices},
+		&xscform.ChoicesField{Field: *xscform.NewField(handlingID20, true), Choices: handlingChoices},
+		&xscform.ChoicesField{Field: *xscform.NewField(takeActionID, false), Choices: yesNoChoices},
+		&xscform.ChoicesField{Field: *xscform.NewField(replyID, false), Choices: yesNoChoices},
+		&xscform.BooleanField{Field: *xscform.NewField(fyiID, false)},
+		xscform.NewField(replyByID, false),
+		xscform.NewField(toICSPositionID, true),
+		xscform.NewField(fromICSPositionID, true),
+		xscform.NewField(toLocationID, true),
+		xscform.NewField(fromLocationID, true),
+		xscform.NewField(toNameID, false),
+		xscform.NewField(fromNameID, false),
+		xscform.NewField(toTelID, false),
+		xscform.NewField(fromTelID, false),
+		xscform.NewField(subjectID, true),
+		xscform.NewField(referenceID, false),
+		xscform.NewField(messageID, true),
+		xscform.FOpRelayRcvd(),
+		xscform.FOpRelaySent(),
+		&recSentField{xscform.ChoicesField{Field: *xscform.NewField(recSentID, false), Choices: recSentChoices}},
+		xscform.FOpCall(),
+		&methodField{xscform.ChoicesField{Field: *xscform.NewField(methodID, false), Choices: methodChoices}},
+		xscform.FOpName(),
+		&otherField{*xscform.NewField(otherID, false)},
+		xscform.FOpDate(),
+		xscform.FOpTime(),
+	}
+}
+
+var (
+	senderMessageNumberRxID = &xscmsg.FieldID{
+		Tag:        "2.",
+		Annotation: "txmsgno",
+		Label:      "2. Sender's Msg #",
+		Comment:    "message-number",
+		Canonical:  xscmsg.FOriginMsgNo,
+		ReadOnly:   true,
+	}
+	myMessageNumberRxID = &xscmsg.FieldID{
+		Tag:       "MsgNo",
+		Label:     "My Msg #",
+		Comment:   "message-number",
+		Canonical: xscmsg.FDestinationMsgNo,
+	}
+	receiverMessageNumberRxID = &xscmsg.FieldID{
+		Tag:        "3.",
+		Annotation: "rxmsgno",
+		Label:      "3. Receiver's Msg #",
+		Comment:    "message-number",
+		ReadOnly:   true,
+	}
+	senderMessageNumberTxID = &xscmsg.FieldID{
+		Tag:        "2.",
+		Annotation: "txmsgno",
+		Label:      "2. Sender's Msg #",
+		Comment:    "message-number",
+		ReadOnly:   true,
+	}
+	myMessageNumberTxID = &xscmsg.FieldID{
+		Tag:       "MsgNo",
+		Label:     "My Msg #",
+		Comment:   "message-number",
+		Canonical: xscmsg.FOriginMsgNo,
+	}
+	receiverMessageNumberTxID = &xscmsg.FieldID{
+		Tag:        "3.",
+		Annotation: "rxmsgno",
+		Label:      "3. Receiver's Msg #",
+		Comment:    "message-number",
+		Canonical:  xscmsg.FDestinationMsgNo,
+		ReadOnly:   true,
+	}
+	originMessageNumberID = &xscmsg.FieldID{
+		Tag:       "MsgNo",
+		Label:     "2. Origin Msg #",
+		Comment:   "required message-number",
+		Canonical: xscmsg.FOriginMsgNo,
+	}
+	destinationMessageNumberID = &xscmsg.FieldID{
+		Tag:        "3.",
+		Annotation: "rxmsgno",
+		Label:      "3. Destination Msg #",
+		Comment:    "message-number",
+		Canonical:  xscmsg.FDestinationMsgNo,
+		ReadOnly:   true,
+	}
+	dateID = &xscmsg.FieldID{
+		Tag:        "1a.",
+		Annotation: "date",
+		Label:      "1. Date",
+		Comment:    "required date",
+		Canonical:  xscmsg.FMessageDate,
+	}
+	timeID = &xscmsg.FieldID{
+		Tag:        "1b.",
+		Annotation: "time",
+		Label:      "1. Time (24hr)",
+		Comment:    "required time",
+		Canonical:  xscmsg.FMessageTime,
+	}
+	severityID = &xscmsg.FieldID{
+		Tag:        "4.",
+		Annotation: "severity",
+		Label:      "4. Situation Severity",
+		Comment:    "required: EMERGENCY, URGENT, OTHER",
+	}
+	severityChoices = []string{"EMERGENCY", "URGENT", "OTHER"}
+	handlingID20    = &xscmsg.FieldID{
+		Tag:        "5.",
+		Annotation: "handling",
+		Label:      "5. Message Handling Order",
+		Comment:    "required: IMMEDIATE, PRIORITY, ROUTINE",
+		Canonical:  xscmsg.FHandling,
+	}
+	handlingID22 = &xscmsg.FieldID{
+		Tag:        "5.",
+		Annotation: "handling",
+		Label:      "5. Handling",
+		Comment:    "required: IMMEDIATE, PRIORITY, ROUTINE",
+		Canonical:  xscmsg.FHandling,
+	}
+	handlingChoices = []string{"IMMEDIATE", "PRIORITY", "ROUTINE"}
+	takeActionID    = &xscmsg.FieldID{
+		Tag:        "6a.",
+		Annotation: "take-action",
+		Label:      "6. Take Action",
+		Comment:    "Yes, No",
+	}
+	yesNoChoices = []string{"Yes", "No"}
+	replyID      = &xscmsg.FieldID{
+		Tag:        "6b.",
+		Annotation: "reply",
+		Label:      "6. Reply",
+		Comment:    "Yes, No",
+	}
+	fyiID = &xscmsg.FieldID{
+		Tag:        "6c.",
+		Annotation: "fyi",
+		Label:      "6. For your information (no action required)",
+		Comment:    "boolean",
+	}
+	replyByID = &xscmsg.FieldID{
+		Tag:        "6d.",
+		Annotation: "reply-by",
+		Label:      "6. Reply by",
+	}
+	toICSPositionID = &xscmsg.FieldID{
+		Tag:        "7.",
+		Annotation: "to-ics-position",
+		Label:      "7. To ICS Position",
+		Comment:    "required",
+		Canonical:  xscmsg.FToICSPosition,
+	}
+	fromICSPositionID = &xscmsg.FieldID{
+		Tag:        "8.",
+		Annotation: "from-ics-position",
+		Label:      "8. From ICS Position",
+		Comment:    "required",
+	}
+	toLocationID = &xscmsg.FieldID{
+		Tag:        "9a.",
+		Annotation: "to-location",
+		Label:      "9. To Location",
+		Comment:    "required",
+		Canonical:  xscmsg.FToLocation,
+	}
+	fromLocationID = &xscmsg.FieldID{
+		Tag:        "9b.",
+		Annotation: "from-location",
+		Label:      "9. From Location",
+		Comment:    "required",
+	}
+	toNameID = &xscmsg.FieldID{
+		Tag:   "ToName",
+		Label: "To Name",
+	}
+	fromNameID = &xscmsg.FieldID{
+		Tag:   "FmName",
+		Label: "From Name",
+	}
+	toTelID = &xscmsg.FieldID{
+		Tag:   "ToTel",
+		Label: "To Telephone #",
+	}
+	fromTelID = &xscmsg.FieldID{
+		Tag:   "FmTel",
+		Label: "From Telephone #",
+	}
+	subjectID = &xscmsg.FieldID{
+		Tag:        "10.",
+		Annotation: "subject",
+		Label:      "10. Subject",
+		Comment:    "required",
+		Canonical:  xscmsg.FSubject,
+	}
+	referenceID = &xscmsg.FieldID{
+		Tag:        "11.",
+		Annotation: "reference",
+		Label:      "11. Reference",
+	}
+	messageID = &xscmsg.FieldID{
+		Tag:        "12.",
+		Annotation: "message",
+		Label:      "12. Message",
+		Comment:    "required",
+	}
+	recSentID = &xscmsg.FieldID{
+		Tag:     "Rec-Sent",
+		Label:   "Receiver or Sender",
+		Comment: "receiver, sender",
+	}
+	recSentChoices = []string{"receiver", "sender"}
+	methodID       = &xscmsg.FieldID{
+		Tag:     "Method",
+		Label:   "How Received or Sent",
+		Comment: "Telephone, Dispatch Center, EOC Radio, FAX, Courier, Amateur Radio, Other",
+	}
+	methodChoices = []string{"Telephone", "Dispatch Center", "EOC Radio", "FAX", "Courier", "Amateur Radio", "Other"}
+	otherID       = &xscmsg.FieldID{
+		Tag:   "Other",
+		Label: "Other",
+	}
+)
+
+type recSentField struct{ xscform.ChoicesField }
+
+func (f *recSentField) Default() string { return "sender" }
+
+type methodField struct{ xscform.ChoicesField }
+
+func (f *methodField) Default() string { return "Other" }
+
+type otherField struct{ xscform.Field }
+
+func (f *otherField) Default() string { return "Packet" }
