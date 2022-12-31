@@ -611,7 +611,11 @@ func setResourcesRole(f *xscmsg.Field, msg *xscmsg.Message, strict bool) string 
 	if fval != "" {
 		bval += " / " + fval
 	}
-	f.Value = fval
+	if !strict {
+		f.Value = fval
+	} else if f.Value != fval {
+		return fmt.Sprintf("The value of field %q is not consistent with the values of fields %q and %q.", btag, etag, ftag)
+	}
 	return ""
 }
 

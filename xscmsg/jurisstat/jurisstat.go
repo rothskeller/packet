@@ -534,7 +534,9 @@ func validateRequiredForComplete(f *xscmsg.Field, m *xscmsg.Message, _ bool) str
 	return ""
 }
 
-func setJurisdictionCode(f *xscmsg.Field, m *xscmsg.Message, _ bool) string {
-	xscform.SetChoiceFieldFromValue(f, m.Field("22.").Value)
+func setJurisdictionCode(f *xscmsg.Field, m *xscmsg.Message, strict bool) string {
+	if !strict {
+		xscform.SetChoiceFieldFromValue(f, m.Field("22.").Value)
+	}
 	return ""
 }

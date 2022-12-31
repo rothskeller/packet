@@ -360,13 +360,17 @@ var (
 	}
 )
 
-func setShelterCityCode(f *xscmsg.Field, m *xscmsg.Message, _ bool) string {
-	xscform.SetChoiceFieldFromValue(f, m.Field("34b.").Value)
+func setShelterCityCode(f *xscmsg.Field, m *xscmsg.Message, strict bool) string {
+	if !strict {
+		xscform.SetChoiceFieldFromValue(f, m.Field("34b.").Value)
+	}
 	return ""
 }
 
-func setManagedByCode(f *xscmsg.Field, m *xscmsg.Message, _ bool) string {
-	xscform.SetChoiceFieldFromValue(f, m.Field("49a.").Value)
+func setManagedByCode(f *xscmsg.Field, m *xscmsg.Message, strict bool) string {
+	if !strict {
+		xscform.SetChoiceFieldFromValue(f, m.Field("49a.").Value)
+	}
 	return ""
 }
 
