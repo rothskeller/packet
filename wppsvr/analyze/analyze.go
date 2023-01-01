@@ -24,8 +24,8 @@ type Analysis struct {
 	msg *pktmsg.Message
 	// xsc is the recognized XSC message of the received message.
 	xsc *xscmsg.Message
-	// hash is the hash of the raw received message, used for deduplication.
-	hash string
+	// Hash is the hash of the raw received message, used for deduplication.
+	Hash string
 	// localID is the local message ID of the received message.
 	localID string
 	// session is the session for which the message was received.
@@ -33,8 +33,8 @@ type Analysis struct {
 	// toBBS is the name of the BBS to which the message was sent (i.e.,
 	// the one from which we retrieved it).
 	toBBS string
-	// jurisdiction is the jurisdiction of the sender, if known.
-	jurisdiction string
+	// Jurisdiction is the jurisdiction of the sender, if known.
+	Jurisdiction string
 	// problems is the set of problems found with the message.  Each one
 	// maps to the appropriate response key for that problem.
 	problems map[*Problem]string
@@ -42,9 +42,9 @@ type Analysis struct {
 	// this received message.  These would include delivery receipts and/or
 	// problem reports.
 	responses []*response
-	// fromCallSign is the call sign of the message sender, which can come
+	// FromCallSign is the call sign of the message sender, which can come
 	// from any of several places.
-	fromCallSign string
+	FromCallSign string
 	// subjectCallSign is the call sign found in the Practice part of the
 	// subject line, if any.
 	subjectCallSign string
@@ -81,17 +81,17 @@ func Analyze(st astore, session *store.Session, bbs, raw string) *Analysis {
 	a.session = session
 	a.toBBS = bbs
 	sum = sha1.Sum([]byte(raw))
-	a.hash = hex.EncodeToString(sum[:])
+	a.Hash = hex.EncodeToString(sum[:])
 	// Log receipt of the message.
 	a.msg, err = pktmsg.ParseMessage(raw)
 	if err != nil && a.msg.ReturnAddress() == "" {
-		log.Printf("Received at %s@%s: [UNPARSEABLE with hash %s]", session.CallSign, bbs, a.hash)
+		log.Printf("Received at %s@%s: [UNPARSEABLE with hash %s]", session.CallSign, bbs, a.Hash)
 	} else {
 		log.Printf("Received at %s@%s: from %q subject %q",
 			session.CallSign, bbs, a.msg.ReturnAddress(), a.msg.Header.Get("Subject"))
 	}
 	// If we've already handled the message, stop.
-	if a.localID = st.HasMessageHash(a.hash); a.localID != "" {
+	if a.localID = st.HasMessageHash(a.Hash); a.localID != "" {
 		log.Printf("=> already handled as %s", a.localID)
 		return nil
 	}
@@ -126,32 +126,25 @@ PROBLEMS:
 // Commit commits the analyzed message to the database.
 func (a *Analysis) Commit(st astore) {
 	var (
-		m        store.Message
-		tag      string
-		problems = config.Get().Problems
+		m   store.Message
+		tag string
 	)
 	if a == nil { // message already handled, nothing to commit
 		return
 	}
 	m.LocalID = a.localID
-	m.Hash = a.hash
+	m.Hash = a.Hash
 	m.Message = a.raw
 	m.Session = a.session.ID
 	m.FromAddress = a.msg.ReturnAddress()
-	m.FromCallSign = a.fromCallSign
+	m.FromCallSign = a.FromCallSign
 	m.ToBBS = a.toBBS
-	m.Jurisdiction = a.jurisdiction
-	if a.xsc != nil {
-		m.MessageType = a.xsc.Type.Tag
-	}
+	m.Jurisdiction = a.Jurisdiction
+	m.MessageType = a.MessageType()
 	m.Subject = a.msg.Header.Get("Subject")
 	m.DeliveryTime = a.msg.Date()
 	m.FromBBS = a.msg.FromBBS()
-	for p := range a.problems {
-		m.Actions |= problems[p.Code].ActionFlags
-		m.Problems = append(m.Problems, p.Code)
-	}
-	sort.Strings(m.Problems)
+	m.Problems, m.Actions = a.ProblemsActions()
 	st.SaveMessage(&m)
 	if a.xsc != nil {
 		tag = a.xsc.Type.Tag
@@ -159,4 +152,23 @@ func (a *Analysis) Commit(st astore) {
 		tag = "-"
 	}
 	log.Printf("=> %s %s %s", m.LocalID, tag, strings.Join(m.Problems, ","))
+}
+
+// MessageType returns the analyzed type of the message.
+func (a *Analysis) MessageType() string {
+	if a.xsc != nil {
+		return a.xsc.Type.Tag
+	}
+	return ""
+}
+
+// ProblemsActions returns the list of problem codes for the message and the
+// resulting action flags.
+func (a *Analysis) ProblemsActions() (problems []string, actions config.Action) {
+	for p := range a.problems {
+		actions |= config.Get().Problems[p.Code].ActionFlags
+		problems = append(problems, p.Code)
+	}
+	sort.Strings(problems)
+	return
 }

@@ -24,9 +24,6 @@ var ProbFormSubject = &Problem{
 		// Is the message of a type where the subject line can be
 		// derived from the content (i.e., a known form type)?
 		if a.xsc.Type.Tag != xscmsg.PlainTextTag {
-			if a.xsc.Subject() != a.msg.Header.Get("Subject") {
-				println(a.xsc.Subject(), a.msg.Header.Get("Subject"))
-			}
 			return a.xsc.Subject() != a.msg.Header.Get("Subject"), ""
 		}
 		return false, ""

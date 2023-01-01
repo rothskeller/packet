@@ -84,7 +84,7 @@ var Variables = variableMap{
 		return a.msg.FromBBS()
 	},
 	"FROMCALLSIGN": func(a *Analysis) string {
-		return a.fromCallSign
+		return a.FromCallSign
 	},
 	"MSGDATE": func(a *Analysis) string {
 		return a.msg.Date().Format("2006-01-02 at 15:04")

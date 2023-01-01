@@ -46,11 +46,11 @@ var ProbNoCallSign = &Problem{
 		// line, then the form OpCall field.
 		switch {
 		case a.subjectCallSign != "":
-			a.fromCallSign = a.subjectCallSign
+			a.FromCallSign = a.subjectCallSign
 		case fromCS != "":
-			a.fromCallSign = fromCS
+			a.FromCallSign = fromCS
 		default:
-			a.fromCallSign = formCS
+			a.FromCallSign = formCS
 		}
 		return false, ""
 	},
@@ -62,17 +62,17 @@ var ProbNoCallSign = &Problem{
 // call, a mismatch is OK.
 var ProbCallSignConflict = &Problem{
 	Code:  "CallSignConflict",
-	after: []*Problem{ProbNoCallSign, ProbDeliveryReceipt}, // set a.fromCallSign, a.xsc
+	after: []*Problem{ProbNoCallSign, ProbDeliveryReceipt}, // set a.FromCallSign, a.xsc
 	ifnot: []*Problem{ProbNoCallSign, ProbBounceMessage, ProbDeliveryReceipt, ProbReadReceipt},
 	detect: func(a *Analysis) (bool, string) {
-		if !fccCallSignRE.MatchString(a.fromCallSign) {
+		if !fccCallSignRE.MatchString(a.FromCallSign) {
 			// The from call sign is a tactical call, so the form
 			// OpCall is allowed to be different.
 			return false, ""
 		}
 		if f := a.xsc.KeyField(xscmsg.FOpCall); f != nil {
 			formCS := strings.ToUpper(f.Value)
-			if formCS != "" && formCS != a.fromCallSign {
+			if formCS != "" && formCS != a.FromCallSign {
 				return true, ""
 			}
 		}

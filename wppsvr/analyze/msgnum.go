@@ -41,12 +41,12 @@ var fccCallSignRE = regexp.MustCompile(`^[AKNW][A-Z]?[0-9][A-Z]{1,3}$`)
 // three characters of the sender's call sign.
 var ProbMsgNumPrefix = &Problem{
 	Code:  "MsgNumPrefix",
-	after: []*Problem{ProbDeliveryReceipt, ProbNoCallSign}, // set a.xsc, a.fromCallSign
+	after: []*Problem{ProbDeliveryReceipt, ProbNoCallSign}, // set a.xsc, a.FromCallSign
 	ifnot: []*Problem{ProbMsgNumFormat, ProbBounceMessage, ProbDeliveryReceipt, ProbReadReceipt},
 	detect: func(a *Analysis) (bool, string) {
 		var msgnum string
 
-		if !fccCallSignRE.MatchString(a.fromCallSign) {
+		if !fccCallSignRE.MatchString(a.FromCallSign) {
 			return false, "" // prefix not checked for tactical calls
 		}
 		if f := a.xsc.KeyField(xscmsg.FOriginMsgNo); f != nil {
@@ -56,7 +56,7 @@ var ProbMsgNumPrefix = &Problem{
 		} else {
 			return false, ""
 		}
-		return msgnum[:3] != a.fromCallSign[len(a.fromCallSign)-3:], ""
+		return msgnum[:3] != a.FromCallSign[len(a.FromCallSign)-3:], ""
 	},
 	Variables: variableMap{
 		"ACTUALPFX": func(a *Analysis) string {
@@ -67,7 +67,7 @@ var ProbMsgNumPrefix = &Problem{
 			return xscsubj.MessageNumber[:3]
 		},
 		"EXPECTPFX": func(a *Analysis) string {
-			return a.fromCallSign[len(a.fromCallSign)-3:]
+			return a.FromCallSign[len(a.FromCallSign)-3:]
 		},
 	},
 }

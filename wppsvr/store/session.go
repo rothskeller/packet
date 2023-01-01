@@ -76,6 +76,14 @@ func (s *Store) ExistRealizedSessions(start, end time.Time) bool {
 	}
 }
 
+// GetRealizedSessions returns the set of sessions that end during the specified time
+// range (inclusive start, exclusive end).  The sessions are sorted by end time,
+// then by call sign.  Only sessions that have actually started are included;
+// future defined sessions are not.
+func (s *Store) GetRealizedSessions(start, end time.Time) (list []*Session) {
+	return s.getSessionsWhere("end>=? AND end<? ORDER BY end, callsign", start, end)
+}
+
 // GetSessions returns the set of sessions that end during the specified time
 // range (inclusive start, exclusive end).  The sessions are sorted by end time,
 // then by call sign.

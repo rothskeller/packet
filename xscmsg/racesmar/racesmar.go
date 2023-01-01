@@ -101,11 +101,6 @@ var fieldDefsV21 = []*xscmsg.FieldDef{
 	xscform.FromNameDef, xscform.ToContactDef, xscform.FromContactDef,
 	// RACES MAR fields
 	agencyDef, eventNameDef, eventNumberDef, assignmentDef,
-	resourcesQtyDef, resourcesRoleDef, preferredTypeDef, minimumTypeDef,
-	arrivalDatesDef, arrivalTimesDef, neededDatesDef, neededTimesDef, reportingLocationDef, contactOnArrivalDef,
-	travelInfoDef, requesterNameDef, requesterTitleDef, requesterContactDef, agencyApproverNameDef, agencyApproverTitleDef,
-	agencyApproverContactDef, agencyApprovedDateDef, agencyApprovedTimeDef,
-	agencyDef, eventNameDef, eventNumberDef, assignmentDef,
 	resourcesQty1Def, resourcesRole1DefV21, preferredType1DefV21, minimumType1DefV21,
 	resourcesQty2Def, resourcesRole2DefV21, preferredType2DefV21, minimumType2DefV21,
 	resourcesQty3Def, resourcesRole3DefV21, preferredType3DefV21, minimumType3DefV21,

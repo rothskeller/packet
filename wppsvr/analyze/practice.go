@@ -38,9 +38,9 @@ var ProbPracticeSubjectFormat = &Problem{
 		// have the full practice details.  It just has the
 		// jurisdiction, which we save.
 		if a.xsc.Type.Tag == jurisstat.Tag21 {
-			a.jurisdiction = subject
-			if abbr, ok := jurisdictionMap[strings.ToUpper(a.jurisdiction)]; ok {
-				a.jurisdiction = abbr
+			a.Jurisdiction = subject
+			if abbr, ok := jurisdictionMap[strings.ToUpper(a.Jurisdiction)]; ok {
+				a.Jurisdiction = abbr
 			}
 			return false, ""
 		}
@@ -66,9 +66,9 @@ var ProbPracticeSubjectFormat = &Problem{
 		// Yes, we do, so save the information from it for other
 		// analysis steps.
 		a.subjectCallSign = strings.ToUpper(match[1])
-		a.jurisdiction = strings.TrimSpace(match[2])
-		if abbr, ok := jurisdictionMap[strings.ToUpper(a.jurisdiction)]; ok {
-			a.jurisdiction = abbr
+		a.Jurisdiction = strings.TrimSpace(match[2])
+		if abbr, ok := jurisdictionMap[strings.ToUpper(a.Jurisdiction)]; ok {
+			a.Jurisdiction = abbr
 		}
 		a.subjectDate, _ = time.ParseInLocation("1/2/2006", match[3], time.Local)
 		return false, ""
@@ -84,13 +84,13 @@ var ProbPracticeSubjectFormat = &Problem{
 // of the recognized ones.
 var ProbUnknownJurisdiction = &Problem{
 	Code:  "UnknownJurisdiction",
-	after: []*Problem{ProbPracticeSubjectFormat}, // sets a.jurisdiction
+	after: []*Problem{ProbPracticeSubjectFormat}, // sets a.Jurisdiction
 	ifnot: []*Problem{ProbPracticeSubjectFormat, ProbFormSubject, ProbSubjectFormat, ProbFormCorrupt, ProbBounceMessage, ProbDeliveryReceipt, ProbReadReceipt},
 	detect: func(a *Analysis) (bool, string) {
-		_, ok := config.Get().Jurisdictions[a.jurisdiction]
+		_, ok := config.Get().Jurisdictions[a.Jurisdiction]
 		return !ok, ""
 	},
 	Variables: variableMap{
-		"JURISDICTION": func(a *Analysis) string { return a.jurisdiction },
+		"JURISDICTION": func(a *Analysis) string { return a.Jurisdiction },
 	},
 }
