@@ -16,15 +16,12 @@ This repository contains software related to packet radio:
 * Package `editmsg` provides functions for editing packet messages, including
   forms messages, in a text editor.  `cmd/editmsg` is a command that uses these
   functions.
-* Package `gen` contains code generation programs.  These programs generate some
-  of the package `xscmsg` code, dealing with specific forms, based on reading
-  the PackItForms HTML files for those forms.
 
 ## Legal Text
 
 This software was written by Steve Roth, KC6RSC.
 
-Copyright © 2021–2022 by Steven Roth <steve@rothskeller.net>
+Copyright © 2021–2023 by Steven Roth <steve@rothskeller.net>
 
 Permission to use, copy, modify, and/or distribute this software for any purpose
 with or without fee is hereby granted.
