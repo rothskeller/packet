@@ -1,7 +1,6 @@
 package analyze
 
 import (
-	"github.com/rothskeller/packet/pktmsg"
 	"github.com/rothskeller/packet/wppsvr/config"
 	"github.com/rothskeller/packet/xscmsg"
 )
@@ -11,10 +10,6 @@ func init() {
 	Problems[ProbFormVersion.Code] = ProbFormVersion
 }
 
-type form interface {
-	Form() *pktmsg.Form
-}
-
 // ProbPIFOVersion is raised when the message contains a PackItForms form whose
 // PackItForms version is too old.
 var ProbPIFOVersion = &Problem{
@@ -22,16 +17,14 @@ var ProbPIFOVersion = &Problem{
 	after: []*Problem{ProbDeliveryReceipt}, // sets a.xsc
 	ifnot: []*Problem{ProbBounceMessage, ProbDeliveryReceipt, ProbReadReceipt},
 	detect: func(a *Analysis) (bool, string) {
-		var f *pktmsg.Form
-		if xsc, ok := a.xsc.(form); ok {
-			f = xsc.Form()
+		if f := a.xsc.RawForm; f != nil {
 			return xscmsg.OlderVersion(f.PIFOVersion, config.Get().MinimumVersions["PackItForms"]), ""
 		}
 		return false, ""
 	},
 	Variables: variableMap{
 		"ACTUALVER": func(a *Analysis) string {
-			return a.xsc.(form).Form().PIFOVersion
+			return a.xsc.RawForm.PIFOVersion
 		},
 		"EXPECTVER": func(a *Analysis) string {
 			return config.Get().MinimumVersions["PackItForms"]
@@ -46,10 +39,8 @@ var ProbFormVersion = &Problem{
 	after: []*Problem{ProbDeliveryReceipt}, // sets a.xsc
 	ifnot: []*Problem{ProbBounceMessage, ProbDeliveryReceipt, ProbReadReceipt},
 	detect: func(a *Analysis) (bool, string) {
-		var f *pktmsg.Form
-		if xsc, ok := a.xsc.(form); ok {
-			f = xsc.Form()
-			if min := config.Get().MinimumVersions[a.xsc.TypeTag()]; min != "" {
+		if f := a.xsc.RawForm; f != nil {
+			if min := config.Get().MinimumVersions[a.xsc.Type.Tag]; min != "" {
 				return xscmsg.OlderVersion(f.FormVersion, min), ""
 			}
 		}
@@ -57,10 +48,10 @@ var ProbFormVersion = &Problem{
 	},
 	Variables: variableMap{
 		"ACTUALVER": func(a *Analysis) string {
-			return a.xsc.(form).Form().FormVersion
+			return a.xsc.RawForm.FormVersion
 		},
 		"EXPECTVER": func(a *Analysis) string {
-			return config.Get().MinimumVersions[a.xsc.TypeTag()]
+			return config.Get().MinimumVersions[a.xsc.Type.Tag]
 		},
 	},
 }

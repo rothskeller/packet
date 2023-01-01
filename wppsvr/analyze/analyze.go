@@ -23,7 +23,7 @@ type Analysis struct {
 	// msg is the decoded received message.
 	msg *pktmsg.Message
 	// xsc is the recognized XSC message of the received message.
-	xsc xscmsg.XSCMessage
+	xsc *xscmsg.Message
 	// hash is the hash of the raw received message, used for deduplication.
 	hash string
 	// localID is the local message ID of the received message.
@@ -142,7 +142,7 @@ func (a *Analysis) Commit(st astore) {
 	m.ToBBS = a.toBBS
 	m.Jurisdiction = a.jurisdiction
 	if a.xsc != nil {
-		m.MessageType = a.xsc.TypeTag()
+		m.MessageType = a.xsc.Type.Tag
 	}
 	m.Subject = a.msg.Header.Get("Subject")
 	m.DeliveryTime = a.msg.Date()
@@ -154,7 +154,7 @@ func (a *Analysis) Commit(st astore) {
 	sort.Strings(m.Problems)
 	st.SaveMessage(&m)
 	if a.xsc != nil {
-		tag = a.xsc.TypeTag()
+		tag = a.xsc.Type.Tag
 	} else {
 		tag = "-"
 	}

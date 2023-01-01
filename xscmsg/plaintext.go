@@ -6,6 +6,9 @@ import (
 	"github.com/rothskeller/packet/pktmsg"
 )
 
+// PlainTextTag identifies a plain text message.
+const PlainTextTag = "plain"
+
 func makePlainTextMessage(msg *pktmsg.Message) *Message {
 	return &Message{
 		Type:       &plainTextMessageType,
@@ -35,7 +38,7 @@ func CreatePlainTextMessage() *Message {
 }
 
 var plainTextMessageType = MessageType{
-	Tag:     "plain",
+	Tag:     PlainTextTag,
 	Name:    "plain text message",
 	Article: "a",
 }

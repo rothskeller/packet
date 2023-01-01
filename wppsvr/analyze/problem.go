@@ -78,7 +78,7 @@ func orderedProblems() (list []*Problem) {
 // message for any problem.
 var Variables = variableMap{
 	"AMSGTYPE": func(a *Analysis) string {
-		return a.xsc.TypeArticle() + " " + a.xsc.TypeName()
+		return a.xsc.Type.Article + " " + a.xsc.Type.Name
 	},
 	"FROMBBS": func(a *Analysis) string {
 		return a.msg.FromBBS()
@@ -90,7 +90,7 @@ var Variables = variableMap{
 		return a.msg.Date().Format("2006-01-02 at 15:04")
 	},
 	"MSGTYPE": func(a *Analysis) string {
-		return a.xsc.TypeName()
+		return a.xsc.Type.Name
 	},
 	"SESSIONBBSES": func(a *Analysis) string {
 		return english.Conjoin(a.session.ToBBSes, "or")

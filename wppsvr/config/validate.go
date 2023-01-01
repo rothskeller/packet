@@ -168,11 +168,11 @@ func (c *Config) Validate(knownProbs map[string]map[string]struct{}, knownVars m
 			valid = false
 		}
 		for _, mtype := range ValidMessageTypes() {
-			if mtype.TypeTag() == "plain" {
+			if mtype.Type.Tag == "plain" {
 				continue
 			}
-			if c.MinimumVersions[mtype.TypeTag()] == "" {
-				log.Printf("ERROR: config.minimumVersions[%q] is not specified", mtype.TypeTag())
+			if c.MinimumVersions[mtype.Type.Tag] == "" {
+				log.Printf("ERROR: config.minimumVersions[%q] is not specified", mtype.Type.Tag)
 				valid = false
 			}
 		}
@@ -283,24 +283,24 @@ func (c *Config) Validate(knownProbs map[string]map[string]struct{}, knownVars m
 		valid = false
 	} else {
 		for _, mtype := range ValidMessageTypes() {
-			if mtype.TypeTag() == "plain" {
+			if mtype.Type.Tag == "plain" {
 				continue
 			}
-			if fr := c.FormRouting[mtype.TypeTag()]; fr == nil {
-				log.Printf("ERROR: config.formRouting[%q] is not specified", mtype.TypeTag())
+			if fr := c.FormRouting[mtype.Type.Tag]; fr == nil {
+				log.Printf("ERROR: config.formRouting[%q] is not specified", mtype.Type.Tag)
 				valid = false
 			} else {
 				switch fr.HandlingOrder {
 				case "":
 					break
 				case "computed":
-					if _, ok := ComputedRecommendedHandlingOrder[mtype.TypeTag()]; !ok {
-						log.Printf("ERROR: config.formRouting[%q].HandlingOrder = %q, but that form has no handling order computation defined", mtype.TypeTag(), fr.HandlingOrder)
+					if _, ok := ComputedRecommendedHandlingOrder[mtype.Type.Tag]; !ok {
+						log.Printf("ERROR: config.formRouting[%q].HandlingOrder = %q, but that form has no handling order computation defined", mtype.Type.Tag, fr.HandlingOrder)
 						valid = false
 					}
 				default:
 					if _, ok := xscmsg.ParseHandlingOrder(fr.HandlingOrder); !ok {
-						log.Printf("ERROR: config.formRouting[%q].HandlingOrder = %q is not a valid handling order", mtype.TypeTag(), fr.HandlingOrder)
+						log.Printf("ERROR: config.formRouting[%q].HandlingOrder = %q is not a valid handling order", mtype.Type.Tag, fr.HandlingOrder)
 						valid = false
 					}
 				}

@@ -4,7 +4,6 @@ import (
 	"strings"
 
 	"github.com/rothskeller/packet/pktmsg"
-	"github.com/rothskeller/packet/wppsvr/config"
 	"github.com/rothskeller/packet/xscmsg"
 )
 
@@ -13,10 +12,6 @@ func init() {
 	Problems[ProbHandlingOrderCode.Code] = ProbHandlingOrderCode
 	Problems[ProbSubjectFormat.Code] = ProbSubjectFormat
 	Problems[ProbSubjectHasSeverity.Code] = ProbSubjectHasSeverity
-}
-
-type formWithEncodableSubject interface {
-	EncodeSubject() string
 }
 
 // ProbFormSubject is raised when the subject line of the message does not agree
@@ -28,8 +23,8 @@ var ProbFormSubject = &Problem{
 	detect: func(a *Analysis) (bool, string) {
 		// Is the message of a type where the subject line can be
 		// derived from the content (i.e., a known form type)?
-		if es, ok := a.xsc.(formWithEncodableSubject); ok {
-			return es.EncodeSubject() != a.msg.Header.Get("Subject"), ""
+		if a.xsc.Type.Tag != xscmsg.PlainTextTag {
+			return a.xsc.Subject() != a.msg.Header.Get("Subject"), ""
 		}
 		return false, ""
 	},
@@ -38,7 +33,7 @@ var ProbFormSubject = &Problem{
 			return a.msg.Header.Get("Subject")
 		},
 		"EXPECTSUBJ": func(a *Analysis) string {
-			return a.xsc.(formWithEncodableSubject).EncodeSubject()
+			return a.xsc.Subject()
 		},
 	},
 }
@@ -70,7 +65,7 @@ var ProbSubjectFormat = &Problem{
 		if xscsubj == nil {
 			return true, "parse"
 		}
-		if _, ok := a.xsc.(*config.PlainTextMessage); ok && xscsubj.FormTag != "" {
+		if a.xsc.Type.Tag == xscmsg.PlainTextTag && xscsubj.FormTag != "" {
 			// Empirically, 90% of the time this happens because the subject
 			// erroneously has an underscore after the word "Practice", and
 			// so "Practice" got reported as the form name.

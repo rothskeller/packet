@@ -53,7 +53,8 @@ sessionDefaults:
   # Session reports are sent to the packet email list (as well as to the
   # individuals who checked in).
   reportTo:
-    - packet@scc-ares-races.groups.io
+    html:
+      - packet@scc-ares-races.groups.io
 
 # This section defines which practice sessions exist, and their parameters.  Any
 # parameters not specified here are taken from sessionDefaults, above.
@@ -84,7 +85,7 @@ sessions:
     end: HOUR=20 MINUTE=0
     # We retrieve PKTEST messages every hour of every day.
     # PKTEST session reports are sent only to those who checked in.
-    reportTo: []
+    reportTo: {}
     # PKTEST sessions are not included in the weekly summaries.
     excludeFromWeek: true
 
@@ -524,3 +525,10 @@ formRouting:
       - Operations Section
 
 listenAddr: none
+
+# These are the details for sending email messages via SMTP (e.g. for reports).
+smtp:
+  from: x@x.com
+  server: x:25
+  username: x
+  password: x

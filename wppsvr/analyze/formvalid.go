@@ -4,16 +4,12 @@ import (
 	"strings"
 
 	"github.com/rothskeller/packet/pktmsg"
-	"github.com/rothskeller/packet/wppsvr/config"
+	"github.com/rothskeller/packet/xscmsg"
 )
 
 func init() {
 	Problems[ProbFormCorrupt.Code] = ProbFormCorrupt
 	Problems[ProbFormInvalid.Code] = ProbFormInvalid
-}
-
-type validatableForm interface {
-	Validate(bool) []string
 }
 
 // ProbFormCorrupt is raised when the body looks like a form encoding but
@@ -24,7 +20,7 @@ var ProbFormCorrupt = &Problem{
 	ifnot: []*Problem{ProbBounceMessage, ProbDeliveryReceipt, ProbReadReceipt},
 	detect: func(a *Analysis) (bool, string) {
 		if pktmsg.IsForm(a.msg.Body) {
-			if _, ok := a.xsc.(*config.PlainTextMessage); ok {
+			if a.xsc.Type.Tag == xscmsg.PlainTextTag {
 				return true, ""
 			}
 		}
@@ -38,8 +34,8 @@ var ProbFormInvalid = &Problem{
 	after: []*Problem{ProbDeliveryReceipt}, // sets a.xsc
 	ifnot: []*Problem{ProbFormCorrupt, ProbBounceMessage, ProbDeliveryReceipt, ProbReadReceipt},
 	detect: func(a *Analysis) (bool, string) {
-		if xsc, ok := a.xsc.(validatableForm); ok {
-			if problems := xsc.Validate(true); len(problems) != 0 {
+		if a.xsc.Type.Tag != xscmsg.PlainTextTag {
+			if problems := a.xsc.Validate(true); len(problems) != 0 {
 				return true, ""
 			}
 		}
@@ -47,7 +43,7 @@ var ProbFormInvalid = &Problem{
 	},
 	Variables: variableMap{
 		"PROBLEMS": func(a *Analysis) string {
-			return "    " + strings.Join(a.xsc.(validatableForm).Validate(true), "\n    ")
+			return "    " + strings.Join(a.xsc.Validate(true), "\n    ")
 		},
 	},
 }

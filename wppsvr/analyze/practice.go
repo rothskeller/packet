@@ -15,10 +15,6 @@ func init() {
 	Problems[ProbUnknownJurisdiction.Code] = ProbUnknownJurisdiction
 }
 
-type formWithSubjectField interface {
-	SubjectFieldName() string
-}
-
 // practiceRE matches a correctly formatted practice subject.  The subject must
 // have the word Practice followed by four comma-separated fields (with
 // whitespace also allowed between the fields).  The RE returns the first field
@@ -38,10 +34,10 @@ var ProbPracticeSubjectFormat = &Problem{
 	detect: func(a *Analysis) (bool, string) {
 		jurisdictionMap := config.Get().Jurisdictions
 		subject := xscmsg.ParseSubject(a.msg.Header.Get("Subject")).Subject
-		// Don't check Jurisdiction Status forms; their subject doesn't
+		// Don't check Municipal Status forms; their subject doesn't
 		// have the full practice details.  It just has the
 		// jurisdiction, which we save.
-		if _, ok := a.xsc.(*jurisstat.Form); ok {
+		if a.xsc.Type.Tag == jurisstat.Tag21 {
 			a.jurisdiction = subject
 			if abbr, ok := jurisdictionMap[strings.ToUpper(a.jurisdiction)]; ok {
 				a.jurisdiction = abbr
@@ -56,10 +52,10 @@ var ProbPracticeSubjectFormat = &Problem{
 		// Do we have a valid practice message subject?
 		var match = practiceRE.FindStringSubmatch(subject)
 		if match == nil {
-			if _, ok := a.xsc.(*config.PlainTextMessage); ok {
+			if a.xsc.Type.Tag == xscmsg.PlainTextTag {
 				return true, "plain"
 			}
-			if _, ok := a.xsc.(formWithSubjectField); ok {
+			if a.xsc.Field(xscmsg.FSubject) != nil {
 				return true, "form"
 			}
 			// It's a form that can't be used for weekly practice
@@ -79,7 +75,7 @@ var ProbPracticeSubjectFormat = &Problem{
 	},
 	Variables: variableMap{
 		"SUBJECTFIELD": func(a *Analysis) string {
-			return a.xsc.(formWithSubjectField).SubjectFieldName()
+			return a.xsc.Field(xscmsg.FSubject).Def.Tag
 		},
 	},
 }

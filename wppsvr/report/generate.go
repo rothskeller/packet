@@ -64,7 +64,7 @@ func generateTitle(r *Report, session *store.Session) {
 // to the report.
 func generateParams(r *Report, session *store.Session) {
 	for _, id := range session.MessageTypes {
-		r.MessageTypes = append(r.MessageTypes, config.LookupMessageType(id).TypeName())
+		r.MessageTypes = append(r.MessageTypes, config.LookupMessageType(id).Type.Name)
 	}
 	r.SentTo = fmt.Sprintf("%s at %s", session.CallSign, english.Conjoin(session.ToBBSes, "or"))
 	r.SentAfter = session.Start.Format("Mon 2006-01-02 15:04")

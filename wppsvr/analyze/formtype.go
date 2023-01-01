@@ -3,6 +3,7 @@ package analyze
 import (
 	"github.com/rothskeller/packet/wppsvr/config"
 	"github.com/rothskeller/packet/wppsvr/english"
+	"github.com/rothskeller/packet/xscmsg"
 )
 
 func init() {
@@ -16,13 +17,13 @@ var ProbMessageTypeWrong = &Problem{
 	after: []*Problem{ProbDeliveryReceipt}, // sets a.xsc
 	ifnot: []*Problem{ProbFormCorrupt, ProbBounceMessage, ProbDeliveryReceipt, ProbReadReceipt},
 	detect: func(a *Analysis) (bool, string) {
-		var tag = a.xsc.TypeTag()
+		var tag = a.xsc.Type.Tag
 		for _, mtype := range a.session.MessageTypes {
 			if mtype == tag {
 				return false, ""
 			}
 		}
-		if _, ok := a.xsc.(*config.PlainTextMessage); ok {
+		if tag == xscmsg.PlainTextTag {
 			// It's a plain text message and we're expecting a form.  That's
 			// OK if it's coming from somewhere other than one of our BBSes.
 			if _, ok := config.Get().BBSes[a.msg.FromBBS()]; !ok {
@@ -39,9 +40,9 @@ var ProbMessageTypeWrong = &Problem{
 			)
 			for i, code := range a.session.MessageTypes {
 				mtype := config.LookupMessageType(code)
-				allowed = append(allowed, mtype.TypeName())
+				allowed = append(allowed, mtype.Type.Name)
 				if i == 0 {
-					article = mtype.TypeArticle()
+					article = mtype.Type.Article
 				}
 			}
 			return article + " " + english.Conjoin(allowed, "or")

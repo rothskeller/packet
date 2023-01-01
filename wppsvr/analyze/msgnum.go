@@ -11,10 +11,6 @@ func init() {
 	Problems[ProbMsgNumPrefix.Code] = ProbMsgNumPrefix
 }
 
-type formWithOriginNumber interface {
-	OriginNumber() string
-}
-
 var msgnumRE = regexp.MustCompile(`^(?:[A-Z][A-Z][A-Z]|[A-Z][0-9][A-Z0-9]|[0-9][A-Z][A-Z])-\d\d\d+[PMR]$`)
 
 // ProbMsgNumFormat is raised when the message number does not meet county
@@ -24,9 +20,9 @@ var ProbMsgNumFormat = &Problem{
 	after: []*Problem{ProbDeliveryReceipt}, // sets a.xsc
 	ifnot: []*Problem{ProbBounceMessage, ProbDeliveryReceipt, ProbReadReceipt},
 	detect: func(a *Analysis) (bool, string) {
-		if xsc, ok := a.xsc.(formWithOriginNumber); ok {
+		if f := a.xsc.Field(xscmsg.FOriginMsgNo); f != nil {
 			// It's a form, so check the number in the form.
-			return !msgnumRE.MatchString(xsc.OriginNumber()), ""
+			return !msgnumRE.MatchString(f.Value), ""
 		}
 		if xscsubj := xscmsg.ParseSubject(a.msg.Header.Get("Subject")); xscsubj != nil {
 			// It's not a form, but we were able to parse a message
@@ -53,8 +49,8 @@ var ProbMsgNumPrefix = &Problem{
 		if !fccCallSignRE.MatchString(a.fromCallSign) {
 			return false, "" // prefix not checked for tactical calls
 		}
-		if xsc, ok := a.xsc.(formWithOriginNumber); ok {
-			msgnum = xsc.OriginNumber()
+		if f := a.xsc.Field(xscmsg.FOriginMsgNo); f != nil {
+			msgnum = f.Value
 		} else if xscsubj := xscmsg.ParseSubject(a.msg.Header.Get("Subject")); xscsubj != nil {
 			msgnum = xscsubj.MessageNumber
 		} else {
@@ -64,8 +60,8 @@ var ProbMsgNumPrefix = &Problem{
 	},
 	Variables: variableMap{
 		"ACTUALPFX": func(a *Analysis) string {
-			if xsc, ok := a.xsc.(formWithOriginNumber); ok {
-				return xsc.OriginNumber()[:3]
+			if f := a.xsc.Field(xscmsg.FOriginMsgNo); f != nil {
+				return f.Value[:3]
 			}
 			xscsubj := xscmsg.ParseSubject(a.msg.Header.Get("Subject"))
 			return xscsubj.MessageNumber[:3]

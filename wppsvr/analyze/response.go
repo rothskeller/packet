@@ -24,22 +24,21 @@ func (a *Analysis) Responses(st astore) (list []*store.Response) {
 	if a == nil { // message already handled, no responses needed
 		return nil
 	}
-	switch a.xsc.(type) {
-	case nil, *delivrcpt.DeliveryReceipt, *readrcpt.ReadReceipt:
+	switch a.xsc.Type.Tag {
+	case delivrcpt.Tag, readrcpt.Tag:
 		break
 	default:
-		var dr = xscmsg.Create("DELIVERED").(*delivrcpt.DeliveryReceipt)
-		dr.DeliveredSubject = a.msg.Header.Get("Subject")
-		dr.DeliveredTime = now().Format("01/02/2006 15:04:05")
-		dr.DeliveredTo = fmt.Sprintf("%s@%s.ampr.org", strings.ToLower(a.session.CallSign), strings.ToLower(a.toBBS))
-		dr.LocalMessageID = a.localID
+		var dr = xscmsg.Create(delivrcpt.Tag)
+		dr.Field("DeliveredSubject").Value = a.msg.Header.Get("Subject")
+		dr.Field("DeliveredTime").Value = now().Format("01/02/2006 15:04:05")
+		dr.Field("DeliveredTo").Value = fmt.Sprintf("%s@%s.ampr.org", strings.ToLower(a.session.CallSign), strings.ToLower(a.toBBS))
+		dr.Field("LocalMessageID").Value = a.localID
 		var r store.Response
 		r.LocalID = st.NextMessageID(a.session.Prefix)
 		r.ResponseTo = a.localID
 		r.To = a.msg.ReturnAddress()
-		var drmsg = dr.Message(false)
-		r.Subject = drmsg.Header.Get("Subject")
-		r.Body = drmsg.EncodeBody(false)
+		r.Subject = dr.Subject()
+		r.Body = dr.Body(false)
 		r.SenderCall = a.session.CallSign
 		r.SenderBBS = a.toBBS
 		list = append(list, &r)

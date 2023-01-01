@@ -16,7 +16,8 @@ const (
 )
 
 func init() {
-	xscmsg.RegisterCreate(Tag, create)
+	xscmsg.RegisterCreate(Tag22, create22)
+	xscmsg.RegisterCreate(Tag21, create21)
 	xscmsg.RegisterType(recognize)
 
 	// Our handling, toICSPosition, and toLocation fields are variants of
@@ -28,8 +29,12 @@ func init() {
 	toLocationDef.Comment = "required: County EOC, ..."
 }
 
-func create() *xscmsg.Message {
+func create22() *xscmsg.Message {
 	return xscform.CreateForm(formtype22, fieldDefsV22)
+}
+
+func create21() *xscmsg.Message {
+	return xscform.CreateForm(formtype21, fieldDefsV21)
 }
 
 func recognize(msg *pktmsg.Message, form *pktmsg.Form) *xscmsg.Message {

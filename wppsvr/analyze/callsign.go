@@ -1,14 +1,14 @@
 package analyze
 
-import "strings"
+import (
+	"strings"
+
+	"github.com/rothskeller/packet/xscmsg"
+)
 
 func init() {
 	Problems[ProbCallSignConflict.Code] = ProbCallSignConflict
 	Problems[ProbNoCallSign.Code] = ProbNoCallSign
-}
-
-type formWithOpCall interface {
-	Operator() (string, string)
 }
 
 // ProbNoCallSign is raised if we can't find the sender's call sign in the
@@ -22,9 +22,8 @@ var ProbNoCallSign = &Problem{
 
 		// Extract the call sign from the the OpCall field of the form,
 		// if any.
-		if op, ok := a.xsc.(formWithOpCall); ok {
-			_, formCS = op.Operator()
-			formCS = strings.ToUpper(formCS)
+		if f := a.xsc.Field(xscmsg.FOpCall); f != nil {
+			formCS = strings.ToUpper(f.Value)
 		}
 		// Extract the call sign from the From address of the message.
 		// If we find a non-FCC call and the message is coming from
@@ -36,7 +35,7 @@ var ProbNoCallSign = &Problem{
 		}
 		// If we didn't find a call sign anywhere, report the problem.
 		if fromCS == "" && a.subjectCallSign == "" && formCS == "" {
-			if _, ok := a.xsc.(formWithOpCall); ok {
+			if f := a.xsc.Field(xscmsg.FOpCall); f != nil {
 				return true, "form"
 			}
 			return true, "plain"
@@ -71,9 +70,8 @@ var ProbCallSignConflict = &Problem{
 			// OpCall is allowed to be different.
 			return false, ""
 		}
-		if op, ok := a.xsc.(formWithOpCall); ok {
-			_, formCS := op.Operator()
-			formCS = strings.ToUpper(formCS)
+		if f := a.xsc.Field(xscmsg.FOpCall); f != nil {
+			formCS := strings.ToUpper(f.Value)
 			if formCS != "" && formCS != a.fromCallSign {
 				return true, ""
 			}
@@ -82,8 +80,7 @@ var ProbCallSignConflict = &Problem{
 	},
 	Variables: variableMap{
 		"OPCALL": func(a *Analysis) string {
-			_, formCS := a.xsc.(formWithOpCall).Operator()
-			return strings.ToUpper(formCS)
+			return strings.ToUpper(a.xsc.Field(xscmsg.FOpCall).Value)
 		},
 	},
 }

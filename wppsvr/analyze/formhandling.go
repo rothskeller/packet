@@ -9,10 +9,6 @@ func init() {
 	Problems[ProbFormHandlingOrder.Code] = ProbFormHandlingOrder
 }
 
-type formWithHandlingOrder interface {
-	HandlingOrder() (string, xscmsg.HandlingOrder)
-}
-
 // ProbFormHandlingOrder is raised when the handling order in a form does not
 // conform to the recommended form routing.
 var ProbFormHandlingOrder = &Problem{
@@ -26,17 +22,17 @@ var ProbFormHandlingOrder = &Problem{
 			routing *config.FormRouting
 		)
 		// What handling order do we have?
-		if f, ok := a.xsc.(formWithHandlingOrder); ok {
-			_, have = f.HandlingOrder()
+		if f := a.xsc.Field(xscmsg.FHandling); f != nil {
+			have, _ = xscmsg.ParseHandlingOrder(f.Value)
 		} else {
 			return false, ""
 		}
 		// What handling order are we supposed to have?
-		if routing = config.Get().FormRouting[a.xsc.TypeTag()]; routing == nil {
+		if routing = config.Get().FormRouting[a.xsc.Type.Tag]; routing == nil {
 			return false, ""
 		}
 		if routing.HandlingOrder == "computed" {
-			want = config.ComputedRecommendedHandlingOrder[a.xsc.TypeTag()](a.xsc)
+			want = config.ComputedRecommendedHandlingOrder[a.xsc.Type.Tag](a.xsc)
 		} else {
 			want, _ = xscmsg.ParseHandlingOrder(routing.HandlingOrder)
 		}
@@ -48,13 +44,12 @@ var ProbFormHandlingOrder = &Problem{
 	},
 	Variables: variableMap{
 		"ACTUALHO": func(a *Analysis) string {
-			actual, _ := a.xsc.(formWithHandlingOrder).HandlingOrder()
-			return actual
+			return a.xsc.Field(xscmsg.FHandling).Value
 		},
 		"EXPECTHO": func(a *Analysis) string {
-			expectstr := config.Get().FormRouting[a.xsc.TypeTag()].HandlingOrder
+			expectstr := config.Get().FormRouting[a.xsc.Type.Tag].HandlingOrder
 			if expectstr == "computed" {
-				return config.ComputedRecommendedHandlingOrder[a.xsc.TypeTag()](a.xsc).String()
+				return config.ComputedRecommendedHandlingOrder[a.xsc.Type.Tag](a.xsc).String()
 			}
 			return expectstr
 		},
