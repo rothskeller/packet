@@ -95,7 +95,7 @@ var (
 		Tag:        "MsgNo",
 		Label:      "Message Number",
 		Comment:    "required",
-		Canonical:  xscmsg.FOriginMsgNo,
+		Key:        xscmsg.FOriginMsgNo,
 		Validators: []xscmsg.Validator{xscform.ValidateRequired, xscform.ValidateMessageNumber},
 	}
 	tacCallDef = &xscmsg.FieldDef{
@@ -111,14 +111,14 @@ var (
 		Tag:        "OpCall",
 		Label:      "Operator Call Sign",
 		Comment:    "required call-sign",
-		Canonical:  xscmsg.FOpCall,
+		Key:        xscmsg.FOpCall,
 		Validators: []xscmsg.Validator{xscform.ValidateRequired, xscform.ValidateCallSign},
 	}
 	opNameDef = &xscmsg.FieldDef{
 		Tag:        "OpName",
 		Label:      "Operator Name",
 		Comment:    "required",
-		Canonical:  xscmsg.FOpName,
+		Key:        xscmsg.FOpName,
 		Validators: []xscmsg.Validator{xscform.ValidateRequired},
 	}
 )

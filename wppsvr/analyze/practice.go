@@ -55,7 +55,7 @@ var ProbPracticeSubjectFormat = &Problem{
 			if a.xsc.Type.Tag == xscmsg.PlainTextTag {
 				return true, "plain"
 			}
-			if a.xsc.Field(xscmsg.FSubject) != nil {
+			if a.xsc.KeyField(xscmsg.FSubject) != nil {
 				return true, "form"
 			}
 			// It's a form that can't be used for weekly practice
@@ -75,7 +75,7 @@ var ProbPracticeSubjectFormat = &Problem{
 	},
 	Variables: variableMap{
 		"SUBJECTFIELD": func(a *Analysis) string {
-			return a.xsc.Field(xscmsg.FSubject).Def.Tag
+			return a.xsc.KeyField(xscmsg.FSubject).Def.Label
 		},
 	},
 }

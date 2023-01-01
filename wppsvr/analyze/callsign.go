@@ -22,7 +22,7 @@ var ProbNoCallSign = &Problem{
 
 		// Extract the call sign from the the OpCall field of the form,
 		// if any.
-		if f := a.xsc.Field(xscmsg.FOpCall); f != nil {
+		if f := a.xsc.KeyField(xscmsg.FOpCall); f != nil {
 			formCS = strings.ToUpper(f.Value)
 		}
 		// Extract the call sign from the From address of the message.
@@ -35,7 +35,7 @@ var ProbNoCallSign = &Problem{
 		}
 		// If we didn't find a call sign anywhere, report the problem.
 		if fromCS == "" && a.subjectCallSign == "" && formCS == "" {
-			if f := a.xsc.Field(xscmsg.FOpCall); f != nil {
+			if f := a.xsc.KeyField(xscmsg.FOpCall); f != nil {
 				return true, "form"
 			}
 			return true, "plain"
@@ -70,7 +70,7 @@ var ProbCallSignConflict = &Problem{
 			// OpCall is allowed to be different.
 			return false, ""
 		}
-		if f := a.xsc.Field(xscmsg.FOpCall); f != nil {
+		if f := a.xsc.KeyField(xscmsg.FOpCall); f != nil {
 			formCS := strings.ToUpper(f.Value)
 			if formCS != "" && formCS != a.fromCallSign {
 				return true, ""
@@ -80,7 +80,7 @@ var ProbCallSignConflict = &Problem{
 	},
 	Variables: variableMap{
 		"OPCALL": func(a *Analysis) string {
-			return strings.ToUpper(a.xsc.Field(xscmsg.FOpCall).Value)
+			return strings.ToUpper(a.xsc.KeyField(xscmsg.FOpCall).Value)
 		},
 	},
 }

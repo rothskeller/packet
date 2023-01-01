@@ -22,7 +22,7 @@ var ProbFormHandlingOrder = &Problem{
 			routing *config.FormRouting
 		)
 		// What handling order do we have?
-		if f := a.xsc.Field(xscmsg.FHandling); f != nil {
+		if f := a.xsc.KeyField(xscmsg.FHandling); f != nil {
 			have, _ = xscmsg.ParseHandlingOrder(f.Value)
 		} else {
 			return false, ""
@@ -44,7 +44,7 @@ var ProbFormHandlingOrder = &Problem{
 	},
 	Variables: variableMap{
 		"ACTUALHO": func(a *Analysis) string {
-			return a.xsc.Field(xscmsg.FHandling).Value
+			return a.xsc.KeyField(xscmsg.FHandling).Value
 		},
 		"EXPECTHO": func(a *Analysis) string {
 			expectstr := config.Get().FormRouting[a.xsc.Type.Tag].HandlingOrder

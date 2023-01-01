@@ -20,7 +20,7 @@ var ProbMsgNumFormat = &Problem{
 	after: []*Problem{ProbDeliveryReceipt}, // sets a.xsc
 	ifnot: []*Problem{ProbBounceMessage, ProbDeliveryReceipt, ProbReadReceipt},
 	detect: func(a *Analysis) (bool, string) {
-		if f := a.xsc.Field(xscmsg.FOriginMsgNo); f != nil {
+		if f := a.xsc.KeyField(xscmsg.FOriginMsgNo); f != nil {
 			// It's a form, so check the number in the form.
 			return !msgnumRE.MatchString(f.Value), ""
 		}
@@ -49,7 +49,7 @@ var ProbMsgNumPrefix = &Problem{
 		if !fccCallSignRE.MatchString(a.fromCallSign) {
 			return false, "" // prefix not checked for tactical calls
 		}
-		if f := a.xsc.Field(xscmsg.FOriginMsgNo); f != nil {
+		if f := a.xsc.KeyField(xscmsg.FOriginMsgNo); f != nil {
 			msgnum = f.Value
 		} else if xscsubj := xscmsg.ParseSubject(a.msg.Header.Get("Subject")); xscsubj != nil {
 			msgnum = xscsubj.MessageNumber
@@ -60,7 +60,7 @@ var ProbMsgNumPrefix = &Problem{
 	},
 	Variables: variableMap{
 		"ACTUALPFX": func(a *Analysis) string {
-			if f := a.xsc.Field(xscmsg.FOriginMsgNo); f != nil {
+			if f := a.xsc.KeyField(xscmsg.FOriginMsgNo); f != nil {
 				return f.Value[:3]
 			}
 			xscsubj := xscmsg.ParseSubject(a.msg.Header.Get("Subject"))

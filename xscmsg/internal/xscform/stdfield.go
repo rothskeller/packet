@@ -10,7 +10,7 @@ var OriginMessageNumberDef = &xscmsg.FieldDef{
 	Tag:        "MsgNo",
 	Label:      "Origin Message Number",
 	Comment:    "required message-number",
-	Canonical:  xscmsg.FOriginMsgNo,
+	Key:        xscmsg.FOriginMsgNo,
 	Validators: []xscmsg.Validator{ValidateRequired, ValidateMessageNumber},
 }
 
@@ -20,7 +20,7 @@ var DestinationMessageNumberDef = &xscmsg.FieldDef{
 	Tag:        "DestMsgNo",
 	Label:      "Destination Message Number",
 	Comment:    "message-number",
-	Canonical:  xscmsg.FDestinationMsgNo,
+	Key:        xscmsg.FDestinationMsgNo,
 	ReadOnly:   true,
 	Validators: []xscmsg.Validator{ValidateMessageNumber},
 }
@@ -31,7 +31,6 @@ var MessageDateDef = &xscmsg.FieldDef{
 	Annotation:  "date",
 	Label:       "Date",
 	Comment:     "required date",
-	Canonical:   xscmsg.FMessageDate,
 	Validators:  []xscmsg.Validator{ValidateRequired, ValidateDate},
 	DefaultFunc: DefaultDate,
 }
@@ -42,7 +41,6 @@ var MessageTimeDef = &xscmsg.FieldDef{
 	Annotation:  "time",
 	Label:       "Time",
 	Comment:     "required time",
-	Canonical:   xscmsg.FMessageTime,
 	Validators:  []xscmsg.Validator{ValidateRequired, ValidateTime},
 	DefaultFunc: DefaultTime,
 }
@@ -53,7 +51,7 @@ var HandlingDef = &xscmsg.FieldDef{
 	Annotation: "handling",
 	Label:      "Handling",
 	Comment:    "required: IMMEDIATE, PRIORITY, ROUTINE",
-	Canonical:  xscmsg.FHandling,
+	Key:        xscmsg.FHandling,
 	Validators: []xscmsg.Validator{ValidateRequired, ValidateChoices},
 	Choices:    []string{"IMMEDIATE", "PRIORITY", "ROUTINE"},
 }
@@ -64,7 +62,7 @@ var ToICSPositionDef = &xscmsg.FieldDef{
 	Annotation: "to-ics-position",
 	Label:      "To ICS Position",
 	Comment:    "required",
-	Canonical:  xscmsg.FToICSPosition,
+	Key:        xscmsg.FToICSPosition,
 	Validators: []xscmsg.Validator{ValidateRequired},
 }
 
@@ -84,7 +82,7 @@ var ToLocationDef = &xscmsg.FieldDef{
 	Annotation: "to-location",
 	Label:      "To Location",
 	Comment:    "required",
-	Canonical:  xscmsg.FToLocation,
+	Key:        xscmsg.FToLocation,
 	Validators: []xscmsg.Validator{ValidateRequired},
 }
 
@@ -141,9 +139,9 @@ var OpRelaySentDef = &xscmsg.FieldDef{
 
 // OpNameDef is the definition of the XSC-standard Operator Name field.
 var OpNameDef = &xscmsg.FieldDef{
-	Tag:       "OpName",
-	Label:     "Operator Name",
-	Canonical: xscmsg.FOpName,
+	Tag:   "OpName",
+	Label: "Operator Name",
+	Key:   xscmsg.FOpName,
 }
 
 // OpCallDef is the definition of the XSC-standard Operator Call field.
@@ -151,7 +149,7 @@ var OpCallDef = &xscmsg.FieldDef{
 	Tag:        "OpCall",
 	Label:      "Operator Call Sign",
 	Comment:    "required call-sign",
-	Canonical:  xscmsg.FOpCall,
+	Key:        xscmsg.FOpCall,
 	Validators: []xscmsg.Validator{ValidateRequired, ValidateCallSign},
 }
 
@@ -160,7 +158,7 @@ var OpDateDef = &xscmsg.FieldDef{
 	Tag:         "OpDate",
 	Label:       "Operator Date",
 	Comment:     "date",
-	Canonical:   xscmsg.FOpDate,
+	Key:         xscmsg.FOpDate,
 	Validators:  []xscmsg.Validator{ValidateDate},
 	DefaultFunc: DefaultDate,
 }
@@ -170,7 +168,7 @@ var OpTimeDef = &xscmsg.FieldDef{
 	Tag:         "OpTime",
 	Label:       "Operator Time",
 	Comment:     "time",
-	Canonical:   xscmsg.FOpTime,
+	Key:         xscmsg.FOpTime,
 	Validators:  []xscmsg.Validator{ValidateTime},
 	DefaultFunc: DefaultTime,
 }

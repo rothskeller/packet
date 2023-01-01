@@ -47,9 +47,9 @@ func AdoptForm(mtype *xscmsg.MessageType, fields []*xscmsg.FieldDef, msg *pktmsg
 // not called directly; rather, it is installed as the MessageType.SubjectFunc
 // for a form-based message type.
 func EncodeSubject(m *xscmsg.Message) string {
-	ho, _ := xscmsg.ParseHandlingOrder(m.Field(xscmsg.FHandling).Value)
-	omsgno := m.Field(xscmsg.FOriginMsgNo).Value
-	subject := m.Field(xscmsg.FSubject).Value
+	ho, _ := xscmsg.ParseHandlingOrder(m.KeyField(xscmsg.FHandling).Value)
+	omsgno := m.KeyField(xscmsg.FOriginMsgNo).Value
+	subject := m.KeyField(xscmsg.FSubject).Value
 	return xscmsg.EncodeSubject(omsgno, ho, m.Type.Tag, subject)
 }
 

@@ -163,7 +163,7 @@ var (
 		Annotation: "jurisdiction",
 		Label:      "Jurisdiction Name",
 		Comment:    "required: Campbell, Cupertino, Gilroy, Los Altos, Los Altos Hills, Los Gatos, Milpitas, Monte Sereno, Morgan Hill, Mountain View, Palo Alto, San Jose, Santa Clara, Saratoga, Sunnyvale, Unincorporated",
-		Canonical:  xscmsg.FSubject,
+		Key:        xscmsg.FSubject,
 		Validators: []xscmsg.Validator{xscform.ValidateRequired, xscform.ValidateChoices},
 		Choices:    []string{"Campbell", "Cupertino", "Gilroy", "Los Altos", "Los Altos Hills", "Los Gatos", "Milpitas", "Monte Sereno", "Morgan Hill", "Mountain View", "Palo Alto", "San Jose", "Santa Clara", "Saratoga", "Sunnyvale", "Unincorporated"},
 	}
@@ -172,7 +172,7 @@ var (
 		Annotation: "jurisdiction",
 		Label:      "Jurisdiction Name",
 		Comment:    "required: Campbell, Cupertino, Gilroy, Los Altos, Los Altos Hills, Los Gatos, Milpitas, Monte Sereno, Morgan Hill, Mountain View, Palo Alto, San Jose, Santa Clara, Saratoga, Sunnyvale, ...",
-		Canonical:  xscmsg.FSubject,
+		Key:        xscmsg.FSubject,
 		Validators: []xscmsg.Validator{xscform.ValidateRequired},
 	}
 	eocPhoneDef = &xscmsg.FieldDef{

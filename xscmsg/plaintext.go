@@ -44,15 +44,15 @@ var plainTextMessageType = MessageType{
 }
 
 var plainTextSubjectField = FieldDef{
-	Tag:        FSubject,
-	Canonical:  FSubject,
+	Tag:        string(FSubject),
+	Key:        FSubject,
 	Label:      "Subject",
 	Validators: []Validator{ValidateRequired},
 }
 
 var plainTextBodyField = FieldDef{
-	Tag:        FBody,
-	Canonical:  FBody,
+	Tag:        string(FBody),
+	Key:        FBody,
 	Label:      "Body",
 	Validators: []Validator{ValidateRequired},
 }

@@ -109,7 +109,7 @@ var (
 		Label:      "Shelter Name",
 		Comment:    "required",
 		Validators: []xscmsg.Validator{xscform.ValidateRequired},
-		Canonical:  xscmsg.FSubject,
+		Key:        xscmsg.FSubject,
 	}
 	shelterTypeDef = &xscmsg.FieldDef{
 		Tag:        "30.",

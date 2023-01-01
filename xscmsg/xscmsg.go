@@ -35,11 +35,26 @@ type Message struct {
 	Fields []*Field
 }
 
-// Field returns the field with the specified name, or nil if there is
-// no such field.  It matches against both FieldDef.Tag and FieldDef.Canonical.
-func (m *Message) Field(name string) *Field {
+// Field returns the field with the specified tag, or nil if there is
+// no such field.
+func (m *Message) Field(tag string) *Field {
 	for _, f := range m.Fields {
-		if f.Def.Tag == name || f.Def.Canonical == name {
+		if f.Def.Tag == tag {
+			return f
+		}
+	}
+	return nil
+}
+
+// KeyField returns the field with the specified Key, or nil if there is no
+// such field.
+func (m *Message) KeyField(key FieldKey) *Field {
+	for _, f := range m.Fields {
+		if f.Def.KeyFunc != nil {
+			if f.Def.KeyFunc(f, m) == key {
+				return f
+			}
+		} else if f.Def.Key == key {
 			return f
 		}
 	}
@@ -64,7 +79,7 @@ func (m *Message) Subject() string {
 	if m.Type.SubjectFunc != nil {
 		return m.Type.SubjectFunc(m)
 	}
-	if f := m.Field(FSubject); f != nil {
+	if f := m.KeyField(FSubject); f != nil {
 		return f.Value
 	}
 	return ""
@@ -77,10 +92,23 @@ func (m *Message) Body(human bool) string {
 	if m.Type.BodyFunc != nil {
 		return m.Type.BodyFunc(m, human)
 	}
-	if f := m.Field(FBody); f != nil {
+	if f := m.KeyField(FBody); f != nil {
 		return f.Value
 	}
 	return ""
+}
+
+// SetDestinationMessageNumber sets the destination message number for a message
+// (i.e., the local message number for a received message).  It handles the
+// special cases for old versions of ICS-213 forms.  It is a no-op for message
+// types that don't have a destination message number field.
+func (m *Message) SetDestinationMessageNumber(msgno string) {
+	if f := m.KeyField(FOldICS213TxMsgNo); f != nil {
+		f.Value = m.KeyField(FOriginMsgNo).Value
+	}
+	if f := m.KeyField(FDestinationMsgNo); f != nil {
+		f.Value = msgno
+	}
 }
 
 // MessageType defines a message type.
@@ -146,10 +174,12 @@ type FieldDef struct {
 	// Tag is the unique identifier of the field within its message.  For
 	// most form fields, this is a field number followed by a period.
 	Tag string
-	// Canonical is a name for a well-known field that is common across all
-	// forms containing the field, even if different message types have
-	// different tags for it.  Canonical is empty for less common fields.
-	Canonical string
+	// KeyFunc is a function that returns the well-known-field key for this
+	// field, if any.
+	KeyFunc func(f *Field, m *Message) FieldKey
+	// Key is the well-known-field key for this field, if KeyFunc is not
+	// set.
+	Key FieldKey
 	// Label is the English label of the field.  For form fields, it is the
 	// label of the field as it appears on the PDF form.
 	Label string
@@ -183,22 +213,59 @@ type FieldDef struct {
 // comment on Field.Validate() for details.
 type Validator func(f *Field, msg *Message, strict bool) (problem string)
 
-// Values for FieldID.Canonical.  The values are in all caps so that they do not
-// overlap with PackItForms field tags.
+// A FieldKey is an identifier of a well-known field that is constant across all
+// messages containing that field, even if it has different tags in different
+// message types.
+type FieldKey string
+
+// Values for FieldKey.  Generally, these are all of the fields that
+// non-message-type-specific code needs to interact with.
 const (
-	FBody             = "BODY"
-	FDestinationMsgNo = "DESTINATION_MESSAGE_NUMBER"
-	FHandling         = "HANDLING"
-	FMessageDate      = "MESSAGE_DATE"
-	FMessageTime      = "MESSAGE_TIME"
-	FOpCall           = "OPERATOR_CALL_SIGN"
-	FOpDate           = "OPERATOR_DATE"
-	FOpName           = "OPERATOR_NAME"
-	FOpTime           = "OPERATOR_TIME"
-	FOriginMsgNo      = "ORIGIN_MESSAGE_NUMBER"
-	FSubject          = "SUBJECT"
-	FToICSPosition    = "TO_ICS_POSITION"
-	FToLocation       = "TO_LOCATION"
+	// FOriginMsgNo is the origin message number field.  It is set by code
+	// generating a new outgoing message, and read by code generating
+	// subject lines.
+	FOriginMsgNo FieldKey = "ORIGIN_MESSAGE_NUMBER"
+	// FOldICS213TxMsgNo is the TxMsgNo field in an ICS-213 form with
+	// version < 2.2.  The existence of a field with this key triggers
+	// special message number handling when receiving a message.
+	FOldICS213TxMsgNo FieldKey = "OLD_ICS213_TX_MESSAGE_NUMBER"
+	// FDestinationMsgNo is the destination (receiver) message number field.
+	// Code that is receiving messages will set this to a local message
+	// number.
+	FDestinationMsgNo FieldKey = "DESTINATION_MESSAGE_NUMBER"
+	// FHandling is the handling order for the message.  It gets used in
+	// generating subject lines, and is read by wppsvr to verify correct
+	// handling.
+	FHandling FieldKey = "HANDLING"
+	// FToICSPosition is the To ICS Position field.  It gets read by wppsvr
+	// to verify correct routing.
+	FToICSPosition FieldKey = "TO_ICS_POSITION"
+	// FToLocation is the To Location field.  It gets read by wppsvr to
+	// verify correct handling.
+	FToLocation FieldKey = "TO_LOCATION"
+	// FSubject is the Subject field.  It is the field whose contents are
+	// returned by Message.Subject() if the message type does not have a
+	// SubjectFunc.  If the message type does have a SubjectFunc, that
+	// function often uses the contents of this field as part of the subject
+	// line.
+	FSubject FieldKey = "SUBJECT"
+	// FBody is the field whose contents are returned by Message.Body() if
+	// the message type does not have a BodyFunc.
+	FBody FieldKey = "BODY"
+	// FOpCall is the operator call sign field.  It gets set by code that
+	// creates a new outgoing message, or by code receiving a message.
+	FOpCall FieldKey = "OPERATOR_CALL_SIGN"
+	// FOpName is the operator name field.  It gets set by code that
+	// creates a new outgoing message, or by code receiving a message.
+	FOpName FieldKey = "OPERATOR_NAME"
+	// FOpDate is the transmission date (for outgoing messages) or the
+	// reception date (for incoming messages).  It gets set when a message
+	// is sent or received.
+	FOpDate FieldKey = "OPERATOR_DATE"
+	// FOpTime is the transmission time (for outgoing messages) or the
+	// reception date (for incoming messages).  It gets set when a message
+	// is sent or received.
+	FOpTime FieldKey = "OPERATOR_TIME"
 )
 
 var createFuncs = map[string]func() *Message{}

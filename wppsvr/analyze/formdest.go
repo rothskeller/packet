@@ -23,8 +23,8 @@ var ProbFormDestination = &Problem{
 		if want == nil || len(want.ToICSPosition) == 0 && len(want.ToLocation) == 0 {
 			return false, ""
 		}
-		actpos := a.xsc.Field(xscmsg.FToICSPosition).Value
-		actloc := a.xsc.Field(xscmsg.FToLocation).Value
+		actpos := a.xsc.KeyField(xscmsg.FToICSPosition).Value
+		actloc := a.xsc.KeyField(xscmsg.FToLocation).Value
 		if len(want.ToICSPosition) != 0 && !inList(want.ToICSPosition, actpos) {
 			if len(want.ToLocation) != 0 && !inList(want.ToLocation, actloc) {
 				return true, "both"
@@ -38,10 +38,10 @@ var ProbFormDestination = &Problem{
 	},
 	Variables: variableMap{
 		"ACTUALLOC": func(a *Analysis) string {
-			return a.xsc.Field(xscmsg.FToLocation).Value
+			return a.xsc.KeyField(xscmsg.FToLocation).Value
 		},
 		"ACTUALPOSN": func(a *Analysis) string {
-			return a.xsc.Field(xscmsg.FToICSPosition).Value
+			return a.xsc.KeyField(xscmsg.FToICSPosition).Value
 		},
 		"EXPECTLOCS": func(a *Analysis) string {
 			var locations []string

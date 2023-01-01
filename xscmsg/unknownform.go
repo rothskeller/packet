@@ -20,13 +20,23 @@ func makeUnknownFormMessage(msg *pktmsg.Message, form *pktmsg.Form) *Message {
 }
 
 var unknownFormMessageType = MessageType{
-	Tag:     "UNKNOWN",
-	Name:    "unknown form",
-	Article: "an",
-	SubjectFunc: func(_ *Message) string {
-		panic("unknown form messages cannot be rendered")
-	},
-	BodyFunc: func(_ *Message, _ bool) string {
-		panic("unknown form messages cannot be rendered")
+	Tag:         "UNKNOWN",
+	Name:        "form of unknown type",
+	Article:     "a",
+	SubjectFunc: func(m *Message) string { return m.RawMessage.Header.Get("Subject") },
+	BodyFunc: func(m *Message, human bool) string {
+		// This is a copy of xscform.EncodeBody.  It was easier to copy
+		// it than to work around the import loop to reuse it.
+		var form = pktmsg.Form{
+			PIFOVersion: m.RawForm.PIFOVersion,
+			FormType:    m.RawForm.FormType,
+			FormVersion: m.RawForm.FormVersion,
+		}
+		for _, f := range m.Fields {
+			if f.Value != "" || (human && !f.Def.ReadOnly) {
+				form.Fields = append(form.Fields, pktmsg.FormField{Tag: f.Def.Tag, Value: f.Value})
+			}
+		}
+		return form.Encode(nil, nil, human)
 	},
 }

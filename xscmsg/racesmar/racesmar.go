@@ -142,7 +142,7 @@ var (
 		Annotation: "agency",
 		Label:      "Agency Name",
 		Comment:    "required",
-		Canonical:  xscmsg.FSubject,
+		Key:        xscmsg.FSubject,
 		Validators: []xscmsg.Validator{xscform.ValidateRequired},
 	}
 	eventNameDef = &xscmsg.FieldDef{

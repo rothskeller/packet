@@ -21,7 +21,7 @@ var now = time.Now
 // Responses returns the list of messages that should be sent in response to the
 // analyzed message.
 func (a *Analysis) Responses(st astore) (list []*store.Response) {
-	if a == nil { // message already handled, no responses needed
+	if a == nil || a.xsc == nil { // message already handled, no responses needed
 		return nil
 	}
 	switch a.xsc.Type.Tag {

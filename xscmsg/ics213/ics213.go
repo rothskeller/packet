@@ -44,8 +44,18 @@ var formtype = &xscmsg.MessageType{
 	Article:     "an",
 	HTML:        "form-ics213.html",
 	Version:     "2.2",
-	SubjectFunc: xscform.EncodeSubject,
+	SubjectFunc: encodeSubject,
 	BodyFunc:    xscform.EncodeBody,
+}
+
+func encodeSubject(m *xscmsg.Message) string {
+	ho, _ := xscmsg.ParseHandlingOrder(m.Field("5.").Value)
+	omsgno := m.Field("MsgNo").Value
+	if f := m.Field("2."); f != nil && f.Value != "" {
+		omsgno = f.Value
+	}
+	subject := m.Field("10.").Value
+	return xscmsg.EncodeSubject(omsgno, ho, m.Type.Tag, subject)
 }
 
 var fieldDefsV22 = []*xscmsg.FieldDef{
@@ -87,7 +97,7 @@ var (
 		Annotation: "txmsgno",
 		Label:      "2. Sender's Msg #",
 		Comment:    "message-number",
-		Canonical:  xscmsg.FOriginMsgNo,
+		KeyFunc:    msgNoKeyFunc,
 		ReadOnly:   true,
 		Validators: []xscmsg.Validator{xscform.ValidateMessageNumber},
 	}
@@ -96,6 +106,7 @@ var (
 		Annotation: "txmsgno",
 		Label:      "2. Sender's Msg #",
 		Comment:    "message-number",
+		KeyFunc:    msgNoKeyFunc,
 		ReadOnly:   true,
 		Validators: []xscmsg.Validator{xscform.ValidateMessageNumber},
 	}
@@ -103,14 +114,14 @@ var (
 		Tag:        "MsgNo",
 		Label:      "My Msg #",
 		Comment:    "required message-number",
-		Canonical:  xscmsg.FDestinationMsgNo,
+		KeyFunc:    msgNoKeyFunc,
 		Validators: []xscmsg.Validator{xscform.ValidateRequired, xscform.ValidateMessageNumber},
 	}
 	myMessageNumberTxDef = &xscmsg.FieldDef{
 		Tag:        "MsgNo",
 		Label:      "My Msg #",
 		Comment:    "required message-number",
-		Canonical:  xscmsg.FOriginMsgNo,
+		KeyFunc:    msgNoKeyFunc,
 		Validators: []xscmsg.Validator{xscform.ValidateRequired, xscform.ValidateMessageNumber},
 	}
 	receiverMessageNumberRxDef = &xscmsg.FieldDef{
@@ -118,6 +129,7 @@ var (
 		Annotation: "rxmsgno",
 		Label:      "3. Receiver's Msg #",
 		Comment:    "message-number",
+		KeyFunc:    msgNoKeyFunc,
 		ReadOnly:   true,
 		Validators: []xscmsg.Validator{xscform.ValidateMessageNumber},
 	}
@@ -126,7 +138,7 @@ var (
 		Annotation: "rxmsgno",
 		Label:      "3. Receiver's Msg #",
 		Comment:    "message-number",
-		Canonical:  xscmsg.FDestinationMsgNo,
+		KeyFunc:    msgNoKeyFunc,
 		ReadOnly:   true,
 		Validators: []xscmsg.Validator{xscform.ValidateMessageNumber},
 	}
@@ -134,7 +146,7 @@ var (
 		Tag:        "MsgNo",
 		Label:      "2. Origin Msg #",
 		Comment:    "required message-number",
-		Canonical:  xscmsg.FOriginMsgNo,
+		Key:        xscmsg.FOriginMsgNo,
 		Validators: []xscmsg.Validator{xscform.ValidateRequired, xscform.ValidateMessageNumber},
 	}
 	destinationMessageNumberDef = &xscmsg.FieldDef{
@@ -142,7 +154,7 @@ var (
 		Annotation: "rxmsgno",
 		Label:      "3. Destination Msg #",
 		Comment:    "message-number",
-		Canonical:  xscmsg.FDestinationMsgNo,
+		Key:        xscmsg.FDestinationMsgNo,
 		ReadOnly:   true,
 		Validators: []xscmsg.Validator{xscform.ValidateMessageNumber},
 	}
@@ -151,7 +163,6 @@ var (
 		Annotation:  "date",
 		Label:       "1. Date",
 		Comment:     "required date",
-		Canonical:   xscmsg.FMessageDate,
 		DefaultFunc: xscform.DefaultDate,
 		Validators:  []xscmsg.Validator{xscform.ValidateRequired, xscform.ValidateDate},
 	}
@@ -160,7 +171,6 @@ var (
 		Annotation:  "time",
 		Label:       "1. Time (24hr)",
 		Comment:     "required time",
-		Canonical:   xscmsg.FMessageTime,
 		DefaultFunc: xscform.DefaultTime,
 		Validators:  []xscmsg.Validator{xscform.ValidateRequired, xscform.ValidateTime},
 	}
@@ -177,7 +187,7 @@ var (
 		Annotation: "handling",
 		Label:      "5. Message Handling Order",
 		Comment:    "required: IMMEDIATE, PRIORITY, ROUTINE",
-		Canonical:  xscmsg.FHandling,
+		Key:        xscmsg.FHandling,
 		Validators: []xscmsg.Validator{xscform.ValidateRequired, xscform.ValidateChoices},
 		Choices:    []string{"IMMEDIATE", "PRIORITY", "ROUTINE"},
 	}
@@ -186,7 +196,7 @@ var (
 		Annotation: "handling",
 		Label:      "5. Handling",
 		Comment:    "required: IMMEDIATE, PRIORITY, ROUTINE",
-		Canonical:  xscmsg.FHandling,
+		Key:        xscmsg.FHandling,
 		Validators: []xscmsg.Validator{xscform.ValidateRequired, xscform.ValidateChoices},
 		Choices:    []string{"IMMEDIATE", "PRIORITY", "ROUTINE"},
 	}
@@ -223,7 +233,7 @@ var (
 		Annotation: "to-ics-position",
 		Label:      "7. To ICS Position",
 		Comment:    "required",
-		Canonical:  xscmsg.FToICSPosition,
+		Key:        xscmsg.FToICSPosition,
 		Validators: []xscmsg.Validator{xscform.ValidateRequired},
 	}
 	fromICSPositionDef = &xscmsg.FieldDef{
@@ -238,7 +248,7 @@ var (
 		Annotation: "to-location",
 		Label:      "9. To Location",
 		Comment:    "required",
-		Canonical:  xscmsg.FToLocation,
+		Key:        xscmsg.FToLocation,
 		Validators: []xscmsg.Validator{xscform.ValidateRequired},
 	}
 	fromLocationDef = &xscmsg.FieldDef{
@@ -269,7 +279,7 @@ var (
 		Annotation: "subject",
 		Label:      "10. Subject",
 		Comment:    "required",
-		Canonical:  xscmsg.FSubject,
+		Key:        xscmsg.FSubject,
 		Validators: []xscmsg.Validator{xscform.ValidateRequired},
 	}
 	referenceDef = &xscmsg.FieldDef{
@@ -306,3 +316,49 @@ var (
 		DefaultValue: "Packet",
 	}
 )
+
+// msgNoKeyFunc computes the field keys for message numbers in a v2.0 or v2.1
+// ICS-213 form.
+func msgNoKeyFunc(f *xscmsg.Field, m *xscmsg.Message) xscmsg.FieldKey {
+	// There are three cases, depending on which of the three message number
+	// fields contain values.  If the "2.txmsgno" field has a value, then it
+	// is the origin, the "MsgNo" field is the destination, and the
+	// "3.rxmsgno" field is unused.
+	if m.Field("2.").Value != "" {
+		switch f.Def.Tag {
+		case "2.":
+			return xscmsg.FOriginMsgNo
+		case "MsgNo":
+			return xscmsg.FDestinationMsgNo
+		default: // "3."
+			return ""
+		}
+	}
+	// If the "3.rxmsgno" field has a value, then it is the destination,
+	// "MsgNo" is the origin, and "2.txmsgno" is unused.
+	if m.Field("3.").Value != "" {
+		switch f.Def.Tag {
+		case "3.":
+			return xscmsg.FDestinationMsgNo
+		case "MsgNo":
+			return xscmsg.FOriginMsgNo
+		default: // "2."
+			return ""
+		}
+	}
+	// If neither of them has a value, then "2.txmsgno" is the "old ICS213
+	// sender", "MsgNo" is the origin, and "3.rxmsgno" is the destination.
+	// Code that is generating new messages can simply use origin and
+	// destination as usual.  Code that is receiving messages needs to know
+	// that if a "old ICS213 sender" field exists, the origin message number
+	// should be moved into it before setting the destination message
+	// number.
+	switch f.Def.Tag {
+	case "2.":
+		return xscmsg.FOldICS213TxMsgNo
+	case "MsgNo":
+		return xscmsg.FOriginMsgNo
+	default: // "3."
+		return xscmsg.FDestinationMsgNo
+	}
+}

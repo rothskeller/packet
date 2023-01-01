@@ -49,13 +49,13 @@ func NewMessage(tag, msgnum, opname, opcall string) (err error) {
 		if xsc == nil {
 			return ErrUnknownTag
 		}
-		if f := xsc.Field(xscmsg.FOriginMsgNo); f != nil {
+		if f := xsc.KeyField(xscmsg.FOriginMsgNo); f != nil {
 			f.Value = msgnum
 		}
-		if f := xsc.Field(xscmsg.FOpName); f != nil {
+		if f := xsc.KeyField(xscmsg.FOpName); f != nil {
 			f.Value = opname
 		}
-		if f := xsc.Field(xscmsg.FOpCall); f != nil {
+		if f := xsc.KeyField(xscmsg.FOpCall); f != nil {
 			f.Value = opcall
 		}
 		msg = pktmsg.New()

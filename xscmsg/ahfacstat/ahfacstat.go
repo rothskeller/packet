@@ -90,7 +90,7 @@ var (
 		Annotation: "facility",
 		Label:      "Facility Name",
 		Comment:    "required",
-		Canonical:  xscmsg.FSubject,
+		Key:        xscmsg.FSubject,
 		Validators: []xscmsg.Validator{xscform.ValidateRequired},
 	}
 	facilityTypeDef = &xscmsg.FieldDef{
