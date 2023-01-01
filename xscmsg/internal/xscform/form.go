@@ -63,7 +63,8 @@ func EncodeBody(m *xscmsg.Message, human bool) string {
 		FormVersion: m.Type.Version,
 	}
 	if m.RawForm != nil {
-		form.FormType, form.FormVersion = m.RawForm.FormType, m.RawForm.FormVersion
+		form.PIFOVersion, form.FormType, form.FormVersion =
+			m.RawForm.PIFOVersion, m.RawForm.FormType, m.RawForm.FormVersion
 	}
 	for _, f := range m.Fields {
 		if f.Value != "" || (human && !f.Def.ReadOnly) {

@@ -54,7 +54,7 @@ var fieldDefsV22 = []*xscmsg.FieldDef{
 	takeActionDef, replyDef /* no fyi */, replyByDef,
 	toICSPositionDef, fromICSPositionDef, toLocationDef, fromLocationDef, toNameDef, fromNameDef, toTelDef, fromTelDef,
 	subjectDef, referenceDef, messageDef, xscform.OpRelayRcvdDef, xscform.OpRelaySentDef, recSentDef, xscform.OpCallDef,
-	methodDef, xscform.OpNameDef, otherDef, xscform.OpDateDef, xscform.OpTimeDef,
+	xscform.OpNameDef, methodDef, otherDef, xscform.OpDateDef, xscform.OpTimeDef,
 }
 
 // Versions 2.0 and 2.1 had three message number fields, only two of which were
@@ -69,7 +69,7 @@ var fieldDefsV21Rx = []*xscmsg.FieldDef{
 	takeActionDef, replyDef, fyiDef, replyByDef,
 	toICSPositionDef, fromICSPositionDef, toLocationDef, fromLocationDef, toNameDef, fromNameDef, toTelDef, fromTelDef,
 	subjectDef, referenceDef, messageDef, xscform.OpRelayRcvdDef, xscform.OpRelaySentDef, recSentDef, xscform.OpCallDef,
-	methodDef, xscform.OpNameDef, otherDef, xscform.OpDateDef, xscform.OpTimeDef,
+	xscform.OpNameDef, methodDef, otherDef, xscform.OpDateDef, xscform.OpTimeDef,
 }
 
 var fieldDefsV21Tx = []*xscmsg.FieldDef{
@@ -78,7 +78,7 @@ var fieldDefsV21Tx = []*xscmsg.FieldDef{
 	takeActionDef, replyDef, fyiDef, replyByDef,
 	toICSPositionDef, fromICSPositionDef, toLocationDef, fromLocationDef, toNameDef, fromNameDef, toTelDef, fromTelDef,
 	subjectDef, referenceDef, messageDef, xscform.OpRelayRcvdDef, xscform.OpRelaySentDef, recSentDef, xscform.OpCallDef,
-	methodDef, xscform.OpNameDef, otherDef, xscform.OpDateDef, xscform.OpTimeDef,
+	xscform.OpNameDef, methodDef, otherDef, xscform.OpDateDef, xscform.OpTimeDef,
 }
 
 var (

@@ -17,15 +17,9 @@ func init() {
 
 	// Our handling, toICSPosition, and toLocation fields are variants of
 	// the standard ones, adding default values to them.
-	handlingDef = new(xscmsg.FieldDef)
-	*handlingDef = *xscform.HandlingDef
 	handlingDef.DefaultValue = "ROUTINE"
-	toICSPositionDef = new(xscmsg.FieldDef)
-	*toICSPositionDef = *xscform.ToICSPositionDef
 	toICSPositionDef.DefaultValue = "EMS Unit"
 	toICSPositionDef.Comment = "required: EMS Unit, Public Health Unit, Medical Health Branch, Operations Section, ..."
-	toLocationDef = new(xscmsg.FieldDef)
-	*toLocationDef = *xscform.ToLocationDef
 	toLocationDef.DefaultValue = "MHJOC"
 	toLocationDef.Comment = "required: MHJOC, County EOC, ..."
 }
@@ -54,7 +48,7 @@ var formtype = &xscmsg.MessageType{
 var fieldDefs = []*xscmsg.FieldDef{
 	// Standard header
 	xscform.OriginMessageNumberDef, xscform.DestinationMessageNumberDef, xscform.MessageDateDef, xscform.MessageTimeDef,
-	handlingDef, toICSPositionDef, xscform.FromICSPositionDef, toLocationDef, xscform.FromLocationDef, xscform.ToNameDef,
+	&handlingDef, &toICSPositionDef, xscform.FromICSPositionDef, &toLocationDef, xscform.FromLocationDef, xscform.ToNameDef,
 	xscform.FromNameDef, xscform.ToContactDef, xscform.FromContactDef,
 	// Allied Health Facility Status fields
 	reportTypeDef, facilityDef, facilityTypeDef, dateDef, timeDef, contactDef, contactPhoneDef, contactFaxDef, otherContactDef,
@@ -80,9 +74,9 @@ var fieldDefs = []*xscmsg.FieldDef{
 }
 
 var (
-	handlingDef      *xscmsg.FieldDef // set in func init
-	toICSPositionDef *xscmsg.FieldDef // set in func init
-	toLocationDef    *xscmsg.FieldDef // set in func init
+	handlingDef      = *xscform.HandlingDef      // modified in func init
+	toICSPositionDef = *xscform.ToICSPositionDef // modified in func init
+	toLocationDef    = *xscform.ToLocationDef    // modified in func init
 	reportTypeDef    = &xscmsg.FieldDef{
 		Tag:        "19.",
 		Annotation: "report-type",

@@ -15,12 +15,8 @@ func init() {
 
 	// Our toICSPosition and toLocation fields are variants of the standard
 	// ones, adding default values to them.
-	toICSPositionDef = new(xscmsg.FieldDef)
-	*toICSPositionDef = *xscform.ToICSPositionDef
 	toICSPositionDef.DefaultValue = "Planning Section"
 	toICSPositionDef.Comment = "required: Planning Section, ..."
-	toLocationDef = new(xscmsg.FieldDef)
-	*toLocationDef = *xscform.ToLocationDef
 	toLocationDef.DefaultValue = "County EOC"
 	toLocationDef.Comment = "required: County EOC, ..."
 }
@@ -49,7 +45,7 @@ var formtype = &xscmsg.MessageType{
 var fieldDefs = []*xscmsg.FieldDef{
 	// Standard header
 	xscform.OriginMessageNumberDef, xscform.DestinationMessageNumberDef, xscform.MessageDateDef, xscform.MessageTimeDef,
-	xscform.HandlingDef, toICSPositionDef, xscform.FromICSPositionDef, toLocationDef, xscform.FromLocationDef,
+	xscform.HandlingDef, &toICSPositionDef, xscform.FromICSPositionDef, &toLocationDef, xscform.FromLocationDef,
 	xscform.ToNameDef, xscform.FromNameDef, xscform.ToContactDef, xscform.FromContactDef,
 	// EOC-213RR fields
 	incidentNameDef, dateInitiatedDef, timeInitiatedDef, trackingNumberDef, requestedByDef, preparedByDef, approvedByDef,
@@ -61,8 +57,8 @@ var fieldDefs = []*xscmsg.FieldDef{
 }
 
 var (
-	toICSPositionDef *xscmsg.FieldDef // set in func init
-	toLocationDef    *xscmsg.FieldDef // set in func init
+	toICSPositionDef = *xscform.ToICSPositionDef // modified in func init
+	toLocationDef    = *xscform.ToLocationDef    // modified in func init
 	incidentNameDef  = &xscmsg.FieldDef{
 		Tag:        "21.",
 		Annotation: "incident-name",

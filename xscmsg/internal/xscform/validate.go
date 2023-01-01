@@ -24,7 +24,6 @@ var (
 	realNumberRE      = regexp.MustCompile(`^[-+]?[0-9]*\.[0-9]+|[-+]?[0-9]+$`)
 	timeRE            = regexp.MustCompile(`^([01][0-9]|2[0-3]):?[0-5][0-9]|2400|24:00$`)
 	// these are defined locally
-	callSignRE      = regexp.MustCompile(`(?i)^[AKNW][A-Z]?[0-9][A-Z]{1,3}$`)
 	messageNumberRE = regexp.MustCompile(`(?i)((?:[A-Z]{3}|[0-9][A-Z]{2}|[A-Z][0-9][A-Z])-)(\d+)([A-Z]?)$`)
 )
 
@@ -46,16 +45,10 @@ func ValidateBoolean(f *xscmsg.Field, _ *xscmsg.Message, strict bool) string {
 	return fmt.Sprintf("%q is not a valid boolean value for field %q.", f.Value, f.Def.Tag)
 }
 
-// ValidateCallSign ensures the value is a valid FCC call sign.  In non-strict
-// mode, it converts the call sign to upper case.  (In strict mode, it does not
-// required that the value is in upper case, because PackItForms doesn't.)
+// ValidateCallSign doesn't actually validate call signs, since PackItForms
+// doesn't, and we don't want to raise any errors that it doesn't.  However, in
+// non-strict mode, we can at least upcase the callsign.
 func ValidateCallSign(f *xscmsg.Field, _ *xscmsg.Message, strict bool) string {
-	if f.Value == "" {
-		return ""
-	}
-	if !callSignRE.MatchString(f.Value) {
-		return fmt.Sprintf("%q is not a valid call sign for field %q.", f.Value, f.Def.Tag)
-	}
 	if !strict {
 		f.Value = strings.ToUpper(f.Value)
 	}

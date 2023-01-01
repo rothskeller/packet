@@ -1,0 +1,33 @@
+Subject: RSC-100M_I_ICS213_Subj
+
+!SCCoPIFO!
+#T: form-ics213.html
+#V: 3.9-2.2
+MsgNo: [RSC-100M]
+1a.: [12/31/2022]
+1b.: [14:48]
+5.: [IMMEDIATE]
+6a.: [Yes]
+6b.: [Yes]
+6d.: [someday]
+7.: [ToPosn]
+8.: [FromPos]
+9a.: [ToLoc]
+9b.: [FromLoc]
+ToName: [ToName]
+FmName: [FromName]
+ToTel: [ToTel]
+FmTel: [FromTel]
+10.: [Subj]
+11.: [Ref]
+12.: [Message]
+OpRelayRcvd: [RelayRcvd]
+OpRelaySent: [RelaySent]
+Rec-Sent: [sender]
+OpCall: [KC6RSC]
+OpName: [Steve Roth]
+Method: [Other]
+Other: [Packet]
+OpDate: [12/31/2022]
+OpTime: [14:50]
+!/ADDON!

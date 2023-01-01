@@ -20,15 +20,12 @@ func init() {
 
 	// Our handling, toICSPosition, and toLocation fields are variants of
 	// the standard ones, adding default values to them.
-	handlingDef = new(xscmsg.FieldDef)
-	*handlingDef = *xscform.HandlingDef
+	handlingDef = *xscform.HandlingDef
 	handlingDef.DefaultValue = "ROUTINE"
-	toICSPositionDef = new(xscmsg.FieldDef)
-	*toICSPositionDef = *xscform.ToICSPositionDef
+	toICSPositionDef = *xscform.ToICSPositionDef
 	toICSPositionDef.DefaultValue = "RACES Chief Radio Officer"
 	toICSPositionDef.Comment = "required: RACES Chief Radio Officer, RACES Unit, Operations Section, ..."
-	toLocationDef = new(xscmsg.FieldDef)
-	*toLocationDef = *xscform.ToLocationDef
+	toLocationDef = *xscform.ToLocationDef
 	toLocationDef.DefaultValue = "County EOC"
 	toLocationDef.Comment = "required: County EOC, ..."
 }
@@ -47,7 +44,7 @@ func recognize(msg *pktmsg.Message, form *pktmsg.Form) *xscmsg.Message {
 	if form.FormType == formtype23.HTML && !xscmsg.OlderVersion(form.FormVersion, "2.1") {
 		return xscform.AdoptForm(formtype23, fieldDefsV21, msg, form)
 	}
-	if form.FormType != formtype16.HTML && !xscmsg.OlderVersion(form.FormVersion, "1.6") {
+	if form.FormType == formtype16.HTML && !xscmsg.OlderVersion(form.FormVersion, "1.6") {
 		return xscform.AdoptForm(formtype16, fieldDefsV16, msg, form)
 	}
 	return nil
@@ -79,7 +76,7 @@ var formtype16 = &xscmsg.MessageType{
 var fieldDefsV23 = []*xscmsg.FieldDef{
 	// Standard header
 	xscform.OriginMessageNumberDef, xscform.DestinationMessageNumberDef, xscform.MessageDateDef, xscform.MessageTimeDef,
-	handlingDef, toICSPositionDef, xscform.FromICSPositionDef, toLocationDef, xscform.FromLocationDef, xscform.ToNameDef,
+	&handlingDef, &toICSPositionDef, xscform.FromICSPositionDef, &toLocationDef, xscform.FromLocationDef, xscform.ToNameDef,
 	xscform.FromNameDef, xscform.ToContactDef, xscform.FromContactDef,
 	// RACES MAR fields
 	agencyDef, eventNameDef, eventNumberDef, assignmentDef,
@@ -100,7 +97,7 @@ var fieldDefsV23 = []*xscmsg.FieldDef{
 var fieldDefsV21 = []*xscmsg.FieldDef{
 	// Standard header
 	xscform.OriginMessageNumberDef, xscform.DestinationMessageNumberDef, xscform.MessageDateDef, xscform.MessageTimeDef,
-	handlingDef, toICSPositionDef, xscform.FromICSPositionDef, toLocationDef, xscform.FromLocationDef, xscform.ToNameDef,
+	&handlingDef, &toICSPositionDef, xscform.FromICSPositionDef, &toLocationDef, xscform.FromLocationDef, xscform.ToNameDef,
 	xscform.FromNameDef, xscform.ToContactDef, xscform.FromContactDef,
 	// RACES MAR fields
 	agencyDef, eventNameDef, eventNumberDef, assignmentDef,
@@ -124,7 +121,7 @@ var fieldDefsV21 = []*xscmsg.FieldDef{
 var fieldDefsV16 = []*xscmsg.FieldDef{
 	// Standard header
 	xscform.OriginMessageNumberDef, xscform.DestinationMessageNumberDef, xscform.MessageDateDef, xscform.MessageTimeDef,
-	handlingDef, toICSPositionDef, xscform.FromICSPositionDef, toLocationDef, xscform.FromLocationDef, xscform.ToNameDef,
+	&handlingDef, &toICSPositionDef, xscform.FromICSPositionDef, &toLocationDef, xscform.FromLocationDef, xscform.ToNameDef,
 	xscform.FromNameDef, xscform.ToContactDef, xscform.FromContactDef,
 	// RACES MAR fields
 	agencyDef, eventNameDef, eventNumberDef, assignmentDef,
@@ -137,9 +134,9 @@ var fieldDefsV16 = []*xscmsg.FieldDef{
 }
 
 var (
-	handlingDef      *xscmsg.FieldDef // set in func init
-	toICSPositionDef *xscmsg.FieldDef // set in func init
-	toLocationDef    *xscmsg.FieldDef // set in func init
+	handlingDef      = *xscform.HandlingDef      // modified in func init
+	toICSPositionDef = *xscform.ToICSPositionDef // modified in func init
+	toLocationDef    = *xscform.ToLocationDef    // modified in func init
 	agencyDef        = &xscmsg.FieldDef{
 		Tag:        "15.",
 		Annotation: "agency",
@@ -612,8 +609,8 @@ func setResourcesRole(f *xscmsg.Field, msg *xscmsg.Message, strict bool) string 
 		bval += " / " + fval
 	}
 	if !strict {
-		f.Value = fval
-	} else if f.Value != fval {
+		f.Value = bval
+	} else if f.Value != bval {
 		return fmt.Sprintf("The value of field %q is not consistent with the values of fields %q and %q.", btag, etag, ftag)
 	}
 	return ""

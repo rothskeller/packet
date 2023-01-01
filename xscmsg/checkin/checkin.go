@@ -38,12 +38,12 @@ func recognize(msg *pktmsg.Message, form *pktmsg.Form) *xscmsg.Message {
 	if match := checkInRE.FindStringSubmatch(msg.Body); match != nil {
 		if match[3] != "" {
 			m.Field("TacCall").Value = match[1]
-			m.Field("TacName").Value = match[2]
+			m.Field("TacName").Value = strings.TrimSpace(match[2])
 			m.Field("OpCall").Value = match[3]
-			m.Field("OpName").Value = match[4]
+			m.Field("OpName").Value = strings.TrimSpace(match[4])
 		} else {
 			m.Field("OpCall").Value = match[1]
-			m.Field("OpName").Value = match[2]
+			m.Field("OpName").Value = strings.TrimSpace(match[2])
 		}
 	}
 	return m

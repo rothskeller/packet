@@ -23,15 +23,9 @@ func init() {
 
 	// Our handling, toICSPosition, and toLocation fields are variants of
 	// the standard ones, adding default values to them.
-	handlingDef = new(xscmsg.FieldDef)
-	*handlingDef = *xscform.HandlingDef
 	handlingDef.DefaultValue = "PRIORITY"
-	toICSPositionDef = new(xscmsg.FieldDef)
-	*toICSPositionDef = *xscform.ToICSPositionDef
 	toICSPositionDef.DefaultValue = "Mass Care and Shelter Unit"
 	toICSPositionDef.Comment = "required: Mass Care and Shelter Unit, Care and Shelter Branch, Operations Section, ..."
-	toLocationDef = new(xscmsg.FieldDef)
-	*toLocationDef = *xscform.ToLocationDef
 	toLocationDef.DefaultValue = "County EOC"
 	toLocationDef.Comment = "required: County EOC, ..."
 }
@@ -68,7 +62,7 @@ var formtype = &xscmsg.MessageType{
 var fieldDefsV22 = []*xscmsg.FieldDef{
 	// Standard header
 	xscform.OriginMessageNumberDef, xscform.DestinationMessageNumberDef, xscform.MessageDateDef, xscform.MessageTimeDef,
-	handlingDef, toICSPositionDef, xscform.FromICSPositionDef, toLocationDef, xscform.FromLocationDef, xscform.ToNameDef,
+	&handlingDef, &toICSPositionDef, xscform.FromICSPositionDef, &toLocationDef, xscform.FromLocationDef, xscform.ToNameDef,
 	xscform.FromNameDef, xscform.ToContactDef, xscform.FromContactDef,
 	// Shelter Status fields
 	reportTypeDef, shelterNameDef, shelterTypeDef, shelterStatusDef, shelterAddressDef, shelterCityCodeDef, shelterCityDefV22,
@@ -84,7 +78,7 @@ var fieldDefsV22 = []*xscmsg.FieldDef{
 var fieldDefsV21 = []*xscmsg.FieldDef{
 	// Standard header
 	xscform.OriginMessageNumberDef, xscform.DestinationMessageNumberDef, xscform.MessageDateDef, xscform.MessageTimeDef,
-	handlingDef, toICSPositionDef, xscform.FromICSPositionDef, toLocationDef, xscform.FromLocationDef, xscform.ToNameDef,
+	&handlingDef, &toICSPositionDef, xscform.FromICSPositionDef, &toLocationDef, xscform.FromLocationDef, xscform.ToNameDef,
 	xscform.FromNameDef, xscform.ToContactDef, xscform.FromContactDef,
 	// Shelter Status fields
 	reportTypeDef, shelterNameDef, shelterTypeDef, shelterStatusDef, shelterAddressDef, shelterCityDefV21,
@@ -98,9 +92,9 @@ var fieldDefsV21 = []*xscmsg.FieldDef{
 }
 
 var (
-	handlingDef      *xscmsg.FieldDef // set in func init
-	toICSPositionDef *xscmsg.FieldDef // set in func init
-	toLocationDef    *xscmsg.FieldDef // set in func init
+	handlingDef      = *xscform.HandlingDef      // modified in func init
+	toICSPositionDef = *xscform.ToICSPositionDef // modified in func init
+	toLocationDef    = *xscform.ToLocationDef    // modified in func init
 	reportTypeDef    = &xscmsg.FieldDef{
 		Tag:        "19.",
 		Annotation: "report-type",
