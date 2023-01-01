@@ -11,7 +11,6 @@ import (
 	"os/exec"
 	"runtime"
 	"strings"
-	"time"
 
 	"github.com/rothskeller/packet/pktmsg"
 	"github.com/rothskeller/packet/xscmsg"
@@ -50,16 +49,17 @@ func NewMessage(tag, msgnum, opname, opcall string) (err error) {
 		if xsc == nil {
 			return ErrUnknownTag
 		}
-		if xsc, ok := xsc.(interface{ SetOriginNumber(string) }); ok {
-			xsc.SetOriginNumber(msgnum)
+		if f := xsc.Field(xscmsg.FOriginMsgNo); f != nil {
+			f.Value = msgnum
 		}
-		if xsc, ok := xsc.(interface{ SetOperator(string, string) }); ok {
-			xsc.SetOperator(opname, opcall)
+		if f := xsc.Field(xscmsg.FOpName); f != nil {
+			f.Value = opname
 		}
-		if xsc, ok := xsc.(interface{ SetActionTime(time.Time) }); ok {
-			xsc.SetActionTime(time.Now())
+		if f := xsc.Field(xscmsg.FOpCall); f != nil {
+			f.Value = opcall
 		}
-		msg = xsc.Message(true)
+		msg = pktmsg.New()
+		msg.Body = xsc.Body(true)
 		msg.Header.Set("To", "")
 		msg.Header.Set("Subject", "(computed)")
 	}
@@ -88,7 +88,8 @@ func EditMessage(msgnum string) (err error) {
 	if msg, _ = pktmsg.ParseMessage(string(orig)); msg == nil {
 		in = string(orig)
 	} else if xsc := xscmsg.Recognize(msg, false); xsc != nil {
-		msg = xsc.Message(true)
+		msg.Header.Set("Subject", xsc.Subject())
+		msg.Body = xsc.Body(true)
 		in = msg.Encode(true)
 	} else {
 		in = msg.Encode(true)
@@ -150,10 +151,9 @@ RETRY:
 	if msg, err := pktmsg.ParseMessage(out); err != nil {
 		problems = []string{err.Error()}
 	} else if xsc := xscmsg.Recognize(msg, false); xsc != nil {
-		if xsc, ok := xsc.(interface{ Validate(bool) []string }); ok {
-			problems = xsc.Validate(false)
-		}
-		msg = xsc.Message(false)
+		problems = xsc.Validate(false)
+		msg.Header.Set("Subject", xsc.Subject())
+		msg.Body = xsc.Body(false)
 		out = msg.Encode(false)
 	} else if pktmsg.IsForm(msg.Body) {
 		if form := pktmsg.ParseForm(msg.Body, false); form == nil {
