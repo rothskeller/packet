@@ -15,6 +15,14 @@ func init() {
 	Problems[ProbUnknownJurisdiction.Code] = ProbUnknownJurisdiction
 }
 
+// PracticeSubject is the parsed contents of the "Practice ..." part of the
+// subject line.
+type PracticeSubject struct {
+	CallSign     string
+	Jurisdiction string
+	NetDate      time.Time
+}
+
 // practiceRE matches a correctly formatted practice subject.  The subject must
 // have the word Practice followed by four comma-separated fields (with
 // whitespace also allowed between the fields).  The RE returns the first field
@@ -25,33 +33,33 @@ func init() {
 // penalizing.
 var practiceRE = regexp.MustCompile(`(?i)^Practice[,\s]+([AKNW][A-Z]?[0-9][A-Z]{1,3}|[A-Z][A-Z0-9]{5})\s*,[^,]+,([^,]+),\s*((?:0?[1-9]|1[0-2])/(?:0?[1-9]|[12]\d|3[01])/20\d\d)\s*$`)
 
+func (a *Analysis) parsePracticeSubject() (ps *PracticeSubject) {
+	// If we have an old Municipal Status form, the subject doesn't have the
+	// full practice details; it only has the jurisdiction.
+	if a.xsc.Type.Tag == jurisstat.Tag21 {
+		ps = &PracticeSubject{Jurisdiction: a.subject.Subject}
+	} else if match := practiceRE.FindStringSubmatch(a.subject.Subject); match != nil {
+		ps = &PracticeSubject{
+			CallSign:     strings.ToUpper(match[1]),
+			Jurisdiction: strings.TrimSpace(match[2]),
+		}
+		ps.NetDate, _ = time.ParseInLocation("1/2/2006", match[3], time.Local)
+	}
+	if ps != nil {
+		if abbr, ok := config.Get().Jurisdictions[strings.ToUpper(ps.Jurisdiction)]; ok {
+			ps.Jurisdiction = abbr
+		}
+	}
+	return ps
+}
+
 // ProbPracticeSubjectFormat is raised when the practice message details in the
 // subject line have the wrong format.
 var ProbPracticeSubjectFormat = &Problem{
 	Code:  "PracticeSubjectFormat",
-	after: []*Problem{ProbDeliveryReceipt}, // sets a.xsc
-	ifnot: []*Problem{ProbFormSubject, ProbSubjectFormat, ProbFormCorrupt, ProbBounceMessage, ProbDeliveryReceipt, ProbReadReceipt},
+	ifnot: []*Problem{ProbFormSubject, ProbSubjectFormat, ProbFormCorrupt},
 	detect: func(a *Analysis) (bool, string) {
-		jurisdictionMap := config.Get().Jurisdictions
-		subject := xscmsg.ParseSubject(a.msg.Header.Get("Subject")).Subject
-		// Don't check Municipal Status forms; their subject doesn't
-		// have the full practice details.  It just has the
-		// jurisdiction, which we save.
-		if a.xsc.Type.Tag == jurisstat.Tag21 {
-			a.Jurisdiction = subject
-			if abbr, ok := jurisdictionMap[strings.ToUpper(a.Jurisdiction)]; ok {
-				a.Jurisdiction = abbr
-			}
-			return false, ""
-		}
-		// Parse the subject line to get the true subject.
-		xscsubj := xscmsg.ParseSubject(a.msg.Header.Get("Subject"))
-		if xscsubj == nil {
-			return false, "" // unparseable subject line reported elsewhere
-		}
-		// Do we have a valid practice message subject?
-		var match = practiceRE.FindStringSubmatch(subject)
-		if match == nil {
+		if a.Practice == nil {
 			if a.xsc.Type.Tag == xscmsg.PlainTextTag {
 				return true, "plain"
 			}
@@ -63,14 +71,6 @@ var ProbPracticeSubjectFormat = &Problem{
 			// and just give them the "wrong form" message.
 			return false, ""
 		}
-		// Yes, we do, so save the information from it for other
-		// analysis steps.
-		a.subjectCallSign = strings.ToUpper(match[1])
-		a.Jurisdiction = strings.TrimSpace(match[2])
-		if abbr, ok := jurisdictionMap[strings.ToUpper(a.Jurisdiction)]; ok {
-			a.Jurisdiction = abbr
-		}
-		a.subjectDate, _ = time.ParseInLocation("1/2/2006", match[3], time.Local)
 		return false, ""
 	},
 	Variables: variableMap{
@@ -84,13 +84,12 @@ var ProbPracticeSubjectFormat = &Problem{
 // of the recognized ones.
 var ProbUnknownJurisdiction = &Problem{
 	Code:  "UnknownJurisdiction",
-	after: []*Problem{ProbPracticeSubjectFormat}, // sets a.Jurisdiction
-	ifnot: []*Problem{ProbPracticeSubjectFormat, ProbFormSubject, ProbSubjectFormat, ProbFormCorrupt, ProbBounceMessage, ProbDeliveryReceipt, ProbReadReceipt},
+	ifnot: []*Problem{ProbPracticeSubjectFormat, ProbFormSubject, ProbSubjectFormat, ProbFormCorrupt},
 	detect: func(a *Analysis) (bool, string) {
-		_, ok := config.Get().Jurisdictions[a.Jurisdiction]
+		_, ok := config.Get().Jurisdictions[a.Practice.Jurisdiction]
 		return !ok, ""
 	},
 	Variables: variableMap{
-		"JURISDICTION": func(a *Analysis) string { return a.Jurisdiction },
+		"JURISDICTION": func(a *Analysis) string { return a.Practice.Jurisdiction },
 	},
 }

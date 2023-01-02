@@ -18,9 +18,6 @@ type Problem struct {
 	// this one.  If any of those other problems are found with a message,
 	// we won't even attempt to detect this problem.
 	ifnot []*Problem
-	// after is a set of zero or more other problems that must be checked
-	// before checking this one.
-	after []*Problem
 	// detect is a function that examines a practice message and returns
 	// whether this problem exists with the message, and if so, which
 	// response message should be used.
@@ -35,17 +32,20 @@ var Problems = map[string]*Problem{}
 // cacheOrderedProblems caches the result of the orderedProblems function.
 var cacheOrderedProblems []*Problem
 
-// orderedProblems returns an ordered list of all Problem objects.  The order is
-// random except that it honors the 'ifnot' and 'after' fields of each problem.
+// orderedProblems returns an ordered list of all Problem objects with detect
+// functions.  The order is random except that it honors the 'ifnot' fields of
+// each problem.
 func orderedProblems() (list []*Problem) {
 	if cacheOrderedProblems != nil {
 		return cacheOrderedProblems
 	}
 	var mp = make(map[*Problem]struct{}, len(Problems))
 	for _, p := range Problems {
-		mp[p] = struct{}{}
+		if p.detect != nil {
+			mp[p] = struct{}{}
+		}
 	}
-	list = make([]*Problem, 0, len(Problems))
+	list = make([]*Problem, 0, len(mp))
 	var iter int
 	for len(mp) != 0 {
 		iter++
@@ -54,9 +54,6 @@ func orderedProblems() (list []*Problem) {
 		}
 		for p := range mp {
 			var after = make(map[*Problem]struct{})
-			for _, ap := range p.after {
-				after[ap] = struct{}{}
-			}
 			for _, ip := range p.ifnot {
 				after[ip] = struct{}{}
 			}

@@ -13,9 +13,7 @@ func init() {
 // ProbPIFOVersion is raised when the message contains a PackItForms form whose
 // PackItForms version is too old.
 var ProbPIFOVersion = &Problem{
-	Code:  "PIFOVersion",
-	after: []*Problem{ProbDeliveryReceipt}, // sets a.xsc
-	ifnot: []*Problem{ProbBounceMessage, ProbDeliveryReceipt, ProbReadReceipt},
+	Code: "PIFOVersion",
 	detect: func(a *Analysis) (bool, string) {
 		if f := a.xsc.RawForm; f != nil {
 			return xscmsg.OlderVersion(f.PIFOVersion, config.Get().MinimumVersions["PackItForms"]), ""
@@ -35,9 +33,7 @@ var ProbPIFOVersion = &Problem{
 // ProbFormVersion is raised when the message contains a form whose version is
 // too old.
 var ProbFormVersion = &Problem{
-	Code:  "FormVersion",
-	after: []*Problem{ProbDeliveryReceipt}, // sets a.xsc
-	ifnot: []*Problem{ProbBounceMessage, ProbDeliveryReceipt, ProbReadReceipt},
+	Code: "FormVersion",
 	detect: func(a *Analysis) (bool, string) {
 		if f := a.xsc.RawForm; f != nil {
 			if min := config.Get().MinimumVersions[a.xsc.Type.Tag]; min != "" {

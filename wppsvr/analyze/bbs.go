@@ -9,8 +9,7 @@ func init() {
 // ProbFromBBSDown is raised when a message is sent from a BBS that is simulated
 // down.
 var ProbFromBBSDown = &Problem{
-	Code:  "FromBBSDown",
-	ifnot: []*Problem{ProbBounceMessage, ProbDeliveryReceipt, ProbReadReceipt},
+	Code: "FromBBSDown",
 	detect: func(a *Analysis) (bool, string) {
 		for _, down := range a.session.DownBBSes {
 			if down == a.msg.FromBBS() {
@@ -24,8 +23,7 @@ var ProbFromBBSDown = &Problem{
 // ProbToBBSDown is raised when a message is sent to a BBS that is simulated
 // down.
 var ProbToBBSDown = &Problem{
-	Code:  "ToBBSDown",
-	ifnot: []*Problem{ProbBounceMessage, ProbDeliveryReceipt, ProbReadReceipt},
+	Code: "ToBBSDown",
 	detect: func(a *Analysis) (bool, string) {
 		for _, down := range a.session.DownBBSes {
 			if down == a.toBBS {
@@ -40,7 +38,7 @@ var ProbToBBSDown = &Problem{
 // for the session.
 var ProbToBBS = &Problem{
 	Code:  "ToBBS",
-	ifnot: []*Problem{ProbToBBSDown, ProbBounceMessage, ProbDeliveryReceipt, ProbReadReceipt},
+	ifnot: []*Problem{ProbToBBSDown},
 	detect: func(a *Analysis) (bool, string) {
 		for _, to := range a.session.ToBBSes {
 			if to == a.toBBS {

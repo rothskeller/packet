@@ -9,6 +9,6 @@ func init() {
 // the reporting code.  But it's convenient to have it defined the same way as
 // the other problems.
 var ProbMultipleMessagesFromAddress = &Problem{
-	Code:   "MultipleMessagesFromAddress",
-	detect: func(*Analysis) (bool, string) { return false, "" },
+	Code: "MultipleMessagesFromAddress",
+	// detection happens in the reporting code.
 }

@@ -12,9 +12,7 @@ func init() {
 // ProbFormHandlingOrder is raised when the handling order in a form does not
 // conform to the recommended form routing.
 var ProbFormHandlingOrder = &Problem{
-	Code:  "FormHandlingOrder",
-	after: []*Problem{ProbDeliveryReceipt}, // sets a.xsc
-	ifnot: []*Problem{ProbBounceMessage, ProbDeliveryReceipt, ProbReadReceipt},
+	Code: "FormHandlingOrder",
 	detect: func(a *Analysis) (bool, string) {
 		var (
 			want    xscmsg.HandlingOrder

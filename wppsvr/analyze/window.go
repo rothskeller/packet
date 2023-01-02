@@ -9,8 +9,7 @@ func init() {
 // ProbMessageTooEarly is raised when
 var ProbMessageTooEarly = &Problem{
 	Code:  "MessageTooEarly",
-	after: []*Problem{ProbPracticeSubjectFormat},
-	ifnot: []*Problem{ProbMessageTooLate, ProbBounceMessage, ProbDeliveryReceipt, ProbReadReceipt},
+	ifnot: []*Problem{ProbMessageTooLate},
 	detect: func(a *Analysis) (bool, string) {
 		return a.msg.Date().Before(a.session.Start), ""
 	},
@@ -23,15 +22,13 @@ var ProbMessageTooEarly = &Problem{
 
 // ProbMessageTooLate is raised when
 var ProbMessageTooLate = &Problem{
-	Code:  "MessageTooLate",
-	after: []*Problem{ProbPracticeSubjectFormat},
-	ifnot: []*Problem{ProbBounceMessage, ProbDeliveryReceipt, ProbReadReceipt},
+	Code: "MessageTooLate",
 	detect: func(a *Analysis) (bool, string) {
-		return a.msg.Date().Before(a.session.Start) && !a.subjectDate.IsZero() && a.subjectDate.Before(a.session.Start), ""
+		return a.msg.Date().Before(a.session.Start) && a.Practice != nil && !a.Practice.NetDate.IsZero() && a.Practice.NetDate.Before(a.session.Start), ""
 	},
 	Variables: variableMap{
 		"SUBJECTDATE": func(a *Analysis) string {
-			return a.subjectDate.Format("January 2")
+			return a.Practice.NetDate.Format("January 2")
 		},
 	},
 }
@@ -39,18 +36,17 @@ var ProbMessageTooLate = &Problem{
 // ProbSessionDate is raised when
 var ProbSessionDate = &Problem{
 	Code:  "SessionDate",
-	after: []*Problem{ProbPracticeSubjectFormat},
-	ifnot: []*Problem{ProbMessageTooEarly, ProbMessageTooLate, ProbBounceMessage, ProbDeliveryReceipt, ProbReadReceipt},
+	ifnot: []*Problem{ProbMessageTooEarly, ProbMessageTooLate},
 	detect: func(a *Analysis) (bool, string) {
-		return !a.subjectDate.IsZero() &&
-				(a.subjectDate.Year() != a.session.End.Year() ||
-					a.subjectDate.Month() != a.session.End.Month() ||
-					a.subjectDate.Day() != a.session.End.Day()),
-			""
+		if a.Practice == nil || a.Practice.NetDate.IsZero() {
+			return false, ""
+		}
+		nd := a.Practice.NetDate
+		return nd.Year() != a.session.End.Year() || nd.Month() != a.session.End.Month() || nd.Day() != a.session.End.Day(), ""
 	},
 	Variables: variableMap{
 		"SUBJECTDATE": func(a *Analysis) string {
-			return a.subjectDate.Format("January 2")
+			return a.Practice.NetDate.Format("January 2")
 		},
 	},
 }

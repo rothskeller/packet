@@ -8,12 +8,13 @@ import (
 	"log"
 	"sort"
 	"strings"
-	"time"
 
 	"github.com/rothskeller/packet/pktmsg"
 	"github.com/rothskeller/packet/wppsvr/config"
 	"github.com/rothskeller/packet/wppsvr/store"
 	"github.com/rothskeller/packet/xscmsg"
+	"github.com/rothskeller/packet/xscmsg/delivrcpt"
+	"github.com/rothskeller/packet/xscmsg/readrcpt"
 )
 
 // An Analysis contains the analysis of a received message.
@@ -24,6 +25,11 @@ type Analysis struct {
 	msg *pktmsg.Message
 	// xsc is the recognized XSC message of the received message.
 	xsc *xscmsg.Message
+	// subject is the parsed XSC subject of the received message.
+	subject *xscmsg.XSCSubject
+	// Practice is the parsed practice message details of the received
+	// message.
+	Practice *PracticeSubject
 	// Hash is the hash of the raw received message, used for deduplication.
 	Hash string
 	// localID is the local message ID of the received message.
@@ -33,8 +39,6 @@ type Analysis struct {
 	// toBBS is the name of the BBS to which the message was sent (i.e.,
 	// the one from which we retrieved it).
 	toBBS string
-	// Jurisdiction is the jurisdiction of the sender, if known.
-	Jurisdiction string
 	// problems is the set of problems found with the message.  Each one
 	// maps to the appropriate response key for that problem.
 	problems map[*Problem]string
@@ -45,12 +49,6 @@ type Analysis struct {
 	// FromCallSign is the call sign of the message sender, which can come
 	// from any of several places.
 	FromCallSign string
-	// subjectCallSign is the call sign found in the Practice part of the
-	// subject line, if any.
-	subjectCallSign string
-	// subjectDate is the net date found in the Practice part of the subject
-	// line, if any.
-	subjectDate time.Time
 }
 
 // A response is a single outgoing message that should be sent in response to
@@ -97,19 +95,35 @@ func Analyze(st astore, session *store.Session, bbs, raw string) *Analysis {
 	}
 	// Assign it a local message ID.
 	a.localID = st.NextMessageID(a.session.Prefix)
-	// Check the message for problems and log them in the analysis.
-	a.checkMessage(err)
-	return &a
-}
-
-// checkMessage checks the message for problems, logging them in the problems
-// map of the Analysis structure.
-func (a *Analysis) checkMessage(parseerr error) {
+	// If we had a parse error, note that and don't analyze further.
 	a.problems = make(map[*Problem]string)
-	if parseerr != nil {
+	if err != nil {
 		a.problems[ProbMessageCorrupt] = ""
-		return
+		return &a
 	}
+	// If it was a bounce message, note that and don't analyze further.
+	if a.msg.Flags&pktmsg.AutoResponse != 0 {
+		a.problems[ProbBounceMessage] = ""
+		return &a
+	}
+	// Determine what kind of message it was.
+	a.xsc = xscmsg.Recognize(a.msg, true)
+	// If it was a receipt, note that and don't analyze further.
+	switch a.xsc.Type.Tag {
+	case delivrcpt.Tag:
+		a.problems[ProbDeliveryReceipt] = ""
+		return &a
+	case readrcpt.Tag:
+		a.problems[ProbReadReceipt] = ""
+		return &a
+	}
+	// Parse the subject line.
+	if a.subject = xscmsg.ParseSubject(a.msg.Header.Get("Subject")); a.subject != nil {
+		a.Practice = a.parsePracticeSubject()
+	}
+	// Determine the sender's call sign, looking at various sources.
+	a.FromCallSign = a.fromCallSign()
+	// Check the message for problems and log them in the analysis.
 PROBLEMS:
 	for _, prob := range orderedProblems() {
 		for _, ifnot := range prob.ifnot {
@@ -117,10 +131,11 @@ PROBLEMS:
 				continue PROBLEMS
 			}
 		}
-		if found, responseKey := prob.detect(a); found {
+		if found, responseKey := prob.detect(&a); found {
 			a.problems[prob] = responseKey
 		}
 	}
+	return &a
 }
 
 // Commit commits the analyzed message to the database.
@@ -139,7 +154,9 @@ func (a *Analysis) Commit(st astore) {
 	m.FromAddress = a.msg.ReturnAddress()
 	m.FromCallSign = a.FromCallSign
 	m.ToBBS = a.toBBS
-	m.Jurisdiction = a.Jurisdiction
+	if a.Practice != nil {
+		m.Jurisdiction = a.Practice.Jurisdiction
+	}
 	m.MessageType = a.MessageType()
 	m.Subject = a.msg.Header.Get("Subject")
 	m.DeliveryTime = a.msg.Date()

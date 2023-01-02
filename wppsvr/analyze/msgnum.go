@@ -16,9 +16,7 @@ var msgnumRE = regexp.MustCompile(`^(?:[A-Z][A-Z][A-Z]|[A-Z][0-9][A-Z0-9]|[0-9][
 // ProbMsgNumFormat is raised when the message number does not meet county
 // standards.
 var ProbMsgNumFormat = &Problem{
-	Code:  "MsgNumFormat",
-	after: []*Problem{ProbDeliveryReceipt}, // sets a.xsc
-	ifnot: []*Problem{ProbBounceMessage, ProbDeliveryReceipt, ProbReadReceipt},
+	Code: "MsgNumFormat",
 	detect: func(a *Analysis) (bool, string) {
 		if f := a.xsc.KeyField(xscmsg.FOriginMsgNo); f != nil {
 			// It's a form, so check the number in the form.
@@ -41,8 +39,7 @@ var fccCallSignRE = regexp.MustCompile(`^[AKNW][A-Z]?[0-9][A-Z]{1,3}$`)
 // three characters of the sender's call sign.
 var ProbMsgNumPrefix = &Problem{
 	Code:  "MsgNumPrefix",
-	after: []*Problem{ProbDeliveryReceipt, ProbNoCallSign}, // set a.xsc, a.FromCallSign
-	ifnot: []*Problem{ProbMsgNumFormat, ProbBounceMessage, ProbDeliveryReceipt, ProbReadReceipt},
+	ifnot: []*Problem{ProbMsgNumFormat},
 	detect: func(a *Analysis) (bool, string) {
 		var msgnum string
 

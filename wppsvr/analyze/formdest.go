@@ -15,9 +15,7 @@ func init() {
 // ProbFormDestination is raised when a form's destination doesn't match the
 // recommended routing.
 var ProbFormDestination = &Problem{
-	Code:  "FormDestination",
-	after: []*Problem{ProbDeliveryReceipt}, // sets a.xsc
-	ifnot: []*Problem{ProbBounceMessage, ProbDeliveryReceipt, ProbReadReceipt},
+	Code: "FormDestination",
 	detect: func(a *Analysis) (bool, string) {
 		want := config.Get().FormRouting[a.xsc.Type.Tag]
 		if want == nil || len(want.ToICSPosition) == 0 && len(want.ToLocation) == 0 {

@@ -15,9 +15,7 @@ func init() {
 // ProbFormCorrupt is raised when the body looks like a form encoding but
 // couldn't be successfully decoded.
 var ProbFormCorrupt = &Problem{
-	Code:  "FormCorrupt",
-	after: []*Problem{ProbDeliveryReceipt}, // sets a.xsc
-	ifnot: []*Problem{ProbBounceMessage, ProbDeliveryReceipt, ProbReadReceipt},
+	Code: "FormCorrupt",
 	detect: func(a *Analysis) (bool, string) {
 		if pktmsg.IsForm(a.msg.Body) {
 			if a.xsc.Type.Tag == xscmsg.PlainTextTag {
@@ -31,8 +29,7 @@ var ProbFormCorrupt = &Problem{
 // ProbFormInvalid is raised when the form has invalid field values.
 var ProbFormInvalid = &Problem{
 	Code:  "FormInvalid",
-	after: []*Problem{ProbDeliveryReceipt}, // sets a.xsc
-	ifnot: []*Problem{ProbFormCorrupt, ProbBounceMessage, ProbDeliveryReceipt, ProbReadReceipt},
+	ifnot: []*Problem{ProbFormCorrupt},
 	detect: func(a *Analysis) (bool, string) {
 		if a.xsc.Type.Tag != xscmsg.PlainTextTag {
 			if problems := a.xsc.Validate(true); len(problems) != 0 {
