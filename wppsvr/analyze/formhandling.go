@@ -13,7 +13,7 @@ func init() {
 // conform to the recommended form routing.
 var ProbFormHandlingOrder = &Problem{
 	Code: "FormHandlingOrder",
-	detect: func(a *Analysis) (bool, string) {
+	detect: func(a *Analysis) bool {
 		var (
 			want    xscmsg.HandlingOrder
 			have    xscmsg.HandlingOrder
@@ -23,11 +23,11 @@ var ProbFormHandlingOrder = &Problem{
 		if f := a.xsc.KeyField(xscmsg.FHandling); f != nil {
 			have, _ = xscmsg.ParseHandlingOrder(f.Value)
 		} else {
-			return false, ""
+			return false
 		}
 		// What handling order are we supposed to have?
 		if routing = config.Get().FormRouting[a.xsc.Type.Tag]; routing == nil {
-			return false, ""
+			return false
 		}
 		if routing.HandlingOrder == "computed" {
 			want = config.ComputedRecommendedHandlingOrder[a.xsc.Type.Tag](a.xsc)
@@ -35,10 +35,10 @@ var ProbFormHandlingOrder = &Problem{
 			want, _ = xscmsg.ParseHandlingOrder(routing.HandlingOrder)
 		}
 		if want == 0 {
-			return false, ""
+			return false
 		}
 		// Return whether they match.
-		return have != want, ""
+		return have != want
 	},
 	Variables: variableMap{
 		"ACTUALHO": func(a *Analysis) string {

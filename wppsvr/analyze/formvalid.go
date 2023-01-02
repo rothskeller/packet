@@ -16,13 +16,13 @@ func init() {
 // couldn't be successfully decoded.
 var ProbFormCorrupt = &Problem{
 	Code: "FormCorrupt",
-	detect: func(a *Analysis) (bool, string) {
+	detect: func(a *Analysis) bool {
 		if pktmsg.IsForm(a.msg.Body) {
 			if a.xsc.Type.Tag == xscmsg.PlainTextTag {
-				return true, ""
+				return true
 			}
 		}
-		return false, ""
+		return false
 	},
 }
 
@@ -30,13 +30,13 @@ var ProbFormCorrupt = &Problem{
 var ProbFormInvalid = &Problem{
 	Code:  "FormInvalid",
 	ifnot: []*Problem{ProbFormCorrupt},
-	detect: func(a *Analysis) (bool, string) {
+	detect: func(a *Analysis) bool {
 		if a.xsc.Type.Tag != xscmsg.PlainTextTag {
 			if problems := a.xsc.Validate(true); len(problems) != 0 {
-				return true, ""
+				return true
 			}
 		}
-		return false, ""
+		return false
 	},
 	Variables: variableMap{
 		"PROBLEMS": func(a *Analysis) string {

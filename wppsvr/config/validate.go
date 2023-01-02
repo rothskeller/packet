@@ -210,16 +210,8 @@ func (c *Config) Validate(knownProbs map[string]map[string]struct{}, knownVars m
 				}
 			}
 			if problem.Response != "" {
-				if problem.Responses == nil {
-					problem.Responses = make(map[string]string)
-				}
-				problem.Responses[""] = problem.Response
-			}
-			if len(problem.Responses) != 0 {
 				problem.ActionFlags |= ActionRespond
-			}
-			for resptag, response := range problem.Responses {
-				for _, variable := range variableRE.FindAllString(response, -1) {
+				for _, variable := range variableRE.FindAllString(problem.Response, -1) {
 					if probVars != nil {
 						if _, ok := probVars[variable[1:len(variable)-1]]; ok {
 							continue
@@ -228,7 +220,7 @@ func (c *Config) Validate(knownProbs map[string]map[string]struct{}, knownVars m
 					if _, ok := knownVars[variable[1:len(variable)-1]]; ok {
 						continue
 					}
-					log.Printf("ERROR: config.problems[%q].responses[%q] refers to unknown variable %q", code, resptag, variable)
+					log.Printf("ERROR: config.problems[%q].response refers to unknown variable %q", code, variable)
 					valid = false
 				}
 			}

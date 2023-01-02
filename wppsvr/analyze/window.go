@@ -10,8 +10,8 @@ func init() {
 var ProbMessageTooEarly = &Problem{
 	Code:  "MessageTooEarly",
 	ifnot: []*Problem{ProbMessageTooLate},
-	detect: func(a *Analysis) (bool, string) {
-		return a.msg.Date().Before(a.session.Start), ""
+	detect: func(a *Analysis) bool {
+		return a.msg.Date().Before(a.session.Start)
 	},
 	Variables: variableMap{
 		"SESSIONSTART": func(a *Analysis) string {
@@ -23,8 +23,8 @@ var ProbMessageTooEarly = &Problem{
 // ProbMessageTooLate is raised when
 var ProbMessageTooLate = &Problem{
 	Code: "MessageTooLate",
-	detect: func(a *Analysis) (bool, string) {
-		return a.msg.Date().Before(a.session.Start) && a.Practice != nil && !a.Practice.NetDate.IsZero() && a.Practice.NetDate.Before(a.session.Start), ""
+	detect: func(a *Analysis) bool {
+		return a.msg.Date().Before(a.session.Start) && a.Practice != nil && !a.Practice.NetDate.IsZero() && a.Practice.NetDate.Before(a.session.Start)
 	},
 	Variables: variableMap{
 		"SUBJECTDATE": func(a *Analysis) string {
@@ -37,12 +37,12 @@ var ProbMessageTooLate = &Problem{
 var ProbSessionDate = &Problem{
 	Code:  "SessionDate",
 	ifnot: []*Problem{ProbMessageTooEarly, ProbMessageTooLate},
-	detect: func(a *Analysis) (bool, string) {
+	detect: func(a *Analysis) bool {
 		if a.Practice == nil || a.Practice.NetDate.IsZero() {
-			return false, ""
+			return false
 		}
 		nd := a.Practice.NetDate
-		return nd.Year() != a.session.End.Year() || nd.Month() != a.session.End.Month() || nd.Day() != a.session.End.Day(), ""
+		return nd.Year() != a.session.End.Year() || nd.Month() != a.session.End.Month() || nd.Day() != a.session.End.Day()
 	},
 	Variables: variableMap{
 		"SUBJECTDATE": func(a *Analysis) string {

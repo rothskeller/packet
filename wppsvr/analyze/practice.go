@@ -11,6 +11,7 @@ import (
 )
 
 func init() {
+	Problems[ProbFormPracticeSubject.Code] = ProbFormPracticeSubject
 	Problems[ProbPracticeSubjectFormat.Code] = ProbPracticeSubjectFormat
 	Problems[ProbUnknownJurisdiction.Code] = ProbUnknownJurisdiction
 }
@@ -53,25 +54,16 @@ func (a *Analysis) parsePracticeSubject() (ps *PracticeSubject) {
 	return ps
 }
 
-// ProbPracticeSubjectFormat is raised when the practice message details in the
-// subject line have the wrong format.
-var ProbPracticeSubjectFormat = &Problem{
-	Code:  "PracticeSubjectFormat",
-	ifnot: []*Problem{ProbFormSubject, ProbSubjectFormat, ProbFormCorrupt},
-	detect: func(a *Analysis) (bool, string) {
-		if a.Practice == nil {
-			if a.xsc.Type.Tag == xscmsg.PlainTextTag {
-				return true, "plain"
-			}
-			if a.xsc.KeyField(xscmsg.FSubject) != nil {
-				return true, "form"
-			}
-			// It's a form that can't be used for weekly practice
-			// (e.g. check-in form).  We'll ignore the bad subject
-			// and just give them the "wrong form" message.
-			return false, ""
+// ProbFormPracticeSubject is raised when the practice message details in the
+// subject field of a form message have the wrong format.
+var ProbFormPracticeSubject = &Problem{
+	Code:  "FormPracticeSubject",
+	ifnot: []*Problem{ProbFormSubject, ProbSubjectFormat, ProbPracticeAsFormName},
+	detect: func(a *Analysis) bool {
+		if a.Practice == nil && a.xsc.Type.Tag != xscmsg.PlainTextTag && a.xsc.KeyField(xscmsg.FSubject) != nil {
+			return true
 		}
-		return false, ""
+		return false
 	},
 	Variables: variableMap{
 		"SUBJECTFIELD": func(a *Analysis) string {
@@ -80,14 +72,27 @@ var ProbPracticeSubjectFormat = &Problem{
 	},
 }
 
+// ProbPracticeSubjectFormat is raised when the practice message details in the
+// subject line of a non-form message have the wrong format.
+var ProbPracticeSubjectFormat = &Problem{
+	Code:  "PracticeSubjectFormat",
+	ifnot: []*Problem{ProbSubjectFormat, ProbPracticeAsFormName, ProbFormCorrupt},
+	detect: func(a *Analysis) bool {
+		if a.Practice == nil && a.xsc.Type.Tag == xscmsg.PlainTextTag {
+			return true
+		}
+		return false
+	},
+}
+
 // ProbUnknownJurisdiction is raised when the provided jurisdiction is not one
 // of the recognized ones.
 var ProbUnknownJurisdiction = &Problem{
 	Code:  "UnknownJurisdiction",
-	ifnot: []*Problem{ProbPracticeSubjectFormat, ProbFormSubject, ProbSubjectFormat, ProbFormCorrupt},
-	detect: func(a *Analysis) (bool, string) {
+	ifnot: []*Problem{ProbFormPracticeSubject, ProbPracticeSubjectFormat, ProbFormSubject, ProbSubjectFormat, ProbPracticeAsFormName, ProbFormCorrupt},
+	detect: func(a *Analysis) bool {
 		_, ok := config.Get().Jurisdictions[a.Practice.Jurisdiction]
-		return !ok, ""
+		return !ok
 	},
 	Variables: variableMap{
 		"JURISDICTION": func(a *Analysis) string { return a.Practice.Jurisdiction },

@@ -17,19 +17,19 @@ var msgnumRE = regexp.MustCompile(`^(?:[A-Z][A-Z][A-Z]|[A-Z][0-9][A-Z0-9]|[0-9][
 // standards.
 var ProbMsgNumFormat = &Problem{
 	Code: "MsgNumFormat",
-	detect: func(a *Analysis) (bool, string) {
+	detect: func(a *Analysis) bool {
 		if f := a.xsc.KeyField(xscmsg.FOriginMsgNo); f != nil {
 			// It's a form, so check the number in the form.
-			return !msgnumRE.MatchString(f.Value), ""
+			return !msgnumRE.MatchString(f.Value)
 		}
 		if xscsubj := xscmsg.ParseSubject(a.msg.Header.Get("Subject")); xscsubj != nil {
 			// It's not a form, but we were able to parse a message
 			// number out of the subject line, so check that.
-			return !msgnumRE.MatchString(xscsubj.MessageNumber), ""
+			return !msgnumRE.MatchString(xscsubj.MessageNumber)
 		}
 		// No message number to check.  The problem will be
 		// reported elsewhere as a bad subject line.
-		return false, ""
+		return false
 	},
 }
 
@@ -40,20 +40,20 @@ var fccCallSignRE = regexp.MustCompile(`^[AKNW][A-Z]?[0-9][A-Z]{1,3}$`)
 var ProbMsgNumPrefix = &Problem{
 	Code:  "MsgNumPrefix",
 	ifnot: []*Problem{ProbMsgNumFormat},
-	detect: func(a *Analysis) (bool, string) {
+	detect: func(a *Analysis) bool {
 		var msgnum string
 
 		if !fccCallSignRE.MatchString(a.FromCallSign) {
-			return false, "" // prefix not checked for tactical calls
+			return false // prefix not checked for tactical calls
 		}
 		if f := a.xsc.KeyField(xscmsg.FOriginMsgNo); f != nil {
 			msgnum = f.Value
 		} else if xscsubj := xscmsg.ParseSubject(a.msg.Header.Get("Subject")); xscsubj != nil {
 			msgnum = xscsubj.MessageNumber
 		} else {
-			return false, ""
+			return false
 		}
-		return msgnum[:3] != a.FromCallSign[len(a.FromCallSign)-3:], ""
+		return msgnum[:3] != a.FromCallSign[len(a.FromCallSign)-3:]
 	},
 	Variables: variableMap{
 		"ACTUALPFX": func(a *Analysis) string {

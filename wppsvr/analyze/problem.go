@@ -19,9 +19,8 @@ type Problem struct {
 	// we won't even attempt to detect this problem.
 	ifnot []*Problem
 	// detect is a function that examines a practice message and returns
-	// whether this problem exists with the message, and if so, which
-	// response message should be used.
-	detect func(*Analysis) (bool, string)
+	// whether this problem exists with the message.
+	detect func(*Analysis) bool
 }
 
 type variableMap map[string]func(*Analysis) string

@@ -46,18 +46,16 @@ order that satisfies the `ifnot` constraints.  (The order is otherwise random.)
 
 When a problem is found with a message, we often want to notify the message
 sender of the problem.  The wppsvr code finds the entry for the problem in the
-`problems` map in `config.yaml`.  If that entry has a `response` or `responses`
-key, we will send a problem response to the message sender, containing a
-description of the problem.  (If the message has multiple problems with
-`response` or `responses` keys, they get a single problem response containing
-the descriptions of all such problems.)
+`problems` map in `config.yaml`.  If that entry has a `response` key, we will
+send a problem response to the message sender, containing a description of the
+problem.  (If the message has multiple problems with `response` keys, they get a
+single problem response containing the descriptions of all such problems.)
 
-In the common case, the `response` key maps to a string, which is the
-description of the problem.  That string may include `{VARIABLE}` references,
-which are places where variables should be interpolated into the description.
-The variable names must either be defined in the `Variables` map in the Problem
-structure for the problem, or they must be one of the well-known global
-variables:
+The `response` key maps to a string containing is the description of the
+problem.  That string may include `{VARIABLE}` references, which are places
+where variables should be interpolated into the description.  The variable names
+must either be defined in the `Variables` map in the Problem structure for the
+problem, or they must be one of the well-known global variables:
 
 * `AMSGTYPE`: name of the message type, preceded by the "a" or "an"
 * `FROMBBS`: name of the BBS from which the message was sent
@@ -69,13 +67,6 @@ variables:
 * `SESSIONNAME`: name of the practice session, e.g. "SVECS Net"
 * `TOBBS`: name of the BBS to which the message was sent
 * `TOCALLSIGN`: name (call sign) of the mailbox to which the message was sent
-
-Sometimes an analysis check may have more than one problem description,
-depending on the details of the analysis.  In these cases, the `responses` key
-is used instead of the `response` key in `config.yaml`.  It contains a map of
-strings rather than a single string.  The `detect` function in the Problem
-structure returns the key into this map, indicating which problem description
-should be used.
 
 ## How to Add a New Analysis Check
 

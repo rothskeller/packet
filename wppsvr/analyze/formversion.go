@@ -14,11 +14,11 @@ func init() {
 // PackItForms version is too old.
 var ProbPIFOVersion = &Problem{
 	Code: "PIFOVersion",
-	detect: func(a *Analysis) (bool, string) {
+	detect: func(a *Analysis) bool {
 		if f := a.xsc.RawForm; f != nil {
-			return xscmsg.OlderVersion(f.PIFOVersion, config.Get().MinimumVersions["PackItForms"]), ""
+			return xscmsg.OlderVersion(f.PIFOVersion, config.Get().MinimumVersions["PackItForms"])
 		}
-		return false, ""
+		return false
 	},
 	Variables: variableMap{
 		"ACTUALVER": func(a *Analysis) string {
@@ -34,13 +34,13 @@ var ProbPIFOVersion = &Problem{
 // too old.
 var ProbFormVersion = &Problem{
 	Code: "FormVersion",
-	detect: func(a *Analysis) (bool, string) {
+	detect: func(a *Analysis) bool {
 		if f := a.xsc.RawForm; f != nil {
 			if min := config.Get().MinimumVersions[a.xsc.Type.Tag]; min != "" {
-				return xscmsg.OlderVersion(f.FormVersion, min), ""
+				return xscmsg.OlderVersion(f.FormVersion, min)
 			}
 		}
-		return false, ""
+		return false
 	},
 	Variables: variableMap{
 		"ACTUALVER": func(a *Analysis) string {

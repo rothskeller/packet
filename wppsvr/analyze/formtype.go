@@ -15,21 +15,21 @@ func init() {
 var ProbMessageTypeWrong = &Problem{
 	Code:  "MessageTypeWrong",
 	ifnot: []*Problem{ProbFormCorrupt},
-	detect: func(a *Analysis) (bool, string) {
+	detect: func(a *Analysis) bool {
 		var tag = a.xsc.Type.Tag
 		for _, mtype := range a.session.MessageTypes {
 			if mtype == tag {
-				return false, ""
+				return false
 			}
 		}
 		if tag == xscmsg.PlainTextTag {
 			// It's a plain text message and we're expecting a form.  That's
 			// OK if it's coming from somewhere other than one of our BBSes.
 			if _, ok := config.Get().BBSes[a.msg.FromBBS()]; !ok {
-				return false, ""
+				return false
 			}
 		}
-		return true, ""
+		return true
 	},
 	Variables: variableMap{
 		"AEXPECTTYPE": func(a *Analysis) string {

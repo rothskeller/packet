@@ -41,7 +41,7 @@ type Analysis struct {
 	toBBS string
 	// problems is the set of problems found with the message.  Each one
 	// maps to the appropriate response key for that problem.
-	problems map[*Problem]string
+	problems map[*Problem]struct{}
 	// responses is a list of messages that should be sent in response to
 	// this received message.  These would include delivery receipts and/or
 	// problem reports.
@@ -96,14 +96,14 @@ func Analyze(st astore, session *store.Session, bbs, raw string) *Analysis {
 	// Assign it a local message ID.
 	a.localID = st.NextMessageID(a.session.Prefix)
 	// If we had a parse error, note that and don't analyze further.
-	a.problems = make(map[*Problem]string)
+	a.problems = make(map[*Problem]struct{})
 	if err != nil {
-		a.problems[ProbMessageCorrupt] = ""
+		a.problems[ProbMessageCorrupt] = struct{}{}
 		return &a
 	}
 	// If it was a bounce message, note that and don't analyze further.
 	if a.msg.Flags&pktmsg.AutoResponse != 0 {
-		a.problems[ProbBounceMessage] = ""
+		a.problems[ProbBounceMessage] = struct{}{}
 		return &a
 	}
 	// Determine what kind of message it was.
@@ -111,10 +111,10 @@ func Analyze(st astore, session *store.Session, bbs, raw string) *Analysis {
 	// If it was a receipt, note that and don't analyze further.
 	switch a.xsc.Type.Tag {
 	case delivrcpt.Tag:
-		a.problems[ProbDeliveryReceipt] = ""
+		a.problems[ProbDeliveryReceipt] = struct{}{}
 		return &a
 	case readrcpt.Tag:
-		a.problems[ProbReadReceipt] = ""
+		a.problems[ProbReadReceipt] = struct{}{}
 		return &a
 	}
 	// Parse the subject line.
@@ -131,8 +131,8 @@ PROBLEMS:
 				continue PROBLEMS
 			}
 		}
-		if found, responseKey := prob.detect(&a); found {
-			a.problems[prob] = responseKey
+		if found := prob.detect(&a); found {
+			a.problems[prob] = struct{}{}
 		}
 	}
 	return &a

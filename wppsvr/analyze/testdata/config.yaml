@@ -145,17 +145,10 @@ problems:
   FormDestination:
     label: incorrect destination for form
     actions: report error
-    responses:
-      both: |
-        This message form is addressed to ICS Position "{ACTUALPOSN}" at
-        Location "{ACTUALLOC}".  {MSGTYPE}s should be addressed to {EXPECTPOSNS}
-        at {EXPECTLOCS}.
-      loc: |
-        This message form is addressed to Location "{ACTUALLOC}".  {MSGTYPE}s
-        should be addressed to Location {EXPECTLOCS}.
-      pos: |
-        This message form is addressed to ICS Position "{ACTUALPOSN}".
-        {MSGTYPE}s should be addressed to ICS Position {EXPECTPOSNS}.
+    response: |
+      This message form is addressed to ICS Position "{ACTUALPOSN}" at
+      Location "{ACTUALLOC}".  {MSGTYPE}s should be addressed to {EXPECTPOSNS}
+      at {EXPECTLOCS}.
     references: formRouting
   FormHandlingOrder:
     label: incorrect handling order for form
@@ -172,6 +165,25 @@ problems:
       This message contains a form with invalid contents:
       {PROBLEMS}
       Please verify the correctness of the form before sending.
+  FormNoCallSign:
+    label: no call sign in form message
+    actions: report dontcount
+    response: |
+      This message cannot be counted because it's not clear who sent it.  There
+      is no call sign in the return address, or after the word "Practice" on the
+      subject line, or in the Operator Call field of the form.  In order for a
+      message to count, there must be a call sign in at least one of those
+      places.
+  FormPracticeSubject:
+    label: incorrect practice message details in form
+    actions: report
+    response: |
+      The {SUBJECTFIELD} field of this form does not have the correct format.
+      It should have the word "Practice" followed by four comma-separated
+      fields:
+          Practice CallSign, FirstName, Jurisdiction, NetDate
+      NetDate should be in the form MM/DD/YYYY.
+    references: weeklyPractice
   FormSubject:
     label: message subject doesn't agree with form contents
     actions: report error
@@ -182,6 +194,20 @@ problems:
           Subject: {EXPECTSUBJ}
       PackItForms automatically generates the Subject line from the form
       contents; it should not be overridden manually.
+  FormToICSPosition:
+    label: incorrect "To ICS Position" for form
+    actions: report error
+    response: |
+      This message form is addressed to ICS Position "{ACTUALPOSN}".
+      {MSGTYPE}s should be addressed to ICS Position {EXPECTPOSNS}.
+    references: formRouting
+  FormToLocation:
+    label: incorrect "To Location" for form
+    actions: report error
+    response: |
+      This message form is addressed to Location "{ACTUALLOC}".  {MSGTYPE}s
+      should be addressed to Location {EXPECTLOCS}.
+    references: formRouting
   FormVersion:
     label: form version out of date
     actions: report error
@@ -209,6 +235,15 @@ problems:
   MessageCorrupt:
     label: message could not be parsed
     actions: report dontcount
+  MessageFromWinlink:
+    label: message sent from Winlink
+    actions: report error
+    response: |
+      This message was sent from Winlink.  Winlink should not be used for
+      emergency communications, unless no alternatives are available, because it
+      uses a message encoding system ("quoted-printable") that Outpost cannot
+      decode.  As a result, some messages (particularly those with long lines
+      and those containing equals signs) may be garbled in transmission.
   MessageNotASCII:
     label: message has non-ASCII characters
     actions: report error
@@ -223,18 +258,12 @@ problems:
   MessageNotPlainText:
     label: not a plain text message
     actions: report error
-    responses:
-      normal: |
-        This message is not a plain text message.  All SCCo packet messages
-        should be plain text only.  ("Rich text" or HTML-formatted messages,
-        common in email systems, are far larger than plain text messages and put
-        too much strain on the packet infrastructure.)  Please configure your
-        software to send plain text messages when sending to an SCCo BBS.
-      winlink: |
-        This message is not a plain text message.  All SCCo packet messages
-        should be plain text only.  Note: messages from winlink.org are not
-        plain text messages; they use an encoding system ("quoted-printable")
-        that Outpost cannot decode.
+    response: |
+      This message is not a plain text message.  All SCCo packet messages should
+      be plain text only.  ("Rich text" or HTML-formatted messages, common in
+      email systems, are far larger than plain text messages and put too much
+      strain on the packet infrastructure.)  Please configure your software to
+      send plain text messages when sending to an SCCo BBS.
   MessageTooEarly:
     label: message before start of practice session
     actions: report dontcount
@@ -284,18 +313,11 @@ problems:
   NoCallSign:
     label: no call sign in message
     actions: report dontcount
-    responses:
-      form: |
-        This message cannot be counted because it's not clear who sent it.
-        There is no call sign in the return address, or after the word
-        "Practice" on the subject line, or in the Operator Call field of the
-        form.  In order for a message to count, there must be a call sign in at
-        least one of those places.
-      plain: |
-        This message cannot be counted because it's not clear who sent it.
-        There is no call sign in the return address or after the word "Practice"
-        on the subject line.  In order for a message to count, there must be a
-        call sign in at least one of those places.
+    response: |
+      This message cannot be counted because it's not clear who sent it.  There
+      is no call sign in the return address or after the word "Practice" on the
+      subject line.  In order for a message to count, there must be a call sign
+      in at least one of those places.
   PIFOVersion:
     label: PackItForms version out of date
     actions: report error
@@ -303,22 +325,26 @@ problems:
       This message used version {ACTUALVER} of PackItForms to encode the form,
       but that version is not current.  Please use PackItForms version
       {EXPECTVER} or newer to encode messages containing forms.
+  PracticeAsFormName:
+    label: incorrect subject line format (underline after "Practice")
+    actions: report error
+    response: |
+      This message has an incorrect subject line format.  According to SCCo
+      standards, the subject should look like
+          AAA-111P_R_Practice A6AAA, Charlie, Nowhereville, 03/16/2019
+          (msgnum) |            |    (name)   (city)        (net date)
+            (handling order)  (call sign)
+      Note that there is no underline after the word "Practice".
+    references: subjectLine weeklyPractice
   PracticeSubjectFormat:
     label: incorrect practice message details
     actions: report
-    responses:
-      form: |
-        The {SUBJECTFIELD} field of this form does not have the correct format.
-        It should have the word "Practice" followed by four comma-separated
-        fields:
-            Practice CallSign, FirstName, Jurisdiction, NetDate
-        NetDate should be in the form MM/DD/YYYY.
-      plain: |
-        The Subject of this message does not have the correct format.  After the
-        message number and handling order, it should have the word
-        "Practice" followed by four comma-separated fields:
-            Practice CallSign, FirstName, Jurisdiction, NetDate
-        NetDate should be in the form MM/DD/YYYY.
+    response: |
+      The Subject of this message does not have the correct format.  After the
+      message number and handling order, it should have the word "Practice"
+      followed by four comma-separated fields:
+          Practice CallSign, FirstName, Jurisdiction, NetDate
+      NetDate should be in the form MM/DD/YYYY.
     references: weeklyPractice
   ReadReceipt:
     label: unexpected READ receipt message
@@ -341,30 +367,23 @@ problems:
   SubjectFormat:
     label: incorrect subject line format
     actions: report error
-    responses:
-      parse: |
-        This message has an incorrect subject line format.  According to SCCo
-        standards, the subject should look like
-            AAA-111P_R_Practice A6AAA, Charlie, Nowhereville, 03/16/2019
-            (msgnum) |            |    (name)   (city)        (net date)
-              (handling order)  (call sign)
-      plainform: |
-        This message has an incorrect subject line format.  According to SCCo
-        standards, the subject should look like
-            AAA-111P_R_Practice A6AAA, Charlie, Nowhereville, 03/16/2019
-            (msgnum) |            |    (name)   (city)        (net date)
-              (handling order)  (call sign)
-        Note that there is no form name between the handling order and the word
-        "Practice" for plain text messages.  If this is in fact a form message,
-        it is improperly encoded and was not recognized as a form.
-      practice: |
-        This message has an incorrect subject line format.  According to SCCo
-        standards, the subject should look like
-            AAA-111P_R_Practice A6AAA, Charlie, Nowhereville, 03/16/2019
-            (msgnum) |            |    (name)   (city)        (net date)
-              (handling order)  (call sign)
-        Note that there is no underline after the word "Practice".
+    response: |
+      This message has an incorrect subject line format.  According to SCCo
+      standards, the subject should look like
+          AAA-111P_R_Practice A6AAA, Charlie, Nowhereville, 03/16/2019
+          (msgnum) |            |    (name)   (city)        (net date)
+            (handling order)  (call sign)
     references: subjectLine weeklyPractice
+  SubjectPlainForm:
+    label: form name in subject of non-form message
+    actions: report error
+    response: |
+      This message has a form name on the subject line, but does not contain a
+      recognizable form.  If this is a plain text message, there should be no
+      form name between the handling order and the word "Practice".  If this is
+      a form message, the form is improperly encoded and could not be
+      recognized.
+    references: subjectLine
   SubjectHasSeverity:
     label: severity on subject line
     actions: report error

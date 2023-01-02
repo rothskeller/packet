@@ -41,8 +41,8 @@ stored:
   subject: RSC-100P_R_ICS213_Practice
   problems:
     - FormInvalid
-    - NoCallSign
-    - PracticeSubjectFormat
+    - FormNoCallSign
+    - FormPracticeSubject
   actions: 15
 
 # Messages that should be sent in response:

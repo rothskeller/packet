@@ -116,9 +116,9 @@ has the following issue%s.%s
 		a.msg.Header.Get("Date"),
 		counts, invalids)
 	// Add the paragraphs describing each problem.
-	for p, rk := range a.problems {
+	for p := range a.problems {
 		if problems[p.Code].ActionFlags&config.ActionRespond != 0 {
-			writeProblemResponse(a, p, problems[p.Code].Responses[rk], wrapper)
+			writeProblemResponse(a, p, problems[p.Code].Response, wrapper)
 		}
 	}
 	// Add the references.

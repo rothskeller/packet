@@ -15,6 +15,6 @@ var ProbBounceMessage = &Problem{
 // messages.
 var ProbMessageCorrupt = &Problem{
 	Code:   "MessageCorrupt",
-	detect: func(*Analysis) (bool, string) { return false, "" },
+	detect: func(*Analysis) bool { return false },
 	// detection is hard-coded in Analyze
 }

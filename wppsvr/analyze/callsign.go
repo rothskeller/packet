@@ -8,6 +8,7 @@ import (
 
 func init() {
 	Problems[ProbCallSignConflict.Code] = ProbCallSignConflict
+	Problems[ProbFormNoCallSign.Code] = ProbFormNoCallSign
 	Problems[ProbNoCallSign.Code] = ProbNoCallSign
 }
 
@@ -42,18 +43,31 @@ func (a *Analysis) fromCallSign() string {
 	}
 }
 
-// ProbNoCallSign is raised if we can't find the sender's call sign in the
-// message.
-var ProbNoCallSign = &Problem{
-	Code: "NoCallSign",
-	detect: func(a *Analysis) (bool, string) {
+// ProbFormNoCallSign is raised if we can't find the sender's call sign in a
+// form message.
+var ProbFormNoCallSign = &Problem{
+	Code: "FormNoCallSign",
+	detect: func(a *Analysis) bool {
 		if a.FromCallSign == "" {
 			if f := a.xsc.KeyField(xscmsg.FOpCall); f != nil {
-				return true, "form"
+				return true
 			}
-			return true, "plain"
 		}
-		return false, ""
+		return false
+	},
+}
+
+// ProbNoCallSign is raised if we can't find the sender's call sign in a
+// non-form message.
+var ProbNoCallSign = &Problem{
+	Code: "NoCallSign",
+	detect: func(a *Analysis) bool {
+		if a.FromCallSign == "" {
+			if f := a.xsc.KeyField(xscmsg.FOpCall); f == nil {
+				return true
+			}
+		}
+		return false
 	},
 }
 
@@ -64,19 +78,19 @@ var ProbNoCallSign = &Problem{
 var ProbCallSignConflict = &Problem{
 	Code:  "CallSignConflict",
 	ifnot: []*Problem{ProbNoCallSign},
-	detect: func(a *Analysis) (bool, string) {
+	detect: func(a *Analysis) bool {
 		if !fccCallSignRE.MatchString(a.FromCallSign) {
 			// The from call sign is a tactical call, so the form
 			// OpCall is allowed to be different.
-			return false, ""
+			return false
 		}
 		if f := a.xsc.KeyField(xscmsg.FOpCall); f != nil {
 			formCS := strings.ToUpper(f.Value)
 			if formCS != "" && formCS != a.FromCallSign {
-				return true, ""
+				return true
 			}
 		}
-		return false, ""
+		return false
 	},
 	Variables: variableMap{
 		"OPCALL": func(a *Analysis) string {

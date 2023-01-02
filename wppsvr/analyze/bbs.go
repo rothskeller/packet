@@ -10,13 +10,13 @@ func init() {
 // down.
 var ProbFromBBSDown = &Problem{
 	Code: "FromBBSDown",
-	detect: func(a *Analysis) (bool, string) {
+	detect: func(a *Analysis) bool {
 		for _, down := range a.session.DownBBSes {
 			if down == a.msg.FromBBS() {
-				return true, ""
+				return true
 			}
 		}
-		return false, ""
+		return false
 	},
 }
 
@@ -24,13 +24,13 @@ var ProbFromBBSDown = &Problem{
 // down.
 var ProbToBBSDown = &Problem{
 	Code: "ToBBSDown",
-	detect: func(a *Analysis) (bool, string) {
+	detect: func(a *Analysis) bool {
 		for _, down := range a.session.DownBBSes {
 			if down == a.toBBS {
-				return true, ""
+				return true
 			}
 		}
-		return false, ""
+		return false
 	},
 }
 
@@ -39,12 +39,12 @@ var ProbToBBSDown = &Problem{
 var ProbToBBS = &Problem{
 	Code:  "ToBBS",
 	ifnot: []*Problem{ProbToBBSDown},
-	detect: func(a *Analysis) (bool, string) {
+	detect: func(a *Analysis) bool {
 		for _, to := range a.session.ToBBSes {
 			if to == a.toBBS {
-				return false, ""
+				return false
 			}
 		}
-		return true, ""
+		return true
 	},
 }

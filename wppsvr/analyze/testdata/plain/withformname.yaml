@@ -19,7 +19,7 @@ stored:
   jurisdiction: SNY
   subject: RSC-100P_R_ICS213_Practice KC6RSC, Steve, SNY, 1/11/2022
   problems:
-    - SubjectFormat
+    - SubjectPlainForm
   actions: 7
 
 # Messages that should be sent in response:
@@ -31,8 +31,7 @@ responses:
       - ^!LMI!TUE-100P!DR!01/11/2022 20:00:01\n
   - localID: TUE-102P
     to: kc6rsc@w1xsc.ampr.org
-    subject: TUE-102P_R_Incorrect subject line format
+    subject: TUE-102P_R_Form name in subject of non-form message
     bodyREs:
-      - incorrect subject line format
-      - no form name
+      - form name on the subject line
       - Standard Packet Message Subject Line

@@ -1,0 +1,37 @@
+# Message is not in plain-text format.
+
+# Message being analyzed:
+message: |
+  From: kc6rsc@winlink.org
+  To: pkttue@w4xsc.ampr.org
+  Date: Sun, 09 Jan 2022 20:00:00 -0800
+  Subject: RSC-100P_R_Practice KC6RSC, Steve, SNY, 1/11/2022
+  Content-Transfer-Encoding: quoted-printable
+
+  Test message
+
+# Analysis that should be stored:
+stored:
+  deliveryTime: 2022-01-09T20:00:00-08:00
+  fromAddress: kc6rsc@winlink.org
+  fromCallSign: KC6RSC
+  jurisdiction: SNY
+  messageType: plain
+  subject: RSC-100P_R_Practice KC6RSC, Steve, SNY, 1/11/2022
+  problems:
+    - MessageFromWinlink
+  actions: 7
+
+# Messages that should be sent in response:
+responses:
+  - localID: TUE-101P
+    to: kc6rsc@winlink.org
+    subject: 'DELIVERED: RSC-100P_R_Practice KC6RSC, Steve, SNY, 1/11/2022'
+    bodyREs:
+      - ^!LMI!TUE-100P!DR!01/11/2022 20:00:01\n
+  - localID: TUE-102P
+    to: kc6rsc@winlink.org
+    subject: TUE-102P_R_Message sent from Winlink
+    bodyREs:
+      - Winlink
+      - quoted-printable
