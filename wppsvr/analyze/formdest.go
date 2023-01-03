@@ -19,18 +19,15 @@ func init() {
 var ProbFormDestination = &Problem{
 	Code: "FormDestination",
 	detect: func(a *Analysis) bool {
+		// This check does not apply unless the message is of a type
+		// that has recommended To ICS Position and To Location values.
 		want := config.Get().FormRouting[a.xsc.Type.Tag]
 		if want == nil || len(want.ToICSPosition) == 0 && len(want.ToLocation) == 0 {
 			return false
 		}
-		actpos := a.xsc.KeyField(xscmsg.FToICSPosition).Value
-		actloc := a.xsc.KeyField(xscmsg.FToLocation).Value
-		if len(want.ToICSPosition) != 0 && !inList(want.ToICSPosition, actpos) {
-			if len(want.ToLocation) != 0 && !inList(want.ToLocation, actloc) {
-				return true
-			}
-		}
-		return false
+		// The check.
+		return !inList(want.ToICSPosition, a.xsc.KeyField(xscmsg.FToICSPosition).Value) &&
+			!inList(want.ToLocation, a.xsc.KeyField(xscmsg.FToLocation).Value)
 	},
 	Variables: variableMap{
 		"ACTUALLOC":   varActualLoc,
@@ -43,18 +40,21 @@ var ProbFormDestination = &Problem{
 // ProbFormToICSPosition is raised when a form's To ICS Position field doesn't
 // match the recommended routing (but its To Location field does).
 var ProbFormToICSPosition = &Problem{
-	Code:  "FormToICSPosition",
-	ifnot: []*Problem{ProbFormDestination},
+	Code: "FormToICSPosition",
+	ifnot: []*Problem{
+		// This check does not apply if we already found that both the
+		// To ICS Position and To Location fields are off.
+		ProbFormDestination,
+	},
 	detect: func(a *Analysis) bool {
+		// This check does not apply unless the message is of a type
+		// that has recommended To ICS Position values.
 		want := config.Get().FormRouting[a.xsc.Type.Tag]
 		if want == nil || len(want.ToICSPosition) == 0 {
 			return false
 		}
-		actpos := a.xsc.KeyField(xscmsg.FToICSPosition).Value
-		if !inList(want.ToICSPosition, actpos) {
-			return true
-		}
-		return false
+		// The check.
+		return !inList(want.ToICSPosition, a.xsc.KeyField(xscmsg.FToICSPosition).Value)
 	},
 	Variables: variableMap{
 		"ACTUALPOSN":  varActualPosn,
@@ -65,18 +65,21 @@ var ProbFormToICSPosition = &Problem{
 // ProbFormToLocation is raised when a form's To Location field doesn't match
 // the recommended routing (but its To ICS Position field does).
 var ProbFormToLocation = &Problem{
-	Code:  "FormToLocation",
-	ifnot: []*Problem{ProbFormDestination},
+	Code: "FormToLocation",
+	ifnot: []*Problem{
+		// This check does not apply if we already found that both the
+		// To ICS Position and To Location fields are off.
+		ProbFormDestination,
+	},
 	detect: func(a *Analysis) bool {
+		// This check does not apply unless the message is of a type
+		// that has recommended To Location values.
 		want := config.Get().FormRouting[a.xsc.Type.Tag]
 		if want == nil || len(want.ToLocation) == 0 {
 			return false
 		}
-		actloc := a.xsc.KeyField(xscmsg.FToLocation).Value
-		if len(want.ToLocation) != 0 && !inList(want.ToLocation, actloc) {
-			return true
-		}
-		return false
+		// The check.
+		return !inList(want.ToLocation, a.xsc.KeyField(xscmsg.FToLocation).Value)
 	},
 	Variables: variableMap{
 		"ACTUALLOC":  varActualLoc,

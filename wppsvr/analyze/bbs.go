@@ -11,12 +11,7 @@ func init() {
 var ProbFromBBSDown = &Problem{
 	Code: "FromBBSDown",
 	detect: func(a *Analysis) bool {
-		for _, down := range a.session.DownBBSes {
-			if down == a.msg.FromBBS() {
-				return true
-			}
-		}
-		return false
+		return inList(a.session.DownBBSes, a.msg.FromBBS())
 	},
 }
 
@@ -25,26 +20,16 @@ var ProbFromBBSDown = &Problem{
 var ProbToBBSDown = &Problem{
 	Code: "ToBBSDown",
 	detect: func(a *Analysis) bool {
-		for _, down := range a.session.DownBBSes {
-			if down == a.toBBS {
-				return true
-			}
-		}
-		return false
+		return inList(a.session.DownBBSes, a.toBBS)
 	},
 }
 
 // ProbToBBS is raised when a message is sent to a BBS that is not a correct BBS
-// for the session.
+// for the session (and is not down).
 var ProbToBBS = &Problem{
 	Code:  "ToBBS",
 	ifnot: []*Problem{ProbToBBSDown},
 	detect: func(a *Analysis) bool {
-		for _, to := range a.session.ToBBSes {
-			if to == a.toBBS {
-				return false
-			}
-		}
-		return true
+		return !inList(a.session.ToBBSes, a.toBBS)
 	},
 }

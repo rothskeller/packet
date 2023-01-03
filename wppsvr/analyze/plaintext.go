@@ -41,8 +41,12 @@ var ProbMessageFromWinlink = &Problem{
 // than text/plain or a content-transfer-encoding other than binary, 7bit, or
 // 8bit (and the return address does not contain "winlink.org").
 var ProbMessageNotPlainText = &Problem{
-	Code:  "MessageNotPlainText",
-	ifnot: []*Problem{ProbMessageFromWinlink},
+	Code: "MessageNotPlainText",
+	ifnot: []*Problem{
+		// This check does not apply to messages that came from Winlink;
+		// they get their own special problem message.
+		ProbMessageFromWinlink,
+	},
 	detect: func(a *Analysis) bool {
 		return a.msg.Flags&pktmsg.NotPlainText != 0
 	},

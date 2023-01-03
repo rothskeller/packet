@@ -17,26 +17,20 @@ func init() {
 var ProbFormCorrupt = &Problem{
 	Code: "FormCorrupt",
 	detect: func(a *Analysis) bool {
-		if pktmsg.IsForm(a.msg.Body) {
-			if a.xsc.Type.Tag == xscmsg.PlainTextTag {
-				return true
-			}
-		}
-		return false
+		return a.xsc.Type.Tag == xscmsg.PlainTextTag && pktmsg.IsForm(a.msg.Body)
 	},
 }
 
 // ProbFormInvalid is raised when the form has invalid field values.
 var ProbFormInvalid = &Problem{
-	Code:  "FormInvalid",
-	ifnot: []*Problem{ProbFormCorrupt},
+	Code: "FormInvalid",
 	detect: func(a *Analysis) bool {
-		if a.xsc.Type.Tag != xscmsg.PlainTextTag {
-			if problems := a.xsc.Validate(true); len(problems) != 0 {
-				return true
-			}
+		// This message only applies to forms.
+		if a.xsc.Type.Tag == xscmsg.PlainTextTag {
+			return false
 		}
-		return false
+		// The check.
+		return len(a.xsc.Validate(true)) != 0
 	},
 	Variables: variableMap{
 		"PROBLEMS": func(a *Analysis) string {

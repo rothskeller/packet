@@ -18,17 +18,18 @@ var msgnumRE = regexp.MustCompile(`^(?:[A-Z][A-Z][A-Z]|[A-Z][0-9][A-Z0-9]|[0-9][
 var ProbMsgNumFormat = &Problem{
 	Code: "MsgNumFormat",
 	detect: func(a *Analysis) bool {
+		// If the message is a form with an Origin Message Number field,
+		// check the message number in that field.
 		if f := a.xsc.KeyField(xscmsg.FOriginMsgNo); f != nil {
-			// It's a form, so check the number in the form.
 			return !msgnumRE.MatchString(f.Value)
 		}
-		if xscsubj := xscmsg.ParseSubject(a.msg.Header.Get("Subject")); xscsubj != nil {
-			// It's not a form, but we were able to parse a message
-			// number out of the subject line, so check that.
-			return !msgnumRE.MatchString(xscsubj.MessageNumber)
+		// If we were able to parse the subject line of the message,
+		// check the message number from that.
+		if a.subject != nil {
+			return !msgnumRE.MatchString(a.subject.MessageNumber)
 		}
-		// No message number to check.  The problem will be
-		// reported elsewhere as a bad subject line.
+		// No message number to check.  The problem will be reported
+		// elsewhere as a bad subject line.
 		return false
 	},
 }
@@ -38,22 +39,34 @@ var fccCallSignRE = regexp.MustCompile(`^[AKNW][A-Z]?[0-9][A-Z]{1,3}$`)
 // ProbMsgNumPrefix is raised when the message number prefix is not the last
 // three characters of the sender's call sign.
 var ProbMsgNumPrefix = &Problem{
-	Code:  "MsgNumPrefix",
-	ifnot: []*Problem{ProbMsgNumFormat},
+	Code: "MsgNumPrefix",
+	ifnot: []*Problem{
+		// This check does not apply if the message number format is
+		// wrong.
+		ProbMsgNumFormat,
+	},
 	detect: func(a *Analysis) bool {
-		var msgnum string
-
+		// This check does not apply if the sender call sign is not an
+		// FCC call sign (i.e., missing or tactical call).
 		if !fccCallSignRE.MatchString(a.FromCallSign) {
-			return false // prefix not checked for tactical calls
-		}
-		if f := a.xsc.KeyField(xscmsg.FOriginMsgNo); f != nil {
-			msgnum = f.Value
-		} else if xscsubj := xscmsg.ParseSubject(a.msg.Header.Get("Subject")); xscsubj != nil {
-			msgnum = xscsubj.MessageNumber
-		} else {
 			return false
 		}
-		return msgnum[:3] != a.FromCallSign[len(a.FromCallSign)-3:]
+		// The prefix we want is the last three characters of the sender
+		// call sign.
+		want := a.FromCallSign[len(a.FromCallSign)-3:]
+		// If the message is a form with an Origin Message Number field,
+		// check the message number in that field.
+		if f := a.xsc.KeyField(xscmsg.FOriginMsgNo); f != nil {
+			return f.Value[:3] != want
+		}
+		// If we were able to parse the subject line of the message,
+		// check the message number from that.
+		if a.subject != nil {
+			return a.subject.MessageNumber[:3] != want
+		}
+		// No message number to check.  The problem will be reported
+		// elsewhere as a bad subject line.
+		return false
 	},
 	Variables: variableMap{
 		"ACTUALPFX": func(a *Analysis) string {

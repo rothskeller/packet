@@ -34,6 +34,10 @@ type PracticeSubject struct {
 // penalizing.
 var practiceRE = regexp.MustCompile(`(?i)^Practice[,\s]+([AKNW][A-Z]?[0-9][A-Z]{1,3}|[A-Z][A-Z0-9]{5})\s*,[^,]+,([^,]+),\s*((?:0?[1-9]|1[0-2])/(?:0?[1-9]|[12]\d|3[01])/20\d\d)\s*$`)
 
+// parsePracticeSubject parses the practice subject and returns the
+// corresponding PracticeSubject structure, or nil if it couldn't be parsed
+// successfully.  Jurisdictions are converted to their three-letter code if
+// recognized; otherwise they are left as given.
 func (a *Analysis) parsePracticeSubject() (ps *PracticeSubject) {
 	// If we have an old Municipal Status form, the subject doesn't have the
 	// full practice details; it only has the jurisdiction.
@@ -57,13 +61,25 @@ func (a *Analysis) parsePracticeSubject() (ps *PracticeSubject) {
 // ProbFormPracticeSubject is raised when the practice message details in the
 // subject field of a form message have the wrong format.
 var ProbFormPracticeSubject = &Problem{
-	Code:  "FormPracticeSubject",
-	ifnot: []*Problem{ProbFormSubject, ProbSubjectFormat, ProbPracticeAsFormName},
+	Code: "FormPracticeSubject",
+	ifnot: []*Problem{
+		// This check does not apply if the subject line of the message
+		// doesn't match the subject field of the form.
+		ProbFormSubject,
+		// This check doesn't apply if the subject line of the message
+		// is ill-formed.
+		ProbSubjectFormat,
+		// This check doesn't apply if the subject line of the message
+		// has the word "Practice" as the form name.
+		ProbPracticeAsFormName,
+	},
 	detect: func(a *Analysis) bool {
-		if a.Practice == nil && a.xsc.Type.Tag != xscmsg.PlainTextTag && a.xsc.KeyField(xscmsg.FSubject) != nil {
-			return true
+		// This check only applies to forms with a subject field.
+		if a.xsc.Type.Tag == xscmsg.PlainTextTag || a.xsc.KeyField(xscmsg.FSubject) == nil {
+			return false
 		}
-		return false
+		// The check.
+		return a.Practice == nil
 	},
 	Variables: variableMap{
 		"SUBJECTFIELD": func(a *Analysis) string {
@@ -75,24 +91,52 @@ var ProbFormPracticeSubject = &Problem{
 // ProbPracticeSubjectFormat is raised when the practice message details in the
 // subject line of a non-form message have the wrong format.
 var ProbPracticeSubjectFormat = &Problem{
-	Code:  "PracticeSubjectFormat",
-	ifnot: []*Problem{ProbSubjectFormat, ProbPracticeAsFormName, ProbFormCorrupt},
+	Code: "PracticeSubjectFormat",
+	ifnot: []*Problem{
+		// This check does not apply if the message appears to contain
+		// a form that couldn't be parsed.
+		ProbFormCorrupt,
+		// This check does not apply if the subject line of the message
+		// is ill-formed.
+		ProbSubjectFormat,
+		// This check does not apply if the subject line of the message
+		// has the word "Practice" as the form name.
+		ProbPracticeAsFormName,
+	},
 	detect: func(a *Analysis) bool {
-		if a.Practice == nil && a.xsc.Type.Tag == xscmsg.PlainTextTag {
-			return true
+		// This check only applies to plain text messages.
+		if a.xsc.Type.Tag != xscmsg.PlainTextTag {
+			return false
 		}
-		return false
+		// The check.
+		return a.Practice == nil
 	},
 }
 
 // ProbUnknownJurisdiction is raised when the provided jurisdiction is not one
 // of the recognized ones.
 var ProbUnknownJurisdiction = &Problem{
-	Code:  "UnknownJurisdiction",
-	ifnot: []*Problem{ProbFormPracticeSubject, ProbPracticeSubjectFormat, ProbFormSubject, ProbSubjectFormat, ProbPracticeAsFormName, ProbFormCorrupt},
+	Code: "UnknownJurisdiction",
+	ifnot: []*Problem{
+		// This check does not apply if the message appears to contain a
+		// form that couldn't be parsed.
+		ProbFormCorrupt,
+		// This check does not apply if the subject line of the message
+		// doesn't match the subject field of the form.
+		ProbFormSubject,
+		// This check does not apply if the subject line of the message
+		// is ill-formed.
+		ProbSubjectFormat,
+		// This check does not apply if the subject line of the message
+		// has the word "Practice" as the form name.
+		ProbPracticeAsFormName,
+		// This check does not apply if the practice details are
+		// ill-formed.
+		ProbFormPracticeSubject,
+		ProbPracticeSubjectFormat,
+	},
 	detect: func(a *Analysis) bool {
-		_, ok := config.Get().Jurisdictions[a.Practice.Jurisdiction]
-		return !ok
+		return config.Get().Jurisdictions[a.Practice.Jurisdiction] == ""
 	},
 	Variables: variableMap{
 		"JURISDICTION": func(a *Analysis) string { return a.Practice.Jurisdiction },

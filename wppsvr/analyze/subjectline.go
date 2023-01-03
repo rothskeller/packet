@@ -3,7 +3,6 @@ package analyze
 import (
 	"strings"
 
-	"github.com/rothskeller/packet/pktmsg"
 	"github.com/rothskeller/packet/xscmsg"
 )
 
@@ -19,15 +18,20 @@ func init() {
 // ProbFormSubject is raised when the subject line of the message does not agree
 // with what the embedded form would generate.
 var ProbFormSubject = &Problem{
-	Code:  "FormSubject",
-	ifnot: []*Problem{ProbFormInvalid},
+	Code: "FormSubject",
+	ifnot: []*Problem{
+		// This check does not apply if the form contents don't pass
+		// validation checks (such as, for example, not having anything
+		// in the subject field at all).
+		ProbFormInvalid,
+	},
 	detect: func(a *Analysis) bool {
-		// Is the message of a type where the subject line can be
-		// derived from the content (i.e., a known form type)?
-		if a.xsc.Type.Tag != xscmsg.PlainTextTag {
-			return a.xsc.Subject() != a.msg.Header.Get("Subject")
+		// This check only applies to forms.
+		if a.xsc.Type.Tag == xscmsg.PlainTextTag {
+			return false
 		}
-		return false
+		// The check.
+		return a.xsc.Subject() != a.msg.Header.Get("Subject")
 	},
 	Variables: variableMap{
 		"ACTUALSUBJ": func(a *Analysis) string {
@@ -44,8 +48,13 @@ var ProbFormSubject = &Problem{
 var ProbHandlingOrderCode = &Problem{
 	Code: "HandlingOrderCode",
 	detect: func(a *Analysis) bool {
-		xscsubj := xscmsg.ParseSubject(a.msg.Header.Get("Subject"))
-		return xscsubj != nil && xscsubj.HandlingOrder == 0
+		// This check does not apply if the subject line could not be
+		// parsed.
+		if a.subject == nil {
+			return false
+		}
+		// The check.
+		return a.subject.HandlingOrder == 0
 	},
 	Variables: variableMap{
 		"HANDLING": func(a *Analysis) string {
@@ -68,20 +77,45 @@ var ProbSubjectFormat = &Problem{
 // message has a form name of "Practice".  This means the sender put an
 // underline after the word "Practice" rather than a blank.
 var ProbPracticeAsFormName = &Problem{
-	Code:  "PracticeAsFormName",
-	ifnot: []*Problem{ProbFormSubject},
+	Code: "PracticeAsFormName",
 	detect: func(a *Analysis) bool {
-		return a.xsc.Type.Tag == xscmsg.PlainTextTag && a.subject != nil && strings.EqualFold(a.subject.FormTag, "Practice")
+		// This check only applies to plain text messages.
+		if a.xsc.Type.Tag != xscmsg.PlainTextTag {
+			return false
+		}
+		// This check does not apply if the subject line could not be
+		// parsed.
+		if a.subject == nil {
+			return false
+		}
+		// The check.
+		return strings.EqualFold(a.subject.FormTag, "Practice")
 	},
 }
 
 // ProbSubjectPlainForm is raised when the subject line of a plain text message
 // has a form name in it (other than "Practice").
 var ProbSubjectPlainForm = &Problem{
-	Code:  "SubjectPlainForm",
-	ifnot: []*Problem{ProbPracticeAsFormName, ProbFormSubject},
+	Code: "SubjectPlainForm",
+	ifnot: []*Problem{
+		// This check does not apply if the form name is "Practice".
+		ProbPracticeAsFormName,
+		// This check does not apply if the message appears to contain
+		// a form that couldn't be parsed.
+		ProbFormCorrupt,
+	},
 	detect: func(a *Analysis) bool {
-		return a.xsc.Type.Tag == xscmsg.PlainTextTag && a.subject != nil && a.subject.FormTag != "" && !pktmsg.IsForm(a.msg.Body)
+		// This check only applies to plain text messages.
+		if a.xsc.Type.Tag != xscmsg.PlainTextTag {
+			return false
+		}
+		// This check does not apply if the subject line could not be
+		// parsed.
+		if a.subject == nil {
+			return false
+		}
+		// The check.
+		return a.subject.FormTag != ""
 	},
 }
 
@@ -90,8 +124,13 @@ var ProbSubjectPlainForm = &Problem{
 var ProbSubjectHasSeverity = &Problem{
 	Code: "SubjectHasSeverity",
 	detect: func(a *Analysis) bool {
-		xscsubj := xscmsg.ParseSubject(a.msg.Header.Get("Subject"))
-		return xscsubj != nil && xscsubj.SeverityCode != ""
+		// This check does not apply if the subject line could not be
+		// parsed.
+		if a.subject == nil {
+			return false
+		}
+		// The check.
+		return a.subject.SeverityCode != ""
 	},
 	Variables: variableMap{
 		"HANDLING": func(a *Analysis) string {

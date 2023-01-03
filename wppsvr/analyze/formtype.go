@@ -13,23 +13,22 @@ func init() {
 // ProbMessageTypeWrong is raised when the message type is not one of the
 // expected types for the session, and the message is coming from in-county.
 var ProbMessageTypeWrong = &Problem{
-	Code:  "MessageTypeWrong",
-	ifnot: []*Problem{ProbFormCorrupt},
+	Code: "MessageTypeWrong",
+	ifnot: []*Problem{
+		// This check does not apply if we have a message that appears
+		// to be a form but couldn't be parsed as one.
+		ProbFormCorrupt,
+	},
 	detect: func(a *Analysis) bool {
-		var tag = a.xsc.Type.Tag
-		for _, mtype := range a.session.MessageTypes {
-			if mtype == tag {
-				return false
-			}
+		// This check does not apply if we have a plain text message
+		// coming from outside our BBS network.  (It could be from
+		// outside of Santa Clara County where the SCC forms are not
+		// available.)
+		if a.xsc.Type.Tag == xscmsg.PlainTextTag && config.Get().BBSes[a.msg.FromBBS()] == nil {
+			return false
 		}
-		if tag == xscmsg.PlainTextTag {
-			// It's a plain text message and we're expecting a form.  That's
-			// OK if it's coming from somewhere other than one of our BBSes.
-			if _, ok := config.Get().BBSes[a.msg.FromBBS()]; !ok {
-				return false
-			}
-		}
-		return true
+		// The check.
+		return !inList(a.session.MessageTypes, a.xsc.Type.Tag)
 	},
 	Variables: variableMap{
 		"AEXPECTTYPE": func(a *Analysis) string {

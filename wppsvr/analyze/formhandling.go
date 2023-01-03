@@ -14,30 +14,21 @@ func init() {
 var ProbFormHandlingOrder = &Problem{
 	Code: "FormHandlingOrder",
 	detect: func(a *Analysis) bool {
-		var (
-			want    xscmsg.HandlingOrder
-			have    xscmsg.HandlingOrder
-			routing *config.FormRouting
-		)
-		// What handling order do we have?
-		if f := a.xsc.KeyField(xscmsg.FHandling); f != nil {
-			have, _ = xscmsg.ParseHandlingOrder(f.Value)
-		} else {
-			return false
-		}
-		// What handling order are we supposed to have?
-		if routing = config.Get().FormRouting[a.xsc.Type.Tag]; routing == nil {
-			return false
-		}
-		if routing.HandlingOrder == "computed" {
-			want = config.ComputedRecommendedHandlingOrder[a.xsc.Type.Tag](a.xsc)
-		} else {
-			want, _ = xscmsg.ParseHandlingOrder(routing.HandlingOrder)
+		// This check does not apply unless the message is of a type
+		// that has a recommended Handling value.
+		var want xscmsg.HandlingOrder
+		if routing := config.Get().FormRouting[a.xsc.Type.Tag]; routing != nil {
+			if routing.HandlingOrder == "computed" {
+				want = config.ComputedRecommendedHandlingOrder[a.xsc.Type.Tag](a.xsc)
+			} else {
+				want, _ = xscmsg.ParseHandlingOrder(routing.HandlingOrder)
+			}
 		}
 		if want == 0 {
 			return false
 		}
-		// Return whether they match.
+		// The check.
+		have, _ := xscmsg.ParseHandlingOrder(a.xsc.KeyField(xscmsg.FHandling).Value)
 		return have != want
 	},
 	Variables: variableMap{

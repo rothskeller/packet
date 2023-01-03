@@ -12,35 +12,35 @@ func init() {
 	Problems[ProbNoCallSign.Code] = ProbNoCallSign
 }
 
+// fromCallSign extracts the sender's call sign from the several different
+// places it might appear.
 func (a *Analysis) fromCallSign() string {
-	var fromCS, subjCS, formCS string
-
-	// Extract the call sign from the the OpCall field of the form, if any.
-	if f := a.xsc.KeyField(xscmsg.FOpCall); f != nil {
-		formCS = strings.ToUpper(f.Value)
+	// If there's a call sign on the subject line, use that.
+	if a.Practice != nil && a.Practice.CallSign != "" {
+		return a.Practice.CallSign
 	}
-	// Extract the call sign from the practice subject, if any.
-	if a.Practice != nil {
-		subjCS = a.Practice.CallSign
+	// If there's a call sign in the From address of the message, use that.
+	if cs := a.msg.FromCallSign(); cs != "" {
+		// If it's a valid FCC call sign, use it.
+		if fccCallSignRE.MatchString(cs) {
+			return cs
+		}
+		// It's not a valid FCC call sign.  If it's from within our BBS
+		// network, assume it's a tactical call sign and use it.
+		// If it's from within our BBS network, use it.
+		if a.msg.FromBBS() != "" {
+			return cs
+		}
+		// It's not a valid FCC call sign and it's not from within our
+		// BBS network, so it doesn't count.
 	}
-	// Extract the call sign from the From address of the message.  If we
-	// find a non-FCC call and the message is coming from outside the BBS
-	// network, it doesn't count.  We only accept tactical calls on the From
-	// line when within the BBS network.
-	fromCS = a.msg.FromCallSign()
-	if !fccCallSignRE.MatchString(fromCS) && a.msg.FromBBS() == "" {
-		fromCS = ""
+	// If the message is a form and has a call sign in an OpCall field, use
+	// that.
+	if f := a.xsc.KeyField(xscmsg.FOpCall); f != nil && f.Value != "" {
+		return strings.ToUpper(f.Value)
 	}
-	// Choose "the" from call sign.  We give precedence to the subject line,
-	// then the From line, then the form OpCall field.
-	switch {
-	case subjCS != "":
-		return subjCS
-	case fromCS != "":
-		return fromCS
-	default:
-		return formCS
-	}
+	// No call sign found.  (Problem will be reported later.)
+	return ""
 }
 
 // ProbFormNoCallSign is raised if we can't find the sender's call sign in a
@@ -48,12 +48,12 @@ func (a *Analysis) fromCallSign() string {
 var ProbFormNoCallSign = &Problem{
 	Code: "FormNoCallSign",
 	detect: func(a *Analysis) bool {
-		if a.FromCallSign == "" {
-			if f := a.xsc.KeyField(xscmsg.FOpCall); f != nil {
-				return true
-			}
+		// This check only applies to forms with an OpCall field.
+		if a.xsc.KeyField(xscmsg.FOpCall) == nil {
+			return false
 		}
-		return false
+		// The check.
+		return a.FromCallSign == ""
 	},
 }
 
@@ -62,12 +62,13 @@ var ProbFormNoCallSign = &Problem{
 var ProbNoCallSign = &Problem{
 	Code: "NoCallSign",
 	detect: func(a *Analysis) bool {
-		if a.FromCallSign == "" {
-			if f := a.xsc.KeyField(xscmsg.FOpCall); f == nil {
-				return true
-			}
+		// This check only applies to non-forms or to forms that don't
+		// have an OpCall field.
+		if a.xsc.KeyField(xscmsg.FOpCall) != nil {
+			return false
 		}
-		return false
+		// The check.
+		return a.FromCallSign == ""
 	},
 }
 
@@ -77,20 +78,23 @@ var ProbNoCallSign = &Problem{
 // call, a mismatch is OK.
 var ProbCallSignConflict = &Problem{
 	Code:  "CallSignConflict",
-	ifnot: []*Problem{ProbNoCallSign},
+	ifnot: []*Problem{ProbFormNoCallSign},
 	detect: func(a *Analysis) bool {
-		if !fccCallSignRE.MatchString(a.FromCallSign) {
-			// The from call sign is a tactical call, so the form
-			// OpCall is allowed to be different.
+		// This check only applies to forms with a call sign in an
+		// OpCall field.
+		var formCS string
+		if f := a.xsc.KeyField(xscmsg.FOpCall); f != nil && f.Value != "" {
+			formCS = strings.ToUpper(f.Value)
+		} else {
 			return false
 		}
-		if f := a.xsc.KeyField(xscmsg.FOpCall); f != nil {
-			formCS := strings.ToUpper(f.Value)
-			if formCS != "" && formCS != a.FromCallSign {
-				return true
-			}
+		// This check only applies if the detected FromCallSign is a
+		// valid FCC call sign.
+		if !fccCallSignRE.MatchString(a.FromCallSign) {
+			return false
 		}
-		return false
+		// The check.
+		return formCS != a.FromCallSign
 	},
 	Variables: variableMap{
 		"OPCALL": func(a *Analysis) string {

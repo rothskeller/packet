@@ -1,6 +1,7 @@
 package analyze
 
 import (
+	"github.com/rothskeller/packet/pktmsg"
 	"github.com/rothskeller/packet/wppsvr/config"
 	"github.com/rothskeller/packet/xscmsg"
 )
@@ -15,10 +16,13 @@ func init() {
 var ProbPIFOVersion = &Problem{
 	Code: "PIFOVersion",
 	detect: func(a *Analysis) bool {
-		if f := a.xsc.RawForm; f != nil {
-			return xscmsg.OlderVersion(f.PIFOVersion, config.Get().MinimumVersions["PackItForms"])
+		// This check only applies to forms.
+		var form *pktmsg.Form
+		if form = a.xsc.RawForm; form == nil {
+			return false
 		}
-		return false
+		// The check.
+		return xscmsg.OlderVersion(form.PIFOVersion, config.Get().MinimumVersions["PackItForms"])
 	},
 	Variables: variableMap{
 		"ACTUALVER": func(a *Analysis) string {
@@ -35,12 +39,21 @@ var ProbPIFOVersion = &Problem{
 var ProbFormVersion = &Problem{
 	Code: "FormVersion",
 	detect: func(a *Analysis) bool {
-		if f := a.xsc.RawForm; f != nil {
-			if min := config.Get().MinimumVersions[a.xsc.Type.Tag]; min != "" {
-				return xscmsg.OlderVersion(f.FormVersion, min)
-			}
+		// This check only applies to forms.
+		var form *pktmsg.Form
+		if form = a.xsc.RawForm; form == nil {
+			return false
 		}
-		return false
+		// This check only applies to forms for which we have a minimum
+		// version.  The config enforces that we have a minimum version
+		// for all known form types, but we won't have one for an
+		// unknown form type.
+		var min string
+		if min = config.Get().MinimumVersions[a.xsc.Type.Tag]; min == "" {
+			return false
+		}
+		// The check.
+		return xscmsg.OlderVersion(form.FormVersion, min)
 	},
 	Variables: variableMap{
 		"ACTUALVER": func(a *Analysis) string {
