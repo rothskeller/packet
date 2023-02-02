@@ -6,7 +6,7 @@ import (
 
 	"github.com/rothskeller/packet/pktmsg"
 	"github.com/rothskeller/packet/xscmsg"
-	"github.com/rothskeller/packet/xscmsg/internal/xscform"
+	"github.com/rothskeller/packet/xscmsg/xscform"
 )
 
 // Tag identifies shelter status forms.

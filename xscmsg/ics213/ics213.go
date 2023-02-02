@@ -3,7 +3,7 @@ package ics213
 import (
 	"github.com/rothskeller/packet/pktmsg"
 	"github.com/rothskeller/packet/xscmsg"
-	"github.com/rothskeller/packet/xscmsg/internal/xscform"
+	"github.com/rothskeller/packet/xscmsg/xscform"
 )
 
 // Tag identifies ICS-213 forms.

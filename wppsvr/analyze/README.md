@@ -36,8 +36,8 @@ following fields:
 The set of known analysis checks is stored in the `Problems` variable, which is
 a map from problem code to Problem structure.  New analysis checks are
 registered by adding entries for them to this map in a `func init()`.
-(Corresponding entries must be added to `problems` map in `config.yaml` as well,
-so that wppsvr knows what to do when a problem of this type is found.)
+(Corresponding entries must be added to the `problems` map in `config.yaml` as
+well, so that wppsvr knows what to do when a problem of this type is found.)
 
 The message analysis code runs all of the registered analysis checks, in an
 order that satisfies the `ifnot` constraints.  (The order is otherwise random.)
@@ -77,8 +77,8 @@ To add a new analysis check, follow these steps.
    isn't already in use.
 2. Add an entry for the new problem type to the `problems` map in
    `testdata/config.yaml`.  See the comments in `config.yaml` for details.  In
-   particular, write the response text(s) so that you know what variables you
-   want to interpolate.
+   particular, write the response text so that you know what variables you want
+   to interpolate.
 3. Determine which other problem checks should preclude yours, i.e., if that
    other problem is found, yours shouldn't be checked.
 4. Create a new Go source file in this directory with a name relevant to your
