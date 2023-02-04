@@ -34,7 +34,7 @@ func Generate(st Store, session *store.Session) *Report {
 	generateStatistics(&r, session, messages)
 	generateWeekSummary(&r, st, session)
 	generateMessages(&r, session, messages)
-	generateGenInfo(&r)
+	generateGenInfo(&r, session)
 	generateParticipants(&r, messages)
 	return &r
 }
@@ -350,13 +350,20 @@ func removeReplaced(messages []*store.Message) (out []*store.Message) {
 }
 
 // generateGenInfo records when then report was generated and by what software.
-func generateGenInfo(r *Report) {
+func generateGenInfo(r *Report, session *store.Session) {
+	// The report date/time is the date/time of the latest retrieval.
+	var stamp time.Time
+	for _, ret := range session.Retrieve {
+		if ret.LastRun.After(stamp) {
+			stamp = ret.LastRun
+		}
+	}
 	if bi, ok := debug.ReadBuildInfo(); ok && bi.Main.Version != "" && bi.Main.Version != "(devel)" {
 		r.GenerationInfo = fmt.Sprintf("This report was generated on %s by wppsvr version %s.",
-			now().Format("Monday, January 2, 2006 at 15:04"), bi.Main.Version)
+			stamp.Format("Monday, January 2, 2006 at 15:04"), bi.Main.Version)
 	} else {
 		r.GenerationInfo = fmt.Sprintf("This report was generated on %s by wppsvr.",
-			now().Format("Monday, January 2, 2006 at 15:04"))
+			stamp.Format("Monday, January 2, 2006 at 15:04"))
 	}
 }
 

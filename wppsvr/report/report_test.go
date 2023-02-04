@@ -44,6 +44,7 @@ var fakeSession3 = store.Session{
 	ToBBSes:      []string{"W2XSC"},
 	DownBBSes:    []string{"W3XSC"},
 	MessageTypes: []string{"MuniStat", "plain"},
+	Retrieve:     []*store.Retrieval{{LastRun: time.Date(2022, 4, 19, 20, 0, 0, 0, time.Local)}},
 }
 
 type fakeStore struct{}
