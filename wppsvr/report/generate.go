@@ -12,6 +12,7 @@ import (
 	"github.com/rothskeller/packet/wppsvr/config"
 	"github.com/rothskeller/packet/wppsvr/english"
 	"github.com/rothskeller/packet/wppsvr/store"
+	"github.com/rothskeller/packet/xscmsg"
 )
 
 // This function returns the current time; it can be overridden by tests.
@@ -64,7 +65,7 @@ func generateTitle(r *Report, session *store.Session) {
 // to the report.
 func generateParams(r *Report, session *store.Session) {
 	for _, id := range session.MessageTypes {
-		r.MessageTypes = append(r.MessageTypes, config.LookupMessageType(id).Type.Name)
+		r.MessageTypes = append(r.MessageTypes, xscmsg.RegisteredTypes[id].Name)
 	}
 	r.SentTo = fmt.Sprintf("%s at %s", session.CallSign, english.Conjoin(session.ToBBSes, "or"))
 	r.SentAfter = session.Start.Format("Mon 2006-01-02 15:04")

@@ -147,7 +147,7 @@ func (c *Config) Validate(knownProbs map[string]string) (valid bool) {
 			valid = false
 		}
 		for i, item := range session.MessageTypes {
-			if LookupMessageType(item.Then) == nil {
+			if _, ok := xscmsg.RegisteredTypes[item.Then]; !ok {
 				log.Printf("ERROR: config.sessions[%q].messageTypes[%d] = %q is not a recognized message type",
 					toCallSign, i, item.Then)
 				valid = false
@@ -170,8 +170,7 @@ func (c *Config) Validate(knownProbs map[string]string) (valid bool) {
 		valid = false
 	} else {
 		for tag, mtc := range c.MessageTypes {
-			mt := LookupMessageType(tag)
-			if mt == nil {
+			if _, ok := xscmsg.RegisteredTypes[tag]; !ok {
 				log.Printf("ERROR: config.messageTypes has entry for unknown message type %q", tag)
 				valid = false
 				continue
@@ -198,12 +197,12 @@ func (c *Config) Validate(knownProbs map[string]string) (valid bool) {
 				}
 			}
 		}
-		for _, mtype := range ValidMessageTypes() {
-			if _, ok := c.MessageTypes[mtype.Type.Tag]; !ok {
-				if mtype.Type.Tag == "plain" {
+		for tag := range xscmsg.RegisteredTypes {
+			if _, ok := c.MessageTypes[tag]; !ok {
+				if tag == "plain" {
 					c.MessageTypes["plain"] = new(MessageTypeConfig)
 				} else {
-					log.Printf("ERROR: config.messageTypes[%q] is not specified", mtype.Type.Tag)
+					log.Printf("ERROR: config.messageTypes[%q] is not specified", tag)
 					valid = false
 				}
 			}

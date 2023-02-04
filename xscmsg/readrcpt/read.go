@@ -18,7 +18,7 @@ const html = "read-receipt.html"
 var readReceiptRE = regexp.MustCompile(`^!RR!(.+)\n.*\n\nTo: (.+)`)
 
 func init() {
-	xscmsg.RegisterCreate(Tag, create)
+	xscmsg.RegisterCreate(messageType, create)
 	xscmsg.RegisterType(recognize)
 }
 

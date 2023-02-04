@@ -77,10 +77,10 @@ func (a *Analysis) checkMessageType() {
 			article string
 		)
 		for i, code := range a.session.MessageTypes {
-			mtype := config.LookupMessageType(code)
-			allowed = append(allowed, mtype.Type.Name)
+			mtype := xscmsg.RegisteredTypes[code]
+			allowed = append(allowed, mtype.Name)
 			if i == 0 {
-				article = mtype.Type.Article
+				article = mtype.Article
 			}
 		}
 		a.reportProblem("MessageTypeWrong", refWeeklyPractice, messageTypeWrongResponse,

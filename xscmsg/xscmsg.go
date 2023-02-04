@@ -268,15 +268,25 @@ const (
 	FOpTime FieldKey = "OPERATOR_TIME"
 )
 
-var createFuncs = map[string]func() *Message{}
+// RegisteredTypes is a map from type tag to type definition for all registered
+// types.  Callers should treat it as read-only; to register a type, use
+// RegisterCreate and RegisterType.
+var RegisteredTypes = map[string]*MessageType{
+	PlainTextTag: &plainTextMessageType, // plain text is always registered
+}
+
+var createFuncs = map[string]func() *Message{
+	PlainTextTag: CreatePlainTextMessage, // always registered for create
+}
 var recognizeFuncs []func(*pktmsg.Message, *pktmsg.Form) *Message
 
 // RegisterCreate registers a function to create a message with the specified
-// type tag.  (It is normally called by an init function in the package that
+// type.  (It is normally called by an init function in the package that
 // implements the message type.  To make a message type usable, simply import
 // its implementing package.)
-func RegisterCreate(tag string, fn func() *Message) {
-	createFuncs[tag] = fn
+func RegisterCreate(mtype *MessageType, fn func() *Message) {
+	RegisteredTypes[mtype.Tag] = mtype
+	createFuncs[mtype.Tag] = fn
 }
 
 // RegisterType registers a message type to be recognizable by the Recognize

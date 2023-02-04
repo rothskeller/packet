@@ -15,7 +15,7 @@ const (
 )
 
 func init() {
-	xscmsg.RegisterCreate(Tag, create)
+	xscmsg.RegisterCreate(formtype23, create)
 	xscmsg.RegisterType(recognize)
 
 	// Our handling, toICSPosition, and toLocation fields are variants of

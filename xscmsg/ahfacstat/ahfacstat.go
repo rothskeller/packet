@@ -12,7 +12,7 @@ import (
 const Tag = "AHFacStat"
 
 func init() {
-	xscmsg.RegisterCreate(Tag, create)
+	xscmsg.RegisterCreate(formtype, create)
 	xscmsg.RegisterType(recognize)
 
 	// Our handling, toICSPosition, and toLocation fields are variants of

@@ -18,7 +18,7 @@ const html = "delivery-receipt.html"
 var deliveryReceiptRE = regexp.MustCompile(`^!LMI!([^!]+)!DR!(.+)\n.*\nTo: (.+)`)
 
 func init() {
-	xscmsg.RegisterCreate(Tag, create)
+	xscmsg.RegisterCreate(messageType, create)
 	xscmsg.RegisterType(recognize)
 }
 

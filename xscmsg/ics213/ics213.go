@@ -10,7 +10,7 @@ import (
 const Tag = "ICS213"
 
 func init() {
-	xscmsg.RegisterCreate(Tag, create)
+	xscmsg.RegisterCreate(formtype, create)
 	xscmsg.RegisterType(recognize)
 }
 

@@ -10,7 +10,7 @@ import (
 const Tag = "EOC213RR"
 
 func init() {
-	xscmsg.RegisterCreate(Tag, create)
+	xscmsg.RegisterCreate(formtype, create)
 	xscmsg.RegisterType(recognize)
 
 	// Our toICSPosition and toLocation fields are variants of the standard

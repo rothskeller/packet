@@ -17,7 +17,7 @@ const html = "check-out.html"
 var checkOutRE = regexp.MustCompile(`(?i)^Check-Out\s+([A-Z][A-Z0-9]{2,5})\s*,(.*)(?:\n([AKNW][A-Z0-9]{2,5})\s*,(.*))?`)
 
 func init() {
-	xscmsg.RegisterCreate(Tag, create)
+	xscmsg.RegisterCreate(formtype, create)
 	xscmsg.RegisterType(recognize)
 }
 
