@@ -66,7 +66,7 @@ func testAnalyze(t *testing.T, testfile string) {
 	// testdata/config.yaml, and then allow it to be modified by the test's
 	// yaml file.
 	os.Chdir("testdata")
-	if err := config.Read(KnownProblems()); err != nil {
+	if err := config.Read(ProblemLabels); err != nil {
 		t.Fatal(err)
 	}
 	os.Chdir("..")
@@ -99,7 +99,7 @@ func testAnalyze(t *testing.T, testfile string) {
 	if err := dec.Decode(&testdata); err != nil {
 		t.Fatal(err)
 	}
-	testdata.Config.Validate(KnownProblems())
+	testdata.Config.Validate(ProblemLabels)
 	// We'll need a fake store for the analyzer to use.
 	store := &fakeStore{seenHash: testdata.SeenHash, nextID: 100}
 	// Run the analysis.

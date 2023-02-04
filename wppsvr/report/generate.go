@@ -150,7 +150,7 @@ func generateStatistics(r *Report, session *store.Session, messages []*store.Mes
 		}
 		if m.Actions&config.ActionError != 0 {
 			r.ErrorCount++
-		} else if len(m.Problems) > 1 || (len(m.Problems) == 1 && m.Problems[0] != analyze.ProbMultipleMessagesFromAddress.Code) {
+		} else if len(m.Problems) > 1 || (len(m.Problems) == 1 && m.Problems[0] != analyze.MultipleMessagesFromAddress) {
 			r.WarningCount++
 		} else {
 			r.OKCount++
@@ -231,7 +231,7 @@ func wasSimulatedDown(session *store.Session, bbs string) bool {
 // generateMessages generates the lists of valid and invalid check-in messages
 // that appear in the report.
 func generateMessages(r *Report, session *store.Session, messages []*store.Message) {
-	var problems = config.Get().Problems
+	var problems = config.Get().ProblemActionFlags
 	var jurisdictions = config.Get().Jurisdictions
 
 	messages = removeReplaced(messages)
@@ -273,15 +273,15 @@ func generateMessages(r *Report, session *store.Session, messages []*store.Messa
 			rm.Class = "ok"
 		}
 		for _, p := range m.Problems {
-			if p == analyze.ProbMultipleMessagesFromAddress.Code {
+			if p == analyze.MultipleMessagesFromAddress {
 				rm.Multiple = true
 				continue
 			}
 			if prob, ok := problems[p]; ok {
-				if prob.ActionFlags&config.ActionReport == 0 {
+				if prob&config.ActionReport == 0 {
 					continue
 				}
-				p = prob.Label
+				p = analyze.ProblemLabels[p]
 				if rm.Class == "ok" {
 					rm.Class = "warning"
 				}
@@ -341,8 +341,8 @@ func removeReplaced(messages []*store.Message) (out []*store.Message) {
 			out[outidx] = m
 			addresses[m.FromAddress] = m
 		} else if len(keeper.Problems) == 0 ||
-			keeper.Problems[len(keeper.Problems)-1] != analyze.ProbMultipleMessagesFromAddress.Code {
-			keeper.Problems = append(keeper.Problems, analyze.ProbMultipleMessagesFromAddress.Code)
+			keeper.Problems[len(keeper.Problems)-1] != analyze.MultipleMessagesFromAddress {
+			keeper.Problems = append(keeper.Problems, analyze.MultipleMessagesFromAddress)
 		}
 	}
 	return out[outidx:]

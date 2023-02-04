@@ -100,359 +100,52 @@ minimumVersions:
   RACES-MAR: 2.1
   SheltStat: 2.1
 
-# This section defines how each detected problem is treated.  Each problem has
-# the following attributes:
-#   - label (required): this is a short string label for the problem.  It
-#         appears in session reports and in the subject line of problem
-#         responses.
-#   - actions (required): this defines the actions to be taken when the problem
-#         is detected.  It contains zero or more of the following keywords:
-#         report    - the problem gets listed in the report
-#         error     - the message gets counted as an error
-#         dontcount - the message does not get counted as a valid checkin
-#         dropmsg   - drop the entire message from the report
-#   - response (optional): this defines the text describing the problem that
-#         should be included in the problem response.  (A problem response is
-#         sent only if the message has one or more problems with defined
-#         response text).  The response text may include interpolated variables.
-#   - responses (optional): some problems can choose between multiple response
-#         texts based on the specifics of the problem detected.  In those cases,
-#         there will be multiple response texts under the "responses" key rather
-#         than a single response text under the "response" key.
+# This section defines how each detected problem is treated.  Each problem code
+# maps to a list of actions to be taken when the problem is detected, which is a
+# space-separated list of zero or more of the following keywords:
+#   respond   - the problem should be described in a response to the sender
+#   report    - the problem gets listed in the report
+#   error     - the message gets counted as an error
+#   dontcount - the message does not get counted as a valid checkin
+#   dropmsg   - drop the entire message from the report
 problems:
-  BounceMessage:
-    label: message has no return address (probably auto-response)
-    actions: report dontcount
-  CallSignConflict:
-    label: call sign conflict
-    actions: report error
-    response: |
-      This message has conflicting call signs.  The Subject line says the call
-      sign is {FROMCALLSIGN}, but the Operator Call Sign field of the form says
-      {OPCALL}.  The two should agree.  (This message will be counted as a
-      practice attempt by {FROMCALLSIGN}.)
-  DeliveryReceipt:
-    label: DELIVERED receipt message
-    actions: dropmsg
-  FormCorrupt:
-    label: incorrectly encoded form
-    actions: report error
-    response: |
-      This message appears to contain an encoded form, but the encoding is
-      incorrect.  It appears to have been created or edited by software other
-      than the current PackItForms software.  Please use current PackItForms
-      software to encode messages containing forms.
-  FormDestination:
-    label: incorrect destination for form
-    actions: report error
-    response: |
-      This message form is addressed to ICS Position "{ACTUALPOSN}" at
-      Location "{ACTUALLOC}".  {MSGTYPE}s should be addressed to {EXPECTPOSNS}
-      at {EXPECTLOCS}.
-    references: formRouting
-  FormHandlingOrder:
-    label: incorrect handling order for form
-    actions: report error
-    response: |
-      This message has handling order {ACTUALHO}.  According to the SCCo
-      ARES/RACES Recommended Form Routing document, it should have handling
-      order {EXPECTHO}.
-    references: formRouting
-  FormInvalid:
-    label: invalid form contents
-    actions: report error
-    response: |
-      This message contains a form with invalid contents:
-      {PROBLEMS}
-      Please verify the correctness of the form before sending.
-  FormNoCallSign:
-    label: no call sign in form message
-    actions: report dontcount
-    response: |
-      This message cannot be counted because it's not clear who sent it.  There
-      is no call sign in the return address, or after the word "Practice" on the
-      subject line, or in the Operator Call field of the form.  In order for a
-      message to count, there must be a call sign in at least one of those
-      places.
-  FormPracticeSubject:
-    label: incorrect practice message details in form
-    actions: report
-    response: |
-      The {SUBJECTFIELD} field of this form does not have the correct format.
-      It should have the word "Practice" followed by four comma-separated
-      fields:
-          Practice CallSign, FirstName, Jurisdiction, NetDate
-      NetDate should be in the form MM/DD/YYYY.
-    references: weeklyPractice
-  FormSubject:
-    label: message subject doesn't agree with form contents
-    actions: report error
-    response: |
-      This message has
-          Subject: {ACTUALSUBJ}
-      but, based on the contents of the form, it should have
-          Subject: {EXPECTSUBJ}
-      PackItForms automatically generates the Subject line from the form
-      contents; it should not be overridden manually.
-  FormToICSPosition:
-    label: incorrect "To ICS Position" for form
-    actions: report error
-    response: |
-      This message form is addressed to ICS Position "{ACTUALPOSN}".
-      {MSGTYPE}s should be addressed to ICS Position {EXPECTPOSNS}.
-    references: formRouting
-  FormToLocation:
-    label: incorrect "To Location" for form
-    actions: report error
-    response: |
-      This message form is addressed to Location "{ACTUALLOC}".  {MSGTYPE}s
-      should be addressed to Location {EXPECTLOCS}.
-    references: formRouting
-  FormVersion:
-    label: form version out of date
-    actions: report error
-    response: |
-      This message contains version {ACTUALVER} of the {MSGTYPE}, but that
-      version is not current.  Please use version {EXPECTVER} or newer of the
-      form.  (You can get the newer form by updating your PackItForms
-      installation.)
-  FromBBSDown:
-    label: message from incorrect BBS (simulated outage)
-    actions: report error
-    response: |
-      This message was sent from {FROMBBS}, which has a simulated outage for
-      {SESSIONNAME} on {SESSIONDATE}.  Practice messages should not be sent from
-      BBSes that have a simulated outage.
-    references: weeklyPractice
-  HandlingOrderCode:
-    label: unknown handling order code
-    actions: report error
-    response: |
-      The Subject line of this message contains an invalid Handling Order code
-      ({HANDLING}). The valid codes are "I" for Immediate, "P" for Priority, and
-      "R" for Routine.
-    references: subjectLine
-  MessageCorrupt:
-    label: message could not be parsed
-    actions: report dontcount
-  MessageFromWinlink:
-    label: message sent from Winlink
-    actions: report error
-    response: |
-      This message was sent from Winlink.  Winlink should not be used for
-      emergency communications, unless no alternatives are available, because it
-      uses a message encoding system ("quoted-printable") that Outpost cannot
-      decode.  As a result, some messages (particularly those with long lines
-      and those containing equals signs) may be garbled in transmission.
-  MessageNotASCII:
-    label: message has non-ASCII characters
-    actions: report error
-    response: |
-      This message contains characters that are not in the standard ASCII
-      character set (i.e., not on a standard keyboard).  Non-standard characters
-      should be avoided in packet messages, because the receiving system may not
-      know how to render them.  Note that some software may introduce undesired
-      non-standard characters (e.g., Microsoft Word's "smart quotes" feature).
-      If you use message text composed in such software, make sure those
-      features are disabled.
-  MessageNotPlainText:
-    label: not a plain text message
-    actions: report error
-    response: |
-      This message is not a plain text message.  All SCCo packet messages should
-      be plain text only.  ("Rich text" or HTML-formatted messages, common in
-      email systems, are far larger than plain text messages and put too much
-      strain on the packet infrastructure.)  Please configure your software to
-      send plain text messages when sending to an SCCo BBS.
-  MessageTooEarly:
-    label: message before start of practice session
-    actions: report dontcount
-    response: |
-      This message arrived at {TOBBS} on {MSGDATE}.  However, practice messages
-      for {SESSIONNAME} aren't accepted until {SESSIONSTART}.
-    references: weeklyPractice
-  MessageTooLate:
-    label: message after end of practice session
-    actions: report dontcount
-    response: |
-      This message arrived at {TOBBS} on {MSGDATE}.  That was too late to be
-      counted for the {SESSIONNAME} on {SUBJECTDATE}.
-    references: weeklyPractice
-  MessageTypeWrong:
-    label: incorrect message type
-    actions: report error
-    response: |
-      This message is {AMSGTYPE}.  For the {SESSIONNAME} on {SESSIONDATE},
-      {AEXPECTTYPE} is expected.
-    references: weeklyPractice
-  MsgNumFormat:
-    label: incorrect message number format
-    actions: report error
-    response: |
-      The message number of this message is not formatted correctly.  It should
-      have a format like "XND-042P", containing:
-        - a three-character prefix (usually the sender's call sign suffix),
-        - a dash,
-        - a number with at least three digits, and
-        - a "P", "M", or "R" suffix.
-      All letters should be upper case.  In Outpost, the format of the message
-      number is set in the Message Settings dialog, which should be configured
-      according to county standards.
-    references: outpostConfig subjectLine
-  MsgNumPrefix:
-    label: incorrect message number prefix
-    actions: report
-    response: |
-      The message number of this message has the prefix "{ACTUALPFX}".  The
-      prefix should be the last three characters of your call sign,
-      "{EXPECTPFX}".
-    references: subjectLine
-  MultipleMessagesFromAddress:
-    label: multiple messages from this address
-    actions: report
-  NoCallSign:
-    label: no call sign in message
-    actions: report dontcount
-    response: |
-      This message cannot be counted because it's not clear who sent it.  There
-      is no call sign in the return address or after the word "Practice" on the
-      subject line.  In order for a message to count, there must be a call sign
-      in at least one of those places.
-  PIFOVersion:
-    label: PackItForms version out of date
-    actions: report error
-    response: |
-      This message used version {ACTUALVER} of PackItForms to encode the form,
-      but that version is not current.  Please use PackItForms version
-      {EXPECTVER} or newer to encode messages containing forms.
-  PracticeAsFormName:
-    label: incorrect subject line format (underline after "Practice")
-    actions: report error
-    response: |
-      This message has an incorrect subject line format.  According to SCCo
-      standards, the subject should look like
-          AAA-111P_R_Practice A6AAA, Charlie, Nowhereville, 03/16/2019
-          (msgnum) |            |    (name)   (city)        (net date)
-            (handling order)  (call sign)
-      Note that there is no underline after the word "Practice".
-    references: subjectLine weeklyPractice
-  PracticeSubjectFormat:
-    label: incorrect practice message details
-    actions: report
-    response: |
-      The Subject of this message does not have the correct format.  After the
-      message number and handling order, it should have the word "Practice"
-      followed by four comma-separated fields:
-          Practice CallSign, FirstName, Jurisdiction, NetDate
-      NetDate should be in the form MM/DD/YYYY.
-    references: weeklyPractice
-  ReadReceipt:
-    label: unexpected READ receipt message
-    actions: report dontcount
-    response: |
-      This message is an Outpost "read receipt", which should not have been
-      sent.  Most likely, your Outpost installation has the "Auto-Read Receipt"
-      setting turned on.  The SCCo-standard Outpost configuration specifies that
-      this setting should be turned off.  You can find it on the Receipts tab of
-      the Message Settings dialog in Outpost.
-    references: outpostConfig
-  SessionDate:
-    label: incorrect net date in subject
-    actions: report
-    response: |
-      This message is being counted for {SESSIONNAME} on {SESSIONDATE}, but the
-      subject line says it's intended for a net on {SUBJECTDATE}.  This may
-      indicate that the message was sent to the wrong net.
-    references: weeklyPractice
-  SubjectFormat:
-    label: incorrect subject line format
-    actions: report error
-    response: |
-      This message has an incorrect subject line format.  According to SCCo
-      standards, the subject should look like
-          AAA-111P_R_Practice A6AAA, Charlie, Nowhereville, 03/16/2019
-          (msgnum) |            |    (name)   (city)        (net date)
-            (handling order)  (call sign)
-    references: subjectLine weeklyPractice
-  SubjectPlainForm:
-    label: form name in subject of non-form message
-    actions: report error
-    response: |
-      This message has a form name on the subject line, but does not contain a
-      recognizable form.  If this is a plain text message, there should be no
-      form name between the handling order and the word "Practice".  If this is
-      a form message, the form is improperly encoded and could not be
-      recognized.
-    references: subjectLine
-  SubjectHasSeverity:
-    label: severity on subject line
-    actions: report error
-    response: |
-      The Subject line of this message contains a both a Severity code and a
-      Handling Order code ("_{SEVERITY}/{HANDLING}_").  This is an outdated
-      Subject line style.  Current SCCo standards include only the Handling
-      Order code on the Subject line ("_{HANDLING}_").
-    references: subjectLine
-  ToBBS:
-    label: message to incorrect BBS
-    actions: report dontcount
-    response: |
-      This message was sent to {TOCALLSIGN} at {TOBBS}.  Practice messages for
-      {SESSIONNAME} on {SESSIONDATE} must be sent to {TOCALLSIGN} at
-      {SESSIONBBSES}.
-    references: weeklyPractice
-  ToBBSDown:
-    label: message to incorrect BBS (simulated outage)
-    actions: report dontcount
-    response: |
-      This message was sent to {TOCALLSIGN} at {TOBBS}, but {TOBBS} has a
-      simulated outage for {SESSIONNAME} on {SESSIONDATE}.  Practice messages
-      for this session must be sent to {TOCALLSIGN} at {SESSIONBBSES}.
-    references: weeklyPractice
-  UnknownJurisdiction:
-    label: unknown jurisdiction
-    actions: report
-    response: |
-      The jurisdiction "{JURISDICTION}" is not recognized.  Please use one of
-      the recognized jurisdiction names or abbreviations.
-    references: bbsList weeklyPractice
-
-# This section defines the text for each of the references that can be mentioned
-# in a problem response.  Note that the last one, packetGroup, is mentioned in
-# every problem response.
-references:
-  bbsList: |
-    * The "County Packet Frequency List and BBS Info" page on the county
-      ARES/RACES website gives a list of the known jurisdiction names and their
-      abbreviations.  It is available at
-      https://www.scc-ares-races.org/freqs/packet/freqs.html#assignments
-  formRouting: |
-    * The "SCCo ARES/RACES Recommended Form Routing" document gives
-      recommendations for, among other things, what handling orders should be
-      used for different types of forms, and what positions and locations they
-      should be sent to.  It is available from the "Go Kit Forms" page at
-      https://www.scc-ares-races.org/operations/go-kit-forms.html
-  outpostConfig: |
-    * The "Standard Outpost Configuration Instructions" document describes how
-      to configure the Outpost messaging software to send messages following
-      county standards.  It is available from the "Packet BBS Service" page at
-      https://www.scc-ares-races.org/data/packet/index.html
-  subjectLine: |
-    * The "Standard Packet Message Subject Line" document describes how to
-      compose the subject line of a packet message following county standards.
-      It is available from the "Packet BBS Service" page at
-      https://www.scc-ares-races.org/data/packet/index.html
-  weeklyPractice: |
-    * The "Weekly SPECS/SVECS Packet Practice" page on the county ARES/RACES
-      website gives details of the packet practice exercise, including the net
-      practice schedules, the schedule of what type of message to send, the
-      schedule of simulated outages of BBS systems, and the format of the subject
-      line for practice messages.  It is available at
-      https://www.scc-ares-races.org/data/packet/weekly-packet-practice.html
-  packetGroup: |
-    * If you need assistance, you can request it in the packet discussion group.
-      To sign up for this group, see the Discussion Groups page at
-      https://www.scc-ares-races.org/discuss-groups.html
+  BounceMessage: report dontcount
+  CallSignConflict: respond report error
+  DeliveryReceipt: dropmsg
+  FormCorrupt: respond report error
+  FormDestination: respond report error
+  FormHandlingOrder: respond report error
+  FormInvalid: respond report error
+  FormNoCallSign: respond report dontcount
+  FormPracticeSubject: respond report
+  FormSubject: respond report error
+  FormToICSPosition: respond report error
+  FormToLocation: respond report error
+  FormVersion: respond report error
+  FromBBSDown: respond report error
+  HandlingOrderCode: respond report error
+  MessageCorrupt: report dontcount
+  MessageFromWinlink: respond report error
+  MessageNotASCII: respond report error
+  MessageNotPlainText: respond report error
+  MessageTooEarly: respond report dontcount
+  MessageTooLate: respond report dontcount
+  MessageTypeWrong: respond report error
+  MsgNumFormat: respond report error
+  MsgNumPrefix: respond report
+  MultipleMessagesFromAddress: report
+  NoCallSign: respond report dontcount
+  PIFOVersion: respond report error
+  PracticeAsFormName: respond report error
+  PracticeSubjectFormat: respond report
+  ReadReceipt: respond report dontcount
+  SessionDate: respond report
+  SubjectFormat: respond report error
+  SubjectPlainForm: respond report error
+  SubjectHasSeverity: respond report error
+  ToBBS: respond report dontcount
+  ToBBSDown: respond report dontcount
+  UnknownJurisdiction: respond report
 
 # This section lists the known jurisdiction names and their abbreviations.
 jurisdictions:

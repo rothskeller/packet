@@ -21,7 +21,7 @@ var variableRE = regexp.MustCompile(`\{[^}]*\}`)
 // Validate checks the configuration to make sure all fields have valid values.
 // If there are any errors, they are logged, and the function returns false.
 // If the configuration is valid, the function returns true.
-func (c *Config) Validate(knownProbs map[string]map[string]struct{}, knownVars map[string]struct{}) (valid bool) {
+func (c *Config) Validate(knownProbs map[string]string) (valid bool) {
 	var err error
 	valid = true // assume valid until proven otherwise
 	var haveHTMLReports bool
@@ -179,75 +179,43 @@ func (c *Config) Validate(knownProbs map[string]map[string]struct{}, knownVars m
 	}
 
 	// Parse the problems.
-	if c.Problems == nil {
+	if c.ProblemActions == nil {
 		log.Printf("ERROR: config.problems is not specified")
 		valid = false
 	} else {
-		for code, problem := range c.Problems {
-			probVars, ok := knownProbs[code]
-			if !ok {
+		c.ProblemActionFlags = make(map[string]Action)
+		for code, actions := range c.ProblemActions {
+			if _, ok := knownProbs[code]; !ok {
 				log.Printf("ERROR: config.problems has entry for unknown problem %q", code)
 				valid = false
 				continue
 			}
-			if problem.Label == "" {
-				log.Printf("ERROR: config.problems[%q].label is not specified", code)
-				valid = false
-			}
-			for _, word := range strings.Fields(problem.Actions) {
+			var flags Action
+			for _, word := range strings.Fields(actions) {
 				switch word {
+				case "respond":
+					flags |= ActionRespond
 				case "report":
-					problem.ActionFlags |= ActionReport
+					flags |= ActionReport
 				case "error":
-					problem.ActionFlags |= ActionError
+					flags |= ActionError
 				case "dontcount":
-					problem.ActionFlags |= ActionDontCount
+					flags |= ActionDontCount
 				case "dropmsg":
-					problem.ActionFlags |= ActionDropMsg
+					flags |= ActionDropMsg
 				default:
 					log.Printf("ERROR: config.problems[%q].actions contains %q, which is not recognized", code, word)
 					valid = false
 				}
 			}
-			if problem.Response != "" {
-				problem.ActionFlags |= ActionRespond
-				for _, variable := range variableRE.FindAllString(problem.Response, -1) {
-					if probVars != nil {
-						if _, ok := probVars[variable[1:len(variable)-1]]; ok {
-							continue
-						}
-					}
-					if _, ok := knownVars[variable[1:len(variable)-1]]; ok {
-						continue
-					}
-					log.Printf("ERROR: config.problems[%q].response refers to unknown variable %q", code, variable)
-					valid = false
-				}
-			}
-			if c.References != nil {
-				for _, word := range strings.Fields(problem.References) {
-					if c.References[word] == "" {
-						log.Printf("ERROR: config.problems[%q].references contains %q, but config.references does not", code, word)
-						valid = false
-					}
-				}
-			}
+			c.ProblemActionFlags[code] = flags
 		}
 		for code := range knownProbs {
-			if _, ok := c.Problems[code]; !ok {
+			if _, ok := c.ProblemActions[code]; !ok {
 				log.Printf("ERROR: config.problems has no entry for problem %q", code)
 				valid = false
 			}
 		}
-	}
-
-	// Verify the presence of references, especially the required one.
-	if c.References == nil {
-		log.Printf("ERROR: config.references is not specified")
-		valid = false
-	} else if c.References["packetGroup"] == "" {
-		log.Printf("ERROR: config.references[\"packetGroup\"] is not specified")
-		valid = false
 	}
 
 	// Verify the jurisdiction abbreviations and fill out the map.

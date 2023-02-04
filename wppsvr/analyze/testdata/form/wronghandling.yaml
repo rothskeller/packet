@@ -55,5 +55,5 @@ responses:
     to: kc6rsc@w1xsc.ampr.org
     subject: TUE-102P_R_Incorrect handling order for form
     bodyREs:
-      - it should have handling order
+      - It should have handling order
       - SCCo ARES/RACES Recommended Form Routing

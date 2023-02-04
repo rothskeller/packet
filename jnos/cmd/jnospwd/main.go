@@ -19,7 +19,7 @@ func main() {
 		fmt.Fprintf(os.Stderr, "usage: jnospwd bbsname mailbox challenge\n")
 		os.Exit(2)
 	}
-	config.Read(analyze.KnownProblems())
+	config.Read(analyze.ProblemLabels)
 	bbs := config.Get().BBSes[strings.ToUpper(os.Args[1])]
 	if bbs == nil {
 		fmt.Fprintf(os.Stderr, "ERROR: no such BBS %q\n", os.Args[1])

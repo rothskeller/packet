@@ -39,9 +39,17 @@ type Analysis struct {
 	// toBBS is the name of the BBS to which the message was sent (i.e.,
 	// the one from which we retrieved it).
 	toBBS string
-	// problems is the set of problems found with the message.  Each one
-	// maps to the appropriate response key for that problem.
-	problems map[*Problem]struct{}
+	// problems is the set of problems found with the message.
+	problems map[string]struct{}
+	// reportSubject is the subject of the problem report message.
+	reportSubject string
+	// reportText is the text of the problem report message.
+	reportText strings.Builder
+	// references is the bitmask of references that should be cited in the
+	// problem report message.
+	references reference
+	// invalid is a flag indicating that the message should not be counted.
+	invalid bool
 	// responses is a list of messages that should be sent in response to
 	// this received message.  These would include delivery receipts and/or
 	// problem reports.
@@ -95,48 +103,67 @@ func Analyze(st astore, session *store.Session, bbs, raw string) *Analysis {
 	}
 	// Assign it a local message ID.
 	a.localID = st.NextMessageID(a.session.Prefix)
-	// If we had a parse error, note that and don't analyze further.
-	a.problems = make(map[*Problem]struct{})
-	if err != nil {
-		a.problems[ProbMessageCorrupt] = struct{}{}
-		return &a
+	// Determine the message type (if no parse error and not a bounce).
+	if err == nil && a.msg.Flags&pktmsg.AutoResponse == 0 {
+		a.xsc = xscmsg.Recognize(a.msg, true)
 	}
-	// If it was a bounce message, note that and don't analyze further.
-	if a.msg.Flags&pktmsg.AutoResponse != 0 {
-		a.problems[ProbBounceMessage] = struct{}{}
-		return &a
-	}
-	// Determine what kind of message it was.
-	a.xsc = xscmsg.Recognize(a.msg, true)
-	// If it was a receipt, note that and don't analyze further.
-	switch a.xsc.Type.Tag {
-	case delivrcpt.Tag:
-		a.problems[ProbDeliveryReceipt] = struct{}{}
-		return &a
-	case readrcpt.Tag:
-		a.problems[ProbReadReceipt] = struct{}{}
-		return &a
-	}
-	// Parse the subject line.
-	if a.subject = xscmsg.ParseSubject(a.msg.Header.Get("Subject")); a.subject != nil {
-		a.Practice = a.parsePracticeSubject()
-	}
-	// Determine the sender's call sign, looking at various sources.
-	a.FromCallSign = a.fromCallSign()
-	// Check the message for problems and log them in the analysis.
-PROBLEMS:
-	for _, prob := range orderedProblems() {
-		for _, ifnot := range prob.ifnot {
-			if _, ok := a.problems[ifnot]; ok {
-				continue PROBLEMS
-			}
-		}
-		if found := prob.detect(&a); found {
-			a.problems[prob] = struct{}{}
-		}
-	}
+	// Find the problems with the message.
+	a.findProblems(err)
 	return &a
 }
+
+// findProblems finds all of the problems with the message.
+func (a *Analysis) findProblems(parseErr error) {
+	a.problems = make(map[string]struct{})
+	if a.notPracticeMessage(parseErr) {
+		return
+	}
+	a.checkSender() // sets a.FromCallSign
+	a.checkReceiver()
+	a.checkSubject() // sets a.subject and a.Practice
+	a.checkDate()
+	a.checkBody()
+}
+
+// notPracticeMessage checks for problems that indicate the message is not a
+// practice message at all, and shouldn't get the full analysis.
+func (a *Analysis) notPracticeMessage(parseErr error) bool {
+	switch {
+	case parseErr != nil:
+		// If we had a parse error, note that and don't analyze further.
+		a.problems["MessageCorrupt"] = struct{}{}
+		return true
+	case a.msg.Flags&pktmsg.AutoResponse != 0:
+		// If it was a bounce message, note that and don't analyze further.
+		a.problems["BounceMessage"] = struct{}{}
+		return true
+	case a.xsc.Type.Tag == delivrcpt.Tag:
+		a.problems["DeliveryReceipt"] = struct{}{}
+		return true
+	case a.xsc.Type.Tag == readrcpt.Tag:
+		a.reportProblem("ReadReceipt", refOutpostConfig, readReceiptResponse)
+		return true
+	}
+	return false
+}
+
+// MultipleMessagesFromAddress is a pseudo-problem used during reporting, to
+// mark messages that have been superseded by other messages.
+const MultipleMessagesFromAddress = "MultipleMessagesFromAddress"
+
+func init() {
+	ProblemLabels["BounceMessage"] = "message has no return address (probably auto-response)"
+	ProblemLabels["DeliveryReceipt"] = "DELIVERED receipt message"
+	ProblemLabels["MessageCorrupt"] = "message could not be parsed"
+	ProblemLabels[MultipleMessagesFromAddress] = "multiple messages from this address"
+	ProblemLabels["ReadReceipt"] = "unexpected READ receipt message"
+}
+
+const readReceiptResponse = `This message is an Outpost "read receipt", which
+should not have been sent.  Most likely, your Outpost installation has the
+"Auto-Read Receipt" setting turned on.  The SCCo-standard Outpost configuration
+specifies that this setting should be turned off.  You can find it on the
+Receipts tab of the Message Settings dialog in Outpost.`
 
 // Commit commits the analyzed message to the database.
 func (a *Analysis) Commit(st astore) {
@@ -183,8 +210,8 @@ func (a *Analysis) MessageType() string {
 // resulting action flags.
 func (a *Analysis) ProblemsActions() (problems []string, actions config.Action) {
 	for p := range a.problems {
-		actions |= config.Get().Problems[p.Code].ActionFlags
-		problems = append(problems, p.Code)
+		actions |= config.Get().ProblemActionFlags[p]
+		problems = append(problems, p)
 	}
 	sort.Strings(problems)
 	return

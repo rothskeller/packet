@@ -22,7 +22,7 @@ func main() {
 		st  *store.Store
 		err error
 	)
-	if err = config.Read(analyze.KnownProblems()); err != nil {
+	if err = config.Read(analyze.ProblemLabels); err != nil {
 		log.Fatal(err)
 	}
 	if st, err = store.Open(); err != nil {

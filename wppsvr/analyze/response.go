@@ -2,12 +2,10 @@ package analyze
 
 import (
 	"fmt"
-	"regexp"
 	"strings"
 	"time"
 
 	"github.com/rothskeller/packet/pktmsg"
-	"github.com/rothskeller/packet/wppsvr/config"
 	"github.com/rothskeller/packet/wppsvr/english"
 	"github.com/rothskeller/packet/wppsvr/store"
 	"github.com/rothskeller/packet/xscmsg"
@@ -17,6 +15,16 @@ import (
 
 // The time.Now function can be overridden by tests.
 var now = time.Now
+
+type reference uint
+
+const (
+	refBBSList reference = 1 << iota
+	refOutpostConfig
+	refRouting
+	refSubjectLine
+	refWeeklyPractice
+)
 
 // Responses returns the list of messages that should be sent in response to the
 // analyzed message.
@@ -63,42 +71,18 @@ func (a *Analysis) Responses(st astore) (list []*store.Response) {
 // logged with the message.
 func (a *Analysis) responseMessage() (subject, body string) {
 	var (
-		count      int
-		counts     string
-		invalid    bool
-		invalids   string
-		rbody      strings.Builder
-		wrapper    *english.Wrapper
-		problems   = config.Get().Problems
-		reftext    = config.Get().References
-		references = map[string]bool{}
+		counts   string
+		invalids string
+		rbody    strings.Builder
+		wrapper  *english.Wrapper
 	)
-	// Count the number of problems to include in the message, and note
-	// whether any of them prevent the message from counting.  We need that
-	// information for the header of the message.
-	for p := range a.problems {
-		pdef := problems[p.Code]
-		if pdef.ActionFlags&config.ActionRespond != 0 {
-			count++
-			subject = pdef.Label
-		}
-		if pdef.ActionFlags&config.ActionDontCount != 0 {
-			invalid = true
-		}
-		for _, ref := range strings.Fields(pdef.References) {
-			references[ref] = true
-		}
-	}
-	switch count {
-	case 0:
+	if a.reportSubject == "" {
 		return "", "" // no problem response message should be sent
-	case 1:
-		subject = strings.ToUpper(subject[:1]) + subject[1:]
-	default:
-		counts = "s"
-		subject = "Issues with packet practice message"
 	}
-	if invalid {
+	if a.reportSubject == multipleProblemsSubject {
+		counts = "s"
+	}
+	if a.invalid {
 		invalids = "  The message will not be counted."
 	}
 	// Generate the header of the message.
@@ -109,6 +93,7 @@ func (a *Analysis) responseMessage() (subject, body string) {
     Subject: %s
     Date: %s
 has the following issue%s.%s
+
 `,
 		a.msg.ReturnAddress(),
 		strings.ToLower(a.session.CallSign), strings.ToLower(a.toBBS),
@@ -116,44 +101,59 @@ has the following issue%s.%s
 		a.msg.Header.Get("Date"),
 		counts, invalids)
 	// Add the paragraphs describing each problem.
-	for p := range a.problems {
-		if problems[p.Code].ActionFlags&config.ActionRespond != 0 {
-			writeProblemResponse(a, p, problems[p.Code].Response, wrapper)
-		}
-	}
+	wrapper.WriteString(a.reportText.String())
 	// Add the references.
-	wrapper.WriteString("\nFor more information:\n")
-	for ref := range references {
-		if ref != "packetGroup" { // save it for last
-			writeReference(wrapper, reftext[ref])
-		}
+	wrapper.WriteString("For more information:")
+	if a.references&refBBSList != 0 {
+		wrapper.WriteString(bbsListRefText)
 	}
-	writeReference(wrapper, reftext["packetGroup"])
+	if a.references&refOutpostConfig != 0 {
+		wrapper.WriteString(outpostConfigRefText)
+	}
+	if a.references&refRouting != 0 {
+		wrapper.WriteString(routingRefText)
+	}
+	if a.references&refSubjectLine != 0 {
+		wrapper.WriteString(subjectLineRefText)
+	}
+	if a.references&refWeeklyPractice != 0 {
+		wrapper.WriteString(weeklyPracticeRefText)
+	}
+	wrapper.WriteString(packetGroupRefText)
 	wrapper.Close()
-	return subject, rbody.String()
-}
-func writeReference(wrapper *english.Wrapper, reftext string) {
-	for _, line := range strings.Split(strings.TrimSpace(reftext), "\n") {
-		wrapper.WriteString("  " + line + "\n")
-	}
+	return a.reportSubject, rbody.String()
 }
 
-var variableRE = regexp.MustCompile(`\{([^}]*)\}`)
-
-func writeProblemResponse(a *Analysis, p *Problem, response string, wrapper *english.Wrapper) {
-	wrapper.WriteString("\n")
-	for {
-		if match := variableRE.FindStringIndex(response); match != nil {
-			wrapper.WriteString(response[:match[0]])
-			if fn, ok := p.Variables[response[match[0]+1:match[1]-1]]; ok && fn != nil {
-				wrapper.WriteString(fn(a))
-			} else {
-				wrapper.WriteString(Variables[response[match[0]+1:match[1]-1]](a))
-			}
-			response = response[match[1]:]
-		} else {
-			wrapper.WriteString(response)
-			return
-		}
-	}
-}
+const bbsListRefText = `
+  * The "County Packet Frequency List and BBS Info" page on the county
+    ARES/RACES website gives a list of the known jurisdiction names and their
+    abbreviations.  It is available at
+    https://www.scc-ares-races.org/freqs/packet/freqs.html#assignments`
+const outpostConfigRefText = `
+  * The "Standard Outpost Configuration Instructions" document describes how
+    to configure the Outpost messaging software to send messages following
+    county standards.  It is available from the "Packet BBS Service" page at
+    https://www.scc-ares-races.org/data/packet/index.html`
+const routingRefText = `
+  * The "SCCo ARES/RACES Recommended Form Routing" document gives
+    recommendations for, among other things, what handling orders should be
+    used for different types of forms, and what positions and locations they
+    should be sent to.  It is available from the "Go Kit Forms" page at
+    https://www.scc-ares-races.org/operations/go-kit-forms.html`
+const subjectLineRefText = `
+  * The "Standard Packet Message Subject Line" document describes how to
+    compose the subject line of a packet message following county standards.
+    It is available from the "Packet BBS Service" page at
+    https://www.scc-ares-races.org/data/packet/index.html`
+const weeklyPracticeRefText = `
+  * The "Weekly SPECS/SVECS Packet Practice" page on the county ARES/RACES
+    website gives details of the packet practice exercise, including the net
+    practice schedules, the schedule of what type of message to send, the
+    schedule of simulated outages of BBS systems, and the format of the subject
+    line for practice messages.  It is available at
+    https://www.scc-ares-races.org/data/packet/weekly-packet-practice.html`
+const packetGroupRefText = `
+  * If you need assistance, you can request it in the packet discussion group.
+    To sign up for this group, see the Discussion Groups page at
+    https://www.scc-ares-races.org/discuss-groups.html
+` // This one is always last and has a newline at the end on purpose.

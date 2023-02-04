@@ -23,14 +23,15 @@ type Config struct {
 	SessionDefaults *SessionConfig            `yaml:"sessionDefaults"`
 	Sessions        map[string]*SessionConfig `yaml:"sessions"`
 	MinimumVersions map[string]string         `yaml:"minimumVersions"`
-	Problems        map[string]*ProblemConfig `yaml:"problems"`
-	References      map[string]string         `yaml:"references"`
+	ProblemActions  map[string]string         `yaml:"problems"`
 	Jurisdictions   map[string]string         `yaml:"jurisdictions"`
 	FormRouting     map[string]*FormRouting   `yaml:"formRouting"`
 	ListenAddr      string                    `yaml:"listenAddr"`
 	SMTP            *SMTPConfig               `yaml:"smtp"`
 	CanViewEveryone []string                  `yaml:"canViewEveryone"`
 	CanEditSessions []string                  `yaml:"canEditSessions"`
+
+	ProblemActionFlags map[string]Action `yaml:"-"`
 }
 
 // An SMTPConfig describes how to send email via SMTP.
@@ -47,16 +48,6 @@ type FormRouting struct {
 	HandlingOrder string   `yaml:"HandlingOrder"`
 	ToICSPosition []string `yaml:"ToICSPosition"`
 	ToLocation    []string `yaml:"ToLocation"`
-}
-
-// A ProblemConfig describes how a particular problem is handled.
-type ProblemConfig struct {
-	Label      string `yaml:"label"`
-	Actions    string `yaml:"actions"`
-	Response   string `yaml:"response"`
-	References string `yaml:"references"`
-
-	ActionFlags Action `yaml:"-"`
 }
 
 // Action is a flag, or a bitmask of flags, describing the action(s) to take in
@@ -138,7 +129,7 @@ func Get() *Config {
 
 // Read reads the system configuration from the config.yaml file.  If an error
 // occurs, the previous configuration is retained and the error is returned.
-func Read(knownProbs map[string]map[string]struct{}, knownVars map[string]struct{}) (err error) {
+func Read(knownProbs map[string]string) (err error) {
 	var (
 		newconfig Config
 		configFH  *os.File
@@ -156,7 +147,7 @@ func Read(knownProbs map[string]map[string]struct{}, knownVars map[string]struct
 		return err
 	}
 	newconfig.applySessionDefaults()
-	if !newconfig.Validate(knownProbs, knownVars) {
+	if !newconfig.Validate(knownProbs) {
 		return errors.New("invalid configuration data")
 	}
 	SetConfig(&newconfig)

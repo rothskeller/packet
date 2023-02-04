@@ -37,7 +37,7 @@ func main() {
 	if st, err = store.Open(); err != nil {
 		log.Fatalf("ERROR: %s", err)
 	}
-	if err = config.Read(analyze.KnownProblems()); err != nil {
+	if err = config.Read(analyze.ProblemLabels); err != nil {
 		os.Exit(1)
 	}
 	if err = webserver.Run(st); err != nil {
@@ -60,11 +60,11 @@ func step(st *store.Store) {
 		}
 		sleep5min()
 	}()
-	maybeReopenLog()                     // at midnight on the first of each month
-	config.Read(analyze.KnownProblems()) // re-read config in case it has changed
-	checkBBSes(st)                       // retrieve and respond to check-in messages
-	closeSessions(st)                    // close sessions that are ending and send reports
-	openSessions(st)                     // open sessions that should be running
+	maybeReopenLog()                   // at midnight on the first of each month
+	config.Read(analyze.ProblemLabels) // re-read config in case it has changed
+	checkBBSes(st)                     // retrieve and respond to check-in messages
+	closeSessions(st)                  // close sessions that are ending and send reports
+	openSessions(st)                   // open sessions that should be running
 }
 
 // lockFH is the singleton lock file used in ensureSingleton.  It is declared at
