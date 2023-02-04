@@ -146,6 +146,8 @@ func (r *Report) emailStatistics(w *quotedprintable.Writer) {
 
 func (r *Report) emailMessages(w *quotedprintable.Writer) {
 	var hasMultiple bool
+	var serverURL = config.Get().ServerURL
+
 	io.WriteString(w, `<div style="max-width:640px;margin-bottom:24px"><div style="font-size:20px;font-weight:bold;color:#444">Messages</div><table cellspacing="0" cellpadding="0">`)
 	for _, m := range r.Messages {
 		var multiple string
@@ -153,8 +155,12 @@ func (r *Report) emailMessages(w *quotedprintable.Writer) {
 		if m.Multiple {
 			multiple, hasMultiple = `*`, true
 		}
-		fmt.Fprintf(w, `<td style="padding:4px 0 0 16px">%s%s</td><td style="padding:4px 0 0 16px">%s</td><td style="padding:4px 0 0 16px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:%s">%s%s</td></tr>`,
-			m.Source, multiple, m.Jurisdiction, classColor[m.Class], classLabel[m.Class], m.Problem)
+		fmt.Fprintf(w, `<td style="padding:4px 0 0 16px">%s%s</td><td style="padding:4px 0 0 16px">%s</td><td style="padding:4px 0 0 16px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:%s">%s`,
+			m.Source, multiple, m.Jurisdiction, classColor[m.Class], classLabel[m.Class])
+		if m.Problem != "" {
+			fmt.Fprintf(w, `%s [<a href="%s/message?hash=%s">details</a>]`, m.Problem, serverURL, m.Hash)
+		}
+		fmt.Fprint(w, `</td></tr>`)
 	}
 	io.WriteString(w, `</table>`)
 	if hasMultiple {

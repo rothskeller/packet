@@ -5,6 +5,7 @@ import (
 	"log"
 	"net"
 	"net/mail"
+	"net/url"
 	"regexp"
 	"strings"
 
@@ -266,6 +267,15 @@ func (c *Config) Validate(knownProbs map[string]string) (valid bool) {
 			}
 			c.Jurisdictions[abbr] = abbr
 		}
+	}
+
+	// Check that we have a URL for the web server.
+	if c.ServerURL == "" {
+		log.Printf("ERROR: config.serverURL is not specified")
+		valid = false
+	} else if u, err := url.Parse(c.ServerURL); err != nil || u.Scheme != "https" {
+		log.Printf("ERROR: config.serverURL has an invalid value, not an https:// URL")
+		valid = false
 	}
 
 	// Check that we have a listen address for the web server.

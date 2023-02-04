@@ -235,6 +235,7 @@ jurisdictions:
   Sunnyvale: SNY
   Unincorporated: XSC
 
+serverURL: https://none
 listenAddr: none
 
 # These are the details for sending email messages via SMTP (e.g. for reports).

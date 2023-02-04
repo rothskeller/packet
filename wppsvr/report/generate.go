@@ -240,6 +240,7 @@ func generateMessages(r *Report, session *store.Session, messages []*store.Messa
 		var rm Message
 
 		rm.ID = m.LocalID
+		rm.Hash = m.Hash
 		rm.FromCallSign = m.FromCallSign
 		if len(m.FromCallSign) > 2 {
 			if m.FromCallSign[1] >= '0' && m.FromCallSign[1] <= '9' {

@@ -22,6 +22,7 @@ type Config struct {
 	MessageTypes    map[string]*MessageTypeConfig `yaml:"messageTypes"`
 	ProblemActions  map[string]string             `yaml:"problems"`
 	Jurisdictions   map[string]string             `yaml:"jurisdictions"`
+	ServerURL       string                        `yaml:"serverURL"`
 	ListenAddr      string                        `yaml:"listenAddr"`
 	SMTP            *SMTPConfig                   `yaml:"smtp"`
 	CanViewEveryone []string                      `yaml:"canViewEveryone"`

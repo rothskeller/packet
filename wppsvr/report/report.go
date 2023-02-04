@@ -63,6 +63,7 @@ type Count struct {
 // A Message contains the information about a single message in a Report.
 type Message struct {
 	ID           string
+	Hash         string
 	FromCallSign string
 	Prefix       string
 	Suffix       string

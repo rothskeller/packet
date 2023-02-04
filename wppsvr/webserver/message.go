@@ -21,16 +21,23 @@ func (ws *webserver) serveMessage(w http.ResponseWriter, r *http.Request) {
 		responses []*store.Response
 		content   int
 	)
-	if callsign = checkLoggedIn(w, r); callsign == "" {
-		return
-	}
-	if message = ws.st.GetMessage(r.FormValue("id")); message == nil {
-		http.Error(w, "404 Not Found", http.StatusNotFound)
-		return
-	}
-	if message.FromCallSign != callsign && !canViewEveryone(callsign) {
-		http.Error(w, "403 Forbidden", http.StatusForbidden)
-		return
+	if hash := r.FormValue("hash"); hash != "" {
+		if message = ws.st.GetMessageByHash(hash); message == nil {
+			http.Error(w, "404 Not Found", http.StatusNotFound)
+			return
+		}
+	} else {
+		if callsign = checkLoggedIn(w, r); callsign == "" {
+			return
+		}
+		if message = ws.st.GetMessage(r.FormValue("id")); message == nil {
+			http.Error(w, "404 Not Found", http.StatusNotFound)
+			return
+		}
+		if message.FromCallSign != callsign && !canViewEveryone(callsign) {
+			http.Error(w, "403 Forbidden", http.StatusForbidden)
+			return
+		}
 	}
 	responses = ws.st.GetResponses(message.LocalID)
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")
