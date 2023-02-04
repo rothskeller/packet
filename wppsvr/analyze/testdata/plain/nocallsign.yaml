@@ -19,7 +19,7 @@ stored:
   problems:
     - NoCallSign
     - PracticeSubjectFormat
-  actions: 11
+  actions: 15
 
 # Messages that should be sent in response:
 responses:

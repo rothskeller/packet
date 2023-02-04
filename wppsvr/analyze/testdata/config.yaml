@@ -30,29 +30,35 @@ sessionDefaults:
   toBBSes:
     - { when: 'DAY=8-14', then: W4XSC }
     - { when: 'DAY=1-7,15-31', then: W2XSC }
-  # The BBS(es) that are considered "down" during a session.  These are W1XSC
-  # when the session end date is in the first week of the month, W2XSC in the
-  # second week, etc.  Note that this setting allows the possibility of having
-  # multiple BBSes "down"; all matching rules apply.
+  # The BBS(es) that are considered "down" during a session.  (Messages sent
+  # either from them or to them are considered errors.)  These are W1XSC when
+  # the session end date is in the first week of the month, W2XSC in the second
+  # week, etc.  Note that this setting allows the possibility of having multiple
+  # BBSes "down".  Note also that marking a BBS "down" does not prevent
+  # retrieval of messages from it.  (To do that, remove it from the "retrieve"
+  # setting for the session.)
   downBBSes:
     - { when: 'DAY=1-7', then: W1XSC }
     - { when: 'DAY=8-14', then: W2XSC }
     - { when: 'DAY=15-21', then: W3XSC }
     - { when: 'DAY=22-28', then: W4XSC }
-  # Message type(s) that are accepted for check-in messages for the session.
-  # This is ICS-213 in February, June, and October; EOC-213RR in March, July,
-  # and November; and OA Municipal Status in April, August, and December.
-  # Plain text messages are accepted in any month, and are the only messages
-  # accepted in January, April, and September.
+  # Message type(s) that are accepted for practice messages for the session.
+  # Note that, for messages coming from a BBS outside our system, plain text is
+  # always allowed.
   messageTypes:
+    - { when: 'MONTH=1', then: 'plain' }
     - { when: 'MONTH=2,6,10', then: ICS213 }
     - { when: 'MONTH=3,7,11', then: EOC213RR }
-    - { when: 'MONTH=4,8,12', then: MuniStat }
-    - { when: 'MONTH=4,8,12', then: JurisStat }
-    - { when: 'MONTH=1-12', then: 'plain' }
-  # Session reports are sent to the packet email list (as well as to the
-  # individuals who checked in).
+    - { when: 'MONTH=4,8', then: MuniStat }
+    - { when: 'MONTH=4,8', then: JurisStat }
+    - { when: 'MONTH=5', then: SheltStat }
+    - { when: 'MONTH=9', then: AHFacStat }
+    - { when: 'MONTH=12', then: RACES-MAR }
+  # Session reports are sent to everyone who sent a practice messages, and to
+  # the packet email list.
   reportTo:
+    text:
+      - MESSAGE-SENDERS
     html:
       - packet@scc-ares-races.groups.io
 
@@ -63,42 +69,29 @@ sessions:
   PKTMON:
     name: SPECS Net
     prefix: MON
-    # Each PKTMON session starts at midnight after the end of the previous
-    # PKTMON session, and ends the following Monday night at 20:00.
-    start: HOUR=0 MINUTE=0
-    end: WEEKDAY=Monday HOUR=20 MINUTE=0
+    # Each PKTMON session starts at midnight on Tuesday (after the end of the
+    # previous PKTMON session), and ends the following Monday night at 19:00.
+    start: WEEKDAY=Tuesday HOUR=0 MINUTE=0
+    end: WEEKDAY=Monday HOUR=19 MINUTE=0
   # Settings for the Tuesday night SVECS net sessions.
   PKTTUE:
     name: SVECS Net
     prefix: TUE
-    # Each PKTTUE session starts at midnight after the end of the previous
-    # PKTTUE session, and ends the following Tuesday night at 20:00.
-    start: HOUR=0 MINUTE=0
-    end: WEEKDAY=Tuesday HOUR=20 MINUTE=0
-  # Settings for the test sessions.
-  PKTEST:
-    name: Test Check-Ins
-    prefix: TST
-    # Each PKTEST session starts at 20:00 daily and runs until 20:00 the
-    # following day.
-    start: HOUR=20 MINUTE=0
-    end: HOUR=20 MINUTE=0
-    # We retrieve PKTEST messages every hour of every day.
-    # PKTEST session reports are sent only to those who checked in.
-    reportTo: {}
-    # PKTEST sessions are not included in the weekly summaries.
-    excludeFromWeek: true
+    # Each PKTTUE session starts at midnight on Wednesday (after the end of the
+    # previous PKTTUE session), and ends the following Tuesday night at 19:00.
+    start: WEEKDAY=Wednesday HOUR=0 MINUTE=0
+    end: WEEKDAY=Tuesday HOUR=19 MINUTE=0
 
 # This section defines the minimum acceptable form versions.
 minimumVersions:
-  PackItForms: 3.2
-  AHFacStat: 2.2
-  ICS213: 2.1
-  EOC213RR: 2.3
-  JurisStat: 2.2
-  MuniStat: 2.1
-  RACES-MAR: 2.1
-  SheltStat: 2.1
+  PackItForms: 3.2 # 161G: 2.9
+  AHFacStat: 2.2 # 161G: 2.3
+  ICS213: 2.1 # 161G: 2.2
+  EOC213RR: 2.3 # 161G: 2.3
+  JurisStat: 2.2 # 161G: 2.2
+  MuniStat: 2.1 # 161G: gone
+  RACES-MAR: 2.1 # 161G: 2.3
+  SheltStat: 2.1 # 161G: 2.2
 
 # This section defines how each detected problem is treated.  Each problem code
 # maps to a list of actions to be taken when the problem is detected, which is a
@@ -117,7 +110,7 @@ problems:
   FormHandlingOrder: respond report error
   FormInvalid: respond report error
   FormNoCallSign: respond report dontcount
-  FormPracticeSubject: respond report
+  FormPracticeSubject: respond report error
   FormSubject: respond report error
   FormToICSPosition: respond report error
   FormToLocation: respond report error
@@ -132,20 +125,20 @@ problems:
   MessageTooLate: respond report dontcount
   MessageTypeWrong: respond report error
   MsgNumFormat: respond report error
-  MsgNumPrefix: respond report
+  MsgNumPrefix: respond report error
   MultipleMessagesFromAddress: report
   NoCallSign: respond report dontcount
   PIFOVersion: respond report error
   PracticeAsFormName: respond report error
-  PracticeSubjectFormat: respond report
+  PracticeSubjectFormat: respond report error
   ReadReceipt: respond report dontcount
-  SessionDate: respond report
+  SessionDate: respond report error
   SubjectFormat: respond report error
   SubjectPlainForm: respond report error
   SubjectHasSeverity: respond report error
   ToBBS: respond report dontcount
   ToBBSDown: respond report dontcount
-  UnknownJurisdiction: respond report
+  UnknownJurisdiction: respond report error
 
 # This section lists the known jurisdiction names and their abbreviations.
 jurisdictions:
@@ -182,6 +175,7 @@ jurisdictions:
   Saratoga: SAR
   Stanford University: STU
   Sunnyvale: SNY
+  Unincorporated: XSC
 
 # This section defines the expected handling order and destination of each of
 # the different form types.  For HandlingOrder, possible values are "computed"

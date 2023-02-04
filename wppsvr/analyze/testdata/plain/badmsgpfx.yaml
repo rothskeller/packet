@@ -20,7 +20,7 @@ stored:
   subject: STR-100P_R_Practice KC6RSC, Steve, SNY, 1/11/2022
   problems:
     - MsgNumPrefix
-  actions: 3
+  actions: 7
 
 # Messages that should be sent in response:
 responses:
