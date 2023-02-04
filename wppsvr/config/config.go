@@ -13,23 +13,19 @@ import (
 	"gopkg.in/yaml.v3"
 )
 
-// PackItForms is the key into the Config.MinimumVersions map for retrieving the
-// minimum version of the PackItForms encoding.
-const PackItForms = "PackItForms"
-
 // Config holds all of the configuration data.
 type Config struct {
-	BBSes           map[string]*BBSConfig     `yaml:"bbses"`
-	SessionDefaults *SessionConfig            `yaml:"sessionDefaults"`
-	Sessions        map[string]*SessionConfig `yaml:"sessions"`
-	MinimumVersions map[string]string         `yaml:"minimumVersions"`
-	ProblemActions  map[string]string         `yaml:"problems"`
-	Jurisdictions   map[string]string         `yaml:"jurisdictions"`
-	FormRouting     map[string]*FormRouting   `yaml:"formRouting"`
-	ListenAddr      string                    `yaml:"listenAddr"`
-	SMTP            *SMTPConfig               `yaml:"smtp"`
-	CanViewEveryone []string                  `yaml:"canViewEveryone"`
-	CanEditSessions []string                  `yaml:"canEditSessions"`
+	BBSes           map[string]*BBSConfig         `yaml:"bbses"`
+	SessionDefaults *SessionConfig                `yaml:"sessionDefaults"`
+	Sessions        map[string]*SessionConfig     `yaml:"sessions"`
+	MinPIFOVersion  string                        `yaml:"minPIFOVersion"`
+	MessageTypes    map[string]*MessageTypeConfig `yaml:"messageTypes"`
+	ProblemActions  map[string]string             `yaml:"problems"`
+	Jurisdictions   map[string]string             `yaml:"jurisdictions"`
+	ListenAddr      string                        `yaml:"listenAddr"`
+	SMTP            *SMTPConfig                   `yaml:"smtp"`
+	CanViewEveryone []string                      `yaml:"canViewEveryone"`
+	CanEditSessions []string                      `yaml:"canEditSessions"`
 
 	ProblemActionFlags map[string]Action `yaml:"-"`
 }
@@ -42,12 +38,14 @@ type SMTPConfig struct {
 	Password string `yaml:"password"`
 }
 
-// A FormRouting structure specifies the required form routing for a particular
-// form type.
-type FormRouting struct {
-	HandlingOrder string   `yaml:"HandlingOrder"`
-	ToICSPosition []string `yaml:"ToICSPosition"`
-	ToLocation    []string `yaml:"ToLocation"`
+// A MessageTypeConfig structure specifies the configuration for a particular
+// message type.
+type MessageTypeConfig struct {
+	NoPracticeInfo bool     `yaml:"noPracticeInfo"`
+	MinimumVersion string   `yaml:"minimumVersion"`
+	HandlingOrder  string   `yaml:"handlingOrder"`
+	ToICSPosition  []string `yaml:"toICSPosition"`
+	ToLocation     []string `yaml:"toLocation"`
 }
 
 // Action is a flag, or a bitmask of flags, describing the action(s) to take in

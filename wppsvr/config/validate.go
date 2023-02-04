@@ -158,22 +158,54 @@ func (c *Config) Validate(knownProbs map[string]string) (valid bool) {
 		}
 	}
 
-	// Check that we have minimum versions for every form.
-	if c.MinimumVersions == nil {
-		log.Printf("ERROR: config.minimumVersions is not specified")
+	// Check that we have a minimum PackItForms version.
+	if c.MinPIFOVersion == "" {
+		log.Printf("ERROR: config.minPIFOVersion is not specified")
+		valid = false
+	}
+
+	// Check that we have configuration for every form.
+	if c.MessageTypes == nil {
+		log.Printf("ERROR: config.messageTypes is not specified")
 		valid = false
 	} else {
-		if c.MinimumVersions[PackItForms] == "" {
-			log.Printf("ERROR: config.minimumVersions[%q] is not specified", PackItForms)
-			valid = false
-		}
-		for _, mtype := range ValidMessageTypes() {
-			if mtype.Type.Tag == "plain" {
+		for tag, mtc := range c.MessageTypes {
+			mt := LookupMessageType(tag)
+			if mt == nil {
+				log.Printf("ERROR: config.messageTypes has entry for unknown message type %q", tag)
+				valid = false
 				continue
 			}
-			if c.MinimumVersions[mtype.Type.Tag] == "" {
-				log.Printf("ERROR: config.minimumVersions[%q] is not specified", mtype.Type.Tag)
+			if tag == "plain" {
+				continue
+			}
+			if mtc.MinimumVersion == "" {
+				log.Printf("ERROR: config.messageTypes[%q].minimumVersion is not specified", tag)
 				valid = false
+			}
+			switch mtc.HandlingOrder {
+			case "":
+				break
+			case "computed":
+				if _, ok := ComputedRecommendedHandlingOrder[tag]; !ok {
+					log.Printf("ERROR: config.messageTypes[%q].handlingOrder = %q, but that form has no handling order computation defined", tag, mtc.HandlingOrder)
+					valid = false
+				}
+			default:
+				if _, ok := xscmsg.ParseHandlingOrder(mtc.HandlingOrder); !ok {
+					log.Printf("ERROR: config.messageTypes[%q].handlingOrder = %q is not a valid handling order", tag, mtc.HandlingOrder)
+					valid = false
+				}
+			}
+		}
+		for _, mtype := range ValidMessageTypes() {
+			if _, ok := c.MessageTypes[mtype.Type.Tag]; !ok {
+				if mtype.Type.Tag == "plain" {
+					c.MessageTypes["plain"] = new(MessageTypeConfig)
+				} else {
+					log.Printf("ERROR: config.messageTypes[%q] is not specified", mtype.Type.Tag)
+					valid = false
+				}
 			}
 		}
 	}
@@ -234,37 +266,6 @@ func (c *Config) Validate(knownProbs map[string]string) (valid bool) {
 				c.Jurisdictions[upcase] = abbr
 			}
 			c.Jurisdictions[abbr] = abbr
-		}
-	}
-
-	// Check that we have form routing for every form.
-	if c.FormRouting == nil {
-		log.Printf("ERROR: config.formRouting is not specified")
-		valid = false
-	} else {
-		for _, mtype := range ValidMessageTypes() {
-			if mtype.Type.Tag == "plain" {
-				continue
-			}
-			if fr := c.FormRouting[mtype.Type.Tag]; fr == nil {
-				log.Printf("ERROR: config.formRouting[%q] is not specified", mtype.Type.Tag)
-				valid = false
-			} else {
-				switch fr.HandlingOrder {
-				case "":
-					break
-				case "computed":
-					if _, ok := ComputedRecommendedHandlingOrder[mtype.Type.Tag]; !ok {
-						log.Printf("ERROR: config.formRouting[%q].HandlingOrder = %q, but that form has no handling order computation defined", mtype.Type.Tag, fr.HandlingOrder)
-						valid = false
-					}
-				default:
-					if _, ok := xscmsg.ParseHandlingOrder(fr.HandlingOrder); !ok {
-						log.Printf("ERROR: config.formRouting[%q].HandlingOrder = %q is not a valid handling order", mtype.Type.Tag, fr.HandlingOrder)
-						valid = false
-					}
-				}
-			}
 		}
 	}
 

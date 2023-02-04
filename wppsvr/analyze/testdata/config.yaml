@@ -82,16 +82,74 @@ sessions:
     start: WEEKDAY=Wednesday HOUR=0 MINUTE=0
     end: WEEKDAY=Tuesday HOUR=19 MINUTE=0
 
-# This section defines the minimum acceptable form versions.
-minimumVersions:
-  PackItForms: 3.2 # 161G: 2.9
-  AHFacStat: 2.2 # 161G: 2.3
-  ICS213: 2.1 # 161G: 2.2
-  EOC213RR: 2.3 # 161G: 2.3
-  JurisStat: 2.2 # 161G: 2.2
-  MuniStat: 2.1 # 161G: gone
-  RACES-MAR: 2.1 # 161G: 2.3
-  SheltStat: 2.1 # 161G: 2.2
+# This is the minimum acceptable version of PackItForms.
+minPIFOVersion: 3.2 # 161G: 3.9
+
+# This section defines the characteristics of the message types.  All message
+# types must be defined except "plain", which is optional.  Each message type
+# has the following keys:
+#   - minimumVersion: the minimum acceptable version of the form (required)
+#   - noPracticeInfo: set to true if messages of this type aren't expected to
+#     have "Practice ..." information in their subject line.
+#   - handlingOrder: expected handling order for messages of this type
+#     (optional).  Possible values are "computed" (for ICS213 and EOC213RR
+#     only), "IMMEDIATE", "PRIORITY", or "ROUTINE".
+#   - toICSPosition and toLocation: expected destination for messages of this
+#     type (optional list of acceptable values).
+messageTypes:
+  AHFacStat:
+    minimumVersion: 2.2 # 161G: 2.3
+    handlingOrder: ROUTINE
+    toICSPosition:
+      - EMS Unit
+      - Public Health Unit
+      - Medical Health Branch
+      - Operations Section
+    toLocation:
+      - MHJOC
+      - County EOC
+  EOC213RR:
+    minimumVersion: 2.3 # 161G: 2.3
+    handlingOrder: computed # based on priority in form
+    toICSPosition:
+      - Planning Section
+    toLocation:
+      - County EOC
+  ICS213:
+    minimumVersion: 2.1 # 161G: 2.2
+    handlingOrder: computed # based on severity in form
+  JurisStat:
+    minimumVersion: 2.2 # 161G: 2.2
+    handlingOrder: IMMEDIATE
+    toICSPosition:
+      - Situation Analysis Unit
+      - Planning Section
+    toLocation:
+      - County EOC
+  MuniStat:
+    minimumVersion: 2.1 # 161G: gone
+    handlingOrder: IMMEDIATE
+    toICSPosition:
+      - Situation Analysis Unit
+      - Planning Section
+    toLocation:
+      - County EOC
+  RACES-MAR:
+    minimumVersion: 2.1 # 161G: 2.3
+    handlingOrder: ROUTINE
+    toICSPosition:
+      - RACES Chief Radio Officer
+      - RACES Unit
+      - Operations Section
+    toLocation:
+      - County EOC
+  SheltStat:
+    minimumVersion: 2.1 # 161G: 2.2
+    handlingOrder: PRIORITY
+    toICSPosition:
+      - Mass Care and Shelter Unit
+      - Care and Shelter Branch
+      - Operations Section
 
 # This section defines how each detected problem is treated.  Each problem code
 # maps to a list of actions to be taken when the problem is detected, which is a
@@ -176,59 +234,6 @@ jurisdictions:
   Stanford University: STU
   Sunnyvale: SNY
   Unincorporated: XSC
-
-# This section defines the expected handling order and destination of each of
-# the different form types.  For HandlingOrder, possible values are "computed"
-# (for ICS213 and EOC213RR only), "IMMEDIATE", "PRIORITY", or "ROUTINE".  For
-# ToICSPosition and ToLocation, any listed value is considered acceptable.
-# Fields that are omitted from this section are not checked.
-formRouting:
-  ICS213:
-    HandlingOrder: computed # based on severity in form
-  AHFacStat:
-    HandlingOrder: ROUTINE
-    ToICSPosition:
-      - EMS Unit
-      - Public Health Unit
-      - Medical Health Branch
-      - Operations Section
-    ToLocation:
-      - MHJOC
-      - County EOC
-  EOC213RR:
-    HandlingOrder: computed # based on priority in form
-    ToICSPosition:
-      - Planning Section
-    ToLocation:
-      - County EOC
-  JurisStat:
-    HandlingOrder: IMMEDIATE
-    ToICSPosition:
-      - Situation Analysis Unit
-      - Planning Section
-    ToLocation:
-      - County EOC
-  MuniStat:
-    HandlingOrder: IMMEDIATE
-    ToICSPosition:
-      - Situation Analysis Unit
-      - Planning Section
-    ToLocation:
-      - County EOC
-  RACES-MAR:
-    HandlingOrder: ROUTINE
-    ToICSPosition:
-      - RACES Chief Radio Officer
-      - RACES Unit
-      - Operations Section
-    ToLocation:
-      - County EOC
-  SheltStat:
-    HandlingOrder: PRIORITY
-    ToICSPosition:
-      - Mass Care and Shelter Unit
-      - Care and Shelter Branch
-      - Operations Section
 
 listenAddr: none
 

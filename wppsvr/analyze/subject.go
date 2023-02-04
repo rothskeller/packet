@@ -104,6 +104,12 @@ func (a *Analysis) checkSubjectFormat() {
 
 // checkPracticeInfo checks the "Practice ..." portion of the Subject line.
 func (a *Analysis) checkPracticeInfo() {
+	if mtc := config.Get().MessageTypes[a.xsc.Type.Tag]; mtc == nil || mtc.NoPracticeInfo {
+		// This is an unknown form type or one that doesn't support
+		// Practice... info on the Subject line.  Return without raising
+		// an error.
+		return
+	}
 	if f := a.xsc.KeyField(xscmsg.FSubject); f != nil && a.xsc.Type.Tag != xscmsg.PlainTextTag {
 		// This is a form with a Subject field.  Check the practice info
 		// from there.

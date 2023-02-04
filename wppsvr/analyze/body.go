@@ -95,38 +95,38 @@ func (a *Analysis) checkForm() {
 		return // this function only applies to forms
 	}
 	// Check the PIFO version.
-	minimums := config.Get().MinimumVersions
-	if xscmsg.OlderVersion(a.xsc.RawForm.PIFOVersion, minimums["PackItForms"]) {
-		a.reportProblem("PIFOVersion", 0, pifoVersionResponse, a.xsc.RawForm.PIFOVersion, minimums["PackItForms"])
-	}
-	// Check the form version.
-	if min := config.Get().MinimumVersions[a.xsc.Type.Tag]; min != "" {
-		if xscmsg.OlderVersion(a.xsc.RawForm.FormVersion, min) {
-			a.reportProblem("FormVersion", 0, formVersionResponse, a.xsc.RawForm.FormVersion, a.xsc.Type.Name, min)
-		}
+	minPIFO := config.Get().MinPIFOVersion
+	if xscmsg.OlderVersion(a.xsc.RawForm.PIFOVersion, minPIFO) {
+		a.reportProblem("PIFOVersion", 0, pifoVersionResponse, a.xsc.RawForm.PIFOVersion, minPIFO)
 	}
 	// Check the validity of the form contents.
 	if problems := a.xsc.Validate(true); len(problems) != 0 {
 		a.reportProblem("FormInvalid", 0, formInvalidResponse1+strings.Join(problems, "\n    ")+formInvalidResponse2)
 	}
-	// Check the recommended form routing.
-	routing := config.Get().FormRouting[a.xsc.Type.Tag]
-	if routing == nil {
-		return // no routing to check
+	// Get the message type data.
+	mtc := config.Get().MessageTypes[a.xsc.Type.Tag]
+	if mtc == nil {
+		return // no message type data, must be unknown form type
 	}
-	badpos := len(routing.ToICSPosition) != 0 && !inList(routing.ToICSPosition, a.xsc.KeyField(xscmsg.FToICSPosition).Value)
-	badloc := len(routing.ToLocation) != 0 && !inList(routing.ToLocation, a.xsc.KeyField(xscmsg.FToLocation).Value)
+	// Check the form version.
+	if mtc.MinimumVersion != "" {
+		if xscmsg.OlderVersion(a.xsc.RawForm.FormVersion, mtc.MinimumVersion) {
+			a.reportProblem("FormVersion", 0, formVersionResponse, a.xsc.RawForm.FormVersion, a.xsc.Type.Name, mtc.MinimumVersion)
+		}
+	}
+	badpos := len(mtc.ToICSPosition) != 0 && !inList(mtc.ToICSPosition, a.xsc.KeyField(xscmsg.FToICSPosition).Value)
+	badloc := len(mtc.ToLocation) != 0 && !inList(mtc.ToLocation, a.xsc.KeyField(xscmsg.FToLocation).Value)
 	var exppos, exploc string
 	if badpos {
 		var positions []string
-		for _, pos := range config.Get().FormRouting[a.xsc.Type.Tag].ToICSPosition {
+		for _, pos := range mtc.ToICSPosition {
 			positions = append(positions, strconv.Quote(pos))
 		}
 		exppos = english.Conjoin(positions, "or")
 	}
 	if badloc {
 		var locations []string
-		for _, loc := range config.Get().FormRouting[a.xsc.Type.Tag].ToLocation {
+		for _, loc := range mtc.ToLocation {
 			locations = append(locations, strconv.Quote(loc))
 		}
 		exploc = english.Conjoin(locations, "or")
@@ -143,12 +143,12 @@ func (a *Analysis) checkForm() {
 			a.xsc.KeyField(xscmsg.FToLocation).Value, a.xsc.Type.Name, exploc)
 	}
 	// Check the recommended handling order.
-	if handling := routing.HandlingOrder; handling != "" {
+	if handling := mtc.HandlingOrder; handling != "" {
 		var want xscmsg.HandlingOrder
-		if routing.HandlingOrder == "computed" {
+		if mtc.HandlingOrder == "computed" {
 			want = config.ComputedRecommendedHandlingOrder[a.xsc.Type.Tag](a.xsc)
 		} else {
-			want, _ = xscmsg.ParseHandlingOrder(routing.HandlingOrder)
+			want, _ = xscmsg.ParseHandlingOrder(mtc.HandlingOrder)
 		}
 		have, _ := xscmsg.ParseHandlingOrder(a.xsc.KeyField(xscmsg.FHandling).Value)
 		if want != 0 && want != have {
