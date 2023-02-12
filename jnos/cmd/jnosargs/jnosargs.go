@@ -47,8 +47,8 @@ var (
 )
 
 var (
-	ax25RE = regexp.MustCompile(`(?i)^[AKNW][A-Z]?[0-9][A-Z]{1,3}-(?:[0-9]|1[0-5])$`)
-	fccRE  = regexp.MustCompile(`(?i)^[AKNW][A-Z]?[0-9][A-Z]{1,3}$`)
+	ax25RE = regexp.MustCompile(`(?i)^(?:A[A-L]|[KNW][A-Z]?)[0-9][A-Z]{1,3}-(?:[0-9]|1[0-5])$`)
+	fccRE  = regexp.MustCompile(`(?i)^(?:A[A-L]|[KNW][A-Z]?)[0-9][A-Z]{1,3}$`)
 )
 
 // Connect connects to a BBS as specified through the command line parameters.

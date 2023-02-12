@@ -23,7 +23,7 @@ var contentMarker = []byte("@@CONTENT@@")
 //go:embed "calendar.html"
 var calendarHTML []byte
 
-var callsignRE = regexp.MustCompile(`(?i)^[AKNW][A-Z]?[0-9][A-Z]{1,3}$`)
+var callsignRE = regexp.MustCompile(`(?i)^(?:A[A-L]|[KNW][A-Z]?)[0-9][A-Z]{1,3}$`)
 
 // serveCalendar handles GET /calendar requests.
 func (ws *webserver) serveCalendar(w http.ResponseWriter, r *http.Request) {

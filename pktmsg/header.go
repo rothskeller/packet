@@ -68,7 +68,7 @@ func (msg *Message) Date() (date time.Time) {
 // for a call sign at the start of the string, followed either by a %, an @, or
 // the end of the string.  It is not case-sensitive.  The substring returned is
 // the call sign.
-var fromCallSignRE = regexp.MustCompile(`(?i)^([AKNW][A-Z]?[0-9][A-Z]{1,3}|[A-Z][A-Z0-9]{5})(?:@|%|$)`)
+var fromCallSignRE = regexp.MustCompile(`(?i)^((?:A[A-L]|[KNW][A-Z]?)[0-9][A-Z]{1,3}|[A-Z][A-Z0-9]{5})(?:@|%|$)`)
 
 // FromCallSign extracts a call sign from the message return address.
 func (msg *Message) FromCallSign() string {

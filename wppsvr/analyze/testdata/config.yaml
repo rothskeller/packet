@@ -108,6 +108,12 @@ messageTypes:
     toLocation:
       - MHJOC
       - County EOC
+  Check-In:
+    minimumVersion: n/a
+  Check-Out:
+    minimumVersion: n/a
+  DELIVERED:
+    minimumVersion: n/a
   EOC213RR:
     minimumVersion: 2.3 # 161G: 2.3
     handlingOrder: computed # based on priority in form
@@ -143,6 +149,8 @@ messageTypes:
       - Operations Section
     toLocation:
       - County EOC
+  READ:
+    minimumVersion: n/a
   SheltStat:
     minimumVersion: 2.1 # 161G: 2.2
     handlingOrder: PRIORITY

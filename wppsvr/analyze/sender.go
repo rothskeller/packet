@@ -50,7 +50,7 @@ func (a *Analysis) checkSender() {
 // "Practice ..." portion of a subject line or field.  It matches anything that
 // looks like a call sign (FCC or tactical) in the word after "Practice".  The
 // regexp returns the matched call sign, which may be in any case.
-var practiceCallSignRE = regexp.MustCompile(`(?i)(?:\b|_)Practice[\W_]+([AKNW][A-Z]?[0-9][A-Z]{1,3}|[A-Z][A-Z0-9]{5})\b`)
+var practiceCallSignRE = regexp.MustCompile(`(?i)(?:\b|_)Practice[\W_]+((?:A[A-L]|[KNW][A-Z]?)[0-9][A-Z]{1,3}|[A-Z][A-Z0-9]{5})\b`)
 
 // fromCallSign extracts the sender's call sign from the several different
 // places it might appear.

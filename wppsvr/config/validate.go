@@ -13,8 +13,8 @@ import (
 	"github.com/rothskeller/packet/xscmsg"
 )
 
-var fccCallRE = regexp.MustCompile(`^[AKNW][A-Z]?[0-9][A-Z]{1,3}$`)
-var ax25RE = regexp.MustCompile(`^([AKNW][A-Z]?[0-9][A-Z]{1,3})-(?:[0-9]|1[0-5])$`)
+var fccCallRE = regexp.MustCompile(`^(?:A[A-L]|[KNW][A-Z]?)[0-9][A-Z]{1,3}$`)
+var ax25RE = regexp.MustCompile(`^((?:A[A-L]|[KNW][A-Z]?)[0-9][A-Z]{1,3})-(?:[0-9]|1[0-5])$`)
 var tacticalCallRE = regexp.MustCompile(`^[A-Z][A-Z0-9]{0,5}$`)
 var prefixRE = regexp.MustCompile(`^(?:[A-Z]{3}|[A-Z][0-9][A-Z]|[0-9][A-Z]{2})$`)
 var variableRE = regexp.MustCompile(`\{[^}]*\}`)

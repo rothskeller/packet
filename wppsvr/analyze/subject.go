@@ -55,7 +55,7 @@ func (a *Analysis) checkFormSubject() {
 }
 
 var msgnumRE = regexp.MustCompile(`^(?:[A-Z][A-Z][A-Z]|[A-Z][0-9][A-Z0-9]|[0-9][A-Z][A-Z])-\d\d\d+[PMR]$`)
-var fccCallSignRE = regexp.MustCompile(`^[AKNW][A-Z]?[0-9][A-Z]{1,3}$`)
+var fccCallSignRE = regexp.MustCompile(`^(?:A[A-L]|[KNW][A-Z]?)[0-9][A-Z]{1,3}$`)
 
 // checkSubjectFormat makes sure the Subject line of the message follows the
 // expected standard for SCCo packet messages.  As a side effect, it sets
@@ -148,7 +148,7 @@ func (a *Analysis) checkPracticeInfo() {
 // A comma is allowed after the word "Practice", which doesn't exactly conform
 // to the required syntax, but it is a very common mistake and not worth
 // penalizing.
-var practiceRE = regexp.MustCompile(`(?i)^Practice[,\s]+([AKNW][A-Z]?[0-9][A-Z]{1,3}|[A-Z][A-Z0-9]{5})\s*,[^,]+,([^,]+),\s*((?:0?[1-9]|1[0-2])/(?:0?[1-9]|[12]\d|3[01])/20\d\d)\s*$`)
+var practiceRE = regexp.MustCompile(`(?i)^Practice[,\s]+((?:A[A-L]|[KNW][A-Z]?)[0-9][A-Z]{1,3}|[A-Z][A-Z0-9]{5})\s*,[^,]+,([^,]+),\s*((?:0?[1-9]|1[0-2])/(?:0?[1-9]|[12]\d|3[01])/20\d\d)\s*$`)
 
 // parsePracticeSubject parses the practice subject and returns the
 // corresponding PracticeSubject structure, or nil if it couldn't be parsed
