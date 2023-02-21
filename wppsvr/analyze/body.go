@@ -96,7 +96,7 @@ func (a *Analysis) checkForm() {
 	}
 	// Check the PIFO version.
 	minPIFO := config.Get().MinPIFOVersion
-	if xscmsg.OlderVersion(a.xsc.RawForm.PIFOVersion, minPIFO) {
+	if a.xsc.RawForm != nil && xscmsg.OlderVersion(a.xsc.RawForm.PIFOVersion, minPIFO) {
 		a.reportProblem("PIFOVersion", 0, pifoVersionResponse, a.xsc.RawForm.PIFOVersion, minPIFO)
 	}
 	// Check the validity of the form contents.
@@ -109,7 +109,7 @@ func (a *Analysis) checkForm() {
 		return // no message type data, must be unknown form type
 	}
 	// Check the form version.
-	if mtc.MinimumVersion != "" {
+	if mtc.MinimumVersion != "" && a.xsc.RawForm != nil {
 		if xscmsg.OlderVersion(a.xsc.RawForm.FormVersion, mtc.MinimumVersion) {
 			a.reportProblem("FormVersion", 0, formVersionResponse, a.xsc.RawForm.FormVersion, a.xsc.Type.Name, mtc.MinimumVersion)
 		}
