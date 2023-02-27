@@ -8,7 +8,7 @@ import (
 )
 
 // Encode encodes the message for transmission or storage.
-func (msg *Message) Encode(human bool) string {
+func (msg *Message) Encode() string {
 	var sb strings.Builder
 
 	// If the message has envelope data, emit an RFC-4155 "From " envelope
@@ -28,12 +28,12 @@ func (msg *Message) Encode(human bool) string {
 	}
 	sb.WriteByte('\n')
 	// Emit the body.
-	sb.WriteString(msg.EncodeBody(human))
+	sb.WriteString(msg.EncodeBody())
 	return sb.String()
 }
 
 // EncodeBody encodes the message body for transmission.
-func (msg *Message) EncodeBody(human bool) (body string) {
+func (msg *Message) EncodeBody() (body string) {
 	// Add the Outpost flags to the body if needed.
 	if msg.Flags != 0 {
 		var sb strings.Builder
@@ -52,7 +52,7 @@ func (msg *Message) EncodeBody(human bool) (body string) {
 		body = msg.Body
 	}
 	// Encode in Base64 if needed.
-	if !human && strings.IndexFunc(body, nonASCII) >= 0 {
+	if strings.IndexFunc(body, nonASCII) >= 0 {
 		body = "!B64!" + base64.StdEncoding.EncodeToString([]byte(body)) + "\n"
 	}
 	return body

@@ -17,6 +17,7 @@ package xscmsg
 // literal structure values rather than composing chains of nested objects.
 
 import (
+	"fmt"
 	"strconv"
 	"strings"
 
@@ -88,9 +89,9 @@ func (m *Message) Subject() string {
 // Body returns the encoded body of the message.  If human is
 // true, it is encoded for human reading or editing; if false, it is
 // encoded for transmission.
-func (m *Message) Body(human bool) string {
+func (m *Message) Body() string {
 	if m.Type.BodyFunc != nil {
-		return m.Type.BodyFunc(m, human)
+		return m.Type.BodyFunc(m)
 	}
 	if f := m.KeyField(FBody); f != nil {
 		return f.Value
@@ -133,10 +134,8 @@ type MessageType struct {
 	// message field.
 	SubjectFunc func(msg *Message) string
 	// BodyFunc is a function that returns the encoded body of the message.
-	// If human is true, it is encoded for human reading or editing; if
-	// false, it is encoded for transmission.  If it is nil, the body is
-	// taken from the "BODY" message field.
-	BodyFunc func(msg *Message, human bool) string
+	// If it is nil, the body is taken from the "BODY" message field.
+	BodyFunc func(msg *Message) string
 }
 
 // Field is a single field within an XSC message.
@@ -152,11 +151,29 @@ type Field struct {
 // true, correctable problems are reported; otherwise they are corrected.  For
 // fields whose values are computed based on the values of other fields,
 // Validate performs the computation.
-func (f *Field) Validate(msg *Message, strict bool) string {
-	for _, vfn := range f.Def.Validators {
-		if prob := vfn(f, msg, strict); prob != "" {
-			return prob
+func (f *Field) Validate(msg *Message, strict bool) (prob string) {
+	if f.Def.Flags&Required != 0 && f.Value == "" {
+		prob = fmt.Sprintf("The %q field must have a value.", f.Def.Tag)
+		// don't return it yet
+	}
+	if prob == "" && f.Def.Flags&RequiredForComplete != 0 && f.Value == "" {
+		if c := msg.KeyField(FComplete); c != nil && c.Value == "Complete" {
+			prob = fmt.Sprintf("The %q field must have a value when the %q field is Complete.", f.Def.Tag, c.Def.Tag)
+			// don't return it yet
 		}
+	}
+	for _, vfn := range f.Def.Validators {
+		if prob2 := vfn(f, msg, strict); prob2 != "" {
+			if prob != "" {
+				return prob // prefer the requirement problem
+			}
+			return prob2
+		}
+	}
+	// Return the deferred requirement problem only if none of the
+	// validator functions added a value.
+	if prob != "" && f.Value == "" {
+		return prob
 	}
 	return ""
 }
@@ -183,19 +200,12 @@ type FieldDef struct {
 	// Label is the English label of the field.  For form fields, it is the
 	// label of the field as it appears on the PDF form.
 	Label string
-	// Annotation is a short textual annotation added to the Tag when
-	// rendering a form field in human-readable mode.  It gives a string
-	// name to the field when the tag is a field number.
-	Annotation string
 	// Comment is a comment displayed in the human-readable rendering of a
 	// form when the field has no assigned value.  It is generally a textual
 	// reminder of the validation requirements for the field value.
 	Comment string
-	// ReadOnly is a flag indicating that the field is read-only.  It may
-	// have a value when a message is received and decoded, or it may have
-	// one computed by its Validate method based on other message fields,
-	// but it should not be presented to the user for editing.
-	ReadOnly bool
+	// Flags is a set of flags describing the field.
+	Flags FieldFlag
 	// DefaultFunc is a function to compute the default value of the field.
 	DefaultFunc func() string
 	// DefaultValue is the default value of the field, if DefaultFunc is not
@@ -208,6 +218,26 @@ type FieldDef struct {
 	// set.
 	Choices []string
 }
+
+// FieldFlag is a flag, or bitmask of flags, describing a field.
+type FieldFlag uint
+
+// Values for FieldFlag:
+const (
+	// Readonly indicates that the field is read-only.  It may have a value
+	// when a message is received and decoded, or it may have one computed
+	// by its Validate method based on other message fields, but it should
+	// not be presented to the user for editing.
+	Readonly FieldFlag = 1 << iota
+	// Multiline indicates that the field is allowed to have a multi-line
+	// value.
+	Multiline
+	// Required indicates that a value for the field is required.
+	Required
+	// RequiredForComplete indicates that a value for the field is required
+	// if the FComplete field contains "Complete".
+	RequiredForComplete
+)
 
 // Validator is a function called to validate a field value.  See the
 // comment on Field.Validate() for details.
@@ -250,8 +280,13 @@ const (
 	// line.
 	FSubject FieldKey = "SUBJECT"
 	// FBody is the field whose contents are returned by Message.Body() if
-	// the message type does not have a BodyFunc.
+	// the message type does not have a BodyFunc.  It is also the field into
+	// which default message body text is placed.
 	FBody FieldKey = "BODY"
+	// FComplete is the field that, when set to "Complete", triggers
+	// conditional requirement of other fields marked with the
+	// RequiredForComplete flag.
+	FComplete FieldKey = "COMPLETE"
 	// FOpCall is the operator call sign field.  It gets set by code that
 	// creates a new outgoing message, or by code receiving a message.
 	FOpCall FieldKey = "OPERATOR_CALL_SIGN"
@@ -312,21 +347,19 @@ func Create(tag string) *Message {
 }
 
 // Recognize determines which registered XSC message type to use for the
-// supplied pktmsg.Message, and returns the corresponding xscmsg.Message.  The
-// strict flag indicates whether any form embedded in the message should be
-// parsed strictly; see pktmsg.ParseForm for details.  Recognize always returns
-// an xscmsg.Message; if the supplied message isn't recognized as any more
-// specific type, it is returned as an "unknown form" message or a "plain text"
-// message.
+// supplied pktmsg.Message, and returns the corresponding xscmsg.Message.
+// Recognize always returns an xscmsg.Message; if the supplied message isn't
+// recognized as any more specific type, it is returned as an "unknown form"
+// message or a "plain text" message.
 //
 // For a message to be recognized as a specific type, that type must have been
 // registered.  The standard message types can be registered by importing the
 // appropriate message-type-specific subpackages of xscmsg.  Alternatively, all
 // standard message types can be registered by importing xscmsg/all.
-func Recognize(msg *pktmsg.Message, strict bool) *Message {
+func Recognize(msg *pktmsg.Message) *Message {
 	var form *pktmsg.Form
 	if pktmsg.IsForm(msg.Body) {
-		form = pktmsg.ParseForm(msg.Body, strict)
+		form = pktmsg.ParseForm(msg.Body)
 	}
 	for _, recognizeFunc := range recognizeFuncs {
 		if xsc := recognizeFunc(msg, form); xsc != nil {

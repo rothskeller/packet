@@ -146,9 +146,6 @@ func ValidateRealNumber(f *xscmsg.Field, _ *xscmsg.Message, _ bool) string {
 	return ""
 }
 
-// ValidateRequired verifies that a field has a value.
-var ValidateRequired = xscmsg.ValidateRequired
-
 // ValidateTime ensures the time is a valid timestamp in 24-hour HH:MM format.
 func ValidateTime(f *xscmsg.Field, _ *xscmsg.Message, _ bool) string {
 	if f.Value != "" && !timeRE.MatchString(f.Value) {

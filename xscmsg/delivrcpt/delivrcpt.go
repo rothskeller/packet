@@ -36,16 +36,6 @@ func create() *xscmsg.Message {
 
 func recognize(msg *pktmsg.Message, form *pktmsg.Form) *xscmsg.Message {
 	var m = create()
-	if form != nil {
-		if form.FormType == html {
-			m.Field("DeliveredTo").Value = form.Get("DeliveredTo")
-			m.Field("DeliveredSubject").Value = form.Get("DeliveredSubject")
-			m.Field("LocalMessageID").Value = form.Get("LocalMessageID")
-			m.Field("DeliveredTime").Value = form.Get("DeliveredTime")
-			return m
-		}
-		return nil
-	}
 	if subject := msg.Header.Get("Subject"); strings.HasPrefix(subject, "DELIVERED: ") {
 		m.Field("DeliveredSubject").Value = subject[11:]
 	} else {
@@ -72,19 +62,7 @@ func encodeSubject(m *xscmsg.Message) string {
 	return "DELIVERED: " + m.Field("DeliveredSubject").Value
 }
 
-func encodeBody(m *xscmsg.Message, human bool) string {
-	if human {
-		form := &pktmsg.Form{
-			FormType: html, PIFOVersion: "0", FormVersion: "0",
-			Fields: []pktmsg.FormField{
-				{Tag: "DeliveredTo", Value: m.Field("DeliveredTo").Value},
-				{Tag: "DeliveredSubject", Value: m.Field("DeliveredSubject").Value},
-				{Tag: "DeliveredTime", Value: m.Field("DeliveredTime").Value},
-				{Tag: "LocalMessageID", Value: m.Field("LocalMessageID").Value},
-			},
-		}
-		return form.Encode(nil, nil, true)
-	}
+func encodeBody(m *xscmsg.Message) string {
 	return fmt.Sprintf(
 		"!LMI!%s!DR!%s\nYour Message\nTo: %s\nSubject: %s\nwas delivered on %[2]s\nRecipient's Local Message ID: %[1]s\n",
 		m.Field("LocalMessageID").Value, m.Field("DeliveredTime").Value, m.Field("DeliveredTo").Value, m.Field("DeliveredSubject").Value,
@@ -93,23 +71,23 @@ func encodeBody(m *xscmsg.Message, human bool) string {
 
 var (
 	deliveredToDef = &xscmsg.FieldDef{
-		Tag:        "DeliveredTo",
-		Label:      "DeliveredTo",
-		Validators: []xscmsg.Validator{xscmsg.ValidateRequired},
+		Tag:   "DeliveredTo",
+		Label: "DeliveredTo",
+		Flags: xscmsg.Required,
 	}
 	deliveredSubjectDef = &xscmsg.FieldDef{
-		Tag:        "DeliveredSubject",
-		Label:      "DeliveredSubject",
-		Validators: []xscmsg.Validator{xscmsg.ValidateRequired},
+		Tag:   "DeliveredSubject",
+		Label: "DeliveredSubject",
+		Flags: xscmsg.Required,
 	}
 	localMessageIDDef = &xscmsg.FieldDef{
-		Tag:        "LocalMessageID",
-		Label:      "LocalMessageID",
-		Validators: []xscmsg.Validator{xscmsg.ValidateRequired},
+		Tag:   "LocalMessageID",
+		Label: "LocalMessageID",
+		Flags: xscmsg.Required,
 	}
 	deliveredTimeDef = &xscmsg.FieldDef{
-		Tag:        "DeliveredTime",
-		Label:      "DeliveredTime",
-		Validators: []xscmsg.Validator{xscmsg.ValidateRequired},
+		Tag:   "DeliveredTime",
+		Label: "DeliveredTime",
+		Flags: xscmsg.Required,
 	}
 )

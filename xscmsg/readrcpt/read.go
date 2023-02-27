@@ -35,15 +35,6 @@ func create() *xscmsg.Message {
 
 func recognize(msg *pktmsg.Message, form *pktmsg.Form) *xscmsg.Message {
 	var m = create()
-	if form != nil {
-		if form.FormType == html {
-			m.Field("ReadTo").Value = form.Get("ReadTo")
-			m.Field("ReadSubject").Value = form.Get("ReadSubject")
-			m.Field("ReadTime").Value = form.Get("ReadTime")
-			return m
-		}
-		return nil
-	}
 	if subject := msg.Header.Get("Subject"); strings.HasPrefix(subject, "READ: ") {
 		m.Field("ReadSubject").Value = subject[11:]
 	} else {
@@ -69,36 +60,25 @@ func encodeSubject(m *xscmsg.Message) string {
 	return "Read: " + m.Field("ReadSubject").Value
 }
 
-func encodeBody(m *xscmsg.Message, human bool) string {
-	if human {
-		form := &pktmsg.Form{
-			FormType: html, PIFOVersion: "0", FormVersion: "0",
-			Fields: []pktmsg.FormField{
-				{Tag: "ReadTo", Value: m.Field("ReadTo").Value},
-				{Tag: "ReadSubject", Value: m.Field("ReadSubject").Value},
-				{Tag: "ReadTime", Value: m.Field("ReadTime").Value},
-			},
-		}
-		return form.Encode(nil, nil, true)
-	}
+func encodeBody(m *xscmsg.Message) string {
 	return fmt.Sprintf("!RR!%s\nYour Message\n\nTo: %s\nSubject: %s\n\nwas read on %[1]s\n",
 		m.Field("ReadTime").Value, m.Field("ReadTo").Value, m.Field("ReadSubject").Value)
 }
 
 var (
 	readToDef = &xscmsg.FieldDef{
-		Tag:        "ReadTo",
-		Label:      "ReadTo",
-		Validators: []xscmsg.Validator{xscmsg.ValidateRequired},
+		Tag:   "ReadTo",
+		Label: "ReadTo",
+		Flags: xscmsg.Required,
 	}
 	readSubjectDef = &xscmsg.FieldDef{
-		Tag:        "ReadSubject",
-		Label:      "ReadSubject",
-		Validators: []xscmsg.Validator{xscmsg.ValidateRequired},
+		Tag:   "ReadSubject",
+		Label: "ReadSubject",
+		Flags: xscmsg.Required,
 	}
 	readTimeDef = &xscmsg.FieldDef{
-		Tag:        "ReadTime",
-		Label:      "ReadTime",
-		Validators: []xscmsg.Validator{xscmsg.ValidateRequired},
+		Tag:   "ReadTime",
+		Label: "ReadTime",
+		Flags: xscmsg.Required,
 	}
 )

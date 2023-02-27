@@ -1,8 +1,6 @@
 package xscmsg
 
 import (
-	"fmt"
-
 	"github.com/rothskeller/packet/pktmsg"
 )
 
@@ -44,23 +42,15 @@ var plainTextMessageType = MessageType{
 }
 
 var plainTextSubjectField = FieldDef{
-	Tag:        string(FSubject),
-	Key:        FSubject,
-	Label:      "Subject",
-	Validators: []Validator{ValidateRequired},
+	Tag:   string(FSubject),
+	Key:   FSubject,
+	Label: "Subject",
+	Flags: Required,
 }
 
 var plainTextBodyField = FieldDef{
-	Tag:        string(FBody),
-	Key:        FBody,
-	Label:      "Body",
-	Validators: []Validator{ValidateRequired},
-}
-
-// ValidateRequired is a Validator that verifies that the field has a value.
-func ValidateRequired(f *Field, m *Message, strict bool) string {
-	if f.Value == "" {
-		return fmt.Sprintf("The %q field must have a value.", f.Def.Tag)
-	}
-	return ""
+	Tag:   string(FBody),
+	Key:   FBody,
+	Label: "Body",
+	Flags: Required | Multiline,
 }

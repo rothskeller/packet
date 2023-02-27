@@ -46,7 +46,7 @@ func (a *Analysis) Responses(st astore) (list []*store.Response) {
 		r.ResponseTo = a.localID
 		r.To = a.msg.ReturnAddress()
 		r.Subject = dr.Subject()
-		r.Body = dr.Body(false)
+		r.Body = dr.Body()
 		r.SenderCall = a.session.CallSign
 		r.SenderBBS = a.toBBS
 		list = append(list, &r)
@@ -59,7 +59,7 @@ func (a *Analysis) Responses(st astore) (list []*store.Response) {
 		r.ResponseTo = a.localID
 		r.To = a.msg.ReturnAddress()
 		r.Subject = xscmsg.EncodeSubject(r.LocalID, xscmsg.HandlingRoutine, "", rsubject)
-		r.Body = rm.EncodeBody(false)
+		r.Body = rm.EncodeBody()
 		r.SenderCall = a.session.CallSign
 		r.SenderBBS = a.toBBS
 		list = append(list, &r)

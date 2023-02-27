@@ -25,9 +25,9 @@ func init() {
 	// the standard ones, adding default values to them.
 	handlingDef.DefaultValue = "PRIORITY"
 	toICSPositionDef.DefaultValue = "Mass Care and Shelter Unit"
-	toICSPositionDef.Comment = "required: Mass Care and Shelter Unit, Care and Shelter Branch, Operations Section, ..."
+	toICSPositionDef.Choices = []string{"Care and Shelter Branch", "Mass Care and Shelter Unit", "Operations Section"}
 	toLocationDef.DefaultValue = "County EOC"
-	toLocationDef.Comment = "required: County EOC, ..."
+	toLocationDef.Choices = []string{"County EOC"}
 }
 
 func create() *xscmsg.Message {
@@ -97,259 +97,212 @@ var (
 	toLocationDef    = *xscform.ToLocationDef    // modified in func init
 	reportTypeDef    = &xscmsg.FieldDef{
 		Tag:        "19.",
-		Annotation: "report-type",
+		Key:        xscmsg.FComplete,
 		Label:      "Report Type",
-		Comment:    "required: Update, Complete",
-		Validators: []xscmsg.Validator{xscform.ValidateRequired, xscform.ValidateChoices},
+		Validators: []xscmsg.Validator{xscform.ValidateChoices},
 		Choices:    []string{"Update", "Complete"},
+		Flags:      xscmsg.Required,
 	}
 	shelterNameDef = &xscmsg.FieldDef{
-		Tag:        "32.",
-		Annotation: "shelter-name",
-		Label:      "Shelter Name",
-		Comment:    "required",
-		Validators: []xscmsg.Validator{xscform.ValidateRequired},
-		Key:        xscmsg.FSubject,
+		Tag:   "32.",
+		Label: "Shelter Name",
+		Flags: xscmsg.Required,
+		Key:   xscmsg.FSubject,
 	}
 	shelterTypeDef = &xscmsg.FieldDef{
 		Tag:        "30.",
-		Annotation: "shelter-type",
 		Label:      "Shelter Type",
-		Comment:    "required-for-complete: Type 1, Type 2, Type 3, Type 4",
-		Validators: []xscmsg.Validator{requiredForComplete, xscform.ValidateChoices},
+		Validators: []xscmsg.Validator{xscform.ValidateChoices},
 		Choices:    []string{"Type 1", "Type 2", "Type 3", "Type 4"},
+		Flags:      xscmsg.RequiredForComplete,
 	}
 	shelterStatusDef = &xscmsg.FieldDef{
 		Tag:        "31.",
-		Annotation: "shelter-status",
 		Label:      "Status",
-		Comment:    "required-for-complete: Open, Closed, Full",
-		Validators: []xscmsg.Validator{requiredForComplete, xscform.ValidateChoices},
+		Validators: []xscmsg.Validator{xscform.ValidateChoices},
 		Choices:    []string{"Open", "Closed", "Full"},
+		Flags:      xscmsg.RequiredForComplete,
 	}
 	shelterAddressDef = &xscmsg.FieldDef{
-		Tag:        "33a.",
-		Annotation: "shelter-address",
-		Label:      "Address",
-		Comment:    "required-for-complete",
-		Validators: []xscmsg.Validator{requiredForComplete},
+		Tag:   "33a.",
+		Label: "Address",
+		Flags: xscmsg.RequiredForComplete,
 	}
 	shelterCityCodeDef = &xscmsg.FieldDef{
 		Tag:        "33b.",
-		Annotation: "shelter-city-code",
-		Comment:    "required-for-complete",
-		ReadOnly:   true,
+		Flags:      xscmsg.Readonly,
 		Validators: []xscmsg.Validator{setShelterCityCode, xscform.ValidateChoices},
 		Choices:    []string{"Campbell", "Cupertino", "Gilroy", "Los Altos", "Los Altos Hills", "Los Gatos", "Milpitas", "Monte Sereno", "Morgan Hill", "Mountain View", "Palo Alto", "San Jose", "Santa Clara", "Saratoga", "Sunnyvale", "Unincorporated"},
 	}
 	shelterCityDefV21 = &xscmsg.FieldDef{
 		Tag:        "33b.",
-		Annotation: "shelter-city",
 		Label:      "City",
-		Comment:    "required-for-complete: Campbell, Cupertino, Gilroy, Los Altos, Los Altos Hills, Los Gatos, Milpitas, Monte Sereno, Morgan Hill, Mountain View, Palo Alto, San Jose, Santa Clara, Saratoga, Sunnyvale, Unincorporated",
-		Validators: []xscmsg.Validator{requiredForComplete, xscform.ValidateChoices},
+		Validators: []xscmsg.Validator{xscform.ValidateChoices},
 		Choices:    []string{"Campbell", "Cupertino", "Gilroy", "Los Altos", "Los Altos Hills", "Los Gatos", "Milpitas", "Monte Sereno", "Morgan Hill", "Mountain View", "Palo Alto", "San Jose", "Santa Clara", "Saratoga", "Sunnyvale", "Unincorporated"},
+		Flags:      xscmsg.RequiredForComplete,
 	}
 	shelterCityDefV22 = &xscmsg.FieldDef{
-		Tag:        "34b.",
-		Annotation: "shelter-city",
-		Label:      "City",
-		Comment:    "required-for-complete: Campbell, Cupertino, Gilroy, Los Altos, Los Altos Hills, Los Gatos, Milpitas, Monte Sereno, Morgan Hill, Mountain View, Palo Alto, San Jose, Santa Clara, Saratoga, Sunnyvale, ...",
-		Validators: []xscmsg.Validator{requiredForComplete},
+		Tag:   "34b.",
+		Label: "City",
+		Flags: xscmsg.RequiredForComplete,
 	}
 	shelterStateDef = &xscmsg.FieldDef{
-		Tag:        "33c.",
-		Annotation: "shelter-state",
-		Label:      "State",
+		Tag:   "33c.",
+		Label: "State",
 	}
 	shelterZipDef = &xscmsg.FieldDef{
-		Tag:        "33d.",
-		Annotation: "shelter-zip",
-		Label:      "Zip",
+		Tag:   "33d.",
+		Label: "Zip",
 	}
 	latitudeDef = &xscmsg.FieldDef{
 		Tag:        "37a.",
-		Annotation: "latitude",
 		Label:      "Latitude",
-		Comment:    "real-number",
+		Comment:    "number",
 		Validators: []xscmsg.Validator{xscform.ValidateRealNumber},
 	}
 	longitudeDef = &xscmsg.FieldDef{
 		Tag:        "37b.",
-		Annotation: "longitude",
 		Label:      "Longitude",
-		Comment:    "real-number",
+		Comment:    "number",
 		Validators: []xscmsg.Validator{xscform.ValidateRealNumber},
 	}
 	capacityDef = &xscmsg.FieldDef{
 		Tag:        "40a.",
-		Annotation: "capacity",
 		Label:      "Capacity",
-		Comment:    "cardinal-number required-for-complete",
-		Validators: []xscmsg.Validator{requiredForComplete, xscform.ValidateCardinalNumber},
+		Comment:    "count",
+		Validators: []xscmsg.Validator{xscform.ValidateCardinalNumber},
+		Flags:      xscmsg.RequiredForComplete,
 	}
 	occupancyDef = &xscmsg.FieldDef{
 		Tag:        "40b.",
-		Annotation: "occupancy",
 		Label:      "Occupancy",
-		Comment:    "cardinal-number required-for-complete",
-		Validators: []xscmsg.Validator{requiredForComplete, xscform.ValidateCardinalNumber},
+		Comment:    "count",
+		Validators: []xscmsg.Validator{xscform.ValidateCardinalNumber},
+		Flags:      xscmsg.RequiredForComplete,
 	}
 	mealsDef = &xscmsg.FieldDef{
-		Tag:        "41.",
-		Annotation: "meals",
-		Label:      "Meals Served (last 24 hours)",
+		Tag:   "41.",
+		Label: "Meals Served (last 24 hours)",
 	}
 	nssDef = &xscmsg.FieldDef{
-		Tag:        "42.",
-		Annotation: "NSS",
-		Label:      "NSS Number",
+		Tag:   "42.",
+		Label: "NSS Number",
 	}
 	petFriendlyDef = &xscmsg.FieldDef{
 		Tag:        "43a.",
-		Annotation: "pet-friendly",
 		Label:      "Pet Friendly",
-		Comment:    "checked, false",
 		Validators: []xscmsg.Validator{xscform.ValidateChoices},
 		Choices:    []string{"checked", "false"},
 	}
 	basicSafetyDef = &xscmsg.FieldDef{
 		Tag:        "43b.",
-		Annotation: "basic-safety",
 		Label:      "Basic Safety Inspection",
-		Comment:    "checked, false",
 		Validators: []xscmsg.Validator{xscform.ValidateChoices},
 		Choices:    []string{"checked", "false"},
 	}
 	atc20Def = &xscmsg.FieldDef{
 		Tag:        "43c.",
-		Annotation: "ATC-20",
 		Label:      "ATC 20 Inspection",
-		Comment:    "checked, false",
 		Validators: []xscmsg.Validator{xscform.ValidateChoices},
 		Choices:    []string{"checked", "false"},
 	}
 	availableServicesDef = &xscmsg.FieldDef{
-		Tag:        "44.",
-		Annotation: "available-services",
-		Label:      "Available Services",
+		Tag:   "44.",
+		Label: "Available Services",
+		Flags: xscmsg.Multiline,
 	}
 	mouDef = &xscmsg.FieldDef{
-		Tag:        "45.",
-		Annotation: "MOU",
-		Label:      "",
+		Tag:   "45.",
+		Label: "",
 	}
 	floorPlanDef = &xscmsg.FieldDef{
-		Tag:        "46.",
-		Annotation: "floor-plan",
-		Label:      "Floor Plan",
+		Tag:   "46.",
+		Label: "Floor Plan",
 	}
 	managedByCodeDef = &xscmsg.FieldDef{
 		Tag:        "50a.",
-		Annotation: "managed-by-code",
-		ReadOnly:   true,
+		Flags:      xscmsg.Readonly,
 		Validators: []xscmsg.Validator{setManagedByCode, xscform.ValidateChoices},
 		Choices:    []string{"American Red Cross", "Private", "Community", "Government", "Other"},
 	}
 	managedByDefV21 = &xscmsg.FieldDef{
 		Tag:        "50a.",
-		Annotation: "managed-by",
 		Label:      "Managed By",
-		Comment:    "required-for-complete: American Red Cross, Private, Community, Government, Other",
-		Validators: []xscmsg.Validator{requiredForComplete, xscform.ValidateChoices},
+		Validators: []xscmsg.Validator{xscform.ValidateChoices},
 		Choices:    []string{"American Red Cross", "Private", "Community", "Government", "Other"},
+		Flags:      xscmsg.RequiredForComplete,
 	}
 	managedByDefV22 = &xscmsg.FieldDef{
-		Tag:        "49a.",
-		Annotation: "managed-by",
-		Label:      "Managed By",
-		Comment:    "required-for-complete: American Red Cross, Private, Community, Government, ...",
-		Validators: []xscmsg.Validator{requiredForComplete},
+		Tag:   "49a.",
+		Label: "Managed By",
+		Flags: xscmsg.RequiredForComplete,
 	}
 	managedByDetailDef = &xscmsg.FieldDef{
-		Tag:        "50b.",
-		Annotation: "managed-by-detail",
-		Label:      "Managed By Detail",
+		Tag:   "50b.",
+		Label: "Managed By Detail",
 	}
 	primaryContactDef = &xscmsg.FieldDef{
-		Tag:        "51a.",
-		Annotation: "primary-contact",
-		Label:      "Primary Contact",
-		Comment:    "required-for-complete",
-		Validators: []xscmsg.Validator{requiredForComplete},
+		Tag:   "51a.",
+		Label: "Primary Contact",
+		Flags: xscmsg.RequiredForComplete,
 	}
 	primaryPhoneDef = &xscmsg.FieldDef{
 		Tag:        "51b.",
-		Annotation: "primary-phone",
 		Label:      "Primary Contact Phone",
-		Comment:    "phone-number required-for-complete",
-		Validators: []xscmsg.Validator{requiredForComplete, xscform.ValidatePhoneNumber},
+		Validators: []xscmsg.Validator{xscform.ValidatePhoneNumber},
+		Flags:      xscmsg.RequiredForComplete,
 	}
 	secondaryContactDef = &xscmsg.FieldDef{
-		Tag:        "52a.",
-		Annotation: "secondary-contact",
-		Label:      "Secondary Contact",
+		Tag:   "52a.",
+		Label: "Secondary Contact",
 	}
 	secondaryPhoneDef = &xscmsg.FieldDef{
 		Tag:        "52b.",
-		Annotation: "secondary-phone",
 		Label:      "Secondary Contact Phone",
-		Comment:    "phone-number",
 		Validators: []xscmsg.Validator{xscform.ValidatePhoneNumber},
 	}
 	tacticalCallDef = &xscmsg.FieldDef{
-		Tag:        "60.",
-		Annotation: "tactical-call",
-		Label:      "Tactical Call Sign",
+		Tag:   "60.",
+		Label: "Tactical Call Sign",
 	}
 	repeaterCallDef = &xscmsg.FieldDef{
 		Tag:        "61.",
-		Annotation: "repeater-call",
 		Label:      "Repeater Call Sign",
-		Comment:    "call-sign",
 		Validators: []xscmsg.Validator{xscform.ValidateCallSign},
 	}
 	repeaterInputDef = &xscmsg.FieldDef{
 		Tag:        "62a.",
-		Annotation: "repeater-input",
 		Label:      "Repeater Input (MHz)",
-		Comment:    "frequency",
 		Validators: []xscmsg.Validator{validateFrequency},
 	}
 	repeaterInputToneDef = &xscmsg.FieldDef{
-		Tag:        "62b.",
-		Annotation: "repeater-input-tone",
-		Label:      "Repeater Input Tone or Code",
+		Tag:   "62b.",
+		Label: "Repeater Input Tone or Code",
 	}
 	repeaterOutputDef = &xscmsg.FieldDef{
 		Tag:        "63a.",
-		Annotation: "repeater-output",
 		Label:      "Repeater Output (MHz)",
-		Comment:    "frequency",
 		Validators: []xscmsg.Validator{validateFrequency},
 	}
 	repeaterOutputToneDef = &xscmsg.FieldDef{
-		Tag:        "63b.",
-		Annotation: "repeater-output-tone",
-		Label:      "Repeater Output Tone or Code",
+		Tag:   "63b.",
+		Label: "Repeater Output Tone or Code",
 	}
 	repeaterOffsetDef = &xscmsg.FieldDef{
 		Tag:        "62c.",
-		Annotation: "repeater-offset",
-		Label:      "Repeater Offset (MHz or \"+\" or \"-\" for standard)",
-		Comment:    "frequency-offset",
+		Label:      "Repeater Offset",
+		Comment:    "+, -, number",
 		Validators: []xscmsg.Validator{validateFrequencyOffset},
 	}
 	commentsDef = &xscmsg.FieldDef{
-		Tag:        "70.",
-		Annotation: "comments",
-		Label:      "Comments",
+		Tag:   "70.",
+		Label: "Comments",
+		Key:   xscmsg.FBody,
+		Flags: xscmsg.Multiline,
 	}
 	removeFromActiveListDef = &xscmsg.FieldDef{
 		Tag:        "71.",
-		Annotation: "remove-from-active-list",
 		Label:      "Remove from List",
-		Comment:    "boolean",
 		Validators: []xscmsg.Validator{xscform.ValidateBoolean},
 	}
 )
@@ -378,16 +331,6 @@ func validateFrequency(f *xscmsg.Field, _ *xscmsg.Message, _ bool) string {
 func validateFrequencyOffset(f *xscmsg.Field, _ *xscmsg.Message, _ bool) string {
 	if f.Value != "" && !frequencyOffsetRE.MatchString(f.Value) {
 		return fmt.Sprintf("%q is not a valid frequency offset value for field %q", f.Value, f.Def.Tag)
-	}
-	return ""
-}
-
-func requiredForComplete(f *xscmsg.Field, m *xscmsg.Message, _ bool) string {
-	if m.Field("19.").Value != "Complete" {
-		return ""
-	}
-	if f.Value == "" {
-		return fmt.Sprintf("The %q field must have a value when the \"19.\" field is set to \"Complete\".", f.Def.Tag)
 	}
 	return ""
 }

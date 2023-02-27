@@ -26,14 +26,12 @@ func create() *xscmsg.Message {
 }
 
 func recognize(msg *pktmsg.Message, form *pktmsg.Form) *xscmsg.Message {
-	if form != nil && form.FormType == html && !xscmsg.OlderVersion(form.FormVersion, "1.0") {
-		return xscform.AdoptForm(formtype, fieldDefs, msg, form)
-	}
 	subject := xscmsg.ParseSubject(msg.Header.Get("Subject"))
 	if subject == nil || subject.FormTag != "" || !strings.HasPrefix(strings.ToLower(subject.Subject), "check-in ") {
 		return nil
 	}
 	var m = create()
+	m.RawMessage = msg
 	m.Field("MsgNo").Value = subject.MessageNumber
 	if match := checkInRE.FindStringSubmatch(msg.Body); match != nil {
 		if match[3] != "" {
@@ -59,10 +57,7 @@ var formtype = &xscmsg.MessageType{
 	BodyFunc:    encodeBody,
 }
 
-func encodeBody(m *xscmsg.Message, human bool) string {
-	if human {
-		return xscform.EncodeBody(m, human)
-	}
+func encodeBody(m *xscmsg.Message) string {
 	opname := m.Field("OpName").Value
 	opcall := m.Field("OpCall").Value
 	taccall := m.Field("TacCall").Value
@@ -94,9 +89,9 @@ var (
 	msgNoDef = &xscmsg.FieldDef{
 		Tag:        "MsgNo",
 		Label:      "Message Number",
-		Comment:    "required",
 		Key:        xscmsg.FOriginMsgNo,
-		Validators: []xscmsg.Validator{xscform.ValidateRequired, xscform.ValidateMessageNumber},
+		Validators: []xscmsg.Validator{xscform.ValidateMessageNumber},
+		Flags:      xscmsg.Required,
 	}
 	tacCallDef = &xscmsg.FieldDef{
 		Tag:   "TacCall",
@@ -110,16 +105,16 @@ var (
 	opCallDef = &xscmsg.FieldDef{
 		Tag:        "OpCall",
 		Label:      "Operator Call Sign",
-		Comment:    "required call-sign",
+		Comment:    "call sign",
 		Key:        xscmsg.FOpCall,
-		Validators: []xscmsg.Validator{xscform.ValidateRequired, xscform.ValidateCallSign},
+		Validators: []xscmsg.Validator{xscform.ValidateCallSign},
+		Flags:      xscmsg.Required,
 	}
 	opNameDef = &xscmsg.FieldDef{
-		Tag:        "OpName",
-		Label:      "Operator Name",
-		Comment:    "required",
-		Key:        xscmsg.FOpName,
-		Validators: []xscmsg.Validator{xscform.ValidateRequired},
+		Tag:   "OpName",
+		Label: "Operator Name",
+		Key:   xscmsg.FOpName,
+		Flags: xscmsg.Required,
 	}
 )
 

@@ -94,169 +94,141 @@ var fieldDefsV21Tx = []*xscmsg.FieldDef{
 var (
 	senderMessageNumberRxDef = &xscmsg.FieldDef{
 		Tag:        "2.",
-		Annotation: "txmsgno",
 		Label:      "2. Sender's Msg #",
-		Comment:    "message-number",
 		KeyFunc:    msgNoKeyFunc,
-		ReadOnly:   true,
+		Flags:      xscmsg.Readonly,
 		Validators: []xscmsg.Validator{xscform.ValidateMessageNumber},
 	}
 	senderMessageNumberTxDef = &xscmsg.FieldDef{
 		Tag:        "2.",
-		Annotation: "txmsgno",
 		Label:      "2. Sender's Msg #",
-		Comment:    "message-number",
 		KeyFunc:    msgNoKeyFunc,
-		ReadOnly:   true,
+		Flags:      xscmsg.Readonly,
 		Validators: []xscmsg.Validator{xscform.ValidateMessageNumber},
 	}
 	myMessageNumberRxDef = &xscmsg.FieldDef{
 		Tag:        "MsgNo",
 		Label:      "My Msg #",
-		Comment:    "required message-number",
 		KeyFunc:    msgNoKeyFunc,
-		Validators: []xscmsg.Validator{xscform.ValidateRequired, xscform.ValidateMessageNumber},
+		Validators: []xscmsg.Validator{xscform.ValidateMessageNumber},
+		Flags:      xscmsg.Required,
 	}
 	myMessageNumberTxDef = &xscmsg.FieldDef{
 		Tag:        "MsgNo",
 		Label:      "My Msg #",
-		Comment:    "required message-number",
 		KeyFunc:    msgNoKeyFunc,
-		Validators: []xscmsg.Validator{xscform.ValidateRequired, xscform.ValidateMessageNumber},
+		Validators: []xscmsg.Validator{xscform.ValidateMessageNumber},
+		Flags:      xscmsg.Required,
 	}
 	receiverMessageNumberRxDef = &xscmsg.FieldDef{
 		Tag:        "3.",
-		Annotation: "rxmsgno",
 		Label:      "3. Receiver's Msg #",
-		Comment:    "message-number",
 		KeyFunc:    msgNoKeyFunc,
-		ReadOnly:   true,
+		Flags:      xscmsg.Readonly,
 		Validators: []xscmsg.Validator{xscform.ValidateMessageNumber},
 	}
 	receiverMessageNumberTxDef = &xscmsg.FieldDef{
 		Tag:        "3.",
-		Annotation: "rxmsgno",
 		Label:      "3. Receiver's Msg #",
-		Comment:    "message-number",
 		KeyFunc:    msgNoKeyFunc,
-		ReadOnly:   true,
+		Flags:      xscmsg.Readonly,
 		Validators: []xscmsg.Validator{xscform.ValidateMessageNumber},
 	}
 	originMessageNumberDef = &xscmsg.FieldDef{
 		Tag:        "MsgNo",
 		Label:      "2. Origin Msg #",
-		Comment:    "required message-number",
 		Key:        xscmsg.FOriginMsgNo,
-		Validators: []xscmsg.Validator{xscform.ValidateRequired, xscform.ValidateMessageNumber},
+		Validators: []xscmsg.Validator{xscform.ValidateMessageNumber},
+		Flags:      xscmsg.Required,
 	}
 	destinationMessageNumberDef = &xscmsg.FieldDef{
 		Tag:        "3.",
-		Annotation: "rxmsgno",
 		Label:      "3. Destination Msg #",
-		Comment:    "message-number",
 		Key:        xscmsg.FDestinationMsgNo,
-		ReadOnly:   true,
+		Flags:      xscmsg.Readonly,
 		Validators: []xscmsg.Validator{xscform.ValidateMessageNumber},
 	}
 	dateDef = &xscmsg.FieldDef{
 		Tag:         "1a.",
-		Annotation:  "date",
 		Label:       "1. Date",
-		Comment:     "required date",
+		Comment:     "MM/DD/YYYY",
 		DefaultFunc: xscform.DefaultDate,
-		Validators:  []xscmsg.Validator{xscform.ValidateRequired, xscform.ValidateDate},
+		Validators:  []xscmsg.Validator{xscform.ValidateDate},
+		Flags:       xscmsg.Required,
 	}
 	timeDef = &xscmsg.FieldDef{
 		Tag:         "1b.",
-		Annotation:  "time",
 		Label:       "1. Time (24hr)",
-		Comment:     "required time",
+		Comment:     "HH:MM",
 		DefaultFunc: xscform.DefaultTime,
-		Validators:  []xscmsg.Validator{xscform.ValidateRequired, xscform.ValidateTime},
+		Validators:  []xscmsg.Validator{xscform.ValidateTime},
+		Flags:       xscmsg.Required,
 	}
 	severityDef = &xscmsg.FieldDef{
 		Tag:        "4.",
-		Annotation: "severity",
 		Label:      "4. Situation Severity",
-		Comment:    "required: EMERGENCY, URGENT, OTHER",
-		Validators: []xscmsg.Validator{xscform.ValidateRequired, xscform.ValidateChoices},
+		Validators: []xscmsg.Validator{xscform.ValidateChoices},
 		Choices:    []string{"EMERGENCY", "URGENT", "OTHER"},
+		Flags:      xscmsg.Required,
 	}
 	handlingDefV21 = &xscmsg.FieldDef{
 		Tag:        "5.",
-		Annotation: "handling",
 		Label:      "5. Message Handling Order",
-		Comment:    "required: IMMEDIATE, PRIORITY, ROUTINE",
 		Key:        xscmsg.FHandling,
-		Validators: []xscmsg.Validator{xscform.ValidateRequired, xscform.ValidateChoices},
+		Validators: []xscmsg.Validator{xscform.ValidateChoices},
 		Choices:    []string{"IMMEDIATE", "PRIORITY", "ROUTINE"},
+		Flags:      xscmsg.Required,
 	}
 	handlingDefV22 = &xscmsg.FieldDef{
 		Tag:        "5.",
-		Annotation: "handling",
 		Label:      "5. Handling",
-		Comment:    "required: IMMEDIATE, PRIORITY, ROUTINE",
 		Key:        xscmsg.FHandling,
-		Validators: []xscmsg.Validator{xscform.ValidateRequired, xscform.ValidateChoices},
+		Validators: []xscmsg.Validator{xscform.ValidateChoices},
 		Choices:    []string{"IMMEDIATE", "PRIORITY", "ROUTINE"},
+		Flags:      xscmsg.Required,
 	}
 	takeActionDef = &xscmsg.FieldDef{
 		Tag:        "6a.",
-		Annotation: "take-action",
 		Label:      "6. Take Action",
-		Comment:    "Yes, No",
 		Validators: []xscmsg.Validator{xscform.ValidateChoices},
 		Choices:    []string{"Yes", "No"},
 	}
 	replyDef = &xscmsg.FieldDef{
 		Tag:        "6b.",
-		Annotation: "reply",
 		Label:      "6. Reply",
-		Comment:    "Yes, No",
 		Validators: []xscmsg.Validator{xscform.ValidateChoices},
 		Choices:    []string{"Yes", "No"},
 	}
 	fyiDef = &xscmsg.FieldDef{
 		Tag:        "6c.",
-		Annotation: "fyi",
 		Label:      "6. For your information (no action required)",
-		Comment:    "boolean",
 		Validators: []xscmsg.Validator{xscform.ValidateBoolean},
 	}
 	replyByDef = &xscmsg.FieldDef{
-		Tag:        "6d.",
-		Annotation: "reply-by",
-		Label:      "6. Reply by",
+		Tag:   "6d.",
+		Label: "6. Reply by",
 	}
 	toICSPositionDef = &xscmsg.FieldDef{
-		Tag:        "7.",
-		Annotation: "to-ics-position",
-		Label:      "7. To ICS Position",
-		Comment:    "required",
-		Key:        xscmsg.FToICSPosition,
-		Validators: []xscmsg.Validator{xscform.ValidateRequired},
+		Tag:   "7.",
+		Label: "7. To ICS Position",
+		Key:   xscmsg.FToICSPosition,
+		Flags: xscmsg.Required,
 	}
 	fromICSPositionDef = &xscmsg.FieldDef{
-		Tag:        "8.",
-		Annotation: "from-ics-position",
-		Label:      "8. From ICS Position",
-		Comment:    "required",
-		Validators: []xscmsg.Validator{xscform.ValidateRequired},
+		Tag:   "8.",
+		Label: "8. From ICS Position",
+		Flags: xscmsg.Required,
 	}
 	toLocationDef = &xscmsg.FieldDef{
-		Tag:        "9a.",
-		Annotation: "to-location",
-		Label:      "9. To Location",
-		Comment:    "required",
-		Key:        xscmsg.FToLocation,
-		Validators: []xscmsg.Validator{xscform.ValidateRequired},
+		Tag:   "9a.",
+		Label: "9. To Location",
+		Key:   xscmsg.FToLocation,
+		Flags: xscmsg.Required,
 	}
 	fromLocationDef = &xscmsg.FieldDef{
-		Tag:        "9b.",
-		Annotation: "from-location",
-		Label:      "9. From Location",
-		Comment:    "required",
-		Validators: []xscmsg.Validator{xscform.ValidateRequired},
+		Tag:   "9b.",
+		Label: "9. From Location",
+		Flags: xscmsg.Required,
 	}
 	toNameDef = &xscmsg.FieldDef{
 		Tag:   "ToName",
@@ -275,29 +247,24 @@ var (
 		Label: "From Telephone #",
 	}
 	subjectDef = &xscmsg.FieldDef{
-		Tag:        "10.",
-		Annotation: "subject",
-		Label:      "10. Subject",
-		Comment:    "required",
-		Key:        xscmsg.FSubject,
-		Validators: []xscmsg.Validator{xscform.ValidateRequired},
+		Tag:   "10.",
+		Label: "10. Subject",
+		Key:   xscmsg.FSubject,
+		Flags: xscmsg.Required,
 	}
 	referenceDef = &xscmsg.FieldDef{
-		Tag:        "11.",
-		Annotation: "reference",
-		Label:      "11. Reference",
+		Tag:   "11.",
+		Label: "11. Reference",
 	}
 	messageDef = &xscmsg.FieldDef{
-		Tag:        "12.",
-		Annotation: "message",
-		Label:      "12. Message",
-		Comment:    "required",
-		Validators: []xscmsg.Validator{xscform.ValidateRequired},
+		Tag:   "12.",
+		Key:   xscmsg.FBody,
+		Label: "12. Message",
+		Flags: xscmsg.Required | xscmsg.Multiline,
 	}
 	recSentDef = &xscmsg.FieldDef{
 		Tag:          "Rec-Sent",
 		Label:        "Receiver or Sender",
-		Comment:      "receiver, sender",
 		DefaultValue: "sender",
 		Validators:   []xscmsg.Validator{xscform.ValidateChoices},
 		Choices:      []string{"receiver", "sender"},
@@ -305,7 +272,6 @@ var (
 	methodDef = &xscmsg.FieldDef{
 		Tag:          "Method",
 		Label:        "How Received or Sent",
-		Comment:      "Telephone, Dispatch Center, EOC Radio, FAX, Courier, Amateur Radio, Other",
 		DefaultValue: "Other",
 		Validators:   []xscmsg.Validator{xscform.ValidateChoices},
 		Choices:      []string{"Telephone", "Dispatch Center", "EOC Radio", "FAX", "Courier", "Amateur Radio", "Other"},

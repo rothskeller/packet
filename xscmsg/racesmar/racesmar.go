@@ -24,10 +24,10 @@ func init() {
 	handlingDef.DefaultValue = "ROUTINE"
 	toICSPositionDef = *xscform.ToICSPositionDef
 	toICSPositionDef.DefaultValue = "RACES Chief Radio Officer"
-	toICSPositionDef.Comment = "required: RACES Chief Radio Officer, RACES Unit, Operations Section, ..."
+	toICSPositionDef.Choices = []string{"Operations Section", "RACES Chief Radio Officer", "RACES Unit"}
 	toLocationDef = *xscform.ToLocationDef
 	toLocationDef.DefaultValue = "County EOC"
-	toLocationDef.Comment = "required: County EOC, ..."
+	toLocationDef.Choices = []string{"County EOC"}
 }
 
 func create() *xscmsg.Message {
@@ -133,463 +133,358 @@ var (
 	toICSPositionDef = *xscform.ToICSPositionDef // modified in func init
 	toLocationDef    = *xscform.ToLocationDef    // modified in func init
 	agencyDef        = &xscmsg.FieldDef{
-		Tag:        "15.",
-		Annotation: "agency",
-		Label:      "Agency Name",
-		Comment:    "required",
-		Key:        xscmsg.FSubject,
-		Validators: []xscmsg.Validator{xscform.ValidateRequired},
+		Tag:   "15.",
+		Label: "Agency Name",
+		Key:   xscmsg.FSubject,
+		Flags: xscmsg.Required,
 	}
 	eventNameDef = &xscmsg.FieldDef{
-		Tag:        "16a.",
-		Annotation: "event-name",
-		Label:      "Event / Incident Name",
-		Comment:    "required",
-		Validators: []xscmsg.Validator{xscform.ValidateRequired},
+		Tag:   "16a.",
+		Label: "Event / Incident Name",
+		Flags: xscmsg.Required,
 	}
 	eventNumberDef = &xscmsg.FieldDef{
 		Tag:        "16b.",
-		Annotation: "event-number",
 		Label:      "Event / Incident Number",
 		Validators: []xscmsg.Validator{},
 	}
 	assignmentDef = &xscmsg.FieldDef{
-		Tag:        "17.",
-		Annotation: "assignment",
-		Label:      "Assignment",
-		Comment:    "required",
-		Validators: []xscmsg.Validator{xscform.ValidateRequired},
+		Tag:   "17.",
+		Label: "Assignment",
+		Key:   xscmsg.FBody,
+		Flags: xscmsg.Required | xscmsg.Multiline,
 	}
 	resourcesQtyDef = &xscmsg.FieldDef{
 		Tag:        "18a.",
-		Annotation: "resources-qty",
 		Label:      "Qty",
-		Comment:    "required cardinal-number",
-		Validators: []xscmsg.Validator{xscform.ValidateRequired, xscform.ValidateCardinalNumber},
+		Validators: []xscmsg.Validator{xscform.ValidateCardinalNumber},
+		Flags:      xscmsg.Required,
 	}
 	resourcesRoleDef = &xscmsg.FieldDef{
-		Tag:        "18b.",
-		Annotation: "resources-role",
-		Label:      "Role/Position",
-		Comment:    "required",
-		Validators: []xscmsg.Validator{xscform.ValidateRequired},
+		Tag:   "18b.",
+		Label: "Role/Position",
+		Flags: xscmsg.Required,
 	}
 	preferredTypeDef = &xscmsg.FieldDef{
-		Tag:        "18c.",
-		Annotation: "preferred-type",
-		Label:      "Preferred Type",
-		Comment:    "required",
-		Validators: []xscmsg.Validator{xscform.ValidateRequired},
+		Tag:   "18c.",
+		Label: "Preferred Type",
+		Flags: xscmsg.Required,
 	}
 	minimumTypeDef = &xscmsg.FieldDef{
-		Tag:        "18d.",
-		Annotation: "minimum-type",
-		Label:      "Minimum Type",
-		Comment:    "required",
-		Validators: []xscmsg.Validator{xscform.ValidateRequired},
+		Tag:   "18d.",
+		Label: "Minimum Type",
+		Flags: xscmsg.Required,
 	}
 	resourcesQty1Def = &xscmsg.FieldDef{
 		Tag:        "18.1a.",
-		Annotation: "resources-qty",
 		Label:      "Resource 1 Qty",
-		Comment:    "required cardinal-number",
-		Validators: []xscmsg.Validator{xscform.ValidateRequired, xscform.ValidateCardinalNumber},
+		Validators: []xscmsg.Validator{xscform.ValidateCardinalNumber},
+		Flags:      xscmsg.Required,
 	}
 	role1Def = &xscmsg.FieldDef{
 		Tag:        "18.1e.",
-		Annotation: "role",
 		Label:      "Resource 1 Role",
-		Comment:    "required: Field Communicator, Net Control Operator, Packet Operator, Shadow Communicator",
-		Validators: []xscmsg.Validator{xscform.ValidateRequired, xscform.ValidateChoices},
+		Validators: []xscmsg.Validator{xscform.ValidateChoices},
 		Choices:    []string{"Field Communicator", "Net Control Operator", "Packet Operator", "Shadow Communicator"},
+		Flags:      xscmsg.Required,
 	}
 	position1Def = &xscmsg.FieldDef{
 		Tag:        "18.1f.",
-		Annotation: "position",
 		Label:      "Resource 1 Position (for example, Checkpoint)",
 		Validators: []xscmsg.Validator{},
 	}
 	resourcesRole1DefV23 = &xscmsg.FieldDef{
 		Tag:        "18.1b.",
-		Annotation: "resources-role",
-		ReadOnly:   true,
-		Validators: []xscmsg.Validator{setResourcesRole, xscform.ValidateRequired},
+		Validators: []xscmsg.Validator{setResourcesRole},
+		Flags:      xscmsg.Readonly | xscmsg.Required,
 	}
 	resourcesRole1DefV21 = &xscmsg.FieldDef{
-		Tag:        "18.1b.",
-		Annotation: "resources-role",
-		Label:      "Resource 1 Role/Position",
-		Comment:    "required",
-		Validators: []xscmsg.Validator{xscform.ValidateRequired},
+		Tag:   "18.1b.",
+		Label: "Resource 1 Role/Position",
+		Flags: xscmsg.Required,
 	}
 	preferredType1DefV23 = &xscmsg.FieldDef{
 		Tag:        "18.1c.",
-		Annotation: "preferred-type",
 		Label:      "Resource 1 Preferred Type",
-		Comment:    "[FNPS][123], Type IV, Type V",
 		Validators: []xscmsg.Validator{validateType},
 	}
 	preferredType1DefV21 = &xscmsg.FieldDef{
-		Tag:        "18.1c.",
-		Annotation: "preferred-type",
-		Label:      "Resource 1 Preferred Type",
-		Comment:    "required",
-		Validators: []xscmsg.Validator{xscform.ValidateRequired},
+		Tag:   "18.1c.",
+		Label: "Resource 1 Preferred Type",
+		Flags: xscmsg.Required,
 	}
 	minimumType1DefV23 = &xscmsg.FieldDef{
 		Tag:        "18.1d.",
-		Annotation: "minimum-type",
 		Label:      "Resource 1 Minimum Type",
-		Comment:    "[FNPS][123], Type IV, Type V",
 		Validators: []xscmsg.Validator{validateType},
 	}
 	minimumType1DefV21 = &xscmsg.FieldDef{
-		Tag:        "18.1d.",
-		Annotation: "minimum-type",
-		Label:      "Resource 1 Minimum Type",
-		Comment:    "required",
-		Validators: []xscmsg.Validator{xscform.ValidateRequired},
+		Tag:   "18.1d.",
+		Label: "Resource 1 Minimum Type",
+		Flags: xscmsg.Required,
 	}
 	resourcesQty2Def = &xscmsg.FieldDef{
 		Tag:        "18.2a.",
-		Annotation: "resources-qty",
 		Label:      "Resource 2 Qty",
-		Comment:    "cardinal-number",
 		Validators: []xscmsg.Validator{xscform.ValidateCardinalNumber},
 	}
 	role2Def = &xscmsg.FieldDef{
 		Tag:        "18.2e.",
-		Annotation: "role",
 		Label:      "Resource 2 Role",
-		Comment:    "Field Communicator, Net Control Operator, Packet Operator, Shadow Communicator",
 		Validators: []xscmsg.Validator{xscform.ValidateChoices},
 		Choices:    []string{"Field Communicator", "Net Control Operator", "Packet Operator", "Shadow Communicator"},
 	}
 	position2Def = &xscmsg.FieldDef{
 		Tag:        "18.2f.",
-		Annotation: "position",
 		Label:      "Resource 2 Position (for example, Checkpoint)",
 		Validators: []xscmsg.Validator{},
 	}
 	resourcesRole2DefV23 = &xscmsg.FieldDef{
 		Tag:        "18.2b.",
-		Annotation: "resources-role",
-		ReadOnly:   true,
+		Flags:      xscmsg.Readonly,
 		Validators: []xscmsg.Validator{setResourcesRole},
 	}
 	resourcesRole2DefV21 = &xscmsg.FieldDef{
 		Tag:        "18.2b.",
-		Annotation: "resources-role",
 		Label:      "Resource 2 Role/Position",
 		Validators: []xscmsg.Validator{},
 	}
 	preferredType2DefV23 = &xscmsg.FieldDef{
 		Tag:        "18.2c.",
-		Annotation: "preferred-type",
 		Label:      "Resource 2 Preferred Type",
-		Comment:    "[FNPS][123], Type IV, Type V",
 		Validators: []xscmsg.Validator{validateType},
 	}
 	preferredType2DefV21 = &xscmsg.FieldDef{
 		Tag:        "18.2c.",
-		Annotation: "preferred-type",
 		Label:      "Resource 2 Preferred Type",
 		Validators: []xscmsg.Validator{},
 	}
 	minimumType2DefV23 = &xscmsg.FieldDef{
 		Tag:        "18.2d.",
-		Annotation: "minimum-type",
 		Label:      "Resource 2 Minimum Type",
-		Comment:    "[FNPS][123], Type IV, Type V",
 		Validators: []xscmsg.Validator{validateType},
 	}
 	minimumType2DefV21 = &xscmsg.FieldDef{
 		Tag:        "18.2d.",
-		Annotation: "minimum-type",
 		Label:      "Resource 2 Minimum Type",
 		Validators: []xscmsg.Validator{},
 	}
 	resourcesQty3Def = &xscmsg.FieldDef{
 		Tag:        "18.3a.",
-		Annotation: "resources-qty",
 		Label:      "Resource 3 Qty",
-		Comment:    "cardinal-number",
 		Validators: []xscmsg.Validator{xscform.ValidateCardinalNumber},
 	}
 	role3Def = &xscmsg.FieldDef{
 		Tag:        "18.3e.",
-		Annotation: "role",
 		Label:      "Resource 3 Role",
-		Comment:    "Field Communicator, Net Control Operator, Packet Operator, Shadow Communicator",
 		Validators: []xscmsg.Validator{xscform.ValidateChoices},
 		Choices:    []string{"Field Communicator", "Net Control Operator", "Packet Operator", "Shadow Communicator"},
 	}
 	position3Def = &xscmsg.FieldDef{
 		Tag:        "18.3f.",
-		Annotation: "position",
 		Label:      "Resource 3 Position (for example, Checkpoint)",
 		Validators: []xscmsg.Validator{},
 	}
 	resourcesRole3DefV23 = &xscmsg.FieldDef{
 		Tag:        "18.3b.",
-		Annotation: "resources-role",
-		ReadOnly:   true,
+		Flags:      xscmsg.Readonly,
 		Validators: []xscmsg.Validator{setResourcesRole},
 	}
 	resourcesRole3DefV21 = &xscmsg.FieldDef{
 		Tag:        "18.3b.",
-		Annotation: "resources-role",
 		Label:      "Resource 3 Role/Position",
 		Validators: []xscmsg.Validator{},
 	}
 	preferredType3DefV23 = &xscmsg.FieldDef{
 		Tag:        "18.3c.",
-		Annotation: "preferred-type",
 		Label:      "Resource 3 Preferred Type",
-		Comment:    "[FNPS][123], Type IV, Type V",
 		Validators: []xscmsg.Validator{validateType},
 	}
 	preferredType3DefV21 = &xscmsg.FieldDef{
 		Tag:        "18.3c.",
-		Annotation: "preferred-type",
 		Label:      "Resource 3 Preferred Type",
 		Validators: []xscmsg.Validator{},
 	}
 	minimumType3DefV23 = &xscmsg.FieldDef{
 		Tag:        "18.3d.",
-		Annotation: "minimum-type",
 		Label:      "Resource 3 Minimum Type",
-		Comment:    "[FNPS][123], Type IV, Type V",
 		Validators: []xscmsg.Validator{validateType},
 	}
 	minimumType3DefV21 = &xscmsg.FieldDef{
 		Tag:        "18.3d.",
-		Annotation: "minimum-type",
 		Label:      "Resource 3 Minimum Type",
 		Validators: []xscmsg.Validator{},
 	}
 	resourcesQty4Def = &xscmsg.FieldDef{
 		Tag:        "18.4a.",
-		Annotation: "resources-qty",
 		Label:      "Resource 4 Qty",
-		Comment:    "cardinal-number",
 		Validators: []xscmsg.Validator{xscform.ValidateCardinalNumber},
 	}
 	role4Def = &xscmsg.FieldDef{
 		Tag:        "18.4e.",
-		Annotation: "role",
 		Label:      "Resource 4 Role",
-		Comment:    "Field Communicator, Net Control Operator, Packet Operator, Shadow Communicator",
 		Validators: []xscmsg.Validator{xscform.ValidateChoices},
 		Choices:    []string{"Field Communicator", "Net Control Operator", "Packet Operator", "Shadow Communicator"},
 	}
 	position4Def = &xscmsg.FieldDef{
 		Tag:        "18.4f.",
-		Annotation: "position",
 		Label:      "Resource 4 Position (for example, Checkpoint)",
 		Validators: []xscmsg.Validator{},
 	}
 	resourcesRole4DefV23 = &xscmsg.FieldDef{
 		Tag:        "18.4b.",
-		Annotation: "resources-role",
-		ReadOnly:   true,
+		Flags:      xscmsg.Readonly,
 		Validators: []xscmsg.Validator{setResourcesRole},
 	}
 	resourcesRole4DefV21 = &xscmsg.FieldDef{
 		Tag:        "18.4b.",
-		Annotation: "resources-role",
 		Label:      "Resource 4 Role/Position",
 		Validators: []xscmsg.Validator{},
 	}
 	preferredType4DefV23 = &xscmsg.FieldDef{
 		Tag:        "18.4c.",
-		Annotation: "preferred-type",
 		Label:      "Resource 4 Preferred Type",
-		Comment:    "[FNPS][123], Type IV, Type V",
 		Validators: []xscmsg.Validator{validateType},
 	}
 	preferredType4DefV21 = &xscmsg.FieldDef{
 		Tag:        "18.4c.",
-		Annotation: "preferred-type",
 		Label:      "Resource 4 Preferred Type",
 		Validators: []xscmsg.Validator{},
 	}
 	minimumType4DefV23 = &xscmsg.FieldDef{
 		Tag:        "18.4d.",
-		Annotation: "minimum-type",
 		Label:      "Resource 4 Minimum Type",
-		Comment:    "[FNPS][123], Type IV, Type V",
 		Validators: []xscmsg.Validator{validateType},
 	}
 	minimumType4DefV21 = &xscmsg.FieldDef{
 		Tag:        "18.4d.",
-		Annotation: "minimum-type",
 		Label:      "Resource 4 Minimum Type",
 		Validators: []xscmsg.Validator{},
 	}
 	resourcesQty5Def = &xscmsg.FieldDef{
 		Tag:        "18.5a.",
-		Annotation: "resources-qty",
 		Label:      "Resource 5 Qty",
-		Comment:    "cardinal-number",
 		Validators: []xscmsg.Validator{xscform.ValidateCardinalNumber},
 	}
 	role5Def = &xscmsg.FieldDef{
 		Tag:        "18.5e.",
-		Annotation: "role",
 		Label:      "Resource 5 Role",
-		Comment:    "Field Communicator, Net Control Operator, Packet Operator, Shadow Communicator",
 		Validators: []xscmsg.Validator{xscform.ValidateChoices},
 		Choices:    []string{"Field Communicator", "Net Control Operator", "Packet Operator", "Shadow Communicator"},
 	}
 	position5Def = &xscmsg.FieldDef{
 		Tag:        "18.5f.",
-		Annotation: "position",
 		Label:      "Resource 5 Position (for example, Checkpoint)",
 		Validators: []xscmsg.Validator{},
 	}
 	resourcesRole5DefV23 = &xscmsg.FieldDef{
 		Tag:        "18.5b.",
-		Annotation: "resources-role",
-		ReadOnly:   true,
+		Flags:      xscmsg.Readonly,
 		Validators: []xscmsg.Validator{setResourcesRole},
 	}
 	resourcesRole5DefV21 = &xscmsg.FieldDef{
 		Tag:        "18.5b.",
-		Annotation: "resources-role",
 		Label:      "Resource 5 Role/Position",
 		Validators: []xscmsg.Validator{},
 	}
 	preferredType5DefV23 = &xscmsg.FieldDef{
 		Tag:        "18.5c.",
-		Annotation: "preferred-type",
 		Label:      "Resource 5 Preferred Type",
-		Comment:    "[FNPS][123], Type IV, Type V",
 		Validators: []xscmsg.Validator{validateType},
 	}
 	preferredType5DefV21 = &xscmsg.FieldDef{
 		Tag:        "18.5c.",
-		Annotation: "preferred-type",
 		Label:      "Resource 5 Preferred Type",
 		Validators: []xscmsg.Validator{},
 	}
 	minimumType5DefV23 = &xscmsg.FieldDef{
 		Tag:        "18.5d.",
-		Annotation: "minimum-type",
 		Label:      "Resource 5 Minimum Type",
-		Comment:    "[FNPS][123], Type IV, Type V",
 		Validators: []xscmsg.Validator{validateType},
 	}
 	minimumType5DefV21 = &xscmsg.FieldDef{
 		Tag:        "18.5d.",
-		Annotation: "minimum-type",
 		Label:      "Resource 5 Minimum Type",
 		Validators: []xscmsg.Validator{},
 	}
 	arrivalDatesDef = &xscmsg.FieldDef{
-		Tag:        "19a.",
-		Annotation: "arrival-dates",
-		Label:      "Requested Arrival Date(s)",
-		Comment:    "required",
-		Validators: []xscmsg.Validator{xscform.ValidateRequired},
+		Tag:   "19a.",
+		Label: "Requested Arrival Date(s)",
+		Flags: xscmsg.Required,
 	}
 	arrivalTimesDef = &xscmsg.FieldDef{
-		Tag:        "19b.",
-		Annotation: "arrival-times",
-		Label:      "Requested Arrival Time(s)",
-		Comment:    "required",
-		Validators: []xscmsg.Validator{xscform.ValidateRequired},
+		Tag:   "19b.",
+		Label: "Requested Arrival Time(s)",
+		Flags: xscmsg.Required,
 	}
 	neededDatesDef = &xscmsg.FieldDef{
-		Tag:        "20a.",
-		Annotation: "needed-dates",
-		Label:      "Needed Until Date(s)",
-		Comment:    "required",
-		Validators: []xscmsg.Validator{xscform.ValidateRequired},
+		Tag:   "20a.",
+		Label: "Needed Until Date(s)",
+		Flags: xscmsg.Required,
 	}
 	neededTimesDef = &xscmsg.FieldDef{
-		Tag:        "20b.",
-		Annotation: "needed-times",
-		Label:      "Needed Until Time(s)",
-		Comment:    "required",
-		Validators: []xscmsg.Validator{xscform.ValidateRequired},
+		Tag:   "20b.",
+		Label: "Needed Until Time(s)",
+		Flags: xscmsg.Required,
 	}
 	reportingLocationDef = &xscmsg.FieldDef{
-		Tag:        "21.",
-		Annotation: "reporting-location",
-		Label:      "Reporting Location (Street Address, Parking, Entry Instructions)",
-		Comment:    "required",
-		Validators: []xscmsg.Validator{xscform.ValidateRequired},
+		Tag:   "21.",
+		Label: "Reporting Location (Street Address, Parking, Entry Instructions)",
+		Flags: xscmsg.Required | xscmsg.Multiline,
 	}
 	contactOnArrivalDef = &xscmsg.FieldDef{
-		Tag:        "22.",
-		Annotation: "contact-on-arrival",
-		Label:      "Contact on Arrival (Name/Position and contact info)",
-		Comment:    "required",
-		Validators: []xscmsg.Validator{xscform.ValidateRequired},
+		Tag:   "22.",
+		Label: "Contact on Arrival (Name/Position and contact info)",
+		Flags: xscmsg.Required | xscmsg.Multiline,
 	}
 	travelInfoDef = &xscmsg.FieldDef{
-		Tag:        "23.",
-		Annotation: "travel-info",
-		Label:      "Travel Info (Routes, Hazards, Lodging)",
-		Comment:    "required",
-		Validators: []xscmsg.Validator{xscform.ValidateRequired},
+		Tag:   "23.",
+		Label: "Travel Info (Routes, Hazards, Lodging)",
+		Flags: xscmsg.Required | xscmsg.Multiline,
 	}
 	requesterNameDef = &xscmsg.FieldDef{
-		Tag:        "24a.",
-		Annotation: "requester-name",
-		Label:      "Requested By Name",
-		Comment:    "required",
-		Validators: []xscmsg.Validator{xscform.ValidateRequired},
+		Tag:   "24a.",
+		Label: "Requested By Name",
+		Flags: xscmsg.Required,
 	}
 	requesterTitleDef = &xscmsg.FieldDef{
-		Tag:        "24b.",
-		Annotation: "requester-title",
-		Label:      "Requested By Title",
-		Comment:    "required",
-		Validators: []xscmsg.Validator{xscform.ValidateRequired},
+		Tag:   "24b.",
+		Label: "Requested By Title",
+		Flags: xscmsg.Required,
 	}
 	requesterContactDef = &xscmsg.FieldDef{
-		Tag:        "24c.",
-		Annotation: "requester-contact",
-		Label:      "Requested By Contact (E-mail, phone, frequency)",
-		Comment:    "required",
-		Validators: []xscmsg.Validator{xscform.ValidateRequired},
+		Tag:   "24c.",
+		Label: "Requested By Contact (E-mail, phone, frequency)",
+		Flags: xscmsg.Required,
 	}
 	agencyApproverNameDef = &xscmsg.FieldDef{
-		Tag:        "25a.",
-		Annotation: "agency-approver-name",
-		Label:      "Approved By Name",
-		Comment:    "required",
-		Validators: []xscmsg.Validator{xscform.ValidateRequired},
+		Tag:   "25a.",
+		Label: "Approved By Name",
+		Flags: xscmsg.Required,
 	}
 	agencyApproverTitleDef = &xscmsg.FieldDef{
-		Tag:        "25b.",
-		Annotation: "agency-approver-title",
-		Label:      "Approved By Title",
-		Comment:    "required",
-		Validators: []xscmsg.Validator{xscform.ValidateRequired},
+		Tag:   "25b.",
+		Label: "Approved By Title",
+		Flags: xscmsg.Required,
 	}
 	agencyApproverContactDef = &xscmsg.FieldDef{
-		Tag:        "25c.",
-		Annotation: "agency-approver-contact",
-		Label:      "Approved By Contact (E-mail, phone, frequency)",
-		Comment:    "required",
-		Validators: []xscmsg.Validator{xscform.ValidateRequired},
+		Tag:   "25c.",
+		Label: "Approved By Contact (E-mail, phone, frequency)",
+		Flags: xscmsg.Required,
 	}
 	agencyApprovedDateDef = &xscmsg.FieldDef{
 		Tag:        "26a.",
-		Annotation: "agency-approved-date",
 		Label:      "Approved By Date",
-		Comment:    "required date",
-		Validators: []xscmsg.Validator{xscform.ValidateRequired, xscform.ValidateDate},
+		Comment:    "MM/DD/YYYY",
+		Validators: []xscmsg.Validator{xscform.ValidateDate},
+		Flags:      xscmsg.Required,
 	}
 	agencyApprovedTimeDef = &xscmsg.FieldDef{
 		Tag:        "26b.",
-		Annotation: "agency-approved-time",
 		Label:      "Approved By Time",
-		Comment:    "required time",
-		Validators: []xscmsg.Validator{xscform.ValidateRequired, xscform.ValidateTime},
+		Comment:    "HH:MM",
+		Validators: []xscmsg.Validator{xscform.ValidateTime},
+		Flags:      xscmsg.Required,
 	}
 )
 

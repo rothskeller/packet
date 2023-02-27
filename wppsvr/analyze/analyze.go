@@ -105,7 +105,7 @@ func Analyze(st astore, session *store.Session, bbs, raw string) *Analysis {
 	a.localID = st.NextMessageID(a.session.Prefix)
 	// Determine the message type (if no parse error and not a bounce).
 	if err == nil && a.msg.Flags&pktmsg.AutoResponse == 0 {
-		a.xsc = xscmsg.Recognize(a.msg, true)
+		a.xsc = xscmsg.Recognize(a.msg)
 	}
 	// Find the problems with the message.
 	a.findProblems(err)

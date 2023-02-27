@@ -24,7 +24,7 @@ var unknownFormMessageType = MessageType{
 	Name:        "form of unknown type",
 	Article:     "a",
 	SubjectFunc: func(m *Message) string { return m.RawMessage.Header.Get("Subject") },
-	BodyFunc: func(m *Message, human bool) string {
+	BodyFunc: func(m *Message) string {
 		// This is a copy of xscform.EncodeBody.  It was easier to copy
 		// it than to work around the import loop to reuse it.
 		var form = pktmsg.Form{
@@ -33,10 +33,10 @@ var unknownFormMessageType = MessageType{
 			FormVersion: m.RawForm.FormVersion,
 		}
 		for _, f := range m.Fields {
-			if f.Value != "" || (human && !f.Def.ReadOnly) {
+			if f.Value != "" {
 				form.Fields = append(form.Fields, pktmsg.FormField{Tag: f.Def.Tag, Value: f.Value})
 			}
 		}
-		return form.Encode(nil, nil, human)
+		return form.Encode()
 	},
 }

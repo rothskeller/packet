@@ -34,7 +34,7 @@ func main() {
 	if msg, err = pktmsg.ParseMessage(raw); err != nil {
 		log.Fatal(err)
 	}
-	xsc = xscmsg.Recognize(msg, true)
+	xsc = xscmsg.Recognize(msg)
 	fmt.Fprintf(os.Stderr, "Message Type: %s\n", xsc.Type.Tag)
 	problems = xsc.Validate(true)
 	for _, problem := range problems {
@@ -44,8 +44,8 @@ func main() {
 		os.Exit(1)
 	}
 	msg.Header.Set("Subject", xsc.Subject())
-	msg.Body = xsc.Body(false)
-	out := msg.Encode(false)
+	msg.Body = xsc.Body()
+	out := msg.Encode()
 	if out != raw {
 		fmt.Printf("ERROR: round trip mismatch: input was:\n%s\n=== output was:\n%s\n", raw, out)
 		os.Exit(1)

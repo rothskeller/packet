@@ -9,9 +9,9 @@ import (
 var OriginMessageNumberDef = &xscmsg.FieldDef{
 	Tag:        "MsgNo",
 	Label:      "Origin Message Number",
-	Comment:    "required message-number",
 	Key:        xscmsg.FOriginMsgNo,
-	Validators: []xscmsg.Validator{ValidateRequired, ValidateMessageNumber},
+	Validators: []xscmsg.Validator{ValidateMessageNumber},
+	Flags:      xscmsg.Required,
 }
 
 // DestinationMessageNumberDef is the definition of the XSC-standard Destination
@@ -19,108 +19,94 @@ var OriginMessageNumberDef = &xscmsg.FieldDef{
 var DestinationMessageNumberDef = &xscmsg.FieldDef{
 	Tag:        "DestMsgNo",
 	Label:      "Destination Message Number",
-	Comment:    "message-number",
 	Key:        xscmsg.FDestinationMsgNo,
-	ReadOnly:   true,
+	Flags:      xscmsg.Readonly,
 	Validators: []xscmsg.Validator{ValidateMessageNumber},
 }
 
 // MessageDateDef is the definition of the XSC-standard Message Date field.
 var MessageDateDef = &xscmsg.FieldDef{
 	Tag:         "1a.",
-	Annotation:  "date",
 	Label:       "Date",
-	Comment:     "required date",
-	Validators:  []xscmsg.Validator{ValidateRequired, ValidateDate},
+	Comment:     "MM/DD/YYYY",
+	Validators:  []xscmsg.Validator{ValidateDate},
+	Flags:       xscmsg.Required,
 	DefaultFunc: DefaultDate,
 }
 
 // MessageTimeDef is the definition of the XSC-standard Message Time field.
 var MessageTimeDef = &xscmsg.FieldDef{
 	Tag:         "1b.",
-	Annotation:  "time",
 	Label:       "Time",
-	Comment:     "required time",
-	Validators:  []xscmsg.Validator{ValidateRequired, ValidateTime},
+	Comment:     "HH:MM",
+	Validators:  []xscmsg.Validator{ValidateTime},
+	Flags:       xscmsg.Required,
 	DefaultFunc: DefaultTime,
 }
 
 // HandlingDef is the definition of the XSC-standard Handling field.
 var HandlingDef = &xscmsg.FieldDef{
 	Tag:        "5.",
-	Annotation: "handling",
 	Label:      "Handling",
-	Comment:    "required: IMMEDIATE, PRIORITY, ROUTINE",
 	Key:        xscmsg.FHandling,
-	Validators: []xscmsg.Validator{ValidateRequired, ValidateChoices},
+	Validators: []xscmsg.Validator{ValidateChoices},
 	Choices:    []string{"IMMEDIATE", "PRIORITY", "ROUTINE"},
+	Flags:      xscmsg.Required,
 }
 
 // ToICSPositionDef is the definition of the XSC-standard To ICS Position field.
 var ToICSPositionDef = &xscmsg.FieldDef{
-	Tag:        "7a.",
-	Annotation: "to-ics-position",
-	Label:      "To ICS Position",
-	Comment:    "required",
-	Key:        xscmsg.FToICSPosition,
-	Validators: []xscmsg.Validator{ValidateRequired},
+	Tag:   "7a.",
+	Label: "To ICS Position",
+	Key:   xscmsg.FToICSPosition,
+	Flags: xscmsg.Required,
 }
 
 // FromICSPositionDef is the definition of the XSC-standard From ICS Position
 // field.
 var FromICSPositionDef = &xscmsg.FieldDef{
-	Tag:        "8a.",
-	Annotation: "from-ics-position",
-	Label:      "From ICS Position",
-	Comment:    "required",
-	Validators: []xscmsg.Validator{ValidateRequired},
+	Tag:   "8a.",
+	Label: "From ICS Position",
+	Flags: xscmsg.Required,
 }
 
 // ToLocationDef is the definition of the XSC-standard To Location field.
 var ToLocationDef = &xscmsg.FieldDef{
-	Tag:        "7b.",
-	Annotation: "to-location",
-	Label:      "To Location",
-	Comment:    "required",
-	Key:        xscmsg.FToLocation,
-	Validators: []xscmsg.Validator{ValidateRequired},
+	Tag:   "7b.",
+	Label: "To Location",
+	Key:   xscmsg.FToLocation,
+	Flags: xscmsg.Required,
 }
 
 // FromLocationDef is the definition of the XSC-standard From Location field.
 var FromLocationDef = &xscmsg.FieldDef{
-	Tag:        "8b.",
-	Annotation: "from-location",
-	Label:      "From Location",
-	Comment:    "required",
-	Validators: []xscmsg.Validator{ValidateRequired},
+	Tag:   "8b.",
+	Label: "From Location",
+	Flags: xscmsg.Required,
 }
 
 // ToNameDef is the definition of the XSC-standard To Name field.
 var ToNameDef = &xscmsg.FieldDef{
-	Tag:        "7c.",
-	Annotation: "to-name",
-	Label:      "To Name",
+	Tag:   "7c.",
+	Label: "To Name",
 }
 
 // FromNameDef is the definition of the XSC-standard From Name field.
 var FromNameDef = &xscmsg.FieldDef{
-	Tag:        "8c.",
-	Annotation: "from-name",
-	Label:      "From Name",
+	Tag:   "8c.",
+	Label: "From Name",
 }
 
 // ToContactDef is the definition of the XSC-standard To Contact field.
 var ToContactDef = &xscmsg.FieldDef{
-	Tag:        "7d.",
-	Annotation: "to-contact",
-	Label:      "To Contact Info",
+	Tag:   "7d.",
+	Label: "To Contact Info",
 }
 
 // FromContactDef is the definition of the XSC-standard From Contact field.
 var FromContactDef = &xscmsg.FieldDef{
-	Tag:        "8d.",
-	Annotation: "from-contact",
-	Label:      "From Contact Info",
+	Tag:   "8d.",
+	Label: "From Contact Info",
 }
 
 // OpRelayRcvdDef is the definition of the XSC-standard Operator Relay Received
@@ -148,16 +134,16 @@ var OpNameDef = &xscmsg.FieldDef{
 var OpCallDef = &xscmsg.FieldDef{
 	Tag:        "OpCall",
 	Label:      "Operator Call Sign",
-	Comment:    "required call-sign",
 	Key:        xscmsg.FOpCall,
-	Validators: []xscmsg.Validator{ValidateRequired, ValidateCallSign},
+	Validators: []xscmsg.Validator{ValidateCallSign},
+	Flags:      xscmsg.Required,
 }
 
 // OpDateDef is the definition of the XSC-standard Operator Date field.
 var OpDateDef = &xscmsg.FieldDef{
 	Tag:         "OpDate",
 	Label:       "Operator Date",
-	Comment:     "date",
+	Comment:     "MM/DD/YYYY",
 	Key:         xscmsg.FOpDate,
 	Validators:  []xscmsg.Validator{ValidateDate},
 	DefaultFunc: DefaultDate,
@@ -167,7 +153,7 @@ var OpDateDef = &xscmsg.FieldDef{
 var OpTimeDef = &xscmsg.FieldDef{
 	Tag:         "OpTime",
 	Label:       "Operator Time",
-	Comment:     "time",
+	Comment:     "HH:MM",
 	Key:         xscmsg.FOpTime,
 	Validators:  []xscmsg.Validator{ValidateTime},
 	DefaultFunc: DefaultTime,

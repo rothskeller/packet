@@ -16,9 +16,9 @@ func init() {
 	// Our toICSPosition and toLocation fields are variants of the standard
 	// ones, adding default values to them.
 	toICSPositionDef.DefaultValue = "Planning Section"
-	toICSPositionDef.Comment = "required: Planning Section, ..."
+	toICSPositionDef.Choices = []string{"Planning Section"}
 	toLocationDef.DefaultValue = "County EOC"
-	toLocationDef.Comment = "required: County EOC, ..."
+	toLocationDef.Choices = []string{"County EOC"}
 }
 
 func create() *xscmsg.Message {
@@ -60,166 +60,135 @@ var (
 	toICSPositionDef = *xscform.ToICSPositionDef // modified in func init
 	toLocationDef    = *xscform.ToLocationDef    // modified in func init
 	incidentNameDef  = &xscmsg.FieldDef{
-		Tag:        "21.",
-		Annotation: "incident-name",
-		Label:      "1. Incident Name",
-		Comment:    "required",
-		Key:        xscmsg.FSubject,
-		Validators: []xscmsg.Validator{xscform.ValidateRequired},
+		Tag:   "21.",
+		Label: "1. Incident Name",
+		Key:   xscmsg.FSubject,
+		Flags: xscmsg.Required,
 	}
 	dateInitiatedDef = &xscmsg.FieldDef{
 		Tag:        "22.",
-		Annotation: "date",
 		Label:      "2. Date Initiated",
-		Comment:    "required date",
-		Validators: []xscmsg.Validator{xscform.ValidateRequired, xscform.ValidateDate},
+		Comment:    "MM/DD/YYYY",
+		Validators: []xscmsg.Validator{xscform.ValidateDate},
+		Flags:      xscmsg.Required,
 	}
 	timeInitiatedDef = &xscmsg.FieldDef{
 		Tag:        "23.",
-		Annotation: "time",
 		Label:      "3. Time Initiated",
-		Comment:    "required time",
-		Validators: []xscmsg.Validator{xscform.ValidateRequired, xscform.ValidateTime},
+		Comment:    "HH:MM",
+		Validators: []xscmsg.Validator{xscform.ValidateTime},
+		Flags:      xscmsg.Required,
 	}
 	trackingNumberDef = &xscmsg.FieldDef{
-		Tag:        "24.",
-		Annotation: "tracking-number",
-		Label:      "4. Tracking Number (OA EOC)",
+		Tag:   "24.",
+		Label: "4. Tracking Number (OA EOC)",
+		Flags: xscmsg.Readonly,
 	}
 	requestedByDef = &xscmsg.FieldDef{
-		Tag:        "25.",
-		Annotation: "requested-by",
-		Label:      "5. Requested by (name, agency, position, email, phone)",
-		Comment:    "required",
-		Validators: []xscmsg.Validator{xscform.ValidateRequired},
+		Tag:   "25.",
+		Label: "5. Requested by",
+		Flags: xscmsg.Required | xscmsg.Multiline,
 	}
 	preparedByDef = &xscmsg.FieldDef{
-		Tag:        "26.",
-		Annotation: "prepared-by",
-		Label:      "6. Prepared by (name, position, email, phone)",
+		Tag:   "26.",
+		Label: "6. Prepared by",
+		Flags: xscmsg.Multiline,
 	}
 	approvedByDef = &xscmsg.FieldDef{
-		Tag:        "27.",
-		Annotation: "approved-by",
-		Label:      "7. Approved By (name, position, email, phone)",
+		Tag:   "27.",
+		Label: "7. Approved By",
+		Flags: xscmsg.Multiline,
 	}
 	qtyUnitDef = &xscmsg.FieldDef{
-		Tag:        "28.",
-		Annotation: "qty-unit",
-		Label:      "8. Qty/Unit",
-		Comment:    "required",
-		Validators: []xscmsg.Validator{xscform.ValidateRequired},
+		Tag:   "28.",
+		Label: "8. Qty/Unit",
+		Flags: xscmsg.Required | xscmsg.Multiline,
 	}
 	resourceDescriptionDef = &xscmsg.FieldDef{
-		Tag:        "29.",
-		Annotation: "resource-description",
-		Label:      "9. Resource Description (kind/type if applicable)",
-		Comment:    "required",
-		Validators: []xscmsg.Validator{xscform.ValidateRequired},
+		Tag:   "29.",
+		Label: "9. Resource Description",
+		Flags: xscmsg.Required | xscmsg.Multiline,
 	}
 	resourceArrivalDef = &xscmsg.FieldDef{
-		Tag:        "30.",
-		Annotation: "resource-arrival",
-		Label:      "10. Arrival (date/time)",
-		Comment:    "required",
-		Validators: []xscmsg.Validator{xscform.ValidateRequired},
+		Tag:   "30.",
+		Label: "10. Arrival (date/time)",
+		Flags: xscmsg.Required | xscmsg.Multiline,
 	}
 	priorityDef = &xscmsg.FieldDef{
 		Tag:        "31.",
-		Annotation: "priority",
 		Label:      "11. Priority",
-		Comment:    "required: Now, High, Medium, Low",
-		Validators: []xscmsg.Validator{xscform.ValidateRequired, xscform.ValidateChoices},
+		Validators: []xscmsg.Validator{xscform.ValidateChoices},
 		Choices:    []string{"Now", "High", "Medium", "Low"},
+		Flags:      xscmsg.Required,
 	}
 	estdCostDef = &xscmsg.FieldDef{
-		Tag:        "32.",
-		Annotation: "estd-cost", // it's resource-priority in PackItForms, but that's clearly wrong
-		Label:      "12. Est'd Cost",
+		Tag:   "32.",
+		Label: "12. Est'd Cost",
+		Flags: xscmsg.Multiline,
 	}
 	deliverToDef = &xscmsg.FieldDef{
-		Tag:        "33.",
-		Annotation: "deliver-to",
-		Label:      "13. Deliver to (name, agency, position, email, phone)",
-		Comment:    "required",
-		Validators: []xscmsg.Validator{xscform.ValidateRequired},
+		Tag:   "33.",
+		Label: "13. Deliver to",
+		Flags: xscmsg.Required | xscmsg.Multiline,
 	}
 	deliverToLocationDef = &xscmsg.FieldDef{
-		Tag:        "34.",
-		Annotation: "deliver-to-location",
-		Label:      "14. Location (address or lat/long, site type)",
-		Comment:    "required",
-		Validators: []xscmsg.Validator{xscform.ValidateRequired},
+		Tag:   "34.",
+		Label: "14. Location",
+		Flags: xscmsg.Required | xscmsg.Multiline,
 	}
 	substitutesDef = &xscmsg.FieldDef{
-		Tag:        "35.",
-		Annotation: "substitutes",
-		Label:      "15. Substitute/Suggested Sources (name, phone, website)",
+		Tag:   "35.",
+		Label: "15. Substitute/Suggested Sources",
+		Flags: xscmsg.Multiline,
 	}
 	equipmentOperatorDef = &xscmsg.FieldDef{
 		Tag:        "36a.",
-		Annotation: "equipment-operator",
 		Label:      "16. Supplemental Requirements: Equipment Operator",
-		Comment:    "boolean",
 		Validators: []xscmsg.Validator{xscform.ValidateBoolean},
 	}
 	lodgingDef = &xscmsg.FieldDef{
 		Tag:        "36b.",
-		Annotation: "lodging",
 		Label:      "16. Supplemental Requirements: Lodging",
-		Comment:    "boolean",
 		Validators: []xscmsg.Validator{xscform.ValidateBoolean},
 	}
 	fuelDef = &xscmsg.FieldDef{
 		Tag:        "36c.",
-		Annotation: "fuel",
 		Label:      "16. Supplemental Requirements: Fuel",
-		Comment:    "boolean",
 		Validators: []xscmsg.Validator{xscform.ValidateBoolean},
 	}
 	fuelTypeDef = &xscmsg.FieldDef{
-		Tag:        "36d.",
-		Annotation: "fuel-type",
-		Label:      "16. Supplemental Requirements: Fuel Type",
+		Tag:   "36d.",
+		Label: "16. Supplemental Requirements: Fuel Type",
 	}
 	powerDef = &xscmsg.FieldDef{
 		Tag:        "36e.",
-		Annotation: "power",
 		Label:      "16. Supplemental Requirements: Power",
-		Comment:    "boolean",
 		Validators: []xscmsg.Validator{xscform.ValidateBoolean},
 	}
 	mealsDef = &xscmsg.FieldDef{
 		Tag:        "36f.",
-		Annotation: "meals",
 		Label:      "16. Supplemental Requirements: Meals",
-		Comment:    "boolean",
 		Validators: []xscmsg.Validator{xscform.ValidateBoolean},
 	}
 	maintenanceDef = &xscmsg.FieldDef{
 		Tag:        "36g.",
-		Annotation: "maintenance",
 		Label:      "16. Supplemental Requirements: Maintenance",
-		Comment:    "boolean",
 		Validators: []xscmsg.Validator{xscform.ValidateBoolean},
 	}
 	waterDef = &xscmsg.FieldDef{
 		Tag:        "36h.",
-		Annotation: "water",
 		Label:      "16. Supplemental Requirements: Water",
-		Comment:    "boolean",
 		Validators: []xscmsg.Validator{xscform.ValidateBoolean},
 	}
 	otherDef = &xscmsg.FieldDef{
 		Tag:        "36i.",
-		Annotation: "other",
 		Label:      "16. Supplemental Requirements: Other",
-		Comment:    "boolean",
 		Validators: []xscmsg.Validator{xscform.ValidateBoolean},
 	}
 	instructionsDef = &xscmsg.FieldDef{
-		Tag:        "37.",
-		Annotation: "instructions",
-		Label:      "17. Special Instructions",
+		Tag:   "37.",
+		Label: "17. Special Instructions",
+		Key:   xscmsg.FBody,
+		Flags: xscmsg.Multiline,
 	}
 )
