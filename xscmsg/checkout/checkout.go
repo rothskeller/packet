@@ -65,7 +65,7 @@ func encodeBody(m *xscmsg.Message) string {
 		tacname := m.Field("TacName").Value
 		return fmt.Sprintf("Check-Out %s, %s\n%s, %s\n", taccall, tacname, opcall, opname)
 	}
-	return fmt.Sprintf("Check-Out %s, %s", opcall, opname)
+	return fmt.Sprintf("Check-Out %s, %s\n", opcall, opname)
 }
 
 func encodeSubject(m *xscmsg.Message) string {
