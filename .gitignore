@@ -2,7 +2,7 @@
 /wppsvr/config.yaml
 go.work
 log
-old
+_old
 run.lock
 trial
 wppsvr.db

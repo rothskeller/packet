@@ -53,7 +53,7 @@ func recognize(msg *pktmsg.Message, form *pktmsg.Form) *xscmsg.Message {
 
 var formtype22 = &xscmsg.MessageType{
 	Tag:         Tag22,
-	Name:        "OA jurisdiction status form",
+	Name:        "OA Jurisdiction Status form",
 	Article:     "an",
 	HTML:        "form-oa-muni-status.html",
 	Version:     "2.2",
@@ -63,7 +63,7 @@ var formtype22 = &xscmsg.MessageType{
 
 var formtype21 = &xscmsg.MessageType{
 	Tag:         Tag21,
-	Name:        "OA municipal status form",
+	Name:        "OA Municipal Status form",
 	Article:     "an",
 	HTML:        "form-oa-muni-status.html",
 	Version:     "2.1",
@@ -282,7 +282,7 @@ var (
 	}
 	howSentDef = &xscmsg.FieldDef{
 		Tag:   "99.",
-		Label: "SOE Proclamation: Indicate how sent (method/to)",
+		Label: "SOE Proclamation: How Sent",
 	}
 	communicationsDef = &xscmsg.FieldDef{
 		Tag:        "41.0.",
@@ -395,26 +395,26 @@ var (
 	}
 	infrastructureWaterSystemsDef = &xscmsg.FieldDef{
 		Tag:        "50.0.",
-		Label:      "Infrastructure (Water Systems)",
+		Label:      "Infrastructure (Water)",
 		Validators: []xscmsg.Validator{xscform.ValidateChoices},
 		Choices:    []string{"Unknown", "Normal", "Problem", "Failure", "Delayed", "Closed", "Early Out"},
 		Flags:      xscmsg.RequiredForComplete,
 	}
 	infrastructureWaterSystemsCommentsDef = &xscmsg.FieldDef{
 		Tag:   "50.1.",
-		Label: "Infrastructure (Water Systems) Comments",
+		Label: "Infrastructure (Water) Comments",
 		Flags: xscmsg.Multiline,
 	}
 	infrastructureSewerSystemsDef = &xscmsg.FieldDef{
 		Tag:        "51.0.",
-		Label:      "Infrastructure (Sewer Systems)",
+		Label:      "Infrastructure (Sewer)",
 		Validators: []xscmsg.Validator{xscform.ValidateChoices},
 		Choices:    []string{"Unknown", "Normal", "Problem", "Failure", "Delayed", "Closed", "Early Out"},
 		Flags:      xscmsg.RequiredForComplete,
 	}
 	infrastructureSewerSystemsCommentsDef = &xscmsg.FieldDef{
 		Tag:   "51.1.",
-		Label: "Infrastructure (Sewer Systems) Comments",
+		Label: "Infrastructure (Sewer) Comments",
 		Flags: xscmsg.Multiline,
 	}
 	searchAndRescueDef = &xscmsg.FieldDef{

@@ -143,46 +143,46 @@ var (
 	}
 	equipmentOperatorDef = &xscmsg.FieldDef{
 		Tag:        "36a.",
-		Label:      "16. Supplemental Requirements: Equipment Operator",
+		Label:      "16. Supplemental: Equipment Operator",
 		Validators: []xscmsg.Validator{xscform.ValidateBoolean},
 	}
 	lodgingDef = &xscmsg.FieldDef{
 		Tag:        "36b.",
-		Label:      "16. Supplemental Requirements: Lodging",
+		Label:      "16. Supplemental: Lodging",
 		Validators: []xscmsg.Validator{xscform.ValidateBoolean},
 	}
 	fuelDef = &xscmsg.FieldDef{
 		Tag:        "36c.",
-		Label:      "16. Supplemental Requirements: Fuel",
+		Label:      "16. Supplemental: Fuel",
 		Validators: []xscmsg.Validator{xscform.ValidateBoolean},
 	}
 	fuelTypeDef = &xscmsg.FieldDef{
 		Tag:   "36d.",
-		Label: "16. Supplemental Requirements: Fuel Type",
+		Label: "16. Supplemental: Fuel Type",
 	}
 	powerDef = &xscmsg.FieldDef{
 		Tag:        "36e.",
-		Label:      "16. Supplemental Requirements: Power",
+		Label:      "16. Supplemental: Power",
 		Validators: []xscmsg.Validator{xscform.ValidateBoolean},
 	}
 	mealsDef = &xscmsg.FieldDef{
 		Tag:        "36f.",
-		Label:      "16. Supplemental Requirements: Meals",
+		Label:      "16. Supplemental: Meals",
 		Validators: []xscmsg.Validator{xscform.ValidateBoolean},
 	}
 	maintenanceDef = &xscmsg.FieldDef{
 		Tag:        "36g.",
-		Label:      "16. Supplemental Requirements: Maintenance",
+		Label:      "16. Supplemental: Maintenance",
 		Validators: []xscmsg.Validator{xscform.ValidateBoolean},
 	}
 	waterDef = &xscmsg.FieldDef{
 		Tag:        "36h.",
-		Label:      "16. Supplemental Requirements: Water",
+		Label:      "16. Supplemental: Water",
 		Validators: []xscmsg.Validator{xscform.ValidateBoolean},
 	}
 	otherDef = &xscmsg.FieldDef{
 		Tag:        "36i.",
-		Label:      "16. Supplemental Requirements: Other",
+		Label:      "16. Supplemental: Other",
 		Validators: []xscmsg.Validator{xscform.ValidateBoolean},
 	}
 	instructionsDef = &xscmsg.FieldDef{

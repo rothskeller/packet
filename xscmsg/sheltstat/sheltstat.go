@@ -49,7 +49,7 @@ func recognize(msg *pktmsg.Message, form *pktmsg.Form) *xscmsg.Message {
 
 var formtype = &xscmsg.MessageType{
 	Tag:         Tag,
-	Name:        "OA shelter status form",
+	Name:        "OA Shelter Status form",
 	Article:     "an",
 	HTML:        "form-oa-shelter-status.html",
 	Version:     "2.2",

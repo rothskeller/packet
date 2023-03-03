@@ -35,7 +35,7 @@ func recognize(msg *pktmsg.Message, form *pktmsg.Form) *xscmsg.Message {
 
 var formtype = &xscmsg.MessageType{
 	Tag:         Tag,
-	Name:        "allied health facility status report",
+	Name:        "Allied Health Facility status report",
 	Article:     "an",
 	HTML:        "form-allied-health-facility-status.html",
 	Version:     "2.3",

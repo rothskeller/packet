@@ -201,7 +201,7 @@ var (
 	}
 	fyiDef = &xscmsg.FieldDef{
 		Tag:        "6c.",
-		Label:      "6. For your information (no action required)",
+		Label:      "6. For your information",
 		Validators: []xscmsg.Validator{xscform.ValidateBoolean},
 	}
 	replyByDef = &xscmsg.FieldDef{

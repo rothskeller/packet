@@ -190,7 +190,7 @@ var (
 	}
 	position1Def = &xscmsg.FieldDef{
 		Tag:        "18.1f.",
-		Label:      "Resource 1 Position (for example, Checkpoint)",
+		Label:      "Resource 1 Position",
 		Validators: []xscmsg.Validator{},
 	}
 	resourcesRole1DefV23 = &xscmsg.FieldDef{
@@ -236,7 +236,7 @@ var (
 	}
 	position2Def = &xscmsg.FieldDef{
 		Tag:        "18.2f.",
-		Label:      "Resource 2 Position (for example, Checkpoint)",
+		Label:      "Resource 2 Position",
 		Validators: []xscmsg.Validator{},
 	}
 	resourcesRole2DefV23 = &xscmsg.FieldDef{
@@ -282,7 +282,7 @@ var (
 	}
 	position3Def = &xscmsg.FieldDef{
 		Tag:        "18.3f.",
-		Label:      "Resource 3 Position (for example, Checkpoint)",
+		Label:      "Resource 3 Position",
 		Validators: []xscmsg.Validator{},
 	}
 	resourcesRole3DefV23 = &xscmsg.FieldDef{
@@ -328,7 +328,7 @@ var (
 	}
 	position4Def = &xscmsg.FieldDef{
 		Tag:        "18.4f.",
-		Label:      "Resource 4 Position (for example, Checkpoint)",
+		Label:      "Resource 4 Position",
 		Validators: []xscmsg.Validator{},
 	}
 	resourcesRole4DefV23 = &xscmsg.FieldDef{
@@ -374,7 +374,7 @@ var (
 	}
 	position5Def = &xscmsg.FieldDef{
 		Tag:        "18.5f.",
-		Label:      "Resource 5 Position (for example, Checkpoint)",
+		Label:      "Resource 5 Position",
 		Validators: []xscmsg.Validator{},
 	}
 	resourcesRole5DefV23 = &xscmsg.FieldDef{
@@ -429,17 +429,17 @@ var (
 	}
 	reportingLocationDef = &xscmsg.FieldDef{
 		Tag:   "21.",
-		Label: "Reporting Location (Street Address, Parking, Entry Instructions)",
+		Label: "Reporting Location",
 		Flags: xscmsg.Required | xscmsg.Multiline,
 	}
 	contactOnArrivalDef = &xscmsg.FieldDef{
 		Tag:   "22.",
-		Label: "Contact on Arrival (Name/Position and contact info)",
+		Label: "Contact on Arrival",
 		Flags: xscmsg.Required | xscmsg.Multiline,
 	}
 	travelInfoDef = &xscmsg.FieldDef{
 		Tag:   "23.",
-		Label: "Travel Info (Routes, Hazards, Lodging)",
+		Label: "Travel Info",
 		Flags: xscmsg.Required | xscmsg.Multiline,
 	}
 	requesterNameDef = &xscmsg.FieldDef{
@@ -454,7 +454,7 @@ var (
 	}
 	requesterContactDef = &xscmsg.FieldDef{
 		Tag:   "24c.",
-		Label: "Requested By Contact (E-mail, phone, frequency)",
+		Label: "Requested By Contact",
 		Flags: xscmsg.Required,
 	}
 	agencyApproverNameDef = &xscmsg.FieldDef{
@@ -469,7 +469,7 @@ var (
 	}
 	agencyApproverContactDef = &xscmsg.FieldDef{
 		Tag:   "25c.",
-		Label: "Approved By Contact (E-mail, phone, frequency)",
+		Label: "Approved By Contact",
 		Flags: xscmsg.Required,
 	}
 	agencyApprovedDateDef = &xscmsg.FieldDef{
