@@ -5,6 +5,7 @@ package jnosargs
 import (
 	"flag"
 	"fmt"
+	"io"
 	"os"
 	"regexp"
 	"strings"
@@ -67,7 +68,7 @@ func Connect() (c *jnos.Conn, err error) {
 }
 
 func connectSimulator(fh *os.File) (*jnos.Conn, error) {
-	if _, err := simulator.Start(fh); err != nil {
+	if _, err := simulator.Start(map[string]io.Reader{"": fh}, "x"); err != nil {
 		return nil, err
 	}
 	*bbs = simulator.ListenAddress
@@ -93,7 +94,7 @@ func connectKPC3Plus() (*jnos.Conn, error) {
 		fmt.Fprintf(os.Stderr, "ERROR: -call doesn't look like an FCC call sign\n")
 		os.Exit(2)
 	}
-	return kpc3plus.Connect(*port, strings.ToUpper(*bbs), strings.ToUpper(*mbox), strings.ToUpper(*call))
+	return kpc3plus.Connect(*port, strings.ToUpper(*bbs), strings.ToUpper(*mbox), strings.ToUpper(*call), nil)
 }
 
 func connectTelnet() (*jnos.Conn, error) {
@@ -108,5 +109,5 @@ func connectTelnet() (*jnos.Conn, error) {
 	if buf, err := os.ReadFile(*pwd); err == nil {
 		*pwd = strings.TrimSpace(string(buf))
 	}
-	return telnet.Connect(*bbs, *mbox, *pwd)
+	return telnet.Connect(*bbs, *mbox, *pwd, nil)
 }

@@ -127,9 +127,9 @@ func ConnectToBBS(bbsname, mailbox string) (conn *jnos.Conn) {
 		log.Printf("ERROR: can't connect to %s@%s: connections to %s are disabled", mailbox, bbsname, bbsname)
 		return nil
 	case "kpc3plus":
-		conn, err = kpc3plus.Connect("/dev/tty.usbserial-1410", bbs.AX25, mailbox, "KC6RSC")
+		conn, err = kpc3plus.Connect("/dev/tty.usbserial-1410", bbs.AX25, mailbox, "KC6RSC", nil)
 	case "telnet":
-		conn, err = telnet.Connect(bbs.TCP, mailbox, bbs.Passwords[mailbox])
+		conn, err = telnet.Connect(bbs.TCP, mailbox, bbs.Passwords[mailbox], nil)
 	}
 	if err != nil {
 		log.Printf("ERROR: can't connect to %s@%s via %s: %s", mailbox, bbsname, bbs.Transport, err)

@@ -147,6 +147,29 @@ func (c *Conn) Send(subject, body string, to ...string) (err error) {
 	return nil
 }
 
+// SetArea switches to the specified message area.
+func (c *Conn) SetArea(area string) error {
+	var (
+		line string
+		err  error
+	)
+	defer c.maybeIdent()
+	if err = c.t.Send(fmt.Sprintf("A %s\n", area)); err != nil {
+		return err
+	}
+	for {
+		if line, err = c.readLine(); err != nil {
+			return err
+		}
+		if jnosPromptRE.MatchString(line) {
+			return nil
+		}
+		if strings.Contains(line, "No such message area") {
+			return errors.New("no such message area: " + area)
+		}
+	}
+}
+
 // MessageList contains a message list, retrieved with the List call.
 type MessageList struct {
 	Area     string
@@ -184,12 +207,11 @@ var listLine1Prefix = "Mail area: "
 var listLine2RE = regexp.MustCompile(`^(\d+) message(?:s)?  -  (\d+) new$`)
 var listHeaderNone = "None to list."
 var listHeader = "St.  #  TO            FROM     DATE   SIZE SUBJECT"
-var listMsgLineRE = regexp.MustCompile(`^[> ]([D ])([HYN]) (  \d| \d\d|\d+) ([^ ].{12}) ([^ ].{7}) ((?:Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec) \d\d) (   \d|  \d\d| \d\d\d|\d+) (.*)`)
+var listMsgLineRE = regexp.MustCompile(`^[> ]([D ])([HYN]) (  \d| \d\d|\d+) ([^ ].{12}) ([^ ].{7}) ((?:Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec) (?: \d|\d\d)) (   \d|  \d\d| \d\d\d|\d+) (.*)`)
 
-// List returns the list of messages.  If start is positive, only messages with
-// that number or higher are returned.  If start is negative, only unread
-// messages are returned.  If start is zero, all messages are returned.
-func (c *Conn) List(start int) (ml *MessageList, err error) {
+// List returns the list of messages.  If to is set, only messages sent to
+// addresses containing that string are returned.
+func (c *Conn) List(to string) (ml *MessageList, err error) {
 	var (
 		cmd   string
 		line  string
@@ -197,10 +219,8 @@ func (c *Conn) List(start int) (ml *MessageList, err error) {
 	)
 	defer c.maybeIdent()
 	ml = new(MessageList)
-	if start < 0 {
-		cmd = "LM\n"
-	} else if start > 0 {
-		cmd = fmt.Sprintf("L %d\n", start)
+	if to != "" {
+		cmd = fmt.Sprintf("L> %s\n", to)
 	} else {
 		cmd = "LA\n"
 	}
@@ -232,6 +252,7 @@ func (c *Conn) List(start int) (ml *MessageList, err error) {
 	if line, err = c.readLine(); err != nil {
 		return nil, err
 	} else if line == "None to list." {
+		c.skipLinesUntilPrompt()
 		return nil, nil
 	} else if line != listHeader {
 		return nil, fmt.Errorf(`expected %q received %q`, listHeader, line)

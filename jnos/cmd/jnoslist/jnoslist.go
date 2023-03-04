@@ -12,7 +12,7 @@ import (
 
 func main() {
 	flag.Usage = func() {
-		fmt.Fprintf(os.Stderr, "usage: jnoslist [transport-options]\n%s", jnosargs.Usage)
+		fmt.Fprintf(os.Stderr, "usage: jnoslist [transport-options] [area [to]]\n%s", jnosargs.Usage)
 	}
 	flag.Parse()
 	conn, err := jnosargs.Connect()
@@ -20,7 +20,13 @@ func main() {
 		fmt.Fprintf(os.Stderr, "ERROR: %s\n", err)
 		os.Exit(1)
 	}
-	list, err := conn.List(0)
+	if area := flag.Arg(0); area != "" {
+		if err := conn.SetArea(area); err != nil {
+			fmt.Fprintf(os.Stderr, "ERROR: %s\n", err)
+			os.Exit(1)
+		}
+	}
+	list, err := conn.List(flag.Arg(1))
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "ERROR: %s\n", err)
 		conn.Close()

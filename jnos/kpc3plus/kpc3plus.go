@@ -91,11 +91,11 @@ var postDisconnectCommands = []string{
 // a small integer SSID.)  It logs into the specified BBS mailbox.  If callsign
 // is set, it self-identifies periodically using the that call sign for FCC
 // compliance.  (callsign should be the licensed FCC call sign of the calling
-// user.)
-func Connect(serialPort, bbsAddress, mailbox, callsign string) (c *jnos.Conn, err error) {
+// user.)  If log is set, all traffic except echo-backs is logged to it.
+func Connect(serialPort, bbsAddress, mailbox, callsign string, log io.Writer) (c *jnos.Conn, err error) {
 	var t *Transport
 
-	if t, err = open(serialPort, bbsAddress, mailbox, callsign); err != nil {
+	if t, err = open(serialPort, bbsAddress, mailbox, callsign, log); err != nil {
 		return nil, err
 	}
 	if c, err = jnos.Connect(t); err != nil {
@@ -111,14 +111,16 @@ func Connect(serialPort, bbsAddress, mailbox, callsign string) (c *jnos.Conn, er
 // sign, a dash, and a small integer SSID.)  It logs into the mailbox
 // corresponding to the specified callsign, which must be the licensed FCC call
 // sign of the calling user.  (For connecting to other mailboxes, see the
-// Connect function.)
-func Open(serialPort, bbsAddress, callsign string) (t *Transport, err error) {
-	return open(serialPort, bbsAddress, callsign, "")
+// Connect function.)  If log is set, all traffic except echo-backs is logged to
+// it.
+func Open(serialPort, bbsAddress, callsign string, log io.Writer) (t *Transport, err error) {
+	return open(serialPort, bbsAddress, callsign, "", log)
 }
 
 // open is the common code between Connect and Open.
-func open(serialPort, bbsAddress, mailbox, callsign string) (t *Transport, err error) {
+func open(serialPort, bbsAddress, mailbox, callsign string, log io.Writer) (t *Transport, err error) {
 	t = new(Transport)
+	t.log = log
 	if err = t.connectSerial(serialPort); err != nil {
 		return nil, err
 	}
@@ -171,6 +173,7 @@ type Transport struct {
 	connected    bool
 	wasConnected bool
 	callsign     string
+	log          io.Writer
 }
 
 // ReadUntil reads data from the BBS until the specified string is seen, or a
@@ -218,6 +221,9 @@ func (t *Transport) readUntil(until string, timeout time.Duration) (data string,
 				err = <-t.errch
 			} else {
 				t.pending = append(t.pending, read...)
+				if t.log != nil {
+					t.log.Write(read)
+				}
 			}
 			if !timer.Stop() {
 				<-timer.C
@@ -299,6 +305,9 @@ func (t *Transport) send(data string) (err error) {
 		}
 		if idx := bytes.Index(t.pending, echo); idx >= 0 {
 			t.pending = append(t.pending[:idx], t.pending[idx+len(echo):]...)
+			if t.log != nil {
+				t.log.Write(t.pending)
+			}
 			return nil
 		}
 		timer.Reset(echoTimeout)
@@ -327,6 +336,9 @@ func (t *Transport) sendRaw(data []byte) (err error) {
 		for _, line := range traceLines(data) {
 			fmt.Printf("Tx %-36s >\n", line)
 		}
+	}
+	if t.log != nil {
+		t.log.Write(bytes.ReplaceAll(data, cr, crlf))
 	}
 	for len(data) != 0 {
 		if count, err = t.serial.Write(data); err != nil {

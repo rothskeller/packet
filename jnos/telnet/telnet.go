@@ -37,11 +37,12 @@ var (
 var md5ChallengeRE = regexp.MustCompile(`Password \[([0-9a-f]{1,8})\] : $`)
 
 // Connect connects to the JNOS BBS at bbsAddress (host:port).  It logs into the
-// specified BBS mailbox with the specified password.
-func Connect(bbsAddress, mailbox, password string) (c *jnos.Conn, err error) {
+// specified BBS mailbox with the specified password.  If log is non-nil, all
+// traffic on the connection is written to the log.
+func Connect(bbsAddress, mailbox, password string, log io.Writer) (c *jnos.Conn, err error) {
 	var t *Transport
 
-	if t, err = Open(bbsAddress, mailbox, password); err != nil {
+	if t, err = Open(bbsAddress, mailbox, password, log); err != nil {
 		return nil, err
 	}
 	if c, err = jnos.Connect(t); err != nil {
@@ -52,11 +53,13 @@ func Connect(bbsAddress, mailbox, password string) (c *jnos.Conn, err error) {
 }
 
 // Open connects to the JNOS BBS at bbsAddress (host:port).  It logs into the
-// specified BBS mailbox with the specified password.
-func Open(bbsAddress, mailbox, password string) (t *Transport, err error) {
+// specified BBS mailbox with the specified password.  If log is non-nil, all
+// traffic on the connection is written to the log.
+func Open(bbsAddress, mailbox, password string, log io.Writer) (t *Transport, err error) {
 	var pwprompt string
 
 	t = new(Transport)
+	t.log = log
 	if err = t.connectTelnet(bbsAddress); err != nil {
 		return nil, err
 	}
@@ -106,6 +109,7 @@ type Transport struct {
 	errch     <-chan error
 	pending   []byte
 	connected bool
+	log       io.Writer
 }
 
 // ReadUntil reads data from the BBS until the specified string is seen, or a
@@ -185,6 +189,9 @@ func (t *Transport) Send(data string) (err error) {
 			fmt.Printf("Tx %-36s >\n", line)
 		}
 	}
+	if t.log != nil {
+		t.log.Write(tosend)
+	}
 	for len(tosend) != 0 {
 		if count, err = t.telnet.Write(tosend); err != nil {
 			return err
@@ -232,6 +239,9 @@ func (t *Transport) reader(readch chan<- []byte, errch chan<- error) {
 		if count != 0 {
 			var out = make([]byte, count)
 			copy(out, buf[:count])
+			if t.log != nil {
+				t.log.Write(out)
+			}
 			readch <- out
 		}
 		if err != nil {
