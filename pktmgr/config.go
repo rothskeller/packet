@@ -1,0 +1,55 @@
+package pktmgr
+
+import (
+	"regexp"
+	"strconv"
+)
+
+// Config is the configuration for an incident.
+type Config struct {
+	// BBS is the name of the operator's home BBS.
+	BBS string
+	// OpCall is the operator's FCC call sign.
+	OpCall string
+	// OpName is the operator's name.
+	OpName string
+	// TacCall is the tactical call sign for the station.  It is optional.
+	TacCall string `json:",omitempty"`
+	// TacName is the name of the tactical station.  It should be provided
+	// if and only if TacCall is provided.
+	TacName string `json:",omitempty"`
+	// StartMsgID is the local message ID for the first message sent or
+	// received.  It must have the form XXX-###S, where S is either "P" or
+	// "M".
+	StartMsgID string
+	// DefBody is an optional string added to the body of any new message.
+	DefBody string `json:",omitempty"`
+	// msgIDPrefix is the prefix of local message IDs, derived from
+	// StartMsgID.
+	msgIDPrefix string
+	// startMsgNum is the sequence number in StartMsgID.
+	startMsgNum int
+	// msgIDSuffix is the suffix of local message IDs, derived from
+	// StartMsgID.
+	msgIDSuffix string
+	// callsign is the local call sign:  TacCall if specified, and OpCall
+	// otherwise.
+	callsign string
+	// name is the local station name:  TacName if TacCall is specified, and
+	// OpName otherwise.
+	name string
+}
+
+var startMsgIDRE = regexp.MustCompile(`^((?:[A-Z][A-Z0-9][A-Z0-9]|[0-9][A-Z][A-Z])-)(\d+)([PM])$`)
+
+func (c *Config) fillin() {
+	if c.TacCall != "" {
+		c.callsign, c.name = c.TacCall, c.TacName
+	} else {
+		c.callsign, c.name = c.OpCall, c.OpName
+	}
+	match := startMsgIDRE.FindStringSubmatch(c.StartMsgID)
+	c.msgIDPrefix = match[1]
+	c.startMsgNum, _ = strconv.Atoi(match[2])
+	c.msgIDSuffix = match[3]
+}

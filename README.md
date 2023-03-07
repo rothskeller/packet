@@ -13,9 +13,9 @@ This repository contains software related to packet radio:
   testing purposes.
 * Package `wppsvr` is the program that receives, responds to, and reports on
   SCCo weekly packet practice messages.
-* Package `editmsg` provides functions for editing packet messages, including
-  forms messages, in a text editor.  `cmd/editmsg` is a command that uses these
-  functions.
+* Package `pktmsg` manages the collection of messages sent and received during
+  an incident.  It handles message storage, matching receipts to head messages,
+  ICS-309 generation, and similar functionality.
 
 ## Legal Text
 
