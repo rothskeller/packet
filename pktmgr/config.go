@@ -7,6 +7,23 @@ import (
 
 // Config is the configuration for an incident.
 type Config struct {
+	// IncidentName is the name of the incident, recorded in the ICS-309.
+	IncidentName string
+	// ActivationNum is the activation number for the incident, recorded in
+	// the ICS-309.
+	ActivationNum string
+	// OpStartDate is the date of the start of the operational period,
+	// recorded in the ICS-309.
+	OpStartDate string
+	// OpStartTime is the time of the start of the operational period,
+	// recorded in the ICS-309.
+	OpStartTime string
+	// OpEndDate is the date of the end of the operational period, recorded
+	// in the ICS-309.
+	OpEndDate string
+	// OpEndTime is the time of the end of the operational period, recorded
+	// in the ICS-309.
+	OpEndTime string
 	// BBS is the name of the operator's home BBS.
 	BBS string
 	// OpCall is the operator's FCC call sign.

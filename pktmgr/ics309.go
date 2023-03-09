@@ -2,6 +2,7 @@ package pktmgr
 
 import (
 	"encoding/csv"
+	"fmt"
 	"os"
 	"sort"
 	"strings"
@@ -19,37 +20,11 @@ func (i *Incident) ics309() {
 // ics309CSV (re-)generates the CSV version of the ICS-309 log for the incident.
 func (i *Incident) ics309CSV() {
 	var (
-		fh       *os.File
-		incName  string
-		actNum   string
-		opPeriod string
-		w        *csv.Writer
-		msgs     []*Message
-		err      error
+		fh   *os.File
+		w    *csv.Writer
+		msgs []*Message
+		err  error
 	)
-	// It's possible that someone has added metadata to the report on disk.
-	// Read it and preserve the metadata if any.
-	if fh, err = os.Open("ics309.csv"); err == nil {
-		r := csv.NewReader(fh)
-		r.FieldsPerRecord = -1 // variable
-		if rows, err := r.ReadAll(); err == nil {
-			for _, row := range rows {
-				if len(row) == 2 {
-					switch row[0] {
-					case "Incident Name":
-						incName = row[1]
-					case "Activation Number:":
-						actNum = row[1]
-					case "Operational Period:":
-						opPeriod = row[1]
-					}
-				}
-			}
-
-		}
-		fh.Close()
-	}
-	// Create the new file.
 	if fh, err = os.Create("ics309.csv"); err != nil {
 		return
 	}
@@ -57,9 +32,10 @@ func (i *Incident) ics309CSV() {
 	w = csv.NewWriter(fh)
 	defer w.Flush()
 	w.Write([]string{"ICS 309 COMMUNICATIONS LOG"})
-	w.Write([]string{"Incident Name:", incName})
-	w.Write([]string{"Activation Number:", actNum})
-	w.Write([]string{"Operational Period:", opPeriod})
+	w.Write([]string{"Incident Name:", i.config.IncidentName})
+	w.Write([]string{"Activation Number:", i.config.ActivationNum})
+	w.Write([]string{"Operational Period:", fmt.Sprintf("%s %s to %s %s",
+		i.config.OpStartDate, i.config.OpStartTime, i.config.OpEndDate, i.config.OpEndTime)})
 	if i.config.TacCall != "" {
 		w.Write([]string{"Tactical Station:", i.config.TacName, i.config.TacCall})
 	}
