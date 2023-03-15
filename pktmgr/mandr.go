@@ -1,7 +1,10 @@
 package pktmgr
 
 import (
+	"log"
 	"os"
+
+	"github.com/rothskeller/packet/xscpdf"
 )
 
 // MAndR stands for Message-and-Receipts.  It is the collection of a single
@@ -34,6 +37,13 @@ func (m *MAndR) Save() (err error) {
 	}
 	if m.RMI != "" {
 		_ = os.Symlink(m.LMI+".txt", m.RMI+".txt")
+	}
+	if err = xscpdf.MessageToPDF(m.M.Message, m.LMI+".pdf"); err == nil {
+		if m.RMI != "" {
+			_ = os.Symlink(m.LMI+".pdf", m.RMI+".pdf")
+		}
+	} else {
+		log.Printf("Saving %s.pdf: %s", m.LMI, err)
 	}
 	if m.DR != nil {
 		if err = m.DR.save(m.LMI+".DR.txt", ""); err != nil {
