@@ -168,8 +168,11 @@ func (i *Incident) GetLMI(lmi string) *MAndR {
 
 // AddDraft creates a new draft message of the specified type with the next
 // available local message ID, and returns it.  The local message ID, default
-// body, and operator fields of the message are filled in.
-func (i *Incident) AddDraft(tag string) (mr *MAndR) {
+// body, and operator fields of the message are filled in.  If replyTo is
+// specified, the To: field of the draft is set to the From: field of replyTo,
+// the Subject and Body fields of the draft are copied from replyTo, and the
+// Reference field of the draft (if any) is set to the OMI of replyTo.
+func (i *Incident) AddDraft(tag string, replyTo *MAndR) (mr *MAndR) {
 	xsc := xscmsg.Create(tag)
 	if xsc == nil {
 		return nil
@@ -178,15 +181,55 @@ func (i *Incident) AddDraft(tag string) (mr *MAndR) {
 	mr = i.addLMI(lmi)
 	i.nextMsgNum++
 	mr.M = &Message{mandr: mr, Message: xsc}
+	if replyTo != nil {
+		mr.M.To = []*mail.Address{replyTo.M.From}
+	}
 	mr.M.SetOperatorFields()
 	if f := mr.M.KeyField(xscmsg.FOriginMsgNo); f != nil {
 		f.Value = mr.LMI
 	}
+	if f := mr.M.KeyField(xscmsg.FReference); f != nil && replyTo != nil {
+		f.Value = replyTo.RMI
+	}
 	if f := mr.M.KeyField(xscmsg.FBody); f != nil {
 		f.Value = i.config.DefBody
+		if replyTo != nil {
+			if rf := replyTo.M.KeyField(xscmsg.FBody); rf != nil {
+				f.Value = rf.Value
+			}
+		}
+	}
+	var subject xscmsg.XSCSubject
+	subject.MessageNumber = mr.LMI
+	subject.HandlingOrder = xscmsg.HandlingRoutine
+	if replyTo != nil {
+		if replyTo.M.Type.Tag == xscmsg.PlainTextTag {
+			if rs := xscmsg.ParseSubject(replyTo.M.Subject()); rs != nil {
+				subject.HandlingOrder = rs.HandlingOrder
+				subject.Subject = rs.Subject
+			} else {
+				subject.Subject = replyTo.M.Subject()
+			}
+		} else {
+			if f := replyTo.M.KeyField(xscmsg.FHandling); f != nil {
+				subject.HandlingOrder, _ = xscmsg.ParseHandlingOrder(f.Value)
+			}
+			if f := replyTo.M.KeyField(xscmsg.FSubject); f != nil {
+				subject.Subject = f.Value
+			}
+		}
 	}
 	if tag == xscmsg.PlainTextTag {
-		mr.M.KeyField(xscmsg.FSubject).Value = mr.LMI + "_"
+		mr.M.KeyField(xscmsg.FSubject).Value = xscmsg.EncodeSubject(
+			subject.MessageNumber, subject.HandlingOrder, "", subject.Subject,
+		)
+	} else {
+		if f := mr.M.KeyField(xscmsg.FHandling); f != nil {
+			f.Value = subject.HandlingOrder.String()
+		}
+		if f := mr.M.KeyField(xscmsg.FSubject); f != nil {
+			f.Value = subject.Subject
+		}
 	}
 	mr.Save()
 	return mr

@@ -255,6 +255,7 @@ var (
 	referenceDef = &xscmsg.FieldDef{
 		Tag:   "11.",
 		Label: "11. Reference",
+		Key:   xscmsg.FReference,
 	}
 	messageDef = &xscmsg.FieldDef{
 		Tag:   "12.",

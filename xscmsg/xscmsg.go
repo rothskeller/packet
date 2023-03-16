@@ -279,6 +279,10 @@ const (
 	// function often uses the contents of this field as part of the subject
 	// line.
 	FSubject FieldKey = "SUBJECT"
+	// FReference is the Reference field.  It is the field that contains the
+	// origin message ID of the message to which the instant message is a
+	// reply.
+	FReference FieldKey = "REFERENCE"
 	// FBody is the field whose contents are returned by Message.Body() if
 	// the message type does not have a BodyFunc.  It is also the field into
 	// which default message body text is placed.
