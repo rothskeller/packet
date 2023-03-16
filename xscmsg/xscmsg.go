@@ -297,6 +297,12 @@ const (
 	// FOpName is the operator name field.  It gets set by code that
 	// creates a new outgoing message, or by code receiving a message.
 	FOpName FieldKey = "OPERATOR_NAME"
+	// FTacCall is the tactical call sign field.  It gets set by code that
+	// creates a new outgoing message.
+	FTacCall FieldKey = "TACTICAL_CALL_SIGN"
+	// FTacName is the tactical name field.  It gets set by code that
+	// creates a new outgoing message.
+	FTacName FieldKey = "TACTICAL_NAME"
 	// FOpDate is the transmission date (for outgoing messages) or the
 	// reception date (for incoming messages).  It gets set when a message
 	// is sent or received.

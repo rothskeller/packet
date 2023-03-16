@@ -39,6 +39,8 @@ type Message struct {
 	From *mail.Address
 	// To is the set of addresses to which the message is addressed.
 	To []*mail.Address
+	// SubjectLine is the raw subject line of the message.
+	SubjectLine string
 	// Sent is the time at which the message was sent; it is zero for
 	// messages that have not yet been sent.
 	Sent time.Time
@@ -82,6 +84,7 @@ func newMessage(raw string) (m *Message, err error) {
 	m.From, _ = mail.ParseAddress(pkt.Header.Get("From"))
 	m.To, _ = mail.ParseAddressList(pkt.Header.Get("To"))
 	m.Sent, _ = mail.ParseDate(pkt.Header.Get("Date"))
+	m.SubjectLine = pkt.Header.Get("Subject")
 	return m, nil
 }
 
@@ -143,8 +146,8 @@ func (m *Message) save(filename, lmi string) (err error) {
 		fmt.Fprintf(fh, "To: %s\n", strings.Join(tostr, ", "))
 	}
 	// Write the Subject header if appropriate.
-	if subject := m.Subject(); subject != "" {
-		fmt.Fprintf(fh, "Subject: %s\n", subject)
+	if m.SubjectLine = m.Subject(); m.SubjectLine != "" {
+		fmt.Fprintf(fh, "Subject: %s\n", m.SubjectLine)
 	}
 	// Write the Date header if appropriate.
 	if !m.Sent.IsZero() {

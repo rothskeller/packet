@@ -231,6 +231,12 @@ func (i *Incident) AddDraft(tag string, replyTo *MAndR) (mr *MAndR) {
 			f.Value = subject.Subject
 		}
 	}
+	if f := mr.M.KeyField(xscmsg.FTacCall); f != nil {
+		f.Value = i.config.TacCall
+	}
+	if f := mr.M.KeyField(xscmsg.FTacName); f != nil {
+		f.Value = i.config.TacName
+	}
 	mr.Save()
 	return mr
 }
@@ -286,6 +292,7 @@ func (i *Incident) Receive(raw, bbs, bulletin string) (dr *Message, err error) {
 		if mr.DR != nil {
 			return nil, errors.New("dropping received delivery receipt: already have one")
 		}
+		m.mandr = mr
 		mr.DR = m
 		mr.RMI = m.Field("LocalMessageID").Value
 	case readrcpt.Tag:
@@ -299,6 +306,7 @@ func (i *Incident) Receive(raw, bbs, bulletin string) (dr *Message, err error) {
 		if mr.RR != nil {
 			return nil, errors.New("dropping received read receipt: already have one")
 		}
+		m.mandr = mr
 		mr.RR = m
 	default:
 		lmi := fmt.Sprintf("%s%03d%s", i.config.msgIDPrefix, i.nextMsgNum, i.config.msgIDSuffix)
@@ -306,6 +314,7 @@ func (i *Incident) Receive(raw, bbs, bulletin string) (dr *Message, err error) {
 		i.nextMsgNum++
 		mr.Unread = true
 		mr.M = m
+		m.mandr = mr
 		if p := xscmsg.ParseSubject(m.RawMessage.Header.Get("Subject")); p != nil {
 			mr.RMI = p.MessageNumber
 		}
@@ -320,6 +329,7 @@ func (i *Incident) Receive(raw, bbs, bulletin string) (dr *Message, err error) {
 			xdr.Field("DeliveredTime").Value = m.Received.Format("1/2/2006 15:04")
 			xdr.Field("LocalMessageID").Value = lmi
 			mr.DR = &Message{
+				mandr:   mr,
 				Message: xdr,
 				To:      []*mail.Address{m.From},
 			}
@@ -335,7 +345,7 @@ func (i *Incident) Receive(raw, bbs, bulletin string) (dr *Message, err error) {
 // and read receipts against their primary messages.)
 func (i *Incident) findWithSubject(subject string) *MAndR {
 	for j := len(i.list) - 1; j >= 0; j-- {
-		if i.list[j].M.RawMessage.Header.Get("Subject") == subject {
+		if i.list[j].M.RawMessage != nil && i.list[j].M.RawMessage.Header.Get("Subject") == subject {
 			return i.list[j]
 		}
 	}

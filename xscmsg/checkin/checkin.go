@@ -96,10 +96,12 @@ var (
 	tacCallDef = &xscmsg.FieldDef{
 		Tag:   "TacCall",
 		Label: "Tactical Call Sign",
+		Key:   xscmsg.FTacCall,
 	}
 	tacNameDef = &xscmsg.FieldDef{
 		Tag:        "TacName",
 		Label:      "Tactical Station Name",
+		Key:        xscmsg.FTacName,
 		Validators: []xscmsg.Validator{validateBothOrNone},
 	}
 	opCallDef = &xscmsg.FieldDef{
