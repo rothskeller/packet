@@ -13,7 +13,7 @@ This repository contains software related to packet radio:
   testing purposes.
 * Package `wppsvr` is the program that receives, responds to, and reports on
   SCCo weekly packet practice messages.
-* Package `pktmsg` manages the collection of messages sent and received during
+* Package `pktmgr` manages the collection of messages sent and received during
   an incident.  It handles message storage, matching receipts to head messages,
   ICS-309 generation, and similar functionality.
 
