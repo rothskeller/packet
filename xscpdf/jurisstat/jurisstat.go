@@ -12,7 +12,7 @@ import (
 var basePDF []byte
 
 var idFull, _ = hex.DecodeString("19515d102a4c184c8f9092ec0e13116f")
-var idP123, _ = hex.DecodeString("3c60723816bba4e0b2b2805ed9568dda")
+var idP123, _ = hex.DecodeString("1bbf43d608388df7414a8053bb3e4e8a")
 
 func init() {
 	xscpdf.RegisterReader(xscpdf.ReaderMap{XSCTag: jurisstat.Tag, PDFID: idFull, Fields: fieldMap})

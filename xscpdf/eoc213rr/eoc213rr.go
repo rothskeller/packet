@@ -12,7 +12,7 @@ import (
 //go:embed XSC_EOC-213RR_Fillable_v20170803_with_XSC_RACES_Routing_Slip_Fillable_v20190527.pdf
 var basePDF []byte
 
-var idFormAndRouting, _ = hex.DecodeString("98c512a97943e8efacd8eaddc0d15f97")
+var idFormAndRouting, _ = hex.DecodeString("3eb10d9ab04e8ae30d396cfd805fb397")
 var idFormOnly, _ = hex.DecodeString("323803bdd308144f8e77dce823b62312")
 
 func init() {
