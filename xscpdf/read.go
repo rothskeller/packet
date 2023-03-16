@@ -19,13 +19,15 @@ type FieldMap struct {
 	PDFName string
 	// XSCTag is the Tag of the field in the xscmsg.
 	XSCTag string
-	// PDFFixed is a hard-coded value that always appears in the PDF field;
-	// it does not come from a corresponding XSC field.  This is used to
-	// fill in the form type on routing sheets.
-	PDFFixed string
 	// Values, if set, is a mapping between values in the PDF and values in
 	// the xscmsg.
 	Values []ValueMap
+	// FromXSC is a hook function to get the value of a PDF field when a
+	// simple mapping won't suffice.
+	FromXSC func(*xscmsg.Message) string
+	// FromPDF is a hook function to get the value of an XSC field when a
+	// simple mapping won't suffice.
+	FromPDF func(map[string]string) string
 	// FontSize is the font size to be used for the field in the PDF.  Some
 	// fields have a defined font size in the PDF, in which case this isn't
 	// used.  But for those that don't, we need this.
@@ -101,9 +103,11 @@ func readFields(pdf *pdfstruct.PDF, msg *xscmsg.Message, fmaps []FieldMap) {
 		for _, fm := range fmaps {
 			if pf == fm.PDFName {
 				if fm.XSCTag == "" {
-					break
+					continue
 				}
-				if len(fm.Values) != 0 {
+				if fm.FromPDF != nil {
+					pv = fm.FromPDF(pfields)
+				} else if len(fm.Values) != 0 {
 					for _, vm := range fm.Values {
 						if pv == vm.PDFValue {
 							pv = vm.XSCValue

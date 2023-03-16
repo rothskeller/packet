@@ -8,13 +8,15 @@ import (
 	"github.com/rothskeller/packet/xscpdf"
 )
 
-//go:embed ICS-213_SCCo_Message_Form_Fillable_v20220119.pdf
+//go:embed ICS-213_SCCo_Message_Form_Fillable_v20220119_p1.pdf
 var basePDF []byte
 
-var id, _ = hex.DecodeString("d77f0ce1e7f53f4bc76cf657612be44f")
+var idFull, _ = hex.DecodeString("d77f0ce1e7f53f4bc76cf657612be44f")
+var idP1, _ = hex.DecodeString("dcd883281dc105cb1e71d7c448131b45")
 
 func init() {
-	xscpdf.RegisterReader(xscpdf.ReaderMap{XSCTag: ics213.Tag, PDFID: id, Fields: fieldMap})
+	xscpdf.RegisterReader(xscpdf.ReaderMap{XSCTag: ics213.Tag, PDFID: idFull, Fields: fieldMap})
+	xscpdf.RegisterReader(xscpdf.ReaderMap{XSCTag: ics213.Tag, PDFID: idP1, Fields: fieldMap})
 	xscpdf.RegisterWriter(xscpdf.WriterMap{XSCTag: ics213.Tag, BasePDF: basePDF, Fields: fieldMap})
 }
 

@@ -4,6 +4,7 @@ import (
 	_ "embed" // oh, please
 	"encoding/hex"
 
+	"github.com/rothskeller/packet/xscmsg"
 	"github.com/rothskeller/packet/xscmsg/eoc213rr"
 	"github.com/rothskeller/packet/xscpdf"
 )
@@ -11,10 +12,12 @@ import (
 //go:embed XSC_EOC-213RR_Fillable_v20170803_with_XSC_RACES_Routing_Slip_Fillable_v20190527.pdf
 var basePDF []byte
 
-var id, _ = hex.DecodeString("d807e45d22add1680c19a7beba47d7a7")
+var idFormAndRouting, _ = hex.DecodeString("98c512a97943e8efacd8eaddc0d15f97")
+var idFormOnly, _ = hex.DecodeString("323803bdd308144f8e77dce823b62312")
 
 func init() {
-	xscpdf.RegisterReader(xscpdf.ReaderMap{XSCTag: eoc213rr.Tag, PDFID: id, Fields: fieldMap})
+	xscpdf.RegisterReader(xscpdf.ReaderMap{XSCTag: eoc213rr.Tag, PDFID: idFormAndRouting, Fields: fieldMap})
+	xscpdf.RegisterReader(xscpdf.ReaderMap{XSCTag: eoc213rr.Tag, PDFID: idFormOnly, Fields: fieldMap})
 	xscpdf.RegisterWriter(xscpdf.WriterMap{XSCTag: eoc213rr.Tag, BasePDF: basePDF, Fields: fieldMap})
 }
 
@@ -29,31 +32,31 @@ var fieldMap = []xscpdf.FieldMap{
 		{PDFValue: "Priority", XSCValue: "PRIORITY"},
 		{PDFValue: "Routine", XSCValue: "ROUTINE"},
 	}},
-	{PDFName: "To ICS Position", XSCTag: "7a.", FontSize: 12},        // 6
-	{PDFName: "To Location", XSCTag: "7b.", FontSize: 12},            // 7
-	{PDFName: "To Name", XSCTag: "7c.", FontSize: 12},                // 8
-	{PDFName: "To Contact Info", XSCTag: "7d.", FontSize: 12},        // 9
-	{PDFName: "From ICS Position", XSCTag: "8a.", FontSize: 12},      // 10
-	{PDFName: "From Location", XSCTag: "8b.", FontSize: 12},          // 11
-	{PDFName: "From Name", XSCTag: "8c.", FontSize: 12},              // 12
-	{PDFName: "From Contact Info", XSCTag: "8d.", FontSize: 12},      // 13
-	{PDFName: "Form Type", PDFFixed: "XSC EOC-213RR", FontSize: 12},  // 14
-	{PDFName: "Form Topic", XSCTag: "21.", FontSize: 12},             // 15
-	{PDFName: "Relay Rcvd", XSCTag: "OpRelayRcvd", FontSize: 12},     // 16
-	{PDFName: "Relay Sent", XSCTag: "OpRelaySent", FontSize: 12},     // 17
-	{PDFName: "Op Name", XSCTag: "OpName", FontSize: 12},             // 18
-	{PDFName: "Op Call Sign", XSCTag: "OpCall", FontSize: 12},        // 19
-	{PDFName: "Op Date", XSCTag: "OpDate", FontSize: 12},             // 20
-	{PDFName: "Op Time", XSCTag: "OpTime", FontSize: 12},             // 21
-	{PDFName: "1 Incident Name", XSCTag: "21.", FontSize: 12},        // 22
-	{PDFName: "2 Date Initiated", XSCTag: "22.", FontSize: 12},       // 23
-	{PDFName: "3 Time Initiated", XSCTag: "23.", FontSize: 12},       // 24
-	{PDFName: "5 Requested By", XSCTag: "25.", FontSize: 12},         // 25
-	{PDFName: "6 Prepared by", XSCTag: "26.", FontSize: 12},          // 26
-	{PDFName: "7 Approved By", XSCTag: "27.", FontSize: 12},          // 27
-	{PDFName: "8 QtyUnit", XSCTag: "28.", FontSize: 12},              // 28
-	{PDFName: "9 Resource Description", XSCTag: "29.", FontSize: 12}, // 29
-	{PDFName: "10 Arrival", XSCTag: "30.", FontSize: 12},             // 30
+	{PDFName: "To ICS Position", XSCTag: "7a.", FontSize: 12},                                              // 6
+	{PDFName: "To Location", XSCTag: "7b.", FontSize: 12},                                                  // 7
+	{PDFName: "To Name", XSCTag: "7c.", FontSize: 12},                                                      // 8
+	{PDFName: "To Contact Info", XSCTag: "7d.", FontSize: 12},                                              // 9
+	{PDFName: "From ICS Position", XSCTag: "8a.", FontSize: 12},                                            // 10
+	{PDFName: "From Location", XSCTag: "8b.", FontSize: 12},                                                // 11
+	{PDFName: "From Name", XSCTag: "8c.", FontSize: 12},                                                    // 12
+	{PDFName: "From Contact Info", XSCTag: "8d.", FontSize: 12},                                            // 13
+	{PDFName: "Form Type", FromXSC: func(*xscmsg.Message) string { return "XSC EOC-213RR" }, FontSize: 12}, // 14
+	{PDFName: "Form Topic", XSCTag: "21.", FontSize: 12},                                                   // 15
+	{PDFName: "Relay Rcvd", XSCTag: "OpRelayRcvd", FontSize: 12},                                           // 16
+	{PDFName: "Relay Sent", XSCTag: "OpRelaySent", FontSize: 12},                                           // 17
+	{PDFName: "Op Name", XSCTag: "OpName", FontSize: 12},                                                   // 18
+	{PDFName: "Op Call Sign", XSCTag: "OpCall", FontSize: 12},                                              // 19
+	{PDFName: "Op Date", XSCTag: "OpDate", FontSize: 12},                                                   // 20
+	{PDFName: "Op Time", XSCTag: "OpTime", FontSize: 12},                                                   // 21
+	{PDFName: "1 Incident Name", XSCTag: "21.", FontSize: 12},                                              // 22
+	{PDFName: "2 Date Initiated", XSCTag: "22.", FontSize: 12},                                             // 23
+	{PDFName: "3 Time Initiated", XSCTag: "23.", FontSize: 12},                                             // 24
+	{PDFName: "5 Requested By", XSCTag: "25.", FontSize: 12},                                               // 25
+	{PDFName: "6 Prepared by", XSCTag: "26.", FontSize: 12},                                                // 26
+	{PDFName: "7 Approved By", XSCTag: "27.", FontSize: 12},                                                // 27
+	{PDFName: "8 QtyUnit", XSCTag: "28.", FontSize: 12},                                                    // 28
+	{PDFName: "9 Resource Description", XSCTag: "29.", FontSize: 12},                                       // 29
+	{PDFName: "10 Arrival", XSCTag: "30.", FontSize: 12},                                                   // 30
 	{PDFName: "11 Priority", XSCTag: "31.", Values: []xscpdf.ValueMap{ // 31
 		{PDFValue: "Off", XSCValue: ""},
 		{PDFValue: "Now", XSCValue: "Now"},

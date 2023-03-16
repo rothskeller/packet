@@ -61,8 +61,11 @@ func messageToPDF(m *xscmsg.Message, filename string, wm WriterMap) (err error) 
 	for _, fm := range wm.Fields {
 		var v string
 
-		if fm.PDFFixed != "" {
-			v = fm.PDFFixed
+		if fm.PDFName == "" {
+			continue
+		}
+		if fm.FromXSC != nil {
+			v = fm.FromXSC(m)
 		} else {
 			v = m.Field(fm.XSCTag).Value
 			if len(fm.Values) != 0 {
