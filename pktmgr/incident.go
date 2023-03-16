@@ -86,7 +86,16 @@ func (i *Incident) Refresh() (err error) {
 			return fmt.Errorf("found receipt for non-existent message %s", mr.LMI)
 		}
 	}
-	i.ics309() // regenerate in case someone else changed message files
+	// Regenerate in case someone else changed message files.
+	if i.config.BackgroundPDF != nil {
+		go func() {
+			i.config.BackgroundPDF.Lock()
+			i.ics309()
+			i.config.BackgroundPDF.Unlock()
+		}()
+	} else {
+		i.ics309()
+	}
 	return nil
 }
 

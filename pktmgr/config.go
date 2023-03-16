@@ -3,6 +3,7 @@ package pktmgr
 import (
 	"regexp"
 	"strconv"
+	"sync"
 )
 
 // Config is the configuration for an incident.
@@ -41,6 +42,12 @@ type Config struct {
 	StartMsgID string
 	// DefBody is an optional string added to the body of any new message.
 	DefBody string `json:",omitempty"`
+	// BackgroundPDF is an indicator that PDF generation should happen in a
+	// background goroutine.  If BackgroundPDF is set, the goroutine will
+	// acquire the lock before generating the PDF and release it when
+	// finished.  If BackgroundPDF is nil, PDF generation will happen in the
+	// foreground.
+	BackgroundPDF *sync.Mutex
 	// msgIDPrefix is the prefix of local message IDs, derived from
 	// StartMsgID.
 	msgIDPrefix string
