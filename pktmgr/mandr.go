@@ -66,7 +66,7 @@ func (m *MAndR) savePDF() {
 		if m.RMI != "" {
 			_ = os.Symlink(m.LMI+".pdf", m.RMI+".pdf")
 		}
-	} else {
+	} else if err != xscpdf.ErrNoWriter {
 		log.Printf("Saving %s.pdf: %s", m.LMI, err)
 	}
 }

@@ -18,6 +18,10 @@ type WriterMap struct {
 	Fields  []FieldMap
 }
 
+// ErrNoWriter is the error returned when trying to write a PDF for a form that
+// has no writer.
+var ErrNoWriter = errors.New("no writer registered for this message type")
+
 // writers is the list of registered writers.
 var writers []WriterMap
 
@@ -34,7 +38,7 @@ func MessageToPDF(m *xscmsg.Message, filename string) (err error) {
 			return messageToPDF(m, filename, wm)
 		}
 	}
-	return errors.New("no writer registered for this message type")
+	return ErrNoWriter
 }
 
 // messageToPDF creates a PDF for the specified message.
