@@ -1,5 +1,2 @@
 Change session configuration from web UI.
-Need to rethink how pktmgr handles subject lines for transmitted messages.  It
-shouldn't be recomputing them.  And it's not recognizing delivery receipts for
-messages received during the same invocation.
 PDFs aren't being generated for ICS-213, EOC-213RR, SheltStat AcroForm[DR] not present

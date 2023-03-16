@@ -345,7 +345,7 @@ func (i *Incident) Receive(raw, bbs, bulletin string) (dr *Message, err error) {
 // and read receipts against their primary messages.)
 func (i *Incident) findWithSubject(subject string) *MAndR {
 	for j := len(i.list) - 1; j >= 0; j-- {
-		if i.list[j].M.RawMessage != nil && i.list[j].M.RawMessage.Header.Get("Subject") == subject {
+		if i.list[j].M.SubjectLine == subject {
 			return i.list[j]
 		}
 	}

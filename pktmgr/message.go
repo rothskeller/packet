@@ -146,7 +146,10 @@ func (m *Message) save(filename, lmi string) (err error) {
 		fmt.Fprintf(fh, "To: %s\n", strings.Join(tostr, ", "))
 	}
 	// Write the Subject header if appropriate.
-	if m.SubjectLine = m.Subject(); m.SubjectLine != "" {
+	if !m.IsReceived() && !m.IsSent() {
+		m.SubjectLine = m.Subject()
+	}
+	if m.SubjectLine != "" {
 		fmt.Fprintf(fh, "Subject: %s\n", m.SubjectLine)
 	}
 	// Write the Date header if appropriate.
