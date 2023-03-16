@@ -213,7 +213,7 @@ var (
 	}
 	mouDef = &xscmsg.FieldDef{
 		Tag:   "45.",
-		Label: "",
+		Label: "MOU",
 	}
 	floorPlanDef = &xscmsg.FieldDef{
 		Tag:   "46.",
