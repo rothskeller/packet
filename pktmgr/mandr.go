@@ -74,9 +74,11 @@ func (m *MAndR) savePDF() {
 // remove removes a message from disk.
 func (m *MAndR) remove() {
 	os.Remove(m.LMI + ".txt")
+	os.Remove(m.LMI + ".pdf")
 	os.Remove(m.LMI + ".DR.txt")
 	os.Remove(m.LMI + ".RR.txt")
 	if m.RMI != "" {
 		os.Remove(m.RMI + ".txt")
+		os.Remove(m.RMI + ".pdf")
 	}
 }
