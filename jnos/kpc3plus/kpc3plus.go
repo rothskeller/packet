@@ -122,14 +122,25 @@ func open(serialPort, bbsAddress, mailbox, callsign string, log io.Writer) (t *T
 	t = new(Transport)
 	t.log = log
 	if err = t.connectSerial(serialPort); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("connectSerial: %s", err)
 	}
 	// Send a newline and check that we get a command prompt.  We may get
 	// other stuff ahead of it, and may get more than one command prompt.
-	if err = t.sendRaw([]byte{'\r'}); err != nil {
-		goto ERROR
+	// Empirically, the TNC doesn't always respond to the first CR with a
+	// prompt; sometimes it takes more than one.  We'll give it three tries
+	// before giving up.
+	var tries int
+	for tries = 0; tries < 3; tries++ {
+		if err = t.sendRaw([]byte{'\r'}); err != nil {
+			err = fmt.Errorf("send initial newline: %s", err)
+			goto ERROR
+		}
+		if _, err = t.readUntil(commandPrompt, tncTimeout); err == nil {
+			break
+		}
 	}
-	if _, err = t.readUntil(commandPrompt, tncTimeout); err != nil {
+	if tries >= 3 {
+		err = fmt.Errorf("read initial prompt (after 3 tries): %s", err)
 		goto ERROR
 	}
 	// Apply the pre-connect settings.
