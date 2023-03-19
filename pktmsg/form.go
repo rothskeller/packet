@@ -226,7 +226,7 @@ func (f *Form) Encode() string {
 	var sb strings.Builder
 
 	if f.PIFOVersion == "" {
-		f.PIFOVersion = "3.2"
+		f.PIFOVersion = "3.9"
 	}
 	sb.WriteString("!SCCoPIFO!\n#T: ")
 	sb.WriteString(f.FormType)
