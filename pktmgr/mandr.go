@@ -4,6 +4,7 @@ import (
 	"log"
 	"os"
 
+	"github.com/rothskeller/packet/xscmsg"
 	"github.com/rothskeller/packet/xscpdf"
 )
 
@@ -32,6 +33,13 @@ type MAndR struct {
 
 // Save writes a newly received or modified message to disk.
 func (m *MAndR) Save() (err error) {
+	if !m.M.IsReceived() && !m.M.IsSent() {
+		if f := m.M.KeyField(xscmsg.FOriginMsgNo); f != nil && f.Value != m.LMI {
+			// The LMI has been changed.
+			m.remove()
+			m.LMI = f.Value
+		}
+	}
 	if err = m.M.save(m.LMI+".txt", m.LMI); err != nil {
 		return err
 	}
