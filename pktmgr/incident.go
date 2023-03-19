@@ -199,37 +199,21 @@ func (i *Incident) AddDraft(tag string, replyTo *MAndR) (mr *MAndR) {
 			}
 		}
 	}
-	var subject xscmsg.XSCSubject
-	subject.MessageNumber = mr.LMI
-	subject.HandlingOrder = xscmsg.HandlingRoutine
+	var subject string
+	var handling = xscmsg.HandlingRoutine.String()
 	if replyTo != nil {
-		if replyTo.M.Type.Tag == xscmsg.PlainTextTag {
-			if rs := xscmsg.ParseSubject(replyTo.M.Subject()); rs != nil {
-				subject.HandlingOrder = rs.HandlingOrder
-				subject.Subject = rs.Subject
-			} else {
-				subject.Subject = replyTo.M.Subject()
-			}
-		} else {
-			if f := replyTo.M.KeyField(xscmsg.FHandling); f != nil {
-				subject.HandlingOrder, _ = xscmsg.ParseHandlingOrder(f.Value)
-			}
-			if f := replyTo.M.KeyField(xscmsg.FSubject); f != nil {
-				subject.Subject = f.Value
-			}
+		if f := replyTo.M.KeyField(xscmsg.FHandling); f != nil && f.Value != "" {
+			handling = f.Value
+		}
+		if f := replyTo.M.KeyField(xscmsg.FSubject); f != nil {
+			subject = f.Value
 		}
 	}
-	if tag == xscmsg.PlainTextTag {
-		mr.M.KeyField(xscmsg.FSubject).Value = xscmsg.EncodeSubject(
-			subject.MessageNumber, subject.HandlingOrder, "", subject.Subject,
-		)
-	} else {
-		if f := mr.M.KeyField(xscmsg.FHandling); f != nil {
-			f.Value = subject.HandlingOrder.String()
-		}
-		if f := mr.M.KeyField(xscmsg.FSubject); f != nil {
-			f.Value = subject.Subject
-		}
+	if f := mr.M.KeyField(xscmsg.FHandling); f != nil {
+		f.Value = handling
+	}
+	if f := mr.M.KeyField(xscmsg.FSubject); f != nil {
+		f.Value = subject
 	}
 	if f := mr.M.KeyField(xscmsg.FTacCall); f != nil {
 		f.Value = i.config.TacCall

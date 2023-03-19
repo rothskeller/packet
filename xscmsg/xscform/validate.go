@@ -3,7 +3,6 @@ package xscform
 import (
 	"fmt"
 	"regexp"
-	"strconv"
 	"strings"
 	"time"
 
@@ -23,8 +22,6 @@ var (
 	phoneNumberRE     = regexp.MustCompile(`^[a-zA-Z ]*([+][0-9]+ )?[0-9][0-9 -]*([xX][0-9]+)?$`)
 	realNumberRE      = regexp.MustCompile(`^[-+]?[0-9]*\.[0-9]+|[-+]?[0-9]+$`)
 	timeRE            = regexp.MustCompile(`^([01][0-9]|2[0-3]):?[0-5][0-9]|2400|24:00$`)
-	// these are defined locally
-	messageNumberRE = regexp.MustCompile(`(?i)((?:[A-Z]{3}|[0-9][A-Z]{2}|[A-Z][0-9][A-Z])-)(\d+)([A-Z]?)$`)
 )
 
 // ValidateBoolean ensures the value is a proper Boolean.
@@ -67,33 +64,7 @@ func ValidateCardinalNumber(f *xscmsg.Field, _ *xscmsg.Message, _ bool) string {
 // ValidateChoices ensures the field has one of the allowed values.  In
 // non-strict mode, the values are case-insensitive, and any unambiguous prefix
 // of an allowed value is accepted.
-func ValidateChoices(f *xscmsg.Field, _ *xscmsg.Message, strict bool) string {
-	var prefixOf string
-
-	if f.Value == "" {
-		return ""
-	}
-	for _, allowed := range f.Def.Choices {
-		if strict && f.Value == allowed {
-			return ""
-		}
-		if !strict && strings.EqualFold(allowed, f.Value) {
-			return ""
-		}
-		if !strict && len(f.Value) < len(allowed) && strings.EqualFold(allowed[:len(f.Value)], f.Value) {
-			if prefixOf == "" {
-				prefixOf = allowed
-			} else {
-				prefixOf = "∅"
-			}
-		}
-	}
-	if prefixOf != "" && prefixOf != "∅" {
-		f.Value = prefixOf
-		return ""
-	}
-	return fmt.Sprintf("%q is not a valid value for field %q.", f.Value, f.Def.Tag)
-}
+var ValidateChoices = xscmsg.ValidateChoices
 
 // ValidateDate ensures the value is a valid date in MM/DD/YYYY format.
 func ValidateDate(f *xscmsg.Field, _ *xscmsg.Message, strict bool) string {
@@ -118,15 +89,7 @@ func DefaultDate() string {
 // PackItForms doesn't validate it, and we don't want to be raising errors that
 // PackItForms doesn't.  However, in non-strict mode, if the message number is
 // well formed, we can at least canonicalize it.
-func ValidateMessageNumber(f *xscmsg.Field, _ *xscmsg.Message, strict bool) string {
-	if !strict {
-		if match := messageNumberRE.FindStringSubmatch(f.Value); match != nil {
-			num, _ := strconv.Atoi(match[2])
-			f.Value = fmt.Sprintf("%s%03d%s", strings.ToUpper(match[1]), num, strings.ToUpper(match[3]))
-		}
-	}
-	return ""
-}
+var ValidateMessageNumber = xscmsg.ValidateMessageNumber
 
 // ValidatePhoneNumber ensures that the value is a properly-formatted phone
 // number.
