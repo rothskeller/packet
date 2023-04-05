@@ -1,152 +1,546 @@
 package pktmsg
 
 import (
-	"net/textproto"
+	"os"
 	"reflect"
 	"testing"
 	"time"
+
+	"github.com/davecgh/go-spew/spew"
 )
 
-var checkAutoResponseFlag = new(Message)
-
-var parseMessageTests = []struct {
+var parseTests = []struct {
 	name    string
-	rawmsg  string
-	want    *Message
+	raw     string
 	wantErr bool
+	msg     Message
 }{
 	{
-		"unparseable",
-		"nothing\n",
-		nil, true,
+		name:    "unparseable",
+		raw:     "nothing\n",
+		wantErr: true,
 	},
 	{
-		"bounce",
-		actualBounceMessage,
-		checkAutoResponseFlag, false,
+		name:    "no plain text",
+		raw:     "Content-Type: text/html\n\n<div>nothing</div>",
+		wantErr: true,
 	},
 	{
-		"no plain text",
-		`Content-Type: text/html\n\n<div>nothing</div>`,
-		nil, true,
+		name: "sent",
+		raw:  "From: <nobody@nowhere>\nTo: <somebody@somewhere>\nSubject: Hello, World\nDate: Wed, 1 Dec 2021 08:04:29 +0000\n\nnothing\n",
+		msg: &outpostMessage{
+			baseTx: &baseTx{
+				fromAddr: fromAddrField{"<nobody@nowhere>"},
+				toAddrs:  toAddrsField{"<somebody@somewhere>"},
+				sentDate: sentDateField{"Wed, 01 Dec 2021 08:04:29 +0000"},
+				subject:  settableField("Hello, World"),
+				body:     settableField("nothing\n"),
+			},
+			body: settableField("nothing\n"),
+		},
 	},
 	{
-		"quoted-printable",
-		"Content-Transfer-Encoding: quoted-printable\n\nn=6fthing\n",
-		&Message{
-			Header: textproto.MIMEHeader{"Content-Transfer-Encoding": []string{"quoted-printable"}},
-			Body:   "nothing\n",
-			Flags:  NotPlainText,
-		}, false,
+		name: "multiple recipients",
+		raw:  "From: <nobody@nowhere>\nTo: <somebody@somewhere>\nCc: <number2@somewhere>\nBcc: <number3@somewhere>\nSubject: Hello, World\nDate: Wed, 1 Dec 2021 08:04:29 +0000\n\nnothing\n",
+		msg: &outpostMessage{
+			baseTx: &baseTx{
+				fromAddr: fromAddrField{"<nobody@nowhere>"},
+				toAddrs:  toAddrsField{"<somebody@somewhere>, <number2@somewhere>, <number3@somewhere>"},
+				sentDate: sentDateField{"Wed, 01 Dec 2021 08:04:29 +0000"},
+				subject:  settableField("Hello, World"),
+				body:     settableField("nothing\n"),
+			},
+			body: settableField("nothing\n"),
+		},
 	},
 	{
-		"base64 (MIME)",
-		"Content-Transfer-Encoding: base64\n\nbm90aGluZwo=\n",
-		&Message{
-			Header: textproto.MIMEHeader{"Content-Transfer-Encoding": []string{"base64"}},
-			Body:   "nothing\n",
-			Flags:  NotPlainText,
-		}, false,
+		name: "received",
+		raw:  "Received: FROM bbs.ampr.org BY pktmsg.local FOR area; Wed, 01 Dec 2021 08:04:29 +0000\nFrom: <nobody@nowhere>\nTo: <somebody@somewhere>\nSubject: Hello, World\nDate: Wed, 1 Dec 2021 08:04:29 +0000\n\nnothing\n",
+		msg: &baseRx{
+			outpostMessage: &outpostMessage{
+				baseTx: &baseTx{
+					fromAddr: fromAddrField{"<nobody@nowhere>"},
+					toAddrs:  toAddrsField{"<somebody@somewhere>"},
+					sentDate: sentDateField{"Wed, 01 Dec 2021 08:04:29 +0000"},
+					subject:  settableField("Hello, World"),
+					body:     settableField("nothing\n"),
+				},
+				body: settableField("nothing\n"),
+			},
+			rxBBS:  rxBBSField("bbs"),
+			rxArea: field("area"),
+			rxDate: rxDateField{"Wed, 01 Dec 2021 08:04:29 +0000"},
+		},
 	},
 	{
-		"unparseable content type",
-		"Content-Type: //bogus\n\nnothing\n",
-		&Message{
-			Header: textproto.MIMEHeader{"Content-Type": []string{"//bogus"}},
-			Flags:  NotPlainText,
-		}, true,
+		name:    "received with bad header",
+		raw:     "Received: blah\nFrom: <nobody@nowhere>\nTo: <somebody@somewhere>\nSubject: Hello, World\nDate: Wed, 1 Dec 2021 08:04:29 +0000\n\nnothing\n",
+		wantErr: true,
 	},
 	{
-		"non-plain-text content type",
-		"Content-Type: text/html\n\nnothing\n",
-		&Message{
-			Header: textproto.MIMEHeader{"Content-Type": []string{"text/html"}},
-			Flags:  NotPlainText,
-		}, false,
+		name: "Outpost flags",
+		raw:  "From: <nobody@nowhere>\n\n!RDR!!RRR!!URG!nothing\n",
+		msg: &outpostMessage{
+			baseTx: &baseTx{
+				fromAddr: fromAddrField{"<nobody@nowhere>"},
+				body:     settableField("!RDR!!RRR!!URG!nothing\n"),
+			},
+			flags: outpostFlagsField{"!URG!!RDR!!RRR!"},
+			body:  settableField("nothing\n"),
+		},
 	},
 	{
-		"multipart with plain text",
-		"Content-Type: multipart/alternative; boundary=\"X\"\n\n\n--X\nContent-Type: text/plain\n\nnothing\n\n--X--\n",
-		&Message{
-			Header: textproto.MIMEHeader{"Content-Type": []string{"multipart/alternative; boundary=\"X\""}},
-			Body:   "nothing\n",
-			Flags:  NotPlainText,
-		}, false,
+		name: "base64 (Outpost)",
+		raw:  "From: <nobody@nowhere>\n\n\n!B64!bm90aGluZwo=\n",
+		msg: &outpostMessage{
+			baseTx: &baseTx{
+				fromAddr: fromAddrField{"<nobody@nowhere>"},
+				body:     settableField("\n!B64!bm90aGluZwo=\n"),
+			},
+			body: settableField("nothing\n"),
+		},
 	},
 	{
-		"nested multipart with plain text",
-		"Content-Type: multipart/mixed; boundary=\"Y\"\n\n\n--Y\nContent-Type: multipart/alternative; boundary=\"X\"\n\n\n--X\nContent-Type: text/plain\n\nnothing\n\n--X--\n\n--Y--\n",
-		&Message{
-			Header: textproto.MIMEHeader{"Content-Type": []string{"multipart/mixed; boundary=\"Y\""}},
-			Body:   "nothing\n",
-			Flags:  NotPlainText,
-		}, false,
+		name: "minimal valid form",
+		raw:  "From: <nobody@nowhere>\n\n!SCCoPIFO!\n#T: tt.html\n#V: 1-2\nA: [x]\n!/ADDON!\n",
+		msg: &pifoMessage{
+			Message: &outpostMessage{
+				baseTx: &baseTx{
+					fromAddr: fromAddrField{"<nobody@nowhere>"},
+					body:     settableField("!SCCoPIFO!\n#T: tt.html\n#V: 1-2\nA: [x]\n!/ADDON!\n"),
+				},
+				body: settableField("!SCCoPIFO!\n#T: tt.html\n#V: 1-2\nA: [x]\n!/ADDON!\n"),
+			},
+			pifoVersion: field("1"),
+			formHTML:    field("tt.html"),
+			formVersion: field("2"),
+			fields:      []*taggedField{{"x", "A"}},
+		},
 	},
 	{
-		"nested multipart ill-formed",
-		"Content-Type: multipart/mixed; boundary=\"Y\"\n\n\n--Y\nContent-Type: multipart/alternative; boundary=\"X\"\n\n\n--X\nContent-Type: text/plain\n\nnothing\n\n--Y--\n",
-		&Message{
-			Header: textproto.MIMEHeader{"Content-Type": []string{"multipart/mixed; boundary=\"Y\""}},
-			Flags:  NotPlainText,
-		}, true,
+		name: "form with stuff before it",
+		raw:  "From: <nobody@nowhere>\n\nHello, world!\n!SCCoPIFO!\n#T: tt.html\n#V: 1-2\nA: [x]\n!/ADDON!\n",
+		msg: &pifoMessage{
+			Message: &outpostMessage{
+				baseTx: &baseTx{
+					fromAddr: fromAddrField{"<nobody@nowhere>"},
+					body:     settableField("Hello, world!\n!SCCoPIFO!\n#T: tt.html\n#V: 1-2\nA: [x]\n!/ADDON!\n"),
+				},
+				body: settableField("Hello, world!\n!SCCoPIFO!\n#T: tt.html\n#V: 1-2\nA: [x]\n!/ADDON!\n"),
+			},
+			pifoVersion: field("1"),
+			formHTML:    field("tt.html"),
+			formVersion: field("2"),
+			fields:      []*taggedField{{"x", "A"}},
+		},
 	},
 	{
-		"multipart with no plain text",
-		"Content-Type: multipart/alternative; boundary=\"X\"\n\n\n--X\nContent-Type: text/html\n\n<div>nothing</div>\n\n--X--\n",
-		&Message{
-			Header: textproto.MIMEHeader{"Content-Type": []string{"multipart/alternative; boundary=\"X\""}},
-			Flags:  NotPlainText,
-		}, false,
+		name: "form with stuff after it",
+		raw:  "From: <nobody@nowhere>\n\n!SCCoPIFO!\n#T: tt.html\n#V: 1-2\nA: [x]\n!/ADDON!\nGoodbye, cruel world!\n",
+		msg: &pifoMessage{
+			Message: &outpostMessage{
+				baseTx: &baseTx{
+					fromAddr: fromAddrField{"<nobody@nowhere>"},
+					body:     settableField("!SCCoPIFO!\n#T: tt.html\n#V: 1-2\nA: [x]\n!/ADDON!\nGoodbye, cruel world!\n"),
+				},
+				body: settableField("!SCCoPIFO!\n#T: tt.html\n#V: 1-2\nA: [x]\n!/ADDON!\nGoodbye, cruel world!\n"),
+			},
+			pifoVersion: field("1"),
+			formHTML:    field("tt.html"),
+			formVersion: field("2"),
+			fields:      []*taggedField{{"x", "A"}},
+		},
 	},
 	{
-		"envelope line",
-		"From nobody@nowhere Wed Dec  1 08:04:29 2021\n\nnothing\n",
-		&Message{
-			EnvelopeAddress: "nobody@nowhere",
-			EnvelopeDate:    time.Date(2021, 12, 1, 8, 4, 29, 0, time.Local),
-			Header:          textproto.MIMEHeader{},
-			Body:            "nothing\n",
-		}, false,
+		name: "missing header",
+		raw:  "From: <nobody@nowhere>\n\n#T: tt.html\n#V: 1-2\nA: [x]\n!/ADDON!\n",
+		msg: &outpostMessage{
+			baseTx: &baseTx{
+				fromAddr: fromAddrField{"<nobody@nowhere>"},
+				body:     settableField("#T: tt.html\n#V: 1-2\nA: [x]\n!/ADDON!\n"),
+			},
+			body: settableField("#T: tt.html\n#V: 1-2\nA: [x]\n!/ADDON!\n"),
+		},
 	},
 	{
-		"Outpost flags",
-		"From: <nobody@nowhere>\n\n!RDR!!RRR!!URG!nothing\n",
-		&Message{
-			Header: textproto.MIMEHeader{"From": []string{"<nobody@nowhere>"}},
-			Body:   "nothing\n",
-			Flags:  RequestDeliveryReceipt | RequestReadReceipt | OutpostUrgent,
-		}, false,
+		name: "missing type",
+		raw:  "From: <nobody@nowhere>\n\n!SCCoPIFO!\n#V: 1-2\nA: [x]\n!/ADDON!\n",
+		msg: &outpostMessage{
+			baseTx: &baseTx{
+				fromAddr: fromAddrField{"<nobody@nowhere>"},
+				body:     settableField("!SCCoPIFO!\n#V: 1-2\nA: [x]\n!/ADDON!\n"),
+			},
+			body: settableField("!SCCoPIFO!\n#V: 1-2\nA: [x]\n!/ADDON!\n"),
+		},
 	},
 	{
-		"base64 (Outpost)",
-		"From: <nobody@nowhere>\n\n\n!B64!bm90aGluZwo=\n",
-		&Message{
-			Header: textproto.MIMEHeader{"From": []string{"<nobody@nowhere>"}},
-			Body:   "nothing\n",
-			Flags:  NotPlainText,
-		}, false,
+		name: "invalid type",
+		raw:  "From: <nobody@nowhere>\n\n!SCCoPIFO!\n#T: t\n#V: 1-2\nA: [x]\n!/ADDON!\n",
+		msg: &outpostMessage{
+			baseTx: &baseTx{
+				fromAddr: fromAddrField{"<nobody@nowhere>"},
+				body:     settableField("!SCCoPIFO!\n#T: t\n#V: 1-2\nA: [x]\n!/ADDON!\n"),
+			},
+			body: settableField("!SCCoPIFO!\n#T: t\n#V: 1-2\nA: [x]\n!/ADDON!\n"),
+		},
+	},
+	{
+		name: "missing version",
+		raw:  "From: <nobody@nowhere>\n\n!SCCoPIFO!\n#T: tt.html\n!/ADDON!\n",
+		msg: &outpostMessage{
+			baseTx: &baseTx{
+				fromAddr: fromAddrField{"<nobody@nowhere>"},
+				body:     settableField("!SCCoPIFO!\n#T: tt.html\n!/ADDON!\n"),
+			},
+			body: settableField("!SCCoPIFO!\n#T: tt.html\n!/ADDON!\n"),
+		},
+	},
+	{
+		name: "invalid version",
+		raw:  "From: <nobody@nowhere>\n\n!SCCoPIFO!\n#T: tt.html\n#V: X\nA: [x]\n!/ADDON!\n",
+		msg: &outpostMessage{
+			baseTx: &baseTx{
+				fromAddr: fromAddrField{"<nobody@nowhere>"},
+				body:     settableField("!SCCoPIFO!\n#T: tt.html\n#V: X\nA: [x]\n!/ADDON!\n"),
+			},
+			body: settableField("!SCCoPIFO!\n#T: tt.html\n#V: X\nA: [x]\n!/ADDON!\n"),
+		},
+	},
+	{
+		name: "invalid field",
+		raw:  "From: <nobody@nowhere>\n\n!SCCoPIFO!\n#T: tt.html\n#V: 1-2\nA\n!/ADDON!\n",
+		msg: &outpostMessage{
+			baseTx: &baseTx{
+				fromAddr: fromAddrField{"<nobody@nowhere>"},
+				body:     settableField("!SCCoPIFO!\n#T: tt.html\n#V: 1-2\nA\n!/ADDON!\n"),
+			},
+			body: settableField("!SCCoPIFO!\n#T: tt.html\n#V: 1-2\nA\n!/ADDON!\n"),
+		},
+	},
+	{
+		name: "missing footer",
+		raw:  "From: <nobody@nowhere>\n\n!SCCoPIFO!\n#T: tt.html\n#V: 1-2\nA: [x]\n",
+		msg: &outpostMessage{
+			baseTx: &baseTx{
+				fromAddr: fromAddrField{"<nobody@nowhere>"},
+				body:     settableField("!SCCoPIFO!\n#T: tt.html\n#V: 1-2\nA: [x]\n"),
+			},
+			body: settableField("!SCCoPIFO!\n#T: tt.html\n#V: 1-2\nA: [x]\n"),
+		},
+	},
+	{
+		name: "multiple settings of same field",
+		raw:  "From: <nobody@nowhere>\n\n!SCCoPIFO!\n#T: tt.html\n#V: 1-2\nA: [x]\nA: [x]\n!/ADDON!\n",
+		msg: &outpostMessage{
+			baseTx: &baseTx{
+				fromAddr: fromAddrField{"<nobody@nowhere>"},
+				body:     settableField("!SCCoPIFO!\n#T: tt.html\n#V: 1-2\nA: [x]\nA: [x]\n!/ADDON!\n"),
+			},
+			body: settableField("!SCCoPIFO!\n#T: tt.html\n#V: 1-2\nA: [x]\nA: [x]\n!/ADDON!\n"),
+		},
+	},
+	{
+		name: "bracket quoting",
+		raw:  "From: <nobody@nowhere>\n\n!SCCoPIFO!\n#T: tt.html\n#V: 1-2\nA: [nl\\nbs\\\\rb`]et`]]]\n!/ADDON!\n",
+		msg: &pifoMessage{
+			Message: &outpostMessage{
+				baseTx: &baseTx{
+					fromAddr: fromAddrField{"<nobody@nowhere>"},
+					body:     settableField("!SCCoPIFO!\n#T: tt.html\n#V: 1-2\nA: [nl\\nbs\\\\rb`]et`]]]\n!/ADDON!\n"),
+				},
+				body: settableField("!SCCoPIFO!\n#T: tt.html\n#V: 1-2\nA: [nl\\nbs\\\\rb`]et`]]]\n!/ADDON!\n"),
+			},
+			pifoVersion: field("1"),
+			formHTML:    field("tt.html"),
+			formVersion: field("2"),
+			fields:      []*taggedField{{"nl\nbs\\rb]et`", "A"}},
+		},
+	},
+	{
+		name: "end of input inside brackets",
+		raw:  "From: <nobody@nowhere>\n\n!SCCoPIFO!\n#T: tt.html\n#V: 1-2\nA: [x",
+		msg: &outpostMessage{
+			baseTx: &baseTx{
+				fromAddr: fromAddrField{"<nobody@nowhere>"},
+				body:     settableField("!SCCoPIFO!\n#T: tt.html\n#V: 1-2\nA: [x"),
+			},
+			body: settableField("!SCCoPIFO!\n#T: tt.html\n#V: 1-2\nA: [x"),
+		},
+	},
+	{
+		name: "extra stuff after brackets",
+		raw:  "From: <nobody@nowhere>\n\n!SCCoPIFO!\n#T: tt.html\n#V: 1-2\nA: [x] \n!/ADDON!\n",
+		msg: &outpostMessage{
+			baseTx: &baseTx{
+				fromAddr: fromAddrField{"<nobody@nowhere>"},
+				body:     settableField("!SCCoPIFO!\n#T: tt.html\n#V: 1-2\nA: [x] \n!/ADDON!\n"),
+			},
+			body: settableField("!SCCoPIFO!\n#T: tt.html\n#V: 1-2\nA: [x] \n!/ADDON!\n"),
+		},
+	},
+	{
+		name: "line continuation",
+		raw:  "From: <nobody@nowhere>\n\n!SCCoPIFO!\n#T: tt.html\n#V: 1-2\nA: [this is \na test]\n!/ADDON!\n",
+		msg: &pifoMessage{
+			Message: &outpostMessage{
+				baseTx: &baseTx{
+					fromAddr: fromAddrField{"<nobody@nowhere>"},
+					body:     settableField("!SCCoPIFO!\n#T: tt.html\n#V: 1-2\nA: [this is \na test]\n!/ADDON!\n"),
+				},
+				body: settableField("!SCCoPIFO!\n#T: tt.html\n#V: 1-2\nA: [this is \na test]\n!/ADDON!\n"),
+			},
+			pifoVersion: field("1"),
+			formHTML:    field("tt.html"),
+			formVersion: field("2"),
+			fields:      []*taggedField{{"this is a test", "A"}},
+		},
 	},
 }
 
-func TestParseMessage(t *testing.T) {
-	for _, tt := range parseMessageTests {
+func TestParse(t *testing.T) {
+	for _, tt := range parseTests {
 		t.Run(tt.name, func(t *testing.T) {
-			gotMsg, err := ParseMessage(tt.rawmsg)
-			if (err != nil) != tt.wantErr {
-				t.Errorf("ParseMessage() error = %v, wantErr %v", err, tt.wantErr)
-				return
+			m, err := ParseMessage(tt.raw)
+			if err != nil && !tt.wantErr {
+				t.Fatalf("unexpected error %s", err)
 			}
-			if tt.wantErr {
-				return
+			if err == nil && tt.wantErr {
+				t.Fatal("unexpected success")
 			}
-			if tt.want == checkAutoResponseFlag {
-				if gotMsg.Flags&AutoResponse == 0 {
-					t.Errorf("ParseMessage() no AutoResponse flag")
-				}
-				return
+			if !reflect.DeepEqual(m, tt.msg) {
+				spew.Fdump(os.Stderr, "actual", m)
+				spew.Fdump(os.Stderr, "expected", tt.msg)
+				t.Fatal("incorrect result")
 			}
-			if !reflect.DeepEqual(gotMsg, tt.want) {
-				t.Errorf("ParseMessage() = %v, want %v", gotMsg, tt.want)
+		})
+	}
+}
+
+var receiveTests = []struct {
+	name    string
+	raw     string
+	bbs     string
+	area    string
+	wantErr bool
+	msg     Message
+}{
+	{
+		name:    "unparseable",
+		raw:     "nothing\n",
+		bbs:     "bbs",
+		wantErr: true,
+	},
+	{
+		name:    "bounce",
+		raw:     actualBounceMessage,
+		bbs:     "bbs",
+		wantErr: false,
+		msg: &baseRetrieved{
+			baseRx: &baseRx{
+				outpostMessage: &outpostMessage{
+					baseTx: &baseTx{
+						fromAddr: fromAddrField{"Microsoft Outlook <MicrosoftExchange329e71ec88ae4615bbc36ab6ce41109e@cityofsunnyvale.onmicrosoft.com>"},
+						toAddrs:  toAddrsField{"<cert@sunnyvale.ca.gov>"},
+						subject:  settableField("Undeliverable: SERV Volunteer Hours for November 2021"),
+						sentDate: sentDateField{"Wed, 01 Dec 2021 08:04:29 +0000"},
+						body:     settableField(expectedBounceBody),
+					},
+					body: settableField(expectedBounceBody),
+				},
+				rxBBS:  rxBBSField("bbs"),
+				rxDate: rxDateField{"Sun, 01 Jan 2023 00:00:00 -0800"},
+			},
+			returnAddr:   field(""),
+			bbsRxDate:    bbsRxDateField{"Wed, 01 Dec 2021 08:04:29 -0800"},
+			notPlainText: field("true"),
+		},
+	},
+	{
+		name:    "no plain text",
+		raw:     "Content-Type: text/html\n\n<div>nothing</div>",
+		bbs:     "bbs",
+		wantErr: true,
+		msg: &baseRetrieved{
+			baseRx: &baseRx{
+				outpostMessage: &outpostMessage{
+					baseTx: &baseTx{},
+				},
+				rxBBS:  rxBBSField("bbs"),
+				rxDate: rxDateField{"Sun, 01 Jan 2023 00:00:00 -0800"},
+			},
+			notPlainText: field("true"),
+		},
+	},
+	{
+		name: "quoted-printable",
+		raw:  "Content-Transfer-Encoding: quoted-printable\n\nn=6fthing\n",
+		bbs:  "bbs",
+		msg: &baseRetrieved{
+			baseRx: &baseRx{
+				outpostMessage: &outpostMessage{
+					baseTx: &baseTx{
+						body: settableField("nothing\n"),
+					},
+					body: settableField("nothing\n"),
+				},
+				rxBBS:  rxBBSField("bbs"),
+				rxDate: rxDateField{"Sun, 01 Jan 2023 00:00:00 -0800"},
+			},
+			notPlainText: field("true"),
+		},
+	},
+	{
+		name: "base64 (MIME)",
+		raw:  "Content-Transfer-Encoding: base64\n\nbm90aGluZwo=\n",
+		bbs:  "bbs",
+		msg: &baseRetrieved{
+			baseRx: &baseRx{
+				outpostMessage: &outpostMessage{
+					baseTx: &baseTx{
+						body: settableField("nothing\n"),
+					},
+					body: settableField("nothing\n"),
+				},
+				rxBBS:  rxBBSField("bbs"),
+				rxDate: rxDateField{"Sun, 01 Jan 2023 00:00:00 -0800"},
+			},
+			notPlainText: field("true"),
+		},
+	},
+	{
+		name: "unparseable content type",
+		raw:  "Content-Type: //bogus\n\nnothing\n",
+		bbs:  "bbs",
+		msg: &baseRetrieved{
+			baseRx: &baseRx{
+				outpostMessage: &outpostMessage{
+					baseTx: &baseTx{},
+				},
+				rxBBS:  rxBBSField("bbs"),
+				rxDate: rxDateField{"Sun, 01 Jan 2023 00:00:00 -0800"},
+			},
+		},
+		wantErr: true,
+	},
+	{
+		name: "non-plain-text content type",
+		raw:  "Content-Type: text/html\n\nnothing\n",
+		bbs:  "bbs",
+		msg: &baseRetrieved{
+			baseRx: &baseRx{
+				outpostMessage: &outpostMessage{
+					baseTx: &baseTx{},
+				},
+				rxBBS:  rxBBSField("bbs"),
+				rxDate: rxDateField{"Sun, 01 Jan 2023 00:00:00 -0800"},
+			},
+			notPlainText: field("true"),
+		},
+		wantErr: true,
+	},
+	{
+		name: "multipart with plain text",
+		raw:  "Content-Type: multipart/alternative; boundary=\"X\"\n\n\n--X\nContent-Type: text/plain\n\nnothing\n\n--X--\n",
+		bbs:  "bbs",
+		msg: &baseRetrieved{
+			baseRx: &baseRx{
+				outpostMessage: &outpostMessage{
+					baseTx: &baseTx{
+						body: settableField("nothing\n"),
+					},
+					body: settableField("nothing\n"),
+				},
+				rxBBS:  rxBBSField("bbs"),
+				rxDate: rxDateField{"Sun, 01 Jan 2023 00:00:00 -0800"},
+			},
+			notPlainText: field("true"),
+		},
+	},
+	{
+		name: "nested multipart with plain text",
+		raw:  "Content-Type: multipart/mixed; boundary=\"Y\"\n\n\n--Y\nContent-Type: multipart/alternative; boundary=\"X\"\n\n\n--X\nContent-Type: text/plain\n\nnothing\n\n--X--\n\n--Y--\n",
+		bbs:  "bbs",
+		msg: &baseRetrieved{
+			baseRx: &baseRx{
+				outpostMessage: &outpostMessage{
+					baseTx: &baseTx{
+						body: settableField("nothing\n"),
+					},
+					body: settableField("nothing\n"),
+				},
+				rxBBS:  rxBBSField("bbs"),
+				rxDate: rxDateField{"Sun, 01 Jan 2023 00:00:00 -0800"},
+			},
+			notPlainText: field("true"),
+		},
+	},
+	{
+		name: "nested multipart ill-formed",
+		raw:  "Content-Type: multipart/mixed; boundary=\"Y\"\n\n\n--Y\nContent-Type: multipart/alternative; boundary=\"X\"\n\n\n--X\nContent-Type: text/plain\n\nnothing\n\n--Y--\n",
+		bbs:  "bbs",
+		msg: &baseRetrieved{
+			baseRx: &baseRx{
+				outpostMessage: &outpostMessage{
+					baseTx: &baseTx{},
+				},
+				rxBBS:  rxBBSField("bbs"),
+				rxDate: rxDateField{"Sun, 01 Jan 2023 00:00:00 -0800"},
+			},
+		},
+		wantErr: true,
+	},
+	{
+		name: "multipart with no plain text",
+		raw:  "Content-Type: multipart/alternative; boundary=\"X\"\n\n\n--X\nContent-Type: text/html\n\n<div>nothing</div>\n\n--X--\n",
+		bbs:  "bbs",
+		msg: &baseRetrieved{
+			baseRx: &baseRx{
+				outpostMessage: &outpostMessage{
+					baseTx: &baseTx{},
+				},
+				rxBBS:  rxBBSField("bbs"),
+				rxDate: rxDateField{"Sun, 01 Jan 2023 00:00:00 -0800"},
+			},
+			notPlainText: field("true"),
+		},
+		wantErr: true,
+	},
+	{
+		name: "envelope line",
+		raw:  "From nobody@nowhere Wed Dec  1 08:04:29 2021\n\nnothing\n",
+		bbs:  "bbs",
+		msg: &baseRetrieved{
+			baseRx: &baseRx{
+				outpostMessage: &outpostMessage{
+					baseTx: &baseTx{
+						body: settableField("nothing\n"),
+					},
+					body: settableField("nothing\n"),
+				},
+				rxBBS:  rxBBSField("bbs"),
+				rxDate: rxDateField{"Sun, 01 Jan 2023 00:00:00 -0800"},
+			},
+			returnAddr: field("nobody@nowhere"),
+			bbsRxDate:  bbsRxDateField{"Wed, 01 Dec 2021 08:04:29 -0800"},
+		},
+	},
+}
+
+func TestReceive(t *testing.T) {
+	now = func() time.Time { return time.Date(2023, 1, 1, 0, 0, 0, 0, time.Local) }
+	for _, tt := range receiveTests {
+		t.Run(tt.name, func(t *testing.T) {
+			m, err := ReceiveMessage(tt.raw, tt.bbs, tt.area)
+			if err != nil && !tt.wantErr {
+				t.Fatalf("unexpected error %s", err)
+			}
+			if err == nil && tt.wantErr {
+				t.Fatal("unexpected success")
+			}
+			if !reflect.DeepEqual(m, tt.msg) {
+				spew.Fdump(os.Stderr, "actual", m)
+				spew.Fdump(os.Stderr, "expected", tt.msg)
+				t.Fatal("incorrect result")
 			}
 		})
 	}
@@ -978,5 +1372,136 @@ iv><br></div><div>Many thanks,<br>Sunnyvale OES</div></body></html>
 --BOUNDARY--
 
 --B_3721553817_1320843075--
+
+`
+
+const expectedBounceBody = `
+Your message to gordon@amateur-radio.org couldn't be delivered.
+amateur-radio.org suspects your message is spam and rejected it.
+cert Office 365 amateur-radio.org
+Sender Action Required
+Messages suspected as spam
+
+How to Fix It
+Try to modify your message, or change how you're sending the message, using the guidance in this article: Bulk E-mailing Best Practices for Senders Using Forefront Online Protection for Exchange. Then resend your message.
+If you continue to experience the problem, contact the recipient by some other means (by phone, for example) and ask them to ask their email admin to add your email address, or your domain name, to their allowed senders list.
+
+Was this helpful? Send feedback to Microsoft.
+
+More Info for Email Admins
+Status code: 550 5.7.350
+
+When Office 365 tried to send the message to the recipient (outside Office 365), the recipient's email server (or email filtering service) suspected the sender's message is spam.
+
+If the sender can't fix the problem by modifying their message, contact the recipient's email admin and ask them to add your domain name, or the sender's email address, to their list of allowed senders.
+
+Although the sender may be able to alter the message contents to fix this issue, it's likely that only the recipient's email admin can fix this problem. Unfortunately, Office 365 Support is unlikely to be able to help fix these kinds of externally reported errors.
+
+Original Message Details
+Created Date:12/1/2021 8:03:44 AM
+Sender Address:cert@sunnyvale.ca.gov
+Recipient Address:gordon@amateur-radio.org
+Subject:SERV Volunteer Hours for November 2021
+
+Error Details
+Reported error:550 5.7.350 Remote server returned message detected as spam -> 554 5.7.1 The message from (<cert@sunnyvale.ca.gov>) with the subject of (SERV Volunteer Hours for November 2021) matches a profile the Internet community may consider spam. Please revise your message before resending.
+DSN generated by:BY5PR09MB5379.namprd09.prod.outlook.com
+Message Hops
+HOPTIME (UTC)FROMTOWITHRELAY TIME
+112/1/2021
+8:04:26 AMlocalhostBL1P223CA0025.NAMP223.PROD.OUTLOOK.COMMicrosoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384)42 sec
+212/1/2021
+8:04:27 AMBY5PR09MB5090.namprd09.prod.outlook.comBY5PR09MB5090.namprd09.prod.outlook.commapi1 sec
+312/1/2021
+8:04:27 AMBY5PR09MB5090.namprd09.prod.outlook.comBY5PR09MB5379.namprd09.prod.outlook.comMicrosoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384)*
+
+Original Message Headers
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=ElDXLNsNor1ieyeILBeH5YK1xaNSUH9k/3DrvN57MlvdD47bwqMqyrCF/aq579lWFnXnV4lxQ7CqmLgzj1JOhLfjGbkhwg64xDwCufjPj19znP1pthkPrbC3ASDOMSM1uVY5jjtdRGBz2KHnJ5gGyn9muTvqqpAP9xNLe4eJWX5Q5k5XsbLCimuLBJoFEF4aTJVB+6WD1wV0cBgwCWiG83NER5cYrWFvm9E0tZAW2ZJwZ7XMs7lrAHG6B8f5aroV0/1wOqLAkbS/31mZH2naMxhL3XsjX90KDUePESyTnclD3bj5jiX62Z6sE1E/DilGz+IBenWmvAoXpD6/Q2TSsg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=xiMYKUzhNVXMjKgeNC0NBpIE1l7F6ew8A35kP50faOY=;
+ b=S1+82Rkj0k6Twql7XKI8WsGwxXC/WQHMmqCvfUm+Z80KwmTAMOExeMfg62vES1aToAHjE+Y0eXmBxQBKfo5crXkU5p8/AJDoZPcztwniN4AjJVOS6jAuqsoZvdDwPFa7J/r0L9VoJzNwekS6PXT+YtelGaysf+iu8xwG8mlyZFkx2thBYz5mYUX6qaFaqGbW3oIVPnCr0V/4SydMn6Dqu4BUWzKlvuWcFUkfETyMAhd2gNXj4aDL+3JPmOu/bncFce19PnSBWbvgkNAiZIU3ypCd41v1NgEgyWeNjGeLrys0SRV42QIjTtcjwTf1/AE5dr9FFvK0t8ikjC74uhb57w==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=sunnyvale.ca.gov; dmarc=pass action=none
+ header.from=sunnyvale.ca.gov; dkim=pass header.d=sunnyvale.ca.gov; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=cityofsunnyvale.onmicrosoft.com;
+ s=selector2-cityofsunnyvale-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=xiMYKUzhNVXMjKgeNC0NBpIE1l7F6ew8A35kP50faOY=;
+ b=0q2m3qItWh5cXQJd+TvjJfR/rqd20b2kN3+hNbTiY57BtFfo6FJkyu2bbOrlgWZR7pe9/rojV2txhcXOg2ulr3nGxetRJ6EhgJF1C2ekRiz0IWE3KGTMOk40K8kZmmGXo3XVJ3bRw4+y2XpB59ZLSWfwsoFed+FmOPOExiE7lx4=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=sunnyvale.ca.gov;
+Received: from BY5PR09MB5090.namprd09.prod.outlook.com (2603:10b6:a03:24a::14)
+ by BY5PR09MB5379.namprd09.prod.outlook.com (2603:10b6:a03:24d::11) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4734.22; Wed, 1 Dec
+ 2021 08:04:27 +0000
+Received: from BY5PR09MB5090.namprd09.prod.outlook.com
+ ([fe80::3ca3:b9c4:5e3d:58f6]) by BY5PR09MB5090.namprd09.prod.outlook.com
+ ([fe80::3ca3:b9c4:5e3d:58f6%3]) with mapi id 15.20.4755.014; Wed, 1 Dec 2021
+ 08:04:27 +0000
+From: SunnyvaleSERV.org <cert@sunnyvale.ca.gov>
+Content-Type: multipart/alternative; boundary="BOUNDARY"
+Subject: SERV Volunteer Hours for November 2021
+Date: Wed, 01 Dec 2021 00:03:44 -0800
+To: "Gordon Girton" <gordon@amateur-radio.org>
+X-ClientProxiedBy: BL1P223CA0025.NAMP223.PROD.OUTLOOK.COM
+ (2603:10b6:208:2c4::30) To BY5PR09MB5090.namprd09.prod.outlook.com
+ (2603:10b6:a03:24a::14)
+Return-Path: cert@sunnyvale.ca.gov
+Message-ID: <BY5PR09MB5090C0A1798249A18D3F34A3E7689@BY5PR09MB5090.namprd09.prod.outlook.com>
+MIME-Version: 1.0
+Received: from localhost (2607:f298:5:100f::320:4a05) by BL1P223CA0025.NAMP223.PROD.OUTLOOK.COM (2603:10b6:208:2c4::30) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4734.23 via Frontend Transport; Wed, 1 Dec 2021 08:04:26 +0000
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: d270b94b-ec7a-41e9-6661-08d9b4a131ee
+X-MS-TrafficTypeDiagnostic: BY5PR09MB5379:
+X-Microsoft-Antispam-PRVS:
+	<BY5PR09MB53799E7833AAA8B89EC78C75E7689@BY5PR09MB5379.namprd09.prod.outlook.com>
+X-MS-Oob-TLC-OOBClassifiers: OLM:6790;
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info:
+	xDd6uy4T4vl0VR3tODu+h8hmVT8n/RR0LsMnRjE1JkCqQjNbDvZCW//Yc74Yu0AGTolRxrk87iiNr60ari8xnFHroywalti12y5ZgKg+99C3P5FN4LjcX2YIdFqlOllMqziDoyTOu9kA4D8H00nCY/RixXb1oBbssQLuHNuem+OknTSeb3WVrBYtpXrTyJMmQEeuOd5wHAyCR3Wde5/mGfWMLsqLc9Ii2cXyM0NeVZSfP+zmeq5TPi9f5cSLQEpjgvUbiP4HST9O1zkebBU+uXf9d3cvGR17iiLkSz/0V+4wU+ecqdwoY1WiHWdWNIaYQcomQxGD5BE8z8Atyg8IIJI1K0QN+gzaNfkA8joWGMRnpmhptHyFBYd0BLd+ZZoqF+jG5C+zwKhkLMQOij9+CZf9/pTgYjmdybvOO1ICMSjkPzkr1fDoCRmnDNEb9J9vOIsHXs1ijpRN4LAKO43yVmZk/8tWPHsIFIGjAY3PNuhK12AR9abkgWYToFyapyLwHlOytdbXedZdfrV/kPRGk4X6Q5bdqjtX6BjIlqgyjXAXkFFlE947CMNhn5vNEIv6slS4PwwDqP1PuyYBTFGUZN5LO/hOw7P457JTrHICUlPCsixRzLB4kdppg+tKToIQkDKTqR5+VM5bWH60fBHseEpFg+WVb/wEk2gBm0g3gqSOStaJcXx4lpO5lf5F6fcX6NG2Nh6iixZPUD/c2CxIWUeAsUc9aAtouNLNlZFC7N8=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BY5PR09MB5090.namprd09.prod.outlook.com;PTR:;CAT:NONE;SFS:(366004)(186003)(4001150100001)(8936002)(38100700002)(5660300002)(83380400001)(6666004)(6916009)(8676002)(508600001)(316002)(9686003)(966005)(52536014)(6496006)(6486002)(2906002)(66476007)(52116002)(33964004)(166002)(33656002)(66556008)(66946007)(86362001);DIR:OUT;SFP:1102;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?NbKYDOktWeK55k5Jod3Eh0cXtj/BpM9uyUI3AqGbM/X35OnV/mzFdDopk3xu?=
+ =?us-ascii?Q?kckxY0rMyxo87Vfh1HQAObmFYo0rpOMiQkgQkpCfkbIjtOfTz5djTHpd3c8V?=
+ =?us-ascii?Q?Whoy/b13NKtH4ksh9KUtGre5sl5y35BThCsJISs/HZKc45JlajC9dFLbXmJk?=
+ =?us-ascii?Q?B17SJqoK8aWoXp0sjsX8PwI1SDUBlvQFRrU39yTtf2ogCnp+J9BIZjudmrLo?=
+ =?us-ascii?Q?SxtPR4pY9HcMnQWvgW89Gvjs0a5S+OmUuv2dJXWQKF1QvMhePWk/NVw1y83T?=
+ =?us-ascii?Q?AT8+/zRPdpv/sHJxEQOWdjyVnjQwG5LXsoPDRoIkR4PQscRcYCtfDzldkR0R?=
+ =?us-ascii?Q?K5k41wVViL3Bj2Yt9rRr4f4f3ZY3EfptXUF79hCYwurkDasekmtZEe+W6517?=
+ =?us-ascii?Q?uP9qrAGBpBoIfReNdG5qSLVme1vFBziAtB866b4iHBpQJyhxifj9FxfeWuWH?=
+ =?us-ascii?Q?V75MfO5G2R0ImZnCXzCD8++mXMKtClF0zeEnTlAxzWg8EJi/nlzXWa1niETU?=
+ =?us-ascii?Q?G/eQg//FHfAX9jlVcDMdYlrDi+Hjj1cDsNBVzE4nu7ij20SQfkg3K6odEac9?=
+ =?us-ascii?Q?4zi3U03GaEFR7CCR+tI/acVFgAaS7TYSGpNHVlthjhsVPlfwM/H0xUSVEact?=
+ =?us-ascii?Q?+lK4SFy6Zc75cdQIjbwLr3x8/A2CDlLxEnctCReahtJCv02RjLAlAtMFkd7j?=
+ =?us-ascii?Q?DzXy2sDhOYN3sbXnBGMdUD/F15QG4Rg+YWZXJwZXgPsPLl0eClIe1ygeFfJ8?=
+ =?us-ascii?Q?xEB/OdDRbIeGvw0zLW0g1IAMhZCEqQax8BEQtxwU2KBsQVxU/k+tDjiRIgcK?=
+ =?us-ascii?Q?aO1UV5M0D9k4nzoIgXWFnbkQFqDdtLqrzU5Vnipgh72VnpxufkOfM2xDIs67?=
+ =?us-ascii?Q?Y8ShpLfbWElbdwc0IzxJ3WfS5/CFiYkN4QMHWUzV9reC0F8Ov7uu82alLvLD?=
+ =?us-ascii?Q?02+9OVkXZiw4h6TO3czbyj239WhuQoCHZivGvbsU31N7JVuLTSBzBKcfdgWl?=
+ =?us-ascii?Q?p7WmccNFOKP/GY4vLaDev9KUUCqGy3DHFqCp/PeJaWNbZlQFyVBgELPmbZbc?=
+ =?us-ascii?Q?7mL3iCrFrLF65oYg/6QfLaUregT5f5JENi3S+tKUQitQ1BoE9f5KpbqDDf//?=
+ =?us-ascii?Q?PPVdLs1JDSmdCJyIHkmr0I7fpl/PYPf/hRbKeVjxELuHY9fOjpEZQkS/ZDOM?=
+ =?us-ascii?Q?g7fE+ebolUFU9dpsPFM3tu7FtO7arSmfB4oyFx7Up3FqrvDA+EnnWZ8Gmyd1?=
+ =?us-ascii?Q?CZXfWBBgKTazj/u1xrMw2sJFB/Xv+FnPdnVdz+yS/CRwgdoMbHKQTg60R1UH?=
+ =?us-ascii?Q?VHvZ7ldvkZVh1138NhcahYslKeP33e53t7dVkslDbqONpEAbtTMkERgqm+tW?=
+ =?us-ascii?Q?Ex9R+pw=3D?=
+X-OriginatorOrg: sunnyvale.ca.gov
+X-MS-Exchange-CrossTenant-Network-Message-Id: d270b94b-ec7a-41e9-6661-08d9b4a131ee
+X-MS-Exchange-CrossTenant-AuthSource: BY5PR09MB5090.namprd09.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 01 Dec 2021 08:04:27.0714
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 63dc83d7-8dcb-489b-bce2-0bf7c37d8f39
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BY5PR09MB5379
 
 `

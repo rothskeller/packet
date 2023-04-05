@@ -3,72 +3,95 @@ package pktmsg
 import (
 	"bytes"
 	"encoding/base64"
+	"errors"
 	"io"
 	"mime"
 	"mime/multipart"
 	"mime/quotedprintable"
 	"net/mail"
 	"net/textproto"
-	"regexp"
 	"strings"
-	"time"
 )
 
-// fromLineRE is the regular expression that the "From " line at the beginning
-// of an RFC-4155 "mbox" format email message is expected to match.  It has the
-// word "From" followed by a space (not a colon, as in the RFC-5322 header);
-// then a possibly-empty from address, and then optionally a space and a
-// timestamp.
-var fromLineRE = regexp.MustCompile(`^From (\S*)(?: (.*))?\n`)
+// ErrNoPlainTextBody is raised when a message being parsed has no plain text
+// body content.
+var ErrNoPlainTextBody = errors.New("message has no plain text body content")
 
-// ParseMessage parses an encoded message.  It returns an error if the message
-// could not be decoded or parsed.  Even if it returns a non-nil error, the
-// returned Message will be non-nil and may contain incomplete message data.
-func ParseMessage(rawmsg string) (msg *Message, err error) {
+// ParseMessage parses the supplied string as a stored message (which could be
+// either incoming or outgoing).
+func ParseMessage(raw string) (m Message, err error) {
 	var (
-		loc      []int
+		mm   *mail.Message
+		body []byte
+		tx   *baseTx
+		om   *outpostMessage
+	)
+	// Parse the message headers.  If we can't parse them, we go no further.
+	if mm, err = mail.ReadMessage(strings.NewReader(raw)); err != nil {
+		return nil, err
+	}
+	// Stored messages should not have a Content-Type or Content-Transfer-Encoding.
+	if mm.Header["Content-Type"] != nil || mm.Header["Content-Transfer-Encoding"] != nil {
+		return nil, errors.New("stored messages must be plain text only")
+	}
+	// Extract the plain text portion of the body and create the baseTx.
+	body, _ = io.ReadAll(mm.Body)
+	tx = parseBaseTx(mm.Header, string(body))
+	// Decode outpost flags.
+	if om, err = parseOutpostFlags(tx); err != nil {
+		return nil, err
+	}
+	// If the message was received, transform it into a baseRx.
+	if recv := mm.Header.Get("Received"); recv != "" {
+		if m, err = parseBaseRx(om, recv); err != nil {
+			return nil, err
+		}
+	} else {
+		m = om
+	}
+	// Parse the form if any.
+	m = parsePIFOForm(m)
+	return m, nil
+}
+
+// ReceiveMessage parses the supplied string as a message that was just
+// retrieved from the specified JNOS BBS.  If it is a bulletin, area should be
+// set to the bulletin area from which it was retrieved; otherwise, area should
+// be empty.
+func ReceiveMessage(raw, bbs, area string) (m Message, err error) {
+	var (
+		envelope string
 		mm       *mail.Message
 		body     []byte
 		notplain bool
+		tx       *baseTx
+		om       *outpostMessage
+		err2     error
 	)
-	msg = new(Message)
-	// Extract information from the RFC-4155 "From " envelope line if any.
-	// If we have such a line but it has no return address on it, that's an
-	// auto-responder message.
-	if loc = fromLineRE.FindStringSubmatchIndex(rawmsg); loc != nil {
-		if msg.EnvelopeAddress = rawmsg[loc[2]:loc[3]]; msg.EnvelopeAddress == "" {
-			msg.Flags |= AutoResponse
+	// If there is an envelope From line, remove it from the raw message.
+	if strings.HasPrefix(raw, "From ") {
+		if idx := strings.IndexByte(raw, '\n'); idx > 0 {
+			envelope, raw = raw[:idx], raw[idx+1:]
 		}
-		if loc[4] >= 0 {
-			// Looks like there's a timestamp on the envelope line.
-			// RFC-4155 says it should be a ctime-style timestamp in
-			// UTC.  We'll try parsing it as that way, but we'll
-			// treat it as local time because that's what JNOS BBSes
-			// do, and those are our primary source of messages to
-			// parse.
-			msg.EnvelopeDate, _ = time.ParseInLocation(time.ANSIC, rawmsg[loc[4]:loc[5]], time.Local)
-		}
-		rawmsg = rawmsg[loc[1]:]
 	}
-	// Parse the message headers.  If we can't parse them, it's an
-	// unparseable message and we go no further.
-	if mm, err = mail.ReadMessage(strings.NewReader(rawmsg)); err != nil {
-		return msg, err
+	// Parse the message headers.  If we can't parse them, we go no further.
+	if mm, err = mail.ReadMessage(strings.NewReader(raw)); err != nil {
+		return nil, err
 	}
-	msg.Header = textproto.MIMEHeader(mm.Header)
-	// Extract the plain text portion of the body, and decode it.
+	// Extract the plain text portion of the body.
 	body, _ = io.ReadAll(mm.Body)
 	body, notplain, err = extractPlainText(textproto.MIMEHeader(mm.Header), body)
-	if err != nil {
-		return msg, err
+	if err == nil && notplain && len(body) == 0 {
+		err = ErrNoPlainTextBody
 	}
-	if notplain {
-		msg.Flags |= NotPlainText
+	// Create the message.
+	tx = parseBaseTx(mm.Header, string(body))
+	if om, err2 = parseOutpostFlags(tx); err == nil {
+		err = err2
 	}
-	msg.Body = string(body)
-	// Handle Outpost flags.
-	err = msg.parseOutpostFlags()
-	return msg, err
+	m = parseBaseRetrieved(om, bbs, area, envelope, mm.Header, notplain)
+	m = parsePIFOForm(m)
+	return m, err
 }
 
 // extractPlainText extracts the plain text portion of a message from its body.
@@ -144,51 +167,4 @@ func extractPlainText(header textproto.MIMEHeader, body []byte) (nbody []byte, n
 	// In theory we also ought to check the charset, but we'll elide that
 	// until experience proves a need.
 	return body, notplain, nil
-}
-
-// parseOutpostFlags looks for Outpost flags at the beginning of the message
-// body, and handles them if they are found.
-func (msg *Message) parseOutpostFlags() error {
-	var (
-		found bool
-		body  = msg.Body
-	)
-	for {
-		switch {
-		case strings.HasPrefix(body, "\n"):
-			// Remove newlines that might precede the first Outpost
-			// code.  We'll keep this removal only if we actually
-			// find an Outpost code.
-			body = body[1:]
-		case strings.HasPrefix(body, "!B64!"):
-			// Message content has Base64 encoding.
-			if dec, err := base64.StdEncoding.DecodeString(body[5:]); err == nil {
-				body = string(dec)
-				found = true
-				msg.Flags |= NotPlainText
-			} else {
-				return err
-			}
-		case strings.HasPrefix(body, "!RRR!"):
-			msg.Flags |= RequestReadReceipt
-			body = body[5:]
-			found = true
-		case strings.HasPrefix(body, "!RDR!"):
-			msg.Flags |= RequestDeliveryReceipt
-			body = body[5:]
-			found = true
-		case strings.HasPrefix(body, "!URG!"):
-			msg.Flags |= OutpostUrgent
-			body = body[5:]
-			found = true
-		default:
-			if found {
-				msg.Body = body
-				// If we didn't find any Outpost codes, leave
-				// the body unchanged so as not to remove
-				// initial newlines that might be significant.
-			}
-			return nil
-		}
-	}
 }

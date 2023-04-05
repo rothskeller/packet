@@ -1,102 +1,60 @@
 package pktmsg
 
 import (
-	"net/textproto"
 	"testing"
-	"time"
 )
 
-var encodeBodyTests = []struct {
-	name     string
-	msg      *Message
-	wantBody string
-}{
-	{
-		"empty",
-		&Message{},
-		"",
-	},
-	{
-		"plain body",
-		&Message{
-			Body: "nothing\n",
-		},
-		"nothing\n",
-	},
-	{
-		"Outpost flags",
-		&Message{
-			Body:  "nothing\n",
-			Flags: RequestDeliveryReceipt | RequestReadReceipt | OutpostUrgent,
-		},
-		"!URG!!RDR!!RRR!nothing\n",
-	},
-	{
-		"base64",
-		&Message{
-			Body: "nöthing\n",
-		},
-		"!B64!bsO2dGhpbmcK\n",
-	},
-}
-
-func TestEncodeBody(t *testing.T) {
-	for _, tt := range encodeBodyTests {
-		t.Run(tt.name, func(t *testing.T) {
-			if gotBody := tt.msg.EncodeBody(); gotBody != tt.wantBody {
-				t.Errorf("Message.EncodeBody() = %v, want %v", gotBody, tt.wantBody)
-			}
-		})
+func TestEncodeReceived(t *testing.T) {
+	const start = "Received: FROM bbs.ampr.org BY pktmsg.local FOR area;\n\tWed, 01 Dec 2021 08:04:29 +0000\nFrom: <nobody@nowhere>\nTo: <somebody@somewhere>\nSubject: Hello, World\nDate: Wed, 01 Dec 2021 08:04:29 +0000\n\nnothing\n"
+	var msg, _ = ParseMessage(start)
+	var end = msg.Save()
+	if start != end {
+		t.Fail()
 	}
 }
 
-var encodeTests = []struct {
-	name string
-	msg  *Message
-	want string
-}{
-	{
-		"plain",
-		&Message{Body: "nothing\n"},
-		"\nnothing\n",
-	},
-	{
-		"headers",
-		&Message{
-			Header: textproto.MIMEHeader{
-				"To":   []string{"<nobody@nowhere>", "<somebody@somewhere>"},
-				"From": []string{"<me@here>"},
-			},
-			Body: "nothing\n",
-		},
-		"To: <nobody@nowhere>, <somebody@somewhere>\nFrom: <me@here>\n\nnothing\n",
-	},
-	{
-		"envelope",
-		&Message{
-			EnvelopeAddress: "me@here",
-			Body:            "nothing\n",
-		},
-		"From me@here\n\nnothing\n",
-	},
-	{
-		"everything",
-		&Message{
-			EnvelopeAddress: "me@here",
-			EnvelopeDate:    time.Date(2021, 12, 1, 8, 4, 29, 0, time.Local),
-			Header:          textproto.MIMEHeader{"To": []string{"<nobody@nowhere>"}},
-			Body:            "nothing\n",
-		},
-		"From me@here Wed Dec  1 08:04:29 2021\nTo: <nobody@nowhere>\n\nnothing\n",
-	},
+func TestEncodeOutpostFlags(t *testing.T) {
+	var msg = NewMessage()
+	msg.ToAddrs().SetValue("nobody")
+	msg.Body().SetValue("hello\n")
+	msg.OutpostFlags().SetUrgent(true)
+	var save = msg.Save()
+	const expected = "To: nobody\n\n!URG!hello\n"
+	if save != expected {
+		t.Fail()
+	}
 }
 
-func TestEncode(t *testing.T) {
-	for _, tt := range encodeTests {
-		t.Run(tt.name, func(t *testing.T) {
-			if got := tt.msg.Encode(); got != tt.want {
-				t.Errorf("Message.Encode() = %v, want %v", got, tt.want)
-			}
-		})
+func TestEncodeOutpostB64(t *testing.T) {
+	var msg = NewMessage()
+	msg.ToAddrs().SetValue("nobody")
+	msg.Body().SetValue("hellö\n")
+	var save = msg.Save()
+	const expected = "To: nobody\n\n!B64!aGVsbMO2Cg==\n"
+	if save != expected {
+		t.Fail()
+	}
+}
+
+func TestEncodeMinimalForm(t *testing.T) {
+	var a = taggedField{tag: "A"}
+	var b = taggedField{"b", "B"}
+	var form = NewForm("tt.html", "2", []*taggedField{&a, &b})
+	form.ToAddrs().SetValue("nobody")
+	var save = form.Save()
+	const expected = "To: nobody\n\n!SCCoPIFO!\n#T: tt.html\n#V: 3.9-2\nB: [b]\n!/ADDON!\n"
+	if save != expected {
+		t.Fail()
+	}
+}
+
+func TestEncodeFormWithLineContinuation(t *testing.T) {
+	var a = taggedField{"1234567890 1234567890 1234567890 1234567890 1234567890 1234567890 1234567890 1234567890 1234567890 1234567890 1234567890 1234567890 ", "A"}
+	var form = NewForm("tt.html", "2", []*taggedField{&a})
+	form.ToAddrs().SetValue("nobody")
+	var save = form.Save()
+	const expected = "To: nobody\n\n!SCCoPIFO!\n#T: tt.html\n#V: 3.9-2\nA: [1234567890 1234567890 1234567890 1234567890 1234567890 1234567890 1234567890 1234567890 1234567890 1234567890 1234567890 123\n4567890 ]\n!/ADDON!\n"
+	if save != expected {
+		t.Fail()
 	}
 }

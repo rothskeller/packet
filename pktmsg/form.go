@@ -7,91 +7,112 @@ import (
 	"unicode/utf8"
 )
 
+// pifoVersion is the PIFO version number used in new outgoing forms.
+const pifoVersion = "3.9"
+
 var (
 	headerLine    = "!SCCoPIFO!\n"
 	footerLine    = "!/ADDON!\n"
 	typeLineRE    = regexp.MustCompile(`^#T: ([a-z][-a-z0-9]+\.html)\n`)
 	versionLineRE = regexp.MustCompile(`^#V: (\d+(?:\.\d+)*)-(\d+(?:\.\d+)*)\n`)
-	fieldLineRE   = regexp.MustCompile(`(?i)^([A-Z0-9][-A-Z0-9.]*):`)
+	fieldLineRE   = regexp.MustCompile(`(?i)^([A-Z0-9][-A-Z0-9.]*): \[`)
 	quoteSCCoPIFO = strings.NewReplacer(`\`, `\\`, "\n", `\n`, "]", "`]")
-	quoteLoose    = strings.NewReplacer(`\`, `\\`, "\n", `\n`)
 )
 
-// IsForm returns whether the supplied message body looks like it has an
-// embedded form.
-func IsForm(body string) bool {
-	return strings.Contains(body, "!SCCoPIFO!") || strings.Contains(body, "!PACF!") || strings.Contains(body, "!/ADDON!")
+type pifoMessage struct {
+	Message
+	pifoVersion field
+	formHTML    field
+	formVersion field
+	fields      []*taggedField
 }
 
-// ParseForm parses the supplied message body as a form.  It returns the decoded
-// form, or nil if it could not be parsed.  The strict flag indicates whether
-// strict SCCoPIFO syntax must be used.  If it is false, field annotations,
-// comments, and loose quoting are allowed.
-func ParseForm(body string) (f *Form) {
-	f = new(Form)
-	if f, body = parseFormHeader(body); f == nil {
-		return nil
+// NewForm creates a new, outgoing form with the specified form HTML, version
+// number, and fields.
+func NewForm(html, version string, fields []*taggedField) Message {
+	var m = pifoMessage{Message: newOutpostMessage()}
+	m.pifoVersion = field(pifoVersion)
+	m.formHTML = field(html)
+	m.formVersion = field(version)
+	m.fields = fields
+	return &m
+}
+
+// parsePIFOForm parses the PackItForms form encoded in the message, if any.  If
+// it finds one and is able to decode it, it returns the form.  Otherwise it
+// returns the input message.
+func parsePIFOForm(in Message) Message {
+	var (
+		ok   bool
+		body = in.Body().Value()
+		m    = pifoMessage{Message: in}
+	)
+	if body, ok = m.parseFormHeader(body); !ok {
+		return in
 	}
 	for {
 		var done bool
-		if f, body, done = parseFormField(f, body); done {
+		if body, done, ok = m.parseFormField(body); done {
 			break
 		}
 	}
-	if f != nil {
-		f = parseFormFooter(f, body)
+	if ok {
+		ok = m.parseFormFooter(body)
 	}
-	return f
+	if !ok {
+		return in
+	}
+	return &m
 }
 
 // parseFormHeader parses the three header lines of a form.  Any text can come
 // before the header.  (Some BBSes add routing pseudo-headers, for example.)
-func parseFormHeader(body string) (f *Form, _ string) {
+func (m *pifoMessage) parseFormHeader(body string) (string, bool) {
 	idx := strings.Index(body, headerLine)
 	if idx < 0 || (idx > 0 && body[idx-1] != '\n') {
-		return nil, body
+		return body, false
 	}
 	body = body[idx+len(headerLine):]
 	if match := typeLineRE.FindStringSubmatch(body); match != nil {
-		f = &Form{FormType: match[1]}
+		m.formHTML = field(match[1])
 		body = body[len(match[0]):]
 	} else {
-		return nil, body
+		return body, false
 	}
 	if match := versionLineRE.FindStringSubmatch(body); match != nil {
-		f.PIFOVersion, f.FormVersion = match[1], match[2]
+		m.pifoVersion = field(match[1])
+		m.formVersion = field(match[2])
 		body = body[len(match[0]):]
 	} else {
-		return nil, body
+		return body, false
 	}
-	return f, body
+	return body, true
 }
 
 // parseFormField parses a single field definition from the form.  It is usually
 // a single line, but can be multiple lines if the value is long.
-func parseFormField(f *Form, body string) (_ *Form, _ string, done bool) {
+func (m *pifoMessage) parseFormField(body string) (_ string, done, ok bool) {
 	var (
-		tag   string
+		tf    taggedField
 		value string
-		ok    bool
 	)
 	if match := fieldLineRE.FindStringSubmatch(body); match != nil {
-		tag = match[1]
+		tf.tag = match[1]
 		body = body[len(match[0]):]
 	} else {
-		return f, body, true
+		return body, true, true
 	}
-	if f.Has(tag) {
-		return nil, body, true // multiple values for field
+	for _, f := range m.fields {
+		if f.Tag() == tf.tag {
+			return body, true, false // multiple values for field
+		}
 	}
-	if !strings.HasPrefix(body, " [") {
-		return nil, body, true // must have bracket after exactly one space
+	if value, body, ok = parseBracketedValue(body); !ok {
+		return body, true, false // illegal bracketed value
 	}
-	if value, body, ok = parseBracketedValue(body[2:]); !ok {
-		return nil, body, true
-	}
-	f.Set(tag, value)
-	return f, body, false
+	tf.SetValue(value)
+	m.fields = append(m.fields, &tf)
+	return body, false, true
 }
 
 // parseBracketedValue parses a field value in brackets.  Within the brackets,
@@ -148,117 +169,69 @@ func parseBracketedValue(body string) (value, nbody string, ok bool) {
 // parseFormFooter verifies that the next thing in the body is the footer line.
 // Anything after that is ignored.  (This is because some email clients add
 // their own footers that the sender can't control.)
-func parseFormFooter(f *Form, body string) *Form {
-	if !strings.HasPrefix(body, footerLine) {
-		return nil
-	}
-	return f
+func (m *pifoMessage) parseFormFooter(body string) bool {
+	return strings.HasPrefix(body, footerLine)
 }
 
-// A Form represents a form encoded in a packet message.
-type Form struct {
-	// PIFOVersion identifies the version of the PackItForms encoding of the
-	// form.
-	PIFOVersion string
-	// FormType is a PackItForms HTML file name that identifies the form
-	// type.
-	FormType string
-	// FormVersion identifies the form version.
-	FormVersion string
-	// Fields is a list of form fields.
-	Fields []FormField
-}
+// Accessors for pifoMessage fields.
+func (pifoMessage) Body() BodyField                  { return nil }
+func (m *pifoMessage) FormHTML() FormHTMLField       { return &m.formHTML }
+func (m *pifoMessage) FormVersion() FormVersionField { return &m.formVersion }
+func (m *pifoMessage) PIFOVersion() PIFOVersionField { return &m.pifoVersion }
 
-// A FormField is a single field of a Form.
-type FormField struct {
-	// Tag is the field tag as it appears in the PackItForms encoding of the
-	// form.  In most cases this is a number followed by a period.
-	Tag string
-	// Value is the value of the field, in string form.
-	Value string
-}
-
-// Has returns whether the form has a setting (even if empty) for the field with
-// the specified tag.
-func (f *Form) Has(tag string) bool {
-	for _, ff := range f.Fields {
-		if ff.Tag == tag {
-			return true
+func (m *pifoMessage) TaggedField(tag string) Field {
+	for _, f := range m.fields {
+		if f.Tag() == tag {
+			return f
 		}
 	}
-	return false
+	return nil
 }
 
-// Get retrieves the value of the field with the specified tag.  If the field
-// is not in the form, it returns an empty string.
-func (f *Form) Get(tag string) string {
-	for _, ff := range f.Fields {
-		if ff.Tag == tag {
-			return ff.Value
-		}
+func (m *pifoMessage) TaggedFields(fn func(string, Field)) {
+	for _, f := range m.fields {
+		fn(f.tag, f)
 	}
-	return ""
 }
 
-// Set sets a field value.
-func (f *Form) Set(tag, value string) {
-	for i, ff := range f.Fields {
-		if ff.Tag == tag {
-			f.Fields[i].Value = value
-			return
-		}
-	}
-	f.Fields = append(f.Fields, FormField{Tag: tag, Value: value})
+func (m *pifoMessage) Save() string {
+	m.encode()
+	return m.Message.Save()
 }
 
-// EncodeToMessage encodes the form into the supplied message.  If annotations
-// and/or comments are non-nil, they provide annotations to add to the field
-// tags and comments to display in place of empty field values.  If looseQuoting
-// is true, values are encoded with loose quoting; otherwise they are encoded
-// with strict SCCoPIFO quoting.  annotations and comments must be nil and
-// looseQuoting must be false when encoding a message for transmission.
-func (f *Form) EncodeToMessage(msg *Message) {
-	msg.Body = f.Encode()
+func (m *pifoMessage) Transmit() (to []string, subject string, body string) {
+	m.encode()
+	return m.Message.Transmit()
 }
 
-// Encode returns the encoded form.
-func (f *Form) Encode() string {
+func (m *pifoMessage) encode() {
 	var sb strings.Builder
 
-	if f.PIFOVersion == "" {
-		f.PIFOVersion = "3.9"
-	}
 	sb.WriteString("!SCCoPIFO!\n#T: ")
-	sb.WriteString(f.FormType)
+	sb.WriteString(m.formHTML.Value())
 	sb.WriteString("\n#V: ")
-	sb.WriteString(f.PIFOVersion)
+	sb.WriteString(m.pifoVersion.Value())
 	sb.WriteByte('-')
-	sb.WriteString(f.FormVersion)
+	sb.WriteString(m.formVersion.Value())
 	sb.WriteByte('\n')
-	f.encodeFields(&sb)
+	for _, f := range m.fields {
+		sb.WriteString(pifoEncode(f.tag, f))
+	}
 	sb.WriteString("!/ADDON!\n")
-	return sb.String()
+	m.Message.Body().SetValue(sb.String())
 }
-func (f *Form) encodeFields(sb *strings.Builder) {
-	var (
-		tags   []string
-		values []string
-	)
-	for _, field := range f.Fields {
-		tag := field.Tag
-		if field.Value != "" {
-			tags = append(tags, tag)
-			values = append(values, field.Value)
-		}
+
+func pifoEncode(tag string, f Field) string {
+	if f.Value() == "" {
+		return "" // omit empty fields
 	}
-	for i, tag := range tags {
-		var s = fmt.Sprintf("%s: %s", tag, bracketQuote(values[i]))
-		for len(s) > 128 {
-			fmt.Fprintln(sb, s[:128])
-			s = s[128:]
-		}
-		fmt.Fprintln(sb, s)
+	var s = fmt.Sprintf("%s: %s", tag, bracketQuote(f.Value()))
+	var w string
+	for len(s) > 128 {
+		w += s[:128] + "\n"
+		s = s[128:]
 	}
+	return w + s + "\n"
 }
 
 func bracketQuote(value string) string {
@@ -268,3 +241,23 @@ func bracketQuote(value string) string {
 	}
 	return "[" + value + "]"
 }
+
+// The PIFOVersionField holds the PackItForms encoding version number.  It is
+// present only on form messages.
+type PIFOVersionField interface{ Field }
+
+// The FormHTMLField holds the PackItForms HTML file for the form.  It is
+// present only on form messages.
+type FormHTMLField interface{ Field }
+
+// The FormVersionField holds the form version number.  It is present only on
+// form messages.
+type FormVersionField interface{ Field }
+
+// taggedField is a field with a tag.
+type taggedField struct {
+	settableField
+	tag string
+}
+
+func (f taggedField) Tag() string { return f.tag }
