@@ -8,6 +8,7 @@ package xscpdf
 import (
 	"bytes"
 
+	"github.com/rothskeller/packet/typedmsg"
 	"github.com/rothskeller/packet/xscmsg"
 	"github.com/rothskeller/pdf/pdfform"
 	"github.com/rothskeller/pdf/pdfstruct"
@@ -24,7 +25,7 @@ type FieldMap struct {
 	Values []ValueMap
 	// FromXSC is a hook function to get the value of a PDF field when a
 	// simple mapping won't suffice.
-	FromXSC func(*xscmsg.Message) string
+	FromXSC func(xscmsg.IMessage) string
 	// FromPDF is a hook function to get the value of an XSC field when a
 	// simple mapping won't suffice.
 	FromPDF func(map[string]string) string
@@ -67,7 +68,7 @@ func RegisterReader(rm ReaderMap) {
 // the known message PDFs, with form fields filled in; those values will be
 // carried over into the newly created message.  If the PDF file is not known or
 // any other problem occurs, PDFToMessage returns nil.
-func PDFToMessage(pdf *pdfstruct.PDF) *xscmsg.Message {
+func PDFToMessage(pdf *pdfstruct.PDF) xscmsg.IMessage {
 	var id []byte
 	if a, ok := pdf.Info["ID"].(pdfstruct.Array); ok {
 		if len(a) == 2 {
@@ -81,7 +82,7 @@ func PDFToMessage(pdf *pdfstruct.PDF) *xscmsg.Message {
 	}
 	for _, rm := range readers {
 		if bytes.Equal(rm.PDFID, id) {
-			msg := xscmsg.Create(rm.XSCTag)
+			msg := typedmsg.Create(rm.XSCTag).(xscmsg.IMessage)
 			readFields(pdf, msg, rm.Fields)
 			return msg
 		}
@@ -91,7 +92,7 @@ func PDFToMessage(pdf *pdfstruct.PDF) *xscmsg.Message {
 
 // readFields reads fields from the PDF and applies them to the form according
 // to the map.
-func readFields(pdf *pdfstruct.PDF, msg *xscmsg.Message, fmaps []FieldMap) {
+func readFields(pdf *pdfstruct.PDF, msg xscmsg.IMessage, fmaps []FieldMap) {
 	var (
 		pfields map[string]string
 		err     error
@@ -115,7 +116,12 @@ func readFields(pdf *pdfstruct.PDF, msg *xscmsg.Message, fmaps []FieldMap) {
 						}
 					}
 				}
-				msg.Field(fm.XSCTag).Value = pv
+				for _, f := range msg.GetTaggedFields() {
+					if f.Tag == fm.XSCTag {
+						f.Value = pv
+						break
+					}
+				}
 				break
 			}
 		}

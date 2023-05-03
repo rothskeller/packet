@@ -10,6 +10,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/rothskeller/packet/typedmsg"
 	"github.com/rothskeller/packet/xscmsg/delivrcpt"
 	"github.com/rothskeller/packet/xscmsg/readrcpt"
 	"github.com/rothskeller/pdf/pdfform"
@@ -21,33 +22,37 @@ var ics309pdf []byte
 
 func (i *Incident) ics309() {
 	var (
-		msgs []*Message
+		msgs []typedmsg.Message
 		form [][]string
+		mmap = make(map[typedmsg.Message]*Message)
 	)
 	// Build an ordered list of all messages that have been sent or received
 	// (i.e., not draft or queued).
-	for _, mr := range i.list {
-		if mr.M.IsReceived() || mr.M.IsSent() {
-			msgs = append(msgs, mr.M)
-			if mr.DR != nil && (mr.DR.IsReceived() || mr.DR.IsSent()) {
-				msgs = append(msgs, mr.DR)
+	for _, m := range i.list {
+		if m.IsReceived() || m.IsSent() {
+			msgs = append(msgs, m.M)
+			mmap[m.M] = m
+			if m.DR != nil && m.DR.GetSentDate() != "" {
+				mmap[m.DR] = m
+				msgs = append(msgs, m.DR)
 			}
-			if mr.RR != nil {
-				msgs = append(msgs, mr.RR)
+			if m.RR != nil {
+				mmap[m.RR] = m
+				msgs = append(msgs, m.RR)
 			}
 		}
 	}
 	sort.Slice(msgs, func(a, b int) bool {
 		var at, bt time.Time
-		if msgs[a].IsReceived() {
-			at = msgs[a].Received
+		if msgs[a].GetRxDate() != "" {
+			at = msgs[a].GetRxDateTime()
 		} else {
-			at = msgs[a].Sent
+			at = msgs[a].GetSentDateTime()
 		}
-		if msgs[b].IsReceived() {
-			bt = msgs[b].Received
+		if msgs[b].GetRxDate() != "" {
+			bt = msgs[b].GetRxDateTime()
 		} else {
-			bt = msgs[b].Sent
+			bt = msgs[b].GetSentDateTime()
 		}
 		return at.Before(bt)
 	})
@@ -55,44 +60,48 @@ func (i *Incident) ics309() {
 	for _, m := range msgs {
 		var t time.Time
 		var from, oid, to, did, sub string
-		if m.IsReceived() {
-			t = m.Received
-			from, _, _ = strings.Cut(m.From.Address, "@")
+		if m.GetRxBBS() != "" {
+			t = m.GetRxDateTime()
+			if fa := m.GetFromAddrs(); len(fa) != 0 {
+				from = fa[0]
+			}
+			from, _, _ = strings.Cut(from, "@")
 			from = strings.ToUpper(from)
-			if m == m.mandr.M { // i.e., not a received receipt
-				oid = m.mandr.RMI
-				did = m.mandr.LMI
+			if mm := mmap[m]; mm.M == m { // i.e., not a received receipt
+				oid = mm.RMI
+				did = mm.LMI
 			}
-			if m.IsBulletin() {
-				to = strings.ToUpper(m.Bulletin)
+			if area := m.GetRxArea(); area != "" {
+				to = strings.ToUpper(area)
 			}
-			switch m.Type.Tag {
-			case delivrcpt.Tag:
-				sub = "Delivery receipt for " + m.mandr.LMI
-			case readrcpt.Tag:
-				sub = "Read receipt for " + m.mandr.LMI
+			switch m := m.(type) {
+			case *delivrcpt.DeliveryReceipt:
+				sub = "Delivery receipt for " + mmap[m].LMI
+			case *readrcpt.ReadReceipt:
+				sub = "Read receipt for " + mmap[m].LMI
 			default:
-				sub = m.RawMessage.Header.Get("Subject")
+				sub = m.GetSubjectHeader()
 			}
 		} else {
-			t = m.Sent
-			if m == m.mandr.M { // i.e., not a sent receipt
-				oid = m.mandr.LMI
-				did = m.mandr.RMI
+			t = m.GetSentDateTime()
+			if mm := mmap[m]; mm.M == m { // i.e., not a sent receipt
+				oid = mm.LMI
+				did = mm.RMI
 			}
-			if len(m.To) != 0 {
-				to, _, _ = strings.Cut(m.To[0].Address, "@")
-				to = strings.ToUpper(to)
+			if ta := m.GetToAddrs(); len(ta) != 0 {
+				to = ta[0]
 			}
-			switch m.Type.Tag {
-			case delivrcpt.Tag:
-				if m.mandr.RMI != "" {
-					sub = "Delivery receipt for " + m.mandr.RMI
-					break
+			to, _, _ = strings.Cut(to, "@")
+			to = strings.ToUpper(to)
+			switch m := m.(type) {
+			case *delivrcpt.DeliveryReceipt:
+				if rmi := mmap[m].RMI; rmi != "" {
+					sub = "Delivery receipt for " + rmi
+				} else {
+					sub = m.GetSubjectHeader()
 				}
-				fallthrough
 			default:
-				sub = m.Subject()
+				sub = m.GetSubjectHeader()
 			}
 		}
 		if strings.HasPrefix(sub, oid+"_") {

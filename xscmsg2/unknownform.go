@@ -4,6 +4,7 @@ import (
 	"github.com/rothskeller/packet/pktmsg"
 )
 
+func recognizeUnknownForm(*pktmsg.Message, *pktmsg.Form) Message {}
 func makeUnknownFormMessage(msg *pktmsg.Message, form *pktmsg.Form) *Message {
 	m := Message{
 		Type:       &unknownFormMessageType,

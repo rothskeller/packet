@@ -13,7 +13,7 @@ var parseTests = []struct {
 	name    string
 	raw     string
 	wantErr bool
-	msg     Message
+	msg     *Message
 }{
 	{
 		name:    "unparseable",
@@ -28,48 +28,69 @@ var parseTests = []struct {
 	{
 		name: "sent",
 		raw:  "From: <nobody@nowhere>\nTo: <somebody@somewhere>\nSubject: Hello, World\nDate: Wed, 1 Dec 2021 08:04:29 +0000\n\nnothing\n",
-		msg: &outpostMessage{
-			baseTx: &baseTx{
-				fromAddr: fromAddrField{"<nobody@nowhere>"},
-				toAddrs:  toAddrsField{"<somebody@somewhere>"},
-				sentDate: sentDateField{"Wed, 01 Dec 2021 08:04:29 +0000"},
-				subject:  settableField("Hello, World"),
-				body:     settableField("nothing\n"),
-			},
-			body: settableField("nothing\n"),
+		msg: &Message{
+			From:          "<nobody@nowhere>",
+			To:            "<somebody@somewhere>",
+			SentDate:      "Wed, 01 Dec 2021 08:04:29 +0000",
+			Subject:       "Hello, World",
+			SubjectHeader: "Hello, World",
+			Body:          "nothing\n",
 		},
 	},
 	{
 		name: "multiple recipients",
 		raw:  "From: <nobody@nowhere>\nTo: <somebody@somewhere>\nCc: <number2@somewhere>\nBcc: <number3@somewhere>\nSubject: Hello, World\nDate: Wed, 1 Dec 2021 08:04:29 +0000\n\nnothing\n",
-		msg: &outpostMessage{
-			baseTx: &baseTx{
-				fromAddr: fromAddrField{"<nobody@nowhere>"},
-				toAddrs:  toAddrsField{"<somebody@somewhere>, <number2@somewhere>, <number3@somewhere>"},
-				sentDate: sentDateField{"Wed, 01 Dec 2021 08:04:29 +0000"},
-				subject:  settableField("Hello, World"),
-				body:     settableField("nothing\n"),
-			},
-			body: settableField("nothing\n"),
+		msg: &Message{
+			From:          "<nobody@nowhere>",
+			To:            "<somebody@somewhere>, <number2@somewhere>, <number3@somewhere>",
+			SentDate:      "Wed, 01 Dec 2021 08:04:29 +0000",
+			Subject:       "Hello, World",
+			SubjectHeader: "Hello, World",
+			Body:          "nothing\n",
+		},
+	},
+	{
+		name: "XSC subject",
+		raw:  "From: <nobody@nowhere>\nTo: <somebody@somewhere>\nSubject: AAA-111P_R_Hello, World\nDate: Wed, 1 Dec 2021 08:04:29 +0000\n\nnothing\n",
+		msg: &Message{
+			From:          "<nobody@nowhere>",
+			To:            "<somebody@somewhere>",
+			SentDate:      "Wed, 01 Dec 2021 08:04:29 +0000",
+			Subject:       "Hello, World",
+			SubjectHeader: "AAA-111P_R_Hello, World",
+			Body:          "nothing\n",
+			OriginMsgID:   "AAA-111P",
+			Handling:      "ROUTINE",
+		},
+	},
+	{
+		name: "XSC subject with severity",
+		raw:  "From: <nobody@nowhere>\nTo: <somebody@somewhere>\nSubject: AAA-111P_O/R_Hello, World\nDate: Wed, 1 Dec 2021 08:04:29 +0000\n\nnothing\n",
+		msg: &Message{
+			From:          "<nobody@nowhere>",
+			To:            "<somebody@somewhere>",
+			SentDate:      "Wed, 01 Dec 2021 08:04:29 +0000",
+			Subject:       "Hello, World",
+			SubjectHeader: "AAA-111P_O/R_Hello, World",
+			Body:          "nothing\n",
+			OriginMsgID:   "AAA-111P",
+			Handling:      "ROUTINE",
+			Severity:      "OTHER",
 		},
 	},
 	{
 		name: "received",
 		raw:  "Received: FROM bbs.ampr.org BY pktmsg.local FOR area; Wed, 01 Dec 2021 08:04:29 +0000\nFrom: <nobody@nowhere>\nTo: <somebody@somewhere>\nSubject: Hello, World\nDate: Wed, 1 Dec 2021 08:04:29 +0000\n\nnothing\n",
-		msg: &baseRx{
-			outpostMessage: &outpostMessage{
-				baseTx: &baseTx{
-					fromAddr: fromAddrField{"<nobody@nowhere>"},
-					toAddrs:  toAddrsField{"<somebody@somewhere>"},
-					sentDate: sentDateField{"Wed, 01 Dec 2021 08:04:29 +0000"},
-					subject:  settableField("Hello, World"),
-					body:     settableField("nothing\n"),
-				},
-				body: settableField("nothing\n"),
-			},
-			rxBBS:  rxBBSField("bbs"),
-			rxArea: field("area"),
-			rxDate: rxDateField{"Wed, 01 Dec 2021 08:04:29 +0000"},
+		msg: &Message{
+			From:          "<nobody@nowhere>",
+			To:            "<somebody@somewhere>",
+			SentDate:      "Wed, 01 Dec 2021 08:04:29 +0000",
+			Subject:       "Hello, World",
+			SubjectHeader: "Hello, World",
+			Body:          "nothing\n",
+			RxBBS:         "bbs",
+			RxArea:        "area",
+			RxDate:        "Wed, 01 Dec 2021 08:04:29 +0000",
 		},
 	},
 	{
@@ -80,219 +101,163 @@ var parseTests = []struct {
 	{
 		name: "Outpost flags",
 		raw:  "From: <nobody@nowhere>\n\n!RDR!!RRR!!URG!nothing\n",
-		msg: &outpostMessage{
-			baseTx: &baseTx{
-				fromAddr: fromAddrField{"<nobody@nowhere>"},
-				body:     settableField("!RDR!!RRR!!URG!nothing\n"),
-			},
-			flags: outpostFlagsField{"!URG!!RDR!!RRR!"},
-			body:  settableField("nothing\n"),
+		msg: &Message{
+			From:                   "<nobody@nowhere>",
+			Body:                   "nothing\n",
+			OutpostUrgent:          true,
+			RequestDeliveryReceipt: true,
+			RequestReadReceipt:     true,
 		},
 	},
 	{
 		name: "base64 (Outpost)",
 		raw:  "From: <nobody@nowhere>\n\n\n!B64!bm90aGluZwo=\n",
-		msg: &outpostMessage{
-			baseTx: &baseTx{
-				fromAddr: fromAddrField{"<nobody@nowhere>"},
-				body:     settableField("\n!B64!bm90aGluZwo=\n"),
-			},
-			body: settableField("nothing\n"),
+		msg: &Message{
+			From: "<nobody@nowhere>",
+			Body: "nothing\n",
 		},
 	},
 	{
 		name: "minimal valid form",
 		raw:  "From: <nobody@nowhere>\n\n!SCCoPIFO!\n#T: tt.html\n#V: 1-2\nA: [x]\n!/ADDON!\n",
-		msg: &pifoMessage{
-			Message: &outpostMessage{
-				baseTx: &baseTx{
-					fromAddr: fromAddrField{"<nobody@nowhere>"},
-					body:     settableField("!SCCoPIFO!\n#T: tt.html\n#V: 1-2\nA: [x]\n!/ADDON!\n"),
-				},
-				body: settableField("!SCCoPIFO!\n#T: tt.html\n#V: 1-2\nA: [x]\n!/ADDON!\n"),
-			},
-			pifoVersion: field("1"),
-			formHTML:    field("tt.html"),
-			formVersion: field("2"),
-			fields:      []*taggedField{{"x", "A"}},
+		msg: &Message{
+			From:         "<nobody@nowhere>",
+			PIFOVersion:  "1",
+			FormHTML:     "tt.html",
+			FormVersion:  "2",
+			TaggedFields: []TaggedField{{"A", "x"}},
+		},
+	},
+	{
+		name: "form with XSC subject",
+		raw:  "From: <nobody@nowhere>\nSubject: AAA-111P_R_FTag_Subject\n\n!SCCoPIFO!\n#T: tt.html\n#V: 1-2\nA: [x]\n!/ADDON!\n",
+		msg: &Message{
+			From:          "<nobody@nowhere>",
+			PIFOVersion:   "1",
+			FormHTML:      "tt.html",
+			FormVersion:   "2",
+			SubjectHeader: "AAA-111P_R_FTag_Subject",
+			Subject:       "Subject",
+			OriginMsgID:   "AAA-111P",
+			Handling:      "ROUTINE",
+			FormTag:       "FTag",
+			TaggedFields:  []TaggedField{{"A", "x"}},
 		},
 	},
 	{
 		name: "form with stuff before it",
 		raw:  "From: <nobody@nowhere>\n\nHello, world!\n!SCCoPIFO!\n#T: tt.html\n#V: 1-2\nA: [x]\n!/ADDON!\n",
-		msg: &pifoMessage{
-			Message: &outpostMessage{
-				baseTx: &baseTx{
-					fromAddr: fromAddrField{"<nobody@nowhere>"},
-					body:     settableField("Hello, world!\n!SCCoPIFO!\n#T: tt.html\n#V: 1-2\nA: [x]\n!/ADDON!\n"),
-				},
-				body: settableField("Hello, world!\n!SCCoPIFO!\n#T: tt.html\n#V: 1-2\nA: [x]\n!/ADDON!\n"),
-			},
-			pifoVersion: field("1"),
-			formHTML:    field("tt.html"),
-			formVersion: field("2"),
-			fields:      []*taggedField{{"x", "A"}},
+		msg: &Message{
+			From:         "<nobody@nowhere>",
+			PIFOVersion:  "1",
+			FormHTML:     "tt.html",
+			FormVersion:  "2",
+			TaggedFields: []TaggedField{{"A", "x"}},
 		},
 	},
 	{
 		name: "form with stuff after it",
 		raw:  "From: <nobody@nowhere>\n\n!SCCoPIFO!\n#T: tt.html\n#V: 1-2\nA: [x]\n!/ADDON!\nGoodbye, cruel world!\n",
-		msg: &pifoMessage{
-			Message: &outpostMessage{
-				baseTx: &baseTx{
-					fromAddr: fromAddrField{"<nobody@nowhere>"},
-					body:     settableField("!SCCoPIFO!\n#T: tt.html\n#V: 1-2\nA: [x]\n!/ADDON!\nGoodbye, cruel world!\n"),
-				},
-				body: settableField("!SCCoPIFO!\n#T: tt.html\n#V: 1-2\nA: [x]\n!/ADDON!\nGoodbye, cruel world!\n"),
-			},
-			pifoVersion: field("1"),
-			formHTML:    field("tt.html"),
-			formVersion: field("2"),
-			fields:      []*taggedField{{"x", "A"}},
+		msg: &Message{
+			From:         "<nobody@nowhere>",
+			PIFOVersion:  "1",
+			FormHTML:     "tt.html",
+			FormVersion:  "2",
+			TaggedFields: []TaggedField{{"A", "x"}},
 		},
 	},
 	{
 		name: "missing header",
 		raw:  "From: <nobody@nowhere>\n\n#T: tt.html\n#V: 1-2\nA: [x]\n!/ADDON!\n",
-		msg: &outpostMessage{
-			baseTx: &baseTx{
-				fromAddr: fromAddrField{"<nobody@nowhere>"},
-				body:     settableField("#T: tt.html\n#V: 1-2\nA: [x]\n!/ADDON!\n"),
-			},
-			body: settableField("#T: tt.html\n#V: 1-2\nA: [x]\n!/ADDON!\n"),
+		msg: &Message{
+			From: "<nobody@nowhere>",
+			Body: "#T: tt.html\n#V: 1-2\nA: [x]\n!/ADDON!\n",
 		},
 	},
 	{
 		name: "missing type",
 		raw:  "From: <nobody@nowhere>\n\n!SCCoPIFO!\n#V: 1-2\nA: [x]\n!/ADDON!\n",
-		msg: &outpostMessage{
-			baseTx: &baseTx{
-				fromAddr: fromAddrField{"<nobody@nowhere>"},
-				body:     settableField("!SCCoPIFO!\n#V: 1-2\nA: [x]\n!/ADDON!\n"),
-			},
-			body: settableField("!SCCoPIFO!\n#V: 1-2\nA: [x]\n!/ADDON!\n"),
+		msg: &Message{
+			From: "<nobody@nowhere>",
+			Body: "!SCCoPIFO!\n#V: 1-2\nA: [x]\n!/ADDON!\n",
 		},
 	},
 	{
 		name: "invalid type",
 		raw:  "From: <nobody@nowhere>\n\n!SCCoPIFO!\n#T: t\n#V: 1-2\nA: [x]\n!/ADDON!\n",
-		msg: &outpostMessage{
-			baseTx: &baseTx{
-				fromAddr: fromAddrField{"<nobody@nowhere>"},
-				body:     settableField("!SCCoPIFO!\n#T: t\n#V: 1-2\nA: [x]\n!/ADDON!\n"),
-			},
-			body: settableField("!SCCoPIFO!\n#T: t\n#V: 1-2\nA: [x]\n!/ADDON!\n"),
+		msg: &Message{
+			From: "<nobody@nowhere>",
+			Body: "!SCCoPIFO!\n#T: t\n#V: 1-2\nA: [x]\n!/ADDON!\n",
 		},
 	},
 	{
 		name: "missing version",
 		raw:  "From: <nobody@nowhere>\n\n!SCCoPIFO!\n#T: tt.html\n!/ADDON!\n",
-		msg: &outpostMessage{
-			baseTx: &baseTx{
-				fromAddr: fromAddrField{"<nobody@nowhere>"},
-				body:     settableField("!SCCoPIFO!\n#T: tt.html\n!/ADDON!\n"),
-			},
-			body: settableField("!SCCoPIFO!\n#T: tt.html\n!/ADDON!\n"),
+		msg: &Message{
+			From: "<nobody@nowhere>",
+			Body: "!SCCoPIFO!\n#T: tt.html\n!/ADDON!\n",
 		},
 	},
 	{
 		name: "invalid version",
 		raw:  "From: <nobody@nowhere>\n\n!SCCoPIFO!\n#T: tt.html\n#V: X\nA: [x]\n!/ADDON!\n",
-		msg: &outpostMessage{
-			baseTx: &baseTx{
-				fromAddr: fromAddrField{"<nobody@nowhere>"},
-				body:     settableField("!SCCoPIFO!\n#T: tt.html\n#V: X\nA: [x]\n!/ADDON!\n"),
-			},
-			body: settableField("!SCCoPIFO!\n#T: tt.html\n#V: X\nA: [x]\n!/ADDON!\n"),
+		msg: &Message{
+			From: "<nobody@nowhere>",
+			Body: "!SCCoPIFO!\n#T: tt.html\n#V: X\nA: [x]\n!/ADDON!\n",
 		},
 	},
 	{
 		name: "invalid field",
 		raw:  "From: <nobody@nowhere>\n\n!SCCoPIFO!\n#T: tt.html\n#V: 1-2\nA\n!/ADDON!\n",
-		msg: &outpostMessage{
-			baseTx: &baseTx{
-				fromAddr: fromAddrField{"<nobody@nowhere>"},
-				body:     settableField("!SCCoPIFO!\n#T: tt.html\n#V: 1-2\nA\n!/ADDON!\n"),
-			},
-			body: settableField("!SCCoPIFO!\n#T: tt.html\n#V: 1-2\nA\n!/ADDON!\n"),
+		msg: &Message{
+			From: "<nobody@nowhere>",
+			Body: "!SCCoPIFO!\n#T: tt.html\n#V: 1-2\nA\n!/ADDON!\n",
 		},
 	},
 	{
 		name: "missing footer",
 		raw:  "From: <nobody@nowhere>\n\n!SCCoPIFO!\n#T: tt.html\n#V: 1-2\nA: [x]\n",
-		msg: &outpostMessage{
-			baseTx: &baseTx{
-				fromAddr: fromAddrField{"<nobody@nowhere>"},
-				body:     settableField("!SCCoPIFO!\n#T: tt.html\n#V: 1-2\nA: [x]\n"),
-			},
-			body: settableField("!SCCoPIFO!\n#T: tt.html\n#V: 1-2\nA: [x]\n"),
-		},
-	},
-	{
-		name: "multiple settings of same field",
-		raw:  "From: <nobody@nowhere>\n\n!SCCoPIFO!\n#T: tt.html\n#V: 1-2\nA: [x]\nA: [x]\n!/ADDON!\n",
-		msg: &outpostMessage{
-			baseTx: &baseTx{
-				fromAddr: fromAddrField{"<nobody@nowhere>"},
-				body:     settableField("!SCCoPIFO!\n#T: tt.html\n#V: 1-2\nA: [x]\nA: [x]\n!/ADDON!\n"),
-			},
-			body: settableField("!SCCoPIFO!\n#T: tt.html\n#V: 1-2\nA: [x]\nA: [x]\n!/ADDON!\n"),
+		msg: &Message{
+			From: "<nobody@nowhere>",
+			Body: "!SCCoPIFO!\n#T: tt.html\n#V: 1-2\nA: [x]\n",
 		},
 	},
 	{
 		name: "bracket quoting",
 		raw:  "From: <nobody@nowhere>\n\n!SCCoPIFO!\n#T: tt.html\n#V: 1-2\nA: [nl\\nbs\\\\rb`]et`]]]\n!/ADDON!\n",
-		msg: &pifoMessage{
-			Message: &outpostMessage{
-				baseTx: &baseTx{
-					fromAddr: fromAddrField{"<nobody@nowhere>"},
-					body:     settableField("!SCCoPIFO!\n#T: tt.html\n#V: 1-2\nA: [nl\\nbs\\\\rb`]et`]]]\n!/ADDON!\n"),
-				},
-				body: settableField("!SCCoPIFO!\n#T: tt.html\n#V: 1-2\nA: [nl\\nbs\\\\rb`]et`]]]\n!/ADDON!\n"),
-			},
-			pifoVersion: field("1"),
-			formHTML:    field("tt.html"),
-			formVersion: field("2"),
-			fields:      []*taggedField{{"nl\nbs\\rb]et`", "A"}},
+		msg: &Message{
+			From:         "<nobody@nowhere>",
+			PIFOVersion:  "1",
+			FormHTML:     "tt.html",
+			FormVersion:  "2",
+			TaggedFields: []TaggedField{{"A", "nl\nbs\\rb]et`"}},
 		},
 	},
 	{
 		name: "end of input inside brackets",
 		raw:  "From: <nobody@nowhere>\n\n!SCCoPIFO!\n#T: tt.html\n#V: 1-2\nA: [x",
-		msg: &outpostMessage{
-			baseTx: &baseTx{
-				fromAddr: fromAddrField{"<nobody@nowhere>"},
-				body:     settableField("!SCCoPIFO!\n#T: tt.html\n#V: 1-2\nA: [x"),
-			},
-			body: settableField("!SCCoPIFO!\n#T: tt.html\n#V: 1-2\nA: [x"),
+		msg: &Message{
+			From: "<nobody@nowhere>",
+			Body: "!SCCoPIFO!\n#T: tt.html\n#V: 1-2\nA: [x",
 		},
 	},
 	{
 		name: "extra stuff after brackets",
 		raw:  "From: <nobody@nowhere>\n\n!SCCoPIFO!\n#T: tt.html\n#V: 1-2\nA: [x] \n!/ADDON!\n",
-		msg: &outpostMessage{
-			baseTx: &baseTx{
-				fromAddr: fromAddrField{"<nobody@nowhere>"},
-				body:     settableField("!SCCoPIFO!\n#T: tt.html\n#V: 1-2\nA: [x] \n!/ADDON!\n"),
-			},
-			body: settableField("!SCCoPIFO!\n#T: tt.html\n#V: 1-2\nA: [x] \n!/ADDON!\n"),
+		msg: &Message{
+			From: "<nobody@nowhere>",
+			Body: "!SCCoPIFO!\n#T: tt.html\n#V: 1-2\nA: [x] \n!/ADDON!\n",
 		},
 	},
 	{
 		name: "line continuation",
 		raw:  "From: <nobody@nowhere>\n\n!SCCoPIFO!\n#T: tt.html\n#V: 1-2\nA: [this is \na test]\n!/ADDON!\n",
-		msg: &pifoMessage{
-			Message: &outpostMessage{
-				baseTx: &baseTx{
-					fromAddr: fromAddrField{"<nobody@nowhere>"},
-					body:     settableField("!SCCoPIFO!\n#T: tt.html\n#V: 1-2\nA: [this is \na test]\n!/ADDON!\n"),
-				},
-				body: settableField("!SCCoPIFO!\n#T: tt.html\n#V: 1-2\nA: [this is \na test]\n!/ADDON!\n"),
-			},
-			pifoVersion: field("1"),
-			formHTML:    field("tt.html"),
-			formVersion: field("2"),
-			fields:      []*taggedField{{"this is a test", "A"}},
+		msg: &Message{
+			From:         "<nobody@nowhere>",
+			PIFOVersion:  "1",
+			FormHTML:     "tt.html",
+			FormVersion:  "2",
+			TaggedFields: []TaggedField{{"A", "this is a test"}},
 		},
 	},
 }
@@ -322,7 +287,7 @@ var receiveTests = []struct {
 	bbs     string
 	area    string
 	wantErr bool
-	msg     Message
+	msg     *Message
 }{
 	{
 		name:    "unparseable",
@@ -335,24 +300,19 @@ var receiveTests = []struct {
 		raw:     actualBounceMessage,
 		bbs:     "bbs",
 		wantErr: false,
-		msg: &baseRetrieved{
-			baseRx: &baseRx{
-				outpostMessage: &outpostMessage{
-					baseTx: &baseTx{
-						fromAddr: fromAddrField{"Microsoft Outlook <MicrosoftExchange329e71ec88ae4615bbc36ab6ce41109e@cityofsunnyvale.onmicrosoft.com>"},
-						toAddrs:  toAddrsField{"<cert@sunnyvale.ca.gov>"},
-						subject:  settableField("Undeliverable: SERV Volunteer Hours for November 2021"),
-						sentDate: sentDateField{"Wed, 01 Dec 2021 08:04:29 +0000"},
-						body:     settableField(expectedBounceBody),
-					},
-					body: settableField(expectedBounceBody),
-				},
-				rxBBS:  rxBBSField("bbs"),
-				rxDate: rxDateField{"Sun, 01 Jan 2023 00:00:00 -0800"},
-			},
-			returnAddr:   field(""),
-			bbsRxDate:    bbsRxDateField{"Wed, 01 Dec 2021 08:04:29 -0800"},
-			notPlainText: field("true"),
+		msg: &Message{
+
+			From:          "Microsoft Outlook <MicrosoftExchange329e71ec88ae4615bbc36ab6ce41109e@cityofsunnyvale.onmicrosoft.com>",
+			To:            "<cert@sunnyvale.ca.gov>",
+			Subject:       "Undeliverable: SERV Volunteer Hours for November 2021",
+			SubjectHeader: "Undeliverable: SERV Volunteer Hours for November 2021",
+			SentDate:      "Wed, 01 Dec 2021 08:04:29 +0000",
+			Body:          expectedBounceBody,
+			RxBBS:         "bbs",
+			RxDate:        "Sun, 01 Jan 2023 00:00:00 -0800",
+			Autoresponse:  true,
+			BBSRxDate:     "Wed, 01 Dec 2021 08:04:29 -0800",
+			NotPlainText:  true,
 		},
 	},
 	{
@@ -360,65 +320,50 @@ var receiveTests = []struct {
 		raw:     "Content-Type: text/html\n\n<div>nothing</div>",
 		bbs:     "bbs",
 		wantErr: true,
-		msg: &baseRetrieved{
-			baseRx: &baseRx{
-				outpostMessage: &outpostMessage{
-					baseTx: &baseTx{},
-				},
-				rxBBS:  rxBBSField("bbs"),
-				rxDate: rxDateField{"Sun, 01 Jan 2023 00:00:00 -0800"},
-			},
-			notPlainText: field("true"),
+		msg: &Message{
+
+			RxBBS:  "bbs",
+			RxDate: "Sun, 01 Jan 2023 00:00:00 -0800",
+
+			NotPlainText: true,
 		},
 	},
 	{
 		name: "quoted-printable",
 		raw:  "Content-Transfer-Encoding: quoted-printable\n\nn=6fthing\n",
 		bbs:  "bbs",
-		msg: &baseRetrieved{
-			baseRx: &baseRx{
-				outpostMessage: &outpostMessage{
-					baseTx: &baseTx{
-						body: settableField("nothing\n"),
-					},
-					body: settableField("nothing\n"),
-				},
-				rxBBS:  rxBBSField("bbs"),
-				rxDate: rxDateField{"Sun, 01 Jan 2023 00:00:00 -0800"},
-			},
-			notPlainText: field("true"),
+		msg: &Message{
+
+			Body: "nothing\n",
+
+			RxBBS:  "bbs",
+			RxDate: "Sun, 01 Jan 2023 00:00:00 -0800",
+
+			NotPlainText: true,
 		},
 	},
 	{
 		name: "base64 (MIME)",
 		raw:  "Content-Transfer-Encoding: base64\n\nbm90aGluZwo=\n",
 		bbs:  "bbs",
-		msg: &baseRetrieved{
-			baseRx: &baseRx{
-				outpostMessage: &outpostMessage{
-					baseTx: &baseTx{
-						body: settableField("nothing\n"),
-					},
-					body: settableField("nothing\n"),
-				},
-				rxBBS:  rxBBSField("bbs"),
-				rxDate: rxDateField{"Sun, 01 Jan 2023 00:00:00 -0800"},
-			},
-			notPlainText: field("true"),
+		msg: &Message{
+
+			Body: "nothing\n",
+
+			RxBBS:  "bbs",
+			RxDate: "Sun, 01 Jan 2023 00:00:00 -0800",
+
+			NotPlainText: true,
 		},
 	},
 	{
 		name: "unparseable content type",
 		raw:  "Content-Type: //bogus\n\nnothing\n",
 		bbs:  "bbs",
-		msg: &baseRetrieved{
-			baseRx: &baseRx{
-				outpostMessage: &outpostMessage{
-					baseTx: &baseTx{},
-				},
-				rxBBS:  rxBBSField("bbs"),
-				rxDate: rxDateField{"Sun, 01 Jan 2023 00:00:00 -0800"},
-			},
+		msg: &Message{
+
+			RxBBS:  "bbs",
+			RxDate: "Sun, 01 Jan 2023 00:00:00 -0800",
 		},
 		wantErr: true,
 	},
@@ -426,15 +371,12 @@ var receiveTests = []struct {
 		name: "non-plain-text content type",
 		raw:  "Content-Type: text/html\n\nnothing\n",
 		bbs:  "bbs",
-		msg: &baseRetrieved{
-			baseRx: &baseRx{
-				outpostMessage: &outpostMessage{
-					baseTx: &baseTx{},
-				},
-				rxBBS:  rxBBSField("bbs"),
-				rxDate: rxDateField{"Sun, 01 Jan 2023 00:00:00 -0800"},
-			},
-			notPlainText: field("true"),
+		msg: &Message{
+
+			RxBBS:  "bbs",
+			RxDate: "Sun, 01 Jan 2023 00:00:00 -0800",
+
+			NotPlainText: true,
 		},
 		wantErr: true,
 	},
@@ -442,50 +384,38 @@ var receiveTests = []struct {
 		name: "multipart with plain text",
 		raw:  "Content-Type: multipart/alternative; boundary=\"X\"\n\n\n--X\nContent-Type: text/plain\n\nnothing\n\n--X--\n",
 		bbs:  "bbs",
-		msg: &baseRetrieved{
-			baseRx: &baseRx{
-				outpostMessage: &outpostMessage{
-					baseTx: &baseTx{
-						body: settableField("nothing\n"),
-					},
-					body: settableField("nothing\n"),
-				},
-				rxBBS:  rxBBSField("bbs"),
-				rxDate: rxDateField{"Sun, 01 Jan 2023 00:00:00 -0800"},
-			},
-			notPlainText: field("true"),
+		msg: &Message{
+
+			Body: "nothing\n",
+
+			RxBBS:  "bbs",
+			RxDate: "Sun, 01 Jan 2023 00:00:00 -0800",
+
+			NotPlainText: true,
 		},
 	},
 	{
 		name: "nested multipart with plain text",
 		raw:  "Content-Type: multipart/mixed; boundary=\"Y\"\n\n\n--Y\nContent-Type: multipart/alternative; boundary=\"X\"\n\n\n--X\nContent-Type: text/plain\n\nnothing\n\n--X--\n\n--Y--\n",
 		bbs:  "bbs",
-		msg: &baseRetrieved{
-			baseRx: &baseRx{
-				outpostMessage: &outpostMessage{
-					baseTx: &baseTx{
-						body: settableField("nothing\n"),
-					},
-					body: settableField("nothing\n"),
-				},
-				rxBBS:  rxBBSField("bbs"),
-				rxDate: rxDateField{"Sun, 01 Jan 2023 00:00:00 -0800"},
-			},
-			notPlainText: field("true"),
+		msg: &Message{
+
+			Body: "nothing\n",
+
+			RxBBS:  "bbs",
+			RxDate: "Sun, 01 Jan 2023 00:00:00 -0800",
+
+			NotPlainText: true,
 		},
 	},
 	{
 		name: "nested multipart ill-formed",
 		raw:  "Content-Type: multipart/mixed; boundary=\"Y\"\n\n\n--Y\nContent-Type: multipart/alternative; boundary=\"X\"\n\n\n--X\nContent-Type: text/plain\n\nnothing\n\n--Y--\n",
 		bbs:  "bbs",
-		msg: &baseRetrieved{
-			baseRx: &baseRx{
-				outpostMessage: &outpostMessage{
-					baseTx: &baseTx{},
-				},
-				rxBBS:  rxBBSField("bbs"),
-				rxDate: rxDateField{"Sun, 01 Jan 2023 00:00:00 -0800"},
-			},
+		msg: &Message{
+
+			RxBBS:  "bbs",
+			RxDate: "Sun, 01 Jan 2023 00:00:00 -0800",
 		},
 		wantErr: true,
 	},
@@ -493,15 +423,10 @@ var receiveTests = []struct {
 		name: "multipart with no plain text",
 		raw:  "Content-Type: multipart/alternative; boundary=\"X\"\n\n\n--X\nContent-Type: text/html\n\n<div>nothing</div>\n\n--X--\n",
 		bbs:  "bbs",
-		msg: &baseRetrieved{
-			baseRx: &baseRx{
-				outpostMessage: &outpostMessage{
-					baseTx: &baseTx{},
-				},
-				rxBBS:  rxBBSField("bbs"),
-				rxDate: rxDateField{"Sun, 01 Jan 2023 00:00:00 -0800"},
-			},
-			notPlainText: field("true"),
+		msg: &Message{
+			RxBBS:        "bbs",
+			RxDate:       "Sun, 01 Jan 2023 00:00:00 -0800",
+			NotPlainText: true,
 		},
 		wantErr: true,
 	},
@@ -509,19 +434,12 @@ var receiveTests = []struct {
 		name: "envelope line",
 		raw:  "From nobody@nowhere Wed Dec  1 08:04:29 2021\n\nnothing\n",
 		bbs:  "bbs",
-		msg: &baseRetrieved{
-			baseRx: &baseRx{
-				outpostMessage: &outpostMessage{
-					baseTx: &baseTx{
-						body: settableField("nothing\n"),
-					},
-					body: settableField("nothing\n"),
-				},
-				rxBBS:  rxBBSField("bbs"),
-				rxDate: rxDateField{"Sun, 01 Jan 2023 00:00:00 -0800"},
-			},
-			returnAddr: field("nobody@nowhere"),
-			bbsRxDate:  bbsRxDateField{"Wed, 01 Dec 2021 08:04:29 -0800"},
+		msg: &Message{
+			Body:       "nothing\n",
+			RxBBS:      "bbs",
+			RxDate:     "Sun, 01 Jan 2023 00:00:00 -0800",
+			ReturnAddr: "nobody@nowhere",
+			BBSRxDate:  "Wed, 01 Dec 2021 08:04:29 -0800",
 		},
 	},
 }

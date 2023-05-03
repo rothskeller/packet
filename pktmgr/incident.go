@@ -5,14 +5,14 @@ package pktmgr
 import (
 	"errors"
 	"fmt"
-	"net/mail"
 	"os"
 	"regexp"
 	"sort"
 	"strconv"
 	"strings"
-	"time"
 
+	"github.com/rothskeller/packet/pktmsg"
+	"github.com/rothskeller/packet/typedmsg"
 	"github.com/rothskeller/packet/xscmsg"
 	"github.com/rothskeller/packet/xscmsg/delivrcpt"
 	"github.com/rothskeller/packet/xscmsg/readrcpt"
@@ -40,8 +40,8 @@ var msgfileRE = regexp.MustCompile(`^(((?:[0-9][A-Z]{2}|[A-Z][A-Z0-9]{2})-)([0-9
 type Incident struct {
 	config     Config
 	nextMsgNum int
-	list       []*MAndR
-	index      map[string]*MAndR
+	list       []*Message
+	index      map[string]*Message
 }
 
 // NewIncident creates a new Incident with the specified configuration, using
@@ -62,7 +62,7 @@ func (i *Incident) Refresh() (err error) {
 		dir   *os.File
 		files []os.FileInfo
 	)
-	i.nextMsgNum, i.list, i.index = i.config.startMsgNum, i.list[:0], make(map[string]*MAndR)
+	i.nextMsgNum, i.list, i.index = i.config.startMsgNum, i.list[:0], make(map[string]*Message)
 	if dir, err = os.Open("."); err != nil {
 		return err
 	}
@@ -106,7 +106,7 @@ func (i *Incident) readMessage(filename string) (err error) {
 	var (
 		lmi  string
 		rcpt string
-		mr   *MAndR
+		tm   typedmsg.Message
 		m    *Message
 	)
 	if match := msgfileRE.FindStringSubmatch(filename); match != nil {
@@ -120,49 +120,58 @@ func (i *Incident) readMessage(filename string) (err error) {
 	} else {
 		return nil
 	}
-	if m, err = readMessage(filename); err != nil {
+	if tm, err = readMessage(filename); err != nil {
 		return fmt.Errorf("%s: %s", filename, err)
 	}
-	if mr = i.GetLMI(lmi); mr == nil {
-		mr = i.addLMI(lmi)
+	if m = i.GetLMI(lmi); m == nil {
+		m = i.addLMI(lmi)
 	}
-	m.mandr = mr
 	switch rcpt {
 	case "":
-		mr.M = m
-		if m.IsReceived() {
-			if p := xscmsg.ParseSubject(m.RawMessage.Header.Get("Subject")); p != nil {
-				mr.RMI = p.MessageNumber
+		if tm, ok := tm.(xscmsg.IMessage); ok {
+			m.M = tm
+			if m.IsReceived() {
+				m.RMI = tm.GetOriginMsgID()
 			}
+		} else {
+			return fmt.Errorf("%s does not contain an xscmsg.IMessage", filename)
 		}
 	case "DR":
-		mr.DR = m
-		if m.IsReceived() {
-			mr.RMI = m.Field("LocalMessageID").Value
+		if tm, ok := tm.(*delivrcpt.DeliveryReceipt); ok {
+			m.DR = tm
+			if !m.IsReceived() {
+				m.RMI = tm.LocalMessageID
+			}
+		} else {
+			return fmt.Errorf("%s does not contain a delivery receipt", filename)
 		}
 	case "RR":
-		mr.RR = m
+		if tm, ok := tm.(*readrcpt.ReadReceipt); ok {
+			m.RR = tm
+		} else {
+			return fmt.Errorf("%s does not contain a read receipt", filename)
+		}
 	}
 	return nil
 }
 
-// Count returns the number of MAndRs in the Incident.
+// Count returns the number of messages in the Incident.
 func (i *Incident) Count() int {
 	return len(i.list)
 }
 
-// GetIndex returns the MAndR at the specified numbered position in the list of
-// MAndRs.  It returns nil if no such MAndR exists.
-func (i *Incident) GetIndex(idx int) *MAndR {
+// GetIndex returns the message at the specified numbered position in the list of
+// messages.  It returns nil if no such message exists.
+func (i *Incident) GetIndex(idx int) *Message {
 	if idx >= 0 && idx < len(i.list) {
 		return i.list[idx]
 	}
 	return nil
 }
 
-// GetLMI returns the MandR with the specified local message ID.  It returns nil
-// if no such MandR exists.
-func (i *Incident) GetLMI(lmi string) *MAndR {
+// GetLMI returns the message with the specified local message ID.  It returns
+// nil if no such message exists.
+func (i *Incident) GetLMI(lmi string) *Message {
 	return i.index[lmi]
 }
 
@@ -172,61 +181,36 @@ func (i *Incident) GetLMI(lmi string) *MAndR {
 // specified, the To: field of the draft is set to the From: field of replyTo,
 // the Subject and Body fields of the draft are copied from replyTo, and the
 // Reference field of the draft (if any) is set to the OMI of replyTo.
-func (i *Incident) AddDraft(tag string, replyTo *MAndR) (mr *MAndR) {
-	xsc := xscmsg.Create(tag)
-	if xsc == nil {
+func (i *Incident) AddDraft(tag string, replyTo *Message) (m *Message) {
+	if tm, ok := typedmsg.Create(tag).(xscmsg.IMessage); ok {
+		lmi := fmt.Sprintf("%s%03d%s", i.config.msgIDPrefix, i.nextMsgNum, i.config.msgIDSuffix)
+		m = i.addLMI(lmi)
+		i.nextMsgNum++
+		m.M = tm
+	} else {
 		return nil
 	}
-	lmi := fmt.Sprintf("%s%03d%s", i.config.msgIDPrefix, i.nextMsgNum, i.config.msgIDSuffix)
-	mr = i.addLMI(lmi)
-	i.nextMsgNum++
-	mr.M = &Message{mandr: mr, Message: xsc}
 	if replyTo != nil {
-		mr.M.To = []*mail.Address{replyTo.M.From}
+		m.M.SetTo(replyTo.M.GetFrom())
 	}
-	mr.M.SetOperatorFields()
-	if f := mr.M.KeyField(xscmsg.FOriginMsgNo); f != nil {
-		f.Value = mr.LMI
-	}
-	if f := mr.M.KeyField(xscmsg.FReference); f != nil && replyTo != nil {
-		f.Value = replyTo.RMI
-	}
-	if f := mr.M.KeyField(xscmsg.FBody); f != nil {
-		f.Value = i.config.DefBody
-		if replyTo != nil {
-			if rf := replyTo.M.KeyField(xscmsg.FBody); rf != nil {
-				f.Value = rf.Value
-			}
-		}
-	}
-	var subject string
-	var handling = xscmsg.HandlingRoutine.String()
+	m.M.SetOperator(false, i.config.OpCall, i.config.OpName)
+	m.M.SetTactical(i.config.TacCall, i.config.TacName)
+	m.M.SetOriginMsgID(m.LMI)
+	m.M.SetBody(i.config.DefBody)
 	if replyTo != nil {
-		if f := replyTo.M.KeyField(xscmsg.FHandling); f != nil && f.Value != "" {
-			handling = f.Value
+		m.M.SetHandling(replyTo.M.GetHandling())
+		m.M.SetReference(replyTo.RMI)
+		m.M.SetSubject(replyTo.M.GetSubject())
+		if rbody := replyTo.M.GetBody(); rbody != "" {
+			m.M.SetBody(rbody)
 		}
-		if f := replyTo.M.KeyField(xscmsg.FSubject); f != nil {
-			subject = f.Value
-		}
 	}
-	if f := mr.M.KeyField(xscmsg.FHandling); f != nil {
-		f.Value = handling
-	}
-	if f := mr.M.KeyField(xscmsg.FSubject); f != nil {
-		f.Value = subject
-	}
-	if f := mr.M.KeyField(xscmsg.FTacCall); f != nil {
-		f.Value = i.config.TacCall
-	}
-	if f := mr.M.KeyField(xscmsg.FTacName); f != nil {
-		f.Value = i.config.TacName
-	}
-	mr.Save()
-	return mr
+	m.Save()
+	return m
 }
 
 // Remove removes a message from the Incident.
-func (i *Incident) Remove(mr *MAndR) {
+func (i *Incident) Remove(mr *Message) {
 	for j, m := range i.list {
 		if m == mr {
 			i.list = append(i.list[:j], i.list[j+1:]...)
@@ -240,9 +224,8 @@ func (i *Incident) Remove(mr *MAndR) {
 // HasBulletin returns whether the Incident contains a bulletin from the
 // specified area with the specified subject prefix.
 func (i *Incident) HasBulletin(area, subjectPrefix string) bool {
-	for j := len(i.list) - 1; j >= 0; j-- {
-		if i.list[j].M.Bulletin == area &&
-			strings.HasPrefix(i.list[j].M.RawMessage.Header.Get("Subject"), subjectPrefix) {
+	for _, m := range i.list {
+		if m.M.GetRxArea() == area && strings.HasPrefix(m.M.GetSubjectHeader(), subjectPrefix) {
 			return true
 		}
 	}
@@ -255,90 +238,81 @@ func (i *Incident) HasBulletin(area, subjectPrefix string) bool {
 // was sent; for all other messages, bulletin is an empty string.  When a
 // delivery receipt should be sent for the message, it is queued to be sent and
 // also returned by this function.
-func (i *Incident) Receive(raw, bbs, bulletin string) (dr *Message, err error) {
+func (i *Incident) Receive(raw, bbs, bulletin string) (dr *delivrcpt.DeliveryReceipt, err error) {
 	var (
+		pm *pktmsg.Message
 		m  *Message
-		mr *MAndR
 	)
-	if m, err = newMessage(raw); err != nil {
+	if pm, err = pktmsg.ReceiveMessage(raw, bbs, bulletin); err != nil {
 		return nil, err
 	}
-	m.BBS, m.Bulletin, m.Received = bbs, bulletin, time.Now()
-	switch m.Type.Tag {
-	case delivrcpt.Tag:
-		mr = i.findWithSubject(m.Field("DeliveredSubject").Value)
-		if mr == nil {
+	switch tm := typedmsg.Recognize(pm).(type) {
+	case *delivrcpt.DeliveryReceipt:
+		m = i.findWithSubject(tm.DeliveredSubject)
+		if m == nil {
 			return nil, errors.New("dropping received delivery receipt: no matching subject")
 		}
-		if !mr.M.IsSent() {
+		if !m.IsSent() {
 			return nil, errors.New("dropping received delivery receipt: matching message was received not sent")
 		}
-		if mr.DR != nil {
+		if m.DR != nil {
 			return nil, errors.New("dropping received delivery receipt: already have one")
 		}
-		m.mandr = mr
-		mr.DR = m
-		mr.RMI = m.Field("LocalMessageID").Value
-	case readrcpt.Tag:
-		mr = i.findWithSubject(m.Field("ReadSubject").Value)
-		if mr == nil {
+		m.DR = tm
+		m.RMI = tm.LocalMessageID
+	case *readrcpt.ReadReceipt:
+		m = i.findWithSubject(tm.ReadSubject)
+		if m == nil {
 			return nil, errors.New("dropping received read receipt: no matching subject")
 		}
-		if !mr.M.IsSent() {
+		if !m.IsSent() {
 			return nil, errors.New("dropping received read receipt: matching message was received not sent")
 		}
-		if mr.RR != nil {
+		if m.RR != nil {
 			return nil, errors.New("dropping received read receipt: already have one")
 		}
-		m.mandr = mr
-		mr.RR = m
-	default:
+		m.RR = tm
+	case xscmsg.IMessage:
 		lmi := fmt.Sprintf("%s%03d%s", i.config.msgIDPrefix, i.nextMsgNum, i.config.msgIDSuffix)
-		mr = i.addLMI(lmi)
+		m = i.addLMI(lmi)
 		i.nextMsgNum++
-		mr.Unread = true
-		mr.M = m
-		m.mandr = mr
-		if p := xscmsg.ParseSubject(m.RawMessage.Header.Get("Subject")); p != nil {
-			mr.RMI = p.MessageNumber
-		}
-		if f := mr.M.KeyField(xscmsg.FDestinationMsgNo); f != nil {
-			f.Value = lmi
-		}
-		m.SetOperatorFields()
+		m.Unread = true
+		m.M = tm
+		m.RMI = tm.GetOriginMsgID()
+		m.M.SetDestinationMsgID(lmi)
+		m.M.SetOperator(true, i.config.OpCall, i.config.OpName)
 		if bulletin == "" {
-			xdr := xscmsg.Create(delivrcpt.Tag)
-			xdr.Field("DeliveredTo").Value = m.RawMessage.Header.Get("To")
-			xdr.Field("DeliveredSubject").Value = m.RawMessage.Header.Get("Subject")
-			xdr.Field("DeliveredTime").Value = m.Received.Format("1/2/2006 15:04")
-			xdr.Field("LocalMessageID").Value = lmi
-			mr.DR = &Message{
-				mandr:   mr,
-				Message: xdr,
-				To:      []*mail.Address{m.From},
-			}
-			mr.DR.MarkReady()
-			dr = mr.DR
+			m.DR = delivrcpt.NewDeliveryReceipt()
+			m.DR.DeliveredTo = tm.GetTo()
+			m.DR.DeliveredSubject = tm.GetSubjectHeader()
+			m.DR.DeliveredTime = tm.GetRxDateTime().Format("01/02/2006 15:04")
+			m.DR.LocalMessageID = lmi
+			m.DR.SetTo(tm.GetFrom())
+			i.markReady(m.DR)
+			m.DR.Save() // force encode
+			dr = m.DR
 		}
+	default:
+		return nil, errors.New("dropping message that is neither a receipt nor an xscmsg.Message")
 	}
-	return dr, mr.Save()
+	return dr, m.Save()
 }
 
 // findWithSubject returns the message with the specified subject line.  It
 // returns nil if no such message exists.  (This is used for matching delivery
 // and read receipts against their primary messages.)
-func (i *Incident) findWithSubject(subject string) *MAndR {
+func (i *Incident) findWithSubject(subject string) *Message {
 	for j := len(i.list) - 1; j >= 0; j-- {
-		if i.list[j].M.SubjectLine == subject {
+		if i.list[j].M.GetSubjectHeader() == subject {
 			return i.list[j]
 		}
 	}
 	return nil
 }
 
-// addLMI adds a new MAndR to the Incident, with the specified LMI.
-func (i *Incident) addLMI(lmi string) *MAndR {
-	i.index[lmi] = &MAndR{LMI: lmi, incident: i}
+// addLMI adds a new Message to the Incident, with the specified LMI.
+func (i *Incident) addLMI(lmi string) *Message {
+	i.index[lmi] = &Message{LMI: lmi, incident: i}
 	i.list = append(i.list, i.index[lmi])
 	sort.Slice(i.list, func(a, b int) bool {
 		return lmiLess(i.list[a].LMI, i.list[b].LMI)

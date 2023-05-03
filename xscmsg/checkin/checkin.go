@@ -1,3 +1,4 @@
+// Package checkin defines the check-in message type.
 package checkin
 
 import (
@@ -6,127 +7,213 @@ import (
 	"strings"
 
 	"github.com/rothskeller/packet/pktmsg"
+	"github.com/rothskeller/packet/typedmsg"
 	"github.com/rothskeller/packet/xscmsg"
-	"github.com/rothskeller/packet/xscmsg/xscform"
 )
 
-// Tag identifies check-in messages.
-const Tag = "Check-In"
-const html = "check-in.html"
+// Type is the type definition for a check-in message.
+var Type = typedmsg.MessageType{
+	Tag:       "Check-In",
+	Name:      "check-in message",
+	Article:   "a",
+	Create:    create,
+	Recognize: recognize,
+}
+
+// CheckIn is a check-in message.
+type CheckIn struct {
+	*xscmsg.Message
+	TacCall string
+	TacName string
+	OpCall  string
+	OpName  string
+	fields  []xscmsg.Field
+}
+
+// NewCheckIn creates a new check-in message.
+func NewCheckIn() *CheckIn {
+	ci := CheckIn{Message: &xscmsg.Message{Message: new(pktmsg.Message)}}
+	ci.Handling = "ROUTINE"
+	return &ci
+}
+
+func create() typedmsg.Message { return NewCheckIn() }
 
 var checkInRE = regexp.MustCompile(`(?i)^Check-In\s+([A-Z][A-Z0-9]{2,5})\s*,(.*)(?:\n([AKNW][A-Z0-9]{2,5})\s*,(.*))?`)
 
-func init() {
-	xscmsg.RegisterCreate(formtype, create)
-	xscmsg.RegisterType(recognize)
-}
-
-func create() *xscmsg.Message {
-	return xscform.CreateForm(formtype, fieldDefs)
-}
-
-func recognize(msg *pktmsg.Message, form *pktmsg.Form) *xscmsg.Message {
-	subject := xscmsg.ParseSubject(msg.Header.Get("Subject"))
-	if subject == nil || subject.FormTag != "" || !strings.HasPrefix(strings.ToLower(subject.Subject), "check-in ") {
+func recognize(base *pktmsg.Message) typedmsg.Message {
+	if base.FormTag != "" || !strings.HasPrefix(strings.ToLower(base.Subject), "check-in ") {
 		return nil
 	}
-	var m = create()
-	m.RawMessage = msg
-	m.Field("MsgNo").Value = subject.MessageNumber
-	if match := checkInRE.FindStringSubmatch(msg.Body); match != nil {
+	ci := CheckIn{Message: &xscmsg.Message{Message: base}}
+	if match := checkInRE.FindStringSubmatch(base.Body); match != nil {
 		if match[3] != "" {
-			m.Field("TacCall").Value = match[1]
-			m.Field("TacName").Value = strings.TrimSpace(match[2])
-			m.Field("OpCall").Value = match[3]
-			m.Field("OpName").Value = strings.TrimSpace(match[4])
+			ci.TacCall = match[1]
+			ci.TacName = strings.TrimSpace(match[2])
+			ci.OpCall = match[3]
+			ci.OpName = strings.TrimSpace(match[4])
 		} else {
-			m.Field("OpCall").Value = match[1]
-			m.Field("OpName").Value = strings.TrimSpace(match[2])
+			ci.OpCall = match[1]
+			ci.OpName = strings.TrimSpace(match[2])
 		}
 	}
-	return m
+	return &ci
 }
 
-var formtype = &xscmsg.MessageType{
-	Tag:         Tag,
-	Name:        "check-in message",
-	Article:     "a",
-	HTML:        html,
-	Version:     "1.0",
-	SubjectFunc: encodeSubject,
-	BodyFunc:    encodeBody,
-}
+// Type returns the type of the message.
+func (m *CheckIn) Type() *typedmsg.MessageType { return &Type }
 
-func encodeBody(m *xscmsg.Message) string {
-	opname := m.Field("OpName").Value
-	opcall := m.Field("OpCall").Value
-	taccall := m.Field("TacCall").Value
-	if taccall != "" {
-		tacname := m.Field("TacName").Value
-		return fmt.Sprintf("Check-In %s, %s\n%s, %s\n", taccall, tacname, opcall, opname)
+// View returns the set of viewable fields of the message.
+func (m *CheckIn) View() []xscmsg.LabelValue {
+	var lvs = m.ViewHeaders()
+	lvs = append(lvs,
+		xscmsg.LV("Subject", m.Subject),
+		xscmsg.LV("Tactical Station", smartJoin(m.TacName, m.TacCall, " ")),
+		xscmsg.LV("Operator", smartJoin(m.OpName, m.OpCall, " ")),
+	)
+	return lvs
+}
+func smartJoin(a, b, sep string) string {
+	if a == "" || b == "" {
+		return a + b
 	}
-	return fmt.Sprintf("Check-In %s, %s\n", opcall, opname)
+	return a + sep + b
 }
 
-func encodeSubject(m *xscmsg.Message) string {
-	var name, call string
-	call = m.Field("TacCall").Value
-	if call != "" {
-		name = m.Field("TacName").Value
+// Edit returns the set of editable fields of the message.
+func (m *CheckIn) Edit() []xscmsg.Field {
+	if m.fields == nil {
+		m.fields = []xscmsg.Field{
+			xscmsg.NewToField(&m.To),
+			xscmsg.NewOriginMsgIDField(&m.OriginMsgID),
+			xscmsg.NewHandlingField(&m.Handling),
+			&tacCallField{xscmsg.NewBaseField(&m.TacCall)},
+			&tacNameField{xscmsg.NewBaseField(&m.TacName), &m.TacCall},
+			&opCallField{xscmsg.NewBaseField(&m.OpCall)},
+			&opNameField{xscmsg.NewBaseField(&m.OpName)},
+		}
+	}
+	return m.fields
+}
+
+// GetBody is a no-op for check-in messages.
+func (m *CheckIn) GetBody() string { return "" }
+
+// SetBody is a no-op for check-in messages.
+func (m *CheckIn) SetBody(string) {}
+
+// SetSubject is a no-op for check-in messages.
+func (m *CheckIn) SetSubject(string) {}
+
+// GetOpCall returns the value of the operator call sign field.
+func (m *CheckIn) GetOpCall() string { return m.OpCall }
+
+// SetOperator sets the OpCall and OpName fields of the message (outgoing only).
+func (m *CheckIn) SetOperator(received bool, call string, name string) {
+	if !received {
+		m.OpCall, m.OpName = call, name
+	}
+}
+
+// SetTactical sets the TacCall and TacName fields of the message.
+func (m *CheckIn) SetTactical(call string, name string) {
+	m.TacCall, m.TacName = call, name
+}
+
+// Save renders the message for saving to local storage.
+func (m *CheckIn) Save() string {
+	m.encode()
+	return m.Message.Save()
+}
+
+// Transmit renders the message for transmission.
+func (m *CheckIn) Transmit() ([]string, string, string) {
+	m.encode()
+	return m.Message.Transmit()
+}
+
+func (m *CheckIn) encode() {
+	if m.TacCall != "" {
+		m.Subject = fmt.Sprintf("Check-In %s, %s", m.TacCall, m.TacName)
+		m.Body = fmt.Sprintf("Check-In %s, %s\n%s, %s\n", m.TacCall, m.TacName, m.OpCall, m.OpName)
 	} else {
-		name = m.Field("OpName").Value
-		call = m.Field("OpCall").Value
+		m.Subject = fmt.Sprintf("Check-In %s, %s", m.OpCall, m.OpName)
+		m.Body = fmt.Sprintf("Check-In %s, %s\n", m.OpCall, m.OpName)
 	}
-	msgno := m.Field("MsgNo").Value
-	return xscmsg.EncodeSubject(msgno, xscmsg.HandlingRoutine, "", fmt.Sprintf("Check-In %s, %s", call, name))
 }
 
-var fieldDefs = []*xscmsg.FieldDef{
-	msgNoDef, tacCallDef, tacNameDef, opCallDef, opNameDef,
+// Validate checks the validity of the message and returns strings
+// describing the issues.  This is used for received messages, and only
+// checks for validity issues that Outpost and/or PackItForms check for.
+func (m *CheckIn) Validate() []string {
+	return xscmsg.ValidateFromFieldProblems(m)
 }
 
-var (
-	msgNoDef = &xscmsg.FieldDef{
-		Tag:        "MsgNo",
-		Label:      "Message Number",
-		Key:        xscmsg.FOriginMsgNo,
-		Validators: []xscmsg.Validator{xscform.ValidateMessageNumber},
-		Flags:      xscmsg.Required,
-	}
-	tacCallDef = &xscmsg.FieldDef{
-		Tag:   "TacCall",
-		Label: "Tactical Call Sign",
-		Key:   xscmsg.FTacCall,
-	}
-	tacNameDef = &xscmsg.FieldDef{
-		Tag:        "TacName",
-		Label:      "Tactical Station Name",
-		Key:        xscmsg.FTacName,
-		Validators: []xscmsg.Validator{validateBothOrNone},
-	}
-	opCallDef = &xscmsg.FieldDef{
-		Tag:        "OpCall",
-		Label:      "Operator Call Sign",
-		Comment:    "call sign",
-		Key:        xscmsg.FOpCall,
-		Validators: []xscmsg.Validator{xscform.ValidateCallSign},
-		Flags:      xscmsg.Required,
-	}
-	opNameDef = &xscmsg.FieldDef{
-		Tag:   "OpName",
-		Label: "Operator Name",
-		Key:   xscmsg.FOpName,
-		Flags: xscmsg.Required,
-	}
-)
+type tacCallField struct{ *xscmsg.BaseField }
 
-func validateBothOrNone(f *xscmsg.Field, msg *xscmsg.Message, _ bool) string {
-	taccall := msg.Field("TacCall").Value
-	if (taccall == "") != (f.Value == "") {
-		if taccall == "" {
-			return "The TacName field is set but the TacCall field is not."
-		}
-		return "The TacCall field is set but the TacName field is not."
+var tacCallSignRE = regexp.MustCompile(`^[A-Z][A-Z0-9]{2,5}$`)
+
+func (f tacCallField) Label() string         { return "Tactical Call Sign" }
+func (f tacCallField) Size() (w, h int)      { return xscmsg.CallSignWidth, 1 }
+func (f tacCallField) SetValue(value string) { f.BaseField.SetValue(strings.ToUpper(value)) }
+func (f tacCallField) Problem() string {
+	if f.Value() != "" && !tacCallSignRE.MatchString(f.Value()) {
+		return "The tactical call sign is not valid.  Valid tactical call signs contain three to six letters or digits, starting with a letter."
 	}
 	return ""
+}
+func (f tacCallField) Help() string {
+	return "This is the tactical call sign of the station that is checking in."
+}
+
+type tacNameField struct {
+	*xscmsg.BaseField
+	tacCall *string
+}
+
+func (f tacNameField) Label() string    { return "Tactical Name" }
+func (f tacNameField) Size() (w, h int) { return 80, 1 }
+func (f tacNameField) Problem() string {
+	if f.Value() == "" && *f.tacCall != "" {
+		return "The tactical station name is required when a tactical call sign is provided."
+	}
+	if f.Value() != "" && *f.tacCall == "" {
+		return "A tactical station name is not allowed unless a tactical call sign is also provided."
+	}
+	return ""
+}
+func (f tacNameField) Help() string {
+	return "This is the name of the station that is checking in.  If a tactical call sign is supplied, a tactical station name is required.  Otherwise, a tactical station name is not allowed."
+}
+
+type opCallField struct{ *xscmsg.BaseField }
+
+func (f opCallField) Label() string         { return "Operator Call Sign" }
+func (f opCallField) Size() (w, h int)      { return xscmsg.CallSignWidth, 1 }
+func (f opCallField) SetValue(value string) { f.BaseField.SetValue(strings.ToUpper(value)) }
+func (f opCallField) Problem() string {
+	if f.Value() == "" {
+		return "The operator call sign is required."
+	}
+	if !xscmsg.CallSignValid(f.Value()) {
+		return "The operator call sign is not a valid FCC call sign."
+	}
+	return ""
+}
+func (f opCallField) Help() string {
+	return "This is the FCC call sign of the operator who is checking in."
+}
+
+type opNameField struct{ *xscmsg.BaseField }
+
+func (f opNameField) Label() string    { return "Operator Name" }
+func (f opNameField) Size() (w, h int) { return 80, 1 }
+func (f opNameField) Problem() string {
+	if f.Value() == "" {
+		return "The operator name is required."
+	}
+	return ""
+}
+func (f opNameField) Help() string {
+	return "This is the name of the operator who is checking in.  It is required."
 }

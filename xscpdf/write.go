@@ -32,9 +32,9 @@ func RegisterWriter(wm WriterMap) {
 
 // MessageToPDF creates a PDF with the specified filename from the specified
 // message.
-func MessageToPDF(m *xscmsg.Message, filename string) (err error) {
+func MessageToPDF(m xscmsg.IMessage, filename string) (err error) {
 	for _, wm := range writers {
-		if wm.XSCTag == m.Type.Tag {
+		if wm.XSCTag == m.Type().Tag {
 			return messageToPDF(m, filename, wm)
 		}
 	}
@@ -42,7 +42,7 @@ func MessageToPDF(m *xscmsg.Message, filename string) (err error) {
 }
 
 // messageToPDF creates a PDF for the specified message.
-func messageToPDF(m *xscmsg.Message, filename string, wm WriterMap) (err error) {
+func messageToPDF(m xscmsg.IMessage, filename string, wm WriterMap) (err error) {
 	var (
 		fh  *os.File
 		pdf *pdfstruct.PDF
@@ -71,7 +71,12 @@ func messageToPDF(m *xscmsg.Message, filename string, wm WriterMap) (err error) 
 		if fm.FromXSC != nil {
 			v = fm.FromXSC(m)
 		} else {
-			v = m.Field(fm.XSCTag).Value
+			for _, f := range m.GetTaggedFields() {
+				if f.Tag == fm.XSCTag {
+					v = f.Value
+					break
+				}
+			}
 			if len(fm.Values) != 0 {
 				for _, vm := range fm.Values {
 					if vm.XSCValue == v {
