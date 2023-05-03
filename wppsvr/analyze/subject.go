@@ -50,7 +50,12 @@ func (a *Analysis) checkFormSubject() {
 	act := a.msg.Header.Get("Subject")
 	exp := a.xsc.Subject()
 	if exp != act {
-		a.reportProblem("FormSubject", 0, formSubjectResponse, act, exp)
+		// JNOS is known to trim spaces from the end of subject lines.
+		// That's not a human error, so it should be accepted.
+		exp = strings.TrimRight(exp, " ")
+		if exp != act {
+			a.reportProblem("FormSubject", 0, formSubjectResponse, act, exp)
+		}
 	}
 }
 
