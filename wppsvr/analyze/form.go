@@ -57,7 +57,9 @@ practice attempt by %[1]s.)`
 func (a *Analysis) formSubject() bool {
 	subject := a.msg.(message.IEncode).EncodeSubject()
 	if a.subject != subject {
-		return a.reportProblem("FormSubject", 0, formSubjectResponse, a.subject, subject)
+		if a.subject != strings.TrimRight(subject, " ") {
+			return a.reportProblem("FormSubject", 0, formSubjectResponse, a.subject, subject)
+		}
 	}
 	return false
 }
