@@ -19,12 +19,12 @@ import (
 	"syscall"
 	"time"
 
+	"github.com/rothskeller/packet/message/allmsg"
 	"github.com/rothskeller/packet/wppsvr/analyze"
 	"github.com/rothskeller/packet/wppsvr/config"
 	"github.com/rothskeller/packet/wppsvr/retrieve"
 	"github.com/rothskeller/packet/wppsvr/store"
 	"github.com/rothskeller/packet/wppsvr/webserver"
-	_ "github.com/rothskeller/packet/xscmsg/all" // register message types
 )
 
 func main() {
@@ -34,6 +34,7 @@ func main() {
 	)
 	openLog()
 	ensureSingleton()
+	allmsg.Register()
 	if st, err = store.Open(); err != nil {
 		log.Fatalf("ERROR: %s", err)
 	}

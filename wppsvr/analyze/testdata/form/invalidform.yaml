@@ -60,4 +60,4 @@ responses:
     subject: TUE-102P_R_Invalid form contents
     bodyREs:
       - form with invalid contents
-      - '"TRIVIAL" is not a valid value'
+      - 'valid severity value'

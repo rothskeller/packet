@@ -23,9 +23,9 @@ import (
 	"github.com/go-test/deep"
 	"gopkg.in/yaml.v3"
 
+	"github.com/rothskeller/packet/message/allmsg"
 	"github.com/rothskeller/packet/wppsvr/config"
 	"github.com/rothskeller/packet/wppsvr/store"
-	_ "github.com/rothskeller/packet/xscmsg/all"
 )
 
 type testdata struct {
@@ -46,6 +46,7 @@ type responseCheck struct {
 func TestAnalyze(t *testing.T) {
 	var testfiles []string
 	log.SetOutput(io.Discard)
+	allmsg.Register()
 	filepath.WalkDir("testdata", func(path string, info fs.DirEntry, err error) error {
 		if strings.HasSuffix(path, ".yaml") && path != "testdata/config.yaml" {
 			testfiles = append(testfiles, path)

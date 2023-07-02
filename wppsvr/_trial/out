@@ -1,0 +1,3079 @@
+Rx                                      < login: 
+Tx PKTTUE\n                             >
+Rx                                      < Password [0] : 
+Tx 969e712761df5924fffba3415f0524f4\n   >
+Rx                                      < (#0) >\r\n
+Tx XM 0\n                               >
+Rx                                      < (#0) >\r\n
+Tx V 1\n                                >
+Rx                                      < Message #1 \r\n
+Rx                                      < Date: Tue, 03 May 2022 20:38:34 PDT\
+Rx                                      < r\n
+Rx                                      < From: k6ott@w4xsc.ampr.org\r\n
+Rx                                      < To: pkttue@w2xsc.ampr.org\r\n
+Rx                                      < Subject: DELIVERED: TUE-4978P_O/R_SC
+Rx                                      < Co ARES/RACES Packet Practice Report
+Rx                                      <  For: Tuesday, May 03, 2022. Total =
+Rx                                      <  33 call signs /37 me\r\n
+Rx                                      < \r\n
+Rx                                      < !LMI!OTT-697P!DR!5/3/2022 20:38:06\r
+Rx                                      < \n
+Rx                                      < Your Message\r\n
+Rx                                      < To: K6OTT\r\n
+Rx                                      < Subject: TUE-4978P_O/R_SCCo ARES/RAC
+Rx                                      < ES Packet Practice Report For: Tuesd
+Rx                                      < ay, May 03, 2022. Total = 33 call si
+Rx                                      < gns /37 messages\r\n
+Rx                                      < was delivered on 5/3/2022 20:38\r\n
+Rx                                      < Recipient's Local Message ID: OTT-69
+Rx                                      < 7P\r\n
+Rx                                      < \r\n
+Rx                                      < (#0) >\r\n
+2022/05/18 10:27:40 Received at PKTTUE@W2XSC: from "k6ott@w4xsc.ampr.org" subject "DELIVERED: TUE-4978P_O/R_SCCo ARES/RACES Packet Practice Report For: Tuesday, May 03, 2022. Total = 33 call signs /37 me"
+Tx K 1\n                                >
+Rx                                      < (#0) >\r\n
+2022/05/18 10:27:40 => TUE-001P DELIVERED DeliveryReceipt
+Tx V 2\n                                >
+Rx                                      < Message #2 \r\n
+Rx                                      < Date: Wed, 04 May 2022 15:08:49 PDT\
+Rx                                      < r\n
+Rx                                      < From: ke6ppi@w3xsc.ampr.org\r\n
+Rx                                      < To: pkttue@w2xsc.ampr.org\r\n
+Rx                                      < Subject: DELIVERED: TUE-4975P_O/R_SC
+Rx                                      < Co ARES/RACES Packet Practice Report
+Rx                                      <  For: Tuesday, May 03, 2022. Total =
+Rx                                      <  33 call signs /37 me\r\n
+Rx                                      < \r\n
+Rx                                      < !LMI!PPI-493P!DR!5/4/2022 3:07:55 PM
+Rx                                      < \r\n
+Rx                                      < Your Message\r\n
+Rx                                      < To: KE6PPI\r\n
+Rx                                      < Subject: TUE-4975P_O/R_SCCo ARES/RAC
+Rx                                      < ES Packet Practice Report For: Tuesd
+Rx                                      < ay, May 03, 2022. Total = 33 call si
+Rx                                      < gns /37 messages\r\n
+Rx                                      < was delivered on 5/4/2022 3:07:55 PM
+Rx                                      < \r\n
+Rx                                      < Recipient's Local Message ID: PPI-49
+Rx                                      < 3P\r\n
+Rx                                      < \r\n
+Rx                                      < (#0) >\r\n
+2022/05/18 10:27:40 Received at PKTTUE@W2XSC: from "ke6ppi@w3xsc.ampr.org" subject "DELIVERED: TUE-4975P_O/R_SCCo ARES/RACES Packet Practice Report For: Tuesday, May 03, 2022. Total = 33 call signs /37 me"
+Tx K 2\n                                >
+Rx                                      < (#0) >\r\n
+2022/05/18 10:27:40 => TUE-002P DELIVERED DeliveryReceipt
+Tx V 3\n                                >
+Rx                                      < Message #3 \r\n
+Rx                                      < Date: Wed, 04 May 2022 19:40:10 PDT\
+Rx                                      < r\n
+Rx                                      < From: w6bg@w4xsc.ampr.org\r\n
+Rx                                      < To: pkttue@w2xsc.ampr.org\r\n
+Rx                                      < Subject: DELIVERED: TUE-4975P_O/R_SC
+Rx                                      < Co ARES/RACES Packet Practice Report
+Rx                                      <  For: Tuesday, May 03, 2022. Total =
+Rx                                      <  33 call signs /37 me\r\n
+Rx                                      < \r\n
+Rx                                      < !LMI!6BG-791P!DR!5/4/2022 7:39:39 PM
+Rx                                      < \r\n
+Rx                                      < Your Message\r\n
+Rx                                      < To: W6BG\r\n
+Rx                                      < Subject: TUE-4975P_O/R_SCCo ARES/RAC
+Rx                                      < ES Packet Practice Report For: Tuesd
+Rx                                      < ay, May 03, 2022. Total = 33 call si
+Rx                                      < gns /37 messages\r\n
+Rx                                      < was delivered on 5/4/2022 7:39:39 PM
+Rx                                      < \r\n
+Rx                                      < Recipient's Local Message ID: 6BG-79
+Rx                                      < 1P\r\n
+Rx                                      < \r\n
+Rx                                      < (#0) >\r\n
+2022/05/18 10:27:40 Received at PKTTUE@W2XSC: from "w6bg@w4xsc.ampr.org" subject "DELIVERED: TUE-4975P_O/R_SCCo ARES/RACES Packet Practice Report For: Tuesday, May 03, 2022. Total = 33 call signs /37 me"
+Tx K 3\n                                >
+Rx                                      < (#0) >\r\n
+2022/05/18 10:27:40 => TUE-003P DELIVERED DeliveryReceipt
+Tx V 4\n                                >
+Rx                                      < Message #4 \r\n
+Rx                                      < Date: Wed, 04 May 2022 20:01:10 PDT\
+Rx                                      < r\n
+Rx                                      < From: kn6pe@w1xsc.ampr.org\r\n
+Rx                                      < To: pkttue@w2xsc.ampr.org\r\n
+Rx                                      < Subject: DELIVERED: TUE-2570P_O/R_SC
+Rx                                      < Co ARES/RACES Packet Practice Report
+Rx                                      <  For: Tuesday, April 19, 2022. Total
+Rx                                      <  = 34 call signs /34\r\n
+Rx                                      < \r\n
+Rx                                      < !LMI!6PE-1000000001P!DR!5/4/2022 8:0
+Rx                                      < 1:06 PM\r\n
+Rx                                      < Your Message\r\n
+Rx                                      < To: KN6PE\r\n
+Rx                                      < Subject: TUE-2570P_O/R_SCCo ARES/RAC
+Rx                                      < ES Packet Practice Report For: Tuesd
+Rx                                      < ay, April 19, 2022. Total = 34 call 
+Rx                                      < signs /34 messages\r\n
+Rx                                      < was delivered on 5/4/2022 8:01:06 PM
+Rx                                      < \r\n
+Rx                                      < Recipient's Local Message ID: 6PE-10
+Rx                                      < 00000001P\r\n
+Rx                                      < \r\n
+Rx                                      < (#0) >\r\n
+2022/05/18 10:27:40 Received at PKTTUE@W2XSC: from "kn6pe@w1xsc.ampr.org" subject "DELIVERED: TUE-2570P_O/R_SCCo ARES/RACES Packet Practice Report For: Tuesday, April 19, 2022. Total = 34 call signs /34"
+Tx K 4\n                                >
+Rx                                      < (#0) >\r\n
+2022/05/18 10:27:40 => TUE-004P DELIVERED DeliveryReceipt
+Tx V 5\n                                >
+Rx                                      < Message #5 \r\n
+Rx                                      < Date: Thu, 05 May 2022 17:08:56 PDT\
+Rx                                      < r\n
+Rx                                      < From: km6lry@w1xsc.ampr.org\r\n
+Rx                                      < To: pkttue@w2xsc.ampr.org\r\n
+Rx                                      < Subject: DELIVERED: TUE-778P_O/R_SCC
+Rx                                      < o ARES/RACES Packet Practice Report 
+Rx                                      < For: Tuesday, April 26, 2022. Total 
+Rx                                      < = 29 call signs /30 m\r\n
+Rx                                      < \r\n
+Rx                                      < !LMI!LRY-486P!DR!5/5/2022 5:08:30 PM
+Rx                                      < \r\n
+Rx                                      < Your Message\r\n
+Rx                                      < To: KM6LRY\r\n
+Rx                                      < Subject: TUE-778P_O/R_SCCo ARES/RACE
+Rx                                      < S Packet Practice Report For: Tuesda
+Rx                                      < y, April 26, 2022\r\n
+Rx                                      < . Total = 29 call signs /30 messages
+Rx                                      < \r\n
+Rx                                      < was delivered on 5/5/2022 5:08:30 PM
+Rx                                      < \r\n
+Rx                                      < Recipient's Local Message ID: LRY-48
+Rx                                      < 6P\r\n
+Rx                                      < \r\n
+Rx                                      < (#0) >\r\n
+2022/05/18 10:27:40 Received at PKTTUE@W2XSC: from "km6lry@w1xsc.ampr.org" subject "DELIVERED: TUE-778P_O/R_SCCo ARES/RACES Packet Practice Report For: Tuesday, April 26, 2022. Total = 29 call signs /30 m"
+Tx K 5\n                                >
+Rx                                      < (#0) >\r\n
+2022/05/18 10:27:40 => TUE-005P DELIVERED DeliveryReceipt
+Tx V 6\n                                >
+Rx                                      < Message #6 \r\n
+Rx                                      < Date: Thu, 05 May 2022 18:00:21 PDT\
+Rx                                      < r\n
+Rx                                      < From: kk6fmq@w3xsc.ampr.org\r\n
+Rx                                      < To: pkttue@w2xsc.ampr.org\r\n
+Rx                                      < Subject: DELIVERED: TUE-4975P_O/R_SC
+Rx                                      < Co ARES/RACES Packet Practice Report
+Rx                                      <  For: Tuesday, May 03, 2022. Total =
+Rx                                      <  33 call signs /37 me\r\n
+Rx                                      < \r\n
+Rx                                      < !LMI!FMQ-130P!DR!5/5/2022 5:59:56 PM
+Rx                                      < \r\n
+Rx                                      < Your Message\r\n
+Rx                                      < To: KK6FMQ\r\n
+Rx                                      < Subject: TUE-4975P_O/R_SCCo ARES/RAC
+Rx                                      < ES Packet Practice Report For: Tuesd
+Rx                                      < ay, May 03, 2022. Total = 33 call si
+Rx                                      < gns /37 messages\r\n
+Rx                                      < was delivered on 5/5/2022 5:59:56 PM
+Rx                                      < \r\n
+Rx                                      < Recipient's Local Message ID: FMQ-13
+Rx                                      < 0P\r\n
+Rx                                      < \r\n
+Rx                                      < (#0) >\r\n
+2022/05/18 10:27:40 Received at PKTTUE@W2XSC: from "kk6fmq@w3xsc.ampr.org" subject "DELIVERED: TUE-4975P_O/R_SCCo ARES/RACES Packet Practice Report For: Tuesday, May 03, 2022. Total = 33 call signs /37 me"
+Tx K 6\n                                >
+Rx                                      < (#0) >\r\n
+2022/05/18 10:27:40 => TUE-006P DELIVERED DeliveryReceipt
+Tx V 7\n                                >
+Rx                                      < Message #7 \r\n
+Rx                                      < Date: Thu, 05 May 2022 18:46:59 PDT\
+Rx                                      < r\n
+Rx                                      < From: ke6tim@w4xsc.ampr.org\r\n
+Rx                                      < To: pkttue@w2xsc.ampr.org\r\n
+Rx                                      < Subject: DELIVERED: TUE-4978P_O/R_SC
+Rx                                      < Co ARES/RACES Packet Practice Report
+Rx                                      <  For: Tuesday, May 03, 2022. Total =
+Rx                                      <  33 call signs /37 me\r\n
+Rx                                      < \r\n
+Rx                                      < !LMI!TIM-448P!DR!5/5/2022 6:47:01 PM
+Rx                                      < \r\n
+Rx                                      < Your Message\r\n
+Rx                                      < To: KE6TIM\r\n
+Rx                                      < Subject: TUE-4978P_O/R_SCCo ARES/RAC
+Rx                                      < ES Packet Practice Report For: Tuesd
+Rx                                      < ay, May 03, 2022. Total = 33 call si
+Rx                                      < gns /37 messages\r\n
+Rx                                      < was delivered on 5/5/2022 18:47\r\n
+Rx                                      < Recipient's Local Message ID: TIM-44
+Rx                                      < 8P\r\n
+Rx                                      < \r\n
+Rx                                      < (#0) >\r\n
+2022/05/18 10:27:40 Received at PKTTUE@W2XSC: from "ke6tim@w4xsc.ampr.org" subject "DELIVERED: TUE-4978P_O/R_SCCo ARES/RACES Packet Practice Report For: Tuesday, May 03, 2022. Total = 33 call signs /37 me"
+Tx K 7\n                                >
+Rx                                      < (#0) >\r\n
+2022/05/18 10:27:40 => TUE-007P DELIVERED DeliveryReceipt
+Tx V 8\n                                >
+Rx                                      < Message #8 \r\n
+Rx                                      < Date: Fri, 06 May 2022 08:57:11 PDT\
+Rx                                      < r\n
+Rx                                      < From: pafeoc@w3xsc.ampr.org\r\n
+Rx                                      < To: pkttue@w2xsc.ampr.org\r\n
+Rx                                      < Subject: DELIVERED: TUE-4977P_O/R_SC
+Rx                                      < Co ARES/RACES Packet Practice Report
+Rx                                      <  For: Tuesday, May 03, 2022. Total =
+Rx                                      <  33 call signs /37 me\r\n
+Rx                                      < \r\n
+Rx                                      < !LMI!PAF-266P!DR!5/6/2022 8:56:47 AM
+Rx                                      < \r\n
+Rx                                      < Your Message\r\n
+Rx                                      < To: PAFEOC\r\n
+Rx                                      < Subject: TUE-4977P_O/R_SCCo ARES/RAC
+Rx                                      < ES Packet Practice Report For: Tuesd
+Rx                                      < ay, May 03, 2022. Total = 33 call si
+Rx                                      < gns /37 messages\r\n
+Rx                                      < was delivered on 5/6/2022 8:56:47 AM
+Rx                                      < \r\n
+Rx                                      < Recipient's Local Message ID: PAF-26
+Rx                                      < 6P\r\n
+Rx                                      < \r\n
+Rx                                      < (#0) >\r\n
+2022/05/18 10:27:40 Received at PKTTUE@W2XSC: from "pafeoc@w3xsc.ampr.org" subject "DELIVERED: TUE-4977P_O/R_SCCo ARES/RACES Packet Practice Report For: Tuesday, May 03, 2022. Total = 33 call signs /37 me"
+Tx K 8\n                                >
+Rx                                      < (#0) >\r\n
+2022/05/18 10:27:40 => TUE-008P DELIVERED DeliveryReceipt
+Tx V 9\n                                >
+Rx                                      < Message #9 \r\n
+Rx                                      < Date: Fri, 06 May 2022 14:18:15 PDT\
+Rx                                      < r\n
+Rx                                      < From: k6fjc@w3xsc.ampr.org\r\n
+Rx                                      < To: pkttue@w2xsc.ampr.org\r\n
+Rx                                      < Subject: DELIVERED: TUE-4977P_O/R_SC
+Rx                                      < Co ARES/RACES Packet Practice Report
+Rx                                      <  For: Tuesday, May 03, 2022. Total =
+Rx                                      <  33 call signs /37 me\r\n
+Rx                                      < \r\n
+Rx                                      < !LMI!FJC-759P!DR!5/6/2022 2:17:55 PM
+Rx                                      < \r\n
+Rx                                      < Your Message\r\n
+Rx                                      < To: K6FJC\r\n
+Rx                                      < Subject: TUE-4977P_O/R_SCCo ARES/RAC
+Rx                                      < ES Packet Practice Report For: Tuesd
+Rx                                      < ay, May 03, 2022. Total = 33 call si
+Rx                                      < gns /37 messages\r\n
+Rx                                      < was delivered on 5/6/2022 14:17\r\n
+Rx                                      < Recipient's Local Message ID: FJC-75
+Rx                                      < 9P\r\n
+Rx                                      < \r\n
+Rx                                      < (#0) >\r\n
+2022/05/18 10:27:40 Received at PKTTUE@W2XSC: from "k6fjc@w3xsc.ampr.org" subject "DELIVERED: TUE-4977P_O/R_SCCo ARES/RACES Packet Practice Report For: Tuesday, May 03, 2022. Total = 33 call signs /37 me"
+Tx K 9\n                                >
+Rx                                      < (#0) >\r\n
+2022/05/18 10:27:40 => TUE-009P DELIVERED DeliveryReceipt
+Tx V 10\n                               >
+Rx                                      < Message #10 \r\n
+Rx                                      < Date: Fri, 06 May 2022 15:33:49 PDT\
+Rx                                      < r\n
+Rx                                      < From: n6pwd@w1xsc.ampr.org\r\n
+Rx                                      < To: pkttue@w2xsc.ampr.org\r\n
+Rx                                      < Subject: DELIVERED: TUE-778P_O/R_SCC
+Rx                                      < o ARES/RACES Packet Practice Report 
+Rx                                      < For: Tuesday, April 26, 2022. Total 
+Rx                                      < = 29 call signs /30 m\r\n
+Rx                                      < \r\n
+Rx                                      < !LMI!PWD-3419P!DR!5/6/2022 3:33:22 P
+Rx                                      < M\r\n
+Rx                                      < Your Message\r\n
+Rx                                      < To: N6PWD\r\n
+Rx                                      < Subject: TUE-778P_O/R_SCCo ARES/RACE
+Rx                                      < S Packet Practice Report For: Tuesda
+Rx                                      < y, April 26, 2022. Total = 29 call s
+Rx                                      < igns /30 messages\r\n
+Rx                                      < was delivered on 5/6/2022 3:33:22 PM
+Rx                                      < \r\n
+Rx                                      < Recipient's Local Message ID: PWD-34
+Rx                                      < 19P\r\n
+Rx                                      < \r\n
+Rx                                      < (#0) >\r\n
+2022/05/18 10:27:40 Received at PKTTUE@W2XSC: from "n6pwd@w1xsc.ampr.org" subject "DELIVERED: TUE-778P_O/R_SCCo ARES/RACES Packet Practice Report For: Tuesday, April 26, 2022. Total = 29 call signs /30 m"
+Tx K 10\n                               >
+Rx                                      < (#0) >\r\n
+2022/05/18 10:27:40 => TUE-010P DELIVERED DeliveryReceipt
+Tx V 11\n                               >
+Rx                                      < Message #11 \r\n
+Rx                                      < Date: Sat, 07 May 2022 09:31:32 PDT\
+Rx                                      < r\n
+Rx                                      < From: aj6hm@w4xsc.ampr.org\r\n
+Rx                                      < To: pkttue@w2xsc.ampr.org\r\n
+Rx                                      < Subject: DELIVERED: TUE-4976P_O/R_SC
+Rx                                      < Co ARES/RACES Packet Practice Report
+Rx                                      <  For: Tuesday, May 03, 2022. Total =
+Rx                                      <  33 call signs /37 me\r\n
+Rx                                      < \r\n
+Rx                                      < !LMI!6HM-754P!DR!5/7/2022 9:30:55 AM
+Rx                                      < \r\n
+Rx                                      < Your Message\r\n
+Rx                                      < To: AJ6HM\r\n
+Rx                                      < Subject: TUE-4976P_O/R_SCCo ARES/RAC
+Rx                                      < ES Packet Practice Report For: Tuesd
+Rx                                      < ay, May 03, 2022. Total = 33 call si
+Rx                                      < gns /37 messages\r\n
+Rx                                      < was delivered on 5/7/2022 9:30:55 AM
+Rx                                      < \r\n
+Rx                                      < Recipient's Local Message ID: 6HM-75
+Rx                                      < 4P\r\n
+Rx                                      < \r\n
+Rx                                      < (#0) >\r\n
+2022/05/18 10:27:40 Received at PKTTUE@W2XSC: from "aj6hm@w4xsc.ampr.org" subject "DELIVERED: TUE-4976P_O/R_SCCo ARES/RACES Packet Practice Report For: Tuesday, May 03, 2022. Total = 33 call signs /37 me"
+Tx K 11\n                               >
+Rx                                      < (#0) >\r\n
+2022/05/18 10:27:40 => TUE-011P DELIVERED DeliveryReceipt
+Tx V 12\n                               >
+Rx                                      < Message #12 \r\n
+Rx                                      < Date: Mon, 09 May 2022 05:49:42 PDT\
+Rx                                      < r\n
+Rx                                      < From: kc6rsc@w3xsc.ampr.org\r\n
+Rx                                      < To: pkttue@w2xsc.ampr.org\r\n
+Rx                                      < Subject: DELIVERED: TUE-4976P_O/R_SC
+Rx                                      < Co ARES/RACES Packet Practice Report
+Rx                                      <  For: Tuesday, May 03, 2022. Total =
+Rx                                      <  33 call signs /37 me\r\n
+Rx                                      < \r\n
+Rx                                      < !LMI!STR-2589P!DR!2022-05-09 05:49:1
+Rx                                      < 1\r\n
+Rx                                      < Your Message\r\n
+Rx                                      < To: KC6RSC\r\n
+Rx                                      < Subject: TUE-4976P_O/R_SCCo ARES/RAC
+Rx                                      < ES Packet Practice Report For: Tuesd
+Rx                                      < ay, May 03, 2022. Total = 33 call si
+Rx                                      < gns /37 messages\r\n
+Rx                                      < was delivered on 2022-05-09 05:49\r\
+Rx                                      < n
+Rx                                      < Recipient's Local Message ID: STR-25
+Rx                                      < 89P\r\n
+Rx                                      < \r\n
+Rx                                      < (#0) >\r\n
+2022/05/18 10:27:40 Received at PKTTUE@W2XSC: from "kc6rsc@w3xsc.ampr.org" subject "DELIVERED: TUE-4976P_O/R_SCCo ARES/RACES Packet Practice Report For: Tuesday, May 03, 2022. Total = 33 call signs /37 me"
+Tx K 12\n                               >
+Rx                                      < (#0) >\r\n
+2022/05/18 10:27:40 => TUE-012P DELIVERED DeliveryReceipt
+Tx V 13\n                               >
+Rx                                      < Message #13 \r\n
+Rx                                      < Date: Mon, 09 May 2022 10:25:40 PDT\
+Rx                                      < r\n
+Rx                                      < From: n6tae@w1xsc.ampr.org\r\n
+Rx                                      < To: pkttue@w2xsc.ampr.org\r\n
+Rx                                      < Subject: DELIVERED: TUE-2569P_O/R_SC
+Rx                                      < Co ARES/RACES Packet Practice Report
+Rx                                      <  For: Tuesday, April 19, 2022. Total
+Rx                                      <  = 34 call signs /34\r\n
+Rx                                      < \r\n
+Rx                                      < !LMI!TAE-423P!DR!5/9/2022 10:25:00 A
+Rx                                      < M\r\n
+Rx                                      < Your Message\r\n
+Rx                                      < To: N6TAE\r\n
+Rx                                      < Subject: TUE-2569P_O/R_SCCo ARES/RAC
+Rx                                      < ES Packet Practice Report For: Tuesd
+Rx                                      < ay, April 19, 2022. Total = 34 call 
+Rx                                      < signs /34 messages\r\n
+Rx                                      < was delivered on 5/9/2022 10:25:00 A
+Rx                                      < M\r\n
+Rx                                      < Recipient's Local Message ID: TAE-42
+Rx                                      < 3P\r\n
+Rx                                      < \r\n
+Rx                                      < (#0) >\r\n
+2022/05/18 10:27:40 Received at PKTTUE@W2XSC: from "n6tae@w1xsc.ampr.org" subject "DELIVERED: TUE-2569P_O/R_SCCo ARES/RACES Packet Practice Report For: Tuesday, April 19, 2022. Total = 34 call signs /34"
+Tx K 13\n                               >
+Rx                                      < (#0) >\r\n
+2022/05/18 10:27:40 => TUE-013P DELIVERED DeliveryReceipt
+Tx V 14\n                               >
+Rx                                      < Message #14 \r\n
+Rx                                      < Date: Mon, 09 May 2022 13:59:36 PDT\
+Rx                                      < r\n
+Rx                                      < From: kg6hi@w1xsc.ampr.org\r\n
+Rx                                      < To: pkttue@w2xsc.ampr.org\r\n
+Rx                                      < Subject: DELIVERED: TUE-2571P_O/R_SC
+Rx                                      < Co ARES/RACES Packet Practice Report
+Rx                                      <  For: Tuesday, April 19, 2022. Total
+Rx                                      <  = 34 call signs /34\r\n
+Rx                                      < \r\n
+Rx                                      < !LMI!6HI-1744P!DR!09-May-22 1:59:05 
+Rx                                      < PM\r\n
+Rx                                      < Your Message\r\n
+Rx                                      < To: KG6HI\r\n
+Rx                                      < Subject: TUE-2571P_O/R_SCCo ARES/RAC
+Rx                                      < ES Packet Practice Report For: Tuesd
+Rx                                      < ay, April 19, 2022. Total = 34 call 
+Rx                                      < signs /34 messages\r\n
+Rx                                      < was delivered on 09-May-22 1:59:05 P
+Rx                                      < M\r\n
+Rx                                      < Recipient's Local Message ID: 6HI-17
+Rx                                      < 44P\r\n
+Rx                                      < \r\n
+Rx                                      < (#0) >\r\n
+2022/05/18 10:27:40 Received at PKTTUE@W2XSC: from "kg6hi@w1xsc.ampr.org" subject "DELIVERED: TUE-2571P_O/R_SCCo ARES/RACES Packet Practice Report For: Tuesday, April 19, 2022. Total = 34 call signs /34"
+Tx K 14\n                               >
+Rx                                      < (#0) >\r\n
+2022/05/18 10:27:40 => TUE-014P DELIVERED DeliveryReceipt
+Tx V 15\n                               >
+Rx                                      < Message #15 \r\n
+Rx                                      < Date: Mon, 09 May 2022 18:49:47 PDT\
+Rx                                      < r\n
+Rx                                      < From: n9dk@w3xsc.ampr.org\r\n
+Rx                                      < To: pkttue@w2xsc.ampr.org\r\n
+Rx                                      < Subject: DELIVERED: TUE-4976P_O/R_SC
+Rx                                      < Co ARES/RACES Packet Practice Report
+Rx                                      <  For: Tuesday, May 03, 2022. Total =
+Rx                                      <  33 call signs /37 me\r\n
+Rx                                      < \r\n
+Rx                                      < !LMI!9DK-3396P!DR!2022-05-09 6:49:15
+Rx                                      <  PM\r\n
+Rx                                      < Your Message\r\n
+Rx                                      < To: N9DK\r\n
+Rx                                      < Subject: TUE-4976P_O/R_SCCo ARES/RAC
+Rx                                      < ES Packet Practice Report For: Tuesd
+Rx                                      < ay, May 03, 2022. Total = 33 call si
+Rx                                      < gns /37 messages\r\n
+Rx                                      < was delivered on 2022-05-09 6:49:15 
+Rx                                      < PM\r\n
+Rx                                      < Recipient's Local Message ID: 9DK-33
+Rx                                      < 96P\r\n
+Rx                                      < \r\n
+Rx                                      < (#0) >\r\n
+2022/05/18 10:27:40 Received at PKTTUE@W2XSC: from "n9dk@w3xsc.ampr.org" subject "DELIVERED: TUE-4976P_O/R_SCCo ARES/RACES Packet Practice Report For: Tuesday, May 03, 2022. Total = 33 call signs /37 me"
+Tx K 15\n                               >
+Rx                                      < (#0) >\r\n
+2022/05/18 10:27:40 => TUE-015P DELIVERED DeliveryReceipt
+Tx V 16\n                               >
+Rx                                      < Message #16 \r\n
+Rx                                      < Date: Mon, 09 May 2022 20:56:54 PDT\
+Rx                                      < r\n
+Rx                                      < From: k6rwy@w2xsc.ampr.org\r\n
+Rx                                      < To: pkttue@w2xsc.ampr.org\r\n
+Rx                                      < Subject: DELIVERED: TUE-4977P_O/R_SC
+Rx                                      < Co ARES/RACES Packet Practice Report
+Rx                                      <  For: Tuesday, May 03, 2022. Total =
+Rx                                      <  33 call signs /37 me\r\n
+Rx                                      < \r\n
+Rx                                      < !LMI!RWY-2137P!DR!5/9/2022 8:56:32 P
+Rx                                      < M\r\n
+Rx                                      < Your Message\r\n
+Rx                                      < To: K6RWY\r\n
+Rx                                      < Subject: TUE-4977P_O/R_SCCo ARES/RAC
+Rx                                      < ES Packet Practice Report For: Tuesd
+Rx                                      < ay, May 03, 2022. Total = 33 call si
+Rx                                      < gns /37 messages\r\n
+Rx                                      < was delivered on 5/9/2022 8:56:32 PM
+Rx                                      < \r\n
+Rx                                      < Recipient's Local Message ID: RWY-21
+Rx                                      < 37P\r\n
+Rx                                      < \r\n
+Rx                                      < (#0) >\r\n
+2022/05/18 10:27:40 Received at PKTTUE@W2XSC: from "k6rwy@w2xsc.ampr.org" subject "DELIVERED: TUE-4977P_O/R_SCCo ARES/RACES Packet Practice Report For: Tuesday, May 03, 2022. Total = 33 call signs /37 me"
+Tx K 16\n                               >
+Rx                                      < (#0) >\r\n
+2022/05/18 10:27:40 => TUE-016P DELIVERED DeliveryReceipt
+Tx V 17\n                               >
+Rx                                      < Message #17 \r\n
+Rx                                      < Date: Tue, 10 May 2022 08:31:36 PDT\
+Rx                                      < r\n
+Rx                                      < From: n6ik@w1xsc.ampr.org\r\n
+Rx                                      < To: pkttue@w2xsc.ampr.org\r\n
+Rx                                      < Subject: DELIVERED: TUE-777P_O/R_SCC
+Rx                                      < o ARES/RACES Packet Practice Report 
+Rx                                      < For: Tuesday, April 26, 2022. Total 
+Rx                                      < = 29 call signs /30 m\r\n
+Rx                                      < \r\n
+Rx                                      < !LMI!6IK-312P!DR!5/10/2022 8:31:10 A
+Rx                                      < M\r\n
+Rx                                      < Your Message\r\n
+Rx                                      < To: N6IK\r\n
+Rx                                      < Subject: TUE-777P_O/R_SCCo ARES/RACE
+Rx                                      < S Packet Practice Report For: Tuesda
+Rx                                      < y, April 26, 2022. Total = 29 call s
+Rx                                      < igns /30 messages\r\n
+Rx                                      < was delivered on 5/10/2022 8:31:10 A
+Rx                                      < M\r\n
+Rx                                      < Recipient's Local Message ID: 6IK-31
+Rx                                      < 2P\r\n
+Rx                                      < \r\n
+Rx                                      < (#0) >\r\n
+2022/05/18 10:27:40 Received at PKTTUE@W2XSC: from "n6ik@w1xsc.ampr.org" subject "DELIVERED: TUE-777P_O/R_SCCo ARES/RACES Packet Practice Report For: Tuesday, April 26, 2022. Total = 29 call signs /30 m"
+Tx K 17\n                               >
+Rx                                      < (#0) >\r\n
+2022/05/18 10:27:40 => TUE-017P DELIVERED DeliveryReceipt
+Tx V 18\n                               >
+Rx                                      < Message #18 \r\n
+Rx                                      < Date: Tue, 10 May 2022 16:40:36 PDT\
+Rx                                      < r\n
+Rx                                      < From: km6iao@w4xsc.ampr.org\r\n
+Rx                                      < To: pkttue@w2xsc.ampr.org\r\n
+Rx                                      < Subject: DELIVERED: TUE-4978P_O/R_SC
+Rx                                      < Co ARES/RACES Packet Practice Report
+Rx                                      <  For: Tuesday, May 03, 2022. Total =
+Rx                                      <  33 call signs /37 me\r\n
+Rx                                      < \r\n
+Rx                                      < !LMI!IAO-567P!DR!5/10/2022 4:40:03 P
+Rx                                      < M\r\n
+Rx                                      < Your Message\r\n
+Rx                                      < To: KM6IAO\r\n
+Rx                                      < Subject: TUE-4978P_O/R_SCCo ARES/RAC
+Rx                                      < ES Packet Practice Report For: Tuesd
+Rx                                      < ay, May 03, 2022. Total = 33 call si
+Rx                                      < gns /37 messages\r\n
+Rx                                      < was delivered on 5/10/2022 4:40:03 P
+Rx                                      < M\r\n
+Rx                                      < Recipient's Local Message ID: IAO-56
+Rx                                      < 7P\r\n
+Rx                                      < \r\n
+Rx                                      < (#0) >\r\n
+2022/05/18 10:27:40 Received at PKTTUE@W2XSC: from "km6iao@w4xsc.ampr.org" subject "DELIVERED: TUE-4978P_O/R_SCCo ARES/RACES Packet Practice Report For: Tuesday, May 03, 2022. Total = 33 call signs /37 me"
+Tx K 18\n                               >
+Rx                                      < (#0) >\r\n
+2022/05/18 10:27:40 => TUE-018P DELIVERED DeliveryReceipt
+Tx V 19\n                               >
+Rx                                      < Message #19 \r\n
+Rx                                      < Date: Tue, 10 May 2022 19:05:20 PDT\
+Rx                                      < r\n
+Rx                                      < From: kj6ace@w4xsc.ampr.org\r\n
+Rx                                      < To: pkttue@w2xsc.ampr.org\r\n
+Rx                                      < Subject: DELIVERED: TUE-4978P_O/R_SC
+Rx                                      < Co ARES/RACES Packet Practice Report
+Rx                                      <  For: Tuesday, May 03, 2022. Total =
+Rx                                      <  33 call signs /37 me\r\n
+Rx                                      < \r\n
+Rx                                      < !LMI!ACE-759P!DR!5/10/2022 19:05:07\
+Rx                                      < r\n
+Rx                                      < Your Message\r\n
+Rx                                      < To: KJ6ACE\r\n
+Rx                                      < Subject: TUE-4978P_O/R_SCCo ARES/RAC
+Rx                                      < ES Packet Practice Report For: Tuesd
+Rx                                      < ay, May 03, 2022. Total = 33 call si
+Rx                                      < gns /37 messages\r\n
+Rx                                      < was delivered on 5/10/2022 19:05:07\
+Rx                                      < r\n
+Rx                                      < Recipient's Local Message ID: ACE-75
+Rx                                      < 9P\r\n
+Rx                                      < \r\n
+Rx                                      < (#0) >\r\n
+2022/05/18 10:27:40 Received at PKTTUE@W2XSC: from "kj6ace@w4xsc.ampr.org" subject "DELIVERED: TUE-4978P_O/R_SCCo ARES/RACES Packet Practice Report For: Tuesday, May 03, 2022. Total = 33 call signs /37 me"
+Tx K 19\n                               >
+Rx                                      < (#0) >\r\n
+2022/05/18 10:27:40 => TUE-019P DELIVERED DeliveryReceipt
+Tx V 20\n                               >
+Rx                                      < Message #20 \r\n
+Rx                                      < Date: Tue, 10 May 2022 19:08:28 PDT\
+Rx                                      < r\n
+Rx                                      < From: aa6pm@w1xsc.ampr.org\r\n
+Rx                                      < To: pkttue@w2xsc.ampr.org\r\n
+Rx                                      < Subject: DELIVERED: TUE-2571P_O/R_SC
+Rx                                      < Co ARES/RACES Packet Practice Report
+Rx                                      <  For: Tuesday, April 19, 2022. Total
+Rx                                      <  = 34 call signs /34\r\n
+Rx                                      < \r\n
+Rx                                      < !LMI!PJM-623P!DR!5/10/2022 7:06:41 P
+Rx                                      < M\r\n
+Rx                                      < Y\r\n
+Rx                                      < our Message\r\n
+Rx                                      < To: AA6PM\r\n
+Rx                                      < Subject: TUE-2571P_O/R_SCCo ARES/RAC
+Rx                                      < ES Packet Practice Report For: Tuesd
+Rx                                      < ay, April 19, 2022. Total = 34 call 
+Rx                                      < signs /34 messages\r\n
+Rx                                      < was delivered on 5/10/2022 7:06:41 P
+Rx                                      < M\r\n
+Rx                                      < Recipient's Local Message ID: PJM-62
+Rx                                      < 3P\r\n
+Rx                                      < \r\n
+Rx                                      < (#0) >\r\n
+2022/05/18 10:27:40 Received at PKTTUE@W2XSC: from "aa6pm@w1xsc.ampr.org" subject "DELIVERED: TUE-2571P_O/R_SCCo ARES/RACES Packet Practice Report For: Tuesday, April 19, 2022. Total = 34 call signs /34"
+Tx K 20\n                               >
+Rx                                      < (#0) >\r\n
+2022/05/18 10:27:40 => TUE-020P DELIVERED DeliveryReceipt
+Tx V 21\n                               >
+Rx                                      < Message #21 \r\n
+Rx                                      < Date: Tue, 10 May 2022 19:08:40 PDT\
+Rx                                      < r\n
+Rx                                      < From: aa6pm@w1xsc.ampr.org\r\n
+Rx                                      < To: pkttue@w2xsc.ampr.org\r\n
+Rx                                      < Subject: DELIVERED: TUE-779P_O/R_SCC
+Rx                                      < o ARES/RACES Packet Practice Report 
+Rx                                      < For: Tuesday, April 26, 2022. Total 
+Rx                                      < = 29 call signs /30 m\r\n
+Rx                                      < \r\n
+Rx                                      < !LMI!PJM-624P!DR!5/10/2022 7:07:44 P
+Rx                                      < M\r\n
+Rx                                      < Your Message\r\n
+Rx                                      < To: AA6PM\r\n
+Rx                                      < Subject: TUE-779P_O/R_SCCo ARES/RACE
+Rx                                      < S Packet Practice Report For: Tuesda
+Rx                                      < y, April 26, 2022. Total = 29 call s
+Rx                                      < igns /30 messages\r\n
+Rx                                      < was delivered on 5/10/2022 7:07:44 P
+Rx                                      < M\r\n
+Rx                                      < Recipient's Local Message ID: PJM-62
+Rx                                      < 4P\r\n
+Rx                                      < \r\n
+Rx                                      < (#0) >\r\n
+2022/05/18 10:27:40 Received at PKTTUE@W2XSC: from "aa6pm@w1xsc.ampr.org" subject "DELIVERED: TUE-779P_O/R_SCCo ARES/RACES Packet Practice Report For: Tuesday, April 26, 2022. Total = 29 call signs /30 m"
+Tx K 21\n                               >
+Rx                                      < (#0) >\r\n
+2022/05/18 10:27:40 => TUE-021P DELIVERED DeliveryReceipt
+Tx V 22\n                               >
+Rx                                      < Message #22 \r\n
+Rx                                      < Date: Tue, 10 May 2022 19:39:38 PDT\
+Rx                                      < r\n
+Rx                                      < From: kk6ebl@w1xsc.ampr.org\r\n
+Rx                                      < To: pkttue@w2xsc.ampr.org\r\n
+Rx                                      < Subject: DELIVERED: TUE-778P_O/R_SCC
+Rx                                      < o ARES/RACES Packet Practice Report 
+Rx                                      < For: Tuesday, April 26, 2022. Total 
+Rx                                      < = 29 call signs /30 m\r\n
+Rx                                      < \r\n
+Rx                                      < !LMI!EBL-1310P!DR!5/10/2022 7:37:18 
+Rx                                      < PM\r\n
+Rx                                      < Your Message\r\n
+Rx                                      < To: KK6EBL\r\n
+Rx                                      < Subject: TUE-778P_O/R_SCCo ARES/RACE
+Rx                                      < S Packet Practice Report For: Tuesda
+Rx                                      < y, April 26, 2022. Total = 29 call s
+Rx                                      < igns /30 messages\r\n
+Rx                                      < was delivered on 5/10/2022 7:37:18 P
+Rx                                      < M\r\n
+Rx                                      < Recipient's Local Message ID: EBL-13
+Rx                                      < 10P\r\n
+Rx                                      < \r\n
+Rx                                      < (#0) >\r\n
+2022/05/18 10:27:40 Received at PKTTUE@W2XSC: from "kk6ebl@w1xsc.ampr.org" subject "DELIVERED: TUE-778P_O/R_SCCo ARES/RACES Packet Practice Report For: Tuesday, April 26, 2022. Total = 29 call signs /30 m"
+Tx K 22\n                               >
+Rx                                      < (#0) >\r\n
+2022/05/18 10:27:40 => TUE-022P DELIVERED DeliveryReceipt
+Tx V 23\n                               >
+Rx                                      < Message #23 \r\n
+Rx                                      < Date: Wed, 11 May 2022 09:02:13 PDT\
+Rx                                      < r\n
+Rx                                      < From: ak6by@w1xsc.ampr.org\r\n
+Rx                                      < To: pkttue@w2xsc\r\n
+Rx                                      < Subject: 6BY-101P_R_Practice AK6BY, 
+Rx                                      < Anne, San Jose, 5/17/22\r\n
+Rx                                      < \r\n
+Rx                                      < \r\n
+Rx                                      < \r\n
+Rx                                      < Signed,\r\n
+Rx                                      < AK6BY, Anne Akbay\r\n
+Rx                                      < \r\n
+Rx                                      < (#0) >\r\n
+2022/05/18 10:27:40 Received at PKTTUE@W2XSC: from "ak6by@w1xsc.ampr.org" subject "6BY-101P_R_Practice AK6BY, Anne, San Jose, 5/17/22"
+Tx SP ak6by@w1xsc.ampr.org\n            >
+Rx                                      < Subject:\r\n
+Tx DELIVERED: 6BY-101P_R_Practice AK6BY >
+Tx , Anne, San Jose, 5/17/22\n          >
+Rx                                      < Enter message.  End with /EX or ^Z i
+Rx                                      < n first column (^A aborts):\r\n
+Tx !LMI!TUE-023P!DR!05/18/2022 10:27:40 >
+Tx \n                                   >
+Tx Your Message\n                       >
+Tx To: pkttue@w2xsc.ampr.org\n          >
+Tx Subject: 6BY-101P_R_Practice AK6BY,  >
+Tx Anne, San Jose, 5/17/22\n            >
+Tx was delivered on 05/18/2022 10:27:40 >
+Tx \n                                   >
+Tx Recipient's Local Message ID: TUE-02 >
+Tx 3P\n                                 >
+Tx /EX\n                                >
+Rx                                      < Msg queued\r\n
+Rx                                      < (#0) >\r\n
+Tx K 23\n                               >
+Rx                                      < (#0) >\r\n
+2022/05/18 10:27:40 => TUE-023P plain 
+Tx V 24\n                               >
+Rx                                      < Message #24 \r\n
+Rx                                      < Date: Thu, 12 May 2022 00:44:05 PDT\
+Rx                                      < r\n
+Rx                                      < From: k6sw@w1xsc.ampr.org\r\n
+Rx                                      < To: pkttue@w2xsc.ampr.org\r\n
+Rx                                      < Cc: SJCPKT@w1xsc.ampr.org\r\n
+Rx                                      < Subject: PEB-771P_R_Practice K6SW, P
+Rx                                      < at, San Jose, 2022-05-17\r\n
+Rx                                      < \r\n
+Rx                                      < Good evening.\r\n
+Rx                                      < \r\n
+Rx                                      < Pat\r\n
+Rx                                      < K6SW\r\n
+Rx                                      < \r\n
+Rx                                      < ** This is Drill Traffic *\r\n
+Rx                                      < \r\n
+Rx                                      < \r\n
+Rx                                      < (#0) >\r\n
+2022/05/18 10:27:40 Received at PKTTUE@W2XSC: from "k6sw@w1xsc.ampr.org" subject "PEB-771P_R_Practice K6SW, Pat, San Jose, 2022-05-17"
+Tx SP k6sw@w1xsc.ampr.org\n             >
+Rx                                      < Subject:\r\n
+Tx DELIVERED: PEB-771P_R_Practice K6SW, >
+Tx  Pat, San Jose, 2022-05-17\n         >
+Rx                                      < Enter message.  End with /EX or ^Z i
+Rx                                      < n first column (^A aborts):\r\n
+Tx !LMI!TUE-025P!DR!05/18/2022 10:27:40 >
+Tx \n                                   >
+Tx Your Message\n                       >
+Tx To: pkttue@w2xsc.ampr.org\n          >
+Tx Subject: PEB-771P_R_Practice K6SW, P >
+Tx at, San Jose, 2022-05-17\n           >
+Tx was delivered on 05/18/2022 10:27:40 >
+Tx \n                                   >
+Tx Recipient's Local Message ID: TUE-02 >
+Tx 5P\n                                 >
+Tx /EX\n                                >
+Rx                                      < Msg queued\r\n
+Rx                                      < (#0) >\r\n
+Tx K 24\n                               >
+Rx                                      < (#0) >\r\n
+2022/05/18 10:27:40 => TUE-025P plain 
+Tx V 25\n                               >
+Rx                                      < Message #25 \r\n
+Rx                                      < Date: Thu, 12 May 2022 16:16:02 PDT\
+Rx                                      < r\n
+Rx                                      < From: w6bg@w1xsc.ampr.org\r\n
+Rx                                      < To: pkttue@w2xsc\r\n
+Rx                                      < Subject: 6BG-794P_R_Practice W6BG, M
+Rx                                      < AX, CUPERTINO, 2022-05-17\r\n
+Rx                                      < \r\n
+Rx                                      < Packet Practice Check in\r\n
+Rx                                      < Free text\r\n
+Rx                                      < The quick brown fox jumps over the l
+Rx                                      < azy dog 1234567890\r\n
+Rx                                      < 73,\r\n
+Rx                                      < Max - W6BG\r\n
+Rx                                      < \r\n
+Rx                                      < \r\n
+Rx                                      < (#0) >\r\n
+2022/05/18 10:27:40 Received at PKTTUE@W2XSC: from "w6bg@w1xsc.ampr.org" subject "6BG-794P_R_Practice W6BG, MAX, CUPERTINO, 2022-05-17"
+Tx SP w6bg@w1xsc.ampr.org\n             >
+Rx                                      < Subject:\r\n
+Tx DELIVERED: 6BG-794P_R_Practice W6BG, >
+Tx  MAX, CUPERTINO, 2022-05-17\n        >
+Rx                                      < Enter message.  End with /EX or ^Z i
+Rx                                      < n first column (^A aborts):\r\n
+Tx !LMI!TUE-027P!DR!05/18/2022 10:27:40 >
+Tx \n                                   >
+Tx Your Message\n                       >
+Tx To: pkttue@w2xsc.ampr.org\n          >
+Tx Subject: 6BG-794P_R_Practice W6BG, M >
+Tx AX, CUPERTINO, 2022-05-17\n          >
+Tx was delivered on 05/18/2022 10:27:40 >
+Tx \n                                   >
+Tx Recipient's Local Message ID: TUE-02 >
+Tx 7P\n                                 >
+Tx /EX\n                                >
+Rx                                      < Msg queued\r\n
+Rx                                      < (#0) >\r\n
+Tx K 25\n                               >
+Rx                                      < (#0) >\r\n
+2022/05/18 10:27:40 => TUE-027P plain 
+Tx V 26\n                               >
+Rx                                      < Message #26 \r\n
+Rx                                      < Date: Thu, 12 May 2022 16:49:21 PDT\
+Rx                                      < r\n
+Rx                                      < From: kk6fmq@w4xsc.ampr.org\r\n
+Rx                                      < To: pkttue@w2xsc.ampr.org\r\n
+Rx                                      < Subject: DELIVERED: TUE-4975P_O/R_SC
+Rx                                      < Co ARES/RACES Packet Practice Report
+Rx                                      <  For: Tuesday, May 03, 2022. Total =
+Rx                                      <  33 call signs /37 me\r\n
+Rx                                      < \r\n
+Rx                                      < !LMI!FMQ-136P!DR!5/12/2022 4:49:15 P
+Rx                                      < M\r\n
+Rx                                      < Your Message\r\n
+Rx                                      < To: KK6FMQ\r\n
+Rx                                      < Subject: TUE-4975P_O/R_SCCo ARES/RAC
+Rx                                      < ES Packet Practice Report For: Tuesd
+Rx                                      < ay, May 03, 2022. Total = 33 call si
+Rx                                      < gns /37 messages\r\n
+Rx                                      < was delivered on 5/12/2022 4:49:15 P
+Rx                                      < M\r\n
+Rx                                      < Recipient's Local Message ID: FMQ-13
+Rx                                      < 6P\r\n
+Rx                                      < \r\n
+Rx                                      < (#0) >\r\n
+2022/05/18 10:27:40 Received at PKTTUE@W2XSC: from "kk6fmq@w4xsc.ampr.org" subject "DELIVERED: TUE-4975P_O/R_SCCo ARES/RACES Packet Practice Report For: Tuesday, May 03, 2022. Total = 33 call signs /37 me"
+Tx K 26\n                               >
+Rx                                      < (#0) >\r\n
+2022/05/18 10:27:40 => TUE-029P DELIVERED DeliveryReceipt
+Tx V 27\n                               >
+Rx                                      < Message #27 \r\n
+Rx                                      < Date: Fri, 13 May 2022 14:53:22 PDT\
+Rx                                      < r\n
+Rx                                      < From: ke6ppi@w1xsc.ampr.org\r\n
+Rx                                      < To: pkttue@w2xsc.ampr.org\r\n
+Rx                                      < Subject: PPI-500P_R_Practice KE6PPI,
+Rx                                      <  Roger, Sunnyvale, 05-13-2022\r\n
+Rx                                      < \r\n
+Rx                                      < Practice KE6PPI, Roger, Sunnyvale, 0
+Rx                                      < 5-13-2022\r\n
+Rx                                      < \r\n
+Rx                                      < 73,\r\n
+Rx                                      < Roger Pease, KE6PPI\r\n
+Rx                                      < \r\n
+Rx                                      < (#0) >\r\n
+2022/05/18 10:27:40 Received at PKTTUE@W2XSC: from "ke6ppi@w1xsc.ampr.org" subject "PPI-500P_R_Practice KE6PPI, Roger, Sunnyvale, 05-13-2022"
+Tx SP ke6ppi@w1xsc.ampr.org\n           >
+Rx                                      < Subject:\r\n
+Tx DELIVERED: PPI-500P_R_Practice KE6PP >
+Tx I, Roger, Sunnyvale, 05-13-2022\n    >
+Rx                                      < Enter message.  End with /EX or ^Z i
+Rx                                      < n first column (^A aborts):\r\n
+Tx !LMI!TUE-030P!DR!05/18/2022 10:27:40 >
+Tx \n                                   >
+Tx Your Message\n                       >
+Tx To: pkttue@w2xsc.ampr.org\n          >
+Tx Subject: PPI-500P_R_Practice KE6PPI, >
+Tx  Roger, Sunnyvale, 05-13-2022\n      >
+Tx was delivered on 05/18/2022 10:27:40 >
+Tx \n                                   >
+Tx Recipient's Local Message ID: TUE-03 >
+Tx 0P\n                                 >
+Tx /EX\n                                >
+Rx                                      < Msg queued\r\n
+Rx                                      < (#0) >\r\n
+Tx SP ke6ppi@w1xsc.ampr.org\n           >
+Rx                                      < Subject:\r\n
+Tx TUE-032P_R_Incorrect net date in sub >
+Tx ject\n                               >
+Rx                                      < Enter message.  End with /EX or ^Z i
+Rx                                      < n first column (^A aborts):\r\n
+Tx The packet practice message\n        >
+Tx     From: ke6ppi@w1xsc.ampr.org\n    >
+Tx     To: pkttue@w2xsc\n               >
+Tx     Subject: PPI-500P_R_Practice KE6 >
+Tx PPI, Roger, Sunnyvale, 05-13-2022\n  >
+Tx     Date: Fri, 13 May 2022 14:53:22  >
+Tx PDT\n                                >
+Tx has the following issue.\n           >
+Tx \n                                   >
+Tx This message is being counted for SV >
+Tx ECS Net on May 11, but the subject l >
+Tx ine\n                                >
+Tx says it's intended for a net on May  >
+Tx 13.  This may indicate that the mess >
+Tx age\n                                >
+Tx was sent to the wrong net.\n         >
+Tx \n                                   >
+Tx For more information:\n              >
+Tx   * The \"Weekly SPECS/SVECS Packet  >
+Tx Practice\" page on the county ARES/R >
+Tx ACES\n                               >
+Tx     website gives details of the pac >
+Tx ket practice exercise, including the >
+Tx  net\n                               >
+Tx     practice schedules, the schedule >
+Tx  of what type of message to send, th >
+Tx e\n                                  >
+Tx     schedule of simulated \"down\" B >
+Tx BS systems, and the format of the su >
+Tx bject\n                              >
+Tx     line for practice messages.  It  >
+Tx is available at\n                    >
+Tx     https://www.scc-ares-races.org/d >
+Tx ata/packet/weekly-packet-practice.ht >
+Tx ml\n                                 >
+Tx   * If you need assistance, you can  >
+Tx request it in the packet discussion  >
+Tx group.\n                             >
+Tx     To sign up for this group, see t >
+Tx he Discussion Groups page at\n       >
+Tx     https://www.scc-ares-races.org/d >
+Tx iscuss-groups.html\n                 >
+Tx /EX\n                                >
+Rx                                      < Msg queued\r\n
+Rx                                      < (#0) >\r\n
+Tx K 27\n                               >
+Rx                                      < (#0) >\r\n
+2022/05/18 10:27:40 => TUE-030P plain SessionDate
+Tx V 28\n                               >
+Rx                                      < Message #28 \r\n
+Rx                                      < Date: Fri, 13 May 2022 18:52:22 PDT\
+Rx                                      < r\n
+Rx                                      < From: kk6fmq@w1xsc.ampr.org\r\n
+Rx                                      < To: pkttue@w2xsc.ampr.org\r\n
+Rx                                      < Subject: FMQ-305M_R_Practice KK6FMQ,
+Rx                                      <  Grant, PAF, 05/17/2022\r\n
+Rx                                      < \r\n
+Rx                                      < *****This is Drill Traffic******\r\n
+Rx                                      < Grant, KK6FMQ\r\n
+Rx                                      < \r\n
+Rx                                      < (#0) >\r\n
+2022/05/18 10:27:40 Received at PKTTUE@W2XSC: from "kk6fmq@w1xsc.ampr.org" subject "FMQ-305M_R_Practice KK6FMQ, Grant, PAF, 05/17/2022"
+Tx SP kk6fmq@w1xsc.ampr.org\n           >
+Rx                                      < Subject:\r\n
+Tx DELIVERED: FMQ-305M_R_Practice KK6FM >
+Tx Q, Grant, PAF, 05/17/2022\n          >
+Rx                                      < Enter message.  End with /EX or ^Z i
+Rx                                      < n first column (^A aborts):\r\n
+Tx !LMI!TUE-033P!DR!05/18/2022 10:27:40 >
+Tx \n                                   >
+Tx Your Message\n                       >
+Tx To: pkttue@w2xsc.ampr.org\n          >
+Tx Subject: FMQ-305M_R_Practice KK6FMQ, >
+Tx  Grant, PAF, 05/17/2022\n            >
+Tx was delivered on 05/18/2022 10:27:40 >
+Tx \n                                   >
+Tx Recipient's Local Message ID: TUE-03 >
+Tx 3P\n                                 >
+Tx /EX\n                                >
+Rx                                      < Msg queued\r\n
+Rx                                      < (#0) >\r\n
+Tx K 28\n                               >
+Rx                                      < (#0) >\r\n
+2022/05/18 10:27:40 => TUE-033P plain 
+Tx V 29\n                               >
+Rx                                      < Message #29 \r\n
+Rx                                      < Date: Sun, 15 May 2022 07:58:18 PDT\
+Rx                                      < r\n
+Rx                                      < From: kk6fmq@w3xsc.ampr.org\r\n
+Rx                                      < To: pkttue@w2xsc.ampr.org\r\n
+Rx                                      < Subject: FMQ-140P_R_Practice KK6FMQ,
+Rx                                      <  Grant, PAF, 05/17/2022\r\n
+Rx                                      < \r\n
+Rx                                      < *****This is Drill Traffic******\r\n
+Rx                                      < \r\n
+Rx                                      < Signed:\r\n
+Rx                                      < Grant Elliot, KK6FMQ\r\n
+Rx                                      < \r\n
+Rx                                      < (#0) >\r\n
+2022/05/18 10:27:40 Received at PKTTUE@W2XSC: from "kk6fmq@w3xsc.ampr.org" subject "FMQ-140P_R_Practice KK6FMQ, Grant, PAF, 05/17/2022"
+Tx SP kk6fmq@w3xsc.ampr.org\n           >
+Rx                                      < Subject:\r\n
+Tx DELIVERED: FMQ-140P_R_Practice KK6FM >
+Tx Q, Grant, PAF, 05/17/2022\n          >
+Rx                                      < Enter message.  End with /EX or ^Z i
+Rx                                      < n first column (^A aborts):\r\n
+Tx !LMI!TUE-035P!DR!05/18/2022 10:27:40 >
+Tx \n                                   >
+Tx Your Message\n                       >
+Tx To: pkttue@w2xsc.ampr.org\n          >
+Tx Subject: FMQ-140P_R_Practice KK6FMQ, >
+Tx  Grant, PAF, 05/17/2022\n            >
+Tx was delivered on 05/18/2022 10:27:40 >
+Tx \n                                   >
+Tx Recipient's Local Message ID: TUE-03 >
+Tx 5P\n                                 >
+Tx /EX\n                                >
+Rx                                      < Msg queued\r\n
+Rx                                      < (#0) >\r\n
+Tx SP kk6fmq@w3xsc.ampr.org\n           >
+Rx                                      < Subject:\r\n
+Tx TUE-037P_R_Message from incorrect BB >
+Tx S (simulated down)\n                 >
+Rx                                      < Enter message.  End with /EX or ^Z i
+Rx                                      < n first column (^A aborts):\r\n
+Tx The packet practice message\n        >
+Tx     From: kk6fmq@w3xsc.ampr.org\n    >
+Tx     To: pkttue@w2xsc\n               >
+Tx     Subject: FMQ-140P_R_Practice KK6 >
+Tx FMQ, Grant, PAF, 05/17/2022\n        >
+Tx     Date: Sun, 15 May 2022 07:58:18  >
+Tx PDT\n                                >
+Tx has the following issue.\n           >
+Tx \n                                   >
+Tx This message was sent from W3XSC, wh >
+Tx ich is simulated down for SVECS Net  >
+Tx on\n                                 >
+Tx May 17.  Practice messages should no >
+Tx t be sent from BBSes that are simula >
+Tx ted\n                                >
+Tx down.\n                              >
+Tx \n                                   >
+Tx For more information:\n              >
+Tx   * The \"Weekly SPECS/SVECS Packet  >
+Tx Practice\" page on the county ARES/R >
+Tx ACES\n                               >
+Tx     website gives details of the pac >
+Tx ket practice exercise, including the >
+Tx  net\n                               >
+Tx     practice schedules, the schedule >
+Tx  of what type of message to send, th >
+Tx e\n                                  >
+Tx     schedule of simulated \"down\" B >
+Tx BS systems, and the format of the su >
+Tx bject\n                              >
+Tx     line for practice messages.  It  >
+Tx is available at\n                    >
+Tx     https://www.scc-ares-races.org/d >
+Tx ata/packet/weekly-packet-practice.ht >
+Tx ml\n                                 >
+Tx   * If you need assistance, you can  >
+Tx request it in the packet discussion  >
+Tx group.\n                             >
+Tx     To sign up for this group, see t >
+Tx he Discussion Groups page at\n       >
+Tx     https://www.scc-ares-races.org/d >
+Tx iscuss-groups.html\n                 >
+Tx /EX\n                                >
+Rx                                      < Msg queued\r\n
+Rx                                      < (#0) >\r\n
+Tx K 29\n                               >
+Rx                                      < (#0) >\r\n
+2022/05/18 10:27:40 => TUE-035P plain FromBBSDown
+Tx V 30\n                               >
+Rx                                      < Message #30 \r\n
+Rx                                      < Date: Sun, 15 May 2022 16:26:32 PDT\
+Rx                                      < r\n
+Rx                                      < From: ke6tim@w1xsc.ampr.org\r\n
+Rx                                      < To: pkttue@w2xsc.ampr.org\r\n
+Rx                                      < Subject: DELIVERED: TUE-773P_R_Messa
+Rx                                      < ge Subject Mismatch with Form Conten
+Rx                                      < t\r\n
+Rx                                      < \r\n
+Rx                                      < !LMI!TIM-450P!DR!5/15/2022 4:26:30 P
+Rx                                      < M\r\n
+Rx                                      < Your Message\r\n
+Rx                                      < To: KE6TIM\r\n
+Rx                                      < Subject: TUE-773P_R_Message Subject 
+Rx                                      < Mismatch with Form Content\r\n
+Rx                                      < was delivered on 5/15/2022 16:26\r\n
+Rx                                      < Recipient's Local Message ID: TIM-45
+Rx                                      < 0P\r\n
+Rx                                      < \r\n
+Rx                                      < (#0) >\r\n
+2022/05/18 10:27:40 Received at PKTTUE@W2XSC: from "ke6tim@w1xsc.ampr.org" subject "DELIVERED: TUE-773P_R_Message Subject Mismatch with Form Content"
+Tx K 30\n                               >
+Rx                                      < (#0) >\r\n
+2022/05/18 10:27:40 => TUE-038P DELIVERED DeliveryReceipt
+Tx V 31\n                               >
+Rx                                      < Message #31 \r\n
+Rx                                      < Date: Sun, 15 May 2022 16:26:33 PDT\
+Rx                                      < r\n
+Rx                                      < From: ke6tim@w1xsc.ampr.org\r\n
+Rx                                      < To: pkttue@w2xsc.ampr.org\r\n
+Rx                                      < Subject: DELIVERED: TUE-779P_O/R_SCC
+Rx                                      < o ARES/RACES Packet Practice Report 
+Rx                                      < For: Tuesday, April 26, 2022. Total 
+Rx                                      < = 29 call signs /30 m\r\n
+Rx                                      < \r\n
+Rx                                      < !LMI!TIM-451P!DR!5/15/2022 4:26:31 P
+Rx                                      < M\r\n
+Rx                                      < Your Message\r\n
+Rx                                      < To: KE6TIM\r\n
+Rx                                      < Subject: TUE-779P_O/R_SCCo ARES/RACE
+Rx                                      < S Packet Practice Report For: Tuesda
+Rx                                      < y, April 26, 2022. Total = 29 call s
+Rx                                      < igns /30 messages\r\n
+Rx                                      < was delivered on 5/15/2022 16:26\r\n
+Rx                                      < Recipient's Local Message ID: TIM-45
+Rx                                      < 1P\r\n
+Rx                                      < \r\n
+Rx                                      < (#0) >\r\n
+2022/05/18 10:27:40 Received at PKTTUE@W2XSC: from "ke6tim@w1xsc.ampr.org" subject "DELIVERED: TUE-779P_O/R_SCCo ARES/RACES Packet Practice Report For: Tuesday, April 26, 2022. Total = 29 call signs /30 m"
+Tx K 31\n                               >
+Rx                                      < (#0) >\r\n
+2022/05/18 10:27:40 => TUE-039P DELIVERED DeliveryReceipt
+Tx V 32\n                               >
+Rx                                      < Message #32 \r\n
+Rx                                      < Date: Sun, 15 May 2022 19:09:46 PDT\
+Rx                                      < r\n
+Rx                                      < From: ag6gx@w1xsc.ampr.org\r\n
+Rx                                      < To: pkttue@w2xsc\r\n
+Rx                                      < Subject: 6GX-4985P_R_Practice AG6GX,
+Rx                                      <  Brian, Cupertino, 05/17/2022\r\n
+Rx                                      < \r\n
+Rx                                      < Hello World\r\n
+Rx                                      < \r\n
+Rx                                      < Signed,\r\n
+Rx                                      < Brian Tanner AG6GX\r\n
+Rx                                      < ***** THIS IS DRILL TRAFFIC  ****\r\
+Rx                                      < n
+Rx                                      < \r\n
+Rx                                      < (#0) >\r\n
+2022/05/18 10:27:40 Received at PKTTUE@W2XSC: from "ag6gx@w1xsc.ampr.org" subject "6GX-4985P_R_Practice AG6GX, Brian, Cupertino, 05/17/2022"
+Tx SP ag6gx@w1xsc.ampr.org\n            >
+Rx                                      < Subject:\r\n
+Tx DELIVERED: 6GX-4985P_R_Practice AG6G >
+Tx X, Brian, Cupertino, 05/17/2022\n    >
+Rx                                      < Enter message.  End with /EX or ^Z i
+Rx                                      < n first column (^A aborts):\r\n
+Tx !LMI!TUE-040P!DR!05/18/2022 10:27:40 >
+Tx \n                                   >
+Tx Your Message\n                       >
+Tx To: pkttue@w2xsc.ampr.org\n          >
+Tx Subject: 6GX-4985P_R_Practice AG6GX, >
+Tx  Brian, Cupertino, 05/17/2022\n      >
+Tx was delivered on 05/18/2022 10:27:40 >
+Tx \n                                   >
+Tx Recipient's Local Message ID: TUE-04 >
+Tx 0P\n                                 >
+Tx /EX\n                                >
+Rx                                      < Msg queued\r\n
+Rx                                      < (#0) >\r\n
+Tx K 32\n                               >
+Rx                                      < (#0) >\r\n
+2022/05/18 10:27:40 => TUE-040P plain 
+Tx V 33\n                               >
+Rx                                      < Message #33 \r\n
+Rx                                      < Date: Sun, 15 May 2022 20:19:53 PDT\
+Rx                                      < r\n
+Rx                                      < From: kc6rsc@w1xsc.ampr.org\r\n
+Rx                                      < To: pkttue@w2xsc\r\n
+Rx                                      < Subject: STR-2654P_R_Practice KC6RSC
+Rx                                      < , Steve, SNY, 2022-05-17\r\n
+Rx                                      < \r\n
+Rx                                      < .\r\n
+Rx                                      < \r\n
+Rx                                      < (#0) >\r\n
+2022/05/18 10:27:40 Received at PKTTUE@W2XSC: from "kc6rsc@w1xsc.ampr.org" subject "STR-2654P_R_Practice KC6RSC, Steve, SNY, 2022-05-17"
+Tx SP kc6rsc@w1xsc.ampr.org\n           >
+Rx                                      < Subject:\r\n
+Tx DELIVERED: STR-2654P_R_Practice KC6R >
+Tx SC, Steve, SNY, 2022-05-17\n         >
+Rx                                      < Enter message.  End with /EX or ^Z i
+Rx                                      < n first column (^A aborts):\r\n
+Tx !LMI!TUE-042P!DR!05/18/2022 10:27:40 >
+Tx \n                                   >
+Tx Your Message\n                       >
+Tx To: pkttue@w2xsc.ampr.org\n          >
+Tx Subject: STR-2654P_R_Practice KC6RSC >
+Tx , Steve, SNY, 2022-05-17\n           >
+Tx was delivered on 05/18/2022 10:27:40 >
+Tx \n                                   >
+Tx Recipient's Local Message ID: TUE-04 >
+Tx 2P\n                                 >
+Tx /EX\n                                >
+Rx                                      < Msg queued\r\n
+Rx                                      < (#0) >\r\n
+Tx K 33\n                               >
+Rx                                      < (#0) >\r\n
+2022/05/18 10:27:40 => TUE-042P plain 
+Tx V 34\n                               >
+Rx                                      < Message #34 \r\n
+Rx                                      < Date: Sun, 15 May 2022 20:41:43 PDT\
+Rx                                      < r\n
+Rx                                      < From: wu6p@w1xsc.ampr.org\r\n
+Rx                                      < To: pkttue@w2xsc.ampr.org\r\n
+Rx                                      < Subject: U6P-435P_R_Practice WU6P, N
+Rx                                      < ianfeng, Sunnyvale, 05/17/2022\r\n
+Rx                                      < \r\n
+Rx                                      < Practice WU6P, Nianfeng, Sunnyvale\r
+Rx                                      < \n
+Rx                                      < \r\n
+Rx                                      < (#0) >\r\n
+2022/05/18 10:27:40 Received at PKTTUE@W2XSC: from "wu6p@w1xsc.ampr.org" subject "U6P-435P_R_Practice WU6P, Nianfeng, Sunnyvale, 05/17/2022"
+Tx SP wu6p@w1xsc.ampr.org\n             >
+Rx                                      < Subject:\r\n
+Tx DELIVERED: U6P-435P_R_Practice WU6P, >
+Tx  Nianfeng, Sunnyvale, 05/17/2022\n   >
+Rx                                      < Enter message.  End with /EX or ^Z i
+Rx                                      < n first column (^A aborts):\r\n
+Tx !LMI!TUE-044P!DR!05/18/2022 10:27:40 >
+Tx \n                                   >
+Tx Your Message\n                       >
+Tx To: pkttue@w2xsc.ampr.org\n          >
+Tx Subject: U6P-435P_R_Practice WU6P, N >
+Tx ianfeng, Sunnyvale, 05/17/2022\n     >
+Tx was delivered on 05/18/2022 10:27:40 >
+Tx \n                                   >
+Tx Recipient's Local Message ID: TUE-04 >
+Tx 4P\n                                 >
+Tx /EX\n                                >
+Rx                                      < Msg queued\r\n
+Rx                                      < (#0) >\r\n
+Tx K 34\n                               >
+Rx                                      < (#0) >\r\n
+2022/05/18 10:27:40 => TUE-044P plain 
+Tx V 35\n                               >
+Rx                                      < Message #35 \r\n
+Rx                                      < Date: Sun, 15 May 2022 21:26:10 PDT\
+Rx                                      < r\n
+Rx                                      < From: km6clk@w1xsc.ampr.org\r\n
+Rx                                      < To: pkttue@w2xsc.ampr.org\r\n
+Rx                                      < Subject: DELIVERED: TUE-775P_R_Forma
+Rx                                      < t of Subject Differs from County Sta
+Rx                                      < ndard\r\n
+Rx                                      < \r\n
+Rx                                      < !LMI!CLK-285P!DR!5/15/2022 9:24:47 P
+Rx                                      < M\r\n
+Rx                                      < Your Message\r\n
+Rx                                      < To: KM6CLK\r\n
+Rx                                      < Subject: TUE-775P_R_Format of Subjec
+Rx                                      < t Differs from County Standard\r\n
+Rx                                      < was delivered on 5/15/2022 9:24:47 P
+Rx                                      < M\r\n
+Rx                                      < Recipient's Local Message ID: CLK-28
+Rx                                      < 5P\r\n
+Rx                                      < \r\n
+Rx                                      < (#0) >\r\n
+2022/05/18 10:27:40 Received at PKTTUE@W2XSC: from "km6clk@w1xsc.ampr.org" subject "DELIVERED: TUE-775P_R_Format of Subject Differs from County Standard"
+Tx K 35\n                               >
+Rx                                      < (#0) >\r\n
+2022/05/18 10:27:40 => TUE-046P DELIVERED DeliveryReceipt
+Tx V 36\n                               >
+Rx                                      < Message #36 \r\n
+Rx                                      < Date: Sun, 15 May 2022 21:26:26 PDT\
+Rx                                      < r\n
+Rx                                      < From: km6clk@w1xsc.ampr.org\r\n
+Rx                                      < To: pkttue@w2xsc.ampr.org\r\n
+Rx                                      < Subject: DELIVERED: TUE-777P_O/R_SCC
+Rx                                      < o ARES/RACES Packet Practice Report 
+Rx                                      < For: Tuesday, April 26, 2022. Total 
+Rx                                      < = 29 call signs /30 m\r\n
+Rx                                      < \r\n
+Rx                                      < !LMI!CLK-286P!DR!5/15/2022 9:25:44 P
+Rx                                      < M\r\n
+Rx                                      < Your Message\r\n
+Rx                                      < To: KM6CLK\r\n
+Rx                                      < Subject: TUE-777P_O/R_SCCo ARES/RACE
+Rx                                      < S Packet Practice Report For: Tuesda
+Rx                                      < y, April 26, 2022. Total = 29 call s
+Rx                                      < igns /30 messages\r\n
+Rx                                      < was delivered on 5/15/2022 9:25:44 P
+Rx                                      < M\r\n
+Rx                                      < Recipient's Local Message ID: CLK-28
+Rx                                      < 6P\r\n
+Rx                                      < \r\n
+Rx                                      < (#0) >\r\n
+2022/05/18 10:27:40 Received at PKTTUE@W2XSC: from "km6clk@w1xsc.ampr.org" subject "DELIVERED: TUE-777P_O/R_SCCo ARES/RACES Packet Practice Report For: Tuesday, April 26, 2022. Total = 29 call signs /30 m"
+Tx K 36\n                               >
+Rx                                      < (#0) >\r\n
+2022/05/18 10:27:40 => TUE-047P DELIVERED DeliveryReceipt
+Tx V 37\n                               >
+Rx                                      < Message #37 \r\n
+Rx                                      < Date: Mon, 16 May 2022 10:43:04 PDT\
+Rx                                      < r\n
+Rx                                      < From: kg6yhs@w3xsc.ampr.org\r\n
+Rx                                      < To: pkttue@w2xsc.ampr.org\r\n
+Rx                                      < Subject: DELIVERED: TUE-778P_O/R_SCC
+Rx                                      < o ARES/RACES Packet Practice Report 
+Rx                                      < For: Tuesday, April 26, 2022. Total 
+Rx                                      < = 29 call signs /30 m\r\n
+Rx                                      < \r\n
+Rx                                      < !LMI!YHS-242P!DR!5/16/2022 10:41:50 
+Rx                                      < AM\r\n
+Rx                                      < Your Message\r\n
+Rx                                      < To: KG6YHS\r\n
+Rx                                      < Subject: TUE-778P_O/R_SCCo ARES/RACE
+Rx                                      < S Packet Practice Report For: Tuesda
+Rx                                      < y, April 26, 2022. Total = 29 call s
+Rx                                      < igns /30 messages\r\n
+Rx                                      < was delivered on 5/16/2022 10:41:50 
+Rx                                      < AM\r\n
+Rx                                      < Recipient's Local Message ID: YHS-24
+Rx                                      < 2P\r\n
+Rx                                      < \r\n
+Rx                                      < (#0) >\r\n
+2022/05/18 10:27:40 Received at PKTTUE@W2XSC: from "kg6yhs@w3xsc.ampr.org" subject "DELIVERED: TUE-778P_O/R_SCCo ARES/RACES Packet Practice Report For: Tuesday, April 26, 2022. Total = 29 call signs /30 m"
+Tx K 37\n                               >
+Rx                                      < (#0) >\r\n
+2022/05/18 10:27:40 => TUE-048P DELIVERED DeliveryReceipt
+Tx V 38\n                               >
+Rx                                      < Message #38 \r\n
+Rx                                      < Date: Mon, 16 May 2022 11:08:11 PDT\
+Rx                                      < r\n
+Rx                                      < From: kg6yhs@w4xsc.ampr.org\r\n
+Rx                                      < To: pkttue@w2xsc.ampr.org\r\n
+Rx                                      < Subject: YHS-247P_R_Practice KG6YHS,
+Rx                                      <  Irene, Palo Alto, 05/17/2022\r\n
+Rx                                      < \r\n
+Rx                                      < YHS-247P_R_Practice KG6YHS, Irene, P
+Rx                                      < alo Alto, 05/17/2022\r\n
+Rx                                      < \r\n
+Rx                                      < Signed,\r\n
+Rx                                      < Irene Beardsley, KG6YHS\r\n
+Rx                                      < *** THIS IS DRILL TRAFFIC ***\r\n
+Rx                                      < \r\n
+Rx                                      < (#0) >\r\n
+2022/05/18 10:27:40 Received at PKTTUE@W2XSC: from "kg6yhs@w4xsc.ampr.org" subject "YHS-247P_R_Practice KG6YHS, Irene, Palo Alto, 05/17/2022"
+Tx SP kg6yhs@w4xsc.ampr.org\n           >
+Rx                                      < Subject:\r\n
+Tx DELIVERED: YHS-247P_R_Practice KG6YH >
+Tx S, Irene, Palo Alto, 05/17/2022\n    >
+Rx                                      < Enter message.  End with /EX or ^Z i
+Rx                                      < n first column (^A aborts):\r\n
+Tx !LMI!TUE-049P!DR!05/18/2022 10:27:40 >
+Tx \n                                   >
+Tx Your Message\n                       >
+Tx To: pkttue@w2xsc.ampr.org\n          >
+Tx Subject: YHS-247P_R_Practice KG6YHS, >
+Tx  Irene, Palo Alto, 05/17/2022\n      >
+Tx was delivered on 05/18/2022 10:27:40 >
+Tx \n                                   >
+Tx Recipient's Local Message ID: TUE-04 >
+Tx 9P\n                                 >
+Tx /EX\n                                >
+Rx                                      < Msg queued\r\n
+Rx                                      < (#0) >\r\n
+Tx K 38\n                               >
+Rx                                      < (#0) >\r\n
+2022/05/18 10:27:40 => TUE-049P plain 
+Tx V 39\n                               >
+Rx                                      < Message #39 \r\n
+Rx                                      < Date: Mon, 16 May 2022 11:45:51 PDT\
+Rx                                      < r\n
+Rx                                      < From: kk6fpp@w4xsc.ampr.org\r\n
+Rx                                      < To: pkttue@w2xsc\r\n
+Rx                                      < Subject: FPP-102M_R_Practice KK6FPP,
+Rx                                      <  Thomas, Sunnyvale, 20220517\r\n
+Rx                                      < \r\n
+Rx                                      < Practice KK6FPP, Thomas, Sunnyvale, 
+Rx                                      < 20220517\r\n
+Rx                                      < \r\n
+Rx                                      < (#0) >\r\n
+2022/05/18 10:27:40 Received at PKTTUE@W2XSC: from "kk6fpp@w4xsc.ampr.org" subject "FPP-102M_R_Practice KK6FPP, Thomas, Sunnyvale, 20220517"
+Tx SP kk6fpp@w4xsc.ampr.org\n           >
+Rx                                      < Subject:\r\n
+Tx DELIVERED: FPP-102M_R_Practice KK6FP >
+Tx P, Thomas, Sunnyvale, 20220517\n     >
+Rx                                      < Enter message.  End with /EX or ^Z i
+Rx                                      < n first column (^A aborts):\r\n
+Tx !LMI!TUE-051P!DR!05/18/2022 10:27:40 >
+Tx \n                                   >
+Tx Your Message\n                       >
+Tx To: pkttue@w2xsc.ampr.org\n          >
+Tx Subject: FPP-102M_R_Practice KK6FPP, >
+Tx  Thomas, Sunnyvale, 20220517\n       >
+Tx was delivered on 05/18/2022 10:27:40 >
+Tx \n                                   >
+Tx Recipient's Local Message ID: TUE-05 >
+Tx 1P\n                                 >
+Tx /EX\n                                >
+Rx                                      < Msg queued\r\n
+Rx                                      < (#0) >\r\n
+Tx K 39\n                               >
+Rx                                      < (#0) >\r\n
+2022/05/18 10:27:40 => TUE-051P plain 
+Tx V 40\n                               >
+Rx                                      < Message #40 \r\n
+Rx                                      < Date: Mon, 16 May 2022 12:22:52 PDT\
+Rx                                      < r\n
+Rx                                      < From: kg6kzz@w1xsc.ampr.org\r\n
+Rx                                      < To: pkttue@w2xsc.#nca.ca.usa.noam\r\
+Rx                                      < n
+Rx                                      < Cc: KG6KZZ@xilicom.com, KG6KZZ@N0ARY
+Rx                                      < .#nca.ca.usa.noam, PKTTUE@w2xsc.ampr
+Rx                                      < .org\r\n
+Rx                                      < Subject: KZZ-388P_R_Practice KG6KZZ,
+Rx                                      <  Jason, Almaden, 5/17/2022\r\n
+Rx                                      < \r\n
+Rx                                      < Packet Tuesday Checkin\r\n
+Rx                                      < \r\n
+Rx                                      < \r\n
+Rx                                      < (#0) >\r\n
+2022/05/18 10:27:40 Received at PKTTUE@W2XSC: from "kg6kzz@w1xsc.ampr.org" subject "KZZ-388P_R_Practice KG6KZZ, Jason, Almaden, 5/17/2022"
+Tx SP kg6kzz@w1xsc.ampr.org\n           >
+Rx                                      < Subject:\r\n
+Tx DELIVERED: KZZ-388P_R_Practice KG6KZ >
+Tx Z, Jason, Almaden, 5/17/2022\n       >
+Rx                                      < Enter message.  End with /EX or ^Z i
+Rx                                      < n first column (^A aborts):\r\n
+Tx !LMI!TUE-053P!DR!05/18/2022 10:27:40 >
+Tx \n                                   >
+Tx Your Message\n                       >
+Tx To: pkttue@w2xsc.ampr.org\n          >
+Tx Subject: KZZ-388P_R_Practice KG6KZZ, >
+Tx  Jason, Almaden, 5/17/2022\n         >
+Tx was delivered on 05/18/2022 10:27:40 >
+Tx \n                                   >
+Tx Recipient's Local Message ID: TUE-05 >
+Tx 3P\n                                 >
+Tx /EX\n                                >
+Rx                                      < Msg queued\r\n
+Rx                                      < (#0) >\r\n
+Tx K 40\n                               >
+Rx                                      < (#0) >\r\n
+2022/05/18 10:27:40 => TUE-053P plain 
+Tx V 41\n                               >
+Rx                                      < Message #41 \r\n
+Rx                                      < Date: Mon, 16 May 2022 12:30:21 PDT\
+Rx                                      < r\n
+Rx                                      < From: kg6kzz@w1xsc.#nca.ca.usa.noam\
+Rx                                      < r\n
+Rx                                      < To: pkttue@w2xsc.#nca.ca.usa.noam\r\
+Rx                                      < n
+Rx                                      < Subject: KZZ-388P_R_Practice KG6KZZ,
+Rx                                      <  Jason, Almaden, 5/17/2022\r\n
+Rx                                      < \r\n
+Rx                                      < Path: W1XSC\r\n
+Rx                                      < \r\n
+Rx                                      < Packet Tuesday Checkin\r\n
+Rx                                      < \r\n
+Rx                                      < \r\n
+Rx                                      < (#0) >\r\n
+2022/05/18 10:27:40 Received at PKTTUE@W2XSC: from "kg6kzz@w1xsc.#nca.ca.usa.noam" subject "KZZ-388P_R_Practice KG6KZZ, Jason, Almaden, 5/17/2022"
+Tx SP kg6kzz@w1xsc.#nca.ca.usa.noam\n   >
+Rx                                      < Subject:\r\n
+Tx DELIVERED: KZZ-388P_R_Practice KG6KZ >
+Tx Z, Jason, Almaden, 5/17/2022\n       >
+Rx                                      < Enter message.  End with /EX or ^Z i
+Rx                                      < n first column (^A aborts):\r\n
+Tx !LMI!TUE-055P!DR!05/18/2022 10:27:40 >
+Tx \n                                   >
+Tx Your Message\n                       >
+Tx To: pkttue@w2xsc.ampr.org\n          >
+Tx Subject: KZZ-388P_R_Practice KG6KZZ, >
+Tx  Jason, Almaden, 5/17/2022\n         >
+Tx was delivered on 05/18/2022 10:27:40 >
+Tx \n                                   >
+Tx Recipient's Local Message ID: TUE-05 >
+Tx 5P\n                                 >
+Tx /EX\n                                >
+Rx                                      < Msg queued\r\n
+Rx                                      < (#0) >\r\n
+Tx K 41\n                               >
+Rx                                      < (#0) >\r\n
+2022/05/18 10:27:40 => TUE-055P plain 
+Tx V 42\n                               >
+Rx                                      < Message #42 \r\n
+Rx                                      < Date: Mon, 16 May 2022 12:40:11 PDT\
+Rx                                      < r\n
+Rx                                      < From: kt6jk@w1xsc.#nca.ca.usa.noam\r
+Rx                                      < \n
+Rx                                      < To: pkttue@w2xsc.#nca.ca.usa.noam\r\
+Rx                                      < n
+Rx                                      < Subject: 6JK-910M_R_Practice KT6JK, 
+Rx                                      < Todd, CUP, 20220517\r\n
+Rx                                      < \r\n
+Rx                                      < Path: W1XSC\r\n
+Rx                                      < \r\n
+Rx                                      < SCC ARES weekly pkt practice on thir
+Rx                                      < d Tuesday of May, 2022,\r\n
+Rx                                      < May 17th of 2022, with plain text an
+Rx                                      < d simulated BBS w3xsc down\r\n
+Rx                                      < \r\n
+Rx                                      < \r\n
+Rx                                      < (#0) >\r\n
+2022/05/18 10:27:40 Received at PKTTUE@W2XSC: from "kt6jk@w1xsc.#nca.ca.usa.noam" subject "6JK-910M_R_Practice KT6JK, Todd, CUP, 20220517"
+Tx SP kt6jk@w1xsc.#nca.ca.usa.noam\n    >
+Rx                                      < Subject:\r\n
+Tx DELIVERED: 6JK-910M_R_Practice KT6JK >
+Tx , Todd, CUP, 20220517\n              >
+Rx                                      < Enter message.  End with /EX or ^Z i
+Rx                                      < n first column (^A aborts):\r\n
+Tx !LMI!TUE-057P!DR!05/18/2022 10:27:40 >
+Tx \n                                   >
+Tx Your Message\n                       >
+Tx To: pkttue@w2xsc.ampr.org\n          >
+Tx Subject: 6JK-910M_R_Practice KT6JK,  >
+Tx Todd, CUP, 20220517\n                >
+Tx was delivered on 05/18/2022 10:27:40 >
+Tx \n                                   >
+Tx Recipient's Local Message ID: TUE-05 >
+Tx 7P\n                                 >
+Tx /EX\n                                >
+Rx                                      < Msg queued\r\n
+Rx                                      < (#0) >\r\n
+Tx K 42\n                               >
+Rx                                      < (#0) >\r\n
+2022/05/18 10:27:40 => TUE-057P plain 
+Tx V 43\n                               >
+Rx                                      < Message #43 \r\n
+Rx                                      < Date: Mon, 16 May 2022 15:34:27 PDT\
+Rx                                      < r\n
+Rx                                      < From: km6lry@w1xsc.ampr.org\r\n
+Rx                                      < To: pkttue@w2xsc\r\n
+Rx                                      < Subject: LRY-487P_R_Practice KM6LRY,
+Rx                                      <  Les, LG/MS, 05/17/2022\r\n
+Rx                                      < \r\n
+Rx                                      < x\r\n
+Rx                                      < \r\n
+Rx                                      < (#0) >\r\n
+2022/05/18 10:27:40 Received at PKTTUE@W2XSC: from "km6lry@w1xsc.ampr.org" subject "LRY-487P_R_Practice KM6LRY, Les, LG/MS, 05/17/2022"
+Tx SP km6lry@w1xsc.ampr.org\n           >
+Rx                                      < Subject:\r\n
+Tx DELIVERED: LRY-487P_R_Practice KM6LR >
+Tx Y, Les, LG/MS, 05/17/2022\n          >
+Rx                                      < Enter message.  End with /EX or ^Z i
+Rx                                      < n first column (^A aborts):\r\n
+Tx !LMI!TUE-059P!DR!05/18/2022 10:27:40 >
+Tx \n                                   >
+Tx Your Message\n                       >
+Tx To: pkttue@w2xsc.ampr.org\n          >
+Tx Subject: LRY-487P_R_Practice KM6LRY, >
+Tx  Les, LG/MS, 05/17/2022\n            >
+Tx was delivered on 05/18/2022 10:27:40 >
+Tx \n                                   >
+Tx Recipient's Local Message ID: TUE-05 >
+Tx 9P\n                                 >
+Tx /EX\n                                >
+Rx                                      < Msg queued\r\n
+Rx                                      < (#0) >\r\n
+Tx K 43\n                               >
+Rx                                      < (#0) >\r\n
+2022/05/18 10:27:40 => TUE-059P plain 
+Tx V 44\n                               >
+Rx                                      < Message #44 \r\n
+Rx                                      < Date: Mon, 16 May 2022 15:37:03 PDT\
+Rx                                      < r\n
+Rx                                      < From: km6mzm@w2xsc.ampr.org\r\n
+Rx                                      < To: pkttue@w2xsc\r\n
+Rx                                      < Subject: MZM-467P_R_Practice, KM6MZM
+Rx                                      < , Daniel, Sunnyvale 05/17/2022\r\n
+Rx                                      < \r\n
+Rx                                      < *** DRILL TRAFFIC ONLY ***\r\n
+Rx                                      < \r\n
+Rx                                      < (#0) >\r\n
+2022/05/18 10:27:40 Received at PKTTUE@W2XSC: from "km6mzm@w2xsc.ampr.org" subject "MZM-467P_R_Practice, KM6MZM, Daniel, Sunnyvale 05/17/2022"
+Tx SP km6mzm@w2xsc.ampr.org\n           >
+Rx                                      < Subject:\r\n
+Tx DELIVERED: MZM-467P_R_Practice, KM6M >
+Tx ZM, Daniel, Sunnyvale 05/17/2022\n   >
+Rx                                      < Enter message.  End with /EX or ^Z i
+Rx                                      < n first column (^A aborts):\r\n
+Tx !LMI!TUE-061P!DR!05/18/2022 10:27:40 >
+Tx \n                                   >
+Tx Your Message\n                       >
+Tx To: pkttue@w2xsc.ampr.org\n          >
+Tx Subject: MZM-467P_R_Practice, KM6MZM >
+Tx , Daniel, Sunnyvale 05/17/2022\n     >
+Tx was delivered on 05/18/2022 10:27:40 >
+Tx \n                                   >
+Tx Recipient's Local Message ID: TUE-06 >
+Tx 1P\n                                 >
+Tx /EX\n                                >
+Rx                                      < Msg queued\r\n
+Rx                                      < (#0) >\r\n
+Tx SP km6mzm@w2xsc.ampr.org\n           >
+Rx                                      < Subject:\r\n
+Tx TUE-063P_R_Incorrect Practice subjec >
+Tx t format\n                           >
+Rx                                      < Enter message.  End with /EX or ^Z i
+Rx                                      < n first column (^A aborts):\r\n
+Tx The packet practice message\n        >
+Tx     From: km6mzm@w2xsc.ampr.org\n    >
+Tx     To: pkttue@w2xsc\n               >
+Tx     Subject: MZM-467P_R_Practice, KM >
+Tx 6MZM, Daniel, Sunnyvale 05/17/2022\n >
+Tx     Date: Mon, 16 May 2022 15:37:03  >
+Tx PDT\n                                >
+Tx has the following issue.\n           >
+Tx \n                                   >
+Tx The Subject of this message does not >
+Tx  have the correct format.  After the >
+Tx \n                                   >
+Tx message number, handling order, and  >
+Tx form type, it should have the word\n >
+Tx \"Practice\" followed by four comma- >
+Tx separated fields:\n                  >
+Tx     Practice CallSign, FirstName, Ju >
+Tx risdiction, Date\n                   >
+Tx \n                                   >
+Tx For more information:\n              >
+Tx   * The \"Weekly SPECS/SVECS Packet  >
+Tx Practice\" page on the county ARES/R >
+Tx ACES\n                               >
+Tx     website gives details of the pac >
+Tx ket practice exercise, including the >
+Tx  net\n                               >
+Tx     practice schedules, the schedule >
+Tx  of what type of message to send, th >
+Tx e\n                                  >
+Tx     schedule of simulated \"down\" B >
+Tx BS systems, and the format of the su >
+Tx bject\n                              >
+Tx     line for practice messages.  It  >
+Tx is available at\n                    >
+Tx     https://www.scc-ares-races.org/d >
+Tx ata/packet/weekly-packet-practice.ht >
+Tx ml\n                                 >
+Tx   * If you need assistance, you can  >
+Tx request it in the packet discussion  >
+Tx group.\n                             >
+Tx     To sign up for this group, see t >
+Tx he Discussion Groups page at\n       >
+Tx     https://www.scc-ares-races.org/d >
+Tx iscuss-groups.html\n                 >
+Tx /EX\n                                >
+Rx                                      < Msg queued\r\n
+Rx                                      < (#0) >\r\n
+Tx K 44\n                               >
+Rx                                      < (#0) >\r\n
+2022/05/18 10:27:40 => TUE-061P plain PracticeSubjectFormat
+Tx V 45\n                               >
+Rx                                      < Message #45 \r\n
+Rx                                      < Date: Mon, 16 May 2022 15:41:13 PDT\
+Rx                                      < r\n
+Rx                                      < From: km6mzm@w2xsc.ampr.org\r\n
+Rx                                      < To: pkttue@w2xsc.ampr.org\r\n
+Rx                                      < Subject: DELIVERED: TUE-4976P_O/R_SC
+Rx                                      < Co ARES/RACES Packet Practice Report
+Rx                                      <  For: Tuesday, May 03, 2022. Total =
+Rx                                      <  33 call signs /37 me\r\n
+Rx                                      < \r\n
+Rx                                      < !LMI!MZM-469P!DR!5/16/2022 3:40:34 P
+Rx                                      < M\r\n
+Rx                                      < Your Message\r\n
+Rx                                      < To: KM6MZM\r\n
+Rx                                      < Subject: TUE-4976P_O/R_SCCo ARES/RAC
+Rx                                      < ES Packet Practice Report For: Tuesd
+Rx                                      < ay, May 03, 2022. Total = 33 call si
+Rx                                      < gns /37 messages\r\n
+Rx                                      < was delivered on 5/16/2022 3:40:34 P
+Rx                                      < M\r\n
+Rx                                      < Recipient's Local Message ID: MZM-46
+Rx                                      < 9P\r\n
+Rx                                      < \r\n
+Rx                                      < You have new mail. Please Kill when 
+Rx                                      < read!\r\n
+Rx                                      < (#0) >\r\n
+2022/05/18 10:27:40 Received at PKTTUE@W2XSC: from "km6mzm@w2xsc.ampr.org" subject "DELIVERED: TUE-4976P_O/R_SCCo ARES/RACES Packet Practice Report For: Tuesday, May 03, 2022. Total = 33 call signs /37 me"
+Tx K 45\n                               >
+Rx                                      < (#0) >\r\n
+2022/05/18 10:27:40 => TUE-064P DELIVERED DeliveryReceipt
+Tx V 46\n                               >
+Rx                                      < Message #46 \r\n
+Rx                                      < Date: Mon, 16 May 2022 18:58:40 PDT\
+Rx                                      < r\n
+Rx                                      < From: k6fjc@w2xsc.ampr.org\r\n
+Rx                                      < To: pkttue@w2xsc.ampr.org\r\n
+Rx                                      < Cc: k6fjc@email1.scc-ares-races.net\
+Rx                                      < r\n
+Rx                                      < Subject: FJC-808P_R_Practice K6FJC, 
+Rx                                      < Mark, Redwood City, 20220517\r\n
+Rx                                      < \r\n
+Rx                                      < \r\n
+Rx                                      < \r\n
+Rx                                      < Signed,\r\n
+Rx                                      < Mark Laubach, K6FJC\r\n
+Rx                                      < *** THIS IS DRILL TRAFFIC ***\r\n
+Rx                                      < \r\n
+Rx                                      < (#0) >\r\n
+2022/05/18 10:27:40 Received at PKTTUE@W2XSC: from "k6fjc@w2xsc.ampr.org" subject "FJC-808P_R_Practice K6FJC, Mark, Redwood City, 20220517"
+Tx SP k6fjc@w2xsc.ampr.org\n            >
+Rx                                      < Subject:\r\n
+Tx DELIVERED: FJC-808P_R_Practice K6FJC >
+Tx , Mark, Redwood City, 20220517\n     >
+Rx                                      < Enter message.  End with /EX or ^Z i
+Rx                                      < n first column (^A aborts):\r\n
+Tx !LMI!TUE-065P!DR!05/18/2022 10:27:40 >
+Tx \n                                   >
+Tx Your Message\n                       >
+Tx To: pkttue@w2xsc.ampr.org\n          >
+Tx Subject: FJC-808P_R_Practice K6FJC,  >
+Tx Mark, Redwood City, 20220517\n       >
+Tx was delivered on 05/18/2022 10:27:40 >
+Tx \n                                   >
+Tx Recipient's Local Message ID: TUE-06 >
+Tx 5P\n                                 >
+Tx /EX\n                                >
+Rx                                      < Msg queued\r\n
+Rx                                      < (#0) >\r\n
+Tx K 46\n                               >
+Rx                                      < (#0) >\r\n
+2022/05/18 10:27:40 => TUE-065P plain 
+Tx V 47\n                               >
+Rx                                      < Message #47 \r\n
+Rx                                      < Date: Mon, 16 May 2022 19:04:12 PDT\
+Rx                                      < r\n
+Rx                                      < From: n9dk@w4xsc.ampr.org\r\n
+Rx                                      < To: pkttue@w2xsc.ampr.org\r\n
+Rx                                      < Subject: 9DK-3400P_R_Practice N9DK, 
+Rx                                      < Dave, MV, 2022-05-17\r\n
+Rx                                      < \r\n
+Rx                                      < Please check me in.\r\n
+Rx                                      < \r\n
+Rx                                      < (#0) >\r\n
+2022/05/18 10:27:40 Received at PKTTUE@W2XSC: from "n9dk@w4xsc.ampr.org" subject "9DK-3400P_R_Practice N9DK, Dave, MV, 2022-05-17"
+Tx SP n9dk@w4xsc.ampr.org\n             >
+Rx                                      < Subject:\r\n
+Tx DELIVERED: 9DK-3400P_R_Practice N9DK >
+Tx , Dave, MV, 2022-05-17\n             >
+Rx                                      < Enter message.  End with /EX or ^Z i
+Rx                                      < n first column (^A aborts):\r\n
+Tx !LMI!TUE-067P!DR!05/18/2022 10:27:40 >
+Tx \n                                   >
+Tx Your Message\n                       >
+Tx To: pkttue@w2xsc.ampr.org\n          >
+Tx Subject: 9DK-3400P_R_Practice N9DK,  >
+Tx Dave, MV, 2022-05-17\n               >
+Tx was delivered on 05/18/2022 10:27:40 >
+Tx \n                                   >
+Tx Recipient's Local Message ID: TUE-06 >
+Tx 7P\n                                 >
+Tx /EX\n                                >
+Rx                                      < Msg queued\r\n
+Rx                                      < (#0) >\r\n
+Tx K 47\n                               >
+Rx                                      < (#0) >\r\n
+2022/05/18 10:27:40 => TUE-067P plain 
+Tx V 48\n                               >
+Rx                                      < Message #48 \r\n
+Rx                                      < Date: Mon, 16 May 2022 20:30:00 PDT\
+Rx                                      < r\n
+Rx                                      < From: pktmon@w2xsc.ampr.org\r\n
+Rx                                      < To: pkttue@w2xsc.ampr.org\r\n
+Rx                                      < Subject: MON-6883PLog to PKTTUE NCO 
+Rx                                      < from PKTMON NCO\r\n
+Rx                                      < \r\n
+Rx                                      < \r\n
+Rx                                      < ===================================\
+Rx                                      < r\n
+Rx                                      < 20:00:39 = now, code name, ver, time
+Rx                                      <  of file\r\n
+Rx                                      <           procCheckInList.exe, versi
+Rx                                      < on 04.00.02.00, 05Jun2019 10:56:12\r
+Rx                                      < \n
+Rx                                      <           update_txt_files.exe, vers
+Rx                                      < ion 1.0.0.5, 05Jun2019 10:56:12\r\n
+Rx                                      <           outpost_io, version 1.0.1\
+Rx                                      < r\n
+Rx                                      <           readTacCallAlias, version 
+Rx                                      < 1.0.0\r\n
+Rx                                      <           ar_utils, version 2.0.0\r\
+Rx                                      < n
+Rx                                      <           _init_regexps, version 2.0
+Rx                                      < .14\r\n
+Rx                                      <           sim_bbs_dwn.exe, version 1
+Rx                                      < .0.15, 05Jun2019 10:56:12\r\n
+Rx                                      <           outpost_pause_clock, versi
+Rx                                      < on 1.0.0.12\r\n
+Rx                                      <           readCheckIn, version 1.0.0
+Rx                                      < .21\r\n
+Rx                                      < * get_settings:  INI file values loa
+Rx                                      < ded \"C:\\SCCoPacket\\scripts\\packe
+Rx                                      < tNCO\\procCheckInList.INI\".\r\n
+Rx                                      <  days_oldest = 6\r\n
+Rx                                      <  enable_dwn_bbs_sim = 1\r\n
+Rx                                      <  enable_timed_autopoll = 1\r\n
+Rx                                      <  id_allow_tac_pfx = 1\r\n
+Rx                                      <  log_msg = 2,3,4,5,6, 8\r\n
+Rx                                      <  long_form_issues = 1\r\n
+Rx                                      <  max_len_OpstMsg = 10000\r\n
+Rx                                      <  max_len_toAddr = 126\r\n
+Rx                                      <  msg_sbj_handling_only_form = 1\r\n
+Rx                                      <  msg_sbj_handling_only_pacf = 2\r\n
+Rx                                      <  msg_sbj_handling_only_txt = 2\r\n
+Rx                                      <  nco_summary_type = 0\r\n
+Rx                                      <  require_hyphen = 1\r\n
+Rx                                      <  run_days_before = 0\r\n
+Rx                                      <  time_close = 2000\r\n
+Rx                                      <  time_close_as_dt = 1900-01-01 20:00
+Rx                                      < :00\r\n
+Rx                                      < * _init_regexps:\r\n
+Rx                                      <   tacID: \"[a-zA-Z]{3}\"\r\n
+Rx                                      <   short tacID tacID_diag: \"[a-zA-Z]
+Rx                                      < +\"\r\n
+Rx                                      <   message number msg_num: \"-?[0-9]{
+Rx                                      < 3,}[a-zA-Z]?\"\r\n
+Rx                                      <   short message number msg_num_diag:
+Rx                                      <  \"-?[0-9]+[a-zA-Z]?\"\r\n
+Rx                                      <   Severity sit_severe: \"([_][EUO])\
+Rx                                      < "\r\n
+Rx                                      <   Severity additional formats for pl
+Rx                                      < ain text sit_severe_pln_txt[]:\r\n
+Rx                                      <    [0]: (: )\r\n
+Rx                                      <    [1]: (:)\r\n
+Rx                                      <    [2]: ( )\r\n
+Rx                                      <   Handling Order msg_hndl_ordr: \"\\
+Rx                                      < /[IPR]_\"\r\n
+Rx                                      <   Handling Order msg_hndl_ordr_only:
+Rx                                      <  \"_[IPR]_\"\r\n
+Rx                                      <   Subject subj: \"(.){2,}\"\r\n
+Rx                                      < Oldest allowed: 2022-05-10 00:00:01\
+Rx                                      < r\n
+Rx                                      < ---> Message too old 2022-05-09 13:5
+Rx                                      < 7:49\r\n
+Rx                                      <    C:\\SCCoPacket\\scripts\\packetNC
+Rx                                      < O\\Monday_msgs_18_6HI-1743P_R_Practi
+Rx                                      < ce, KG6HI, Jerry, Sunnyvale, 9 May 2
+Rx                                      < 022.txt\r\n
+Rx                                      <    sbjt: 6HI-1743P_R_Practice, KG6HI
+Rx                                      < , Jerry, Sunnyvale, 9 May 2022\r\n
+Rx                                      < * load_bad_id_file: found file \"C:\
+Rx                                      < \SCCoPacket\\scripts\\packetNCO\\bad
+Rx                                      < _tacid.txt\".\r\n
+Rx                                      < * load_bad_id_file: file empty.\r\n
+Rx                                      < * load_bad_id_file: .\r\n
+Rx                                      < * Current SCCoPIFO version (\r\n
+Rx                                      < from \"CurrentSCCoPIFO.txt\"): 2.17\
+Rx                                      < r\n
+Rx                                      < * Current PACF version (from \"Curre
+Rx                                      < ntPACF.txt\"): None\r\n
+Rx                                      < * SCCoPIFO ErrMsg:\r\n
+Rx                                      <   [none]\r\n
+Rx                                      < * PACF ErrMsg:\r\n
+Rx                                      <   [none]\r\n
+Rx                                      < * Invalid ID ErrMsg:\r\n
+Rx                                      <   [none]\r\n
+Rx                                      < vvvv Unique \"from\" addresses for M
+Rx                                      < onday vvvv\r\n
+Rx                                      < w6bg\r\n
+Rx                                      < kz6dm\r\n
+Rx                                      < ke6ppi\r\n
+Rx                                      < kk6fmq\r\n
+Rx                                      < ag6gx\r\n
+Rx                                      < kc6rsc\r\n
+Rx                                      < wu6p\r\n
+Rx                                      < kg6hi\r\n
+Rx                                      < kg6yhs\r\n
+Rx                                      < kk6fpp\r\n
+Rx                                      < ki6pur\r\n
+Rx                                      < kg6kzz\r\n
+Rx                                      < kt6jk\r\n
+Rx                                      < wa1iam\r\n
+Rx                                      < km6mzm\r\n
+Rx                                      < kf6zsq\r\n
+Rx                                      < k1jh\r\n
+Rx                                      < wb6pvu\r\n
+Rx                                      < kn6ghd\r\n
+Rx                                      < kj6gbg\r\n
+Rx                                      < km6i\r\n
+Rx                                      < k6fjc\r\n
+Rx                                      < n9dk\r\n
+Rx                                      < ^^^^ End Unique \"from\" addresses f
+Rx                                      < or Monday ^^^^\r\n
+Rx                                      < valid_count_ndx: 2, 3, 4, 5, 6, 7, 8
+Rx                                      < , 9, 11, 12, 13, 14, 15, 16, 17, 18,
+Rx                                      <  19, 20, 21, 22, 23, 24, 25, 26, 27,
+Rx                                      <  28, 29, 30.\r\n
+Rx                                      < unique_call_bbs_good_ndx: 6, 7, 8, 9
+Rx                                      < , 11, 12, 13, 14, 15, 16, 17, 18, 19
+Rx                                      < , 21, 22, 23, 24, 25, 26, 27, 28, 29
+Rx                                      < , 30.\r\n
+Rx                                      < unique_call_bbs_bad_ndx: ==== Source
+Rx                                      < s - Other:\r\n
+Rx                                      <  BBS Network:\r\n
+Rx                                      <    kg6kzz@w1xsc.#nca.ca.usa.noam\r\n
+Rx                                      < \r\n
+Rx                                      < \r\n
+Rx                                      < (#0) >\r\n
+2022/05/18 10:27:40 Received at PKTTUE@W2XSC: from "pktmon@w2xsc.ampr.org" subject "MON-6883PLog to PKTTUE NCO from PKTMON NCO"
+Tx SP pktmon@w2xsc.ampr.org\n           >
+Rx                                      < Subject:\r\n
+Tx DELIVERED: MON-6883PLog to PKTTUE NC >
+Tx O from PKTMON NCO\n                  >
+Rx                                      < Enter message.  End with /EX or ^Z i
+Rx                                      < n first column (^A aborts):\r\n
+Tx !LMI!TUE-069P!DR!05/18/2022 10:27:40 >
+Tx \n                                   >
+Tx Your Message\n                       >
+Tx To: pkttue@w2xsc.ampr.org\n          >
+Tx Subject: MON-6883PLog to PKTTUE NCO  >
+Tx from PKTMON NCO\n                    >
+Tx was delivered on 05/18/2022 10:27:40 >
+Tx \n                                   >
+Tx Recipient's Local Message ID: TUE-06 >
+Tx 9P\n                                 >
+Tx /EX\n                                >
+Rx                                      < Msg queued\r\n
+Rx                                      < (#0) >\r\n
+Tx SP pktmon@w2xsc.ampr.org\n           >
+Rx                                      < Subject:\r\n
+Tx TUE-071P_R_Issues with packet practi >
+Tx ce message\n                         >
+Rx                                      < Enter message.  End with /EX or ^Z i
+Rx                                      < n first column (^A aborts):\r\n
+Tx The packet practice message\n        >
+Tx     From: pktmon@w2xsc.ampr.org\n    >
+Tx     To: pkttue@w2xsc\n               >
+Tx     Subject: MON-6883PLog to PKTTUE  >
+Tx NCO from PKTMON NCO\n                >
+Tx     Date: Mon, 16 May 2022 20:30:00  >
+Tx PDT\n                                >
+Tx has the following issues.  The messa >
+Tx ge will not be counted.\n            >
+Tx \n                                   >
+Tx This message has an incorrect subjec >
+Tx t line format.  According to SCCo\n  >
+Tx standards, the subject should look l >
+Tx ike\n                                >
+Tx     AAA-111P_R_Practice A6AAA, Charl >
+Tx ie, Nowhereville, 2019-03-16\n       >
+Tx     (msgnum) |            |    (name >
+Tx )   (city)        (net date)\n       >
+Tx       (handling order)  (call sign)\ >
+Tx n                                    >
+Tx \n                                   >
+Tx This message cannot be counted becau >
+Tx se it's not clear who sent it.  Ther >
+Tx e is\n                               >
+Tx no call sign in the return address o >
+Tx r after the word \"Practice\" on the >
+Tx \n                                   >
+Tx subject line.  In order for a messag >
+Tx e to count, there must be a call sig >
+Tx n in\n                               >
+Tx at least one of those places.\n      >
+Tx \n                                   >
+Tx For more information:\n              >
+Tx   * The \"Weekly SPECS/SVECS Packet  >
+Tx Practice\" page on the county ARES/R >
+Tx ACES\n                               >
+Tx     website gives details of the pac >
+Tx ket practice exercise, including the >
+Tx  net\n                               >
+Tx     practice schedules, the schedule >
+Tx  of what type of message to send, th >
+Tx e\n                                  >
+Tx     schedule of simulated \"down\" B >
+Tx BS systems, and the format of the su >
+Tx bject\n                              >
+Tx     line for practice messages.  It  >
+Tx is available at\n                    >
+Tx     https://www.scc-ares-races.org/d >
+Tx ata/packet/weekly-packet-practice.ht >
+Tx ml\n                                 >
+Tx   * The \"Standard Packet Message Su >
+Tx bject Line\" document describes how  >
+Tx to\n                                 >
+Tx     compose the subject line of a pa >
+Tx cket message following county standa >
+Tx rds.\n                               >
+Tx     It is available from the \"Packe >
+Tx t BBS Service\" page at\n            >
+Tx     https://www.scc-ares-races.org/d >
+Tx ata/packet/index.html\n              >
+Tx   * If you need assistance, you can  >
+Tx request it in the packet discussion  >
+Tx group.\n                             >
+Tx     To sign up for this group, see t >
+Tx he Discussion Groups page at\n       >
+Tx     https://www.scc-ares-races.org/d >
+Tx iscuss-groups.html\n                 >
+Tx /EX\n                                >
+Rx                                      < Msg queued\r\n
+Rx                                      < (#0) >\r\n
+Tx K 48\n                               >
+Rx                                      < (#0) >\r\n
+2022/05/18 10:27:40 => TUE-069P plain SubjectFormat,NoCallSign
+Tx V 49\n                               >
+Rx                                      < Message #49 \r\n
+Rx                                      < Date: Mon, 16 May 2022 21:18:25 PDT\
+Rx                                      < r\n
+Rx                                      < From: k6rwy@w4xsc.ampr.org\r\n
+Rx                                      < To: pkttue@w2xsc.ampr.org\r\n
+Rx                                      < Cc: sjcpkt@w1xsc.ampr.org, k6rwy@w1x
+Rx                                      < sc.ampr.org\r\n
+Rx                                      < Subject: RWY-2141P_R_Practice K6RWY,
+Rx                                      <  Bob, San Jose, 05/17/22\r\n
+Rx                                      < \r\n
+Rx                                      < _R_Practice K6RWY, Bob, San Jose, 05
+Rx                                      < /17/22\r\n
+Rx                                      < \r\n
+Rx                                      < (#0) >\r\n
+2022/05/18 10:27:40 Received at PKTTUE@W2XSC: from "k6rwy@w4xsc.ampr.org" subject "RWY-2141P_R_Practice K6RWY, Bob, San Jose, 05/17/22"
+Tx SP k6rwy@w4xsc.ampr.org\n            >
+Rx                                      < Subject:\r\n
+Tx DELIVERED: RWY-2141P_R_Practice K6RW >
+Tx Y, Bob, San Jose, 05/17/22\n         >
+Rx                                      < Enter message.  End with /EX or ^Z i
+Rx                                      < n first column (^A aborts):\r\n
+Tx !LMI!TUE-072P!DR!05/18/2022 10:27:40 >
+Tx \n                                   >
+Tx Your Message\n                       >
+Tx To: pkttue@w2xsc.ampr.org\n          >
+Tx Subject: RWY-2141P_R_Practice K6RWY, >
+Tx  Bob, San Jose, 05/17/22\n           >
+Tx was delivered on 05/18/2022 10:27:40 >
+Tx \n                                   >
+Tx Recipient's Local Message ID: TUE-07 >
+Tx 2P\n                                 >
+Tx /EX\n                                >
+Rx                                      < Msg queued\r\n
+Rx                                      < (#0) >\r\n
+Tx K 49\n                               >
+Rx                                      < (#0) >\r\n
+2022/05/18 10:27:40 => TUE-072P plain 
+Tx V 50\n                               >
+Rx                                      < Message #50 \r\n
+Rx                                      < Date: Tue, 17 May 2022 11:11:48 PDT\
+Rx                                      < r\n
+Rx                                      < From: kg6hi@w1xsc.ampr.org\r\n
+Rx                                      < To: pkttue@w2xsc.ampr.org\r\n
+Rx                                      < Subject: 6HI-1748P_R_Practice, KG6HI
+Rx                                      < , Jerry, Sunnyvale, 17 May 2022\r\n
+Rx                                      < \r\n
+Rx                                      < This is the packet check-in msg for 
+Rx                                      < Tuesday 17 May 2022.\r\n
+Rx                                      < \r\n
+Rx                                      < 73,\r\n
+Rx                                      < Jerry KG6HI\r\n
+Rx                                      < \r\n
+Rx                                      < (#0) >\r\n
+2022/05/18 10:27:40 Received at PKTTUE@W2XSC: from "kg6hi@w1xsc.ampr.org" subject "6HI-1748P_R_Practice, KG6HI, Jerry, Sunnyvale, 17 May 2022"
+Tx SP kg6hi@w1xsc.ampr.org\n            >
+Rx                                      < Subject:\r\n
+Tx DELIVERED: 6HI-1748P_R_Practice, KG6 >
+Tx HI, Jerry, Sunnyvale, 17 May 2022\n  >
+Rx                                      < Enter message.  End with /EX or ^Z i
+Rx                                      < n first column (^A aborts):\r\n
+Tx !LMI!TUE-074P!DR!05/18/2022 10:27:40 >
+Tx \n                                   >
+Tx Your Message\n                       >
+Tx To: pkttue@w2xsc.ampr.org\n          >
+Tx Subject: 6HI-1748P_R_Practice, KG6HI >
+Tx , Jerry, Sunnyvale, 17 May 2022\n    >
+Tx was delivered on 05/18/2022 10:27:40 >
+Tx \n                                   >
+Tx Recipient's Local Message ID: TUE-07 >
+Tx 4P\n                                 >
+Tx /EX\n                                >
+Rx                                      < Msg queued\r\n
+Rx                                      < (#0) >\r\n
+Tx SP kg6hi@w1xsc.ampr.org\n            >
+Rx                                      < Subject:\r\n
+Tx TUE-076P_R_Incorrect Practice subjec >
+Tx t format\n                           >
+Rx                                      < Enter message.  End with /EX or ^Z i
+Rx                                      < n first column (^A aborts):\r\n
+Tx The packet practice message\n        >
+Tx     From: kg6hi@w1xsc.ampr.org\n     >
+Tx     To: pkttue@w2xsc\n               >
+Tx     Subject: 6HI-1748P_R_Practice, K >
+Tx G6HI, Jerry, Sunnyvale, 17 May 2022\ >
+Tx n                                    >
+Tx     Date: Tue, 17 May 2022 11:11:48  >
+Tx PDT\n                                >
+Tx has the following issue.\n           >
+Tx \n                                   >
+Tx The Subject of this message does not >
+Tx  have the correct format.  After the >
+Tx \n                                   >
+Tx message number, handling order, and  >
+Tx form type, it should have the word\n >
+Tx \"Practice\" followed by four comma- >
+Tx separated fields:\n                  >
+Tx     Practice CallSign, FirstName, Ju >
+Tx risdiction, Date\n                   >
+Tx \n                                   >
+Tx For more information:\n              >
+Tx   * The \"Weekly SPECS/SVECS Packet  >
+Tx Practice\" page on the county ARES/R >
+Tx ACES\n                               >
+Tx     website gives details of the pac >
+Tx ket practice exercise, including the >
+Tx  net\n                               >
+Tx     practice schedules, the schedule >
+Tx  of what type of message to send, th >
+Tx e\n                                  >
+Tx     schedule of simulated \"down\" B >
+Tx BS systems, and the format of the su >
+Tx bject\n                              >
+Tx     line for practice messages.  It  >
+Tx is available at\n                    >
+Tx     https://www.scc-ares-races.org/d >
+Tx ata/packet/weekly-packet-practice.ht >
+Tx ml\n                                 >
+Tx   * If you need assistance, you can  >
+Tx request it in the packet discussion  >
+Tx group.\n                             >
+Tx     To sign up for this group, see t >
+Tx he Discussion Groups page at\n       >
+Tx     https://www.scc-ares-races.org/d >
+Tx iscuss-groups.html\n                 >
+Tx /EX\n                                >
+Rx                                      < Msg queued\r\n
+Rx                                      < (#0) >\r\n
+Tx K 50\n                               >
+Rx                                      < (#0) >\r\n
+2022/05/18 10:27:40 => TUE-074P plain PracticeSubjectFormat
+Tx V 51\n                               >
+Rx                                      < Message #51 \r\n
+Rx                                      < Date: Tue, 17 May 2022 15:47:41 PDT\
+Rx                                      < r\n
+Rx                                      < From: km6iao@w4xsc.ampr.org\r\n
+Rx                                      < To: pkttue@w2xsc\r\n
+Rx                                      < Subject: IAO-568P_R_Practice KM6IAO,
+Rx                                      <  Paul, Milpitas, 05/17/2022\r\n
+Rx                                      < \r\n
+Rx                                      < \r\n
+Rx                                      < Practice\r\n
+Rx                                      < \r\n
+Rx                                      < Regards,\r\n
+Rx                                      < Paul Ellis\r\n
+Rx                                      < KM6IAO\r\n
+Rx                                      < pje5547@gmail.com\r\n
+Rx                                      < +661.904.0047 mobile\r\n
+Rx                                      < \r\n
+Rx                                      < \r\n
+Rx                                      < (#0) >\r\n
+2022/05/18 10:27:40 Received at PKTTUE@W2XSC: from "km6iao@w4xsc.ampr.org" subject "IAO-568P_R_Practice KM6IAO, Paul, Milpitas, 05/17/2022"
+Tx SP km6iao@w4xsc.ampr.org\n           >
+Rx                                      < Subject:\r\n
+Tx DELIVERED: IAO-568P_R_Practice KM6IA >
+Tx O, Paul, Milpitas, 05/17/2022\n      >
+Rx                                      < Enter message.  End with /EX or ^Z i
+Rx                                      < n first column (^A aborts):\r\n
+Tx !LMI!TUE-077P!DR!05/18/2022 10:27:40 >
+Tx \n                                   >
+Tx Your Message\n                       >
+Tx To: pkttue@w2xsc.ampr.org\n          >
+Tx Subject: IAO-568P_R_Practice KM6IAO, >
+Tx  Paul, Milpitas, 05/17/2022\n        >
+Tx was delivered on 05/18/2022 10:27:40 >
+Tx \n                                   >
+Tx Recipient's Local Message ID: TUE-07 >
+Tx 7P\n                                 >
+Tx /EX\n                                >
+Rx                                      < Msg queued\r\n
+Rx                                      < (#0) >\r\n
+Tx K 51\n                               >
+Rx                                      < (#0) >\r\n
+2022/05/18 10:27:40 => TUE-077P plain 
+Tx V 52\n                               >
+Rx                                      < Message #52 \r\n
+Rx                                      < Date: Tue, 17 May 2022 17:48:34 PDT\
+Rx                                      < r\n
+Rx                                      < From: aa6pm@w1xsc.ampr.org\r\n
+Rx                                      < To: pkttue@w2xsc\r\n
+Rx                                      < Subject: PJM-625P_R_Practice AA6PM, 
+Rx                                      < Peter, Saratoga, 05/17/2022\r\n
+Rx                                      < \r\n
+Rx                                      < Good evening!\r\n
+Rx                                      < \r\n
+Rx                                      < Signed,\r\n
+Rx                                      < Peter Melhus, AA6PM\r\n
+Rx                                      < ***DRILL TRAFFIC ONLY***\r\n
+Rx                                      < \r\n
+Rx                                      < (#0) >\r\n
+2022/05/18 10:27:40 Received at PKTTUE@W2XSC: from "aa6pm@w1xsc.ampr.org" subject "PJM-625P_R_Practice AA6PM, Peter, Saratoga, 05/17/2022"
+Tx SP aa6pm@w1xsc.ampr.org\n            >
+Rx                                      < Subject:\r\n
+Tx DELIVERED: PJM-625P_R_Practice AA6PM >
+Tx , Peter, Saratoga, 05/17/2022\n      >
+Rx                                      < Enter message.  End with /EX or ^Z i
+Rx                                      < n first column (^A aborts):\r\n
+Tx !LMI!TUE-079P!DR!05/18/2022 10:27:40 >
+Tx \n                                   >
+Tx Your Message\n                       >
+Tx To: pkttue@w2xsc.ampr.org\n          >
+Tx Subject: PJM-625P_R_Practice AA6PM,  >
+Tx Peter, Saratoga, 05/17/2022\n        >
+Tx was delivered on 05/18/2022 10:27:40 >
+Tx \n                                   >
+Tx Recipient's Local Message ID: TUE-07 >
+Tx 9P\n                                 >
+Tx /EX\n                                >
+Rx                                      < Msg queued\r\n
+Rx                                      < (#0) >\r\n
+Tx K 52\n                               >
+Rx                                      < (#0) >\r\n
+2022/05/18 10:27:40 => TUE-079P plain 
+Tx V 53\n                               >
+Rx                                      < Message #53 \r\n
+Rx                                      < Date: Tue, 17 May 2022 18:28:00 PDT\
+Rx                                      < r\n
+Rx                                      < From: xbeeoc@w2xsc.ampr.org\r\n
+Rx                                      < To: pkttue@w2xsc.ampr.org\r\n
+Rx                                      < Subject: DELIVERED: TUE-4978P_O/R_SC
+Rx                                      < Co ARES/RACES Packet Practice Report
+Rx                                      <  For: Tuesday, May 03, 2022. Total =
+Rx                                      <  33 call signs /37 me\r\n
+Rx                                      < \r\n
+Rx                                      < !LMI!XBE-1363P!DR!5/17/2022 18:27:12
+Rx                                      < \r\n
+Rx                                      < Your Message\r\n
+Rx                                      < To: XBEEOC\r\n
+Rx                                      < Subject: TUE-4978P_O/R_SCCo ARES/RAC
+Rx                                      < ES Packet Practice Report For: Tuesd
+Rx                                      < ay, May 03, 2022. Total = 33 call si
+Rx                                      < gns /37 messages\r\n
+Rx                                      < was delivered on 5/17/2022 18:27:12\
+Rx                                      < r\n
+Rx                                      < Recipient's Local Message ID: XBE-13
+Rx                                      < 63P\r\n
+Rx                                      < \r\n
+Rx                                      < (#0) >\r\n
+2022/05/18 10:27:40 Received at PKTTUE@W2XSC: from "xbeeoc@w2xsc.ampr.org" subject "DELIVERED: TUE-4978P_O/R_SCCo ARES/RACES Packet Practice Report For: Tuesday, May 03, 2022. Total = 33 call signs /37 me"
+Tx K 53\n                               >
+Rx                                      < (#0) >\r\n
+2022/05/18 10:27:40 => TUE-081P DELIVERED DeliveryReceipt
+Tx V 54\n                               >
+Rx                                      < Message #54 \r\n
+Rx                                      < Date: Tue, 17 May 2022 18:28:44 PDT\
+Rx                                      < r\n
+Rx                                      < From: xbeeoc@w2xsc.ampr.org\r\n
+Rx                                      < To: pkttue\r\n
+Rx                                      < Subject: XBE-1362P_R_Practice N6SBC,
+Rx                                      <  Timothy, San Benito Co., 05/17/2022
+Rx                                      < \r\n
+Rx                                      < \r\n
+Rx                                      < Weekly Packet Net - XSC\r\n
+Rx                                      < \r\n
+Rx                                      < (#0) >\r\n
+2022/05/18 10:27:40 Received at PKTTUE@W2XSC: from "xbeeoc@w2xsc.ampr.org" subject "XBE-1362P_R_Practice N6SBC, Timothy, San Benito Co., 05/17/2022"
+Tx SP xbeeoc@w2xsc.ampr.org\n           >
+Rx                                      < Subject:\r\n
+Tx DELIVERED: XBE-1362P_R_Practice N6SB >
+Tx C, Timothy, San Benito Co., 05/17/20 >
+Tx 22\n                                 >
+Rx                                      < Enter message.  End with /EX or ^Z i
+Rx                                      < n first column (^A aborts):\r\n
+Tx !LMI!TUE-082P!DR!05/18/2022 10:27:40 >
+Tx \n                                   >
+Tx Your Message\n                       >
+Tx To: pkttue@w2xsc.ampr.org\n          >
+Tx Subject: XBE-1362P_R_Practice N6SBC, >
+Tx  Timothy, San Benito Co., 05/17/2022 >
+Tx \n                                   >
+Tx was delivered on 05/18/2022 10:27:40 >
+Tx \n                                   >
+Tx Recipient's Local Message ID: TUE-08 >
+Tx 2P\n                                 >
+Tx /EX\n                                >
+Rx                                      < Msg queued\r\n
+Rx                                      < (#0) >\r\n
+Tx K 54\n                               >
+Rx                                      < (#0) >\r\n
+2022/05/18 10:27:40 => TUE-082P plain 
+Tx V 55\n                               >
+Rx                                      < Message #55 \r\n
+Rx                                      < Date: Tue, 17 May 2022 19:00:25 PDT\
+Rx                                      < r\n
+Rx                                      < From: kc6rsc@w2xsc.ampr.org\r\n
+Rx                                      < To: pkttue@w2xsc.ampr.org\r\n
+Rx                                      < Subject: DELIVERED: TUE-2657P_O/R_PK
+Rx                                      < TTUE to KC6RSC msg_wrapback.osl Wrap
+Rx                                      < -back Test\r\n
+Rx                                      < \r\n
+Rx                                      < !LMI!STR-2658P!DR!2022-05-17 19:00:1
+Rx                                      < 7\r\n
+Rx                                      < Your Message\r\n
+Rx                                      < To: KC6RSC\r\n
+Rx                                      < Subject: TUE-2657P_O/R_PKTTUE to KC6
+Rx                                      < RSC msg_wrapback.osl Wrap-back Test\
+Rx                                      < r\n
+Rx                                      < was delivered on 2022-05-17 19:00\r\
+Rx                                      < n
+Rx                                      < Recipient's Local Message ID: STR-26
+Rx                                      < 58P\r\n
+Rx                                      < \r\n
+Rx                                      < (#0) >\r\n
+2022/05/18 10:27:40 Received at PKTTUE@W2XSC: from "kc6rsc@w2xsc.ampr.org" subject "DELIVERED: TUE-2657P_O/R_PKTTUE to KC6RSC msg_wrapback.osl Wrap-back Test"
+Tx K 55\n                               >
+Rx                                      < (#0) >\r\n
+2022/05/18 10:27:40 => TUE-084P DELIVERED DeliveryReceipt
+Tx V 56\n                               >
+Rx                                      < Message #56 \r\n
+Rx                                      < Date: Tue, 17 May 2022 19:09:03 PDT\
+Rx                                      < r\n
+Rx                                      < From: kk6wvi@w1xsc.ampr.org\r\n
+Rx                                      < To: pkttue@w2xsc.ampr.org\r\n
+Rx                                      < Cc: KK6WVI@ARRL.NET, SJCPKT@W1XSC.AM
+Rx                                      < PR.ORG\r\n
+Rx                                      < Subject: JWB-674P_R_Practice KK6WVI,
+Rx                                      <  James, San Jose, 05-17-2022\r\n
+Rx                                      < \r\n
+Rx                                      < !RDR!Checking in for Tuesday 05-17-2
+Rx                                      < 022 - KK6WVI - James - San Jose\r\n
+Rx                                      < \r\n
+Rx                                      < (#0) >\r\n
+2022/05/18 10:27:40 Received at PKTTUE@W2XSC: from "kk6wvi@w1xsc.ampr.org" subject "JWB-674P_R_Practice KK6WVI, James, San Jose, 05-17-2022"
+Tx SP kk6wvi@w1xsc.ampr.org\n           >
+Rx                                      < Subject:\r\n
+Tx DELIVERED: JWB-674P_R_Practice KK6WV >
+Tx I, James, San Jose, 05-17-2022\n     >
+Rx                                      < Enter message.  End with /EX or ^Z i
+Rx                                      < n first column (^A aborts):\r\n
+Tx !LMI!TUE-085P!DR!05/18/2022 10:27:40 >
+Tx \n                                   >
+Tx Your Message\n                       >
+Tx To: pkttue@w2xsc.ampr.org\n          >
+Tx Subject: JWB-674P_R_Practice KK6WVI, >
+Tx  James, San Jose, 05-17-2022\n       >
+Tx was delivered on 05/18/2022 10:27:40 >
+Tx \n                                   >
+Tx Recipient's Local Message ID: TUE-08 >
+Tx 5P\n                                 >
+Tx /EX\n                                >
+Rx                                      < Msg queued\r\n
+Rx                                      < (#0) >\r\n
+Tx K 56\n                               >
+Rx                                      < (#0) >\r\n
+2022/05/18 10:27:40 => TUE-085P plain 
+Tx V 57\n                               >
+Rx                                      < Message #57 \r\n
+Rx                                      < Date: Tue, 17 May 2022 19:13:59 PDT\
+Rx                                      < r\n
+Rx                                      < From: kk6ebl@w1xsc.ampr.org\r\n
+Rx                                      < To: pkttue@w2xsc.ampr.org\r\n
+Rx                                      < Cc: KK6EBL@w1xsc.ampr.org\r\n
+Rx                                      < Subject: EBL-1311P_R_Practice KK6EBL
+Rx                                      < , Klaus, LG/MS 05/17/2022\r\n
+Rx                                      < \r\n
+Rx                                      < Stay Healthy,\r\n
+Rx                                      < \r\n
+Rx                                      < Klaus\r\n
+Rx                                      < \r\n
+Rx                                      < (#0) >\r\n
+2022/05/18 10:27:40 Received at PKTTUE@W2XSC: from "kk6ebl@w1xsc.ampr.org" subject "EBL-1311P_R_Practice KK6EBL, Klaus, LG/MS 05/17/2022"
+Tx SP kk6ebl@w1xsc.ampr.org\n           >
+Rx                                      < Subject:\r\n
+Tx DELIVERED: EBL-1311P_R_Practice KK6E >
+Tx BL, Klaus, LG/MS 05/17/2022\n        >
+Rx                                      < Enter message.  End with /EX or ^Z i
+Rx                                      < n first column (^A aborts):\r\n
+Tx !LMI!TUE-087P!DR!05/18/2022 10:27:40 >
+Tx \n                                   >
+Tx Your Message\n                       >
+Tx To: pkttue@w2xsc.ampr.org\n          >
+Tx Subject: EBL-1311P_R_Practice KK6EBL >
+Tx , Klaus, LG/MS 05/17/2022\n          >
+Tx was delivered on 05/18/2022 10:27:40 >
+Tx \n                                   >
+Tx Recipient's Local Message ID: TUE-08 >
+Tx 7P\n                                 >
+Tx /EX\n                                >
+Rx                                      < Msg queued\r\n
+Rx                                      < (#0) >\r\n
+Tx SP kk6ebl@w1xsc.ampr.org\n           >
+Rx                                      < Subject:\r\n
+Tx TUE-089P_R_Incorrect Practice subjec >
+Tx t format\n                           >
+Rx                                      < Enter message.  End with /EX or ^Z i
+Rx                                      < n first column (^A aborts):\r\n
+Tx The packet practice message\n        >
+Tx     From: kk6ebl@w1xsc.ampr.org\n    >
+Tx     To: pkttue@w2xsc\n               >
+Tx     Subject: EBL-1311P_R_Practice KK >
+Tx 6EBL, Klaus, LG/MS 05/17/2022\n      >
+Tx     Date: Tue, 17 May 2022 19:13:59  >
+Tx PDT\n                                >
+Tx has the following issue.\n           >
+Tx \n                                   >
+Tx The Subject of this message does not >
+Tx  have the correct format.  After the >
+Tx \n                                   >
+Tx message number, handling order, and  >
+Tx form type, it should have the word\n >
+Tx \"Practice\" followed by four comma- >
+Tx separated fields:\n                  >
+Tx     Practice CallSign, FirstName, Ju >
+Tx risdiction, Date\n                   >
+Tx \n                                   >
+Tx For more information:\n              >
+Tx   * The \"Weekly SPECS/SVECS Packet  >
+Tx Practice\" page on the county ARES/R >
+Tx ACES\n                               >
+Tx     website gives details of the pac >
+Tx ket practice exercise, including the >
+Tx  net\n                               >
+Tx     practice schedules, the schedule >
+Tx  of what type of message to send, th >
+Tx e\n                                  >
+Tx     schedule of simulated \"down\" B >
+Tx BS systems, and the format of the su >
+Tx bject\n                              >
+Tx     line for practice messages.  It  >
+Tx is available at\n                    >
+Tx     https://www.scc-ares-races.org/d >
+Tx ata/packet/weekly-packet-practice.ht >
+Tx ml\n                                 >
+Tx   * If you need assistance, you can  >
+Tx request it in the packet discussion  >
+Tx group.\n                             >
+Tx     To sign up for this group, see t >
+Tx he Discussion Groups page at\n       >
+Tx     https://www.scc-ares-races.org/d >
+Tx iscuss-groups.html\n                 >
+Tx /EX\n                                >
+Rx                                      < Msg queued\r\n
+Rx                                      < (#0) >\r\n
+Tx K 57\n                               >
+Rx                                      < (#0) >\r\n
+2022/05/18 10:27:40 => TUE-087P plain PracticeSubjectFormat
+Tx V 58\n                               >
+Rx                                      < Message #58 \r\n
+Rx                                      < Date: Tue, 17 May 2022 19:22:48 PDT\
+Rx                                      < r\n
+Rx                                      < From: aj6hm@w1xsc.ampr.org\r\n
+Rx                                      < To: pkttue@w2xsc.ampr.org\r\n
+Rx                                      < Subject: 6HM-755P_R_Practice AJ6HM, 
+Rx                                      < Steve, Saratoga, 05/17/2022\r\n
+Rx                                      < \r\n
+Rx                                      < \r\n
+Rx                                      < \r\n
+Rx                                      < Weekly Practice,\r\n
+Rx                                      < \r\n
+Rx                                      < Steve Steps, AJ6HM\r\n
+Rx                                      < \r\n
+Rx                                      < (#0) >\r\n
+2022/05/18 10:27:40 Received at PKTTUE@W2XSC: from "aj6hm@w1xsc.ampr.org" subject "6HM-755P_R_Practice AJ6HM, Steve, Saratoga, 05/17/2022"
+Tx SP aj6hm@w1xsc.ampr.org\n            >
+Rx                                      < Subject:\r\n
+Tx DELIVERED: 6HM-755P_R_Practice AJ6HM >
+Tx , Steve, Saratoga, 05/17/2022\n      >
+Rx                                      < Enter message.  End with /EX or ^Z i
+Rx                                      < n first column (^A aborts):\r\n
+Tx !LMI!TUE-090P!DR!05/18/2022 10:27:40 >
+Tx \n                                   >
+Tx Your Message\n                       >
+Tx To: pkttue@w2xsc.ampr.org\n          >
+Tx Subject: 6HM-755P_R_Practice AJ6HM,  >
+Tx Steve, Saratoga, 05/17/2022\n        >
+Tx was delivered on 05/18/2022 10:27:40 >
+Tx \n                                   >
+Tx Recipient's Local Message ID: TUE-09 >
+Tx 0P\n                                 >
+Tx /EX\n                                >
+Rx                                      < Msg queued\r\n
+Rx                                      < (#0) >\r\n
+Tx K 58\n                               >
+Rx                                      < (#0) >\r\n
+2022/05/18 10:27:40 => TUE-090P plain 
+Tx V 59\n                               >
+Rx                                      < Invalid Message\r\n
+Rx                                      < (#0) >\r\n
+Tx B\r\n                                >
+Rx                                      < login: 
+Tx x\n                                  >
+Rx                                      < Password [0] : 
+Tx f1d3ff8443297732862df21dc4e57262\n   >
+Rx                                      < (#0) >\r\n
+Tx XM 0\n                               >
+Rx                                      < (#0) >\r\n
+Tx SP packet@scc-ares-races.groups.io\n >
+Rx                                      < Subject:\r\n
+Tx TUE-092P_R_SCCo Packet Practice Repo >
+Tx rt\n                                 >
+Rx                                      < Enter message.  End with /EX or ^Z i
+Rx                                      < n first column (^A aborts):\r\n
+Tx ==== SCCo ARES/RACES Packet Practice >
+Tx  Report ====\n                       >
+Tx ==== for SVECS Net on Tuesday, May 1 >
+Tx 7, 2022 ====\n                       >
+Tx \n                                   >
+Tx This practice session expected a pla >
+Tx in text message sent to PKTTUE at W2 >
+Tx XSC,\n                               >
+Tx between 00:00 on Wednesday, May 11 a >
+Tx nd 20:00 on Tuesday, May 17, 2022.   >
+Tx W3XSC\n                              >
+Tx was simulated \"down\" for this prac >
+Tx tice session.\n                      >
+Tx \n                                   >
+Tx Total messages:     27\n             >
+Tx Unique addresses:   26\n             >
+Tx Correct messages:   25  (96%)\n      >
+Tx Unique call signs:  24  [report this >
+Tx  count to the net]\n                 >
+Tx Messages from:\n                     >
+Tx   W1XSC:            17\n             >
+Tx   W2XSC:             3\n             >
+Tx   W3XSC:             1  (simulated d >
+Tx own)\n                               >
+Tx   W4XSC:             5\n             >
+Tx \n                                   >
+Tx ---- The following messages were cou >
+Tx nted in this report: ----\n          >
+Tx aa6pm@w1xsc.ampr.org           PJM-6 >
+Tx 25P_R_Practice AA6PM, Peter, Saratog >
+Tx a, 05/17/2022\n                      >
+Tx ag6gx@w1xsc.ampr.org           6GX-4 >
+Tx 985P_R_Practice AG6GX, Brian, Cupert >
+Tx ino, 05/17/2022\n                    >
+Tx aj6hm@w1xsc.ampr.org           6HM-7 >
+Tx 55P_R_Practice AJ6HM, Steve, Saratog >
+Tx a, 05/17/2022\n                      >
+Tx ak6by@w1xsc.ampr.org           6BY-1 >
+Tx 01P_R_Practice AK6BY, Anne, San Jose >
+Tx , 5/17/22\n                          >
+Tx k6fjc@w2xsc.ampr.org           FJC-8 >
+Tx 08P_R_Practice K6FJC, Mark, Redwood  >
+Tx City, 20220517\n                     >
+Tx k6rwy@w4xsc.ampr.org           RWY-2 >
+Tx 141P_R_Practice K6RWY, Bob, San Jose >
+Tx , 05/17/22\n                         >
+Tx k6sw@w1xsc.ampr.org            PEB-7 >
+Tx 71P_R_Practice K6SW, Pat, San Jose,  >
+Tx 2022-05-17\n                         >
+Tx kc6rsc@w1xsc.ampr.org          STR-2 >
+Tx 654P_R_Practice KC6RSC, Steve, SNY,  >
+Tx 2022-05-17\n                         >
+Tx ke6ppi@w1xsc.ampr.org          PPI-5 >
+Tx 00P_R_Practice KE6PPI, Roger, Sunnyv >
+Tx ale, 05-13-2022\n                    >
+Tx   ^ incorrect net date in subject\n  >
+Tx kg6hi@w1xsc.ampr.org           6HI-1 >
+Tx 748P_R_Practice, KG6HI, Jerry, Sunny >
+Tx vale, 17 May 2022\n                  >
+Tx   ^ incorrect Practice subject forma >
+Tx t\n                                  >
+Tx kg6kzz@w1xsc.#nca.ca.usa.noam  KZZ-3 >
+Tx 88P_R_Practice KG6KZZ, Jason, Almade >
+Tx n, 5/17/2022\n                       >
+Tx kg6kzz@w1xsc.ampr.org          KZZ-3 >
+Tx 88P_R_Practice KG6KZZ, Jason, Almade >
+Tx n, 5/17/2022\n                       >
+Tx kg6yhs@w4xsc.ampr.org          YHS-2 >
+Tx 47P_R_Practice KG6YHS, Irene, Palo A >
+Tx lto, 05/17/2022\n                    >
+Tx kk6ebl@w1xsc.ampr.org          EBL-1 >
+Tx 311P_R_Practice KK6EBL, Klaus, LG/MS >
+Tx  05/17/2022\n                        >
+Tx   ^ incorrect Practice subject forma >
+Tx t\n                                  >
+Tx kk6fmq@w1xsc.ampr.org          FMQ-3 >
+Tx 05M_R_Practice KK6FMQ, Grant, PAF, 0 >
+Tx 5/17/2022\n                          >
+Tx kk6fmq@w3xsc.ampr.org          FMQ-1 >
+Tx 40P_R_Practice KK6FMQ, Grant, PAF, 0 >
+Tx 5/17/2022\n                          >
+Tx   ^ message from incorrect BBS (simu >
+Tx lated down)\n                        >
+Tx kk6fpp@w4xsc.ampr.org          FPP-1 >
+Tx 02M_R_Practice KK6FPP, Thomas, Sunny >
+Tx vale, 20220517\n                     >
+Tx kk6wvi@w1xsc.ampr.org          JWB-6 >
+Tx 74P_R_Practice KK6WVI, James, San Jo >
+Tx se, 05-17-2022\n                     >
+Tx km6iao@w4xsc.ampr.org          IAO-5 >
+Tx 68P_R_Practice KM6IAO, Paul, Milpita >
+Tx s, 05/17/2022\n                      >
+Tx km6lry@w1xsc.ampr.org          LRY-4 >
+Tx 87P_R_Practice KM6LRY, Les, LG/MS, 0 >
+Tx 5/17/2022\n                          >
+Tx km6mzm@w2xsc.ampr.org          MZM-4 >
+Tx 67P_R_Practice, KM6MZM, Daniel, Sunn >
+Tx yvale 05/17/2022\n                   >
+Tx   ^ incorrect Practice subject forma >
+Tx t\n                                  >
+Tx kt6jk@w1xsc.#nca.ca.usa.noam   6JK-9 >
+Tx 10M_R_Practice KT6JK, Todd, CUP, 202 >
+Tx 20517\n                              >
+Tx n9dk@w4xsc.ampr.org            9DK-3 >
+Tx 400P_R_Practice N9DK, Dave, MV, 2022 >
+Tx -05-17\n                             >
+Tx w6bg@w1xsc.ampr.org            6BG-7 >
+Tx 94P_R_Practice W6BG, MAX, CUPERTINO, >
+Tx  2022-05-17\n                        >
+Tx wu6p@w1xsc.ampr.org            U6P-4 >
+Tx 35P_R_Practice WU6P, Nianfeng, Sunny >
+Tx vale, 05/17/2022\n                   >
+Tx xbeeoc@w2xsc.ampr.org          XBE-1 >
+Tx 362P_R_Practice N6SBC, Timothy, San  >
+Tx Benito Co., 05/17/2022\n             >
+Tx \n                                   >
+Tx ---- The following messages were not >
+Tx  counted in this report: ----\n      >
+Tx pktmon@w2xsc.ampr.org          MON-6 >
+Tx 883PLog to PKTTUE NCO from PKTMON NC >
+Tx O\n                                  >
+Tx   ^ incorrect subject line format\n  >
+Tx   ^ no call sign in message\n        >
+Tx \n                                   >
+Tx This report was generated on Wednesd >
+Tx ay, May 18, 2022 at 10:27 by wppsvr\ >
+Tx n                                    >
+Tx version (devel).\n                   >
+Tx /EX\n                                >
+Rx                                      < Msg queued\r\n
+Rx                                      < (#0) >\r\n
+2022/05/18 10:27:40 Sent report for SVECS Net on 2022-05-17.
+
+------------------------------------------------------------------------------
+
+SP ak6by@w1xsc.ampr.org
+Subject: DELIVERED: 6BY-101P_R_Practice AK6BY, Anne, San Jose, 5/17/22
+!LMI!TUE-023P!DR!05/18/2022 10:27:40
+Your Message
+To: pkttue@w2xsc.ampr.org
+Subject: 6BY-101P_R_Practice AK6BY, Anne, San Jose, 5/17/22
+was delivered on 05/18/2022 10:27:40
+Recipient's Local Message ID: TUE-023P
+
+------------------------------------------------------------------------------
+
+SP k6sw@w1xsc.ampr.org
+Subject: DELIVERED: PEB-771P_R_Practice K6SW, Pat, San Jose, 2022-05-17
+!LMI!TUE-025P!DR!05/18/2022 10:27:40
+Your Message
+To: pkttue@w2xsc.ampr.org
+Subject: PEB-771P_R_Practice K6SW, Pat, San Jose, 2022-05-17
+was delivered on 05/18/2022 10:27:40
+Recipient's Local Message ID: TUE-025P
+
+------------------------------------------------------------------------------
+
+SP w6bg@w1xsc.ampr.org
+Subject: DELIVERED: 6BG-794P_R_Practice W6BG, MAX, CUPERTINO, 2022-05-17
+!LMI!TUE-027P!DR!05/18/2022 10:27:40
+Your Message
+To: pkttue@w2xsc.ampr.org
+Subject: 6BG-794P_R_Practice W6BG, MAX, CUPERTINO, 2022-05-17
+was delivered on 05/18/2022 10:27:40
+Recipient's Local Message ID: TUE-027P
+
+------------------------------------------------------------------------------
+
+SP ke6ppi@w1xsc.ampr.org
+Subject: DELIVERED: PPI-500P_R_Practice KE6PPI, Roger, Sunnyvale, 05-13-2022
+!LMI!TUE-030P!DR!05/18/2022 10:27:40
+Your Message
+To: pkttue@w2xsc.ampr.org
+Subject: PPI-500P_R_Practice KE6PPI, Roger, Sunnyvale, 05-13-2022
+was delivered on 05/18/2022 10:27:40
+Recipient's Local Message ID: TUE-030P
+
+------------------------------------------------------------------------------
+
+SP ke6ppi@w1xsc.ampr.org
+Subject: TUE-032P_R_Incorrect net date in subject
+The packet practice message
+    From: ke6ppi@w1xsc.ampr.org
+    To: pkttue@w2xsc
+    Subject: PPI-500P_R_Practice KE6PPI, Roger, Sunnyvale, 05-13-2022
+    Date: Fri, 13 May 2022 14:53:22 PDT
+has the following issue.
+
+This message is being counted for SVECS Net on May 11, but the subject line
+says it's intended for a net on May 13.  This may indicate that the message
+was sent to the wrong net.
+
+For more information:
+  * The "Weekly SPECS/SVECS Packet Practice" page on the county ARES/RACES
+    website gives details of the packet practice exercise, including the net
+    practice schedules, the schedule of what type of message to send, the
+    schedule of simulated "down" BBS systems, and the format of the subject
+    line for practice messages.  It is available at
+    https://www.scc-ares-races.org/data/packet/weekly-packet-practice.html
+  * If you need assistance, you can request it in the packet discussion group.
+    To sign up for this group, see the Discussion Groups page at
+    https://www.scc-ares-races.org/discuss-groups.html
+
+------------------------------------------------------------------------------
+
+SP kk6fmq@w1xsc.ampr.org
+Subject: DELIVERED: FMQ-305M_R_Practice KK6FMQ, Grant, PAF, 05/17/2022
+!LMI!TUE-033P!DR!05/18/2022 10:27:40
+Your Message
+To: pkttue@w2xsc.ampr.org
+Subject: FMQ-305M_R_Practice KK6FMQ, Grant, PAF, 05/17/2022
+was delivered on 05/18/2022 10:27:40
+Recipient's Local Message ID: TUE-033P
+
+------------------------------------------------------------------------------
+
+SP kk6fmq@w3xsc.ampr.org
+Subject: DELIVERED: FMQ-140P_R_Practice KK6FMQ, Grant, PAF, 05/17/2022
+!LMI!TUE-035P!DR!05/18/2022 10:27:40
+Your Message
+To: pkttue@w2xsc.ampr.org
+Subject: FMQ-140P_R_Practice KK6FMQ, Grant, PAF, 05/17/2022
+was delivered on 05/18/2022 10:27:40
+Recipient's Local Message ID: TUE-035P
+
+------------------------------------------------------------------------------
+
+SP kk6fmq@w3xsc.ampr.org
+Subject: TUE-037P_R_Message from incorrect BBS (simulated down)
+The packet practice message
+    From: kk6fmq@w3xsc.ampr.org
+    To: pkttue@w2xsc
+    Subject: FMQ-140P_R_Practice KK6FMQ, Grant, PAF, 05/17/2022
+    Date: Sun, 15 May 2022 07:58:18 PDT
+has the following issue.
+
+This message was sent from W3XSC, which is simulated down for SVECS Net on
+May 17.  Practice messages should not be sent from BBSes that are simulated
+down.
+
+For more information:
+  * The "Weekly SPECS/SVECS Packet Practice" page on the county ARES/RACES
+    website gives details of the packet practice exercise, including the net
+    practice schedules, the schedule of what type of message to send, the
+    schedule of simulated "down" BBS systems, and the format of the subject
+    line for practice messages.  It is available at
+    https://www.scc-ares-races.org/data/packet/weekly-packet-practice.html
+  * If you need assistance, you can request it in the packet discussion group.
+    To sign up for this group, see the Discussion Groups page at
+    https://www.scc-ares-races.org/discuss-groups.html
+
+------------------------------------------------------------------------------
+
+SP ag6gx@w1xsc.ampr.org
+Subject: DELIVERED: 6GX-4985P_R_Practice AG6GX, Brian, Cupertino, 05/17/2022
+!LMI!TUE-040P!DR!05/18/2022 10:27:40
+Your Message
+To: pkttue@w2xsc.ampr.org
+Subject: 6GX-4985P_R_Practice AG6GX, Brian, Cupertino, 05/17/2022
+was delivered on 05/18/2022 10:27:40
+Recipient's Local Message ID: TUE-040P
+
+------------------------------------------------------------------------------
+
+SP kc6rsc@w1xsc.ampr.org
+Subject: DELIVERED: STR-2654P_R_Practice KC6RSC, Steve, SNY, 2022-05-17
+!LMI!TUE-042P!DR!05/18/2022 10:27:40
+Your Message
+To: pkttue@w2xsc.ampr.org
+Subject: STR-2654P_R_Practice KC6RSC, Steve, SNY, 2022-05-17
+was delivered on 05/18/2022 10:27:40
+Recipient's Local Message ID: TUE-042P
+
+------------------------------------------------------------------------------
+
+SP wu6p@w1xsc.ampr.org
+Subject: DELIVERED: U6P-435P_R_Practice WU6P, Nianfeng, Sunnyvale, 05/17/2022
+!LMI!TUE-044P!DR!05/18/2022 10:27:40
+Your Message
+To: pkttue@w2xsc.ampr.org
+Subject: U6P-435P_R_Practice WU6P, Nianfeng, Sunnyvale, 05/17/2022
+was delivered on 05/18/2022 10:27:40
+Recipient's Local Message ID: TUE-044P
+
+------------------------------------------------------------------------------
+
+SP kg6yhs@w4xsc.ampr.org
+Subject: DELIVERED: YHS-247P_R_Practice KG6YHS, Irene, Palo Alto, 05/17/2022
+!LMI!TUE-049P!DR!05/18/2022 10:27:40
+Your Message
+To: pkttue@w2xsc.ampr.org
+Subject: YHS-247P_R_Practice KG6YHS, Irene, Palo Alto, 05/17/2022
+was delivered on 05/18/2022 10:27:40
+Recipient's Local Message ID: TUE-049P
+
+------------------------------------------------------------------------------
+
+SP kk6fpp@w4xsc.ampr.org
+Subject: DELIVERED: FPP-102M_R_Practice KK6FPP, Thomas, Sunnyvale, 20220517
+!LMI!TUE-051P!DR!05/18/2022 10:27:40
+Your Message
+To: pkttue@w2xsc.ampr.org
+Subject: FPP-102M_R_Practice KK6FPP, Thomas, Sunnyvale, 20220517
+was delivered on 05/18/2022 10:27:40
+Recipient's Local Message ID: TUE-051P
+
+------------------------------------------------------------------------------
+
+SP kg6kzz@w1xsc.ampr.org
+Subject: DELIVERED: KZZ-388P_R_Practice KG6KZZ, Jason, Almaden, 5/17/2022
+!LMI!TUE-053P!DR!05/18/2022 10:27:40
+Your Message
+To: pkttue@w2xsc.ampr.org
+Subject: KZZ-388P_R_Practice KG6KZZ, Jason, Almaden, 5/17/2022
+was delivered on 05/18/2022 10:27:40
+Recipient's Local Message ID: TUE-053P
+
+------------------------------------------------------------------------------
+
+SP kg6kzz@w1xsc.#nca.ca.usa.noam
+Subject: DELIVERED: KZZ-388P_R_Practice KG6KZZ, Jason, Almaden, 5/17/2022
+!LMI!TUE-055P!DR!05/18/2022 10:27:40
+Your Message
+To: pkttue@w2xsc.ampr.org
+Subject: KZZ-388P_R_Practice KG6KZZ, Jason, Almaden, 5/17/2022
+was delivered on 05/18/2022 10:27:40
+Recipient's Local Message ID: TUE-055P
+
+------------------------------------------------------------------------------
+
+SP kt6jk@w1xsc.#nca.ca.usa.noam
+Subject: DELIVERED: 6JK-910M_R_Practice KT6JK, Todd, CUP, 20220517
+!LMI!TUE-057P!DR!05/18/2022 10:27:40
+Your Message
+To: pkttue@w2xsc.ampr.org
+Subject: 6JK-910M_R_Practice KT6JK, Todd, CUP, 20220517
+was delivered on 05/18/2022 10:27:40
+Recipient's Local Message ID: TUE-057P
+
+------------------------------------------------------------------------------
+
+SP km6lry@w1xsc.ampr.org
+Subject: DELIVERED: LRY-487P_R_Practice KM6LRY, Les, LG/MS, 05/17/2022
+!LMI!TUE-059P!DR!05/18/2022 10:27:40
+Your Message
+To: pkttue@w2xsc.ampr.org
+Subject: LRY-487P_R_Practice KM6LRY, Les, LG/MS, 05/17/2022
+was delivered on 05/18/2022 10:27:40
+Recipient's Local Message ID: TUE-059P
+
+------------------------------------------------------------------------------
+
+SP km6mzm@w2xsc.ampr.org
+Subject: DELIVERED: MZM-467P_R_Practice, KM6MZM, Daniel, Sunnyvale 05/17/2022
+!LMI!TUE-061P!DR!05/18/2022 10:27:40
+Your Message
+To: pkttue@w2xsc.ampr.org
+Subject: MZM-467P_R_Practice, KM6MZM, Daniel, Sunnyvale 05/17/2022
+was delivered on 05/18/2022 10:27:40
+Recipient's Local Message ID: TUE-061P
+
+------------------------------------------------------------------------------
+
+SP km6mzm@w2xsc.ampr.org
+Subject: TUE-063P_R_Incorrect Practice subject format
+The packet practice message
+    From: km6mzm@w2xsc.ampr.org
+    To: pkttue@w2xsc
+    Subject: MZM-467P_R_Practice, KM6MZM, Daniel, Sunnyvale 05/17/2022
+    Date: Mon, 16 May 2022 15:37:03 PDT
+has the following issue.
+
+The Subject of this message does not have the correct format.  After the
+message number, handling order, and form type, it should have the word
+"Practice" followed by four comma-separated fields:
+    Practice CallSign, FirstName, Jurisdiction, Date
+
+For more information:
+  * The "Weekly SPECS/SVECS Packet Practice" page on the county ARES/RACES
+    website gives details of the packet practice exercise, including the net
+    practice schedules, the schedule of what type of message to send, the
+    schedule of simulated "down" BBS systems, and the format of the subject
+    line for practice messages.  It is available at
+    https://www.scc-ares-races.org/data/packet/weekly-packet-practice.html
+  * If you need assistance, you can request it in the packet discussion group.
+    To sign up for this group, see the Discussion Groups page at
+    https://www.scc-ares-races.org/discuss-groups.html
+
+------------------------------------------------------------------------------
+
+SP k6fjc@w2xsc.ampr.org
+Subject: DELIVERED: FJC-808P_R_Practice K6FJC, Mark, Redwood City, 20220517
+!LMI!TUE-065P!DR!05/18/2022 10:27:40
+Your Message
+To: pkttue@w2xsc.ampr.org
+Subject: FJC-808P_R_Practice K6FJC, Mark, Redwood City, 20220517
+was delivered on 05/18/2022 10:27:40
+Recipient's Local Message ID: TUE-065P
+
+------------------------------------------------------------------------------
+
+SP n9dk@w4xsc.ampr.org
+Subject: DELIVERED: 9DK-3400P_R_Practice N9DK, Dave, MV, 2022-05-17
+!LMI!TUE-067P!DR!05/18/2022 10:27:40
+Your Message
+To: pkttue@w2xsc.ampr.org
+Subject: 9DK-3400P_R_Practice N9DK, Dave, MV, 2022-05-17
+was delivered on 05/18/2022 10:27:40
+Recipient's Local Message ID: TUE-067P
+
+------------------------------------------------------------------------------
+
+SP pktmon@w2xsc.ampr.org
+Subject: DELIVERED: MON-6883PLog to PKTTUE NCO from PKTMON NCO
+!LMI!TUE-069P!DR!05/18/2022 10:27:40
+Your Message
+To: pkttue@w2xsc.ampr.org
+Subject: MON-6883PLog to PKTTUE NCO from PKTMON NCO
+was delivered on 05/18/2022 10:27:40
+Recipient's Local Message ID: TUE-069P
+
+------------------------------------------------------------------------------
+
+SP pktmon@w2xsc.ampr.org
+Subject: TUE-071P_R_Issues with packet practice message
+The packet practice message
+    From: pktmon@w2xsc.ampr.org
+    To: pkttue@w2xsc
+    Subject: MON-6883PLog to PKTTUE NCO from PKTMON NCO
+    Date: Mon, 16 May 2022 20:30:00 PDT
+has the following issues.  The message will not be counted.
+
+This message has an incorrect subject line format.  According to SCCo
+standards, the subject should look like
+    AAA-111P_R_Practice A6AAA, Charlie, Nowhereville, 2019-03-16
+    (msgnum) |            |    (name)   (city)        (net date)
+      (handling order)  (call sign)
+
+This message cannot be counted because it's not clear who sent it.  There is
+no call sign in the return address or after the word "Practice" on the
+subject line.  In order for a message to count, there must be a call sign in
+at least one of those places.
+
+For more information:
+  * The "Weekly SPECS/SVECS Packet Practice" page on the county ARES/RACES
+    website gives details of the packet practice exercise, including the net
+    practice schedules, the schedule of what type of message to send, the
+    schedule of simulated "down" BBS systems, and the format of the subject
+    line for practice messages.  It is available at
+    https://www.scc-ares-races.org/data/packet/weekly-packet-practice.html
+  * The "Standard Packet Message Subject Line" document describes how to
+    compose the subject line of a packet message following county standards.
+    It is available from the "Packet BBS Service" page at
+    https://www.scc-ares-races.org/data/packet/index.html
+  * If you need assistance, you can request it in the packet discussion group.
+    To sign up for this group, see the Discussion Groups page at
+    https://www.scc-ares-races.org/discuss-groups.html
+
+------------------------------------------------------------------------------
+
+SP k6rwy@w4xsc.ampr.org
+Subject: DELIVERED: RWY-2141P_R_Practice K6RWY, Bob, San Jose, 05/17/22
+!LMI!TUE-072P!DR!05/18/2022 10:27:40
+Your Message
+To: pkttue@w2xsc.ampr.org
+Subject: RWY-2141P_R_Practice K6RWY, Bob, San Jose, 05/17/22
+was delivered on 05/18/2022 10:27:40
+Recipient's Local Message ID: TUE-072P
+
+------------------------------------------------------------------------------
+
+SP kg6hi@w1xsc.ampr.org
+Subject: DELIVERED: 6HI-1748P_R_Practice, KG6HI, Jerry, Sunnyvale, 17 May 2022
+!LMI!TUE-074P!DR!05/18/2022 10:27:40
+Your Message
+To: pkttue@w2xsc.ampr.org
+Subject: 6HI-1748P_R_Practice, KG6HI, Jerry, Sunnyvale, 17 May 2022
+was delivered on 05/18/2022 10:27:40
+Recipient's Local Message ID: TUE-074P
+
+------------------------------------------------------------------------------
+
+SP kg6hi@w1xsc.ampr.org
+Subject: TUE-076P_R_Incorrect Practice subject format
+The packet practice message
+    From: kg6hi@w1xsc.ampr.org
+    To: pkttue@w2xsc
+    Subject: 6HI-1748P_R_Practice, KG6HI, Jerry, Sunnyvale, 17 May 2022
+    Date: Tue, 17 May 2022 11:11:48 PDT
+has the following issue.
+
+The Subject of this message does not have the correct format.  After the
+message number, handling order, and form type, it should have the word
+"Practice" followed by four comma-separated fields:
+    Practice CallSign, FirstName, Jurisdiction, Date
+
+For more information:
+  * The "Weekly SPECS/SVECS Packet Practice" page on the county ARES/RACES
+    website gives details of the packet practice exercise, including the net
+    practice schedules, the schedule of what type of message to send, the
+    schedule of simulated "down" BBS systems, and the format of the subject
+    line for practice messages.  It is available at
+    https://www.scc-ares-races.org/data/packet/weekly-packet-practice.html
+  * If you need assistance, you can request it in the packet discussion group.
+    To sign up for this group, see the Discussion Groups page at
+    https://www.scc-ares-races.org/discuss-groups.html
+
+------------------------------------------------------------------------------
+
+SP km6iao@w4xsc.ampr.org
+Subject: DELIVERED: IAO-568P_R_Practice KM6IAO, Paul, Milpitas, 05/17/2022
+!LMI!TUE-077P!DR!05/18/2022 10:27:40
+Your Message
+To: pkttue@w2xsc.ampr.org
+Subject: IAO-568P_R_Practice KM6IAO, Paul, Milpitas, 05/17/2022
+was delivered on 05/18/2022 10:27:40
+Recipient's Local Message ID: TUE-077P
+
+------------------------------------------------------------------------------
+
+SP aa6pm@w1xsc.ampr.org
+Subject: DELIVERED: PJM-625P_R_Practice AA6PM, Peter, Saratoga, 05/17/2022
+!LMI!TUE-079P!DR!05/18/2022 10:27:40
+Your Message
+To: pkttue@w2xsc.ampr.org
+Subject: PJM-625P_R_Practice AA6PM, Peter, Saratoga, 05/17/2022
+was delivered on 05/18/2022 10:27:40
+Recipient's Local Message ID: TUE-079P
+
+------------------------------------------------------------------------------
+
+SP xbeeoc@w2xsc.ampr.org
+Subject: DELIVERED: XBE-1362P_R_Practice N6SBC, Timothy, San Benito Co., 05/17/2022
+!LMI!TUE-082P!DR!05/18/2022 10:27:40
+Your Message
+To: pkttue@w2xsc.ampr.org
+Subject: XBE-1362P_R_Practice N6SBC, Timothy, San Benito Co., 05/17/2022
+was delivered on 05/18/2022 10:27:40
+Recipient's Local Message ID: TUE-082P
+
+------------------------------------------------------------------------------
+
+SP kk6wvi@w1xsc.ampr.org
+Subject: DELIVERED: JWB-674P_R_Practice KK6WVI, James, San Jose, 05-17-2022
+!LMI!TUE-085P!DR!05/18/2022 10:27:40
+Your Message
+To: pkttue@w2xsc.ampr.org
+Subject: JWB-674P_R_Practice KK6WVI, James, San Jose, 05-17-2022
+was delivered on 05/18/2022 10:27:40
+Recipient's Local Message ID: TUE-085P
+
+------------------------------------------------------------------------------
+
+SP kk6ebl@w1xsc.ampr.org
+Subject: DELIVERED: EBL-1311P_R_Practice KK6EBL, Klaus, LG/MS 05/17/2022
+!LMI!TUE-087P!DR!05/18/2022 10:27:40
+Your Message
+To: pkttue@w2xsc.ampr.org
+Subject: EBL-1311P_R_Practice KK6EBL, Klaus, LG/MS 05/17/2022
+was delivered on 05/18/2022 10:27:40
+Recipient's Local Message ID: TUE-087P
+
+------------------------------------------------------------------------------
+
+SP kk6ebl@w1xsc.ampr.org
+Subject: TUE-089P_R_Incorrect Practice subject format
+The packet practice message
+    From: kk6ebl@w1xsc.ampr.org
+    To: pkttue@w2xsc
+    Subject: EBL-1311P_R_Practice KK6EBL, Klaus, LG/MS 05/17/2022
+    Date: Tue, 17 May 2022 19:13:59 PDT
+has the following issue.
+
+The Subject of this message does not have the correct format.  After the
+message number, handling order, and form type, it should have the word
+"Practice" followed by four comma-separated fields:
+    Practice CallSign, FirstName, Jurisdiction, Date
+
+For more information:
+  * The "Weekly SPECS/SVECS Packet Practice" page on the county ARES/RACES
+    website gives details of the packet practice exercise, including the net
+    practice schedules, the schedule of what type of message to send, the
+    schedule of simulated "down" BBS systems, and the format of the subject
+    line for practice messages.  It is available at
+    https://www.scc-ares-races.org/data/packet/weekly-packet-practice.html
+  * If you need assistance, you can request it in the packet discussion group.
+    To sign up for this group, see the Discussion Groups page at
+    https://www.scc-ares-races.org/discuss-groups.html
+
+------------------------------------------------------------------------------
+
+SP aj6hm@w1xsc.ampr.org
+Subject: DELIVERED: 6HM-755P_R_Practice AJ6HM, Steve, Saratoga, 05/17/2022
+!LMI!TUE-090P!DR!05/18/2022 10:27:40
+Your Message
+To: pkttue@w2xsc.ampr.org
+Subject: 6HM-755P_R_Practice AJ6HM, Steve, Saratoga, 05/17/2022
+was delivered on 05/18/2022 10:27:40
+Recipient's Local Message ID: TUE-090P
+
+------------------------------------------------------------------------------
+
+SP packet@scc-ares-races.groups.io
+Subject: TUE-092P_R_SCCo Packet Practice Report
+==== SCCo ARES/RACES Packet Practice Report ====
+==== for SVECS Net on Tuesday, May 17, 2022 ====
+
+This practice session expected a plain text message sent to PKTTUE at W2XSC,
+between 00:00 on Wednesday, May 11 and 20:00 on Tuesday, May 17, 2022.  W3XSC
+was simulated "down" for this practice session.
+
+Total messages:     27
+Unique addresses:   26
+Correct messages:   25  (96%)
+Unique call signs:  24  [report this count to the net]
+Messages from:
+  W1XSC:            17
+  W2XSC:             3
+  W3XSC:             1  (simulated down)
+  W4XSC:             5
+
+---- The following messages were counted in this report: ----
+aa6pm@w1xsc.ampr.org           PJM-625P_R_Practice AA6PM, Peter, Saratoga, 05/17/2022
+ag6gx@w1xsc.ampr.org           6GX-4985P_R_Practice AG6GX, Brian, Cupertino, 05/17/2022
+aj6hm@w1xsc.ampr.org           6HM-755P_R_Practice AJ6HM, Steve, Saratoga, 05/17/2022
+ak6by@w1xsc.ampr.org           6BY-101P_R_Practice AK6BY, Anne, San Jose, 5/17/22
+k6fjc@w2xsc.ampr.org           FJC-808P_R_Practice K6FJC, Mark, Redwood City, 20220517
+k6rwy@w4xsc.ampr.org           RWY-2141P_R_Practice K6RWY, Bob, San Jose, 05/17/22
+k6sw@w1xsc.ampr.org            PEB-771P_R_Practice K6SW, Pat, San Jose, 2022-05-17
+kc6rsc@w1xsc.ampr.org          STR-2654P_R_Practice KC6RSC, Steve, SNY, 2022-05-17
+ke6ppi@w1xsc.ampr.org          PPI-500P_R_Practice KE6PPI, Roger, Sunnyvale, 05-13-2022
+  ^ incorrect net date in subject
+kg6hi@w1xsc.ampr.org           6HI-1748P_R_Practice, KG6HI, Jerry, Sunnyvale, 17 May 2022
+  ^ incorrect Practice subject format
+kg6kzz@w1xsc.#nca.ca.usa.noam  KZZ-388P_R_Practice KG6KZZ, Jason, Almaden, 5/17/2022
+kg6kzz@w1xsc.ampr.org          KZZ-388P_R_Practice KG6KZZ, Jason, Almaden, 5/17/2022
+kg6yhs@w4xsc.ampr.org          YHS-247P_R_Practice KG6YHS, Irene, Palo Alto, 05/17/2022
+kk6ebl@w1xsc.ampr.org          EBL-1311P_R_Practice KK6EBL, Klaus, LG/MS 05/17/2022
+  ^ incorrect Practice subject format
+kk6fmq@w1xsc.ampr.org          FMQ-305M_R_Practice KK6FMQ, Grant, PAF, 05/17/2022
+kk6fmq@w3xsc.ampr.org          FMQ-140P_R_Practice KK6FMQ, Grant, PAF, 05/17/2022
+  ^ message from incorrect BBS (simulated down)
+kk6fpp@w4xsc.ampr.org          FPP-102M_R_Practice KK6FPP, Thomas, Sunnyvale, 20220517
+kk6wvi@w1xsc.ampr.org          JWB-674P_R_Practice KK6WVI, James, San Jose, 05-17-2022
+km6iao@w4xsc.ampr.org          IAO-568P_R_Practice KM6IAO, Paul, Milpitas, 05/17/2022
+km6lry@w1xsc.ampr.org          LRY-487P_R_Practice KM6LRY, Les, LG/MS, 05/17/2022
+km6mzm@w2xsc.ampr.org          MZM-467P_R_Practice, KM6MZM, Daniel, Sunnyvale 05/17/2022
+  ^ incorrect Practice subject format
+kt6jk@w1xsc.#nca.ca.usa.noam   6JK-910M_R_Practice KT6JK, Todd, CUP, 20220517
+n9dk@w4xsc.ampr.org            9DK-3400P_R_Practice N9DK, Dave, MV, 2022-05-17
+w6bg@w1xsc.ampr.org            6BG-794P_R_Practice W6BG, MAX, CUPERTINO, 2022-05-17
+wu6p@w1xsc.ampr.org            U6P-435P_R_Practice WU6P, Nianfeng, Sunnyvale, 05/17/2022
+xbeeoc@w2xsc.ampr.org          XBE-1362P_R_Practice N6SBC, Timothy, San Benito Co., 05/17/2022
+
+---- The following messages were not counted in this report: ----
+pktmon@w2xsc.ampr.org          MON-6883PLog to PKTTUE NCO from PKTMON NCO
+  ^ incorrect subject line format
+  ^ no call sign in message
+
+This report was generated on Wednesday, May 18, 2022 at 10:27 by wppsvr
+version (devel).

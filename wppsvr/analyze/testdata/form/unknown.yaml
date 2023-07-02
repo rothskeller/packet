@@ -42,6 +42,7 @@ stored:
   fromBBS: W1XSC
   messageType: UNKNOWN
   subject: RSC-100P_R_ICS213_Practice KC6RSC, Steve, SNY, 1/11/2022
+  jurisdiction: SNY
   problems:
     - MessageTypeWrong
   actions: 7
@@ -57,6 +58,6 @@ responses:
     to: kc6rsc@w1xsc.ampr.org
     subject: TUE-102P_R_Incorrect message type
     bodyREs:
-      - form of unknown type
+      - unrecognized form message
       - ICS-213.*expected
       - Weekly SPECS/SVECS Packet Practice

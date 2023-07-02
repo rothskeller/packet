@@ -1,0 +1,393 @@
+<!DOCTYPE html><html><head>
+    <meta http-equiv="Content-type" content="text/html;charset=UTF-8"/>
+    <link rel="stylesheet" type="text/css" href="resources/css/loading.css"/>
+    <link rel="stylesheet" type="text/css" href="resources/css/pack-it-forms.css"/>
+    <link rel="stylesheet" type="text/css" href="resources/css/ics-header.css"/>
+    <link rel="stylesheet" type="text/css" href="resources/css/ics-footer.css"/>
+    <style>
+      table#form-row-2 {
+          border-top: 2px solid #000000;
+          border-left: 2px solid #000000;
+          border-right: 2px solid #000000;
+      }
+      table#form-row-3 {
+          border-left: 2px solid #000000;
+          border-right: 2px solid #000000;
+      }
+      table#form-body {
+          border-left: 2px solid #000000;
+          border-right: 2px solid #000000;
+          border-bottom: 2px solid #000000;
+      }
+    </style>
+    <script type="text/javascript" src="resources/js/pack-it-forms.js"></script>
+    <script type="text/javascript" src="resources/integration/integration.js"></script>
+    <meta name="pack-it-forms-subject-suffix" content="_ICS213_{{field:10.subject}}"/>
+    <meta name="pack-it-forms-pdf-URL" content="pdf/ICS-213_SCC_Message_Form_v190529b_Fillable.pdf"/>
+    <title>XSC ICS-213 Message</title>
+  </head>
+
+  <body>
+    <div class="version">2.0</div>
+    <div id="loading"><div>Loading<div id="spin"><div id="spin_1" class="spin"></div></div></div></div>
+    <div id="err">
+      <div>
+        <h1>Something went wrong.</h1>
+        The following log information may help resolve the problem.
+        <div id="error-log"></div>
+      </div>
+    </div>
+    <form id="the-form" name="the-form">
+      <div data-included-html="ics-header"><html><head></head><body><div>
+  <div class="version">0.1.0</div>
+  <table id="form-row-1">
+    <tbody><tr>
+      <td>
+        <table class="same-line-label-layout">
+          <tbody><tr>
+            <td colspan="2">
+              <span name="header-title" class="templated no-msg-init" style="font-size:175%;font-weight:bold;">{{title}}</span>
+            </td>
+          </tr><tr>
+            <td><span name="header-subtitle" class="templated no-msg-init"></span></td>
+            <td style="text-align:right;">
+              <span name="header-version" class="templated no-msg-init"></span>
+            </td>
+          </tr>
+        </tbody></table>
+      </td><td>
+        <label>Sender&#39;s Msg #<span class="field-number">2</span>
+          <input name="2.txmsgno" class="message-number no-msg-init" type="text" tabindex="-1" style="width:10em;" value="{{envelope:sender_message_number|view-by:receiver}}" disabled="disabled"/>
+        </label>
+      </td><td>
+        <label>My Msg #<span class="field-number"> </span>
+          <input name="MsgNo" class="message-number no-msg-init" type="text" tabindex="1" style="width:10em;" value="{{envelope:viewer_message_number}}" required="required"/>
+        </label>
+      </td><td>
+        <label>Receiver&#39;s Msg #<span class="field-number">3</span>
+          <input name="3.rxmsgno" class="message-number no-msg-init" type="text" tabindex="-1" style="width:10em;" value="{{envelope:receiver_message_number|view-by:sender}}" disabled="disabled"/>
+        </label>
+      </td>
+    </tr>
+  </tbody></table><table id="form-row-2">
+    <tbody><tr>
+      <td>
+        <label>Date:<span class="field-number">1</span>
+          <input name="1a.date" class="date" type="text" tabindex="2" required="required" value="{{date}}"/>
+        </label>
+      </td><td rowspan="2">
+        <fieldset>
+          <legend>Situation Severity<span class="field-number">4</span></legend>
+          <label title="Life Threat">
+            <input name="4.severity" type="radio" tabindex="4" required="required" value="EMERGENCY"/>
+            <span class="bold">Emergency</span><br/>
+            <span style="margin-left:3em;">(e.g. life threat)</span>
+          </label><label title="Property Threat">
+            <input name="4.severity" type="radio" tabindex="4" required="required" value="URGENT"/>
+            <span class="bold">Urgent</span><br/>
+            <span style="margin-left:3em;">(e.g. property threat)</span>
+          </label><label>
+            <input name="4.severity" type="radio" tabindex="4" required="required" value="OTHER"/>
+            <span class="bold">Other</span><br/>
+            <span style="margin-left:3em;">(all others)</span>
+          </label>
+        </fieldset>
+      </td><td rowspan="2">
+        <fieldset>
+          <legend>Message Handling Order<span class="field-number">5</span>
+          </legend>
+          <label title="As soon as possible">
+            <input name="5.handling" type="radio" tabindex="5" required="required" value="IMMEDIATE"/>
+            <span class="bold">Immediate</span><br/>
+            <span style="margin-left:3em;">(as soon as possible)</span>
+          </label><label title="Less than one hour">
+            <input name="5.handling" type="radio" tabindex="5" required="required" value="PRIORITY"/>
+            <span class="bold">Priority</span><br/>
+            <span style="margin-left:3em;">(less than one hour)</span>
+          </label><label title="More than one hour">
+            <input name="5.handling" type="radio" tabindex="5" required="required" value="ROUTINE"/>
+            <span class="bold">Routine</span><br/>
+            <span style="margin-left:3em;">(more than one hour)</span>
+          </label>
+        </fieldset>
+      </td><td rowspan="2">
+        <fieldset>
+          <legend>Message Requests You To:<span class="field-number">6</span>
+          </legend>
+          <fieldset class="horizontal">
+            <legend>Take action</legend>
+            <label>
+              <input name="6a.take-action" type="radio" value="Yes" tabindex="6"/> Yes
+            </label><label>
+              <input name="6a.take-action" type="radio" value="No" tabindex="6"/> No
+            </label>
+          </fieldset>
+          <fieldset class="horizontal">
+            <legend>Reply</legend>
+            <label>
+              <input name="6b.reply" type="radio" value="Yes" tabindex="7" onchange="if (this.checked) set_properties({&#39;6d.reply-by&#39;: {disabled: false}});"/>
+              Yes, by
+            </label>
+            <input name="6d.reply-by" type="text" tabindex="-1"/>
+            <label>
+              <input name="6b.reply" type="radio" value="No" tabindex="7" onchange="if (this.checked) set_properties({&#39;6d.reply-by&#39;: {disabled: true, value: &#39;&#39;}});"/>
+              No
+            </label>
+          </fieldset>
+          <label>
+            <input name="6c.fyi" type="checkbox" tabindex="-1"/>For your info (no action required)
+          </label>
+        </fieldset>
+      </td>
+    </tr><tr>
+      <td>
+        <label>Time: <span style="font-size:75%;font-weight:normal;">(24 hr clock)</span>
+          <input name="1b.time" class="time" type="text" tabindex="3" required="required"/>
+        </label>
+      </td>
+    </tr>
+  </tbody></table><table id="form-row-3">
+    <tbody><tr>
+      <td rowspan="4" class="block-caption" style="width:1px;font-size:125%;">
+        T<br/>O
+      </td><td>
+        <label>ICS Position:<span class="field-number">7</span>
+          <input name="7.to-ics-position-other" type="text" required="required" tabindex="10"/>
+        </label>
+      </td><td rowspan="4" class="block-caption" style="width:1px;font-size:125%;">
+        F<br/>R<br/>O<br/>M
+      </td><td>
+        <label>ICS Position:<span class="field-number">8</span>
+          <input name="8.from-ics-position" type="text" required="required" tabindex="15"/>
+        </label>
+      </td>
+    </tr><tr>
+      <td>
+        <label>Location:<span class="field-number">9a</span>
+          <input name="9a.to-location" type="text" required="required" tabindex="11"/>
+        </label>
+      </td><td>
+        <label>Location:<span class="field-number">9b</span>
+          <input name="9b.from-location" type="text" required="required" tabindex="16"/>
+        </label>
+      </td>
+    </tr><tr>
+      <td>
+        <label>Name:
+          <input name="ToName" type="text" tabindex="12"/>
+        </label>
+      </td><td>
+        <label>Name:
+          <input name="FmName" type="text" tabindex="17"/>
+        </label>
+      </td>
+    </tr><tr>
+      <td>
+        <label>Telephone #:
+          <input name="ToTel" type="text" tabindex="13"/>
+        </label>
+      </td><td>
+        <label>Telephone #:
+          <input name="FmTel" type="text" tabindex="18"/>
+        </label>
+      </td>
+    </tr>
+  </tbody></table>
+</div>
+</body></html></div>
+      <table id="form-body" class="noborder border">
+        <tbody><tr>
+          <td>
+            <table class="same-line-label-layout">
+              <tbody><tr>
+                <th>Subject:<span class="field-number">10</span>
+                </th>
+                <td>
+                  <input name="10.subject" type="text" required="" tabindex="20"/>
+                </td>
+              </tr>
+            </tbody></table>
+          </td>
+        </tr><tr>
+          <td>
+            <table class="same-line-label-layout">
+              <tbody><tr>
+                <th>Reference:<span class="field-number">11</span>
+                </th><td>
+                  <input name="11.reference" type="text" tabindex="21" placeholder="e.g. Number of earlier msg."/>
+                </td>
+              </tr>
+            </tbody></table>
+          </td>
+        </tr><tr>
+          <td>
+            <label>Message:<span class="field-number">12</span>
+              <textarea name="12.message" rows="6" cols="80" wrap="hard" required="" tabindex="22"></textarea>
+            </label>
+          </td>
+        </tr>
+      </tbody></table>
+      <div data-included-html="ics-footer"><html><head></head><body><div>
+  <div class="version">0.1.0</div>
+  <table id="form-row-5" class="noborder">
+    <tbody><tr>
+      <td class="block-caption">Action Taken:<span class="field-number">13</span>
+        <span style="font-weight:normal;">(For use by Originator/Recipient)</span>
+          USE SEPARATE MESSAGE FORM IF SENDING REPLY!
+      </td>
+    </tr><tr>
+      <td style="height:5em;"></td>
+    </tr><tr>
+      <td>
+        <table class="same-line-label-layout">
+          <tbody><tr>
+            <td class="bold">
+              CC:
+            </td><td class="print-checkbox">
+              <div></div> Management
+            </td><td class="print-checkbox">
+              <div></div> Operations
+            </td><td class="print-checkbox">
+              <div></div> Planning
+            </td><td class="print-checkbox">
+              <div></div> Logistics
+            </td><td class="print-checkbox">
+              <div></div> Finance
+            </td>
+          </tr>
+        </tbody></table>
+      </td>
+    </tr>
+  </tbody></table>
+  <div style="page-break-inside:avoid;">
+    <table id="form-row-six">
+      <tbody><tr>
+        <td class="block-caption">
+          Operator Use Only:<span class="field-number">14</span>
+        </td>
+      </tr>
+    </tbody></table>
+    <table>
+      <tbody><tr>
+        <td class="block-caption" style="width:1px;">
+          Relay:
+        </td><td>
+          <table class="same-line-label-layout">
+            <tbody><tr>
+              <th>Rcvd:</th>
+              <td><input type="text" name="OpRelayRcvd" tabindex="500"/></td>
+            </tr>
+          </tbody></table>
+        </td><td>
+          <table class="same-line-label-layout">
+            <tbody><tr>
+              <th>Sent:</th>
+              <td><input type="text" name="OpRelaySent" tabindex="501"/></td>
+            </tr>
+          </tbody></table>
+        </td>
+      </tr>
+    </tbody></table>
+    <table class="noborder" style="border-top:none;">
+      <tbody><tr class="horizontal">
+        <td colspan="3">
+          <span class="bold">
+            How
+            <label class="intext">
+              Received <input name="Rec-Sent" value="receiver" type="radio" tabindex="-1" class="no-msg-init" onclick="return false;" data-default-value="{{envelope:viewer}}"/>
+            </label>
+            or
+            <label class="intext">
+              Sent <input name="Rec-Sent" value="sender" type="radio" tabindex="-1" class="no-msg-init" onclick="return false;"/>
+            </label>
+          </span>
+        </td><td colspan="2" class="border-left">
+          <label class="label-sameline">Operator Call Sign:
+            <input class="call-sign no-msg-init include-in-submit" name="OpCall" type="text" tabindex="508" disabled="disabled" required="required" value="{{envelope:viewer_operator_call_sign}}"/>
+          </label>
+        </td>
+      </tr><tr class="horizontal">
+        <td>
+          <label>
+            <input name="Method" type="radio" value="Telephone" tabindex="-1"/> Telephone
+          </label>
+        </td>
+        <td colspan="2">
+          <label>
+            <input name="Method" type="radio" value="Dispatch Center" tabindex="-1"/> Dispatch Center
+          </label>
+        </td>
+        <td colspan="2" class="border-left">
+          <label class="label-sameline">Operator Name:
+            <input class="no-msg-init include-in-submit" name="OpName" type="text" tabindex="509" disabled="disabled" value="{{envelope:viewer_operator_name}}"/>
+          </label>
+        </td>
+      </tr><tr class="horizontal">
+        <td>
+          <label>
+            <input name="Method" type="radio" value="EOC Radio" tabindex="-1"/> EOC Radio
+          </label>
+        </td><td>
+          <label>
+            <input name="Method" type="radio" value="FAX" tabindex="-1"/> FAX
+          </label>
+        </td><td>
+          <label>
+            <input name="Method" type="radio" value="Courier" tabindex="-1"/> Courier
+          </label>
+        </td><td colspan="2" class="border-left">
+        </td>
+      </tr><tr class="horizontal">
+        <td>
+          <label>
+            <input name="Method" type="radio" value="Amateur Radio" tabindex="-1"/> Amateur Radio
+          </label>
+        </td><td colspan="2">
+          <label>
+            <input name="Method" type="radio" value="Other" checked="checked" tabindex="-1"/> Other:
+          </label>
+          <label>
+            <input name="Other" type="text" value="Packet" tabindex="-1"/>
+          </label>
+        </td><td class="border-left">
+          <label class="label-sameline">Date:
+            <input name="OpDate" type="text" tabindex="510" class="date no-msg-init init-on-submit" disabled="disabled" value="{{expand-while-null:{{envelope:viewer_date}},{{open-tmpl}}date{{close-tmpl}}}}"/>
+          </label>
+        </td><td>
+          <label class="label-sameline">Time:
+            <input name="OpTime" type="text" tabindex="511" class="time no-msg-init init-on-submit" disabled="disabled" value="{{expand-while-null:{{envelope:viewer_time}},{{open-tmpl}}time{{close-tmpl}}}}"/>
+          </label>
+        </td>
+      </tr>
+    </tbody></table>
+  </div>
+</div>
+</body></html></div>
+    </form>
+    <div data-included-html="submit-buttons"><html><head></head><body><div>
+  <div class="version">0.1.1</div>
+  <table id="button-header" class="same-line-label-layout">
+    <tbody><tr>
+      <td style="vertical-align:middle;white-space:nowrap;">
+        <input type="button" id="opdirect-submit" tabindex="600" disabled="disabled" value="Submit to Outpost" onclick="opdirect_submit(event)" style="font-weight:bold"/>
+        <input type="button" id="email-submit" tabindex="602" disabled="disabled" value="Submit via Email" onclick="email_submit(event)" style="font-weight:bold"/>
+          
+        <input type="button" id="show-hide-data" tabindex="601" value="Show Data Message" onclick="toggle_form_data_visibility(event)"/>
+        <input type="button" id="clear-form" tabindex="603" value="Reset Form" onclick="clear_form(event)"/>
+        <input type="button" id="show-PDF-form" tabindex="604" class="hidden" hidden="hidden" value="Show PDF"/>
+        <span id="invalid-example">
+          <input type="text" class="invalid" disabled="disabled" style="margin-left:1em;width:2em;border:1px solid #cccccc;"/>
+            = required
+        </span>
+        <div id="error-indicator">Error</div>
+      </td>
+    </tr>
+  </tbody></table>
+  <form id="form-data-form" method="post" action="http://127.0.0.1:9334/send">
+    <textarea id="form-data" name="formtext" class="hidden"></textarea>
+  </form>
+</div>
+</body></html></div>
+  
+
+</body></html>

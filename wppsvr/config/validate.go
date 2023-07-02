@@ -9,8 +9,8 @@ import (
 	"regexp"
 	"strings"
 
+	"github.com/rothskeller/packet/message"
 	"github.com/rothskeller/packet/wppsvr/interval"
-	"github.com/rothskeller/packet/xscmsg"
 )
 
 var fccCallRE = regexp.MustCompile(`^(?:A[A-L]|[KNW][A-Z]?)[0-9][A-Z]{1,3}$`)
@@ -148,7 +148,7 @@ func (c *Config) Validate(knownProbs map[string]string) (valid bool) {
 			valid = false
 		}
 		for i, item := range session.MessageTypes {
-			if _, ok := xscmsg.RegisteredTypes[item.Then]; !ok {
+			if _, ok := message.RegisteredTypes[item.Then]; !ok {
 				log.Printf("ERROR: config.sessions[%q].messageTypes[%d] = %q is not a recognized message type",
 					toCallSign, i, item.Then)
 				valid = false
@@ -171,7 +171,7 @@ func (c *Config) Validate(knownProbs map[string]string) (valid bool) {
 		valid = false
 	} else {
 		for tag, mtc := range c.MessageTypes {
-			if _, ok := xscmsg.RegisteredTypes[tag]; !ok {
+			if _, ok := message.RegisteredTypes[tag]; !ok {
 				log.Printf("ERROR: config.messageTypes has entry for unknown message type %q", tag)
 				valid = false
 				continue
@@ -184,25 +184,23 @@ func (c *Config) Validate(knownProbs map[string]string) (valid bool) {
 				valid = false
 			}
 			switch mtc.HandlingOrder {
-			case "":
+			case "", "IMMEDIATE", "PRIORITY", "ROUTINE":
 				break
 			case "computed":
-				if _, ok := ComputedRecommendedHandlingOrder[tag]; !ok {
+				if tag != "ICS213" && tag != "EOC213RR" {
 					log.Printf("ERROR: config.messageTypes[%q].handlingOrder = %q, but that form has no handling order computation defined", tag, mtc.HandlingOrder)
 					valid = false
 				}
 			default:
-				if _, ok := xscmsg.ParseHandlingOrder(mtc.HandlingOrder); !ok {
-					log.Printf("ERROR: config.messageTypes[%q].handlingOrder = %q is not a valid handling order", tag, mtc.HandlingOrder)
-					valid = false
-				}
+				log.Printf("ERROR: config.messageTypes[%q].handlingOrder = %q is not a valid handling order", tag, mtc.HandlingOrder)
+				valid = false
 			}
 		}
-		for tag := range xscmsg.RegisteredTypes {
+		for tag := range message.RegisteredTypes {
 			if _, ok := c.MessageTypes[tag]; !ok {
 				if tag == "plain" {
 					c.MessageTypes["plain"] = new(MessageTypeConfig)
-				} else {
+				} else if tag != "UNKNOWN" {
 					log.Printf("ERROR: config.messageTypes[%q] is not specified", tag)
 					valid = false
 				}

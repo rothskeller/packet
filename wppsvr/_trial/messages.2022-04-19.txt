@@ -1,0 +1,4072 @@
+---------------------------------------------------
+19-Apr 19:18:00: Outpost/Opsessn v3.4.0 c15: TNC Session #  791
+---------------------------------------------------
+
+cmd:D
+Can't DISCONNECT, A Link state is: DISCONNECTED
+cmd:b
+BEACON   EVERY 0 (disabled)
+cmd:Echo on
+ECHO was ON
+cmd:my PKTTUE
+cmd:unproto IDENT
+cmd:Mon off
+MONITOR was OFF
+cmd:daytime 220419191802
+cmd:INTFACE TERMINAL
+INTFACE was TERMINAL
+cmd:CD SOFTWARE
+CD was SOFTWARE
+cmd:NEWMODE ON
+NEWMODE was ON
+cmd:8BITCONV ON
+8BITCONV was ON
+cmd:BEACON EVERY 0
+BEACON was EVERY 0 (disabled)
+cmd:SLOTTIME 10
+SLOTTIME was 10 (100 msec)
+cmd:PERSIST 63
+PERSIST was 63 (25%)
+cmd:PACLEN 128
+PACLEN was 128
+cmd:MAXFRAME 2
+MAXFRAME was 2
+cmd:FRACK 6
+FRACK was 6 (6 sec)
+cmd:RETRY 8
+RETRY was 8
+cmd:CHECK 30
+CHECK was 30 (300 sec)
+cmd:TXDELAY 40
+TXDELAY was 40 (400 msec)
+cmd:XFLOW OFF
+XFLOW was OFF
+cmd:SENDPAC $05
+SENDPAC was $0D (CTRL-M)
+cmd:CR OFF
+CR was ON
+cmd:PACTIME AFTER 2
+PACTIME was AFTER 10 (1000 msec)
+cmd:CPACTIME ON
+CPACTIME was OFF
+cmd:STREAMEV OFF
+STREAMEV was OFF
+cmd:STREAMSW $00
+STREAMSW was $7C (|)
+cmd:connect W2XSC-1
+cmd:*** CONNECTED to W2XSC-1
+[JNOS-2.0k.2.xsc.4-B1FHIM$]
+You have 68 messages  -  68 new.
+(#1) >
+XM 0
+(#1) >
+LM
+Mail area: pkttue
+68 messages  -  68 new
+
+St.  #  TO            FROM     DATE   SIZE SUBJECT
+> N   1 pkttue@w2xsc. k6sw     Apr  5  778 DELIVERED: TUE-4915P_O/R_SCCo ARES/
+  N   2 pkttue@w2xsc. kk6fmq   Apr  6  784 DELIVERED: TUE-4915P_O/R_SCCo ARES/
+  N   3 pkttue@w2xsc. kk6zgl   Apr  6  784 DELIVERED: TUE-4915P_O/R_SCCo ARES/
+  N   4 pkttue@w2xsc. w6bg     Apr  6  778 DELIVERED: TUE-4915P_O/R_SCCo ARES/
+  N   5 pkttue@w2xsc. ai6sl    Apr  8  780 DELIVERED: TUE-704P_O/R_SCCo ARES/R
+  N   6 pkttue@w2xsc. aj6hm    Apr  9  781 DELIVERED: TUE-4915P_O/R_SCCo ARES/
+  N   7 pkttue@w2xsc. k6slb    Apr  9  785 DELIVERED: TUE-4528P_O/R_SCCo ARES/
+  N   8 pkttue@w2xsc. kt2g     Apr  9  777 DELIVERED: TUE-706P_O/R_SCCo ARES/R
+  N   9 pkttue@w2xsc. n6ik     Apr 10  780 DELIVERED: TUE-4881P_O/R_SCCo ARES/
+  N  10 pkttue@w2xsc. ke6ppi   Apr 10  788 DELIVERED: TUE-4915P_O/R_SCCo ARES/
+  N  11 pkttue@w2xsc. km6clk   Apr 10  676 DELIVERED: TUE-4878P_R_Format of Su
+  N  12 pkttue@w2xsc. km6clk   Apr 10  786 DELIVERED: TUE-4879P_O/R_SCCo ARES/
+  N  13 pkttue@w2xsc. ag6gx    Apr 10  785 DELIVERED: TUE-4879P_O/R_SCCo ARES/
+  N  14 pkttue@w2xsc. kc6rsc   Apr 10  786 DELIVERED: TUE-4916P_O/R_SCCo ARES/
+  N  15 pkttue@w2xsc. wu6p     Apr 10  780 DELIVERED: TUE-4916P_O/R_SCCo ARES/
+  N  16 pkttue@w2xsc. kg6hi    Apr 11  787 DELIVERED: TUE-4881P_O/R_SCCo ARES/
+  N  17 pkttue@w2xsc. kk6ebl   Apr 11  790 DELIVERED: TUE-4880P_O/R_SCCo ARES/
+  N  18 pkttue@w2xsc. af6ot    Apr 11  785 DELIVERED: TUE-4916P_O/R_SCCo ARES/
+  N  19 pkttue@w2xsc. km6lry   Apr 11  786 DELIVERED: TUE-4879P_O/R_SCCo ARES/
+  N  20 pkttue@w2xsc. km6mzm   Apr 11  786 DELIVERED: TUE-4916P_O/R_SCCo ARES/
+  N  21 pkttue@w2xsc. k6fjc    Apr 11  783 DELIVERED: TUE-4880P_O/R_SCCo ARES/
+  N  22 pkttue@w2xsc. k6rwy    Apr 11  785 DELIVERED: TUE-4916P_O/R_SCCo ARES/
+  N  23 pkttue@w2xsc. aa6pm    Apr 12  783 DELIVERED: TUE-4881P_O/R_SCCo ARES/
+  N  24 pkttue@w2xsc. ke6tim   Apr 12  781 DELIVERED: TUE-4917P_O/R_SCCo ARES/
+  N  25 pkttue@w2xsc. kj6ace   Apr 12  782 DELIVERED: TUE-4917P_O/R_SCCo ARES/
+  N  26 pkttue@w2xsc. kk6fmq   Apr 13  704 FMQ-659P_R_MuniStat_Palo Alto
+  N  27 pkttue@w2xsc  w6bg     Apr 13  724 6BG-731P_I_MuniStat_Cupertino
+  N  28 pkttue@w2xsc. k6sw     Apr 13  814 PEB-744P_I_MuniStat_San Jose
+  N  29 pktmon@w2xsc  ai6sl    Apr 14  837 6SL-821P_R_MuniStat_Sunnyvale
+  N  30 pkttue@w2xsc. w6jmk    Apr 15  778 DELIVERED: TUE-4916P_O/R_SCCo ARES/
+  N  31 pkttue@w2xsc. ke6ppi   Apr 15  715 PPI-458P_R_MuniStat_Sunnyvale
+  N  32 pkttue@w2xsc  n6tae    Apr 15  748 TAE-414P_P_MuniStat_Cupertino
+  N  33 pkttue@w2xsc. n6tae    Apr 15  782 DELIVERED: TUE-705P_O/R_SCCo ARES/R
+  N  34 pkttue@w2xsc. aj6hm    Apr 16  817 6HM-721P_I_MuniStat_Saratoga
+  N  35 pkttue@w2xsc. kk6ebl   Apr 16 1104 EBL-1298P_R_MuniStat_Los Gatos
+  N  36 pkttue@w2xsc  kk6zgl   Apr 16  805 ZGL-253P_I_MuniStat_San Jose
+  N  37 pkttue@w2xsc  km6mzm   Apr 16  708 MZM-435P_I_MuniStat_Sunnyvale
+  N  38 pkttue@w2xsc. k6gmg    Apr 17  783 DELIVERED: TUE-4915P_O/R_SCCo ARES/
+  N  39 pkttue@w2xsc. k6gmg    Apr 17  784 GMG-291P_I_MuniStat_Morgan Hill
+  N  40 pkttue@w2xsc  km6clk   Apr 17  855 CLK-275P_O/R_Los Gatos/Monte Sereno
+  N  41 pkttue@w2xsc  kc6rsc   Apr 17  728 STR-2526P_I_MuniStat_Sunnyvale
+  N  42 pkttue@w2xsc. wu6p     Apr 17  730 U6P-415P_R_MuniStat_Sunnyvale
+  N  43 pkttue@w2xsc  k6ott    Apr 18  890 OTT-648P_I_MuniStat_Sunnyvale
+  N  44 pkttue@w2xsc  w6jmk    Apr 18  799 JMK-104M_I_MuniStat_Los Altos
+  N  45 pkttue@w2xsc. n9dk     Apr 18  712 9DK-3306P_R_MuniStat_Mountain View
+  N  46 pkttue@w2xsc. n9dk     Apr 18  784 DELIVERED: TUE-4916P_O/R_SCCo ARES/
+  N  47 pkttue@w2xsc. kt6jk    Apr 18  783 DELIVERED: TUE-4879P_O/R_SCCo ARES/
+  N  48 pkttue@w2xsc  kn6pe    Apr 18  752 6PE-592P_I_MuniStat_Cupertino
+  N  49 pkttue@w2xsc  km6lry   Apr 18  688 LRY-475P_R_MuniStat_Los Gatos
+  N  50 pkttue@w2xsc. af6ot    Apr 18  889 PJB-1228P_R_SheltStat_Middlefield
+  N  51 pkttue@w2xsc. pktmon   Apr 18 3235 MON-3338PLog to PKTTUE NCO from PKT
+  N  52 pkttue@w2xsc. k6fjc    Apr 18 1151 FJC-689P_I_MuniStat_Unincorporated
+  N  53 pkttue@w2xsc. kk6fpp   Apr 18 2988 FPP-472E_R_MuniStat_Sunnyvale
+  N  54 pkttue@w2xsc. k6rwy    Apr 18  896 RWY-2128P_R_MuniStat_San Jose
+  N  55 pkttue@w2xsc. kg6kzz   Apr 18  876 KZZ-374P_R_MuniStat_San Jose
+  N  56 pkttue@w2xsc. kg6kzz   Apr 18  788 DELIVERED: TUE-4915P_O/R_SCCo ARES/
+  N  57 pkttue@w2xsc  n6ik     Apr 19  713 6IK-304P_R_MuniStat_Cupertino
+  N  58 pkttue@w2xsc. kg6hi    Apr 19  749 6HI-1735P_R_MuniStat_Sunnyvale
+  N  59 pkttue@w2xsc  kt6jk    Apr 19 1381 6JK-902M_I_MuniStat_Cupertino
+  N  60 pkttue@w2xsc  aa6pm    Apr 19  709 PJM-617P_R_MuniStat_Saratoga
+  N  61 sjcpkt@w1xsc. ai6ls    Apr 19  862 WLC-634P_R_MuniStat_San Jose
+  N  62 pkttue        wa6rah   Apr 19  740 RAH-524P_R_MuniStat_Unincorporated
+  N  63 pkttue        ki6ldm   Apr 19  847 LDM-359P_R_MuniStat_Cupertino
+  N  64 pkttue        ki6ldm   Apr 19  790 DELIVERED: TUE-2361P_O/R_SCCo ARES/
+  N  65 pkttue        xbeeoc   Apr 19 1829 XBE-1357P_I_MuniStat_Unincorporated
+  N  66 pkttue        xbeeoc   Apr 19  784 DELIVERED: TUE-4881P_O/R_SCCo ARES/
+  N  67 pkttue        ke6tim   Apr 19  777 TIM-418P_I_MuniStat_Milpitas
+  N  68 pkttue        kc6rsc   Apr 19  684 DELIVERED: TUE-2529P_O/R_PKTTUE to
+(#1) >
+R 1
+Message #1
+Date: Tue, 05 Apr 2022 20:43:43 PDT
+From: k6sw@w2xsc.ampr.org
+To: pkttue@w2xsc.ampr.org
+Subject: DELIVERED: TUE-4915P_O/R_SCCo ARES/RACES Packet Practice Report For: Tuesday, April 05, 2022. Total = 24 call signs /24
+
+!LMI!PEB-741P!DR!4/5/2022 8:43:29 PM
+Your Message
+To: K6SW
+Subject: TUE-4915P_O/R_SCCo ARES/RACES Packet Practice Report For: Tuesday, April 05, 2022. Total = 24 call signs /24 messages
+was delivered on 4/5/2022 8:43:29 PM
+Recipient's Local Message ID: PEB-741P
+
+(#1) >
+K 1
+Msg 1 Killed.
+(#1) >
+R 2
+Message #2
+Date: Wed, 06 Apr 2022 08:54:19 PDT
+From: kk6fmq@w3xsc.ampr.org
+To: pkttue@w2xsc.ampr.org
+Subject: DELIVERED: TUE-4915P_O/R_SCCo ARES/RACES Packet Practice Report For: Tuesday, April 05, 2022. Total = 24 call signs /24
+
+!LMI!FMQ-646P!DR!4/6/2022 8:53:57 AM
+Your Message
+To: KK6FMQ
+Subject: TUE-4915P_O/R_SCCo ARES/RACES Packet Practice Report For: Tuesday, April 05, 2022. Total = 24 call signs /24 messages
+was delivered on 4/6/2022 8:53:57 AM
+Recipient's Local Message ID: FMQ-646P
+
+(#2) >
+K 2
+Msg 2 Killed.
+(#2) >
+R 3
+Message #3
+Date: Wed, 06 Apr 2022 14:11:48 PDT
+From: kk6zgl@w2xsc.ampr.org
+To: pkttue@w2xsc.ampr.org
+Subject: DELIVERED: TUE-4915P_O/R_SCCo ARES/RACES Packet Practice Report For: Tuesday, April 05, 2022. Total = 24 call signs /24
+
+!LMI!ZGL-248P!DR!4/6/2022 2:11:36 PM
+Your Message
+To: KK6ZGL
+Subject: TUE-4915P_O/R_SCCo ARES/RACES Packet Practice Report For: Tuesday, April 05, 2022. Total = 24 call signs /24 messages
+was delivered on
+4/6/2022 2:11:36 PM
+Recipient's Local Message ID: ZGL-248P
+
+(#3) >
+K 3
+Msg 3 Killed.
+(#3) >
+R 4
+Message #4
+Date: Wed, 06 Apr 2022 18:24:54 PDT
+From: w6bg@w4xsc.ampr.org
+To: pkttue@w2xsc.ampr.org
+Subject: DELIVERED: TUE-4915P_O/R_SCCo ARES/RACES Packet Practice Report For: Tuesday, April 05, 2022. Total = 24 call signs /24
+
+!LMI!6BG-725P!DR!4/6/2022 6:26:05 PM
+Your Message
+To: W6BG
+Subject: TUE-4915P_O/R_SCCo ARES/RACES Packet Practice Report For: Tuesday, April 05, 2022. Total = 24 call signs /24 messages
+was delivered on 4/6/2022 6:26:05 PM
+Recipient's Local Message ID: 6BG-725P
+
+(#4) >
+K 4
+Msg 4 Killed.
+(#4) >
+R 5
+Message #5
+Date: Fri, 08 Apr 2022 13:57:23 PDT
+From: ai6sl@w1xsc.ampr.org
+To: pkttue@w2xsc.ampr.org
+Subject: DELIVERED: TUE-704P_O/R_SCCo ARES/RACES Packet Practice Report For: Tuesday, March 22, 2022. Total = 31 call signs /32 m
+
+!LMI!6SL-818P!DR!4/8/2022 1:56:07 PM
+Your Message
+To: AI6SL
+Subject: TUE-704P_O/R_SCCo ARES/RACES Packet Practice Report For: Tuesday, March 22, 2022. Total = 31 call signs /32 messages
+was delivered on 4/8/2022 1:56:07 PM
+Recipient's Local Message ID: 6SL-818P
+
+(#5) >
+K 5
+Msg 5 Killed.
+(#5) >
+R 6
+Message #6
+Date: Sat, 09 Apr 2022 08:00:47 PDT
+From: aj6hm@w4xsc.ampr.org
+To: pkttue@w2xsc.ampr.org
+Subject: DELIVERED: TUE-4915P_O/R_SCCo ARES/RACES Packet Practice Report For: Tuesday, April 05, 2022. Total = 24 call signs /24
+
+!LMI!6HM-720P!DR!4/9/2022 8:00:05 AM
+Your Message
+To: AJ6HM
+Subject: TUE-4915P_O/R_SCCo ARES/RACES Packet Practice Report For: Tuesday, April 05, 2022. Total = 24 call signs /24 messages
+was delivered on 4/9/2022 8:00:05 AM
+Recipient's Local Message ID: 6HM-720P
+
+(#6) >
+K 6
+Msg 6 Killed.
+(#6) >
+R 7
+Message #7
+Date: Sat, 09 Apr 2022 14:05:22 PDT
+From: k6slb@w1xsc.ampr.org
+To: pkttue@w2xsc.ampr.org
+Subject: DELIVERED: TUE-4528P_O/R_SCCo ARES/RACES Packet Practice Report For: Tuesday, November 23, 2021. Total = 34 call signs /
+
+!LMI!SLB-700P!DR!4/9/2022 2:03:34 PM
+Your Message
+To: K6SLB
+Subject: TUE-4528P_O/R_SCCo ARES/RACES Packet Practice Report For: Tuesday, November 23, 2021. Total = 34 call signs /37 messag
+es
+was delivered on 4/9/2022 2:03:34 PM
+Recipient's Local Message ID: SLB-700P
+
+(#7) >
+K 7
+Msg 7 Killed.
+(#7) >
+R 8
+Message #8
+Date: Sat, 09 Apr 2022 18:29:56 PDT
+From: kt2g@w3xsc.ampr.org
+To: pkttue@w2xsc.ampr.org
+Subject: DELIVERED: TUE-706P_O/R_SCCo ARES/RACES Packet Practice Report For: Tuesday, March 22, 2022. Total = 31 call signs /32 m
+
+!LMI!T2G-149P!DR!4/9/2022 6:29:23 PM
+Your Message
+To: KT2G
+Subject: TUE-706P_O/R_SCCo ARES/RACES Packet Practice Report For: Tuesday, March 22, 2022. Total = 31 call signs /32 messages
+was delivered on 4/9/2022 6:29:23 PM
+Recipient's Local Message ID: T2G-149P
+
+(#8) >
+K 8
+Msg 8 Killed.
+(#8) >
+R 9
+Message #9
+Date: Sun, 10 Apr 2022 09:31:29 PDT
+From: n6ik@w1xsc.ampr.org
+To: pkttue@w2xsc.ampr.org
+Subject: DELIVERED: TUE-4881P_O/R_SCCo ARES/RACES Packet Practice Report For: Tuesday, March 29, 2022. Total = 25 call signs /28
+
+!LMI!6IK-363P!DR!4/10/2022 4:31:00 PM
+Your Message
+To: N6IK
+Subject: TUE-4881P_O/R_SCCo ARES/RACES Packet Practice Report For: Tuesday, March 29, 2022. Total = 25 call signs /28 messages
+was delivered on 4/10/2022 4:31:00 PM
+Recipient's Local Message ID: 6IK-363P
+
+(#9) >
+K 9
+Msg 9 Killed.
+(#9) >
+R 10
+Message #10
+Date: Sun, 10 Apr 2022 12:25:39 PDT
+From: ke6ppi@w3xsc.ampr.org
+To: pkttue@w2xsc.ampr.org
+Subject: DELIVERED: TUE-4915P_O/R_SCCo ARES/RACES Packet Practice Report For: Tuesday, April 05, 2022. Total = 24 call signs /24
+
+!LMI!PPI-455P!DR!4/10/2022 12:24:58 PM
+Your Message
+To: KE6PPI
+Subject: TUE-4915P_O/R_SCCo ARES/RACES Packet Practice Report For: Tuesday, April 05, 2022. Total = 24 call signs /24 messages
+was delivered on 4/10/2022 12:24:58 PM
+Recipient's Local Message ID: PPI-455P
+
+(#10) >
+K 10
+Msg 10 Killed.
+(#10) >
+R 11
+Message #11
+Date: Sun, 10 Apr 2022 15:16:44 PDT
+From: km6clk@w1xsc.ampr.org
+To: pkttue@w2xsc.ampr.org
+Subject: DELIVERED: TUE-4878P_R_Format of Subject Differs from County Standard
+
+!LMI!CLK-272P!DR!4/10/2022 3:15:20 PM
+Your Message
+To: KM6CLK
+Subject: TUE-4878P_R_Format of Subject Differs from County Standard
+was delivered on 4/10/2022 3:15:20 PM
+Recipient's Local Message ID: CLK-272P
+
+(#11) >
+K 11
+Msg 11 Killed.
+(#11) >
+R 12
+Message #12
+Date: Sun, 10 Apr 2022 15:16:56 PDT
+From: km6clk@w1xsc.ampr.org
+To: pkttue@w2xsc.ampr.org
+Subject: DELIVERED: TUE-4879P_O/R_SCCo ARES/RACES Packet Practice Report For: Tuesday, March 29, 2022. Total = 25 call signs /28
+
+!LMI!CLK-273P!DR!4/10/2022 3:16:22 PM
+Your Message
+To: KM6CLK
+Subject: TUE-4879P_O/R_SCCo ARES/RACES Packet Practice Report For: Tuesday, March 29, 2022. Total = 25 call signs /28 messages
+was delivered on 4/10/2022 3:16:22 PM
+Recipient's Local Message ID: CLK-273P
+
+(#12) >
+K 12
+Msg 12 Killed.
+(#12) >
+R 13
+Message #13
+Date: Sun, 10 Apr 2022 19:59:19 PDT
+From: ag6gx@w1xsc.ampr.org
+To: pkttue@w2xsc.ampr.org
+Subject: DELIVERED: TUE-4879P_O/R_SCCo ARES/RACES Packet Practice Report For: Tuesday, March 29, 2022. Total = 25 call signs /28
+
+!LMI!6GX-4926P!DR!4/10/2022 7:58:18 PM
+Your Message
+To: AG6GX
+Subject: TUE-4879P_O/R_SCCo ARES/RACES Packet Practice Report For: Tuesday, March 29, 2022. Total = 25 call signs /28 messages
+was delivered on 4/10/2022 7:58:18 PM
+Recipient's Local Message ID: 6GX-4926P
+
+(#13) >
+K 13
+Msg 13 Killed.
+(#13) >
+R 14
+Message #14
+Date: Sun, 10 Apr 2022 20:05:44 PDT
+From: kc6rsc@w3xsc.ampr.org
+To: pkttue@w2xsc.ampr.org
+Subject: DELIVERED: TUE-4916P_O/R_SCCo ARES/RACES Packet Practice Report For: Tuesday, April 05, 2022. Total = 24 call signs /24
+
+!LMI!STR-2475P!DR!2022-04-10 20:05:22
+Your Message
+To: KC6RSC
+Subject: TUE-4916P_O/R_SCCo ARES/RACES Packet Practice Report For: Tuesday, April 05, 2022. Total = 24 call signs /24 messages
+was delivered on 2022-04-10 20:05:22
+Recipient's Local Message ID: STR-2475P
+
+(#14) >
+K 14
+Msg 14 Killed.
+(#14) >
+R 15
+Message #15
+Date: Sun, 10 Apr 2022 20:39:30 PDT
+From: wu6p@w3xsc.ampr.org
+To: pkttue@w2xsc.ampr.org
+Subject: DELIVERED: TUE-4916P_O/R_SCCo ARES/RACES Packet Practice Report For: Tuesday, April 05, 2022. Total = 24 call signs /24
+
+!LMI!U6P-411P!DR!4/10/2022 8:29:25 PM
+Your Message
+To: WU6P
+Subject: TUE-4916P_O/R_SCCo ARES/RACES Packet Practice Report For: Tuesday, April 05, 2022. Total = 24 call signs /24 messages
+was delivered on 4/10/2022 8:29:25 PM
+Recipient's Local Message ID: U6P-411P
+
+(#15) >
+K 15
+Msg 15 Killed.
+(#15) >
+R 16
+Message #16
+Date: Mon, 11 Apr 2022 11:37:50 PDT
+From: kg6hi@w1xsc.ampr.org
+To: pkttue@w2xsc.ampr.org
+Subject: DELIVERED: TUE-4881P_O/R_SCCo ARES/RACES Packet Practice Report For: Tuesday, March 29, 2022. Total = 25 call signs /28
+
+!LMI!6HI-1729P!DR!11-Apr-22 11:37:18 AM
+Your Message
+To: KG6HI
+Subject: TUE-4881P_O/R_SCCo ARES/RACES Packet Practice Report For: Tuesday, March 29, 2022. Total = 25 call signs /28 messages
+was delivered on 11-Apr-22 11:37:18 AM
+Recipient's Local Message ID: 6HI-1729P
+
+(#16) >
+K 16
+Msg 16 Killed.
+(#16) >
+R 17
+Message #17
+Date: Mon, 11 Apr 2022 12:10:21 PDT
+From: kk6ebl@w1xsc.ampr.org
+To: pkttue@w2xsc.ampr.org
+Subject: DELIVERED: TUE-4880P_O/R_SCCo ARES/RACES Packet Practice Report For: Tuesday, March 29, 2022. Total = 25 call signs /28
+
+!LMI!EBL-1295P!DR!4/11/2022 12:09:30 PM
+Your Message
+To: KK6EBL
+Subject: TUE-4880P_O/R_SCCo ARES/RACES Packet Practice Report For: Tuesday, March 29, 2022. Total = 25 call signs /28 messages
+was delivered on 4/11/2022 12:09:30 PM
+Recipient's Local Message ID: EBL-1295P
+
+(#17) >K 17
+
+Msg 17 Killed.
+(#17) >
+R 18
+Message #18
+Date: Mon, 11 Apr 2022 19:04:28 PDT
+From: af6ot@w3xsc.ampr.org
+To: pkttue@w2xsc.ampr.org
+Subject: DELIVERED: TUE-4916P_O/R_SCCo ARES/RACES Packet Practice Report For: Tuesday, April 05, 2022. Total = 24 call signs /24
+
+!LMI!PJB-1222P!DR!4/11/2022 7:03:28 PM
+Your Message
+To: AF6OT
+Subject: TUE-4916P_O/R_SCCo ARES/RACES Packet Practice Report For: Tuesday, April 05, 2022. Total = 24 call s
+igns /24 messages
+was delivered on 4/11/2022 7:03:28 PM
+Recipient's Local Message ID: PJB-1222P
+
+(#18) >
+K 18
+Msg 18 Killed.
+(#18) >
+R 19
+Message #19
+Date: Mon, 11 Apr 2022 19:08:54 PDT
+From: km6lry@w1xsc.ampr.org
+To: pkttue@w2xsc.ampr.org
+Subject: DELIVERED: TUE-4879P_O/R_SCCo ARES/RACES Packet Practice Report For: Tuesday, March 29, 2022. Total = 25 call signs /28
+
+!LMI!LRY-474P!DR!4/11/2022 7:08:30 PM
+Your Message
+To: KM6LRY
+Subject: TUE-4879P_O/R_SCCo ARES/RACES Packet Practice Report For: Tuesday, March 29, 2022. Total = 25 call signs /28 messages
+was delivered on 4/11/2022 7:08:30 PM
+Recipient's Local Message ID: LRY-474P
+
+(#19) >
+K 19
+Msg 19 Killed.
+(#19) >
+R 20
+Message #20
+Date: Mon, 11 Apr 2022 19:32:14 PDT
+From: km6mzm@w3xsc.ampr.org
+To: pkttue@w2xsc.ampr.org
+Subject: DELIVERED: TUE-4916P_O/R_SCCo ARES/RACES Packet Practice Report For: Tuesday, April 05, 2022. Total = 24 call signs /24
+
+!LMI!MZM-431P!DR!4/11/2022 7:31:28 PM
+Your Message
+To: KM6MZM
+Subject: TUE-4916P_O/R_SCCo ARES/RACES Packet Practice Report For: Tuesday, April 05, 2022. Total = 24 call signs /24 messages
+was delivered on 4/11/2022 7:31:28 PM
+Recipient's Local Message ID: MZM-431P
+
+(#20) >
+K 20
+Msg 20 Killed.
+(#20) >
+R 21
+Message #21
+Date: Mon, 11 Apr 2022 20:29:53 PDT
+From: k6fjc@w3xsc.ampr.org
+To: pkttue@w2xsc.ampr.org
+Subject: DELIVERED: TUE-4880P_O/R_SCCo ARES/RACES Packet Practice Report For: Tuesday, March 29, 2022. Total = 25 call signs /28
+
+!LMI!FJC-667P!DR!4/11/2022 8:29:11 PM
+Your Message
+To: K6FJC
+Subject: TUE-4880P_O/R_SCCo ARES/RACES Packet Practice Report For: Tuesday, March 29, 2022. Total = 25 call signs /28 messages
+was delivered on 4/11/2022 8:29:11 PM
+Recipient's Local Message ID: FJC-667P
+
+(#21) >
+K 21
+Msg 21 Killed.
+(#21) >
+R 22
+Message #22
+Date: Mon, 11 Apr 2022 21:14:55 PDT
+From: k6rwy@w4xsc.ampr.org
+To: pkttue@w2xsc.ampr.org
+Subject: DELIVERED: TUE-4916P_O/R_SCCo ARES/RACES Packet Practice Report For: Tuesday, April 05, 2022. Total = 24 call signs /24
+
+!LMI!RWY-2124P!DR!4/11/2022 9:14:45 PM
+Your Message
+To: K6RWY
+Subject: TUE-4916P_O/R_SCCo ARES/RACES Packet Practice Report For: Tuesday, April 05, 2022. Total = 24 call signs /24 messages
+was delivered on 4/11/2022 9:14:45 PM
+Recipient's Local Message ID: RWY-2124P
+
+(#22) >
+K 22
+Msg 22 Killed.
+(#22) >
+R 23
+Message #23
+Date: Tue, 12 Apr 2022 16:58:31 PDT
+From: aa6pm@w1xsc.ampr.org
+To: pkttue@w2xsc.ampr.org
+Subject: DELIVERED: TUE-4881P_O/R_SCCo ARES/RACES Packet Practice Report For: Tuesday, March 29, 2022. Total = 25 call signs /28
+
+!LMI!PJM-615P!DR!4/12/2022 4:57:33 PM
+Your Message
+To: AA6PM
+Subject: TUE-4881P_O/R_SCCo ARES/RACES Packet Practice Report For: Tuesday, March 29, 2022. Total = 25 call signs /28 messages
+was delivered on 4/12/2022 4:57:33 PM
+Recipient's Local Message ID: PJM-615P
+
+(#23) >
+K 23
+Msg 23 Killed.
+(#23) >
+R 24
+Message #24
+Date: Tue, 12 Apr 2022 19:37:38 PDT
+From: ke6tim@w4xsc.ampr.org
+To: pkttue@w2xsc.ampr.org
+Subject: DELIVERED: TUE-4917P_O/R_SCCo ARES/RACES Packet Practice Report For: Tuesday, April 05, 2022. Total = 24 call signs /24
+
+!LMI!TIM-371P!DR!4/12/2022 7:35:47 PM
+Your Message
+To: KE6TIM
+Subject: TUE-4917P_O/R_SCCo ARES/RACES Packet Practice Report For: Tuesday, April 05, 2022. Total = 24 call signs /24 messages
+was delivered on 4/12/2022 19:35
+Recipient's Local Message ID: TIM-371P
+
+(#24) >
+K 24
+Msg 24 Killed.
+(#24) >
+R 25
+Message #25
+Date: Tue, 12 Apr 2022 20:25:22 PDT
+From: kj6ace@w4xsc.ampr.org
+To: pkttue@w2xsc.ampr.org
+Subject: DELIVERED: TUE-4917P_O/R_SCCo ARES/RACES Packet Practice Report For: Tuesday, April 05, 2022. Total = 24 call signs /24
+
+!LMI!ACE-750P!DR!4/12/2022 19:58:45
+Your Message
+To: KJ6ACE
+Subject: TUE-4917P_O/R_SCCo ARES/RACES Packet Practice Report For: Tuesday, April 05, 2022. Total = 24 call signs /24 messages
+was delivered on 4/12/2022 19:58:45
+Recipient's Local Message ID: ACE-750P
+
+(#25) >
+K 25
+Msg 25 Killed.
+(#25) >
+R 26
+Message #26
+Date: Wed, 13 Apr 2022 11:04:23 PDT
+From: kk6fmq@w4xsc.ampr.org
+To: pkttue@w2xsc.ampr.org
+Subject: FMQ-659P_R_MuniStat_Palo Alto
+
+!SCCoPIFO!
+#T: form-oa-muni-status.html
+#V: 3.2-2.1
+MsgNo: [FMQ-659P]
+1a.: [04/13/2022]
+1b.: [11:02]
+5.: [ROUTINE]
+7a.: [you]
+8a.: [me]
+7b.: [off]
+8b.: [hm]
+19.: [Update]
+21.: [Palo Alto]
+OpName: [Grant Elliot]
+OpCall: [KK6FMQ]
+OpDate: [04/13/2022]
+OpTime: [11:02]
+!/ADDON!
+
+
+(#26) >
+K 26
+Msg 26 Killed.
+(#26) >
+R 27
+Message #27
+Date: Wed, 13 Apr 2022 18:31:32 PDT
+From: w6bg@w1xsc.ampr.org
+To: pkttue@w2xsc
+Subject: 6BG-731P_I_MuniStat_Cupertino
+
+!URG!!SCCoPIFO!
+#T: form-oa-muni-status.html
+#V: 3.2-2.1
+MsgNo: [6BG-731P]
+1a.: [04/13/2022]
+1b.: [18:30]
+5.: [IMMEDIATE]
+7a.: [Planning]
+8a.: [Radio Operator]
+7b.: [XSCEOC]
+8b.: [CUPEOCV]
+19.: [Update]
+21.: [Cupertino]
+OpName: [Max Lanfranconi]
+OpCall: [W6BG]
+OpDate: [04/13/2022]
+OpTime: [18:30]
+!/ADDON!
+
+
+(#27) >
+K 27
+Msg 27 Killed.
+(#27) >
+R 28
+Message #28
+Date: Wed, 13 Apr 2022 18:50:14 PDT
+From: k6sw@w1xsc.ampr.org
+To: pkttue@w2xsc.ampr.org
+Cc: SJCPKT@w1xsc.ampr.org
+Subject: PEB-744P_I_MuniStat_San Jose
+
+!URG!!SCCoPIFO!
+#T: form-oa-muni-status.html
+#V: 3.2-2.1
+MsgNo: [PEB-744P]
+1a.: [04/13/2022]
+1b.: [18:45]
+5.: [IMMEDIATE]
+7a.: [Situation Analysis Unit]
+8a.: [Situation Analysis Unit]
+7b.: [XSC EOC]
+8b.: [SJC EOC]
+19.: [Update]
+21.: [San Jose]
+41.1.: [ ** This is Drill Traffic **]
+OpName: [Pat Buder]
+OpCall: [K6SW]
+OpDate: [04/13/2022]
+OpTime: [18:48]
+!/ADDON!
+
+
+(#28) >
+K 28
+Msg 28 Killed.
+(#28) >
+R 29
+Message #29
+Date: Thu, 14 Apr 2022 16:53:51 PDT
+From: ai6sl@w1xsc.ampr.org
+To: pktmon@w2xsc
+Cc: pkttue@w2xsc
+Subject: 6SL-821P_R_MuniStat_Sunnyvale
+
+!SCCoPIFO!
+#T: form-oa-muni-status.html
+#V: 3.2-2.1
+MsgNo: [6SL-821P]
+1a.: [04/14/2022]
+1b.: [17:55]
+5.: [ROUTINE]
+7a.: [you]
+8a.: [me]
+7b.: [there]
+8b.: [here]
+19.: [Update]
+21.: [Sunnyvale]
+OpName: [Wolfgang Polak]
+OpCall: [AI6SL]
+OpDate: [04/14/2022]
+OpTime: [16:52]
+!/ADDON!
+
+
+(#29) >
+K 29
+Msg 29 Killed.
+(#29) >
+R 30
+Message #30
+Date: Fri, 15 Apr 2022 13:44:59 PDT
+From: w6jmk@w3xsc.ampr.org
+To: pkttue@w2xsc.ampr.org
+Subject: DELIVERED: TUE-4916P_O/R_SCCo ARES/RACES Packet Practice Report For: Tuesday, April 05, 2022. Total = 24 call signs /24
+
+!LMI!JMK-372P!DR!4/15/2022 1:45:01 PM
+Your Message
+To: W6JMK
+Subject: TUE-4916P_O/R_SCCo ARES/RACES Packet Practice Report For: Tuesday, April 05, 2022. Total = 24 call signs /24 messages
+was delivered on 4/15/2022 13:45
+Recipient's Local Message ID: JMK-372P
+
+(#30) >
+K 30
+Msg 30 Killed.
+(#30) >
+R 31
+Message #31
+Date: Fri, 15 Apr 2022 14:35:33 PDT
+From: ke6ppi@w1xsc.ampr.org
+To: pkttue@w2xsc.ampr.org
+Subject: PPI-458P_R_MuniStat_Sunnyvale
+
+!SCCoPIFO!
+#T: form-oa-muni-status.html
+#V: 3.2-2.1
+MsgNo: [PPI-458P]
+1a.: [04/15/2022]
+1b.: [14:33]
+5.: [ROUTINE]
+7a.: [PKTTUE]
+8a.: [KE6PPI]
+7b.: [W2XSC]
+8b.: [W1XSC]
+19.: [Update]
+21.: [Sunnyvale]
+OpName: [Roger Pease]
+OpCall: [KE6PPI]
+OpDate: [04/15/2022]
+OpTime: [14:34]
+!/ADDON!
+
+
+(#31) >
+K 31
+Msg 31 Killed.
+(#31) >
+R 32
+Message #32
+Date: Fri, 15 Apr 2022 14:45:48 PDT
+From: n6tae@w1xsc.ampr.org
+To: pkttue@w2xsc
+Cc: HEYTAES@GMAIL.COM
+Subject: TAE-414P_P_MuniStat_Cupertino
+
+!SCCoPIFO!
+#T: form-oa-muni-status.html
+#V: 3.1-2.1
+MsgNo: [TAE-414P]
+1a.: [04/15/2022]
+1b.: [07:01]
+5.: [PRIORITY]
+7a.: [SS]
+8a.: [AEC]
+7b.: [City Hall]
+8b.: [DEA]
+19.: [Update]
+21.: [Cupertino]
+46.0.: [Problem]
+46.1.: [too many]
+OpName: [Tae]
+OpCall: [N6TAE]
+OpDate: [04/15/2022]
+OpTime: [06:51]
+!/ADDON!
+
+
+(#32) >
+K 32
+Msg 32 Killed.
+(#32) >
+R 33
+Message #33
+Date: Fri, 15 Apr 2022 14:49:45 PDT
+From: n6tae@w1xsc.ampr.org
+To: pkttue@w2xsc.ampr.org
+Subject: DELIVERED: TUE-705P_O/R_SCCo ARES/RACES Packet Practice Report For: Tuesday, March 22, 2022. Total = 31 call signs /32 m
+
+!LMI!TAE-416P!DR!4/15/2022 2:48:38 PM
+Your Message
+To: N6TAE
+Subject: TUE-705P_O/R_SCCo ARES/RACES Packet Practice Report For: Tuesday, March 22, 2022. Total = 31 call signs /32 messages
+w
+as delivered on 4/15/2022 2:48:38 PM
+Recipient's Local Message ID: TAE-416P
+
+(#33) >
+K 33
+Msg 33 Killed.
+(#33) >
+R 34
+Message #34
+Date: Sat, 16 Apr 2022 09:05:04 PDT
+From: aj6hm@w1xsc.ampr.org
+To: pkttue@w2xsc.ampr.org
+Subject: 6HM-721P_I_MuniStat_Saratoga
+
+!URG!!SCCoPIFO!
+#T: form-oa-muni-status.html
+#V: 3.2-2.1
+MsgNo: [6HM-721P]
+1a.: [04/16/2022]
+1b.: [09:02]
+5.: [IMMEDIATE]
+7a.: [Xanadu EOC]
+8a.: [Radio Operator]
+7b.: [Planning Section]
+8b.: [Home]
+19.: [Update]
+21.: [Saratoga]
+44.0.: [Problem]
+44.1.: [Large gangs of Easter Bunnies flooding the streets!]
+OpName: [Steve Steps]
+OpCall: [AJ6HM]
+OpDate: [04/16/2022]
+OpTime: [09:03]
+!/ADDON!
+
+
+(#34) >
+K 34
+Msg 34 Killed.
+(#34) >
+R 35
+Message #35
+Date: Sat, 16 Apr 2022 12:15:12 PDT
+From: kk6ebl@w1xsc.ampr.org
+To: pkttue@w2xsc.ampr.org
+Cc: KK6EBL@w1xsc.ampr.org
+Subject: EBL-1298P_R_MuniStat_Los Gatos
+
+!SCCoPIFO!
+#T: form-oa-muni-status.html
+#V: 3.2-2.1
+MsgNo: [EBL-1298P]
+1a.: [04/16/2022]
+1b.: [12:00]
+5.: [ROUTINE]
+7a.: [Incident Commander]
+8a.: [Operations]
+7b.: [LGTTST]
+8b.: [Belwood]
+7c.: [Patrick Dirks]
+8c.: [Klaus Schumann]
+8d.: [408 356-7374]
+19.: [Update]
+21.: [Los Gatos]
+23.: [14083567374]
+41.0.: [Normal]
+42.0.: [Unknown]
+43.0.: [Normal]
+44.0.: [Unknown]
+45.0.: [Normal]
+46.0.: [Early Out]
+47.0.: [Normal]
+48.0.: [Normal]
+49.0.: [Normal]
+50.0.: [Normal]
+51.0.: [Unknown]
+52.0.: [Normal]
+53.0.: [Closed]
+54.0.: [Closed]
+55.0.: [Early Out]
+56.0.: [Unknown]
+OpName: [Klaus]
+OpCall: [KK6EBL]
+OpDate: [04/16/2022]
+OpTime: [12:11]
+!/ADDON!
+
+
+(#35) >
+K 35
+Msg 35 Killed.
+(#35) >
+R 36
+Message #36
+Date: Sat, 16 Apr 2022 16:27:48 PDT
+From: kk6zgl@w1xsc.ampr.org
+To: pkttue@w2xsc
+Subject: ZGL-253P_I_MuniStat_San Jose
+
+!URG!!SCCoPIFO!
+#T: form-oa-muni-status.html
+#V: 3.2-2.1
+MsgNo: [ZGL-253P]
+1a.: [04/16/2022]
+1b.: [16:17]
+5.: [IMMEDIATE]
+7a.: [Situation Analysis Unit]
+8a.: [Planning Section]
+7b.: [XSC EOC]
+8b.: [SJC EOC]
+19.: [Update]
+21.: [San Jose]
+48.0.: [Failure]
+48.1.: [Power out in Fruitdale neighborhood. ]
+OpName: [Anne Akbay]
+OpCall: [KK6ZGL]
+OpDate: [04/16/2022]
+OpTime: [16:26]
+!/ADDON!
+
+
+(#36) >
+K 36
+Msg 36 Killed.
+You have new mail. Please Kill when read!
+(#36) >
+R 37
+Message #37
+Date: Sat, 16 Apr 2022 17:02:06 PDT
+From: km6mzm@w2xsc.ampr.org
+To: pkttue@w2xsc
+Subject: MZM-435P_I_MuniStat_Sunnyvale
+
+!URG!!SCCoPIFO!
+#T: form-oa-muni-status.html
+#V: 3.2-2.1
+MsgNo: [MZM-435P]
+1a.: [04/16/2022]
+1b.: [1701]
+5.: [IMMEDIATE]
+7a.: [PKT NCO]
+8a.: [PKT OP]
+7b.: [EOC]
+8b.: [QTH]
+19.: [Update]
+21.: [Sunnyvale]
+OpName: [Daniel Tickell]
+OpCall: [KM6MZM]
+OpDate: [04/16/2022]
+OpTime: [17:01]
+!/ADDON!
+
+
+(#37) >
+K 37
+Msg 37 Killed.
+(#37) >
+R 38
+Message #38
+Date: Sun, 17 Apr 2022 16:45:26 PDT
+From: k6gmg@w2xsc.ampr.org
+To: pkttue@w2xsc.ampr.org
+Subject: DELIVERED: TUE-4915P_O/R_SCCo ARES/RACES Packet Practice Report For: Tuesday, April 05, 2022. Total = 24 call signs /24
+
+!LMI!GMG-292P!DR!4/17/2022 4:44:40 PM
+Your Message
+To: K6GMG
+Subject: TUE-4915P_O/R_SCCo ARES/RACES Packet Practice Report For: Tuesday, April 05, 2022. Total = 24 call signs /24 messages
+was delivered on 4/17/2022 4:44:40 PM
+Recipient's Local Message ID: GMG-292P
+
+(#38) >
+K 38
+Msg 38 Killed.
+(#38) >
+R 39
+Message #39
+Date: Sun, 17 Apr 2022 16:49:18 PDT
+From: k6gmg@w2xsc.ampr.org
+To: pkttue@w2xsc.ampr.org
+Subject: GMG-291P_I_MuniStat_Morgan Hill
+
+!URG!!SCCoPIFO!
+#T: form-oa-muni-status.html
+#V: 3.2-2.1
+MsgNo: [GMG-291P]
+1a.: [04/17/2022]
+1b.: [16:41]
+5.: [IMMEDIATE]
+7a.: [Planning Section]
+8a.: [Planning Lead]
+7b.: [XSCEOC]
+8b.: [MRGEOC]
+19.: [Update]
+21.: [Morgan Hill]
+34.: [No]
+36.: [04/20/2022]
+37.: [09:00]
+OpName: [Gary Goelkel]
+OpCall: [K6GMG]
+OpDate: [04/17/2022]
+OpTime: [16:48]
+!/ADDON!
+
+
+(#39) >
+K 39
+Msg 39 Killed.
+(#39) >
+R 40
+Message #40
+Date: Sun, 17 Apr 2022 17:52:39 PDT
+From: km6clk@w1xsc.ampr.org
+To: pkttue@w2xsc
+Subject: CLK-275P_O/R_Los Gatos/Monte Sereno_Practice KM6CLK, Bart, Los Gatos/Monte Sereno 4-19-2022_R_MuniStat_Los Gatos
+
+!SCCoPIFO!
+#T: form-oa-muni-status.html
+#V: 3.2-2.1
+MsgNo: [CLK-275P_O/R_Los Gatos/Monte Sereno_Practice KM6CLK, Bart, Los Gatos/Monte Sereno 4-19-2022]
+1a.: [04/17/2022]
+1b.: [15:45]
+5.: [ROUTINE]
+7a.: [ccc]
+8a.: [ccc]
+7b.: [ccc]
+8b.: [ccc]
+19.: [Update]
+21.: [Los Gatos]
+OpName: [Bart]
+OpCall: [KM6CLK]
+OpDate: [04/17/2022]
+OpTime: [17:49]
+!/ADDON!
+
+
+(#40) >
+K 40
+Msg 40 Killed.
+(#40) >
+R 41
+Message #41
+Date: Sun, 17 Apr 2022 20:20:01 PDT
+From: kc6rsc@w1xsc.ampr.org
+To: pkttue@w2xsc
+Subject: STR-2526P_I_MuniStat_Sunnyvale
+
+!URG!!SCCoPIFO!
+#T: form-oa-muni-status.html
+#V: 3.2-2.1
+MsgNo: [STR-2526P]
+1a.: [04/17/2022]
+1b.: [2019]
+5.: [IMMEDIATE]
+7a.: [IC]
+8a.: [IC]
+7b.: [Packet HQ]
+8b.: [KC6RSC Home]
+8c.: [Steve]
+19.: [Update]
+21.: [Sunnyvale]
+OpName: [Steve Roth]
+OpCall: [KC6RSC]
+OpDate: [04/17/2022]
+OpTime: [20:19]
+!/ADDON!
+
+
+(#41) >
+K 41
+Msg 41 Killed.
+(#41) >
+R 42
+Message #42
+Date: Sun, 17 Apr 2022 21:09:04 PDT
+From: wu6p@w1xsc.ampr.org
+To: pkttue@w2xsc.ampr.org
+Subject: U6P-415P_R_MuniStat_Sunnyvale
+
+!SCCoPIFO!
+#T: form-oa-muni-status.html
+#V: 3.2-2.1
+MsgNo: [U6P-415P]
+1a.: [04/17/2022]
+1b.: [2110]
+5.: [ROUTINE]
+7a.: [Planner]
+8a.: [Field 01]
+7b.: [EOC]
+8b.: [Serra Park]
+19.: [Update]
+21.: [Sunnyvale]
+41.0.: [Normal]
+OpName: [Nianfeng Li]
+OpCall: [WU6P]
+OpDate: [04/17/2022]
+OpTime: [21:07]
+!/ADDON!
+
+
+(#42) >
+K 42
+Msg 42 Killed.
+(#42) >
+R 43
+Message #43
+Date: Mon, 18 Apr 2022 16:54:17 PDT
+From: k6ott@w4xsc.ampr.org
+To: pkttue@w2xsc
+Subject: OTT-648P_I_MuniStat_Sunnyvale
+
+!URG!!SCCoPIFO!
+#T: form-oa-muni-status.html
+#V: 3.7-2.2
+MsgNo: [OTT-648P]
+1a.: [04/18/2022]
+1b.: [16:52]
+5.: [IMMEDIATE]
+7a.: [Situation Analysis Unit]
+8a.: [Operations]
+7b.: [County EOC]
+8b.: [Nightingale ICP]
+19.: [Update]
+21.: [Sunnyvale]
+22.: [Sunnyvale]
+41.0.: [Normal]
+41.1.: [Practice K6OTT, Andreas, Sunnyvale, 2022-04-19]
+45.0.: [Early Out]
+56.0.: [Problem]
+56.1.: [Squirrel!]
+OpName: [Andreas Ott]
+OpCall: [K6OTT]
+OpDate: [04/18/2022]
+OpTime: [16:53]
+!/ADDON!
+
+
+(#43) >
+K 43
+Msg 43 Killed.
+(#43) >
+R 44
+Message #44
+Date: Mon, 18 Apr 2022 17:49:56 PDT
+From: w6jmk@w1xsc.ampr.org
+To: pkttue@w2xsc
+Subject: JMK-104M_I_MuniStat_Los Altos
+
+!SCCoPIFO!
+#T: form-oa-muni-status.html
+#V: 3.8-2.2
+MsgNo: [JMK-104M]
+1a.: [04/18/2022]
+1b.: [1749]
+5.: [IMMEDIATE]
+7a.: [Situation Analysis Unit]
+8a.: [radio operator]
+7b.: [County EOC]
+8b.: [home]
+19.: [Update]
+21.: [Los Altos]
+22.: [Los Altos]
+41.0.: [Normal]
+41.1.: [This is drill traffic.]
+OpName: [John Kristian]
+OpCall: [W6JMK]
+OpDate: [04/18/2022]
+OpTime: [17:49]
+!/ADDON!
+
+(#44) >
+K 44
+Msg 44 Killed.
+(#44) >
+R 45
+Message #45
+Date: Mon, 18 Apr 2022 18:16:50 PDT
+From: n9dk@w4xsc.ampr.org
+To: pkttue@w2xsc.ampr.org
+Subject: 9DK-3306P_R_MuniStat_Mountain View
+
+!SCCoPIFO!
+#T: form-oa-muni-status.html
+#V: 3.2-2.1
+MsgNo: [9DK-3306P]
+1a.: [04/18/2022]
+1b.: [18:16]
+5.: [ROUTINE]
+7a.: [Planning]
+8a.: [Planning]
+7b.: [HQ]
+8b.: [Home]
+19.: [Update]
+21.: [Mountain View]
+OpName: [Dave]
+OpCall: [N9DK]
+OpDate: [04/18/2022]
+OpTime: [18:16]
+!/ADDON!
+
+
+(#45) >
+K 45
+Msg 45 Killed.
+(#45) >
+R 46
+Message #46
+Date: Mon, 18 Apr 2022 18:20:09 PDT
+From: n9dk@w3xsc.ampr.org
+To: pkttue@w2xsc.ampr.org
+Subject: DELIVERED: TUE-4916P_O/R_SCCo ARES/RACES Packet Practice Report For: Tuesday, April 05, 2022. Total = 24 call signs /24
+
+!LMI!9DK-3307P!DR!2022-04-18 6:19:42 PM
+Your Message
+To: N9DK
+Subject: TUE-4916P_O/R_SCCo ARES/RACES Packet Practice Report For: Tuesday, April 05, 2022. Total = 24 call signs /24 messages
+was delivered on 2022-04-18 6:19:42 PM
+Recipient's Local Message ID: 9DK-3307P
+
+(#46) >
+K 46
+Msg 46 Killed.
+(#46) >
+R 47
+Message #47
+Date: Mon, 18 Apr 2022 18:55:34 PDT
+From: kt6jk@w1xsc.ampr.org
+To: pkttue@w2xsc.ampr.org
+Subject: DELIVERED: TUE-4879P_O/R_SCCo ARES/RACES Packet Practice Report For: Tuesday, March 29, 2022. Total = 25 call signs /28
+
+!LMI!6JK-667P!DR!4/18/2022 6:52
+:22 PM
+Your Message
+To: KT6JK
+Subject: TUE-4879P_O/R_SCCo ARES/RACES Packet Practice Report For: Tuesday, March 29, 2022. Total = 25 call signs /28 messages
+was delivered on 4/18/2022 6:52:22 PM
+Recipient's Local Message ID: 6JK-667P
+
+(#47) >
+K 47
+Msg 47 Killed.
+(#47) >
+R 48
+Message #48
+Date: Mon, 18 Apr 2022 19:48:40 PDT
+From: kn6pe@w1xsc.ampr.org
+To: pkttue@w2xsc
+Cc: KN6PE@w1xsc.ampr.org, kn6pe@arrl.net
+Subject: 6PE-592P_I_MuniStat_Cupertino
+
+!URG!!SCCoPIFO!
+#T: form-oa-muni-status.html
+#V: 3.2-2.1
+MsgNo: [6PE-592P]
+1a.: [04/18/2022]
+1b.: [19:46]
+5.: [IMMEDIATE]
+7a.: [DEC]
+8a.: [EC]
+7b.: [SCC EOC]
+8b.: [CUP EOC]
+19.: [Update]
+21.: [Cupertino]
+OpName: [Jim Oberhofer]
+OpCall: [KN6PE]
+OpDate: [04/18/2022]
+OpTime: [19:47]
+!/ADDON!
+
+
+(#48) >
+K 48
+Msg 48 Killed.
+(#48) >
+R 49
+Message #49
+Date: Mon, 18 Apr 2022 19:49:12 PDT
+From: km6lry@w1xsc.ampr.org
+To: pkttue@w2xsc
+Subject: LRY-475P_R_MuniStat_Los Gatos
+
+!SCCoPIFO!
+#T: form-oa-muni-status.html
+#V: 3.2-2.1
+MsgNo: [LRY-475P]
+1a.: [04/18/2022]
+1b.: [1950]
+5.: [ROUTINE]
+7a.: [x]
+8a.: [x]
+7b.: [x]
+8b.: [x]
+19.: [Update]
+21.: [Los Gatos]
+OpName: [Les Pederson]
+OpCall: [KM6LRY]
+OpDate: [04/18/2022]
+OpTime: [19:48]
+!/ADDON!
+
+
+(#49) >
+K 49
+Msg 49 Killed.
+(#49) >
+R 50
+Message #50
+Date: Mon, 18 Apr 2022 19:58:51 PDT
+From: af6ot@w1xsc.ampr.org
+To: pkttue@w2xsc.ampr.org
+Subject: PJB-1228P_R_SheltStat_Middlefield
+
+!SCCoPIFO!
+#T: form-oa-shelter-status.html
+#V: 2.17-2.1
+MsgNo: [PJB-1228P]
+1a.: [04/18/2022]
+1b.: [1955]
+5.: [ROUTINE]
+7a.: [Planning]
+8a.: [Logistics]
+7b.: [SCCEOC]
+8b.: [PAF]
+19.: [Complete]
+32.: [Middlefield]
+30.: [Type 1]
+31.: [Open]
+33a.: [4000 Middlefueld]
+33b.: [Palo Alto]
+33c.: [CA]
+40a.: [60]
+40b.: [40]
+50a.: [Community]
+51a.: [Shelter Mgr]
+51b.: [123-456-7890]
+OpName: [Pat Barrett]
+OpCall: [AF6OT]
+OpDate: [04/18/2022]
+OpTime: [19:57]
+!/ADDON!
+
+
+(#50) >
+K 50
+Msg 50 Killed.
+(#50) >
+R 52
+Message #52
+Date: Mon, 18 Apr 2022 20:33:15 PDT
+From: k6fjc@w1xsc.ampr.org
+To: pkttue@w2xsc.ampr.org
+Cc: k6fjc@email1.scc-ares-races.net
+Subject: FJC-689P_I_MuniStat_Unincorporated
+
+!URG!!SCCoPIFO!
+#T: form-oa-muni-status.html
+#V: 3.8-2.2
+MsgNo: [FJC-689P]
+1a.: [04/18/2022]
+1b.: [2033]
+5.: [IMMEDIATE]
+7a.: [Situation Analysis Unit]
+8a.: [Radio Operator]
+7b.: [XSC EOC]
+8b.: [Home]
+8c.: [Mark Laubach]
+8d.: [Redwood City]
+19.: [Update]
+21.: [Unincorporated]
+22.: [Unincorporated]
+23.: [555-867-5309]
+25.: [Herman Munster]
+27.: [Eddie Munster]
+29.: [Open]
+30.: [04/19/2022]
+31.: [18:00]
+32.: [04/19/2022]
+33.: [18:00]
+34.: [Yes]
+35.: [Partial]
+36.: [04/19/2022]
+37.: [18:00]
+38.: [04/19/2022]
+39.: [18:00]
+40.: [No]
+41.0.: [Normal]
+41.1.: [***** this is practice traffic *****]
+OpName: [Mark Laubach]
+OpCall: [K6FJC]
+OpDate: [04/18/2022]
+OpTime: [20:32]
+!/ADDON!
+
+
+(#52) >
+K 52
+Msg 52 Killed.
+(#52) >
+R 53
+Message #53
+Date: Mon, 18 Apr 2022 20:54:55 -0700
+From: Thomas Leibold <kk6fpp@email1.scc-ares-races.net>
+To: pkttue@w2xsc.ampr.org
+Subject: FPP-472E_R_MuniStat_Sunnyvale
+
+!SCCoPIFO!
+#T: form-oa-muni-status.html
+#V: 3.4-2.1
+MsgNo: [FPP-472E]
+1a.: [04/18/2022]
+1b.: [0000]
+5.: [ROUTINE]
+7a.: [PNCO]
+8a.: [me]
+7b.: [SVECS]
+8b.: [home]
+19.: [Update]
+21.: [Sunnyvale]
+41.0.: [Problem]
+41.1.: [W3XSC is simulated as down, no impact on this message. *** Drill Traffic! ***]
+OpName: [Thomas Leibold]
+OpCall: [KK6FPP]
+OpDate: [04/18/2022]
+OpTime: [19:06]
+!/ADDON!
+
+(#53) >
+K 53
+Msg 53 Killed.
+(#53) >
+R 54
+Message #54
+Date: Mon, 18 Apr 2022 21:37:37 PDT
+From: k6rwy@w2xsc.ampr.org
+To: pkttue@w2xsc.ampr.org
+Cc: sjcpkt@w1xsc.ampr.org, k6rwy@w1xsc.ampr.org
+Subject: RWY-2128P_R_MuniStat_San Jose
+
+!SCCoPIFO!
+#T: form-oa-muni-status.html
+#V: 3.2-2.1
+MsgNo: [RWY-2128P]
+1a.: [04/18/2022]
+1b.: [2135]
+5.: [ROUTINE]
+7a.: [Incident Commander]
+8a.: [Berryessa Park]
+7b.: [SCC]
+8b.: [Berryessa, San Jose]
+19.: [Update]
+21.: [San Jose]
+41.0.: [Normal]
+41.1.: [Practice K6RWY, Bob, San Jose, 04/19/22]
+43.0.: [Normal]
+45.0.: [Normal]
+47.0.: [Normal]
+OpName: [Bob]
+OpCall: [K6RWY]
+OpDate: [04/18/2022]
+OpTime: [21:37]
+!/ADDON!
+
+
+(#54) >
+K 54
+Msg 54 Killed.
+(#54) >
+R 55
+Message #55
+Date: Mon, 18 Apr 2022 23:00:06 PDT
+From: kg6kzz@w1xsc.#nca.ca.usa.noam
+To: pkttue@w2xsc.#nca.ca.usa.noam
+Subject: KZZ-374P_R_MuniStat_San Jose
+
+Path: W1XSC
+
+!SCCoPIFO!
+#T: form-oa-muni-status.html
+#V: 3.2-2.1
+MsgNo: [KZZ-374P]
+1a.: [04/18/2022]
+1b.: [22:56]
+5.: [ROUTINE]
+7a.: [Packet Tuesday]
+8a.: [ARES Packet Station]
+7b.: [Santa Clara County]
+8b.: [Almaden Valley]
+19.: [Update]
+21.: [San Jose]
+OpName: [Jason Kim]
+OpCall: [KG6KZZ]
+OpDate: [04/18/2022]
+OpTime: [22:57]
+!/ADDON!
+
+
+
+(#55) >
+K 55
+Msg 55 Killed.
+(#55) >
+R 56
+Message #56
+Date: Mon, 18 Apr 2022 23:05:42 PDT
+From: kg6kzz@w2xsc.ampr.org
+To: pkttue@w2xsc.ampr.org
+Subject: DELIVERED: TUE-4915P_O/R_SCCo ARES/RACES Packet Practice Report For: Tuesday, April 05, 2022. Total = 24 call signs /24
+
+!LMI!KZZ-3
+77P!DR!4/18/2022 11:05:15 PM
+Your Message
+To: KG6KZZ
+Subject: TUE-4915P_O/R_SCCo ARES/RACES Packet Practice Report For: Tuesday, April 05, 2022. Total = 24 call signs /24 messages
+was delivered on 4/18/2022 11:05:15 PM
+Recipient's Local Message ID: KZZ-377P
+
+(#56) >
+K 56
+Msg 56 Killed.
+(#56) >
+R 57
+Message #57
+Date: Tue, 19 Apr 2022 09:33:00 PDT
+From: n6ik@w1xsc.ampr.org
+To: pkttue@w2xsc
+Subject: 6IK-304P_R_MuniStat_Cupertino
+
+!SCCoPIFO!
+#T: form-oa-muni-status.html
+#V: 3.2-2.1
+MsgNo: [6IK-304P]
+1a.: [04/19/2022]
+1b.: [09:29]
+5.: [ROUTINE]
+7a.: [Logistics]
+8a.: [Logistics]
+7b.: [CUPEOC]
+8b.: [Lawson ARK]
+19.: [Update]
+21.: [Cupertino]
+OpName: [Dick Sherman]
+OpCall: [N6IK]
+OpDate: [04/19/2022]
+OpTime: [09:31]
+!/ADDON!
+
+
+(#57) >
+K 57
+Msg 57 Killed.
+(#57) >
+R 58
+Message #58
+Date: Tue, 19 Apr 2022 11:11:26 PDT
+From: kg6hi@w1xsc.ampr.org
+To: pkttue@w2xsc.ampr.org
+Subject: 6HI-1735P_R_MuniStat_Sunnyvale
+
+!SCCoPIFO!
+#T: form-oa-muni-status.html
+#V: 3.2-2.1
+MsgNo: [6HI-1735P]
+1a.: [04/19/2022]
+1b.: [11:10]
+5.: [ROUTINE]
+7a.: [Planning]
+8a.: [Planning]
+7b.: [EOC]
+8b.: [FS4]
+19.: [Update]
+21.: [Sunnyvale]
+29.: [Closed]
+34.: [No]
+40.: [No]
+OpName: [Jerry Thalls]
+OpCall: [KG6HI]
+OpDate: [04/19/2022]
+OpTime: [11:10]
+!/ADDON!
+
+
+(#58) >
+K 58
+Msg 58 Killed.
+(#58) >
+R 59
+Message #59
+Date: Tue, 19 Apr 2022 14:35:15 PDT
+From: kt6jk@w1xsc.ampr.org
+To: pkttue@w2xsc
+Subject: 6JK-902M_I_MuniStat_Cupertino
+
+!SCCoPIFO!
+#T: form-oa-muni-status.html
+#V: undefined-2.1
+MsgNo: [6JK-902M]
+1a.: [04/19/2022]
+1b.: [13:58]
+5.: [IMMEDIATE]
+7a.: [Planning Section]
+8a.: [AEC]
+7b.: [County EOC]
+8b.: [CUP EOC]
+7d.: [408-333-0419]
+8d.: [408-332-0419]
+19.: [Update]
+21.: [Cupertino]
+41.0.: [Normal]
+41.1.: [No interruptions reported\n\n**** This is exercise traffic ****]
+43.0.: [Unknown]
+43.1.: [Public works are surveying\n\n**** This is exercise traffic ****]
+46.0.: [Unknown]
+46.1.: [No report of casualties\n\n\n**** This is exercise traffic ****]
+47.0.: [Problem]
+47.1.: [Smell reported at Stevens Creek Blvd and De Anza Blvd\n\n**** This is exercise traffic ****]
+48.0.: [Problem]
+48.1.: [Power outage reported at Stevens Creek Blvd and Blaney\n\n\n**** This is exercise traffic ****]
+56.0.: [Problem]
+56.1.: [Stray dogs reported on McClellan and Forrest\n\n\n**** This is exercise traffic ****]
+OpName: [Todd Wen]
+OpCall: [KT6JK]
+OpDate: [04/19/2022]
+OpTime: [13:57]
+!/ADDON!
+
+(#59) >
+K 59
+Msg 59 Killed.
+(#59) >
+R 60
+Message #60
+Date: Tue, 19 Apr 2022 16:20:11 PDT
+From: aa6pm@w1xsc.ampr.org
+To: pkttue@w2xsc
+Subject: PJM-617P_R_MuniStat_Saratoga
+
+!SCCoPIFO!
+#T: form-oa-muni-status.html
+#V: 3.2-2.1
+MsgNo: [PJM-617P]
+1a.: [04/19/2022]
+1b.: [1618]
+5.: [ROUTINE]
+7a.: [Planning]
+8a.: [Planning]
+7b.: [SCC EOC]
+8b.: [SAR EOC]
+19.: [Update]
+21.: [Saratoga]
+OpName: [Peter Melhus]
+OpCall: [AA6PM]
+OpDate: [04/19/2022]
+OpTime: [16:17]
+!/ADDON!
+
+
+(#60) >
+K 60
+Msg 60 Killed.
+(#60) >
+R 61
+Message #61
+Date: Tue, 19 Apr 2022 17:30:02 PDT
+From: ai6ls@w4xsc.ampr.org
+To: sjcpkt@w1xsc.ampr.org
+Cc: pkttue@w2xsc.ampr.org
+Subject: WLC-634P_R_MuniStat_San Jose
+
+!SCCoPIFO!
+#T: form-oa-muni-status.html
+#V: 3.2-2.1
+MsgNo: [WLC-634P]
+1a.: [04/19/2022]
+1b.: [17:27]
+5.: [ROUTINE]
+7a.: [Planning]
+8a.: [Planning]
+7b.: [Los Gatos]
+8b.: [San Jose]
+19.: [Update]
+21.: [San Jose]
+OpName: [Bill]
+OpCall: [AI6LS]
+OpDate: [04/19/2022]
+OpTime: [17:28]
+!/ADDON!
+
+
+(#61) >
+K 61
+Msg 61 Killed.
+(#61) >
+R 62
+Message #62
+Date: Tue, 19 Apr 2022 18:11:22 PDT
+From: wa6rah@w2xsc.ampr.org
+To: pkttue@w2xsc.ampr.org
+Subject: RAH-524P_R_MuniStat_Unincorporated
+
+!SCCoPIFO!
+#T: form-oa-muni-status.html
+#V: 3.2-2.1
+MsgNo: [RAH-524P]
+1a.: [04/19/2022]
+1b.: [18:08]
+5.: [ROUTINE]
+7a.: [PKTTUE]
+8a.: [WA6RAH]
+7b.: [Santa Clara Valley]
+8b.: [Marina]
+19.: [Update]
+21.: [Unincorporated]
+OpName: [Liam Hostrop]
+OpCall: [WA6RAH]
+OpDate: [04/19/2022]
+OpTime: [18:09]
+!/ADDON!
+
+
+(#62) >
+K 62
+Msg 62 Killed.
+(#62) >
+R 63
+Message #63
+Date: Tue, 19 Apr 2022 18:23:05 PDT
+From: ki6ldm@w1xsc.ampr.org
+To: pkttue@w2xsc
+Subject: LDM-359P_R_MuniStat_Cupertino
+
+!SCCoPIFO!
+#T: form-oa-muni-status.html
+#V: 3.2-2.1
+MsgNo: [LDM-359P]
+1a.: [04/19/2022]
+1b.: [18:18]
+5.: [ROUTINE]
+7a.: [Operations]
+8a.: [Operations]
+7b.: [XSC EOC]
+8b.: [CUP EOC]
+7c.: [Darryl Presley]
+8c.: [Darryl Presley]
+19.: [Update]
+21.: [Cupertino]
+23.: [6502552454]
+25.: [Darryl Presley]
+26.: [6502552454]
+29.: [Open]
+34.: [No]
+40.: [No]
+OpName: [Darryl]
+OpCall: [ki6ldm]
+OpDate: [04/19/2022]
+OpTime: [18:21]
+!/ADDON!
+
+
+(#63) >
+K 63
+Msg 63 Killed.
+(#63) >
+R 64
+Message #64
+Date: Tue, 19 Apr 2022 18:25:42 PDT
+From: ki6ldm@w1xsc.ampr.org
+To: pkttue@w2xsc.ampr.org
+Subject: DELIVERED: TUE-2361P_O/R_SCCo ARES/RACES Packet Practice Report For: Tuesday, February 15, 2022. Total = 34 call signs /
+
+!LMI!LDM-360P!DR!4/19/2022 6:24:48 PM
+Your Message
+To: KI6LDM
+Subject: TUE-2361P_O/R_SCCo ARES/RACES Packet Practice Report For: Tuesday, February 15, 2022. Total = 34 call signs /38 messag
+es
+was delivered on 4/19/2022 6:24:48 PM
+Recipient's Local Message ID: LDM-360P
+
+(#64) >K 64
+
+Msg 64 Killed.
+(#64) >
+R 65
+Message #65
+Date: Tue, 19 Apr 2022 18:33:36 PDT
+From: xbeeoc@w2xsc.ampr.org
+To: pkttue@w2xsc.ampr.org
+Cc: W6TST@ARRL.NET
+Subject: XBE-1357P_I_MuniStat_Unincorporated
+
+!URG!!SCCoPIFO!
+#T: form-oa-muni-status.html
+#V: 2.17-2.1
+MsgNo: [XBE-1357P]
+1a.: [04/19/2022]
+1b.: [18:01]
+5.: [IMMEDIATE]
+7a.: [Planning]
+8a.: [Logistics]
+7b.: [Santa Clara County EOC]
+8b.: [San Benito County EOC]
+19.: [Complete]
+21.: [Unincorporated]
+23.: [831-555-1212]
+25.: [Kris M - Drill Traffic]
+26.: [831-555-1212]
+29.: [Open]
+34.: [No]
+35.: [Normal]
+40.: [No]
+41.0.: [Normal]
+41.1.: [Drill Traffic - Weekly Practice]
+42.0.: [Normal]
+42.1.: [Drill Traffic - Weekly Practice]
+43.0.: [Normal]
+43.1.: [Drill Traffic - Weekly Practice]
+44.0.: [Normal]
+44.1.: [Drill Traffic - Weekly Practice]
+45.0.: [Normal]
+45.1.: [Drill Traffic - Weekly Practice]
+46.0.: [Normal]
+46.1.: [Drill Traffic - Weekly Practice]
+47.0.: [Normal]
+47.1.: [Drill Traffic - Weekly Practice]
+48.0.: [Normal]
+48.1.: [Drill Traffic - Weekly Practice]
+49.0.: [Normal]
+49.1.: [Drill Traffic - Weekly Practice]
+50.0.: [Normal]
+50.1.: [Drill Traffic - Weekly Practice]
+51.0.: [Normal]
+51.1.: [Drill Traffic - Weekly Practice]
+52.0.: [Normal]
+52.1.: [Drill Traffic - Weekly Practice]
+53.0.: [Normal]
+53.1.: [Drill Traffic - Weekly Practice]
+54.0.: [Normal]
+54.1.: [Drill Traffic - Weekly Practice]
+55.0.: [Normal]
+55.1.: [Drill Traffic - Weekly Practice]
+56.0.: [Normal]
+56.1.: [Drill Traffic - Weekly Practice]
+OpName: [Timothy S. Takeuchi]
+OpCall: [W6TST]
+OpDate: [04/19/2022]
+OpTime: [18:03]
+!/ADDON!
+
+
+(#65) >
+K 65
+Msg 65 Killed.
+(#65) >
+R 66
+Message #66
+Date: Tue, 19 Apr 2022 18:36:58 PDT
+From: xbeeoc@w2xsc.ampr.org
+To: pkttue@w2xsc.ampr.org
+Subject: DELIVERED: TUE-4881P_O/R_SCCo ARES/RACES Packet Practice Report For: Tuesday, March 29, 2022. Total = 25 call signs /28
+
+!LMI!XBE-1358P!DR!4/19/2022 18:36:03
+Your Message
+To: XBEEOC
+Subject: TUE-4881P_O/R_SCCo ARES/RACES Packet Practice Report For: Tuesday, March 29, 2022. Total = 25 call signs /28 messages
+was delivered on 4/19/2022 18:36:03
+Recipient's Local Message ID: XBE-1358P
+
+(#66) >
+K 66
+Msg 66 Killed.
+(#66) >
+R 67
+Message #67
+Date: Tue, 19 Apr 2022 19:10:15 PDT
+From: ke6tim@w4xsc.ampr.org
+To: pkttue@w2xsc.ampr.org
+Subject: TIM-418P_I_MuniStat_Milpitas
+
+!URG!!SCCoPIFO!
+#T: form-oa-muni-status.html
+#V: 3.8-2.2
+MsgNo: [TIM-418P]
+1a.: [04/19/2022]
+1b.: [1905]
+5.: [IMMEDIATE]
+7a.: [Situation Analysis Unit]
+8a.: [from pos]
+7b.: [County EOC]
+8b.: [from loc]
+19.: [Update]
+21.: [Milpitas]
+22.: [Milpitas]
+41.0.: [Normal]
+OpName: [Tim Howard]
+OpCall: [KE6TIM]
+OpDate: [04/19/2022]
+OpTime: [19:09]
+!/ADDON!
+
+
+(#67) >
+K 67
+Msg 67 Killed.
+(#67) >
+R 68
+Message #68
+Date: Tue, 19 Apr 2022 19:16:39 PDT
+From: kc6rsc@w2xsc.ampr.org
+To: pkttue@w2xsc.ampr.org
+Subject: DELIVERED: TUE-2529P_O/R_PKTTUE to KC6RSC msg_wrapback.osl Wrap-back Test
+
+!LMI!STR-2530P!DR!2022-04-19 19:16:49
+Your Message
+To: KC6RSC
+Subject: TUE-2529P_O/R_PKTTUE to KC6RSC msg_wrapback.osl Wrap-back Test
+was delivered on 2022-04-19 19:16:49
+Recipient's Local Message ID: STR-2530P
+
+(#68) >
+K 68
+Msg 68 Killed.
+(#68) >
+A ALLXSC
+allxsc: 0 messages.
+(#0) >
+A XSCEVENT
+xscevent: 0 messages.
+(#0) >
+A XSCPERM
+xscperm: 6 messages  -  6 new.
+(#1) >
+LA
+Mail area: xscperm
+6 messages  -  6 new
+
+St.  #  TO            FROM     DATE   SIZE SUBJECT
+> N   1 xscperm       xsceoc   Jul  4 4121 SCCo Packet Tactical Calls v190704
+  N   2 xscperm       xsceoc   Nov 27 6083 SCCo XSC Tactical Calls v191127
+  N   3 xscperm       xsceoc   Sep  5 2054 SCCo Packet Frequencies v200905
+  N   4 xscperm       xsceoc   Nov  6 3010 SCCo Packet Subject Line v211105
+  N   5 xscperm       xsceoc   Dec 17 3748 SCCo Weekly Packet Practice v211217
+  N   6 xscperm       xsceoc   Mar 24 2352 SCCo Packet Check-In/Out v220324
+(#1) >
+SP kk6fmq@w4xsc.ampr.org
+DELIVERED: FMQ-659P_R_MuniStat_Palo Alto
+!LMI!TUE-2531P!DR!2022-04-19 19:24:29
+Your Message
+To: PKTTUE
+Subject: FMQ-659P_R_MuniStat_Palo Alto
+was delivered on 2022-04-19 19:24:29
+Recipient's Local Message ID: TUE-2531P
+/EX
+Subject:
+Enter message.  End with /EX or ^Z in first column (^A aborts):
+Msg queued
+(#1) >
+SP w6bg@w1xsc.ampr.org
+DELIVERED: 6BG-731P_I_MuniStat_Cupertino
+!LMI!TUE-2532P!DR!2022-04-19 19:24:39
+Your Message
+To: PKTTUE
+Subject: 6BG-731P_I_MuniStat_Cupertino
+was delivered on 2022-04-19 19:24:39
+Recipient's Local Message ID: TUE-2532P
+/EX
+Subject:
+Enter message.  End with /EX or ^Z in first column (^A aborts):
+Msg queued
+(#1) >
+SP k6sw@w1xsc.ampr.org
+DELIVERED: PEB-744P_I_MuniStat_San Jose
+!LMI!TUE-2533P!DR!2022-04-19 19:24:54
+Your Message
+To: PKTTUE
+Subject: PEB-744P_I_MuniStat_San Jose
+was delivered on 2022-04-19 19:24:54
+Recipient's Local Message ID: TUE-2533P
+/EX
+Subject:
+Enter message.  End with /EX or ^Z in first column (^A aborts):
+Msg queued
+(#1) >
+SP ai6sl@w1xsc.ampr.org
+DELIVERED: 6SL-821P_R_MuniStat_Sunnyvale
+!LMI!TUE-2534P!DR!2022-04-19 19:25:04
+Your Message
+To: PKTTUE
+Subject: 6SL-821P_R_MuniStat_Sunnyvale
+was delivered on 2022-04-19 19:25:04
+Recipient's Local Message ID: TUE-2534P
+/EX
+Subject:
+Enter message.  End with /EX or ^Z in first column (^A aborts):
+Msg queued
+(#1) >
+SP ke6ppi@w1xsc.ampr.org
+DELIVERED: PPI-458P_R_MuniStat_Sunnyvale
+!LMI!TUE-2535P!DR!2022-04-19 19:25:26
+Your Message
+To: PKTTUE
+Subject: PPI-458P_R_MuniStat_Sunnyvale
+was delivered on 2022-04-19 19:25:26
+Recipient's Local Message ID: TUE-2535P
+/EX
+Subject:
+Enter message.  End with /EX or ^Z in first column (^A aborts):
+Msg queued
+(#1) >
+SP n6tae@w1xsc.ampr.org
+DELIVERED: TAE-414P_P_MuniStat_Cupertino
+!LMI!TUE-2536P!DR!2022-04-19 19:25:37
+Your Message
+To: PKTTUE
+Subject: TAE-414P_P_MuniStat_Cupertino
+was delivered on 2022-04-19 19:25:37
+Recipient's Local Message ID: TUE-2536P
+/EX
+Subject:
+Enter message.  End with /EX or ^Z in first column (^A aborts):
+Msg queued
+(#1) >
+SP aj6hm@w1xsc.ampr.org
+DELIVERED: 6HM-721P_I_MuniStat_Saratoga
+!LMI!TUE-2537P!DR!2022-04-19 19:26:00
+Your Message
+To: PKTTUE
+Subject: 6HM-721P_I_MuniStat_Saratoga
+was delivered on 2022-04-19 19:26:00
+Recipient's Local Message ID: TUE-2537P
+/EX
+Subject:
+Enter message.  End with /EX or ^Z in first column (^A aborts):
+Msg queued
+(#1) >
+SP kk6ebl@w1xsc.ampr.org
+DELIVERED: EBL-1298P_R_MuniStat_Los Gatos
+!LMI!TUE-2538P!DR!2022-04-19 19:26:15
+Your Message
+To: PKTTUE
+Subject: EBL-1298P_R_MuniStat_Los Gatos
+was delivered on 2022-04-19 19:26:15
+Recipient's Local Message ID: TUE-2538P
+/EX
+Subject:
+Enter message.  End with /EX or ^Z in first column (^A aborts):
+Msg queued
+(#1) >
+SP kk6zgl@w1xsc.ampr.org
+DELIVERED: ZGL-253P_I_MuniStat_San Jose
+!LMI!TUE-2539P!DR!2022-04-19 19:26:28
+Your Message
+To: PKTTUE
+Subject: ZGL-253P_I_MuniStat_San Jose
+was delivered on 2022-04-19 19:26:28
+Recipient's Local Messa
+ge ID: TUE-2539P
+/EX
+Subject:
+Enter message.  End with /EX or ^Z in first column (^A aborts):
+Msg queued
+(#1) >
+SP km6mzm@w2xsc.ampr.org
+DELIVERED: MZM-435P_I_MuniStat_Sunnyvale
+!LMI!TUE-2540P!DR!2022-04-19 19:26:38
+Your Message
+To: PKTTUE
+Subject: MZM-435P_I_MuniStat_Sunnyvale
+was delivered on 2022-04-19 19:26:38
+Recipient's Local Message ID: TUE-2540P
+/EX
+Subject:
+Enter message.  End with /EX or ^Z in first column (^A aborts):
+Msg queued
+(#1) >
+SP k6gmg@w2xsc.ampr.org
+DELIVERED: GMG-291P_I_MuniStat_Morgan Hill
+!LMI!TUE-2541P!DR!2022-04-19 19:26:58
+Your Message
+To: PKTTUE
+Subject: GMG-291P_I_MuniStat_Morgan Hill
+was delivered on 2022-04-19 19:26:58
+Recipient's Local Message ID: TUE-2541P
+/EX
+Subject:
+Enter message.  End with /EX or ^Z in first column (^A aborts):
+Msg queued
+(#1) >
+SP km6clk@w1xsc.ampr.org
+DELIVERED: CLK-275P_O/R_Los Gatos/Monte Sereno_Practice KM6CLK, Bart, Los Gatos/Monte Sereno 4-19-2022_R_MuniStat_Los Ga
+!LMI!TUE-2542P!DR!2022-04-19 19:27:13
+Your Message
+To: PKTTUE
+Subject: CLK-275P_O/R_Los Gatos/Monte Sereno_Practice KM6CLK, Bart, Los Gatos/Monte Sereno 4-19-2022_R_MuniStat_Los Gatos
+was delivered on 2022-04-19 19:27:13
+Recipient's Local Message ID: TUE-2542P
+/EX
+Subject:
+Enter message.  End with /EX or ^Z in first column (^A aborts):
+Msg queued
+(#1) >
+SP kc6rsc@w1xsc.ampr.org
+DELIVERED: STR-2526P_I_MuniStat_Sunnyvale
+!LMI!TUE-2543P!DR!2022-04-19 19:27:23
+Your Message
+To: PKTTUE
+Subject: STR-2526P_I_MuniStat_Sunnyvale
+was delivered on 2022-04-19 19:27:23
+Recipient's Local Message ID: TUE-2543P
+/EX
+Subject:
+Enter message.  End with /EX or ^Z in first column (^A aborts):
+Msg queued
+(#1) >
+SP wu6p@w1xsc.ampr.org
+DELIVERED: U6P-415P_R_MuniStat_Sunnyvale
+!LMI!TUE-2544P!DR!2022-04-19 19:27:32
+Your Message
+To: PKTTUE
+Subject: U6P-415P_R_MuniStat_Sunnyvale
+was delivered on 2022-04-19 19:27:32
+Recipient's Local Message ID: TUE-2544P
+/EX
+Subject:
+Enter message.  End with /EX or ^Z in first column (^A aborts):
+Msg queued
+(#1) >
+SP k6ott@w4xsc.ampr.org
+DELIVERED: OTT-648P_I_MuniStat_Sunnyvale
+!LMI!TUE-2545P!DR!2022-04-19 19:27:45
+Your Message
+To: PKTTUE
+Subject: OTT-648P_I_MuniStat_Sunnyvale
+was delivered on 2022-04-19 19:27:45
+Recipient's Local Message ID: TUE-2545P
+/EX
+Subject:
+Enter message.  End with /EX or ^Z in first column (^A aborts):
+Msg queued
+(#1) >
+SP w6jmk@w1xsc.ampr.org
+DELIVERED: JMK-104M_I_MuniStat_Los Altos
+!LMI!TUE-2546P!DR!2022-04-19 19:27:58
+Your Message
+To: PKTTUE
+Subject: JMK-104M_I_MuniStat_Los Altos
+was delivered on 2022-04-19 19:27:58
+Recipient's Local Message ID: TUE-2546P
+/EX
+Subject:
+Enter message.  End with /EX or ^Z in first column (^A aborts):
+Msg queued
+(#1) >
+SP n9dk@w4xsc.ampr.org
+DELIVERED: 9DK-3306P_R_MuniStat_Mountain View
+!LMI!TUE-2547P!DR!2022-04-19 19:28:09
+Your Message
+To: PKTTUE
+Subject: 9DK-3306P_R_MuniStat_Mountain View
+was delivered on 2022-04-19 19:28:09
+Recipient's Local Message ID: TUE-2547P
+/EX
+Subject:
+Enter message.  End with /EX or ^Z in first column (^A aborts):
+Msg queued
+(#1) >
+SP kn6pe@w1xsc.ampr.org
+DELIVERED: 6PE-592P_I_MuniStat_Cupertino
+!LMI!TUE-2548P!DR!2022-04-19 19:28:58
+Your Message
+To: PKTTUE
+Subject: 6PE-592P_I_MuniStat_Cupertino
+was delivered on 2022-04-19 19:28:58
+Recipient's Local Message ID: TUE-2548P
+/EX
+Subject:
+Enter message.  End with /EX or ^Z in first column (^A aborts):
+Msg queued
+(#1) >
+SP km6lry@w1xsc.ampr.org
+DELIVERED: LRY-475P_R_MuniStat_Los Gatos
+!LMI!TUE-2549P!DR!2022-04-19 19:29:08
+Your Message
+To: PKTTUE
+Subject: LRY-475P_R_MuniStat_Los Gatos
+was delivered on 2022-04-19 19:29:08
+Recipient's Local Message ID: TUE-2549P
+/EX
+Subject:
+Enter message.  End with /EX or ^Z in first column (^A aborts):
+Msg queued
+(#1) >
+SP af6ot@w1xsc.ampr.org
+DELIVERED: PJB-1228P_R_SheltStat_Middlefield
+!LMI!TUE-2550P!DR!2022-04-19 19:29:22
+Your Message
+To: PKTTUE
+Subject: PJB-1228P_R_SheltStat_Middlefield
+was delivered on 2022-04-19 19:29:22
+Recipient's Local Message ID: TUE-2550P
+/EX
+Subject:
+Enter message
+.  End with /EX or ^Z in first column (^A aborts):
+Msg queued
+(#1) >
+SP pktmon@w2xsc.ampr.org
+DELIVERED: MON-3338PLog to PKTTUE NCO from PKTMON NCO
+!LMI!TUE-2551P!DR!2022-04-19 19:30:04
+Your Message
+To: PKTTUE
+Subject: MON-3338PLog to PKTTUE NCO from PKTMON NCO
+was delivered on 2022-04-19 19:30:04
+Recipient's Local Message ID: TUE-2551P
+/EX
+Subject:
+Enter message.  End with /EX or ^Z in first column (^A aborts):
+Msg queued
+(#1) >
+SP k6fjc@w1xsc.ampr.org
+DELIVERED: FJC-689P_I_MuniStat_Unincorporated
+!LMI!TUE-2552P!DR!2022-04-19 19:30:20
+Your Message
+To: PKTTUE
+Subject: FJC-689P_I_MuniStat_Unincorporated
+was delivered on 2022-04-19 19:30:20
+Recipient's Local Message ID: TUE-2552P
+/EX
+Subject:
+Enter message.  End with /EX or ^Z in first column (^A aborts):
+Msg queued
+(#1) >
+SP kk6fpp@email1.scc-ares-races.net
+DELIVERED: FPP-472E_R_MuniStat_Sunnyvale
+!LMI!TUE-2553P!DR!2022-04-19 19:30:36
+Your Message
+To: PKTTUE
+Subject: FPP-472E_R_MuniStat_Sunnyvale
+was delivered on 2022-04-19 19:30:36
+Recipient's Local Message ID: TUE-2553P
+/EX
+Subject:
+Enter message.  End with /EX or ^Z in first column (^A aborts):
+Msg queued
+(#1) >
+SP k6rwy@w2xsc.ampr.org
+DELIVERED: RWY-2128P_R_MuniStat_San Jose
+!LMI!TUE-2554P!DR!2022-04-19 19:30:50
+Your Message
+To: PKTTUE
+Subject: RWY-2128P_R_MuniStat_San Jose
+was delivered on 2022-04-19 19:30:50
+Recipient's Local Message ID: TUE-2554P
+/EX
+Subject:
+Enter message.  End with /EX or ^Z in first column (^A aborts):
+Msg queued
+(#1) >
+SP kg6kzz@w1xsc.#nca.ca.usa.noam
+DELIVERED: KZZ-374P_R_MuniStat_San Jose
+!LMI!TUE-2555P!DR!2022-04-19 19:31:00
+Your Message
+To: PKTTUE
+Subject: KZZ-374P_R_MuniStat_San Jose
+was delivered on 2022-04-19 19:31:00
+Recipient's Local Message ID: TUE-2555P
+/EX
+Subject:
+Enter message.  End with /EX or ^Z in first column (^A aborts):
+Msg queued
+(#1) >
+SP n6ik@w1xsc.ampr.org
+DELIVERED: 6IK-304P_R_MuniStat_Cupertino
+!LMI!TUE-2556P!DR!2022-04-19 19:31:24
+Your Message
+To: PKTTUE
+Subject: 6IK-304P_R_MuniStat_Cupertino
+was delivered on 2022-04-19 19:31:24
+Recipient's Local Message ID: TUE-2556P
+/EX
+Subject:
+Enter message.  End with /EX or ^Z in first column (^A aborts):
+Msg queued
+(#1) >
+SP kg6hi@w1xsc.ampr.org
+DELIVERED: 6HI-1735P_R_MuniStat_Sunnyvale
+!LMI!TUE-2557P!DR!2022-04-19 19:31:34
+Your Message
+To: PKTTUE
+Subject: 6HI-1735P_R_MuniStat_Sunnyvale
+was delivered on 2022-04-19 19:31:34
+Recipient's Local Message ID: TUE-2557P
+/EX
+Subject:
+Enter message.  End with /EX or ^Z in first column (^A aborts):
+Msg queued
+(#1) >
+SP kt6jk@w1xsc.ampr.org
+DELIVERED: 6JK-902M_I_MuniStat_Cupertino
+!LMI!TUE-2558P!DR!2022-04-19 19:31:55
+Your Message
+To: PKTTUE
+Subject: 6JK-902M_I_MuniStat_Cupertino
+was delivered on 2022-04-19 19:31:55
+Recipient's Local Message ID: TUE-2558P
+/EX
+Subject:
+Enter message.  End with /EX or ^Z in first column (^A aborts):
+Msg queued
+(#1) >
+SP aa6pm@w1xsc.ampr.org
+DELIVERED: PJM-617P_R_MuniStat_Saratoga
+!LMI!TUE-2559P!DR!2022-04-19 19:32:04
+Your Message
+To: PKTTUE
+Subject: PJM-617P_R_MuniStat_Saratoga
+was delivered on 2022-04-19 19:32:04
+Recipient's Local Message ID: TUE-2559P
+/EX
+Subject:
+Enter message.  End with /EX or ^Z in first column (^A aborts):
+Msg queued
+(#1) >
+SP ai6ls@w4xsc.ampr.org
+DELIVERED: WLC-634P_R_MuniStat_San Jose
+!LMI!TUE-2560P!DR!2022-04-19 19:32:14
+Your Message
+To: PKTTUE
+Subject: WLC-634P_R_MuniStat_San Jose
+was delivered on 2022-04-19 19:32:14
+Recipient's Local Message ID: TUE-2560P
+/EX
+Subject:
+Enter message.  End with /EX or ^Z in first column (^A aborts):
+Msg queued
+(#1) >
+SP wa6rah@w2xsc.ampr.org
+DELIVERED: RAH-524P_R_MuniStat_Unincorporated
+!LMI!TUE-2561P!DR!2022-04-19 19:32:25
+Your Message
+To: PKTTUE
+Subject: RAH-524P_R_MuniStat_Unincorporated
+was delivered on 2022-04-19 19:32:25
+Recipient's Local Message ID: TUE-2561P
+/EX
+Subject:
+Enter message.  End with /EX or ^Z in first column (^A aborts):
+Msg queued
+(#1) >
+SP ki6ldm@w1xsc.ampr.org
+DELIVERED: LDM-359P_R_MuniStat_Cupertino
+!LMI!TUE-2562P!DR!2022-04-19 19:32:39
+Your Message
+To: PKTTUE
+Subject: LDM-359P_R_MuniStat_Cupertino
+was delivered on 2022-04-19 19:32:39
+Recipient's Local Message ID: TUE-2562P
+/EX
+Subject:
+Enter message.  End with /EX or ^Z in first column (^A aborts):
+Msg queued
+(#1) >
+SP xbeeoc@w2xsc.ampr.org
+DELIVERED: XBE-1357P_I_MuniStat_Unincorporated
+!LMI!TUE-2563P!DR!2022-04-19 19:33:14
+Your Message
+To: PKTTUE
+Subject: XBE-1357P_I_MuniStat_Unincorporated
+was delivered on 2022-04-19 19:33:14
+Recipient's Local Message ID: TUE-2563P
+/EX
+Subject:
+Enter message.  End with /EX or ^Z in first column (^A aborts):
+Msg queued
+(#1) >
+SP ke6tim@w4xsc.ampr.org
+DELIVERED: TIM-418P_I_MuniStat_Milpitas
+!LMI!TUE-2564P!DR!2022-04-19 19:33:56
+Your Message
+To: PKTTUE
+Subject: TIM-418P_I_MuniStat_Milpitas
+was delivered on 2022-04-19 19:33:56
+Recipient's Local Message ID: TUE-2564P
+/EX
+Subject:
+Enter message.  End with /EX or ^Z in first column (^A aborts):
+Msg queued
+(#1) >
+B
+*** DISCONNECTED
+cmd:conv
+de StationID=KC6RSC, TacCall=PKTTUE, Packet NCO Tuesday
+
+cmd:
+cmd:my KC6RSC
+cmd:
+
+cmd:cmd:SENDPAC $0D
+SENDPAC was $05 (CTRL-E)
+cmd:CR ON
+CR was OFF
+cmd:PACTIME AFTER 10
+PACTIME was AFTER 2 (200 msec)
+cmd:CPACTIME OFF
+CPACTIME was ON
+cmd:STREAMSW $7C
+STREAMSW was $00
+cmd:
+---------------------------------------------------
+19-Apr 19:50:03: Outpost/Opsessn v3.4.0 c15: TNC Session #  792
+---------------------------------------------------
+
+cmd:D
+Can't DISCONNECT, A Link state is: DISCONNECTED
+cmd:b
+BEACON   EVERY 0 (disabled)
+cmd:Echo on
+ECHO was ON
+cmd:my PKTTUE
+cmd:unproto IDENT
+cmd:Mon off
+MONITOR was OFF
+cmd:daytime 220419195004
+cmd:INTFACE TERMINAL
+INTFACE was TERMINAL
+cmd:CD SOFTWARE
+CD was SOFTWARE
+cmd:NEWMODE ON
+NEWMODE was ON
+cmd:8BITCONV ON
+8BITCONV was ON
+cmd:BEACON EVERY 0
+BEACON was EVERY 0 (disabled)
+cmd:SLOTTIME 10
+SLOTTIME was 10 (100 msec)
+cmd:PERSIST 63
+PERSIST was 63 (25%)
+cmd:PACLEN 128
+PACLEN was 128
+cmd:MAXFRAME 2
+MAXFRAME was 2
+cmd:FRACK 6
+FRACK was 6 (6 sec)
+cmd:RETRY 8
+RETRY was 8
+cmd:CHECK 30
+CHECK was 30 (300 sec)
+cmd:TXDELAY 40
+TXDELAY was 40 (400 msec)
+cmd:XFLOW OFF
+XFLOW was OFF
+cmd:SENDPAC $05
+SENDPAC was $0D (CTRL-M)
+cmd:CR OFF
+CR was ON
+cmd:PACTIME AFTER 2
+PACTIME was AFTER 10 (1000 msec)
+cmd:CPACTIME ON
+CPACTIME was OFF
+cmd:STREAMEV OFF
+STREAMEV was OFF
+cmd:STREAMSW $00
+STREAMSW was $7C (|)
+cmd:connect W2XSC-1
+cmd:*** CONNECTED to W2XSC-1
+[JNOS-2.0k.2.xsc.4-B1FHIM$]
+You have 1 message  -  1 new.
+(#1) >
+XM 0
+(#1) >
+LM
+Mail area: pkttue
+1 message  -  1 new
+
+St.  #  TO            FROM     DATE   SIZE SUBJECT
+> N   1 pkttue        kj6ace   Apr 19  793 ACE-753P_I_MuniStat_Milpitas
+(#1) >
+R 1
+Message #1
+Date: Tue, 19 Apr 2022 19:25:08 PDT
+From: kj6ace@w4xsc.ampr.org
+To: pkttue@w2xsc.ampr.org
+Cc: donaldclendenin@yahoo.com
+Subject: ACE-753P_I_MuniStat_Milpitas
+
+!URG!!SCCoPIFO!
+#T: form-oa-muni-status.html
+#V: 3.2-2.1
+MsgNo: [ACE-753P]
+1a.: [04/19/2022]
+1b.: [1923]
+5.: [IMMEDIATE]
+7a.: [Planning]
+8a.: [planning]
+7b.: [There]
+8b.: [Here]
+19.: [Update]
+21.: [Milpitas]
+41.0.: [Closed]
+41.1.: [Drill traffic]
+OpName: [Don Clendenin]
+OpCall: [KJ6ACE]
+OpDate: [04/19/2022]
+OpTime: [19:24]
+!/ADDON!
+
+
+(#1) >
+K 1
+Msg 1 Killed.
+(#1) >
+A ALLXSC
+allxsc: 0 messages.
+(#0) >
+A XSCEVENT
+xscevent: 0 messages.
+(#0) >
+A XSCPERM
+xscperm: 6 messages  -  6 new.
+(#1) >
+LA
+Mail area: xscperm
+6 messages  -  6 new
+
+St.  #  TO            FROM     DATE   SIZE SUBJECT
+> N   1 xscperm       xsceoc   Jul  4 4121 SCCo Packet Tactical Calls v190704
+  N   2 xscperm       xsceoc   Nov 27 6083 SCCo XSC Tactical Calls v191127
+  N   3 xscperm       xsceoc   Sep  5 2054 SCCo Packet Frequencies v200905
+  N   4 xscperm       xsceoc   Nov  6 3010 SCCo Packet Subject Line v211105
+  N   5 xscperm       xsceoc   Dec 17 3748 SCCo Weekly Packet Practice v211217
+  N   6 xscperm       xsceoc   Mar 24 2352 SCCo Packet Check-In/Out v220324
+(#1) >
+SP kj6ace@w4xsc.ampr.org
+DELIVERED: ACE-753P_I_MuniStat_Milpitas
+!LMI!TUE-2565P!DR!2022-04-19 19:50:28
+Your Message
+To: PKTTUE
+Subject: ACE-753P_I_MuniStat_Milpitas
+was delivered on 2022-04-19 19:50:28
+Recipient's Local Message ID: TUE-2565P
+/EX
+Subject:
+Enter message.  End with /EX or ^Z in first column (^A aborts):
+Msg queued
+(#1) >
+B
+*** DISCONNECTED
+cmd:conv
+de StationID=KC6RSC, TacCall=PKTTUE, Packet NCO Tuesday
+
+cmd:
+cmd:my KC6RSC
+cmd:
+
+cmd:cmd:SENDPAC $0D
+SENDPAC was $05 (CTRL-E)
+cmd:CR ON
+CR was OFF
+cmd:PACTIME AFTER 10
+PACTIME was AFTER 2 (200 msec)
+cmd:CPACTIME OFF
+CPACTIME was ON
+cmd:STREAMSW $7C
+STREAMSW was $00
+cmd:
+---------------------------------------------------
+19-Apr 19:55:01: Outpost/Opsessn v3.4.0 c15: TNC Session #  793
+---------------------------------------------------
+
+cmd:D
+Can't DISCONNECT, A Link state is: DISCONNECTED
+cmd:b
+BEACON   EVERY 0 (disabled)
+cmd:Echo on
+ECHO was ON
+cmd:my PKTTUE
+cmd:unproto IDENT
+cmd:Mon off
+MONITOR was OFF
+cmd:daytime 220419195502
+cmd:INTFACE TERMINAL
+INTFACE was TERMINAL
+cmd:CD SOFTWARE
+CD was SOFTWARE
+cmd:NEWMODE ON
+NEWMODE was ON
+cmd:8BITCONV ON
+8BITCONV was ON
+cmd:BEACON EVERY 0
+BEACON was EVERY 0 (disabled)
+cmd:SLOTTIME 10
+SLOTTIME was 10 (100 msec)
+cmd:PERSIST 63
+PERSIST was 63 (25%)
+cmd:PACLEN 128
+PACLEN was 128
+cmd:MAXFRAME 2
+MAXFRAME was 2
+cmd:FRACK 6
+FRACK was 6 (6 sec)
+cmd:RETRY 8
+RETRY was 8
+cmd:CHECK 30
+CHECK was 30 (300 sec)
+cmd:TXDELAY 40
+TXDELAY was 40 (400 msec)
+cmd:XFLOW OFF
+XFLOW was OFF
+cmd:SENDPAC $05
+SENDPAC was $0D (CTRL-M)
+cmd:CR OFF
+CR was ON
+cmd:PACTIME AFTER 2
+PACTIME was AFTER 10 (1000 msec)
+cmd:CPACTIME ON
+CPACTIME was OFF
+cmd:STREAMEV OFF
+STREAMEV was OFF
+cmd:STREAMSW $00
+STREAMSW was $7C (|)
+cmd:connect W2XSC-1
+cmd:*** CONNECTED to W2XSC-1
+[JNOS-2.0k.2.xsc.4-B1FHIM$]
+You have 0 messages.
+(#0) >
+XM 0
+(#0) >
+A ALLXSC
+allxsc: 0 messages.
+(#0) >
+A XSCEVENT
+xscevent: 0 messages.
+(#0) >
+A XSCPERM
+xscperm: 6 messages  -  6 new.
+(#1) >
+LA
+Mail area: xscperm
+6 messages  -  6 new
+
+St.  #  TO            FROM     DATE   SIZE SUBJECT
+> N   1 xscperm       xsceoc   Jul  4 4121 SCCo Packet Tactical Calls v190704
+  N   2 xscperm       xsceoc   Nov 27 6083 SCCo XSC Tactical Calls v191127
+  N   3 xscperm       xsceoc   Sep  5 2054 SCCo Packet Frequencies v200905
+  N   4 xscperm       xsceoc   Nov  6 3010 SCCo Packet Subject Line v211105
+  N   5 xscperm       xsceoc   Dec 17 3748 SCCo Weekly Packet Practice v211217
+  N   6 xscperm       xsceoc   Mar 24 2352 SCCo Packet Check-In/Out v220324
+(#1) >
+B
+*** DISCONNECTED
+cmd:conv
+de StationID=KC6RSC, TacCall=PKTTUE, Packet NCO Tuesday
+
+cmd:
+cmd:my KC6RSC
+cmd:
+
+cmd:cmd:SENDPAC $0D
+SENDPAC was $05 (CTRL-E)
+cmd:CR ON
+CR was OFF
+cmd:PACTIME AFTER 10
+PACTIME was AFTER 2 (200 msec)
+cmd:CPACTIME OFF
+CPACTIME was ON
+cmd:STREAMSW $7C
+STREAMSW was $00
+cmd:
+---------------------------------------------------
+19-Apr 20:00:00: Outpost/Opsessn v3.4.0 c15: TNC Session #  794
+---------------------------------------------------
+
+cmd:D
+Can't DISCONNECT, A Link state is: DISCONNECTED
+cmd:b
+BEACON   EVERY 0 (disabled)
+cmd:Echo on
+ECHO was ON
+cmd:my PKTTUE
+cmd:unproto IDENT
+cmd:Mon off
+MONITOR was OFF
+cmd:daytime 220419200002
+cmd:INTFACE TERMINAL
+INTFACE was TERMINAL
+cmd:CD SOFTWARE
+CD was SOFTWARE
+cmd:NEWMODE ON
+NEWMODE was ON
+cmd:8BITCONV ON
+8BITCONV was ON
+cmd:BEACON EVERY 0
+BEACON was EVERY 0 (disabled)
+cmd:SLOTTIME 10
+SLOTTIME was 10 (100 msec)
+cmd:PERSIST 63
+PERSIST was 63 (25%)
+cmd:PACLEN 128
+PACLEN was 128
+cmd:MAXFRAME 2
+MAXFRAME was 2
+cmd:FRACK 6
+FRACK was 6 (6 sec)
+cmd:RETRY 8
+RETRY was 8
+cmd:CHECK 30
+CHECK was 30 (300 sec)
+cmd:TXDELAY 40
+TXDELAY was 40 (400 msec)
+cmd:XFLOW OFF
+XFLOW was OFF
+cmd:SENDPAC $05
+SENDPAC was $0D (CTRL-M)
+cmd:CR OFF
+CR was ON
+cmd:PACTIME AFTER 2
+PACTIME was AFTER 10 (1000 msec)
+cmd:CPACTIME ON
+CPACTIME was OFF
+cmd:STREAMEV OFF
+STREAMEV was OFF
+cmd:STREAMSW $00
+STREAMSW was $7C (|)
+cmd:connect W2XSC-1
+cmd:*** CONNECTED to W2XSC-1
+[JNOS-2.0k.2.xsc.4-B1FHIM$]
+You have 0 messages.
+(#0) >
+XM 0
+(#0) >
+A ALLXSC
+allxsc: 0 messages.
+(#0) >
+A XSCEVENT
+xscevent: 0 messages.
+(#0) >
+A XSCPERM
+xscperm: 6 messages  -  6 new.
+(#1) >
+LA
+Mail area: xscperm
+6 messages  -  6 new
+
+St.  #  TO            FROM     DATE   SIZE SUBJECT
+> N   1 xscperm       xsceoc   Jul  4 4121 SCCo Packet Tactical Calls v190704
+  N   2 xscperm       xsceoc   Nov 27 6083 SCCo XSC Tactical Calls v191127
+  N   3 xscperm       xsceoc   Sep  5 2054 SCCo Packet Frequencies v200905
+  N   4 xscperm       xsceoc   Nov  6 3010 SCCo Packet Subject Line v211105
+  N   5 xscperm       xsceoc   Dec 17 3748 SCCo Weekly Packet Practice v211217
+  N   6 xscperm       xsceoc   Mar 24 2352 SCCo Packet Check-In/Out v220324
+(#1) >
+B
+*** DISCONNECTED
+cmd:conv
+de StationID=KC6RSC, TacCall=PKTTUE, Packet NCO Tuesday
+
+cmd:
+cmd:my KC6RSC
+cmd:
+
+cmd:cmd:SENDPAC $0D
+SENDPAC was $05 (CTRL-E)
+cmd:CR ON
+CR was OFF
+cmd:PACTIME AFTER 10
+PACTIME was AFTER 2 (200 msec)
+cmd:CPACTIME OFF
+CPACTIME was ON
+cmd:STREAMSW $7C
+STREAMSW was $00
+cmd:
+---------------------------------------------------
+19-Apr 20:15:39: Outpost/Opsessn v3.4.0 c15: TNC Session #  795
+---------------------------------------------------
+
+cmd:D
+Can't DISCONNECT, A Link state is: DISCONNECTED
+cmd:b
+BEACON   EVERY 0 (disabled)
+cmd:Echo on
+ECHO was ON
+cmd:my PKTTUE
+cmd:unproto IDENT
+cmd:Mon off
+MONITOR was OFF
+cmd:daytime 220419201540
+cmd:INTFACE TERMINAL
+INTFACE was TERMINAL
+cmd:CD SOFTWARE
+CD was SOFTWARE
+cmd:NEWMODE ON
+NEWMODE was ON
+cmd:8BITCONV ON
+8BITCONV was ON
+cmd:BEACON EVERY 0
+BEACON was EVERY 0 (disabled)
+cmd:SLOTTIME 10
+SLOTTIME was 10 (100 msec)
+cmd:PERSIST 63
+PERSIST was 63 (25%)
+cmd:PACLEN 128
+PACLEN was 128
+cmd:MAXFRAME 2
+MAXFRAME was 2
+cmd:FRACK 6
+FRACK was 6 (6 sec)
+cmd:RETRY 8
+RETRY was 8
+cmd:CHECK 30
+CHECK was 30 (300 sec)
+cmd:TXDELAY 40
+TXDELAY was 40 (400 msec)
+cmd:XFLOW OFF
+XFLOW was OFF
+cmd:SENDPAC $05
+SENDPAC was $0D (CTRL-M)
+cmd:CR OFF
+CR was ON
+cmd:PACTIME AFTER 2
+PACTIME was AFTER 10 (1000 msec)
+cmd:CPACTIME ON
+CPACTIME was OFF
+cmd:STREAMEV OFF
+STREAMEV was OFF
+cmd:STREAMSW $00
+STREAMSW was $7C (|)
+cmd:connect W2XSC-1
+cmd:*** CONNECTED to W2XSC-1
+[JNOS-2.0k.2.xsc.4-B1FHIM$]
+You have 0 messages.
+(#0) >
+XM 0
+(#0) >
+SP KM6MZM@W2XSC.AMPR.ORG
+TUE-2566P_R_Message Subject Mismatch with Form Content
+Your message with the Subject of
+   MZM-435P_I_MuniStat_Sunnyvale
+from the Tuesday, April 19, 2022 practice was
+detected as potentially having an issue.
+
+The message was determined to be a Form which fills in the
+Subject shown in Outpost. The detected issue is the Subject
+has been modified and no longer matches the Form contents.
+
+You never should alter the contents of the Subject line in Outpost.
+Any corrections or alterations must be performed in the Form
+itself, i.e.: in the browser.
+
+Alterations to the Subject are not allowed because it is crucial
+that the information in the Subject accurately reflect the
+information within the Form.
+
+When you need to make a correctiSubject:
+on, keep in mind you can re-open
+the message as it exists in the browser and then make the correction.
+
+A link to the on-line dEocumentation "Standard Format for Packet Message Subject Line"
+can be found on the page <http://www.scc-ares-races.org/data/packnet/index.html>
+within the "Application Notes" section in the "Operation and Usage Instructions"
+section.
+   Heading Subject mismter message.  End with /EX oratch with SCCoPIFO contents of
+   _I_MuniStat_Sunnyvale
+/EX
+ ^Z in first column (^A aborts):
+Msg queued
+(#0) >
+SP KT6JK@W1XSC.AMPR.ORG
+TUE-2567P_R_Form Version Incorrect
+Your message with the Subject of
+   6JK-902M_I_MuniStat_Cupertino
+from the Tuesday, April 19, 2022 practice was
+detected as potentially having an issue.
+
+This message has been identified as a Form. The version
+of the Form message appears to be incorrect.  Incorrect
+transfer of information may result.
+
+Please download the latest version by using the link on
+http://www.scc-ares-races.org/data/packet/index.html
+The download link is in the Software section.
+
+The specific issue with your version appears to be:
+   #V: undefined-2.1
+   Correct version is 2.12
+/EX
+Subject:
+Enter message.  End with /EX or ^Z in first column (^A aborts):
+Msg queued
+(#0) >
+SP KM6CLK@W1XSC.AMPR.ORG
+TUE-2568P_R_Format of Subject Differs from County Standard
+Your message with the Subject of
+   CLK-275P_O/R_Los Gatos/Monte Sereno_Practice KM6CLK, Bart, Los Gatos/Monte Sereno 4-19-2022_R_MuniStat_Los Gatos
+from the Tuesday, April 19, 2022 practice was
+detected as potentially having an issue.
+
+The Subject line format appears to not conform to the Santa
+Clara County Standard.  This Standard is available on-line
+at http://www.scc-ares-races.org/data/packet/index.html under
+the tab "Standard Format for Packet Message Subject Line".
+(This is in the section "Operating and Usage Instructions".)
+
+This format allows Outpost to determine the sender's message
+number from the subject line of the message and display it
+properly in the log.Subject:
+ It also allows the receiving operator
+to prioritize messages based on severity and handling order
+without having to open the Emessage.
+
+The s
+pecific issue with your subject line format appears to be:
+   Missing: Message Handling Order.
+/EX
+nter message.  End with /EX or ^Z in first column (^A aborts):
+Msg queued
+(#0) >
+SC KK6FMQ@W4XSC
+W6BG@W1XSC,K6SW@W1XSC,AI6SL@W1XSC,KE6PPI@W1XSC,N6TAE@W1XSC,AJ6HM@W1XSC,KK6EBL@W1XSC,KK6ZGL@W1XSC,KM6MZM@W2XSC
+TUE-2569P_O/R_SCCo ARES/RACES Packet Practice Report For: Tuesday, April 19, 2022. Total = 34 call signs /34 messages
+SCCo ARES/RACES Packet Practice Report For: Tuesday, April 19, 2022.
+
+---------------------- WEEK'S SUMMARY ----------------------
+Week's unique call signs: 43
+----------------------- DAY'S SUMMARY -----------------------
+Totals:
+  All messages:            34 received;  31 (91%) correct. [includes duplicates]
+  Unique "from" addresses: 34 received;  31 (91%) correct. [unique From: addresses]
+  Unique call signs:       34 received;  31 (91%) correct. [34 reported to main net]
+
+Simulated BBS outage: W3XSC
+  0/34 (0%) incorrectly sent FROM this BBS.
+
+Sources:
+  Santa Clara County BBSs: 32
+      21 W1XSC
+       5 W2XSC
+       0 W3XSC
+       6 W4XSCC
+
+  Other: 2
+      1 from BBS Network.
+      1 from E-Mail.
+
+
+Most operators who sent a message that is flagged in the list belocw
+will automatically receive a reply with additional details and suggested
+corrective actions. If your message is flagged, pleas: Subject:
+e retrieve the detailed
+reply message from the BBS, email provider, or other service you used to
+submit the weekly packet practice message before requesting assistance.
+
+----------------------- DAY'S DETAILS -----------------------
+
+##     FROM                                                          SUBJECT
+_1 kk6fmq@w4xsc.ampr.org       FMQ-659P_R_MuniStat_Palo Alto
+_2 w6bg@w1xsc.ampr.org         6BG-731P_I_MuniStat_Cupertino
+_3 k6sw@w1xsc.ampr.org         PEB-744P_I_MuniStat_San Jose
+_4 ai6sl@w1xsc.ampr.org        6SL-821P_R_MuniStat_Sunnyvale
+_5 ke6ppi@w1xsc.ampr.org       PPI-458P_R_MuniStat_Sunnyvale
+_6 n6tae@w1xsc.ampr.org        TAE-414P_P_MuniStat_Cupertino
+_7 aj6hm@w1xsc.ampr.org        6HM-721P_I_MuniStat_Saratoga
+_8 kk6ebl@w1xsc.ampr.org       EBL-1298P_R_MuniStat_Los Gatos
+_9 kk6zgl@w1xsc.ampr.org       ZGL-253P_I_MuniStat_San Jose
+10 km6mzm@w2xsc.ampr.org       MZM-435P_I_MuniStat_Sunnyvale
+     ^^^ Message Subject mismatch with Form contents.
+11 k6gmg@w2xsc.ampr.org        GMG-291P_I_MuniStat_EMorgan Hill
+12 km6clk@w1xsc.ampr.org       CLK-275P_O/R_Los Gatos/Monte Sereno_Practice KM6CLK, Bart, Los Gatos/Monte Sereno 4-1nter message.  End with /EX or 9-2022_R_MuniStat_Los Gatos
+     ^^^ Subject line format issue(Missing: Message Handling Order.)
+13 kc6rsc@w1xsc.ampr.org       ^STR-2526P_I_MuniStat_Sunnyvale
+14 wu6p@w1xsc.ampr.org         U6P-415P_R_MuniStat_Sunnyvale
+15 k6ott@w4xsc.ampr.org        OTT-6Z48P_I_MuniStat_Sunnyvale
+16 w6jmk@w1xsc.ampr.org        JMK-104M_I_MuniStat_Los Altos
+17 n9dk@w4xsc.ampr.org         9DK-3306P_R in first column (^A aborts):_MuniStat_Mountain View
+18 kn6pe@w1xsc.ampr.org        6PE-592P_I_MuniStat_Cupertino
+19 km6lry@w1xsc.ampr.org       LRY-475P_R_M
+uniStat_Los Gatos
+20 af6ot@w1xsc.ampr.org        PJB-1228P_R_SheltStat_Middlefield
+21 k6fjc@w1xsc.ampr.org        FJC-689P_I_MuniStat_Unincorporated
+22 kk6fpp@email1.scc-ares-races.net FPP-472E_R_MuniStat_Sunnyvale
+23 k6rwy@w2xsc.ampr.org        RWY-2128P_R_MuniStat_San Jose
+24 kg6kzz@w1xsc.#nca.ca.usa.noam KZZ-374P_R_MuniStat_San Jose
+25 n6ik@w1xsc.ampr.org         6IK-304P_R_MuniStat_Cupertino
+26 kg6hi@w1xsc.ampr.org        6HI-1735P_R_MuniStat_Sunnyvale
+27 kt6jk@w1xsc.ampr.org        6JK-902M_I_MuniStat_Cupertino
+     ^^^ Packet Form version incorrect.
+28 aa6pm@w1xsc.ampr.org        PJM-617P_R_MuniStat_Saratoga
+29 ai6ls@w4xsc.ampr.org        WLC-634P_R_MuniStat_San Jose
+30 wa6rah@w2xsc.ampr.org       RAH-524P_R_MuniStat_Unincorporated
+31 ki6ldm@w1xsc.ampr.org       LDM-359P_R_MuniStat_Cupertino
+32 xbeeoc@w2xsc.ampr.org       XBE-1357P_I_MuniStat_Unincorporated
+33 ke6tim@w4xsc.ampr.org       TIM-418P_I_MuniStat_Milpitas
+34 kj
+6ace@w4xsc.ampr.org       ACE-753P_I_MuniStat_Milpitas
+
+Key:
+S: beginning of Subject line differs from Standards for Santa Clara County.
+P: incorrect version of SCCoPIFO; Correct version is 2.12
+M: Message Subject mismatch with Form contents.
+
+Practice Message count: 0 plain text messages.
+                        34 SCCoPIFO messages.
+
+This list created by KC6RSC, Steve Roth
+/EX
+Msg queued
+(#0) >
+SC K6GMG@W2XSC
+KM6CLK@W1XSC,KC6RSC@W1XSC,WU6P@W1XSC,K6OTT@W4XSC,W6JMK@W1XSC,N9DK@W4XSC,KN6PE@W1XSC,KM6LRY@W1XSC,AF6OT@W1XSC
+TUE-2570P_O/R_SCCo ARES/RACES Packet Practice Report For: Tuesday, April 19, 2022. Total = 34 call signs /34 messages
+SCCo ARES/RACES Packet Practice Report For: Tuesday, April 19, 2022.
+
+---------------------- WEEK'S SUMMARY ----------------------
+Week's unique call signs: 43
+----------------------- DAY'S SUMMARY -----------------------
+Totals:
+  All messages:            34 received;  31 (91%) correct. [includes duplicates]
+  Unique "from" addresses: 34 received;  31 (91%) correct. [unique From: addresses]
+  Unique call signs:       34 received;  31 (91%) correct. [34 reported to main net]
+
+Simulated BBS outage: W3XSC
+  0/34 (0%) incorrectly sent FROM this BBS.
+
+Sources:
+  Santa Clara County BBSs: 32
+      21 W1XSC
+       5 W2XSC
+       0 W3XSC
+       6 W4XSC
+
+  Other: 2
+      1 from BBS Network.
+      1 from E-Mail.
+
+
+Most operators who sent a message that is flagged in the list below
+will automatically receive a reply with additional details and suggested
+corrective actions. If your message is flagged, please Cc: Subject:
+retrieve the detailed
+reply message from the BBS, email provider, or other service you used to
+submit the weekly packet practice message before requesting assistance.
+
+----------------------- DAY'S DETAILS -----------------------
+
+##     FROM                                                          SUBJECT
+_1 kk6fmq@w4xsc.ampr.org       FMQ-659P_R_MuniStat_Palo Alto
+_2 w6bg@w1xsc.ampr.org         6BG-731P_I_MuniStat_Cupertino
+_3 k6sw@w1xsc.ampr.org         PEB-744P_I_MuniStat_San Jose
+_4 ai6sl@w1xsc.ampr.org        6SL-821P_R_MuniStat_Sunnyvale
+_5 ke6ppi@w1xsc.ampr.org       PPI-458P_R_MuniStat_Sunnyvale
+_6 n6tae@w1xsc.ampr.org        TAE-414P_P_MuniStat_Cupertino
+_7 aj6hm@w1xsc.ampr.org        6HM-721P_I_MuniStat_Saratoga
+_8 kk6ebl@w1xsc.ampr.org       EBL-Enter message.  En1298P_R_MuniStat_Los Gatos
+_9 kk6zgl@w1xsc.ampr.org       ZGL-253P_I_MuniStat_San Jose
+10 km6mzm@w2xsc.ampr.org       MZM-435P_Id_MuniStat_Sunnyvale
+     ^^^ Message Subject mismatch with Form contents.
+11 k6gmg@w2xsc.ampr.org        GMG-291P_I_MuniStat_Mo rgan Hill
+12 km6clk@w1xsc.ampr.org       CLK-275P_O/R_Los Gatos/Monte Sereno_Practice KM6CLK, Bart, Los Gatos/Monte Sereno 4-19-with /EX or ^Z in first column2022_R_MuniStat_Los Gatos
+     ^^^ Subject line format issue(Missing: Message Handling Order.)
+13 kc6rsc@w1xsc.ampr.org       ST R-2526P_I_MuniStat_Sunnyvale
+14 wu6p@w1xsc.ampr.org         U6P-415P_R_MuniStat_Sunnyvale
+15 k6ott@w4xsc.ampr.org        OTT-648(P_I_MuniStat_Sunnyvale
+16 w6jmk@w1xsc.ampr.org        JMK-104M_I_MuniStat_Los Altos
+17 n9dk@w4xsc.ampr.org         9DK-3306P_R_M^A aborts):
+uniStat_Mountain View
+18 kn6pe@w1xsc.ampr.org        6PE-592P_I_MuniStat_Cupertino
+19 km6lry@w1xsc.ampr.org       LRY-475P_R_MuniStat_Los Gatos
+20 af6ot@w1xsc.ampr.org        PJB-1228P_R_SheltStat_Middlefield
+21 k6fjc@w1xsc.ampr.org        FJC-689P_I_MuniStat_Unincorporated
+22 kk6fpp@email1.scc-ares-races.net FPP-472E_R_MuniStat_Sunnyvale
+23 k6rwy@w2xsc.ampr.org        RWY-2128P_R_MuniStat_San Jose
+24 kg6kzz@w1xsc.#nca.ca.usa.noam KZZ-374P_R_MuniStat_San Jose
+25 n6ik@w1xsc.ampr.org         6IK-304P_R_MuniStat_Cupertino
+26 kg6hi@w1xsc.ampr.org        6HI-1735P_R_MuniStat_Sunnyvale
+27 kt6jk@w1xsc.ampr.org        6JK-902M_I_MuniStat_Cupertino
+     ^^^ Packet Form version incorrect.
+28 aa6pm@w1xsc.ampr.org        PJM-617P_R_MuniStat_Saratoga
+29 ai6ls@w4xsc.ampr.org        WLC-634P_R_MuniStat_San Jose
+30 wa6rah@w2xsc.ampr.org       RAH-52
+4P_R_MuniStat_Unincorporated
+31 ki6ldm@w1xsc.ampr.org       LDM-359P_R_MuniStat_Cupertino
+32 xbeeoc@w2xsc.ampr.org       XBE-1357P_I_MuniStat_Unincorporated
+33 ke6tim@w4xsc.ampr.org       TIM-418P_I_MuniStat_Milpitas
+34 kj6ace@w4xsc.ampr.org       ACE-753P_I_MuniStat_Milpitas
+
+Key:
+S: beginning of Subject line differs from Standards for Santa Clara County.
+P: incorrect version of SCCoPIFO; Correct version is 2.12
+M: Message Subject mismatch with Form contents.
+
+Practice Message count: 0 plain text messages.
+                        34 SCCoPIFO messages.
+
+This list created by KC6RSC, Steve Roth
+/EX
+Msg queued
+(#0) >
+SC K6FJC@W1XSC
+KK6FPP@EMAIL1.SCC-ARES-RACES.NET,K6RWY@W2XSC,KG6KZZ@W1XSC,N6IK@W1XSC,KG6HI@W1XSC,KT6JK@W1XSC,AA6PM@W1XSC
+TUE-2571P_O/R_SCCo ARES/RACES Packet Practice Report For: Tuesday, April 19, 2022. Total = 34 call signs /34 messages
+SCCo ARES/RACES Packet Practice Report For: Tuesday, April 19, 2022.
+
+---------------------- WEEK'S SUMMARY ----------------------
+Week's unique call signs: 43
+----------------------- DAY'S SUMMARY -----------------------
+Totals:
+  All messages:            34 received;  31 (91%) correct. [includes duplicates]
+  Unique "from" addresses: 34 received;  31 (91%) correct. [unique From: addresses]
+  Unique call signs:       34 received;  31 (91%) correct. [34 reported to main net]
+
+Simulated BBS outage: W3XSC
+  0/34 (0%) incorrectly sent FROM this BBS.
+
+Sources:
+  Santa Clara County BBSs: 32
+      21 W1XSC
+       5 W2XSC
+       0 W3XSC
+       6 W4XSC
+
+  OtCher: 2
+      1 from BBS Network.
+      1 from E-Mail.
+
+
+Most operators who sent a message that is flagged in the list below
+willc automatically receive a reply with additional details and suggested
+corrective actions. If your message is flagged, please retr: Subject:
+ieve the detailed
+reply message from the BBS, email provider, or other service you used to
+submit the weekly packet practice message before requesting assistance.
+
+----------------------- DAY'S DETAILS -----------------------
+
+##     FROM                                                          SUBJECT
+_1 kk6fmq@w4xsc.ampr.org       FMQ-659P_R_MuniStat_Palo Alto
+_2 w6bg@w1xsc.ampr.org         6BG-731P_I_MuniStat_Cupertino
+_3 k6sw@w1xsc.ampr.org         PEB-744P_I_MuniStat_San Jose
+_4 ai6sl@w1xsc.ampr.org        6SL-821P_R_MuniStat_Sunnyvale
+_5 ke6ppi@w1xsc.ampr.org       PPI-458P_R_MuniStat_Sunnyvale
+_6 n6tae@w1xsc.ampr.org        TAE-414P_P_MuniStat_Cupertino
+_7 aj6hm@w1xsc.ampr.org        6HM-721P_I_MuniStat_Saratoga
+_8 kk6ebl@w1xsc.ampr.org       EBL-1298Enter message.  End wiP_R_MuniStat_Los Gatos
+_9 kk6zgl@w1xsc.ampr.org       ZGL-253P_I_MuniStat_San Jose
+10 km6mzm@w2xsc.ampr.org       MZM-435P_I_MuntiStat_Sunnyvale
+     ^^^ Message Subject mismatch with Form contents.
+11 k6gmg@w2xsc.ampr.org        GMG-291P_I_MuniStat_Morganh Hill
+12 km6clk@w1xsc.ampr.org       CLK-275P_O/R_Los Gatos/Monte Sereno_Practice KM6CLK, Bart, Los Gatos/Monte Sereno 4-19-2022 /EX or ^Z in first co_R_MuniStat_Los Gatos
+     ^^^ Subject line format issue(Missing: Message Handling Order.)
+13 kc6rsc@w1xsc.ampr.org       STR-25l26P_I_MuniStat_Sunnyvale
+14 wu6p@w1xsc.ampr.org         U6P-415P_R_MuniStat_Sunnyvale
+15 k6ott@w4xsc.ampr.org        OTT-648P_I_uMuniStat_Sunnyvale
+16 w6jmk@w1xsc.ampr.org        JMK-104M_I_MuniStat_Los Altos
+17 n9dk@w4xsc.ampr.org         9DK-3306P_R_MuniSmn (^A aborts):
+tat_Mountain View
+18 kn6pe@w1xsc.ampr.org        6PE-592P_I_MuniStat_Cupertino
+19 km6lry@w1xsc.ampr.org       LRY-475P_R_MuniStat_Los Gatos
+20 af6ot@w1xsc.ampr.org        PJB-1228P_R_SheltStat_Middlefield
+21 k6fjc@w1xsc.ampr.org        FJC-689P_I_MuniStat_Unincorporated
+22 kk6fpp@email1.scc-ares-races.net FPP-472E_R_MuniStat_Sunnyvale
+23 k6rwy@w2xsc.ampr.org        RWY-2128P_R_MuniStat_San Jose
+24 kg6kzz@w1xsc.#nca.ca.usa.noam KZZ-374P_R_MuniStat_San Jose
+25 n6ik@w1xsc.ampr.org         6IK-304P_R_MuniStat_Cupertino
+26 kg6hi@w1xsc.ampr.org        6HI-1735P_R_MuniStat_Sunnyvale
+27 kt6jk@w1xsc.ampr.org        6JK-902M_I
+_MuniStat_Cupertino
+     ^^^ Packet Form version incorrect.
+28 aa6pm@w1xsc.ampr.org        PJM-617P_R_MuniStat_Saratoga
+29 ai6ls@w4xsc.ampr.org        WLC-634P_R_MuniStat_San Jose
+30 wa6rah@w2xsc.ampr.org       RAH-524P_R_MuniStat_Unincorporated
+31 ki6ldm@w1xsc.ampr.org       LDM-359P_R_MuniStat_Cupertino
+32 xbeeoc@w2xsc.ampr.org       XBE-1357P_I_MuniStat_Unincorporated
+33 ke6tim@w4xsc.ampr.org       TIM-418P_I_MuniStat_Milpitas
+34 kj6ace@w4xsc.ampr.org       ACE-753P_I_MuniStat_Milpitas
+
+Key:
+S: beginning of Subject line differs from Standards for Santa Clara County.
+P: incorrect version of SCCoPIFO; Correct version is 2.12
+M: Message Subject mismatch with Form contents.
+
+Practice Message count: 0 plain text messages.
+                        34 SCCoPIFO messages.
+
+This list created by KC6RSC, Steve Roth
+/EX
+Msg queued
+(#0) >
+SC AI6LS@W4XSC
+WA6RAH@W2XSC,KI6LDM@W1XSC,XBEEOC@W2XSC,KE6TIM@W4XSC,KJ6ACE@W4XSC
+TUE-2572P_O/R_SCCo ARES/RACES Packet Practice Report For: Tuesday, April 19, 2022. Total = 34 call signs /34 messages
+SCCo ARES/RACES Packet Practice Report For: Tuesday, April 19, 2022.
+
+---------------------- WEEK'S SUMMARY ----------------------
+Week's unique call signs: 43
+----------------------- DAY'S SUMMARY -----------------------
+Totals:
+  All messages:            34 received;  31 (91%) correct. [includes duplicates]
+  Unique "from" addresses: 34 received;  31 (91%) correct. [unique From: addresses]
+  Unique call signs:       34 received;  31 (91%) correct. [34 reported to main net]
+
+Simulated BBS outage: W3XSC
+  0/34 (0%) incorrectly sent FROM this BBS.
+
+Sources:
+  Santa Clara County BBSs: 32
+      21 W1XSC
+       5 W2XSC
+       0 W3XSC
+       6 W4XSC
+
+  Other: 2
+      1 from BBS Network.
+      1C from E-Mail.
+
+
+Most operators who sent a message that is flagged in the list below
+will automatically receive a reply with addictional details and suggested
+corrective actions. If your message is flagged, please retrieve the detailed
+reply message from the: Subject:
+ BBS, email provider, or other service you used to
+submit the weekly packet practice message before requesting assistance.
+
+----------------------- DAY'S DETAILS -----------------------
+
+##     FROM                                                          SUBJECT
+_1 kk6fmq@w4xsc.ampr.org       FMQ-659P_R_MuniStat_Palo Alto
+_2 w6bg@w1xsc.ampr.org         6BG-731P_I_MuniStat_Cupertino
+_3 k6sw@w1xsc.ampr.org         PEB-744P_I_MuniStat_San Jose
+_4 ai6sl@w1xsc.ampr.org        6SL-821P_R_MuniStat_Sunnyvale
+_5 ke6ppi@w1xsc.ampr.org       PPI-458P_R_MuniStat_Sunnyvale
+_6 n6tae@w1xsc.ampr.org        TAE-414P_P_MuniStat_Cupertino
+_7 aj6hm@w1xsc.ampr.org        6HM-721P_I_MuniStat_Saratoga
+_8 kk6ebl@w1xsc.ampr.org       EBL-1298P_R_MuniStat_Los Gatos
+_9 kk6zgl@w1xsc.aEnter message.  End with mpr.org       ZGL-253P_I_MuniStat_San Jose
+10 km6mzm@w2xsc.ampr.org       MZM-435P_I_MuniStat_Sunnyvale
+     ^^^ Message Subject/ mismatch with Form contents.
+11 k6gmg@w2xsc.ampr.org        GMG-291P_I_MuniStat_Morgan Hill
+12 km6clk@w1xsc.ampr.org       CLKE-275P_O/R_Los Gatos/Monte Sereno_Practice KM6CLK, Bart, Los Gatos/Monte Sereno 4-19-2022_R_MuniStat_Los Gatos
+     ^^^ Subject lX or ^Z in first columine format issue(Missing: Message Handling Order.)
+13 kc6rsc@w1xsc.ampr.org       STR-2526P_I_MuniStat_Sunnyvale
+14 wu6p@w1xsc.anmpr.org         U6P-415P_R_MuniStat_Sunnyvale
+15 k6ott@w4xsc.ampr.org        OTT-648P_I_MuniStat_Sunnyvale
+16 w6jmk@w1xsc.ampr.o rg        JMK-104M_I_MuniStat_Los Altos
+17 n9dk@w4xsc.ampr.org         9DK-3306P_R_MuniStat_Mountain View
+18 kn6pe@w1xsc.ampr.or(^A aborts):
+g        6PE-592P_I_MuniStat_Cupertino
+19 km6lry@w1xsc.ampr.org       LRY-475P_R_MuniStat_Los Gatos
+20 af6ot@w1xsc.ampr.org        PJB-1228P_R_SheltStat_Middlefield
+21 k6fjc@w1xsc.ampr.org        FJC-689P_I_MuniStat_Unincorporated
+22 kk6fpp@email1.scc-ares-races.net FPP-472E_R_MuniStat_Sunnyvale
+23 k6rwy@w2xsc.ampr.org        RWY-2128P_R_MuniStat_San Jose
+24 kg6kzz@w1xsc.#nca.ca.usa.noam KZZ-374P_R_Mun
+iStat_San Jose
+25 n6ik@w1xsc.ampr.org         6IK-304P_R_MuniStat_Cupertino
+26 kg6hi@w1xsc.ampr.org        6HI-1735P_R_MuniStat_Sunnyvale
+27 kt6jk@w1xsc.ampr.org        6JK-902M_I_MuniStat_Cupertino
+     ^^^ Packet Form version incorrect.
+28 aa6pm@w1xsc.ampr.org        PJM-617P_R_MuniStat_Saratoga
+29 ai6ls@w4xsc.ampr.org        WLC-634P_R_MuniStat_San Jose
+30 wa6rah@w2xsc.ampr.org       RAH-524P_R_MuniStat_Unincorporated
+31 ki6ldm@w1xsc.ampr.org       LDM-359P_R_MuniStat_Cupertino
+32 xbeeoc@w2xsc.ampr.org       XBE-1357P_I_MuniStat_Unincorporated
+33 ke6tim@w4xsc.ampr.org       TIM-418P_I_MuniStat_Milpitas
+34 kj6ace@w4xsc.ampr.org       ACE-753P_I_MuniStat_Milpitas
+
+Key:
+S: beginning of Subject line differs from Standards for Santa Clara County.
+P: incorrect version of SCCoPIFO; Correct version is 2.12
+M: Message Subject mismatch with Form contents.
+
+Practice Message count: 0 plain text messages.
+                        34 SCCoPIFO messages.
+
+This list created by KC6RSC, Steve Roth
+/EX
+Msg queued
+(#0) >
+SP KI6SEP@GMAIL.COM
+TUE-2573P_O/R_SCCo ARES/RACES Packet Practice Report For: Tuesday, April 19, 2022. Total = 34 call signs /34 messages
+
+SCCo ARES/RACES Packet Practice Report For: Tuesday, April 19, 2022.
+
+---------------------- WEEK'S SUMMARY ----------------------
+Week's unique call signs: 43
+----------------------- DAY'S SUMMARY -----------------------
+Totals:
+  All messages:            34 received;  31 (91%) correct. [includes duplicates]
+  Unique "from" addresses: 34 received;  31 (91%) correct. [unique From: addresses]
+  Unique call signs:       34 received;  31 (91%) correct. [34 reported to main net]
+
+Simulated BBS outage: W3XSC
+  0/34 (0%) incorrectly sent FROM this BBS.
+
+Sources:
+  Santa Clara County BBSs: 32
+      21 W1XSC
+       5 W2XSC
+       0 W3XSC
+       6 W4XSC
+
+  Other: 2
+      1 from BBS Network.
+      1 from E-Mail.
+
+
+Most operators who sent a message that is fSlagged in the list below
+will automatically receive a reply with additional details and suggested
+corrective actions. If your meussage is flagged, please retrieve the detailed
+reply message from the BBS, email provider, or other service you used to
+submit tbject:
+he weekly packet practice message before requesting assistance.
+
+----------------------- DAY'S DETAILS -----------------------
+
+##     FROM                                                          SUBJECT
+_1 kk6fmq@w4xsc.ampr.org       FMQ-659P_R_MuniStat_Palo Alto
+_2 w6bg@w1xsc.ampr.org         6BG-731P_I_MuniStat_Cupertino
+_3 k6sw@w1xsc.ampr.org         PEB-744P_I_MuniStat_San Jose
+_4 ai6sl@w1xsc.ampr.org        6SL-821P_R_MuniStat_Sunnyvale
+_5 ke6ppi@w1xsc.ampr.org       PPI-458P_R_MuniStat_Sunnyvale
+_6 n6tae@w1xsc.ampr.org        TAE-414P_P_MuniStat_Cupertino
+_7 aj6hm@w1xsc.ampr.org        6HM-721P_I_MuniStat_Saratoga
+_8 kk6ebl@w1xsc.ampr.org       EBL-1298P_R_MuniStat_Los Gatos
+_9 kk6zgl@w1xsc.ampr.org       ZGL-253P_I_MuniStat_San Jose
+10 km6mzm@w2xsc.Enter message.  End with /EXampr.org       MZM-435P_I_MuniStat_Sunnyvale
+     ^^^ Message Subject mismatch with Form contents.
+11 k6gmg@w2xsc.ampr.org         GMG-291P_I_MuniStat_Morgan Hill
+12 km6clk@w1xsc.ampr.org       CLK-275P_O/R_Los Gatos/Monte Sereno_Practice KM6CLK, Bart, Loso Gatos/Monte Sereno 4-19-2022_R_MuniStat_Los Gatos
+     ^^^ Subject line format issue(Missing: Message Handling Order.)
+13 kc6rsr ^Z in first column (^A abortc@w1xsc.ampr.org       STR-2526P_I_MuniStat_Sunnyvale
+14 wu6p@w1xsc.ampr.org         U6P-415P_R_MuniStat_Sunnyvale
+15 k6ott@w4xssc.ampr.org        OTT-648P_I_MuniStat_Sunnyvale
+16 w6jmk@w1xsc.ampr.org        JMK-104M_I_MuniStat_Los Altos
+17 n9dk@w4xsc.ampr.)org         9DK-3306P_R_MuniStat_Mountain View
+18 kn6pe@w1xsc.ampr.org        6PE-592P_I_MuniStat_Cupertino
+19 km6lry@w1xsc.ampr:
+.org       LRY-475P_R_MuniStat_Los Gatos
+20 af6ot@w1xsc.ampr.org        PJB-1228P_R_SheltStat_Middlefield
+21 k6fjc@w1xsc.ampr.org        FJC-689P_I_MuniStat_Unincorporated
+22 kk6fpp@email1.scc-ares-races.net FPP-472E_R_MuniStat_S
+unnyvale
+23 k6rwy@w2xsc.ampr.org        RWY-2128P_R_MuniStat_San Jose
+24 kg6kzz@w1xsc.#nca.ca.usa.noam KZZ-374P_R_MuniStat_San Jose
+25 n6ik@w1xsc.ampr.org         6IK-304P_R_MuniStat_Cupertino
+26 kg6hi@w1xsc.ampr.org        6HI-1735P_R_MuniStat_Sunnyvale
+27 kt6jk@w1xsc.ampr.org        6JK-902M_I_MuniStat_Cupertino
+     ^^^ Packet Form version incorrect.
+28 aa6pm@w1xsc.ampr.org        PJM-617P_R_MuniStat_Saratoga
+29 ai6ls@w4xsc.ampr.org        WLC-634P_R_MuniStat_San Jose
+30 wa6rah@w2xsc.ampr.org       RAH-524P_R_MuniStat_Unincorporated
+31 ki6ldm@w1xsc.ampr.org       LDM-359P_R_MuniStat_Cupertino
+32 xbeeoc@w2xsc.ampr.org       XBE-1357P_I_MuniStat_Unincorporated
+33 ke6tim@w4xsc.ampr.org       TIM-418P_I_MuniStat_Milpitas
+34 kj6ace@w4xsc.ampr.org       ACE-753P_I_MuniStat_Milpitas
+
+Key:
+S: beginning of Subject line differs from Standards for Santa Clara County.
+P: incorrect version of SCCoPIFO; Correct version is 2.12
+M: Message Subject mismatch with Form contents.
+
+Practice Message count: 0 plain text messages.
+                        34 SCCoPIFO messages.
+
+This list created by KC6RSC, Steve Roth
+TueChk001.LrnOpst004.CntInit013.MsgWrap005
+.MsgErr005.Rprt017
+/EX
+Msg queued
+(#0) >
+SP PACKET@SCC-ARES-RACES.GROUPS.IO
+TUE-2574P_O/R_SCCo ARES/RACES Packet Practice Report For: Tuesday, April 19, 2022. Total = 34 call signs /34 messages
+
+SCCo ARES/RACES Packet Practice Report For: Tuesday, April 19, 2022.
+
+---------------------- WEEK'S SUMMARY ----------------------
+Week's unique call signs: 43
+----------------------- DAY'S SUMMARY -----------------------
+Totals:
+  All messages:            34 received;  31 (91%) correct. [includes duplicates]
+  Unique "from" addresses: 34 received;  31 (91%) correct. [unique From: addresses]
+  Unique call signs:       34 received;  31 (91%) correct. [34 reported to main net]
+
+Simulated BBS outage: W3XSC
+  0/34 (0%) incorrectly sent FROM this BBS.
+
+Sources:
+  Santa Clara County BBSs: 32
+      21 W1XSC
+       5 W2XSC
+       0 W3XSC
+       6 W4XSC
+
+  Other: 2
+      1 from BBS Network.
+      1 from E-Mail.
+
+
+Most operators who sent a meSssage that is flagged in the list below
+will automatically receive a reply with additional details and suggested
+corrective actiuons. If your message is flagged, please retrieve the detailed
+reply message from the BBS, email provider, or other service you ubject:
+sed to
+submit the weekly packet practice message before requesting assistance.
+
+----------------------- DAY'S DETAILS -----------------------
+
+##     FROM                                                          SUBJECT
+_1 kk6fmq@w4xsc.ampr.org       FMQ-659P_R_MuniStat_Palo Alto
+_2 w6bg@w1xsc.ampr.org         6BG-731P_I_MuniStat_Cupertino
+_3 k6sw@w1xsc.ampr.org         PEB-744P_I_MuniStat_San Jose
+_4 ai6sl@w1xsc.ampr.org        6SL-821P_R_MuniStat_Sunnyvale
+_5 ke6ppi@w1xsc.ampr.org       PPI-458P_R_MuniStat_Sunnyvale
+_6 n6tae@w1xsc.ampr.org        TAE-414P_P_MuniStat_Cupertino
+_7 aj6hm@w1xsc.ampr.org        6HM-721P_I_MuniStat_Saratoga
+_8 kk6ebl@w1xsc.ampr.org       EBL-1298P_R_MuniStat_Los Gatos
+_9 kk6zgl@w1xsc.ampr.org       ZGL-253P_I_MuniStat_San Jose
+10 km6mzm@w2xsc.ampr.org       MZM-435P_I_MuniStat_Sunnyvale
+     ^^^ Message Subject mismatch with Form contents.
+11 k6gmg@w2xsEc.ampr.org        GMG-291P_I_MuniStat_Morgan Hill
+12 km6clk@w1xsc.ampr.org       CLK-275P_O/R_Los Gatos/Monte Sereno_Practice KMn6CLK, Bart, Los Gatos/Monte Sereno 4-19-2022_R_MuniStat_Los Gatos
+     ^^^ Subject line format issue(Missing: Message Handling Oter message.  End with /EX or ^Z irder.)
+13 kc6rsc@w1xsc.ampr.org       STR-2526P_I_MuniStat_Sunnyvale
+14 wu6p@w1xsc.ampr.org         U6P-415P_R_MuniStat_Sunnyvalne
+15 k6ott@w4xsc.ampr.org        OTT-648P_I_MuniStat_Sunnyvale
+16 w6jmk@w1xsc.ampr.org        JMK-104M_I_MuniStat_Los Altos
+17 n 9dk@w4xsc.ampr.org         9DK-3306P_R_MuniStat_Mountain View
+18 kn6pe@w1xsc.ampr.org        6PE-592P_I_MuniStat_Cupertino
+19 kmfirst column (^A aborts):
+6lry@w1xsc.ampr.org       LRY-475P_R_MuniStat_Los
+Gatos
+20 af6ot@w1xsc.ampr.org        PJB-1228P_R_SheltStat_Middlefield
+21 k6fjc@w1xsc.ampr.org        FJC-689P_I_MuniStat_Unincorporated
+22 kk6fpp@email1.scc-ares-races.net FPP-472E_R_MuniStat_Sunnyvale
+23 k6rwy@w2xsc.ampr.org        RWY-2128P_R_MuniStat_San Jose
+24 kg6kzz@w1xsc.#nca.ca.usa.noam KZZ-374P_R_MuniStat_San Jose
+25 n6ik@w1xsc.ampr.org         6IK-304P_R_MuniStat_Cupertino
+26 kg6hi@w1xsc.ampr.org        6HI-1735P_R_MuniStat_Sunnyvale
+27 kt6jk@w1xsc.ampr.org        6JK-902M_I_MuniStat_Cupertino
+     ^^^ Packet Form version incorrect.
+28 aa6pm@w1xsc.ampr.org        PJM-617P_R_MuniStat_Saratoga
+29 ai6ls@w4xsc.ampr.org        WLC-634P_R_MuniStat_San Jose
+30 wa6rah@w2xsc.ampr.org       RAH-524P_R_MuniStat_Unincorporated
+31 ki6ldm@w1xsc.ampr.org       LDM-359P_R_MuniStat_Cupertino
+32 xbeeoc@w2xsc.ampr.org       XBE-1357P_I_MuniStat_Unincorporated
+33 ke6tim@w4xsc.ampr.org       TIM-418P_I_MuniStat_Milpitas
+34 kj6ace@w4xsc.ampr.org       ACE-753P_I_MuniStat_Milpitas
+
+Key:
+S: beginning of Subject line differs from Standards for Santa Clara County.
+P: incorrect version of SCCoPIFO; Correct version is 2.12
+M: Message Subject mismatch with Form contents.
+
+Practice Message count: 0 plain text messages.
+                        34 SCCoPIFO messages.
+
+This list created by KC6RSC, Steve Roth
+TueChk001.LrnOpst004.CntInit013.MsgWrap005
+.MsgErr005.Rprt017
+/EX
+Msg queued
+(#0) >
+SP KI6SEP@GMAIL.COM
+TUE-2575P_O/R_SCCo ARES/RACES Packet Practice Report For: Tuesday, April 19, 2022. Total = 34 call signs /34 messages
+
+SCCo ARES/RACES Packet Practice Report For: Tuesday, April 19, 2022.
+
+---------------------- WEEK'S SUMMARY ----------------------
+Week's unique call signs: 43
+----------------------- DAY'S SUMMARY -----------------------
+Totals:
+  All messages:            34 received;  31 (91%) correct. [includes duplicates]
+  Unique "from" addresses: 34 received;  31 (91%) correct. [unique From: addresses]
+  Unique call signs:       34 received;  31 (91%) correct. [34 reported to main net]
+
+Simulated BBS outage: W3XSC
+  0/34 (0%) incorrectly sent FROM this BBS.
+
+Sources:
+  Santa Clara County BBSs: 32
+      21 W1XSC
+       5 W2XSC
+      Subject:
+ 0 W3XSC
+       6 W4XSC
+
+  Other: 2
+      1 from BBS Network.
+      1 from E-Mail.
+
+
+Most operators who sent a message that is flagged in the list below
+will automatically receive a reply with additional details and suggested
+corrective actions. If your message is flagged, please retrieve the detailed
+reply message from the BBS, email provider, or other service you used to
+submit the weekly packet practice message before requesting assistance.
+
+----------------------- DAY'S DETAILS -----------------------
+
+##     FROM                                                          SUBJECT
+_1 kk6fmq@w4xsc.ampr.org       FMQ-659P_R_MuniStat_Palo Alto
+_2 w6bg@w1xsc.ampr.org         6BG-731P_I_MuniStat_Cupertino
+_3 k6sw@w1xsc.ampr.org         PEB-744P_I_MuniStat_San Jose
+_4 ai6sl@w1xsc.ampr.org        6SL-821P_R_MuniStat_Sunnyvale
+_5 ke6ppi@w1xsc.ampr.org       PPI-458P_R_MuniStat_Sunnyvale
+_6 n6tae@w1xsc.ampr.org        TAE-414P_P_MuniStat_Cupertino
+_7 aj6hm@w1xsc.ampr.org        6HM-721P_I_MuniStat_Saratoga
+_8 kk6ebl@Ew1xsc.ampr.org       EBL-1298P_R_MuniStat_Los Gatos
+_9 kk6zgl@w1xsc.ampr.org       ZGL-253P_I_MuniStat_San Jose
+10 km6mzm@w2xsc.nter message.  End with /EX oampr.org       MZM-435P_I_MuniStat_Sunnyvale
+     ^^^ Message Subject mismatch with Form contents.
+11 k6gmg@w2xsc.ampr.org     r   GMG-291P_I_MuniStat_Morgan Hill
+12 km6clk@w1xsc.ampr.org       CLK-275P_O/R_Los Gatos/Monte Sereno_Practice KM6CLK, Bart, Los  Gatos/Monte Sereno 4-19-2022_R_MuniStat_Los Gatos
+     ^^^ Subject line format issue(Missing: Message Handling Order.)
+13 kc6rs^Z in first column (^A aborts)c@w1xsc.ampr.org       STR-2526P_I_MuniStat_Sunnyvale
+14 wu6p@w1xsc.ampr.org         U6P-415P_R_MuniStat_Sunnyvale
+15 k6ott@w4xs:c.ampr.org        OTT-648P_I_MuniStat_Sunnyvale
+16 w6jmk@w1xsc.ampr.org        JMK-104M_I_MuniStat_Los Altos
+17
+n9dk@w4xsc.ampr.
+org         9DK-3306P_R_MuniStat_Mountain View
+18 kn6pe@w1xsc.ampr.org        6PE-592P_I_MuniStat_Cupertino
+19 km6lry@w1xsc.ampr.org       LRY-475P_R_MuniStat_Los Gatos
+20 af6ot@w1xsc.ampr.org        PJB-1228P_R_SheltStat_Middlefield
+21 k6fjc@w1xsc.ampr.org        FJC-689P_I_MuniStat_Unincorporated
+22 kk6fpp@email1.scc-ares-races.net FPP-472E_R_MuniStat_Sunnyvale
+23 k6rwy@w2xsc.ampr.org        RWY-2128P_R_MuniStat_San Jose
+24 kg6kzz@w1xsc.#nca.ca.usa.noam KZZ-374P_R_MuniStat_San Jose
+25 n6ik@w1xsc.ampr.org         6IK-304P_R_MuniStat_Cupertino
+26 kg6hi@w1xsc.ampr.org        6HI-1735P_R_MuniStat_Sunnyvale
+27 kt6jk@w1xsc.ampr.org        6JK-902M_I_MuniStat_Cupertino
+     ^^^ Packet Form version incorrect.
+28 aa6pm@w1xsc.ampr.org        PJM-617P_R_MuniStat_Saratoga
+29 ai6ls@w4xsc.ampr.org        WLC-634P_R_MuniStat_San Jose
+30 wa6rah@w2xsc.ampr.org       RAH-524P_R_MuniStat_Unincorporated
+31 ki6ldm@w1xsc.ampr.org       LDM-359P_R_MuniStat_Cupertino
+32 xbeeoc@w2xsc.ampr.org       XBE-1357P_I_MuniStat_Unincorporated
+33 ke6tim@w4xsc.ampr.org       TIM-418P_I_MuniStat_Milpitas
+34 kj6ace@w4xsc.ampr.org       ACE-753P_I_MuniStat_Milpitas
+
+Key:
+S: beginning of Subject line differs from Standards for Santa Clara County.
+P: incorrect version of SCCoPIFO; Correct version is 2.12
+M: Message Subject mismatch with Form contents.
+
+Practice Message count: 0 plain text messages.
+                        34 SCCoPIFO messages.
+
+This list created by KC6RSC, Steve Roth
+TueChk001.LrnOpst004.CntInit013.MsgWrap005
+.MsgErr005.Rprt017
+
+===================================
+20:01:20 = now, code name, ver, time of file
+          procCheckInList.exe, version 04.00.02.00, 05Jun2019 11:56:12
+          update_txt_files.exe, version 1.0.0.5, 05Jun2019 11:56:12
+          outpost_io, version 1.0.1
+          readTacCallAlias, version 1.0.0
+          ar_utils, version 2.0.0
+          _init_regexps, version 2.0.14
+          sim_bbs_dwn.exe, version 1.0.15, 05Jun2019 11:56:12
+          outpost_pause_clock, version 1.0.0.12
+          readCheckIn, version 1.0.0.21
+* get_settings:  INI file values loaded "C:\Users\roths\AppData\Roaming\SCCo Packet\scripts\packetNCO\procCheckInList.INI".
+ days_oldest = 6
+ enable_dwn_bbs_sim = 1
+ enable_timed_autopoll = 1
+ id_allow_tac_pfx = 1
+ log_msg = 2,3,4,5,6, 8
+ long_form_issues = 1
+ max_len_OpstMsg = 10000
+ max_len_toAddr = 126
+ msg_sbj_handling_only_form = 1
+ msg_sbj_handling_only_pacf = 2
+ msg_sbj_handling_only_txt = 2
+ nco_summary_type = 0
+ require_hyphen = 1
+ run_days_before = 0
+ time_close = 2000
+ time_close_as_dt = 1900-01-01 20:00:00
+* _init_regexps:
+  tacID: "[a-zA-Z]{3}"
+  short tacID tacID_diag: "[a-zA-Z]+"
+  message number msg_num: "-?[0-9]{3,}[a-zA-Z]?"
+  short message number msg_num_diag: "-?[0-9]+[a-zA-Z]?"
+  Severity sit_severe: "([_][EUO])"
+  Severity additional formats for plain text sit_severe_pln_txt[]:
+   [0]: (: )
+   [1]: (:)
+   [2]: ( )
+  Handling Order msg_hndl_ordr: "\/[IPR]_"
+  Handling Order msg_hndl_ordr_only: "_[IPR]_"
+  Subject subj: "(.){2,}"
+Message Subject mismatch with SCCoPIFO contents.
+1:  !SCCoPIFO! Declaration: _I_MuniStat_Sunnyvale
+2:  Message Subject (trimmed): MZM-435P_I_MuniStat_S
+3:  Message Subject residual:unnyvale
+* load_bad_id_file: found file "C:\Users\roths\AppData\Roaming\SCCo Packet\scripts\packetNCO\bad_tacid.txt".
+* load_bad_id_file: file empty.
+* load_bad_id_file: .
+* Current SCCoPIFO version (from "CurrentSCCoPIFO.txt"): 2.12
+* Current PACF version (from "CurrentPACF.txt"): None
+* SCCoPIFO ErrMsg:
+  kt6jk@w1xsc.ampr.org, 6JK-902M_I_MuniStat_Cupertino
+    #V: undefined-2.1 ; Correct version is 2.12
+  --
+* PACF ErrMsg:
+  [none]
+* Invalid ID ErrMsg:
+  [none]
+vvvv Unique "from" addresses for Tuesday vvvv
+kk6fmq
+w6bg
+k6sw
+ai6sl
+ke6ppi
+n6tae
+aj6hm
+kk6ebl
+kk6zgl
+km6mzm
+k6gmg
+km6clk
+kc6rsc
+wu6p
+k6ott
+w6jmk
+n9dk
+kn6pe
+km6lry
+af6ot
+k6fjc
+k6rwy
+n6ik
+kg6hi
+kt6jk
+aa6pm
+ai6ls
+wa6rah
+ki6ldm
+xbeeoc
+ke6tim
+kj6ace
+^^^^ End Unique "from" addresses for
+Tuesday ^^^^
+valid_count_ndx: 1, 2, 3, 4, 5, 6, 7, 8, 9, 11, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 28, 29, 30, 31, 32, 33, 34.
+unique_call_bbs_good_ndx: 1, 2, 3, 4, 5, 6, 7, 8, 9, 11, 13, 14, 15, 16, 17, 18, 19, 20, 21, 23, 25, 26, 28, 29, 30, 31, 32, 33, 34.
+unique_call_bbs_bad_ndx: 10 (km6mzm@w2xsc.ampr.org), 12 (km6clk@w1xsc.ampr.org), 27 (kt6jk@w1xsc.ampr.org).
+==== Sources - Other:
+ BBS Network:
+   kg6kzz@w1xsc.#nca.ca.usa.noam
+ EMail:
+   kk6fpp@email1.scc-ares-races.net
+
+/EX
+Msg queued
+(#0) >
+SP SCCDEC@GMAIL.COM
+TUE-2576P_O/R_SCCo ARES/RACES Packet Practice Report For: Tuesday, April 19, 2022. Total = 34 call signs /34 messages
+
+SCCo ARES/RACES Packet Practice Report For: Tuesday, April 19, 2022.
+
+---------------------- WEEK'S SUMMARY ----------------------
+Week's unique call signs: 43
+----------------------- DAY'S SUMMARY -----------------------
+Totals:
+  All messages:            34 received;  31 (91%) correct. [includes duplicates]
+  Unique "from" addresses: 34 received;  31 (91%) correct. [unique From: addresses]
+  Unique call signs:       34 received;  31 (91%) correct. [34 reported to main net]
+
+Simulated BBS outage: W3XSC
+  0/34 (0%) incorrectly sent FROM this BBS.
+
+Sources:
+  Santa Clara County BBSs: 32
+      21 W1XSC
+       5 W2XSC
+      Subject:
+ 0 W3XSC
+       6 W4XSC
+
+  Other: 2
+      1 from BBS Network.
+      1 from E-Mail.
+
+
+Most operators who sent a message that is flagged in the list below
+will automatically receive a reply with additional details and suggested
+corrective actions. If your message is flagged, please retrieve the detailed
+reply message from the BBS, email provider, or other service you used to
+submit the weekly packet practice message before requesting assistance.
+
+----------------------- DAY'S DETAILS -----------------------
+
+##     FROM                                                          SUBJECT
+_1 kk6fmq@w4xsc.ampr.org       FMQ-659P_R_MuniStat_Palo Alto
+_2 w6bg@w1xsc.ampr.org         6BG-731P_I_MuniStat_Cupertino
+_3 k6sw@w1xsc.ampr.org         PEB-744P_I_MuniStat_San Jose
+_4 ai6sl@w1xsc.ampr.org        6SL-821P_R_MuniStat_Sunnyvale
+_5 ke6ppi@w1xsc.ampr.org       PPI-458P_R_MuniStat_Sunnyvale
+_6 n6tae@w1xsc.ampr.org        TAE-414P_P_MuniStat_Cupertino
+_7 aj6hm@w1xsc.ampr.org        6HM-721P_I_MuniStat_Saratoga
+_8 kk6ebl@w1xsc.ampr.org       EBL-1298P_R_MuniStat_Los Gatos
+_9 kk6zgl@w1xsc.ampr.org       ZGL-253P_I_MuniStat_San Jose
+10 km6mzm@w2xsc.Enter message.  End with /EX ampr.org       MZM-435P_I_MuniStat_Sunnyvale
+     ^^^ Message Subject mismatch with Form contents.
+11 k6gmg@w2xsc.ampr.org     o   GMG-291P_I_MuniStat_Morgan Hill
+12 km6clk@w1xsc.ampr.org       CLK-275P_O/R_Los Gatos/Monte Sereno_Practice KM6CLK, Bart, Losr Gatos/Monte Sereno 4-19-2022_R_MuniStat_Los Gatos
+     ^^^ Subject line format issue(Missing: Message Handling Order.)
+13 kc6rs ^Z in first column (^A abortsc@w1xsc.ampr.org       STR-2526P_I_MuniStat_Sunnyvale
+14 wu6p@w1xsc.ampr.org         U6P-415P_R_MuniStat_Sunnyvale
+15 k6ott@w4xs)c.ampr.org        OTT-648P_I_MuniStat_Sunnyvale
+16 w6jmk@w1xsc.ampr.org        JMK-104M_I_MuniStat_Los Altos
+17 n9dk@w4xsc.ampr.:org         9DK-3306P_R_MuniStat_Mountain View
+18 kn6pe@w1xsc.ampr.org        6PE-592P_I_MuniStat_Cupertino
+19 km6lry@w1xsc.ampr
+.org       LRY-475P_R_MuniStat_Los Gatos
+20 af6ot@w1xsc.ampr.org        PJB-1228P_R_SheltStat_Middlefield
+21 k6fjc@w1xsc.ampr.org        FJC-689P_I_MuniStat_Unincorporated
+22 kk6fpp@email1.scc-ares-races.net FPP-472E_R_MuniStat_Sunnyvale
+23 k6rwy@w2xsc.ampr.org        RWY-2128P_R_MuniStat_San Jose
+24 kg6kzz@w1xsc.#nca.ca.usa.noam KZZ-374P_R_MuniStat_San Jose
+25 n6ik@w1xsc.ampr.org         6IK-304P_R_MuniStat_Cupertino
+26 kg6hi@w1xsc.ampr.org        6HI-1735P_R_MuniStat_Sunnyvale
+27 kt6jk@w1xsc.ampr.org        6JK-902M_I_MuniStat_Cupertino
+     ^^^ Packet Form version incorrect.
+28 aa6pm@w1xsc.ampr.org        PJM-617P_R_MuniStat_Saratoga
+29 ai6ls@w4xsc.ampr.org        WLC-634P_R_MuniStat_San Jose
+30 wa6rah@w2xsc.ampr.or
+g       RAH-524P_R_MuniStat_Unincorporated
+31 ki6ldm@w1xsc.ampr.org       LDM-359P_R_MuniStat_Cupertino
+32 xbeeoc@w2xsc.ampr.org       XBE-1357P_I_MuniStat_Unincorporated
+33 ke6tim@w4xsc.ampr.org       TIM-418P_I_MuniStat_Milpitas
+34 kj6ace@w4xsc.ampr.org       ACE-753P_I_MuniStat_Milpitas
+
+Key:
+S: beginning of Subject line differs from Standards for Santa Clara County.
+P: incorrect version of SCCoPIFO; Correct version is 2.12
+M: Message Subject mismatch with Form contents.
+
+Practice Message count: 0 plain text messages.
+                        34 SCCoPIFO messages.
+
+This list created by KC6RSC, Steve Roth
+TueChk001.LrnOpst004.CntInit013.MsgWrap005
+.MsgErr005.Rprt017
+
+===================================
+20:01:20 = now, code name, ver, time of file
+          procCheckInList.exe, version 04.00.02.00, 05Jun2019 11:56:12
+          update_txt_files.exe, version 1.0.0.5, 05Jun2019 11:56:12
+          outpost_io, version 1.0.1
+          readTacCallAlias, version 1.0.0
+          ar_utils, version 2.0.0
+          _init_regexps, version 2.0.14
+          sim_bbs_dwn.exe, version 1.0.15, 05Jun2019 11:56:12
+          outpost_pause_clock, version 1.0.0.12
+          readCheckIn, version 1.0.0.21
+* get_settings:  INI file values loaded "C:\Users\roths\AppData\Roaming\SCCo Packet\scripts\packetNCO\procCheckInList.INI".
+ days_oldest = 6
+ enable_dwn_bbs_sim = 1
+ enable_timed_autopoll = 1
+ id_allow_tac_pfx = 1
+ log_msg = 2,3,4,5,6, 8
+ long_form_issues = 1
+ max_len_OpstMsg = 10000
+ max_len_toAddr = 126
+ msg_sbj_handling_only_form = 1
+ msg_sbj_handling_only_pacf = 2
+ msg_sbj_handling_only_txt = 2
+ nco_summary_type = 0
+ require_hyphen = 1
+ run_days_before = 0
+ time_close = 2000
+ time_close_as_dt = 1900-01-01 20:00:00
+* _init_regexps:
+  tacID: "[a-zA-Z]{3}"
+  short tacID tacID_diag: "[a-zA-Z]+"
+  message number msg_num: "-?[0-9]{3,}[a-zA-Z]?"
+  short message number msg_num_diag: "-?[0-9]+[a-zA-Z]?"
+  Severity sit_severe: "([_][EUO])"
+  Severity additional formats for plain text sit_severe_pln_txt[]:
+   [0]: (: )
+   [1]: (:)
+   [2]: ( )
+  Handling Order msg_hndl_ordr: "\/[IPR]_"
+  Handling Order msg_hndl_ordr_only: "_[IPR]_"
+  Subject subj: "(.){2,}"
+Message Subject mismatch with SCCoPIFO contents.
+1:  !SCCoPIFO! Declaration: _I_MuniStat_Sunnyvale
+2:  Message Subject (trimmed): MZM-435P_I_MuniStat_S
+3:  Message Subject residual:unnyvale
+* load_bad_id_file: found file "C:\Users\roths\AppData\Roaming\SCCo Packet\scripts\packetNCO\bad_tacid.txt".
+* load_bad_id_file: file empty.
+* load_bad_id_file: .
+* Current SCCoPIFO version (from "CurrentSCCoPIFO.txt"): 2.12
+* Current PACF version (from "CurrentPACF.txt"): None
+* SCCoPIFO ErrMsg:
+  kt6jk@w1xsc.ampr.org, 6JK-902M_I_MuniStat_Cupertino
+    #V: undefined-2.1 ; Correct version is 2.12
+  --
+* PACF ErrMsg:
+  [none]
+* Invalid ID ErrMsg:
+  [none]
+vvvv Unique "from" addresses for Tuesday vvvv
+kk6fmq
+w6bg
+k6sw
+ai6sl
+ke6ppi
+n6tae
+aj6hm
+kk6ebl
+kk6zgl
+km6mzm
+k6gmg
+km6clk
+kc6rsc
+wu6p
+k6ott
+w6jmk
+n9dk
+kn6pe
+km6lry
+af6ot
+k6fjc
+k6rwy
+n6ik
+kg6hi
+kt6jk
+aa6pm
+ai6ls
+wa6rah
+ki6ldm
+xbeeoc
+ke6tim
+kj6ace
+^^^^ End Unique "from" addresses for Tuesday ^^^^
+valid_count_ndx: 1, 2, 3, 4, 5, 6, 7, 8, 9, 11, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 28, 29, 30, 31, 32, 33, 34.
+unique_call_bbs_good_ndx: 1, 2, 3, 4, 5, 6, 7, 8, 9, 11, 13, 14, 15, 16, 17, 18, 19, 20, 21, 23, 25, 26, 28, 29, 30, 31, 32, 33, 34.
+unique_call_bbs_bad_ndx: 10 (km6mzm@w2xsc.ampr.org), 12 (km6clk@w1xsc.ampr.org), 27 (kt6jk@w1xsc.ampr.org).
+==== Sources - Other:
+ BBS Network:
+   kg6kzz@w1xsc.#nca.ca.usa.noam
+ EMail:
+   kk6fpp@email1.scc-ares-races.net
+
+/EX
+Msg queued
+(#0) >
+SP LEIBOLD@HOTMAIL.COM
+TUE-2577P_O/R_SCCo ARES/RACES Packet Practice Report For: Tuesday, April 19, 2022. Total = 34 call signs /34 messages
+
+SCCo ARES/RACES Packet Practice Report For: Tuesday, April 19, 2022.
+
+---------------------- WEEK'S SUMMARY ----------------------
+Week's unique call signs: 43
+----------------------- DAY'S SUMMARY --------
+---------------
+Totals:
+  All messages:            34 received;  31 (91%) correct. [includes duplicates]
+  Unique "from" addresses: 34 received;  31 (91%) correct. [unique From: addresses]
+  Unique call signs:       34 received;  31 (91%) correct. [34 reported to main net]
+
+Simulated BBS outage: W3XSC
+  0/34 (0%) incorrectly sent FROM this BBS.
+
+Sources:
+  Santa Clara County BBSs: 32
+      21 W1XSC
+       5 W2XSC
+       0 W3XSC
+       6 W4XSC
+
+  Other: 2
+      1 from BBS Network.
+      1 from E-Mail.
+
+
+Most operators who sent a message that is flagged in the list below
+will automatically receive a reply with additional details and suggested
+corrective actions. If yourS message is flagged, please retrieve the detailed
+reply message from the BBS, email provider, or other service you used to
+submiubject:
+t the weekly packet practice message before requesting assistance.
+
+----------------------- DAY'S DETAILS -----------------------
+
+##     FROM                                                          SUBJECT
+_1 kk6fmq@w4xsc.ampr.org       FMQ-659P_R_MuniStat_Palo Alto
+_2 w6bg@w1xsc.ampr.org         6BG-731P_I_MuniStat_Cupertino
+_3 k6sw@w1xsc.ampr.org         PEB-744P_I_MuniStat_San Jose
+_4 ai6sl@w1xsc.ampr.org        6SL-821P_R_MuniStat_Sunnyvale
+_5 ke6ppi@w1xsc.ampr.org       PPI-458P_R_MuniStat_Sunnyvale
+_6 n6tae@w1xsc.ampr.org        TAE-414P_P_MuniStat_Cupertino
+_7 aj6hm@w1xsc.ampr.org        6HM-721P_I_MuniStat_Saratoga
+_8 kk6ebl@w1xsc.ampr.org       EBL-1298P_R_MuniStat_Los Gatos
+_9 kk6zgl@w1xsc.ampr.org       ZGL-253P_I_MuniStat_San Jose
+10 km6mzm@w2xEnter message.  End with /EX sc.ampr.org       MZM-435P_I_MuniStat_Sunnyvale
+     ^^^ Message Subject mismatch with Form contents.
+11 k6gmg@w2xsc.ampr.org  o      GMG-291P_I_MuniStat_Morgan Hill
+12 km6clk@w1xsc.ampr.org       CLK-275P_O/R_Los Gatos/Monte Sereno_Practice KM6CLK, Bart, rLos Gatos/Monte Sereno 4-19-2022_R_MuniStat_Los Gatos
+     ^^^ Subject line format issue(Missing: Message Handling Order.)
+13 kc ^Z in first column (^A aborts):
+6rsc@w1xsc.ampr.org       STR-2526P_I_MuniStat_Sunnyvale
+14 wu6p@w1xsc.ampr.org         U6P-415P_R_MuniStat_Sunnyvale
+15 k6ott@w4xsc.ampr.org        OTT-648P_I_MuniStat_Sunnyvale
+16 w6jmk@w1xsc.ampr.org        JMK-104M_I_MuniStat_Los Altos
+17 n9dk@w4xsc.ampr.org         9DK-3306P_R_MuniStat_Mountain View
+18 kn6pe@w1xsc.ampr.org        6PE-592P_I_MuniStat_Cupertino
+19 km6lry@w1xsc.ampr.org       LRY-475P_R_MuniStat_Los Gatos
+20 af6ot@w1xsc.ampr.org        PJB-1228P_R_SheltStat_Middlefield
+21 k6fjc@w1xsc.ampr.org        FJC-689P_I_MuniStat_Unincorporated
+22 kk6fpp@email1.scc-ares-races.net FPP-472E_R_MuniStat_Sunnyvale
+23 k6rwy@w2xsc.ampr.org        RWY-2128P_R_MuniStat_San Jose
+24 kg6kzz@w1xsc.#nca.ca.usa.noam KZZ-374P_R_MuniStat_San Jose
+25 n6ik@w1xsc.ampr.org         6IK-304P_R_MuniStat_Cupertino
+26 kg6hi@w1xsc.ampr.org        6HI-1735P_R_MuniStat_Sunnyvale
+27 kt6jk@w1xsc.ampr.org        6JK-902M_I_MuniStat_Cupertino
+     ^^^ Packet Form version incorrect.
+28 aa6pm@w1xsc.ampr.org        PJM-617P_R_MuniStat_Saratoga
+29 ai6ls@w4xsc.ampr.org        WLC-634P_R_MuniStat_San Jose
+30 wa6rah@w2xsc.ampr.org       RAH-524P_R_MuniStat_Unincorporated
+31 ki6ldm@w1xsc.ampr.org       LDM-359P_R_MuniStat_Cupertino
+32 xbeeoc@w2xsc.ampr.org       XBE-1357P_I_MuniStat_Unincorporated
+33 ke6tim@w4xsc.ampr.org       TIM-418P_I_MuniStat_Milpitas
+34 kj6ace@w4xsc.ampr.org       ACE-753P_I_MuniStat_Milpitas
+
+Key:
+S: beginning of Subject line differs from Standards for Santa Clara County.
+P: incorrect version of SCCoPIFO; Correct version is 2.12
+M: Message Subject mismatch with Form contents.
+
+Practice Message count: 0 plain text messages.
+                        34 SCCoPIFO messages.
+
+This list created by KC6RSC, Steve Roth
+TueChk001.LrnOpst004.CntInit013.MsgWrap005
+.MsgErr005.Rprt017
+
+===================================
+20:01:20 = now, code name, ver, time of file
+          procCheckInList.exe, version 04.00.02.00, 05Jun2019 11:56:12
+          update_txt_files.exe, version 1.0.0.5, 05Jun2019 11:56:12
+          outpost_io, version 1.0.1
+          readTacCallAlias, version 1.0.0
+          ar_utils, version 2.0.0
+          _init_regexps, version 2.0.14
+          sim_bbs_dwn.exe, version 1.0.15, 05Jun2019 11:56:12
+          outpost_pause_clock, version 1.0.0.12
+          readCheckIn, version 1.0.0.21
+* get_settings:  INI file values loaded "C:\Users\roths\AppData\Roaming\SCCo Packet\scripts\packetNCO\procCheckInList.INI".
+ days_oldest = 6
+ enable_dwn_bbs_sim = 1
+ enable_timed_autopoll = 1
+ id_allow_tac_pfx = 1
+ log_msg = 2,3,4,5,6, 8
+ long_form_issues = 1
+ max_len_OpstMsg = 10000
+ max_len_toAddr = 126
+ msg_sbj_handling_only_form = 1
+ msg_sbj_handling_only_pacf = 2
+ msg_sbj_handling_only_txt = 2
+ nco_summary_type = 0
+ require_hyphen = 1
+ run_days_before = 0
+ time_close = 2000
+ time_close_as_dt = 1900-01-01 20:00:00
+* _init_regexps:
+  tacID: "[a-zA-Z]{3}"
+  short tacID tacID_diag: "[a-zA-Z]+"
+  message number msg_num: "-?[0-9]{3,}[a-zA-Z]?"
+  short message number msg_num_diag: "-?[0-9]+[a-zA-Z]?"
+  Severity sit_severe: "([_][EUO])"
+  Severity additional formats for plain text sit_severe_pln_txt[]:
+   [0]: (: )
+   [1]: (:)
+   [2]: ( )
+  Handling Order msg_hndl_ordr: "\/[IPR]_"
+  Handling Order msg_hndl_ordr_only: "_[IPR]_"
+  Subject subj: "(.){2,}"
+Message Subject mismatch with SCCoPIFO contents.
+1:  !SCCoPIFO! Declaration: _I_MuniStat_Sunnyvale
+2:  Message Subject (trimmed): MZM-435P_I_MuniStat_S
+3:  Message Subject residual:unnyvale
+* load_bad_id_file: found file "C:\Users\roths\AppData\Roaming\SCCo Packet\scripts\packetNCO\bad_tacid.txt".
+* load_bad_id_file: file empty.
+* load_bad_id_file: .
+* Current SCCoPIFO version (from "CurrentSCCoPIFO.txt"): 2.12
+* Current PACF version (from "CurrentPACF.txt"): None
+* SCCoPIFO ErrMsg:
+  kt6jk@w1xsc.ampr.org, 6JK-902M_I_MuniStat_Cupertino
+    #V: undefined-2.1 ; Correct version is 2.12
+  --
+* PACF ErrMsg:
+  [none]
+* Invalid ID ErrMsg:
+  [none]
+vvvv Unique "from" addresses for Tuesday vvvv
+kk6fmq
+w6bg
+k6sw
+ai6sl
+ke6ppi
+n6tae
+aj6hm
+kk6ebl
+kk6zgl
+km6mzm
+k6gmg
+km6clk
+kc6rsc
+wu6p
+k6ott
+w6jmk
+n9dk
+kn6pe
+km6lry
+af6ot
+k6fjc
+k6rwy
+n6ik
+kg6hi
+kt6jk
+aa6pm
+ai6ls
+wa6rah
+ki6ldm
+xbeeoc
+ke6tim
+kj6ace
+^^^^ End Unique "from" addresses for Tuesday ^^^^
+valid_count_ndx: 1, 2, 3, 4, 5, 6, 7, 8, 9, 11, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 28, 29, 30, 31, 32, 33, 34.
+unique_call_bbs_good_ndx: 1, 2, 3, 4, 5, 6, 7, 8, 9, 11, 13, 14, 15, 16, 17, 18, 19, 20, 21, 23, 25, 26, 28, 29, 30, 31, 32, 33, 34.
+unique_call_bbs_bad_ndx: 10 (km6mzm@w2xsc.ampr.org), 12 (km6clk@w1xsc.ampr.org), 27 (kt6jk@w1xsc.ampr.org).
+==== Sources - Other:
+ BBS Network:
+   kg6kzz@w1xsc.#nca.ca.usa.noam
+ EMail:
+   kk6fpp@email1.scc-ares-races.net
+
+/EX
+Msg queued
+(#0) >
+B
+*** DISCONNECTED
+cmd:conv
+de StationID=KC6RSC, TacCall=PKTTUE, Packet NCO Tuesday
+
+cmd:
+cmd:my KC6RSC
+cmd:
+
+cmd:cmd:SENDPAC $0D
+SENDPAC was $05 (CTRL-E)
+cmd:CR ON
+CR was OFF
+cmd:PACTIME AFTER 10
+PACTIME was AFTER 2 (200 msec)
+cmd:CPACTIME OFF
+CPACTIME was ON
+cmd:STREAMSW $7C
+STREAMSW was $00
+cmd:

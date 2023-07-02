@@ -41,7 +41,7 @@ var formToPackage = map[string]string{
 
 func main() {
 	var pifodir = "../pack-it-forms"
-	var outdir = "xscmsg"
+	var outdir = "message"
 	var err error
 
 	log.SetFlags(0)
@@ -72,7 +72,7 @@ func getExistingTags(dir string) []string {
 	if err := os.Chdir(dir); err != nil {
 		log.Fatal(err)
 	}
-	cmd := exec.Command("git", "tag", "--merged", "SCCo.2", "--contains", "vSCCo.22")
+	cmd := exec.Command("git", "tag", "-l", "--merged", "SCCo.2", "--contains", "vSCCo.22", "--sort", "committerdate")
 	list, err := cmd.Output()
 	if err != nil {
 		log.Fatal(err)

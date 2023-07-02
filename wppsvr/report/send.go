@@ -8,11 +8,11 @@ import (
 	"net/smtp"
 	"strings"
 
+	"github.com/rothskeller/packet/envelope"
 	"github.com/rothskeller/packet/jnos"
-	"github.com/rothskeller/packet/pktmsg"
+	"github.com/rothskeller/packet/message/common"
 	"github.com/rothskeller/packet/wppsvr/config"
 	"github.com/rothskeller/packet/wppsvr/store"
-	"github.com/rothskeller/packet/xscmsg"
 )
 
 // Send generates the report for the session and sends it to all designated
@@ -26,10 +26,8 @@ func Send(st Store, conn *jnos.Conn, session *store.Session) {
 	}
 	session.Report = report.RenderPlainText()
 	st.UpdateSession(session)
-	var rm = pktmsg.New()
-	rm.Body = session.Report
-	subject := xscmsg.EncodeSubject(st.NextMessageID(session.Prefix), xscmsg.HandlingRoutine, "", "SCCo Packet Practice Report")
-	body := rm.EncodeBody()
+	subject := common.EncodeSubject(st.NextMessageID(session.Prefix), "ROUTINE", "", "SCCo Packet Practice Report")
+	body := new(envelope.Envelope).RenderBody(session.Report)
 	// To avoid potential problems with JNOS line length limits, we
 	// send to each recipient separately.
 	// conn.Send(subject, body, sendTo...)

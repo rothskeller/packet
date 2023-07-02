@@ -1,0 +1,135 @@
+# Configuration for packet-checkins
+
+# This section defines the configuration for each BBS.
+bbses:
+  W1XSC:
+    transport: disable
+  W2XSC:
+    transport: disable
+  W3XSC:
+    transport: disable
+  W4XSC:
+    transport: disable
+
+# We define no sessions; we only read sessions already in the database.
+sessions: {}
+
+# This section defines the minimum acceptable form versions.
+minimumVersions:
+  PackItForms: 3.2
+  AHFacStat: 2.2
+  ICS213: 2.1
+  EOC213RR: 2.3
+  JurisStat: 2.2
+  MuniStat: 2.1
+  RACES-MAR: 2.1
+  SheltStat: 2.1
+
+# This section defines how each detected problem is treated.  Each problem
+# should have zero or more of the following flags:
+#     respond   - the sender gets a response message with the problem
+#     report    - the problem gets listed in the report
+#     error     - the message gets counted as an error
+#     dontcount - the message does not get counted as a valid checkin
+#     dropmsg   - drop the entire message from the report
+problemActions:
+  BounceMessage: report dontcount
+  CallSignConflict: respond report error
+  DeliveryReceipt: dropmsg
+  FormCorrupt: respond report error
+  FormDestination: respond report error
+  FormHandlingOrder: respond report error
+  FormInvalid: respond report error
+  FormSubject: respond report error
+  FormVersion: respond report error
+  FromBBSDown: respond report error
+  HandlingOrderCode: respond report error
+  MessageCorrupt: report dontcount
+  MessageNotASCII: respond report error
+  MessageNotPlainText: respond report error
+  MessageTooEarly: respond report dontcount
+  MessageTooLate: respond report dontcount
+  MessageTypeWrong: respond report error
+  MsgNumFormat: respond report error
+  MultipleMessagesFromAddress: report
+  NoCallSign: respond report dontcount
+  PIFOVersion: respond report error
+  PracticeSubjectFormat: respond report
+  ReadReceipt: respond report dontcount
+  SessionDate: respond report
+  SubjectFormat: respond report error
+  SubjectHasSeverity: respond report error
+  ToBBSDown: respond report dontcount
+  ToBBS: respond report dontcount
+
+# This section defines the expected handling order and destination of each of
+# the different form types.  For HandlingOrder, possible values are "computed"
+# (for ICS213 and EOC213RR only), "IMMEDIATE", "PRIORITY", or "ROUTINE".  For
+# ToICSPosition and ToLocation, any listed value is considered acceptable.
+# Fields that are omitted from this section are not checked.
+formRouting:
+  ICS213:
+    HandlingOrder: computed # based on severity in form
+  AHFacStat:
+    HandlingOrder: ROUTINE
+    ToICSPosition:
+      - EMS Unit
+      - Public Health Unit
+      - Medical Health Branch
+      - Operations Section
+    ToLocation:
+      - MHJOC
+      - County EOC
+  EOC213RR:
+    HandlingOrder: computed # based on priority in form
+    ToICSPosition:
+      - Planning Section
+    ToLocation:
+      - County EOC
+  JurisStat:
+    HandlingOrder: IMMEDIATE
+    ToICSPosition:
+      - Situation Analysis Unit
+      - Planning Section
+    ToLocation:
+      - County EOC
+  MuniStat:
+    HandlingOrder: IMMEDIATE
+    ToICSPosition:
+      - Situation Analysis Unit
+      - Planning Section
+    ToLocation:
+      - County EOC
+  RACES-MAR:
+    HandlingOrder: ROUTINE
+    ToICSPosition:
+      - RACES Chief Radio Officer
+      - RACES Unit
+      - Operations Section
+    ToLocation:
+      - County EOC
+  SheltStat:
+    HandlingOrder: PRIORITY
+    ToICSPosition:
+      - Mass Care and Shelter Unit
+      - Care and Shelter Branch
+      - Operations Section
+
+# This is the address on which the web server should listen.  (The server must
+# be restarted for changes to this setting to take effect.)
+listenAddr: ':8230'
+
+# These people can view the results for people other than themselves.
+canViewEveryone:
+  - K6FJC
+  - KK6FPP
+  - K6OTT
+  - KC6RSC
+  - KE6TIM
+
+# These people can change session configurations:
+canEditSessions:
+  - K6FJC
+  - K6OTT
+  - KC6RSC
+  - KE6TIM

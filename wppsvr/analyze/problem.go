@@ -9,7 +9,7 @@ import (
 
 const multipleProblemsSubject = "Issues with packet practice message"
 
-func (a *Analysis) reportProblem(problemCode string, references reference, report string, args ...any) {
+func (a *Analysis) reportProblem(problemCode string, references reference, report string, args ...any) bool {
 	if _, ok := a.problems[problemCode]; ok {
 		panic(problemCode + " reported twice")
 	}
@@ -19,7 +19,7 @@ func (a *Analysis) reportProblem(problemCode string, references reference, repor
 		a.invalid = true
 	}
 	if actions&config.ActionRespond == 0 {
-		return // no need to generate response
+		return true // no need to generate response
 	}
 	if a.reportSubject == "" {
 		if a.reportSubject = ProblemLabels[problemCode]; a.reportSubject == "" {
@@ -36,6 +36,7 @@ func (a *Analysis) reportProblem(problemCode string, references reference, repor
 		fmt.Fprintf(&a.reportText, report, args...)
 	}
 	a.reportText.WriteString("\n\n")
+	return true
 }
 
 // ProblemLabels is a map from problem code to problem label (a short string

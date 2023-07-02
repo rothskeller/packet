@@ -10,11 +10,11 @@ import (
 	"os"
 	"time"
 
+	"github.com/rothskeller/packet/message/allmsg"
 	"github.com/rothskeller/packet/wppsvr/analyze"
 	"github.com/rothskeller/packet/wppsvr/config"
 	"github.com/rothskeller/packet/wppsvr/report"
 	"github.com/rothskeller/packet/wppsvr/store"
-	_ "github.com/rothskeller/packet/xscmsg/all" // register message types
 )
 
 func main() {
@@ -24,6 +24,7 @@ func main() {
 		messages []*store.Message
 		err      error
 	)
+	allmsg.Register()
 	if err = config.Read(analyze.ProblemLabels); err != nil {
 		log.Fatal(err)
 	}

@@ -1,0 +1,1135 @@
+[JNOS-2.0k.2.xsc.4-B1FHIM$]
+You have 55 messages  -  55 new.
+(#1) >
+XM 0
+(#1) >
+LM
+Mail area: pkttue
+55 messages  -  55 new
+
+St.  #  TO            FROM     DATE   SIZE SUBJECT
+> N   1 pkttue@w2xsc. k6ott    May  3  772 DELIVERED: TUE-4978P_O/R_SCCo ARES/
+  N   2 pkttue@w2xsc. ke6ppi   May  4  782 DELIVERED: TUE-4975P_O/R_SCCo ARES/
+  N   3 pkttue@w2xsc. w6bg     May  4  776 DELIVERED: TUE-4975P_O/R_SCCo ARES/
+  N   4 pkttue@w2xsc. kn6pe    May  4  797 DELIVERED: TUE-2570P_O/R_SCCo ARES/
+  N   5 pkttue@w2xsc. km6lry   May  5  783 DELIVERED: TUE-778P_O/R_SCCo ARES/R
+  N   6 pkttue@w2xsc. kk6fmq   May  5  782 DELIVERED: TUE-4975P_O/R_SCCo ARES/
+  N   7 pkttue@w2xsc. ke6tim   May  5  779 DELIVERED: TUE-4978P_O/R_SCCo ARES/
+  N   8 pkttue@w2xsc. pafeoc   May  6  782 DELIVERED: TUE-4977P_O/R_SCCo ARES/
+  N   9 pkttue@w2xsc. k6fjc    May  6  774 DELIVERED: TUE-4977P_O/R_SCCo ARES/
+  N  10 pkttue@w2xsc. n6pwd    May  6  782 DELIVERED: TUE-778P_O/R_SCCo ARES/R
+  N  11 pkttue@w2xsc. aj6hm    May  7  779 DELIVERED: TUE-4976P_O/R_SCCo ARES/
+  N  12 pkttue@w2xsc. kc6rsc   May  9  781 DELIVERED: TUE-4976P_O/R_SCCo ARES/
+  N  13 pkttue@w2xsc. n6tae    May  9  783 DELIVERED: TUE-2569P_O/R_SCCo ARES/
+  N  14 pkttue@w2xsc. kg6hi    May  9  785 DELIVERED: TUE-2571P_O/R_SCCo ARES/
+  N  15 pkttue@w2xsc. n9dk     May  9  782 DELIVERED: TUE-4976P_O/R_SCCo ARES/
+  N  16 pkttue@w2xsc. k6rwy    May  9  781 DELIVERED: TUE-4977P_O/R_SCCo ARES/
+  N  17 pkttue@w2xsc. n6ik     May 10  779 DELIVERED: TUE-777P_O/R_SCCo ARES/R
+  N  18 pkttue@w2xsc. km6iao   May 10  784 DELIVERED: TUE-4978P_O/R_SCCo ARES/
+  N  19 pkttue@w2xsc. kj6ace   May 10  780 DELIVERED: TUE-4978P_O/R_SCCo ARES/
+  N  20 pkttue@w2xsc. aa6pm    May 10  783 DELIVERED: TUE-2571P_O/R_SCCo ARES/
+  N  21 pkttue@w2xsc. aa6pm    May 10  782 DELIVERED: TUE-779P_O/R_SCCo ARES/R
+  N  22 pkttue@w2xsc. kk6ebl   May 10  787 DELIVERED: TUE-778P_O/R_SCCo ARES/R
+  N  23 pkttue@w2xsc  ak6by    May 11  467 6BY-101P_R_Practice AK6BY, Anne, Sa
+  N  24 pkttue@w2xsc. k6sw     May 12  526 PEB-771P_R_Practice K6SW, Pat, San
+  N  25 pkttue@w2xsc  w6bg     May 12  545 6BG-794P_R_Practice W6BG, MAX, CUPE
+  N  26 pkttue@w2xsc. kk6fmq   May 12  784 DELIVERED: TUE-4975P_O/R_SCCo ARES/
+  N  27 pkttue@w2xsc. ke6ppi   May 13  527 PPI-500P_R_Practice KE6PPI, Roger,
+  N  28 pkttue@w2xsc. kk6fmq   May 13  497 FMQ-305M_R_Practice KK6FMQ, Grant,
+  N  29 pkttue@w2xsc. kk6fmq   May 15  513 FMQ-140P_R_Practice KK6FMQ, Grant,
+  N  30 pkttue@w2xsc. ke6tim   May 15  663 DELIVERED: TUE-773P_R_Message Subje
+  N  31 pkttue@w2xsc. ke6tim   May 15  782 DELIVERED: TUE-779P_O/R_SCCo ARES/R
+  N  32 pkttue@w2xsc  ag6gx    May 15  519 6GX-4985P_R_Practice AG6GX, Brian,
+  N  33 pkttue@w2xsc  kc6rsc   May 15  444 STR-2654P_R_Practice KC6RSC, Steve,
+  N  34 pkttue@w2xsc. wu6p     May 15  488 U6P-435P_R_Practice WU6P, Nianfeng,
+  N  35 pkttue@w2xsc. km6clk   May 15  674 DELIVERED: TUE-775P_R_Format of Sub
+  N  36 pkttue@w2xsc. km6clk   May 15  785 DELIVERED: TUE-777P_O/R_SCCo ARES/R
+  N  37 pkttue@w2xsc. kg6yhs
+May 16  787 DELIVERED: TUE-778P_O/R_SCCo ARES/R
+  N  38 pkttue@w2xsc. kg6yhs   May 16  576 YHS-247P_R_Practice KG6YHS, Irene,
+  N  39 pkttue@w2xsc  kk6fpp   May 16  491 FPP-102M_R_Practice KK6FPP, Thomas,
+  N  40 pkttue@w2xsc. kg6kzz   May 16  684 KZZ-388P_R_Practice KG6KZZ, Jason,
+  N  41 pkttue@w2xsc. kg6kzz   May 16  598 KZZ-388P_R_Practice KG6KZZ, Jason,
+  N  42 pkttue@w2xsc. kt6jk    May 16  689 6JK-910M_R_Practice KT6JK, Todd, CU
+  N  43 pkttue@w2xsc  km6lry   May 16  443 LRY-487P_R_Practice KM6LRY, Les, LG
+  N  44 pkttue@w2xsc  km6mzm   May 16  475 MZM-467P_R_Practice, KM6MZM, Daniel
+  N  45 pkttue@w2xsc. km6mzm   May 16  784 DELIVERED: TUE-4976P_O/R_SCCo ARES/
+  N  46 pkttue@w2xsc. k6fjc    May 16  549 FJC-808P_R_Practice K6FJC, Mark, Re
+  N  47 pkttue@w2xsc. n9dk     May 16  463 9DK-3400P_R_Practice N9DK, Dave, MV
+  N  48 pkttue@w2xsc. pktmon   May 16 3060 MON-6883PLog to PKTTUE NCO from PKT
+  N  49 pkttue@w2xsc. k6rwy    May 16  540 RWY-2141P_R_Practice K6RWY, Bob, Sa
+  N  50 pkttue@w2xsc. kg6hi    May 17  530 6HI-1748P_R_Practice, KG6HI, Jerry,
+  N  51 pkttue@w2xsc  km6iao   May 17  523 IAO-568P_R_Practice KM6IAO, Paul, M
+  N  52 pkttue@w2xsc  aa6pm    May 17  511 PJM-625P_R_Practice AA6PM, Peter, S
+  N  53 pkttue        xbeeoc   May 17  782 DELIVERED: TUE-4978P_O/R_SCCo ARES/
+  N  54 pkttue        xbeeoc   May 17  472 XBE-1362P_R_Practice N6SBC, Timothy
+  N  55 pkttue        kc6rsc   May 17  681 DELIVERED: TUE-2657P_O/R_PKTTUE to
+(#1) >
+R 1
+Message #1
+Date: Tue, 03 May 2022 20:38:34 PDT
+From: k6ott@w4xsc.ampr.org
+To: pkttue@w2xsc.ampr.org
+Subject: DELIVERED: TUE-4978P_O/R_SCCo ARES/RACES Packet Practice Report For: Tuesday, May 03, 2022. Total = 33 call signs /37 me
+
+!LMI!OTT-697P!DR!5/3/2022 20:38:06
+Your Message
+To: K6OTT
+Subject: TUE-4978P_O/R_SCCo ARES/RACES Packet Practice Report For: Tuesday, May 03, 2022. Total = 33 call signs /37 messages
+was delivered on 5/3/2022 20:38
+Recipient's Local Message ID: OTT-697P
+
+(#1) >
+K 1
+Msg 1 Killed.
+(#1) >
+R 2
+Message #2
+Date: Wed, 04 May 2022 15:08:49 PDT
+From: ke6ppi@w3xsc.ampr.org
+To: pkttue@w2xsc.ampr.org
+Subject: DELIVERED: TUE-4975P_O/R_SCCo ARES/RACES Packet Practice Report For: Tuesday, May 03, 2022. Total = 33 call signs /37 me
+
+!LMI!PPI-493P!DR!5/4/2022 3:07:55 PM
+Your Message
+To: KE6PPI
+Subject: TUE-4975P_O/R_SCCo ARES/RACES Packet Practice Report For: Tuesday, May 03, 2022. Total = 33 call signs /37 messages
+was delivered on 5/4/2022 3:07:55 PM
+Recipient's Local Message ID: PPI-493P
+
+(#2) >
+K 2
+Msg 2 Killed.
+(#2) >
+R 3
+Message #3
+Date: Wed, 04 May 2022 19:40:10 PDT
+From: w6bg@w4xsc.ampr.org
+To: pkttue@w2xsc.ampr.org
+Subject: DELIVERED: TUE-4975P_O/R_SCCo ARES/RACES Packet Practice Report For: Tuesday, May 03, 2022. Total = 33 call signs /37 me
+
+!LMI!6BG-791P!DR!5/4/2022 7:39:39 PM
+Your Message
+To: W6BG
+Subject: TUE-4975P_O/R_SCCo ARES/RACES Packet Practice Report For: Tuesday, May 03, 2022. Total = 33 call signs /37 messages
+was delivered on 5/4/2022 7:39:39 PM
+Recipient's Local Message ID: 6BG-791P
+
+(#3) >
+K 3
+Msg 3 Killed.
+(#3) >
+R 4
+Message #4
+Date: Wed, 04 May 2022 20:01:10 PDT
+From: kn6pe@w1xsc.ampr.org
+To: pkttue@w2xsc.ampr.org
+Subject: DELIVERED: TUE-2570P_O/R_SCCo ARES/RACES Packet Practice Report For: Tuesday, April 19, 2022. Total = 34 call signs /34
+
+!LMI!6PE-1000000001P!DR!5/4/2022 8:01:06 PM
+Your Message
+To: KN6PE
+Subject: TUE-2570P_O/R_SCCo ARES/RACES Packet Practice Report For: Tuesday, April 19, 2022. Total = 34 call signs /34 messages
+was delivered on 5/4/2022 8:01:06 PM
+Recipient's Local Message ID: 6PE-1000000001P
+
+(#4) >
+K 4
+Msg 4 Killed.
+(#4) >
+R 5
+Message #5
+Date: Thu, 05 May 2022 17:08:56 PDT
+From: km6lry@w1xsc.ampr.org
+To: pkttue@w2xsc.ampr.org
+Subject: DELIVERED: TUE-778P_O/R_SCCo ARES/RACES Packet Practice Report For: Tuesday, April 26, 2022. Total = 29 call signs /30 m
+
+!LMI!LRY-486P!DR!5/5/2022 5:08:30 PM
+Your Message
+To: KM6LRY
+Subject: TUE-778P_O/R_SCCo ARES/RACES Packet Practice Report For: Tuesday, April 26, 2022
+. Total = 29 call signs /30 messages
+was delivered on 5/5/2022 5:08:30 PM
+Recipient's Local Message ID: LRY-486P
+
+(#5) >
+K 5
+Msg 5 Killed.
+(#5) >
+R 6
+Message #6
+Date: Thu, 05 May 2022 18:00:21 PDT
+From: kk6fmq@w3xsc.ampr.org
+To: pkttue@w2xsc.ampr.org
+Subject: DELIVERED: TUE-4975P_O/R_SCCo ARES/RACES Packet Practice Report For: Tuesday, May 03, 2022. Total = 33 call signs /37 me
+
+!LMI!FMQ-130P!DR!5/5/2022 5:59:56 PM
+Your Message
+To: KK6FMQ
+Subject: TUE-4975P_O/R_SCCo ARES/RACES Packet Practice Report For: Tuesday, May 03, 2022. Total = 33 call signs /37 messages
+was delivered on 5/5/2022 5:59:56 PM
+Recipient's Local Message ID: FMQ-130P
+
+(#6) >
+K 6
+Msg 6 Killed.
+(#6) >
+R 7
+Message #7
+Date: Thu, 05 May 2022 18:46:59 PDT
+From: ke6tim@w4xsc.ampr.org
+To: pkttue@w2xsc.ampr.org
+Subject: DELIVERED: TUE-4978P_O/R_SCCo ARES/RACES Packet Practice Report For: Tuesday, May 03, 2022. Total = 33 call signs /37 me
+
+!LMI!TIM-448P!DR!5/5/2022 6:47:01 PM
+Your Message
+To: KE6TIM
+Subject: TUE-4978P_O/R_SCCo ARES/RACES Packet Practice Report For: Tuesday, May 03, 2022. Total = 33 call signs /37 messages
+was delivered on 5/5/2022 18:47
+Recipient's Local Message ID: TIM-448P
+
+(#7) >
+K 7
+Msg 7 Killed.
+(#7) >
+R 8
+Message #8
+Date: Fri, 06 May 2022 08:57:11 PDT
+From: pafeoc@w3xsc.ampr.org
+To: pkttue@w2xsc.ampr.org
+Subject: DELIVERED: TUE-4977P_O/R_SCCo ARES/RACES Packet Practice Report For: Tuesday, May 03, 2022. Total = 33 call signs /37 me
+
+!LMI!PAF-266P!DR!5/6/2022 8:56:47 AM
+Your Message
+To: PAFEOC
+Subject: TUE-4977P_O/R_SCCo ARES/RACES Packet Practice Report For: Tuesday, May 03, 2022. Total = 33 call signs /37 messages
+was delivered on 5/6/2022 8:56:47 AM
+Recipient's Local Message ID: PAF-266P
+
+(#8) >
+K 8
+Msg 8 Killed.
+(#8) >
+R 9
+Message #9
+Date: Fri, 06 May 2022 14:18:15 PDT
+From: k6fjc@w3xsc.ampr.org
+To: pkttue@w2xsc.ampr.org
+Subject: DELIVERED: TUE-4977P_O/R_SCCo ARES/RACES Packet Practice Report For: Tuesday, May 03, 2022. Total = 33 call signs /37 me
+
+!LMI!FJC-759P!DR!5/6/2022 2:17:55 PM
+Your Message
+To: K6FJC
+Subject: TUE-4977P_O/R_SCCo ARES/RACES Packet Practice Report For: Tuesday, May 03, 2022. Total = 33 call signs /37 messages
+was delivered on 5/6/2022 14:17
+Recipient's Local Message ID: FJC-759P
+
+(#9) >
+K 9
+Msg 9 Killed.
+(#9) >
+R 10
+Message #10
+Date: Fri, 06 May 2022 15:33:49 PDT
+From: n6pwd@w1xsc.ampr.org
+To: pkttue@w2xsc.ampr.org
+Subject: DELIVERED: TUE-778P_O/R_SCCo ARES/RACES Packet Practice Report For: Tuesday, April 26, 2022. Total = 29 call signs /30 m
+
+!LMI!PWD-3419P!DR!5/6/2022 3:33:22 PM
+Your Message
+To: N6PWD
+Subject: TUE-778P_O/R_SCCo ARES/RACES Packet Practice Report For: Tuesday, April 26, 2022. Total = 29 call signs /30 messages
+was delivered on 5/6/2022 3:33:22 PM
+Recipient's Local Message ID: PWD-3419P
+
+(#10) >
+K 10
+Msg 10 Killed.
+(#10) >
+R 11
+Message #11
+Date: Sat, 07 May 2022 09:31:32 PDT
+From: aj6hm@w4xsc.ampr.org
+To: pkttue@w2xsc.ampr.org
+Subject: DELIVERED: TUE-4976P_O/R_SCCo ARES/RACES Packet Practice Report For: Tuesday, May 03, 2022. Total = 33 call signs /37 me
+
+!LMI!6HM-754P!DR!5/7/2022 9:30:55 AM
+Your Message
+To: AJ6HM
+Subject: TUE-4976P_O/R_SCCo ARES/RACES Packet Practice Report For: Tuesday, May 03, 2022. Total = 33 call signs /37 messages
+was delivered on 5/7/2022 9:30:55 AM
+Recipient's Local Message ID: 6HM-754P
+
+(#11) >
+K 11
+Msg 11 Killed.
+(#11) >
+R 12
+Message #12
+Date: Mon, 09 May 2022 05:49:42 PDT
+From: kc6rsc@w3xsc.ampr.org
+To: pkttue@w2xsc.ampr.org
+Subject: DELIVERED: TUE-4976P_O/R_SCCo ARES/RACES Packet Practice Report For: Tuesday, May 03, 2022. Total = 33 call signs /37 me
+
+!LMI!STR-2589P!DR!2022-05-09 05:49:11
+Your Message
+To: KC6RSC
+Subject: TUE-4976P_O/R_SCCo ARES/RACES Packet Practice Report For: Tuesday, May 03, 2022. Total = 33 call signs /37 messages
+was delivered on 2022-05-09 05:49
+Recipient's Local Message ID: STR-2589P
+
+(#12) >
+K 12
+Msg 12 Killed.
+(#12) >
+R 13
+Message #13
+Date: Mon, 09 May 2022 10:25:40 PDT
+From: n6tae@w1xsc.ampr.org
+To: pkttue@w2xsc.ampr.org
+Subject: DELIVERED: TUE-2569P_O/R_SCCo ARES/RACES Packet Practice Report For: Tuesday, April 19, 2022. Total = 34 call signs /34
+
+!LMI!TAE-423P!DR!5/9/2022 10:25:00 AM
+Your Message
+To: N6TAE
+Subject: TUE-2569P_O/R_SCCo ARES/RACES Packet Practice Report For: Tuesday, April 19, 2022. Total = 34 call signs /34 messages
+was delivered on 5/9/2022 10:25:00 AM
+Recipient's Local Message ID: TAE-423P
+
+(#13) >
+K 13
+Msg 13 Killed.
+(#13) >
+R 14
+Message #14
+Date: Mon, 09 May 2022 13:59:36 PDT
+From: kg6hi@w1xsc.ampr.org
+To: pkttue@w2xsc.ampr.org
+Subject: DELIVERED: TUE-2571P_O/R_SCCo ARES/RACES Packet Practice Report For: Tuesday, April 19, 2022. Total = 34 call signs /34
+
+!LMI!6HI-1744P!DR!09-May-22 1:59:05 PM
+Your Message
+To: KG6HI
+Subject: TUE-2571P_O/R_SCCo ARES/RACES Packet Practice Report For: Tuesday, April 19, 2022. Total = 34 call signs /34 messages
+was delivered on 09-May-22 1:59:05 PM
+Recipient's Local Message ID: 6HI-1744P
+
+(#14) >
+K 14
+Msg 14 Killed.
+(#14) >
+R 15
+Message #15
+Date: Mon, 09 May 2022 18:49:47 PDT
+From: n9dk@w3xsc.ampr.org
+To: pkttue@w2xsc.ampr.org
+Subject: DELIVERED: TUE-4976P_O/R_SCCo ARES/RACES Packet Practice Report For: Tuesday, May 03, 2022. Total = 33 call signs /37 me
+
+!LMI!9DK-3396P!DR!2022-05-09 6:49:15 PM
+Your Message
+To: N9DK
+Subject: TUE-4976P_O/R_SCCo ARES/RACES Packet Practice Report For: Tuesday, May 03, 2022. Total = 33 call signs /37 messages
+was delivered on 2022-05-09 6:49:15 PM
+Recipient's Local Message ID: 9DK-3396P
+
+(#15) >
+K 15
+Msg 15 Killed.
+(#15) >
+R 16
+Message #16
+Date: Mon, 09 May 2022 20:56:54 PDT
+From: k6rwy@w2xsc.ampr.org
+To: pkttue@w2xsc.ampr.org
+Subject: DELIVERED: TUE-4977P_O/R_SCCo ARES/RACES Packet Practice Report For: Tuesday, May 03, 2022. Total = 33 call signs /37 me
+
+!LMI!RWY-2137P!DR!5/9/2022 8:56:32 PM
+Your Message
+To: K6RWY
+Subject: TUE-4977P_O/R_SCCo ARES/RACES Packet Practice Report For: Tuesday, May 03, 2022. Total = 33 call signs /37 messages
+was delivered on 5/9/2022 8:56:32 PM
+Recipient's Local Message ID: RWY-2137P
+
+(#16) >
+K 16
+Msg 16 Killed.
+(#16) >
+R 17
+Message #17
+Date: Tue, 10 May 2022 08:31:36 PDT
+From: n6ik@w1xsc.ampr.org
+To: pkttue@w2xsc.ampr.org
+Subject: DELIVERED: TUE-777P_O/R_SCCo ARES/RACES Packet Practice Report For: Tuesday, April 26, 2022. Total = 29 call signs /30 m
+
+!LMI!6IK-312P!DR!5/10/2022 8:31:10 AM
+Your Message
+To: N6IK
+Subject: TUE-777P_O/R_SCCo ARES/RACES Packet Practice Report For: Tuesday, April 26, 2022. Total = 29 call signs /30 messages
+was delivered on 5/10/2022 8:31:10 AM
+Recipient's Local Message ID: 6IK-312P
+
+(#17) >
+K 17
+Msg 17 Killed.
+(#17) >
+R 18
+Message #18
+Date: Tue, 10 May 2022 16:40:36 PDT
+From: km6iao@w4xsc.ampr.org
+To: pkttue@w2xsc.ampr.org
+Subject: DELIVERED: TUE-4978P_O/R_SCCo ARES/RACES Packet Practice Report For: Tuesday, May 03, 2022. Total = 33 call signs /37 me
+
+!LMI!IAO-567P!DR!5/10/2022 4:40:03 PM
+Your Message
+To: KM6IAO
+Subject: TUE-4978P_O/R_SCCo ARES/RACES Packet Practice Report For: Tuesday, May 03, 2022. Total = 33 call signs /37 messages
+was delivered on 5/10/2022 4:40:03 PM
+Recipient's Local Message ID: IAO-567P
+
+(#18) >
+K 18
+Msg 18 Killed.
+(#18) >
+R 19
+Message #19
+Date: Tue, 10 May 2022 19:05:20 PDT
+From: kj6ace@w4xsc.ampr.org
+To: pkttue@w2xsc.ampr.org
+Subject: DELIVERED: TUE-4978P_O/R_SCCo ARES/RACES Packet Practice Report For: Tuesday, May 03, 2022. Total = 33 call signs /37 me
+
+!LMI!ACE-759P!DR!5/10/2022 19:05:07
+Your Message
+To: KJ6ACE
+Subject: TUE-4978P_O/R_SCCo ARES/RACES Packet Practice Report For: Tuesday, May 03, 2022. Total = 33 call signs /37 messages
+was delivered on 5/10/2022 19:05:07
+Recipient's Local Message ID: ACE-759P
+
+(#19) >
+K 19
+Msg 19 Killed.
+(#19) >
+R 20
+Message #20
+Date: Tue, 10 May 2022 19:08:28 PDT
+From: aa6pm@w1xsc.ampr.org
+To: pkttue@w2xsc.ampr.org
+Subject: DELIVERED: TUE-2571P_O/R_SCCo ARES/RACES Packet Practice Report For: Tuesday, April 19, 2022. Total = 34 call signs /34
+
+!LMI!PJM-623P!DR!5/10/2022 7:06:41 PM
+Y
+our Message
+To: AA6PM
+Subject: TUE-2571P_O/R_SCCo ARES/RACES Packet Practice Report For: Tuesday, April 19, 2022. Total = 34 call signs /34 messages
+was delivered on 5/10/2022 7:06:41 PM
+Recipient's Local Message ID: PJM-623P
+
+(#20) >
+K 20
+Msg 20 Killed.
+(#20) >
+R 21
+Message #21
+Date: Tue, 10 May 2022 19:08:40 PDT
+From: aa6pm@w1xsc.ampr.org
+To: pkttue@w2xsc.ampr.org
+Subject: DELIVERED: TUE-779P_O/R_SCCo ARES/RACES Packet Practice Report For: Tuesday, April 26, 2022. Total = 29 call signs /30 m
+
+!LMI!PJM-624P!DR!5/10/2022 7:07:44 PM
+Your Message
+To: AA6PM
+Subject: TUE-779P_O/R_SCCo ARES/RACES Packet Practice Report For: Tuesday, April 26, 2022. Total = 29 call signs /30 messages
+was delivered on 5/10/2022 7:07:44 PM
+Recipient's Local Message ID: PJM-624P
+
+(#21) >
+K 21
+Msg 21 Killed.
+(#21) >
+R 22
+Message #22
+Date: Tue, 10 May 2022 19:39:38 PDT
+From: kk6ebl@w1xsc.ampr.org
+To: pkttue@w2xsc.ampr.org
+Subject: DELIVERED: TUE-778P_O/R_SCCo ARES/RACES Packet Practice Report For: Tuesday, April 26, 2022. Total = 29 call signs /30 m
+
+!LMI!EBL-1310P!DR!5/10/2022 7:37:18 PM
+Your Message
+To: KK6EBL
+Subject: TUE-778P_O/R_SCCo ARES/RACES Packet Practice Report For: Tuesday, April 26, 2022. Total = 29 call signs /30 messages
+was delivered on 5/10/2022 7:37:18 PM
+Recipient's Local Message ID: EBL-1310P
+
+(#22) >
+K 22
+Msg 22 Killed.
+(#22) >
+R 23
+Message #23
+Date: Wed, 11 May 2022 09:02:13 PDT
+From: ak6by@w1xsc.ampr.org
+To: pkttue@w2xsc
+Subject: 6BY-101P_R_Practice AK6BY, Anne, San Jose, 5/17/22
+
+
+
+Signed,
+AK6BY, Anne Akbay
+
+(#23) >
+K 23
+Msg 23 Killed.
+(#23) >
+R 24
+Message #24
+Date: Thu, 12 May 2022 00:44:05 PDT
+From: k6sw@w1xsc.ampr.org
+To: pkttue@w2xsc.ampr.org
+Cc: SJCPKT@w1xsc.ampr.org
+Subject: PEB-771P_R_Practice K6SW, Pat, San Jose, 2022-05-17
+
+Good evening.
+
+Pat
+K6SW
+
+** This is Drill Traffic *
+
+
+(#24) >
+K 24
+Msg 24 Killed.
+(#24) >
+R 25
+Message #25
+Date: Thu, 12 May 2022 16:16:02 PDT
+From: w6bg@w1xsc.ampr.org
+To: pkttue@w2xsc
+Subject: 6BG-794P_R_Practice W6BG, MAX, CUPERTINO, 2022-05-17
+
+Packet Practice Check in
+Free text
+The quick brown fox jumps over the lazy dog 1234567890
+73,
+Max - W6BG
+
+
+(#25) >
+K 25
+Msg 25 Killed.
+(#25) >
+R 26
+Message #26
+Date: Thu, 12 May 2022 16:49:21 PDT
+From: kk6fmq@w4xsc.ampr.org
+To: pkttue@w2xsc.ampr.org
+Subject: DELIVERED: TUE-4975P_O/R_SCCo ARES/RACES Packet Practice Report For: Tuesday, May 03, 2022. Total = 33 call signs /37 me
+
+!LMI!FMQ-136P!DR!5/12/2022 4:49:15 PM
+Your Message
+To: KK6FMQ
+Subject: TUE-4975P_O/R_SCCo ARES/RACES Packet Practice Report For: Tuesday, May 03, 2022. Total = 33 call signs /37 messages
+was delivered on 5/12/2022 4:49:15 PM
+Recipient's Local Message ID: FMQ-136P
+
+(#26) >
+K 26
+Msg 26 Killed.
+(#26) >
+R 27
+Message #27
+Date: Fri, 13 May 2022 14:53:22 PDT
+From: ke6ppi@w1xsc.ampr.org
+To: pkttue@w2xsc.ampr.org
+Subject: PPI-500P_R_Practice KE6PPI, Roger, Sunnyvale, 05-13-2022
+
+Practice KE6PPI, Roger, Sunnyvale, 05-13-2022
+
+73,
+Roger Pease, KE6PPI
+
+(#27) >
+K 27
+Msg 27 Killed.
+(#27) >
+R 28
+Message #28
+Date: Fri, 13 May 2022 18:52:22 PDT
+From: kk6fmq@w1xsc.ampr.org
+To: pkttue@w2xsc.ampr.org
+Subject: FMQ-305M_R_Practice KK6FMQ, Grant, PAF, 05/17/2022
+
+*****This is Drill Traffic******
+Grant, KK6FMQ
+
+(#28) >
+K 28
+Msg 28 Killed.
+(#28) >
+R 29
+Message #29
+Date: Sun, 15 May 2022 07:58:18 PDT
+From: kk6fmq@w3xsc.ampr.org
+To: pkttue@w2xsc.ampr.org
+Subject: FMQ-140P_R_Practice KK6FMQ, Grant, PAF, 05/17/2022
+
+*****This is Drill Traffic******
+
+Signed:
+Grant Elliot, KK6FMQ
+
+(#29) >
+K 29
+Msg 29 Killed.
+(#29) >
+R 30
+Message #30
+Date: Sun, 15 May 2022 16:26:32 PDT
+From: ke6tim@w1xsc.ampr.org
+To: pkttue@w2xsc.ampr.org
+Subject: DELIVERED: TUE-773P_R_Message Subject Mismatch with Form Content
+
+!LMI!TIM-450P!DR!5/15/2022 4:26:30 PM
+Your Message
+To: KE6TIM
+Subject: TUE-773P_R_Message Subject Mismatch with Form Content
+was delivered on 5/15/2022 16:26
+Recipient's Local Message ID: TIM-450P
+
+(#30) >
+K 30
+Msg 30 Killed.
+(#30)
+>
+R 31
+Message #31
+Date: Sun, 15 May 2022 16:26:33 PDT
+From: ke6tim@w1xsc.ampr.org
+To: pkttue@w2xsc.ampr.org
+Subject: DELIVERED: TUE-779P_O/R_SCCo ARES/RACES Packet Practice Report For: Tuesday, April 26, 2022. Total = 29 call signs /30 m
+
+!LMI!TIM-451P!DR!5/15/2022 4:26:31 PM
+Your Message
+To: KE6TIM
+Subject: TUE-779P_O/R_SCCo ARES/RACES Packet Practice Report For: Tuesday, April 26, 2022. Total = 29 call signs /30 messages
+was delivered on 5/15/2022 16:26
+Recipient's Local Message ID: TIM-451P
+
+(#31) >
+K 31
+Msg 31 Killed.
+(#31) >
+R 32
+Message #32
+Date: Sun, 15 May 2022 19:09:46 PDT
+From: ag6gx@w1xsc.ampr.org
+To: pkttue@w2xsc
+Subject: 6GX-4985P_R_Practice AG6GX, Brian, Cupertino, 05/17/2022
+
+Hello World
+
+Signed,
+Brian Tanner AG6GX
+***** THIS IS DRILL TRAFFIC  ****
+
+(#32) >
+K 32
+Msg 32 Killed.
+(#32) >
+R 33
+Message #33
+Date: Sun, 15 May 2022 20:19:53 PDT
+From: kc6rsc@w1xsc.ampr.org
+To: pkttue@w2xsc
+Subject: STR-2654P_R_Practice KC6RSC, Steve, SNY, 2022-05-17
+
+.
+
+(#33) >
+K 33
+Msg 33 Killed.
+(#33) >
+R 34
+Message #34
+Date: Sun, 15 May 2022 20:41:43 PDT
+From: wu6p@w1xsc.ampr.org
+To: pkttue@w2xsc.ampr.org
+Subject: U6P-435P_R_Practice WU6P, Nianfeng, Sunnyvale, 05/17/2022
+
+Practice WU6P, Nianfeng, Sunnyvale
+
+(#34) >
+K 34
+Msg 34 Killed.
+(#34) >
+R 35
+Message #35
+Date: Sun, 15 May 2022 21:26:10 PDT
+From: km6clk@w1xsc.ampr.org
+To: pkttue@w2xsc.ampr.org
+Subject: DELIVERED: TUE-775P_R_Format of Subject Differs from County Standard
+
+!LMI!CLK-285P!DR!5/15/2022 9:24:47 PM
+Your Message
+To: KM6CLK
+Subject: TUE-775P_R_Format of Subject Differs from County Standard
+was delivered on 5/15/2022 9:24:47 PM
+Recipient's Local Message ID: CLK-285P
+
+(#35) >
+K 35
+Msg 35 Killed.
+(#35) >
+R 36
+Message #36
+Date: Sun, 15 May 2022 21:26:26 PDT
+From: km6clk@w1xsc.ampr.org
+To: pkttue@w2xsc.ampr.org
+Subject: DELIVERED: TUE-777P_O/R_SCCo ARES/RACES Packet Practice Report For: Tuesday, April 26, 2022. Total = 29 call signs /30 m
+
+!LMI!CLK-286P!DR!5/15/2022 9:25:44 PM
+Your Message
+To: KM6CLK
+Subject: TUE-777P_O/R_SCCo ARES/RACES Packet Practice Report For: Tuesday, April 26, 2022. Total = 29 call signs /30 messages
+was delivered on 5/15/2022 9:25:44 PM
+Recipient's Local Message ID: CLK-286P
+
+(#36) >
+K 36
+Msg 36 Killed.
+(#36) >
+R 37
+Message #37
+Date: Mon, 16 May 2022 10:43:04 PDT
+From: kg6yhs@w3xsc.ampr.org
+To: pkttue@w2xsc.ampr.org
+Subject: DELIVERED: TUE-778P_O/R_SCCo ARES/RACES Packet Practice Report For: Tuesday, April 26, 2022. Total = 29 call signs /30 m
+
+!LMI!YHS-242P!DR!5/16/2022 10:41:50 AM
+Your Message
+To: KG6YHS
+Subject: TUE-778P_O/R_SCCo ARES/RACES Packet Practice Report For: Tuesday, April 26, 2022. Total = 29 call signs /30 messages
+was delivered on 5/16/2022 10:41:50 AM
+Recipient's Local Message ID: YHS-242P
+
+(#37) >
+K 37
+Msg 37 Killed.
+(#37) >
+R 38
+Message #38
+Date: Mon, 16 May 2022 11:08:11 PDT
+From: kg6yhs@w4xsc.ampr.org
+To: pkttue@w2xsc.ampr.org
+Subject: YHS-247P_R_Practice KG6YHS, Irene, Palo Alto, 05/17/2022
+
+YHS-247P_R_Practice KG6YHS, Irene, Palo Alto, 05/17/2022
+
+Signed,
+Irene Beardsley, KG6YHS
+*** THIS IS DRILL TRAFFIC ***
+
+(#38) >
+K 38
+Msg 38 Killed.
+(#38) >
+R 39
+Message #39
+Date: Mon, 16 May 2022 11:45:51 PDT
+From: kk6fpp@w4xsc.ampr.org
+To: pkttue@w2xsc
+Subject: FPP-102M_R_Practice KK6FPP, Thomas, Sunnyvale, 20220517
+
+Practice KK6FPP, Thomas, Sunnyvale, 20220517
+
+(#39) >
+K 39
+Msg 39 Killed.
+(#39) >
+R 40
+Message #40
+Date: Mon, 16 May 2022 12:22:52 PDT
+From: kg6kzz@w1xsc.ampr.org
+To: pkttue@w2xsc.#nca.ca.usa.noam
+Cc: KG6KZZ@xilicom.com, KG6KZZ@N0ARY.#nca.ca.usa.noam, PKTTUE@w2xsc.ampr.org
+Subject: KZZ-388P_R_Practice KG6KZZ, Jason, Almaden, 5/17/2022
+
+Packet Tuesday Checkin
+
+
+(#40) >
+K 40
+Msg 40 Killed.
+(#40) >
+R 41
+Message #41
+Date: Mon, 16 May 2022 12:30:21 PDT
+From: kg6kzz@w1xsc.#nca.ca.usa.noam
+To: pkttue@w2xsc.#nca.ca.usa.noam
+Subject: KZZ-388P_R_Practice KG6KZZ, Jason, Almaden, 5/17/2022
+
+Path: W1XSC
+
+Packet Tuesday Checkin
+
+
+(#41) >
+K 41
+Msg 41 Killed.
+(#41) >
+R 42
+Message #42
+Date: Mon, 16 May 2022 12:40:11 PDT
+From: kt6jk@w1xsc.#nca.ca.usa.noam
+To: pkttue@w2xsc.#nca.ca.usa.noam
+Subject: 6JK-910M_R_Practice KT6JK, Todd, CUP, 20220517
+
+Path: W1XSC
+
+SCC ARES weekly pkt practice on third Tuesday of May, 2022,
+May 17th of 2022, with plain text and simulated BBS w3xsc down
+
+
+(#42) >
+K 42
+Msg 42 Killed.
+(#42) >
+R 43
+Message #43
+Date: Mon, 16 May 2022 15:34:27 PDT
+From: km6lry@w1xsc.ampr.org
+To: pkttue@w2xsc
+Subject: LRY-487P_R_Practice KM6LRY, Les, LG/MS, 05/17/2022
+
+x
+
+(#43) >
+K 43
+Msg 43 Killed.
+(#43) >
+R 44
+Message #44
+Date: Mon, 16 May 2022 15:37:03 PDT
+From: km6mzm@w2xsc.ampr.org
+To: pkttue@w2xsc
+Subject: MZM-467P_R_Practice, KM6MZM, Daniel, Sunnyvale 05/17/2022
+
+*** DRILL TRAFFIC ONLY ***
+
+(#44) >
+K 44
+Msg 44 Killed.
+(#44) >
+R 45
+Message #45
+Date: Mon, 16 May 2022 15:41:13 PDT
+From: km6mzm@w2xsc.ampr.org
+To: pkttue@w2xsc.ampr.org
+Subject: DELIVERED: TUE-4976P_O/R_SCCo ARES/RACES Packet Practice Report For: Tuesday, May 03, 2022. Total = 33 call signs /37 me
+
+!LMI!MZM-469P!DR!5/16/2022 3:40:34 PM
+Your Message
+To: KM6MZM
+Subject: TUE-4976P_O/R_SCCo ARES/RACES Packet Practice Report For: Tuesday, May 03, 2022. Total = 33 call signs /37 messages
+was delivered on 5/16/2022 3:40:34 PM
+Recipient's Local Message ID: MZM-469P
+
+You have new mail. Please Kill when read!
+(#45) >
+K 45
+Msg 45 Killed.
+(#45) >
+R 46
+Message #46
+Date: Mon, 16 May 2022 18:58:40 PDT
+From: k6fjc@w2xsc.ampr.org
+To: pkttue@w2xsc.ampr.org
+Cc: k6fjc@email1.scc-ares-races.net
+Subject: FJC-808P_R_Practice K6FJC, Mark, Redwood City, 20220517
+
+
+
+Signed,
+Mark Laubach, K6FJC
+*** THIS IS DRILL TRAFFIC ***
+
+(#46) >
+K 46
+Msg 46 Killed.
+(#46) >
+R 47
+Message #47
+Date: Mon, 16 May 2022 19:04:12 PDT
+From: n9dk@w4xsc.ampr.org
+To: pkttue@w2xsc.ampr.org
+Subject: 9DK-3400P_R_Practice N9DK, Dave, MV, 2022-05-17
+
+Please check me in.
+
+(#47) >
+K 47
+Msg 47 Killed.
+(#47) >
+R 48
+Message #48
+Date: Mon, 16 May 2022 20:30:00 PDT
+From: pktmon@w2xsc.ampr.org
+To: pkttue@w2xsc.ampr.org
+Subject: MON-6883PLog to PKTTUE NCO from PKTMON NCO
+
+
+===================================
+20:00:39 = now, code name, ver, time of file
+          procCheckInList.exe, version 04.00.02.00, 05Jun2019 10:56:12
+          update_txt_files.exe, version 1.0.0.5, 05Jun2019 10:56:12
+          outpost_io, version 1.0.1
+          readTacCallAlias, version 1.0.0
+          ar_utils, version 2.0.0
+          _init_regexps, version 2.0.14
+          sim_bbs_dwn.exe, version 1.0.15, 05Jun2019 10:56:12
+          outpost_pause_clock, version 1.0.0.12
+          readCheckIn, version 1.0.0.21
+* get_settings:  INI file values loaded "C:\SCCoPacket\scripts\packetNCO\procCheckInList.INI".
+ days_oldest = 6
+ enable_dwn_bbs_sim = 1
+ enable_timed_autopoll = 1
+ id_allow_tac_pfx = 1
+ log_msg = 2,3,4,5,6, 8
+ long_form_issues = 1
+ max_len_OpstMsg = 10000
+ max_len_toAddr = 126
+ msg_sbj_handling_only_form = 1
+ msg_sbj_handling_only_pacf = 2
+ msg_sbj_handling_only_txt = 2
+ nco_summary_type = 0
+ require_hyphen = 1
+ run_days_before = 0
+ time_close = 2000
+ time_close_as_dt = 1900-01-01 20:00:00
+* _init_regexps:
+  tacID: "[a-zA-Z]{3}"
+  short tacID tacID_diag: "[a-zA-Z]+"
+  message number msg_num: "-?[0-9]{3,}[a-zA-Z]?"
+  short message number msg_num_diag: "-?[0-9]+[a-zA-Z]?"
+  Severity sit_severe: "([_][EUO])"
+  Severity additional formats for plain text sit_severe_pln_txt[]:
+   [0]: (: )
+   [1]: (:)
+   [2]: ( )
+  Handling Order msg_hndl_ordr: "\/[IPR]_"
+  Handling Order msg_hndl_ordr_only: "_[IPR]_"
+  Subject subj: "(.){2,}"
+Oldest allowed: 2022-05-10 00:00:01
+---> Message too old 2022-05-09 13:57:49
+   C:\SCCoPacket\scripts\packetNCO\Monday_msgs_18_6HI-1743P_R_Practice, KG6HI, Jerry, Sunnyvale, 9 May 2022.txt
+   sbjt: 6HI-1743P_R_Practice, KG6HI, Jerry, Sunnyvale, 9 May 2022
+* load_bad_id_file: found file "C:\SCCoPacket\scripts\packetNCO\bad_tacid.txt".
+* load_bad_id_file: file empty.
+* load_bad_id_file: .
+* Current SCCoPIFO version (
+from "CurrentSCCoPIFO.txt"): 2.17
+* Current PACF version (from "CurrentPACF.txt"): None
+* SCCoPIFO ErrMsg:
+  [none]
+* PACF ErrMsg:
+  [none]
+* Invalid ID ErrMsg:
+  [none]
+vvvv Unique "from" addresses for Monday vvvv
+w6bg
+kz6dm
+ke6ppi
+kk6fmq
+ag6gx
+kc6rsc
+wu6p
+kg6hi
+kg6yhs
+kk6fpp
+ki6pur
+kg6kzz
+kt6jk
+wa1iam
+km6mzm
+kf6zsq
+k1jh
+wb6pvu
+kn6ghd
+kj6gbg
+km6i
+k6fjc
+n9dk
+^^^^ End Unique "from" addresses for Monday ^^^^
+valid_count_ndx: 2, 3, 4, 5, 6, 7, 8, 9, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30.
+unique_call_bbs_good_ndx: 6, 7, 8, 9, 11, 12, 13, 14, 15, 16, 17, 18, 19, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30.
+unique_call_bbs_bad_ndx: ==== Sources - Other:
+ BBS Network:
+   kg6kzz@w1xsc.#nca.ca.usa.noam
+
+
+(#48) >
+K 48
+Msg 48 Killed.
+(#48) >
+R 49
+Message #49
+Date: Mon, 16 May 2022 21:18:25 PDT
+From: k6rwy@w4xsc.ampr.org
+To: pkttue@w2xsc.ampr.org
+Cc: sjcpkt@w1xsc.ampr.org, k6rwy@w1xsc.ampr.org
+Subject: RWY-2141P_R_Practice K6RWY, Bob, San Jose, 05/17/22
+
+_R_Practice K6RWY, Bob, San Jose, 05/17/22
+
+(#49) >
+K 49
+Msg 49 Killed.
+(#49) >
+R 50
+Message #50
+Date: Tue, 17 May 2022 11:11:48 PDT
+From: kg6hi@w1xsc.ampr.org
+To: pkttue@w2xsc.ampr.org
+Subject: 6HI-1748P_R_Practice, KG6HI, Jerry, Sunnyvale, 17 May 2022
+
+This is the packet check-in msg for Tuesday 17 May 2022.
+
+73,
+Jerry KG6HI
+
+(#50) >
+K 50
+Msg 50 Killed.
+(#50) >
+R 51
+Message #51
+Date: Tue, 17 May 2022 15:47:41 PDT
+From: km6iao@w4xsc.ampr.org
+To: pkttue@w2xsc
+Subject: IAO-568P_R_Practice KM6IAO, Paul, Milpitas, 05/17/2022
+
+
+Practice
+
+Regards,
+Paul Ellis
+KM6IAO
+pje5547@gmail.com
++661.904.0047 mobile
+
+
+(#51) >
+K 51
+Msg 51 Killed.
+(#51) >
+R 52
+Message #52
+Date: Tue, 17 May 2022 17:48:34 PDT
+From: aa6pm@w1xsc.ampr.org
+To: pkttue@w2xsc
+Subject: PJM-625P_R_Practice AA6PM, Peter, Saratoga, 05/17/2022
+
+Good evening!
+
+Signed,
+Peter Melhus, AA6PM
+***DRILL TRAFFIC ONLY***
+
+(#52) >
+K 52
+Msg 52 Killed.
+(#52) >
+R 53
+Message #53
+Date: Tue, 17 May 2022 18:28:00 PDT
+From: xbeeoc@w2xsc.ampr.org
+To: pkttue@w2xsc.ampr.org
+Subject: DELIVERED: TUE-4978P_O/R_SCCo ARES/RACES Packet Practice Report For: Tuesday, May 03, 2022. Total = 33 call signs /37 me
+
+!LMI!XBE-1363P!DR!5/17/2022 18:27:12
+Your Message
+To: XBEEOC
+Subject: TUE-4978P_O/R_SCCo ARES/RACES Packet Practice Report For: Tuesday, May 03, 2022. Total = 33 call signs /37 messages
+was delivered on 5/17/2022 18:27:12
+Recipient's Local Message ID: XBE-1363P
+
+(#53) >
+K 53
+Msg 53 Killed.
+(#53) >
+R 54
+Message #54
+Date: Tue, 17 May 2022 18:28:44 PDT
+From: xbeeoc@w2xsc.ampr.org
+To: pkttue
+Subject: XBE-1362P_R_Practice N6SBC, Timothy, San Benito Co., 05/17/2022
+
+Weekly Packet Net - XSC
+
+(#54) >
+K 54
+Msg 54 Killed.
+(#54) >
+R 55
+Message #55
+Date: Tue, 17 May 2022 19:00:25 PDT
+From: kc6rsc@w2xsc.ampr.org
+To: pkttue@w2xsc.ampr.org
+Subject: DELIVERED: TUE-2657P_O/R_PKTTUE to KC6RSC msg_wrapback.osl Wrap-back Test
+
+!LMI!STR-2658P!DR!2022-05-17 19:00:17
+Your Message
+To: KC6RSC
+Subject: TUE-2657P_O/R_PKTTUE to KC6RSC msg_wrapback.osl Wrap-back Test
+was delivered on 2022-05-17 19:00
+Recipient's Local Message ID: STR-2658P
+
+(#55) >
+K 55
+Msg 55 Killed.
+(#1) >
+R 1
+Message #1
+Date: Tue, 17 May 2022 19:09:03 PDT
+From: kk6wvi@w1xsc.ampr.org
+To: pkttue@w2xsc.ampr.org
+Cc: KK6WVI@ARRL.NET, SJCPKT@W1XSC.AMPR.ORG
+Subject: JWB-674P_R_Practice KK6WVI, James, San Jose, 05-17-2022
+
+!RDR!Checking in for Tuesday 05-17-2022 - KK6WVI - James - San Jose
+
+(#1) >
+K 1
+Msg 1 Killed.
+(#1) >
+R 2
+Message #2
+Date: Tue, 17 May 2022 19:13:59 PDT
+From: kk6ebl@w1xsc.ampr.org
+To: pkttue@w2xsc.ampr.org
+Cc: KK6EBL@w1xsc.ampr.org
+Subject: EBL-1311P_R_Practice KK6EBL, Klaus, LG/MS 05/17/2022
+
+Stay Healthy,
+
+Klaus
+
+(#2) >
+K 2
+Msg 2 Killed.
+(#2) >
+R 3
+Message #3
+Date: Tue, 17 May 2022 19:22:48 PDT
+From: aj6hm@w1xsc.ampr.org
+To: pkttue@w2xsc.ampr.org
+Subject: 6HM-755P_R_Practice AJ6HM, Steve, Saratoga, 05/17/2022
+
+
+
+Weekly Practice,
+
+Steve Steps, AJ6HM
+
+(#3) >
+K 3
+Msg 3 Killed.
