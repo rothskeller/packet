@@ -50,8 +50,8 @@ type Analysis struct {
 	severity string
 	// formtag is the form tag parsed from the subject line.
 	formtag string
-	// jurisdiction is the jurisdiction decoded from the practice subject.
-	jurisdiction string
+	// Jurisdiction is the jurisdiction decoded from the practice subject.
+	Jurisdiction string
 	// netDate is the net date decoded from the practice subject.
 	netDate time.Time
 	// fromBBS is the name of the BBS from which the message was sent, if
@@ -204,13 +204,13 @@ func (a *Analysis) getAnalysisData() {
 	if f, ok := a.msg.(*jurisstat.JurisStat); ok && message.OlderVersion(f.FormVersion, "2.2") {
 		// If we have an old Municipal Status form, the subject doesn't
 		// have the full practice details; it only has the jurisdiction.
-		a.jurisdiction = a.key.Subject
+		a.Jurisdiction = a.key.Subject
 	} else if match := practiceRE.FindStringSubmatch(a.key.Subject); match != nil {
-		a.jurisdiction = strings.TrimSpace(match[1])
+		a.Jurisdiction = strings.TrimSpace(match[1])
 		a.netDate, _ = time.ParseInLocation("1/2/2006", match[2], time.Local)
 	}
-	if abbr, ok := config.Get().Jurisdictions[strings.ToUpper(a.jurisdiction)]; ok {
-		a.jurisdiction = abbr
+	if abbr, ok := config.Get().Jurisdictions[strings.ToUpper(a.Jurisdiction)]; ok {
+		a.Jurisdiction = abbr
 	}
 	if m, ok := a.msg.(*plaintext.PlainText); ok &&
 		(strings.Contains(m.Body, "!SCCoPIFO!") || strings.Contains(m.Body, "!PACF!") || strings.Contains(m.Body, "!/ADDON!")) {
@@ -279,7 +279,7 @@ func (a *Analysis) Commit(st astore) {
 	m.FromAddress = a.env.ReturnAddr
 	m.FromCallSign = a.FromCallSign
 	m.ToBBS = a.toBBS
-	m.Jurisdiction = a.jurisdiction
+	m.Jurisdiction = a.Jurisdiction
 	m.MessageType = a.MessageType()
 	m.Subject = a.subject
 	m.DeliveryTime = a.env.Date

@@ -32,7 +32,7 @@ copied.  To do these things:
 
 (Note:  get-pifo-html assumes that the PackItForms source code is at
 `../pack-it-forms` and that the output files should go in form-tagged
-subdirectories of `./xscmsg`.  Both of these assumptions are correct if you're
+subdirectories of `./message`.  Both of these assumptions are correct if you're
 following these instructions.  But if you need to do something else, you can
 override those paths on the get-pifo-html command line.)
 
@@ -48,34 +48,20 @@ identifier resembling the form name.  The identifier must start with a lowercase
 letter and contain only lowercase letters and digits.  Once that change is made,
 run get-pifo-html again.
 
-The HTML files are stored in `./xscmsg/«formtype»/*.html`.  Note that any
+The HTML files are stored in `./message/«formtype»/*.html`.  Note that any
 "include" directives in the original HTML file have been followed; the resulting
 HTML files are self-contained.
 
 By default, get-pifo-html only gets HTML files from PackItForms versions that
 are new since the last time it was run.  If for some reason you need to
-regenerate them all, remove the `./xscmsg/tags-read` file, remove all existing
+regenerate them all, remove the `./message/tags-read` file, remove all existing
 `*.html` files, and re-run get-pifo-html.
 
 ## Step 3:  Update the Form Definitions
 
 Once the new HTML form files have been retrieved, compare them with the previous
 versions to determine what has changed, and update the form-specific source code
-to match.  The details will vary case-by-case, but in general:
-
-1. You will need to create new field definitions for any new or modified fields.
-   These are the `fieldNameDef` or `fieldNameDefV##` variables in the source
-   code.
-2. You will need to create a new `fieldDefsV##` variable listing the field
-   definitions for the new version.  Generally you will copy the `fieldDefsV##`
-   of the previous version and modify it to include the new field definitions
-   you created in step 1.
-3. If the tag, HTML file name, or similar data changed, you will need to create
-   a new `formtype##` variable for the new version.
-4. Update the `create` function to create new forms using the same version that
-   PackItForms uses for new forms.
-5. Update the `recognize` function to recognize and adopt the new version using
-   the new field definitions and (if necessary) new form type.
+to match.  The details will vary case-by-case.
 
 ## Step 4:  Commit Changes
 

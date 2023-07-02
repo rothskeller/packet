@@ -53,9 +53,7 @@ func compareAnalyses(m *store.Message, a *analyze.Analysis) {
 		fmt.Printf("%s: FromCallSign %q => %q\n", m.LocalID, m.FromCallSign, a.FromCallSign)
 	}
 	var aj string
-	if a.Practice != nil {
-		aj = a.Practice.Jurisdiction
-	}
+	aj = a.Jurisdiction
 	if m.Jurisdiction != aj {
 		fmt.Printf("%s: Jurisdiction %q => %q\n", m.LocalID, m.Jurisdiction, aj)
 	}

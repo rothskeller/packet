@@ -170,7 +170,7 @@ func (a *Analysis) practiceSubjectFormat() bool {
 		// an error.
 		return false
 	}
-	if a.jurisdiction == "" && a.netDate.IsZero() {
+	if a.Jurisdiction == "" && a.netDate.IsZero() {
 		if a.key.SubjectLabel != "" {
 			return a.reportProblem("FormPracticeSubject", refWeeklyPractice, formPracticeSubjectResponse, a.key.SubjectLabel)
 		}
@@ -191,9 +191,9 @@ comma-separated fields:
 NetDate should be in the form MM/DD/YYYY.`
 
 func (a *Analysis) unknownJurisdiction() bool {
-	if config.Get().Jurisdictions[a.jurisdiction] == "" {
+	if config.Get().Jurisdictions[a.Jurisdiction] == "" {
 		return a.reportProblem("UnknownJurisdiction", refBBSList|refWeeklyPractice, unknownJurisdictionResponse,
-			a.jurisdiction)
+			a.Jurisdiction)
 	}
 	return false
 }
