@@ -5,12 +5,11 @@ import (
 	"strings"
 	"time"
 
-	"github.com/rothskeller/packet/pktmsg"
+	"github.com/rothskeller/packet/message/delivrcpt"
+	"github.com/rothskeller/packet/message/plaintext"
+	"github.com/rothskeller/packet/message/readrcpt"
 	"github.com/rothskeller/packet/wppsvr/english"
 	"github.com/rothskeller/packet/wppsvr/store"
-	"github.com/rothskeller/packet/xscmsg"
-	"github.com/rothskeller/packet/xscmsg/delivrcpt"
-	"github.com/rothskeller/packet/xscmsg/readrcpt"
 )
 
 // The time.Now function can be overridden by tests.
@@ -29,36 +28,39 @@ const (
 // Responses returns the list of messages that should be sent in response to the
 // analyzed message.
 func (a *Analysis) Responses(st astore) (list []*store.Response) {
-	if a == nil || a.xsc == nil { // message already handled, no responses needed
+	if a == nil || a.msg == nil { // message already handled, no responses needed
 		return nil
 	}
-	switch a.xsc.Type.Tag {
-	case delivrcpt.Tag, readrcpt.Tag:
+	switch a.msg.(type) {
+	case *delivrcpt.DeliveryReceipt, *readrcpt.ReadReceipt:
 		break
 	default:
-		var dr = xscmsg.Create(delivrcpt.Tag)
-		dr.Field("DeliveredSubject").Value = a.msg.Header.Get("Subject")
-		dr.Field("DeliveredTime").Value = now().Format("01/02/2006 15:04:05")
-		dr.Field("DeliveredTo").Value = fmt.Sprintf("%s@%s.ampr.org", strings.ToLower(a.session.CallSign), strings.ToLower(a.toBBS))
-		dr.Field("LocalMessageID").Value = a.localID
+		var dr delivrcpt.DeliveryReceipt
+		dr.MessageSubject = a.subject
+		dr.MessageTo = fmt.Sprintf("%s@%s.ampr.org", strings.ToLower(a.session.CallSign), strings.ToLower(a.toBBS))
+		dr.DeliveredTime = now().Format("01/02/2006 15:04:05")
+		dr.LocalMessageID = a.localID
 		var r store.Response
 		r.LocalID = st.NextMessageID(a.session.Prefix)
 		r.ResponseTo = a.localID
-		r.To = a.msg.ReturnAddress()
-		r.Subject = dr.Subject()
-		r.Body = dr.Body()
+		r.To = a.env.ReturnAddr
+		r.Subject = dr.EncodeSubject()
+		r.Body = dr.EncodeBody()
 		r.SenderCall = a.session.CallSign
 		r.SenderBBS = a.toBBS
 		list = append(list, &r)
 	}
 	if rsubject, rbody := a.responseMessage(); rsubject != "" {
-		var rm = pktmsg.New()
+		var rm plaintext.PlainText
+		rm.Subject = rsubject
+		rm.Handling = "ROUTINE"
 		rm.Body = rbody
 		var r store.Response
 		r.LocalID = st.NextMessageID(a.session.Prefix)
+		rm.OriginMsgID = r.LocalID
 		r.ResponseTo = a.localID
-		r.To = a.msg.ReturnAddress()
-		r.Subject = xscmsg.EncodeSubject(r.LocalID, xscmsg.HandlingRoutine, "", rsubject)
+		r.To = a.env.ReturnAddr
+		r.Subject = rm.EncodeSubject()
 		r.Body = rm.EncodeBody()
 		r.SenderCall = a.session.CallSign
 		r.SenderBBS = a.toBBS
@@ -95,10 +97,10 @@ func (a *Analysis) responseMessage() (subject, body string) {
 has the following issue%s.%s
 
 `,
-		a.msg.ReturnAddress(),
+		a.env.ReturnAddr,
 		strings.ToLower(a.session.CallSign), strings.ToLower(a.toBBS),
-		a.msg.Header.Get("Subject"),
-		a.msg.Header.Get("Date"),
+		a.subject,
+		a.env.Date.Format(time.RFC1123Z),
 		counts, invalids)
 	// Add the paragraphs describing each problem.
 	wrapper.WriteString(a.reportText.String())

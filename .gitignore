@@ -1,8 +1,6 @@
 *.log
 /wppsvr/config.yaml
-go.work
 log
-_old
 run.lock
-trial
 wppsvr.db
+_pending

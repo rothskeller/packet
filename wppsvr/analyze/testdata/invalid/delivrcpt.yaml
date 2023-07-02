@@ -7,13 +7,17 @@ message: |
   Date: Sun, 09 Jan 2022 20:00:00 -0800
   Subject: DELIVERED: RSC-100P_R_Practice KC6RSC, Steve, SNY, 1/11/2022
 
-  It was delivered!
+  !LMI!XXX-123P!DR!timestamp
+  Your Message
+  To: kc6rsc@w1xsc.ampr.org
+  Subject: RSC-100P_R_Practice KC6RSC, Steve, SNY, 1/11/2022
+  was delivered on timestamp
+  Recipient's Local Message ID: XXX-123P
 
 # Analysis that should be stored:
 stored:
   deliveryTime: 2022-01-09T20:00:00-08:00
   fromAddress: kc6rsc@w1xsc.ampr.org
-  fromBBS: W1XSC
   messageType: DELIVERED
   subject: 'DELIVERED: RSC-100P_R_Practice KC6RSC, Steve, SNY, 1/11/2022'
   problems:

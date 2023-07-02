@@ -1,40 +1,34 @@
 package config
 
 import (
-	"github.com/rothskeller/packet/xscmsg"
+	"github.com/rothskeller/packet/message"
+	"github.com/rothskeller/packet/message/eoc213rr"
+	"github.com/rothskeller/packet/message/ics213"
 )
 
-// ComputedRecommendedHandlingOrder is a map from message type tags to functions
-// that compute the recommended handling order for messages of that type.  Only
-// message types with computed (non-static) recommended handling orders have
-// entries in this map.
-var ComputedRecommendedHandlingOrder = map[string](func(*xscmsg.Message) xscmsg.HandlingOrder){
-	"ICS213": func(msg *xscmsg.Message) xscmsg.HandlingOrder {
-		var sev xscmsg.MessageSeverity
-		if f := msg.Field("4."); f != nil {
-			sev, _ = xscmsg.ParseSeverity(f.Value)
+// ComputeRecommendedHandlingOrder computes the recommended handling order for a
+// message.  Only message types with computed (non-static) recommended handling
+// orders are handled by this function.
+func ComputeRecommendedHandlingOrder(msg message.Message) string {
+	switch msg := msg.(type) {
+	case *ics213.ICS213:
+		switch msg.Severity {
+		case "EMERGENCY":
+			return "IMMEDIATE"
+		case "URGENT":
+			return "PRIORITY"
+		case "OTHER":
+			return "ROUTINE"
 		}
-		switch sev {
-		case xscmsg.SeverityEmergency:
-			return xscmsg.HandlingImmediate
-		case xscmsg.SeverityUrgent:
-			return xscmsg.HandlingPriority
-		case xscmsg.SeverityOther:
-			return xscmsg.HandlingRoutine
-		default:
-			return 0
-		}
-	},
-	"EOC213RR": func(msg *xscmsg.Message) xscmsg.HandlingOrder {
-		switch msg.Field("31.").Value {
+	case *eoc213rr.EOC213RR:
+		switch msg.Priority {
 		case "Now", "High":
-			return xscmsg.HandlingImmediate
+			return "IMMEDIATE"
 		case "Medium":
-			return xscmsg.HandlingPriority
+			return "PRIORITY"
 		case "Low":
-			return xscmsg.HandlingRoutine
-		default:
-			return 0
+			return "ROUTINE"
 		}
-	},
+	}
+	return ""
 }

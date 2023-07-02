@@ -1,9 +1,9 @@
 # Message has wrong To ICS Position and Location.
 
-# Allow MuniStat forms for session:
+# Allow JurisStat forms for session:
 session:
   messageTypes:
-    - MuniStat
+    - JurisStat
 
 # Message being analyzed:
 message: |
@@ -38,7 +38,7 @@ stored:
   fromCallSign: KC6RSC
   fromBBS: W1XSC
   jurisdiction: SNY
-  messageType: MuniStat
+  messageType: JurisStat
   subject: RSC-100P_I_MuniStat_Sunnyvale
   problems:
     - FormDestination

@@ -6,9 +6,20 @@ message: |
   To: pkttue@w4xsc.ampr.org
   Date: Sun, 09 Jan 2022 20:00:00 -0800
   Subject: RSC-100P_R_Practice KC6RSC, Steve, SNY, 1/11/2022
-  Content-Type: text/html
+  Content-Type: multipart/alternative; boundary="XX"
+
+
+  --XX
+  Content-Type: text/plain
 
   Test message
+
+  --XX
+  Content-Type: text/html
+
+  <div>Test message</div>
+
+  --XX--
 
 # Analysis that should be stored:
 stored:

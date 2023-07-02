@@ -4,9 +4,9 @@ import (
 	"testing"
 	"time"
 
+	"github.com/rothskeller/packet/message/allmsg"
 	"github.com/rothskeller/packet/wppsvr/config"
 	"github.com/rothskeller/packet/wppsvr/store"
-	_ "github.com/rothskeller/packet/xscmsg/all"
 )
 
 var fakeConfig = config.Config{
@@ -143,6 +143,7 @@ This report was generated on Tuesday, April 19, 2022 at 20:00 by wppsvr.
 `
 
 func TestReport(t *testing.T) {
+	allmsg.Register()
 	now = func() time.Time { return time.Date(2022, 4, 19, 20, 0, 1, 0, time.Local) }
 	config.SetConfig(&fakeConfig)
 	actual := Generate(fakeStore{}, &fakeSession3).RenderPlainText()

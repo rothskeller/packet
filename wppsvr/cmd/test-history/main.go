@@ -11,10 +11,10 @@ import (
 	"strings"
 	"time"
 
+	"github.com/rothskeller/packet/message/allmsg"
 	"github.com/rothskeller/packet/wppsvr/analyze"
 	"github.com/rothskeller/packet/wppsvr/config"
 	"github.com/rothskeller/packet/wppsvr/store"
-	_ "github.com/rothskeller/packet/xscmsg/all" // register message types
 )
 
 func main() {
@@ -22,6 +22,7 @@ func main() {
 		st  *store.Store
 		err error
 	)
+	allmsg.Register()
 	if err = config.Read(analyze.ProblemLabels); err != nil {
 		log.Fatal(err)
 	}
@@ -52,9 +53,7 @@ func compareAnalyses(m *store.Message, a *analyze.Analysis) {
 		fmt.Printf("%s: FromCallSign %q => %q\n", m.LocalID, m.FromCallSign, a.FromCallSign)
 	}
 	var aj string
-	if a.Practice != nil {
-		aj = a.Practice.Jurisdiction
-	}
+	aj = a.Jurisdiction
 	if m.Jurisdiction != aj {
 		fmt.Printf("%s: Jurisdiction %q => %q\n", m.LocalID, m.Jurisdiction, aj)
 	}

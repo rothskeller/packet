@@ -7,7 +7,6 @@ message: "From: kc6rsc@w1xsc.ampr.org\nTo: pkttue@w4xsc.ampr.org\nDate: Sun, 09 
 stored:
   deliveryTime: 2022-01-09T20:00:00-08:00
   fromAddress: kc6rsc@w1xsc.ampr.org
-  fromBBS: W1XSC
   subject: RSC-100P_R_Practice KC6RSC, Steve, SNY, 1/11/2022
   problems:
     - MessageCorrupt

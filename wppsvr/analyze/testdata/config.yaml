@@ -125,7 +125,7 @@ messageTypes:
     minimumVersion: 2.1 # 161G: 2.2
     handlingOrder: computed # based on severity in form
   JurisStat:
-    minimumVersion: 2.2 # 161G: 2.2
+    minimumVersion: 2.1 # 161G: 2.2
     handlingOrder: IMMEDIATE
     toICSPosition:
       - Situation Analysis Unit
