@@ -24,6 +24,7 @@ type EOC213RR struct {
 	RequestedBy         string
 	PreparedBy          string
 	ApprovedBy          string
+	WithSignature       string // added in v2.4
 	QtyUnit             string
 	ResourceDescription string
 	ResourceArrival     string

@@ -15,7 +15,7 @@ func decode(subject, body string) (f *EOC213RR) {
 		return nil
 	}
 	switch form.FormVersion {
-	case "2.0", "2.1", "2.3":
+	case "2.0", "2.1", "2.3", "2.4":
 		break
 	default:
 		return nil
@@ -31,6 +31,9 @@ func decode(subject, body string) (f *EOC213RR) {
 	f.RequestedBy = form.TaggedValues["25."]
 	f.PreparedBy = form.TaggedValues["26."]
 	f.ApprovedBy = form.TaggedValues["27."]
+	if f.FormVersion >= "2.4" {
+		f.WithSignature = form.TaggedValues["27s."]
+	}
 	f.QtyUnit = form.TaggedValues["28."]
 	f.ResourceDescription = form.TaggedValues["29."]
 	f.ResourceArrival = form.TaggedValues["30."]

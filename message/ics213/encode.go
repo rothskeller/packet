@@ -21,7 +21,7 @@ func (f *ICS213) EncodeBody() string {
 		f.FormVersion = "2.2"
 	}
 	enc = common.NewPIFOEncoder(&sb, "form-ics213.html", f.FormVersion)
-	if f.FormVersion != "2.2" && f.ReceivedSent == "receiver" {
+	if f.FormVersion < "2.2" && f.ReceivedSent == "receiver" {
 		enc.Write("2.", f.OriginMsgID)
 		enc.Write("MsgNo", f.DestinationMsgID)
 	} else {
@@ -30,13 +30,13 @@ func (f *ICS213) EncodeBody() string {
 	}
 	enc.Write("1a.", f.Date)
 	enc.Write("1b.", f.Time)
-	if f.FormVersion != "2.2" {
+	if f.FormVersion < "2.2" {
 		enc.Write("4.", f.Severity)
 	}
 	enc.Write("5.", f.Handling)
 	enc.Write("6a.", f.TakeAction)
 	enc.Write("6b.", f.Reply)
-	if f.FormVersion != "2.2" {
+	if f.FormVersion < "2.2" {
 		enc.Write("6c.", f.FYI)
 	}
 	enc.Write("6d.", f.ReplyBy)

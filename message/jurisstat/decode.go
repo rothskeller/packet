@@ -25,7 +25,7 @@ func decode(subject, body string) (f *JurisStat) {
 	f.FormVersion = form.FormVersion
 	f.StdFields.Decode(form.TaggedValues)
 	f.ReportType = form.TaggedValues["19."]
-	if f.FormVersion == "2.2" {
+	if f.FormVersion >= "2.2" {
 		f.JurisdictionCode = form.TaggedValues["21."]
 		f.Jurisdiction = form.TaggedValues["22."]
 	} else {

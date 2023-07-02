@@ -27,7 +27,7 @@ func (f *SheltStat) EncodeBody() string {
 	enc.Write("30.", f.ShelterType)
 	enc.Write("31.", f.ShelterStatus)
 	enc.Write("33a.", f.ShelterAddress)
-	if f.FormVersion == "2.2" {
+	if f.FormVersion >= "2.2" {
 		enc.Write("33b.", f.ShelterCityCode)
 		enc.Write("34b.", f.ShelterCity)
 	} else {
@@ -47,7 +47,7 @@ func (f *SheltStat) EncodeBody() string {
 	enc.Write("44.", f.AvailableServices)
 	enc.Write("45.", f.MOU)
 	enc.Write("46.", f.FloorPlan)
-	if f.FormVersion == "2.2" {
+	if f.FormVersion >= "2.2" {
 		enc.Write("50a.", f.ManagedByCode)
 		enc.Write("49a.", f.ManagedBy)
 	} else {

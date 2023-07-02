@@ -24,6 +24,9 @@ func (f *EOC213RR) Validate() (problems []string) {
 	if f.RequestedBy == "" {
 		problems = append(problems, `The "Requested by" field is required.`)
 	}
+	if f.WithSignature != "" && f.WithSignature != "checked" {
+		problems = append(problems, `The "Approved with Signature" field does not contain a valid checkbox value.`)
+	}
 	if f.QtyUnit == "" {
 		problems = append(problems, `The "Qty/Unit" field is required.`)
 	}

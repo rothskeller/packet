@@ -7,7 +7,7 @@ import "github.com/rothskeller/packet/message/common"
 // PackItForms).  It returns a list of strings describing problems that those
 // programs would flag or block.
 func (f *ICS213) Validate() (problems []string) {
-	if f.FormVersion == "2.2" {
+	if f.FormVersion >= "2.2" {
 		if f.OriginMsgID == "" {
 			problems = append(problems, `The "Origin Message #" field is required.`)
 		}
@@ -26,7 +26,7 @@ func (f *ICS213) Validate() (problems []string) {
 	} else if !common.PIFOTimeRE.MatchString(f.Time) {
 		problems = append(problems, `The "Time" field does not contain a valid time.`)
 	}
-	if f.FormVersion == "2.2" {
+	if f.FormVersion >= "2.2" {
 		switch f.Handling {
 		case "":
 			problems = append(problems, `The "Handling" field is required.`)

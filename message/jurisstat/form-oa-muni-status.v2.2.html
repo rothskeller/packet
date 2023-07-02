@@ -97,10 +97,10 @@
         <b>Message Numbers:</b>
       </td><td>
         <b>Origin:</b>
-        <input type="text" name="MsgNo" class="message-number no-msg-init" tabindex="-1" value="{{envelope:sender_message_number}}" required="required"/>
+        <input type="text" name="MsgNo" class="message-number no-msg-init" tabindex="1" value="{{envelope:sender_message_number}}" required="required"/>
       </td><td>
         <b>Destination:</b>
-        <input type="text" class="message-number" disabled="disabled" tabindex="-1" value="{{envelope:receiver_message_number}}"/>
+        <input type="text" class="message-number" disabled="disabled" tabindex="2" value="{{envelope:receiver_message_number}}"/>
       </td>
     </tr>
   </tbody></table>
@@ -236,7 +236,7 @@
         <table class="same-line-label-layout">
           <tbody><tr>
             <th>Contact Info:</th>
-            <td><input type="text" name="8d.from-contact" tabindex="14"/></td>
+            <td><input type="text" name="8d.from-contact" tabindex="15"/></td>
           </tr>
         </tbody></table>
       </td>
@@ -261,7 +261,7 @@
           <th style="padding-left:2em;">Jurisdiction Name:</th>
           <td>
             <input type="text" name="21.jurisdiction" style="display:none;"/>
-            <table class="combobox" style="width:20em;">
+            <table class="combobox" style="width:25em;">
               <tbody><tr>
                 <td>
                   <input type="text" name="22.jurisdiction" required="" tabindex="21" placeholder="Select one..."/>

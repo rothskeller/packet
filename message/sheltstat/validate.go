@@ -42,7 +42,7 @@ func (f *SheltStat) Validate() (problems []string) {
 	if f.ShelterAddress == "" && f.ReportType == "Complete" {
 		problems = append(problems, `The "Shelter Address" field is required when "Report Type" is "Complete".`)
 	}
-	if f.FormVersion == "2.2" {
+	if f.FormVersion >= "2.2" {
 		switch f.ShelterCityCode {
 		case "":
 			if f.ShelterCity != "" {
@@ -103,7 +103,7 @@ func (f *SheltStat) Validate() (problems []string) {
 	default:
 		problems = append(problems, `The "ATC-20 Inspection" field does not contain a valid value.`)
 	}
-	if f.FormVersion == "2.2" {
+	if f.FormVersion >= "2.2" {
 		switch f.ManagedByCode {
 		case "":
 			if f.ManagedBy != "" {
@@ -149,7 +149,15 @@ func (f *SheltStat) Validate() (problems []string) {
 	if f.RepeaterOffset != "" && !common.PIFOFrequencyOffsetRE.MatchString(f.RepeaterOffset) {
 		problems = append(problems, `The "Repeater Offset" field does not contain a valid frequency offset value.`)
 	}
-	if f.RemoveFromList != "" && f.RemoveFromList != "checked" {
+	switch f.RemoveFromList {
+	case "", "checked":
+		break
+	case "false":
+		if f.FormVersion >= "2.3" {
+			break
+		}
+		fallthrough
+	default:
 		problems = append(problems, `The "Remove from List" field does not contain a valid checkbox value.`)
 	}
 	return problems

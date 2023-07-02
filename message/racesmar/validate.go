@@ -204,6 +204,9 @@ func (f *RACESMAR) Validate() (problems []string) {
 	if f.ApprovedByContact == "" {
 		problems = append(problems, `The "Approved By Contact" field is required.`)
 	}
+	if f.WithSignature != "" && f.WithSignature != "checked" {
+		problems = append(problems, `The "Approved With Signature" field does not contain a valid checkbox value.`)
+	}
 	if f.ApprovedByDate == "" {
 		problems = append(problems, `The "Approved By Date" field is required.`)
 	} else if !common.PIFODateRE.MatchString(f.ApprovedByDate) {

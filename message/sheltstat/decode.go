@@ -15,7 +15,7 @@ func decode(subject, body string) (f *SheltStat) {
 		return nil
 	}
 	switch form.FormVersion {
-	case "2.0", "2.1", "2.2":
+	case "2.0", "2.1", "2.2", "2.3":
 		break
 	default:
 		return nil
@@ -29,7 +29,7 @@ func decode(subject, body string) (f *SheltStat) {
 	f.ShelterType = form.TaggedValues["30."]
 	f.ShelterStatus = form.TaggedValues["31."]
 	f.ShelterAddress = form.TaggedValues["33a."]
-	if f.FormVersion == "2.2" {
+	if f.FormVersion >= "2.2" {
 		f.ShelterCityCode = form.TaggedValues["33b."]
 		f.ShelterCity = form.TaggedValues["34b."]
 	} else {
@@ -49,7 +49,7 @@ func decode(subject, body string) (f *SheltStat) {
 	f.AvailableServices = form.TaggedValues["44."]
 	f.MOU = form.TaggedValues["45."]
 	f.FloorPlan = form.TaggedValues["46."]
-	if f.FormVersion == "2.2" {
+	if f.FormVersion >= "2.2" {
 		f.ManagedByCode = form.TaggedValues["50a."]
 		f.ManagedBy = form.TaggedValues["49a."]
 	} else {

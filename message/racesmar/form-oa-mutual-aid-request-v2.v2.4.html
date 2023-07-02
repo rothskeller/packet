@@ -8,25 +8,139 @@
       td {
           white-space: nowrap;
       }
+      td.contains-table {
+          padding: 0;
+      }
+      td.contains-table > table {
+          border: none;
+      }
+      td.contains-table > table td:first-child {
+          border-left: none;
+      }
+      td.contains-table > table td:last-child {
+          border-right: none;
+      }
+      td.contains-table > table tr:last-child > td {
+          border-bottom: none;
+      }
     </style>
     <script type="text/javascript" src="resources/js/pack-it-forms.js"></script>
     <script type="text/javascript" src="resources/integration/integration.js"></script>
     <script type="text/javascript">
-      var standardStartup = integration.late_startup;
-      integration.late_startup = function(next) {
-          standardStartup(function() {
-              document.getElementById("scco-banner").style.backgroundColor = "#e3efd9";
-              next();
+      function addOptions(into, options) {
+          array_for_each(options, function(option) {
+              var o = document.createElement('option');
+              o.value = option;
+              o.innerText = option;
+              into.appendChild(o);
           });
-      };
+      }
+      function forEachSelected(selector, callback) {
+          array_for_each(document.querySelectorAll(selector), callback);
+      }
+      function selectedValue(selector) {
+          var element = document.querySelector(selector);
+          if (element == null) return '';
+          var index = element.selectedIndex;
+          if (index == null) return '';
+          return element.options[index].value;
+      }
+      function onChangeRow(row) {
+          forEachSelected('input[name^="18.' + row + 'b."]', function(input) {
+              var position = document.querySelector('input[name^="18.' + row + 'f."]').value;
+              var newValue =  selectedValue('select[name^="18.' + row + 'e."]')
+                  + (position ? ' / ' + position : '');
+              input.value = newValue;
+          });
+          formChanged();
+      }
+      function onChangeRole(row, role) {
+          if (!role.required) {
+              forEachSelected('input[name^="18.' + row + 'a."]', function(qty) {
+                  if (role.value) {
+                      qty.required = true;
+                  } else {
+                      qty.removeAttribute('required');
+                  }
+              });
+          }
+          ['c', 'd'].forEach(function(column) {
+              forEachSelected('select[name^="18.' + row + column + '."]', function(type) {
+                  type.value = '';
+                  var types = type.children;
+                  if (role.value) {
+                      var prefix = role.value.substring(0, 1);
+                      for (var i = 1; i <= 3; ++i) {
+                          types.item(i).innerText = prefix + i;
+                          types.item(i).value = prefix + i;
+                      }
+                      type.removeAttribute('disabled');
+                      type.required = true;
+                  } else {
+                      type.disabled = true;
+                      type.removeAttribute('required');
+                  }
+              });
+          });
+          onChangeRow(row);
+      }
+      function initializeRow(row, roleValues) {
+          var types = ['', '1', '2', '3', 'Type IV', 'Type V'];
+          var roles = ['',
+                       'Field Communicator',
+                       'Net Control Operator',
+                       'Packet Operator',
+                       'Shadow Communicator'];
+          forEachSelected('select[name^="18.' + row + 'c."]', function(type) {
+              type.disabled = true;
+              addOptions(type, types);
+          });
+          forEachSelected('select[name^="18.' + row + 'd."]', function(type) {
+              type.disabled = true;
+              addOptions(type, types);
+          });
+          forEachSelected('select[name^="18.' + row + 'e."]', function(role) {
+              addOptions(role, roles);
+              role.addEventListener('change', function(event) {
+                  onChangeRole(row, role);
+              });
+              var name = short_name(role.name);
+              var value = msgfields[name];
+              if (value) roleValues[name] = value;
+          });
+          forEachSelected('input[name^="18.' + row + 'f."]', function(position) {
+              position.addEventListener('change', function(event) {
+                  onChangeRow(row);
+              });
+          });
+      }
+      integration.after("early_startup", function() {
+          ComboBox.addOptions(document.getElementById("to-ics-position-options"),
+                              ['RACES Chief Radio Officer',
+                               'RACES Unit',
+                               'Operations Section']);
+      });
+      integration.after("get_old_message", function() {
+          var roleValues = {};
+          for (var row = 1; row <= 5; ++row) {
+              initializeRow(row, roleValues);
+          }
+          // The order of initialization of fields is indeterminate.
+          // Make sure to initialize the roles first, so the types
+          // will have the necessary option values to be initialized.
+          init_form_from_fields(roleValues, true);
+      });
+      integration.after("late_startup", function() {
+          document.getElementById("scco-banner").style.backgroundColor = "#e3efd9";
+      });
     </script>
-    <meta name="pack-it-forms-pdf-URL" content="pdf/SCCo_RACES_MA_Req_v190531_Fillable.pdf"/>
+    <meta name="pack-it-forms-pdf-URL" content="pdf/XSC_RACES_MA_Req_v20220129_fillable.pdf"/>
     <meta name="pack-it-forms-subject-suffix" content="_RACES-MAR_{{field:15.agency}}"/>
     <title>RACES Mutual Aid Request</title>
   </head>
 
   <body>
-    <div class="version">1.6</div>
+    <div class="version">2.4</div>
     <div id="loading"><div>Loading<div id="spin"><div id="spin_1" class="spin"></div></div></div></div>
     <div id="err">
       <div>
@@ -239,22 +353,62 @@
         </tr><tr>
           <td style="white-space:normal;">
             <label>Amateur Radio Resources Requested</label>
-          </td><td style="width:3em;text-align:right;">
-            <label style="font-weight:normal;">Qty:
-              <textarea name="18a.resources-qty" tabindex="24" required="" rows="3" style="text-align:right;"></textarea>
-            </label>
-          </td><td>
-            <label style="font-weight:normal;">Role/Position:
-              <textarea name="18b.resources-role" rows="3" tabindex="25" required=""></textarea>
-            </label>
-          </td><td style="padding-right:1em;">
-            <label style="font-weight:normal;">Preferred Type:
-              <textarea name="18c.preferred-type" rows="3" tabindex="26" required=""></textarea>
-            </label>
-          </td><td style="padding-right:1em;">
-            <label style="font-weight:normal;">Minimum Type:
-              <textarea name="18d.minimum-type" rows="3" tabindex="27" required=""></textarea>
-            </label>
+          </td>
+          <td colspan="4" class="contains-table noft">
+            <table>
+              <tbody><tr>
+                <td class="block-caption" style="width:3em;text-align:right;">Qty</td>
+                <td class="block-caption">Role</td>
+                <td class="block-caption">Position</td>
+                <td class="block-caption" style="width:1px;">Preferred Type</td>
+                <td class="block-caption" style="width:1px;">Minimum Type</td>
+              </tr><tr>
+                <td><input type="text" name="18.1a.resources-qty" tabindex="24" required="" class="cardinal-number"/></td>
+                <td style="width:1px;"><select name="18.1e.role" tabindex="25" required=""></select></td>
+                <td>
+                  <input type="text" name="18.1f.position" placeholder="for example, Checkpoint" tabindex="26"/>
+                  <input type="text" name="18.1b.resources-role" style="display:none;"/>
+                </td>
+                <td><select name="18.1c.preferred-type" tabindex="27"></select></td>
+                <td><select name="18.1d.minimum-type" tabindex="28"></select></td>
+              </tr><tr>
+                <td><input type="text" name="18.2a.resources-qty" tabindex="29" class="cardinal-number"/></td>
+                <td style="width:1px;"><select name="18.2e.role" tabindex="30"></select></td>
+                <td>
+                  <input type="text" name="18.2f.position" tabindex="31"/>
+                  <input type="text" name="18.2b.resources-role" style="display:none;"/>
+                </td>
+                <td><select name="18.2c.preferred-type" tabindex="32"></select></td>
+                <td><select name="18.2d.minimum-type" tabindex="33"></select></td>
+              </tr><tr>
+                <td><input type="text" name="18.3a.resources-qty" tabindex="34" class="cardinal-number"/></td>
+                <td style="width:1px;"><select name="18.3e.role" tabindex="35"></select></td>
+                <td>
+                  <input type="text" name="18.3f.position" tabindex="36"/>
+                  <input type="text" name="18.3b.resources-role" style="display:none;"/>
+                </td>
+                <td><select name="18.3c.preferred-type" tabindex="37"></select></td>
+                <td><select name="18.3d.minimum-type" tabindex="38"></select></td>
+              </tr><tr>
+                <td><input type="text" name="18.4a.resources-qty" tabindex="39" class="cardinal-number"/></td>
+                <td style="width:1px;"><select name="18.4e.role" tabindex="40"></select></td>
+                <td>
+                  <input type="text" name="18.4f.position" tabindex="41"/>
+                  <input type="text" name="18.4b.resources-role" style="display:none;"/>
+                </td>
+                <td><select name="18.4c.preferred-type" tabindex="42"></select></td>
+                <td><select name="18.4d.minimum-type" tabindex="43"></select></td>
+              </tr><tr>
+                <td><input type="text" name="18.5a.resources-qty" tabindex="44" class="cardinal-number"/></td>
+                <td style="width:1px;"><select name="18.5e.role" tabindex="45"></select></td>
+                <td>
+                  <input type="text" name="18.5f.position" tabindex="46"/>
+                  <input type="text" name="18.5b.resources-role" style="display:none;"/>
+                </td>
+                <td><select name="18.5c.preferred-type" tabindex="47"></select></td>
+                <td><select name="18.5d.minimum-type" tabindex="48"></select></td>
+              </tr>
+            </tbody></table>
           </td>
         </tr><tr>
           <td style="width:1px;">
@@ -263,14 +417,14 @@
             <table class="same-line-label-layout">
               <tbody><tr>
                 <td style="width:1px;">Date(s):</td>
-                <td><input type="text" name="19a.arrival-dates" tabindex="28" required=""/></td>
+                <td><input type="text" name="19a.arrival-dates" tabindex="50" required=""/></td>
               </tr>
             </tbody></table>
           </td><td colspan="2"> 
             <table class="same-line-label-layout">
               <tbody><tr>
                 <td style="width:1px;">Time(s):</td>
-                <td><input type="text" name="19b.arrival-times" tabindex="29" required=""/></td>
+                <td><input type="text" name="19b.arrival-times" tabindex="51" required=""/></td>
               </tr>
             </tbody></table>
           </td>
@@ -281,14 +435,14 @@
             <table class="same-line-label-layout">
               <tbody><tr>
                 <td style="width:1px;">Date(s):</td>
-                <td><input type="text" name="20a.needed-dates" tabindex="30" required=""/></td>
+                <td><input type="text" name="20a.needed-dates" tabindex="52" required=""/></td>
               </tr>
             </tbody></table>
           </td><td colspan="2"> 
             <table class="same-line-label-layout">
               <tbody><tr>
                 <td style="width:1px;">Time(s):</td>
-                <td><input type="text" name="20b.needed-times" tabindex="31" required=""/></td>
+                <td><input type="text" name="20b.needed-times" tabindex="53" required=""/></td>
               </tr>
             </tbody></table>
           </td>
@@ -296,19 +450,19 @@
           <td style="width:1px;">
             <label>Reporting Location</label>
           </td><td colspan="4" style="padding-right:1em;">
-            <textarea name="21.reporting-location" tabindex="32" required="" rows="3" placeholder="Street Address, Parking, Entry Instructions"></textarea>
+            <textarea name="21.reporting-location" tabindex="54" required="" rows="3" placeholder="Street Address, Parking, Entry Instructions"></textarea>
           </td>
         </tr><tr>
           <td style="width:1px;">
             <label>Contact on Arrival</label>
           </td><td colspan="4" style="padding-right:1em;">
-            <textarea name="22.contact-on-arrival" tabindex="33" required="" rows="2" placeholder="Name/Position and contact info"></textarea>
+            <textarea name="22.contact-on-arrival" tabindex="55" required="" rows="2" placeholder="Name/Position and contact info"></textarea>
           </td>
         </tr><tr>
           <td style="white-space:normal;">
             <label>Travel Info</label>
           </td><td colspan="4" style="padding-right:1em;">
-            <textarea name="23.travel-info" required="" tabindex="34" rows="2" placeholder="Routes, Hazards, Lodging"></textarea>
+            <textarea name="23.travel-info" required="" tabindex="56" rows="2" placeholder="Routes, Hazards, Lodging"></textarea>
           </td>
         </tr><tr>
           <td style="white-space:normal;" rowspan="2">
@@ -317,14 +471,14 @@
             <table class="same-line-label-layout">
               <tbody><tr>
                 <td style="width:1px;">Name:</td>
-                <td><input type="text" name="24a.requester-name" tabindex="35" required=""/></td>
+                <td><input type="text" name="24a.requester-name" tabindex="57" required=""/></td>
               </tr>
             </tbody></table>
           </td><td colspan="2">
             <table class="same-line-label-layout">
               <tbody><tr>
                 <td style="width:1px;">Title:</td>
-                <td><input type="text" name="24b.requester-title" tabindex="36" required=""/></td>
+                <td><input type="text" name="24b.requester-title" tabindex="58" required=""/></td>
               </tr>
             </tbody></table>
           </td>
@@ -334,7 +488,7 @@
               <tbody><tr>
                 <td style="width:1px;">Contact:</td>
                 <td>
-                  <input type="text" name="24c.requester-contact" tabindex="37" required="" placeholder="E-mail, phone, frequency"/>
+                  <input type="text" name="24c.requester-contact" tabindex="59" required="" placeholder="E-mail, phone, frequency"/>
                 </td>
               </tr>
             </tbody></table>
@@ -348,14 +502,14 @@
             <table class="same-line-label-layout">
               <tbody><tr>
                 <td style="width:1px;">Name:</td>
-                <td><input type="text" name="25a.agency-approver-name" tabindex="40" required=""/></td>
+                <td><input type="text" name="25a.agency-approver-name" tabindex="60" required=""/></td>
               </tr>
             </tbody></table>
           </td><td colspan="2">
             <table class="same-line-label-layout">
               <tbody><tr>
                 <td style="width:1px;">Title:</td>
-                <td><input type="text" name="25b.agency-approver-title" tabindex="41" required=""/></td>
+                <td><input type="text" name="25b.agency-approver-title" tabindex="61" required=""/></td>
               </tr>
             </tbody></table>
           </td>
@@ -365,25 +519,40 @@
               <tbody><tr>
                 <td style="width:1px;">Contact:</td>
                 <td>
-                  <input type="text" name="25c.agency-approver-contact" tabindex="42" required="" placeholder="E-mail, phone, frequency"/>
+                  <input type="text" name="25c.agency-approver-contact" tabindex="62" required="" placeholder="E-mail, phone, frequency"/>
                 </td>
               </tr>
             </tbody></table>
           </td>
         </tr><tr>
-          <td colspan="2" style="height:3em;padding-left:1em;">Signature:
+          <td colspan="2" style="height:3em;padding-left:1em;">
+            <table class="same-line-label-layout">
+              <tbody><tr>
+                <td style="width:1px;padding-left:0px;">
+                  <label for="25s" style="font-weight:normal;">Signature:</label>
+                </td>
+                <td style="width:1px;">
+                  <input type="checkbox" id="25s" name="25s.with-signature"/>
+                </td>
+                <td style="padding-left:0px;text-align:left;">
+                  <label for="25s" style="font-weight:normal;">
+                    with signature
+                  </label>
+                </td>
+              </tr>
+            </tbody></table>
           </td><td style="width:11em;">
             <table class="same-line-label-layout">
               <tbody><tr>
                 <td style="width:1px;">Date:</td>
-                <td><input type="text" name="26a.agency-approved-date" tabindex="43" required="" class="date" value="{{date}}"/></td>
+                <td><input type="text" name="26a.agency-approved-date" tabindex="63" required="" class="date" value="{{date}}"/></td>
               </tr>
             </tbody></table>
           </td><td style="width:10em;">
             <table class="same-line-label-layout">
               <tbody><tr>
                 <td style="width:1px;">Time:</td>
-                <td><input type="text" name="26b.agency-approved-time" tabindex="44" required="" class="time"/></td>
+                <td><input type="text" name="26b.agency-approved-time" tabindex="64" required="" class="time"/></td>
               </tr>
             </tbody></table>
           </td>

@@ -57,11 +57,11 @@
         </tbody></table>
       </td><td style="vertical-align:middle;">
         <label>Origin Msg #:<span class="field-number">2</span>
-          <input name="MsgNo" class="message-number" type="text" required="required" tabindex="-1" value="{{envelope:sender_message_number}}"/>
+          <input name="MsgNo" class="message-number" type="text" required="required" tabindex="1" value="{{envelope:sender_message_number}}"/>
         </label>
       </td><td style="vertical-align:middle;">
         <label>Destination Msg #:<span class="field-number">3</span>
-          <input name="3.rxmsgno" class="message-number" type="text" tabindex="-1" value="{{envelope:receiver_message_number}}" disabled="disabled"/>
+          <input name="3.rxmsgno" class="message-number" type="text" tabindex="2" value="{{envelope:receiver_message_number}}" disabled="disabled"/>
         </label>
       </td>
     </tr>
@@ -71,28 +71,28 @@
         <label>Date<span class="field-number">1</span> :
           <br/>
           <br/>
-          <input name="1a.date" class="date" type="text" tabindex="2" required="required" value="{{date}}"/>
+          <input name="1a.date" class="date" type="text" tabindex="3" required="required" value="{{date}}"/>
         </label>
       </td><td rowspan="2">
         <label title="0001 to 2400">Time
           <span style="font-size:75%;font-weight:normal;">(24hr)</span> :
           <br/>
           <br/>
-          <input name="1b.time" class="time" type="text" tabindex="3" required="required"/>
+          <input name="1b.time" class="time" type="text" tabindex="4" required="required"/>
         </label>
       </td><td class="label-sameline">
         <b>Handling</b><span class="field-number">5</span> :
         <div class="required-group">
           <label title="As soon as possible">
-            <input name="5.handling" type="radio" tabindex="7" required="required" value="IMMEDIATE"/>
+            <input name="5.handling" type="radio" tabindex="8" required="required" value="IMMEDIATE"/>
             <span class="bold">Immediate</span>
             <span style="font-size:75%;font-weight:normal;">(ASAP)</span>
           </label><label title="Less than one hour">
-            <input name="5.handling" type="radio" tabindex="8" required="required" value="PRIORITY"/>
+            <input name="5.handling" type="radio" tabindex="9" required="required" value="PRIORITY"/>
             <span class="bold">Priority</span>
             <span style="font-size:75%;font-weight:normal;">(&lt;1 hr)</span>
           </label><label title="Less than two hours">
-            <input name="5.handling" type="radio" tabindex="9" required="required" value="ROUTINE"/>
+            <input name="5.handling" type="radio" tabindex="10" required="required" value="ROUTINE"/>
             <span class="bold">Routine</span>
             <span style="font-size:75%;font-weight:normal;">(&lt;2 hr)</span>
           </label>
@@ -110,24 +110,24 @@
             <th align="right">Take Action:
             </th><td class="horizontal">
               <label>
-                <input name="6a.take-action" type="radio" value="Yes" tabindex="10"/> Yes
+                <input name="6a.take-action" type="radio" value="Yes" tabindex="11"/> Yes
               </label>
             </td><td>
               <label>
-                <input name="6a.take-action" type="radio" value="No" tabindex="11"/> No
+                <input name="6a.take-action" type="radio" value="No" tabindex="12"/> No
               </label>
             </td>
           </tr><tr>
             <th align="right">Reply:
             </th><td class="horizontal" style="width:16em;padding-right:0px;">
               <label>
-                <input name="6b.reply" type="radio" value="Yes" tabindex="12" onchange="if (this.checked) set_properties({&#39;6d.reply-by&#39;: {disabled: false, tabIndex: &#39;14&#39;}});"/>
+                <input name="6b.reply" type="radio" value="Yes" tabindex="13" onchange="if (this.checked) set_properties({&#39;6d.reply-by&#39;: {disabled: false, tabIndex: &#39;15&#39;}});"/>
                 Yes, by
               </label>
               <input name="6d.reply-by" type="text" disabled="disabled" tabindex="-1" style="margin-right:0px;"/>
             </td><td>
               <label>
-                <input name="6b.reply" type="radio" value="No" tabindex="13" onchange="if (this.checked) set_properties({&#39;6d.reply-by&#39;: {disabled: true, value: &#39;&#39;}});"/>
+                <input name="6b.reply" type="radio" value="No" tabindex="14" onchange="if (this.checked) set_properties({&#39;6d.reply-by&#39;: {disabled: true, value: &#39;&#39;}});"/>
                 No
               </label>
             </td>
@@ -143,7 +143,7 @@
         <table class="same-line-label-layout">
           <tbody><tr>
             <th>ICS Position:<span class="field-number">7</span></th>
-            <td><input name="7.to-ics-position-other" type="text" required="required" tabindex="16"/></td>
+            <td><input name="7.to-ics-position-other" type="text" required="required" tabindex="17"/></td>
           </tr>
         </tbody></table>
       </td><td rowspan="4" class="block-caption" style="width:1px;">
@@ -152,7 +152,7 @@
         <table class="same-line-label-layout">
           <tbody><tr>
             <th>ICS Position:<span class="field-number">8</span></th>
-            <td><input name="8.from-ics-position" type="text" required="required" tabindex="21"/></td>
+            <td><input name="8.from-ics-position" type="text" required="required" tabindex="22"/></td>
           </tr>
         </tbody></table>
       </td>
@@ -161,14 +161,14 @@
         <table class="same-line-label-layout">
           <tbody><tr>
             <th>Location:<span class="field-number">9</span></th>
-            <td><input name="9a.to-location" type="text" required="required" tabindex="17"/></td>
+            <td><input name="9a.to-location" type="text" required="required" tabindex="18"/></td>
           </tr>
         </tbody></table>
       </td><td>
         <table class="same-line-label-layout">
           <tbody><tr>
             <th>Location:<span class="field-number">9</span></th>
-            <td><input name="9b.from-location" type="text" required="required" tabindex="22"/></td>
+            <td><input name="9b.from-location" type="text" required="required" tabindex="23"/></td>
           </tr>
         </tbody></table>
       </td>
@@ -177,14 +177,14 @@
         <table class="same-line-label-layout">
           <tbody><tr>
             <th>Name:</th>
-            <td><input name="ToName" type="text" tabindex="18"/></td>
+            <td><input name="ToName" type="text" tabindex="19"/></td>
           </tr>
         </tbody></table>
       </td><td>
         <table class="same-line-label-layout">
           <tbody><tr>
             <th>Name:</th>
-            <td><input name="FmName" type="text" tabindex="23"/></td>
+            <td><input name="FmName" type="text" tabindex="24"/></td>
           </tr>
         </tbody></table>
       </td>
@@ -193,14 +193,14 @@
         <table class="same-line-label-layout">
           <tbody><tr>
             <th>Telephone #:</th>
-            <td><input name="ToTel" type="text" tabindex="19"/></td>
+            <td><input name="ToTel" type="text" tabindex="20"/></td>
           </tr>
         </tbody></table>
       </td><td>
         <table class="same-line-label-layout">
           <tbody><tr>
             <th>Telephone #:</th>
-            <td><input name="FmTel" type="text" tabindex="24"/></td>
+            <td><input name="FmTel" type="text" tabindex="25"/></td>
           </tr>
         </tbody></table>
       </td>

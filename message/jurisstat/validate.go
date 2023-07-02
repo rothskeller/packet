@@ -16,7 +16,7 @@ func (f *JurisStat) Validate() (problems []string) {
 	default:
 		problems = append(problems, `The "Report Type" field does not contain a valid report type value.`)
 	}
-	if f.FormVersion == "2.2" {
+	if f.FormVersion >= "2.2" {
 		switch f.JurisdictionCode {
 		case "":
 			if f.Jurisdiction != "" {

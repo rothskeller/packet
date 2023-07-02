@@ -21,7 +21,7 @@ func (f *RACESMAR) EncodeBody() string {
 	if f.FormVersion == "" {
 		f.FormVersion = "2.3"
 	}
-	if f.FormVersion == "1.6" {
+	if f.FormVersion < "2.1" {
 		enc = common.NewPIFOEncoder(&sb, "form-oa-mutual-aid-request.html", f.FormVersion)
 	} else {
 		enc = common.NewPIFOEncoder(&sb, "form-oa-mutual-aid-request-v2.html", f.FormVersion)
@@ -31,7 +31,7 @@ func (f *RACESMAR) EncodeBody() string {
 	enc.Write("16a.", f.EventName)
 	enc.Write("16b.", f.EventNumber)
 	enc.Write("17.", f.Assignment)
-	if f.FormVersion == "1.6" {
+	if f.FormVersion < "2.1" {
 		enc.Write("18a.", f.Resources[0].Qty)
 		enc.Write("18b.", f.Resources[0].RolePos)
 		enc.Write("18c.", f.Resources[0].PreferredType)
@@ -42,7 +42,7 @@ func (f *RACESMAR) EncodeBody() string {
 			enc.Write(fmt.Sprintf("18.%db.", i+1), r.RolePos)
 			enc.Write(fmt.Sprintf("18.%dc.", i+1), r.PreferredType)
 			enc.Write(fmt.Sprintf("18.%dd.", i+1), r.MinimumType)
-			if f.FormVersion == "2.3" {
+			if f.FormVersion >= "2.3" {
 				enc.Write(fmt.Sprintf("18.%de.", i+1), r.Role)
 				enc.Write(fmt.Sprintf("18.%df.", i+1), r.Position)
 			}
@@ -61,6 +61,9 @@ func (f *RACESMAR) EncodeBody() string {
 	enc.Write("25a.", f.ApprovedByName)
 	enc.Write("25b.", f.ApprovedByTitle)
 	enc.Write("25c.", f.ApprovedByContact)
+	if f.FormVersion >= "2.4" {
+		enc.Write("25s.", f.WithSignature)
+	}
 	enc.Write("26a.", f.ApprovedByDate)
 	enc.Write("26b.", f.ApprovedByTime)
 	f.StdFields.EncodeFooter(enc)

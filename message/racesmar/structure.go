@@ -21,7 +21,7 @@ type RACESMAR struct {
 	EventName             string
 	EventNumber           string
 	Assignment            string
-	Resources             [5]Resource
+	Resources             [5]Resource // made multiple in v2.1
 	RequestedArrivalDates string
 	RequestedArrivalTimes string
 	NeededUntilDates      string
@@ -35,6 +35,7 @@ type RACESMAR struct {
 	ApprovedByName        string
 	ApprovedByTitle       string
 	ApprovedByContact     string
+	WithSignature         string // added in v2.4
 	ApprovedByDate        string
 	ApprovedByTime        string
 }

@@ -25,14 +25,14 @@ func decode(subject, body string) (f *ICS213) {
 	f.FormVersion = form.FormVersion
 	f.Date = form.TaggedValues["1a."]
 	f.Time = form.TaggedValues["1b."]
-	if f.FormVersion != "2.2" {
+	if f.FormVersion < "2.2" {
 		f.Severity = form.TaggedValues["4."]
 	}
 	f.Handling = form.TaggedValues["5."]
 	f.TakeAction = form.TaggedValues["6a."]
 	f.Reply = form.TaggedValues["6b."]
 	f.ReplyBy = form.TaggedValues["6d."]
-	if f.FormVersion != "2.2" {
+	if f.FormVersion < "2.2" {
 		f.FYI = form.TaggedValues["6c."]
 	}
 	f.ToICSPosition = form.TaggedValues["7."]
@@ -55,7 +55,7 @@ func decode(subject, body string) (f *ICS213) {
 	f.OtherMethod = form.TaggedValues["Other"]
 	f.OpDate = form.TaggedValues["OpDate"]
 	f.OpTime = form.TaggedValues["OpTime"]
-	if f.FormVersion == "2.2" {
+	if f.FormVersion >= "2.2" {
 		f.OriginMsgID = form.TaggedValues["MsgNo"]
 		f.DestinationMsgID = form.TaggedValues["3."]
 	} else if f.OriginMsgID = form.TaggedValues["2."]; f.OriginMsgID != "" || f.ReceivedSent == "receiver" {

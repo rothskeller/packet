@@ -8,7 +8,7 @@ import (
 
 // EncodeSubject encodes the message subject.
 func (f *JurisStat) EncodeSubject() string {
-	if f.FormVersion == "2.2" {
+	if f.FormVersion >= "2.2" {
 		return common.EncodeSubject(f.OriginMsgID, f.Handling, Type.Tag, f.Jurisdiction)
 	}
 	return common.EncodeSubject(f.OriginMsgID, f.Handling, "MuniStat", f.Jurisdiction)
@@ -26,7 +26,7 @@ func (f *JurisStat) EncodeBody() string {
 	enc = common.NewPIFOEncoder(&sb, "form-oa-muni-status.html", f.FormVersion)
 	f.StdFields.EncodeHeader(enc)
 	enc.Write("19.", f.ReportType)
-	if f.FormVersion == "2.2" {
+	if f.FormVersion >= "2.2" {
 		enc.Write("21.", f.JurisdictionCode)
 		enc.Write("22.", f.Jurisdiction)
 	} else {

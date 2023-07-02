@@ -29,6 +29,9 @@ func (f *EOC213RR) EncodeBody() string {
 	enc.Write("25.", f.RequestedBy)
 	enc.Write("26.", f.PreparedBy)
 	enc.Write("27.", f.ApprovedBy)
+	if f.FormVersion >= "2.4" {
+		enc.Write("27s.", f.WithSignature)
+	}
 	enc.Write("28.", f.QtyUnit)
 	enc.Write("29.", f.ResourceDescription)
 	enc.Write("30.", f.ResourceArrival)
