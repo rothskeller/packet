@@ -14,6 +14,9 @@ func decode(subject, body string) *CheckIn {
 	if formtag != "" || !strings.HasPrefix(strings.ToLower(realsubj), "check-in ") {
 		return nil
 	}
+	if h := common.DecodeHandlingMap[handling]; h != "" {
+		handling = h
+	}
 	if match := checkInBodyRE.FindStringSubmatch(body); match != nil {
 		var ci = CheckIn{OriginMsgID: msgid, Handling: handling}
 		if match[3] != "" {

@@ -5,7 +5,7 @@ message: |
   From: kc6rsc@w1xsc.ampr.org
   To: pkttue@w4xsc.ampr.org
   Date: Sun, 09 Jan 2022 20:00:00 -0800
-  Subject: RSC-100P_R_Practice KC6RSC, Steve, Sunnyvale, 1/11/2022
+  Subject: RSC-100P_R_Hello
 
   Test message
 
@@ -17,13 +17,15 @@ stored:
   fromBBS: W1XSC
   jurisdiction: SNY
   messageType: plain
-  subject: RSC-100P_R_Practice KC6RSC, Steve, Sunnyvale, 1/11/2022
-  actions: 0
+  summary: OK
+  score: 100
 
 # Messages that should be sent in response:
 responses:
   - localID: TUE-101P
     to: kc6rsc@w1xsc.ampr.org
-    subject: 'DELIVERED: RSC-100P_R_Practice KC6RSC, Steve, Sunnyvale, 1/11/2022'
+    subject: 'DELIVERED: RSC-100P_R_Hello'
     bodyREs:
       - ^!LMI!TUE-100P!DR!01/11/2022 20:00:01\n
+      - 100% correct
+      - SVECS Net on January 11

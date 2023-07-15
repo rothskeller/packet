@@ -9,8 +9,6 @@ import (
 	"time"
 
 	"github.com/rothskeller/packet/message"
-	"github.com/rothskeller/packet/wppsvr/analyze"
-	"github.com/rothskeller/packet/wppsvr/config"
 	"github.com/rothskeller/packet/wppsvr/english"
 	"github.com/rothskeller/packet/wppsvr/store"
 )
@@ -44,7 +42,7 @@ func Generate(st Store, session *store.Session) *Report {
 func removeDroppedMessages(messages []*store.Message) []*store.Message {
 	j := 0
 	for _, m := range messages {
-		if m.Actions&config.ActionDropMsg == 0 {
+		if m.MessageType != "DELIVERED" {
 			messages[j] = m
 			j++
 		}
@@ -56,7 +54,7 @@ func removeDroppedMessages(messages []*store.Message) []*store.Message {
 func generateTitle(r *Report, session *store.Session) {
 	r.SessionName = session.Name
 	r.SessionDate = session.End.Format("Monday, January 2, 2006")
-	if session.Running {
+	if session.Flags&store.Running != 0 {
 		r.Preliminary = true
 	}
 }
@@ -64,14 +62,23 @@ func generateTitle(r *Report, session *store.Session) {
 // generateParams adds a description of the parameters of the practice session
 // to the report.
 func generateParams(r *Report, session *store.Session) {
-	for _, id := range session.MessageTypes {
-		r.MessageTypes = append(r.MessageTypes, message.RegisteredTypes[id].Name)
+	if session.ModelMsg != nil {
+		r.HasModel = true
+		r.MessageTypes = []string{session.ModelMsg.Type().Name}
+	} else {
+		for _, id := range session.MessageTypes {
+			if mt := message.RegisteredTypes[id]; mt != nil {
+				r.MessageTypes = append(r.MessageTypes, mt.Name)
+			} else {
+				r.MessageTypes = append(r.MessageTypes, id)
+			}
+		}
 	}
 	r.SentTo = fmt.Sprintf("%s at %s", session.CallSign, english.Conjoin(session.ToBBSes, "or"))
 	r.SentAfter = session.Start.Format("Mon 2006-01-02 15:04")
 	r.SentBefore = session.End.Format("Mon 2006-01-02 15:04")
 	r.NotSentFrom = english.Conjoin(session.DownBBSes, "or")
-	r.Modified = session.Modified
+	r.Modified = session.Flags&store.Modified != 0
 }
 
 // generateWeekSummary looks up all sessions that end in the same week as the
@@ -84,7 +91,7 @@ func generateWeekSummary(r *Report, st Store, session *store.Session) {
 		unique   = make(map[string]struct{})
 	)
 	// If the specified session isn't part of the official week, do nothing.
-	if session.ExcludeFromWeek {
+	if session.Flags&store.ExcludeFromWeek != 0 {
 		return
 	}
 	// Get all of the sessions of the week.
@@ -94,7 +101,7 @@ func generateWeekSummary(r *Report, st Store, session *store.Session) {
 	// Remove the ones that aren't officially part of the week.
 	j := 0
 	for _, s := range sessions {
-		if !s.ExcludeFromWeek {
+		if s.Flags&store.ExcludeFromWeek == 0 {
 			sessions[j] = s
 			j++
 		}
@@ -125,7 +132,6 @@ func generateWeekSummary(r *Report, st Store, session *store.Session) {
 // generateStatistics scans the messages accumulated in the session and computes
 // the statistics that we will display.
 func generateStatistics(r *Report, session *store.Session, messages []*store.Message) {
-	var knownJurisdictions = config.Get().Jurisdictions
 	var sources = make(map[string]int)
 	var jurisdictions = make(map[string]int)
 	var mtypes = make(map[string]int)
@@ -140,7 +146,7 @@ func generateStatistics(r *Report, session *store.Session, messages []*store.Mes
 		} else {
 			sources["Email"]++
 		}
-		if m.Jurisdiction != "" && knownJurisdictions[m.Jurisdiction] == m.Jurisdiction {
+		if len(m.Jurisdiction) == 3 {
 			jurisdictions[m.Jurisdiction]++
 		} else {
 			jurisdictions["~~~"]++ // chosen to sort after anything real
@@ -149,13 +155,11 @@ func generateStatistics(r *Report, session *store.Session, messages []*store.Mes
 		if m.FromCallSign != "" {
 			r.uniqueCallSigns[m.FromCallSign] = struct{}{}
 		}
-		if m.Actions&config.ActionError != 0 {
-			r.ErrorCount++
-		} else if len(m.Problems) > 1 || (len(m.Problems) == 1 && m.Problems[0] != analyze.MultipleMessagesFromAddress) {
-			r.WarningCount++
-		} else {
-			r.OKCount++
-		}
+		r.ValidCount++
+		r.AverageValidScore += m.Score
+	}
+	if r.ValidCount != 0 {
+		r.AverageValidScore /= r.ValidCount
 	}
 	r.UniqueCallSigns = len(r.uniqueCallSigns)
 	r.Sources = make([]*Source, 0, len(sources))
@@ -207,7 +211,7 @@ func removeInvalidAndReplaced(messages []*store.Message) (out []*store.Message, 
 			replaced++
 			continue
 		}
-		if m.Actions&config.ActionDontCount != 0 {
+		if m.Score == 0 {
 			invalid++
 			continue
 		}
@@ -232,10 +236,9 @@ func wasSimulatedDown(session *store.Session, bbs string) bool {
 // generateMessages generates the lists of valid and invalid check-in messages
 // that appear in the report.
 func generateMessages(r *Report, session *store.Session, messages []*store.Message) {
-	var problems = config.Get().ProblemActionFlags
-	var jurisdictions = config.Get().Jurisdictions
+	var multiple map[string]bool
 
-	messages = removeReplaced(messages)
+	messages, multiple = removeReplaced(messages)
 	for _, m := range messages {
 		var rm Message
 
@@ -262,41 +265,14 @@ func generateMessages(r *Report, session *store.Session, messages []*store.Messa
 		} else {
 			rm.Source = "Email"
 		}
-		if m.Jurisdiction != "" && jurisdictions[m.Jurisdiction] == m.Jurisdiction {
+		if len(m.Jurisdiction) == 3 {
 			rm.Jurisdiction = m.Jurisdiction
 		} else if m.Jurisdiction != "" {
 			rm.Jurisdiction = "???"
 		}
-		if m.Actions&config.ActionDontCount != 0 {
-			rm.Class = "invalid"
-		} else if m.Actions&config.ActionError != 0 {
-			rm.Class = "error"
-		} else {
-			rm.Class = "ok"
-		}
-		for _, p := range m.Problems {
-			if p == analyze.MultipleMessagesFromAddress {
-				rm.Multiple = true
-				continue
-			}
-			if prob, ok := problems[p]; ok {
-				if prob&config.ActionReport == 0 {
-					continue
-				}
-				p = analyze.ProblemLabels[p]
-				if rm.Class == "ok" {
-					rm.Class = "warning"
-				}
-			} else {
-				// Problem was imported from old packet NCO
-				// scripts.
-			}
-			if rm.Problem == "" {
-				rm.Problem = p
-			} else {
-				rm.Problem = "multiple issues"
-			}
-		}
+		rm.Score = m.Score
+		rm.Summary = m.Summary
+		rm.Multiple = multiple[m.LocalID]
 		r.Messages = append(r.Messages, &rm)
 	}
 	sort.Slice(r.Messages, func(i, j int) bool { return compareMessages(r.Messages[i], r.Messages[j]) })
@@ -323,13 +299,14 @@ func compareMessages(a, b *Message) bool {
 // removeReplaced removes all but the last message from each address.  If more
 // than one message is found from a given address, a MultipleMessagesFromAddress
 // problem code is added to the one that is kept.
-func removeReplaced(messages []*store.Message) (out []*store.Message) {
+func removeReplaced(messages []*store.Message) (out []*store.Message, multiple map[string]bool) {
 	var (
 		msgidx    int
 		outidx    int
 		addresses = make(map[string]*store.Message)
 	)
 	out = make([]*store.Message, len(messages))
+	multiple = make(map[string]bool)
 	outidx = len(messages)
 	for msgidx = len(messages) - 1; msgidx >= 0; msgidx-- {
 		m := messages[msgidx]
@@ -342,12 +319,11 @@ func removeReplaced(messages []*store.Message) (out []*store.Message) {
 			outidx--
 			out[outidx] = m
 			addresses[m.FromAddress] = m
-		} else if len(keeper.Problems) == 0 ||
-			keeper.Problems[len(keeper.Problems)-1] != analyze.MultipleMessagesFromAddress {
-			keeper.Problems = append(keeper.Problems, analyze.MultipleMessagesFromAddress)
+		} else {
+			multiple[keeper.LocalID] = true
 		}
 	}
-	return out[outidx:]
+	return out[outidx:], multiple
 }
 
 // generateGenInfo records when then report was generated and by what software.

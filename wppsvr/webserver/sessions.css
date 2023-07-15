@@ -1,0 +1,41 @@
+#year {
+  margin-top: 1rem;
+  display: flex;
+  align-items: center;
+  white-space: nowrap;
+}
+#lastyear {
+  margin-right: 2rem;
+}
+#thisyear {
+  text-align: center;
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: #444;
+}
+#nextyear {
+  margin-left: 2rem;
+  text-align: right;
+}
+#sessions {
+  margin-top: 1rem;
+  border-collapse: collapse;
+}
+#sessions th {
+  padding-left: 1rem;
+  text-align: left;
+}
+#sessions td {
+  padding-left: 1rem;
+  white-space: nowrap;
+}
+#sessions th:first-child,
+#sessions td:first-child {
+  padding-left: 0;
+}
+#sessions td:nth-child(3) {
+  text-decoration: line-through;
+}
+#newhint {
+  margin-top: 1rem;
+}

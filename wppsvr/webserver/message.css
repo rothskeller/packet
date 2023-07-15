@@ -1,0 +1,15 @@
+#results {
+  max-width: 40rem;
+}
+#lr {
+  display: grid;
+  grid: auto-flow / 1fr max-content;
+  font-size: 1.5rem;
+  font-weight: bold;
+  margin: 0.75rem 0;
+}
+#rawmsg {
+  white-space: pre;
+  overflow-x: auto;
+  font-family: ui-monospace, SFMono-Regular, Consolas, 'Liberation Mono', Menlo, monospace;
+}

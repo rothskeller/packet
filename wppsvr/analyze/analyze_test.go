@@ -23,20 +23,23 @@ import (
 	"github.com/go-test/deep"
 	"gopkg.in/yaml.v3"
 
+	"github.com/rothskeller/packet/envelope"
+	"github.com/rothskeller/packet/message"
 	"github.com/rothskeller/packet/message/allmsg"
 	"github.com/rothskeller/packet/wppsvr/config"
 	"github.com/rothskeller/packet/wppsvr/store"
 )
 
 type testdata struct {
-	Now       time.Time        `yaml:"now"`
-	Config    *config.Config   `yaml:"config"`
-	SeenHash  string           `yaml:"seenHash"`
-	Session   *store.Session   `yaml:"session"`
-	ToBBS     string           `yaml:"toBBS"`
-	Message   string           `yaml:"message"`
-	Stored    *store.Message   `yaml:"stored"`
-	Responses []*responseCheck `yaml:"responses"`
+	Now         time.Time        `yaml:"now"`
+	Config      *config.Config   `yaml:"config"`
+	SeenHash    string           `yaml:"seenHash"`
+	Session     *store.Session   `yaml:"session"`
+	ToBBS       string           `yaml:"toBBS"`
+	Message     string           `yaml:"message"`
+	Stored      *store.Message   `yaml:"stored"`
+	AnalysisREs []string         `yaml:"analysisREs"`
+	Responses   []*responseCheck `yaml:"responses"`
 }
 type responseCheck struct {
 	store.Response `yaml:",inline"`
@@ -46,6 +49,7 @@ type responseCheck struct {
 func TestAnalyze(t *testing.T) {
 	var testfiles []string
 	log.SetOutput(io.Discard)
+	TestForceJurisdiction = "SNY"
 	allmsg.Register()
 	filepath.WalkDir("testdata", func(path string, info fs.DirEntry, err error) error {
 		if strings.HasSuffix(path, ".yaml") && path != "testdata/config.yaml" {
@@ -67,7 +71,7 @@ func testAnalyze(t *testing.T, testfile string) {
 	// testdata/config.yaml, and then allow it to be modified by the test's
 	// yaml file.
 	os.Chdir("testdata")
-	if err := config.Read(ProblemLabels); err != nil {
+	if err := config.Read(); err != nil {
 		t.Fatal(err)
 	}
 	os.Chdir("..")
@@ -100,7 +104,12 @@ func testAnalyze(t *testing.T, testfile string) {
 	if err := dec.Decode(&testdata); err != nil {
 		t.Fatal(err)
 	}
-	testdata.Config.Validate(ProblemLabels)
+	testdata.Config.Validate()
+	// If the test data file included a model message, we need to parse it.
+	if testdata.Session.ModelMessage != "" {
+		_, subject, body, _ := envelope.ParseSaved(testdata.Session.ModelMessage)
+		testdata.Session.ModelMsg = message.Decode(subject, body).(store.ModelMessage)
+	}
 	// We'll need a fake store for the analyzer to use.
 	store := &fakeStore{seenHash: testdata.SeenHash, nextID: 100}
 	// Run the analysis.
@@ -137,10 +146,31 @@ func testAnalyze(t *testing.T, testfile string) {
 		if testdata.Stored.ToBBS == "" {
 			testdata.Stored.ToBBS = "W4XSC"
 		}
+		// For the purpose of testing, all scores are either 0, 50, or
+		// 100.
+		if store.saved[0].Score != 0 && store.saved[0].Score != 100 {
+			store.saved[0].Score = 50
+		}
+		// We don't want to do byte-for-byte compare of the analysis
+		// HTML.  Save it, and then copy it so it compares OK.
+		testdata.Stored.Analysis = store.saved[0].Analysis
 		// With those changes made, the expected and actual analysis
 		// should compare identically.
 		for _, diff := range deep.Equal(testdata.Stored, store.saved[0]) {
 			t.Errorf("analysis mismatch: %s", diff)
+		}
+		// The test file can specify regular expressions that should be
+		// matched by the analysis HTML (an easier way to write the test).  Check
+		// those.
+		for _, restr := range testdata.AnalysisREs {
+			re, err := regexp.Compile(restr)
+			if err != nil {
+				t.Errorf("invalid RE in test: %s", err)
+				return
+			}
+			if !re.MatchString(testdata.Stored.Analysis) {
+				t.Errorf("analysis HTML does not match RE %q: %s", restr, spew.Sdump(testdata.Stored.Analysis))
+			}
 		}
 	}
 	for i := 0; i < len(testdata.Responses) || i < len(responses); i++ {

@@ -120,43 +120,35 @@ body {
 }
 #messages {
   display: grid;
-  grid: auto-flow / repeat(5, max-content);
+  grid: auto-flow / repeat(6, max-content);
   row-gap: 0.25rem;
 }
-#messages div:nth-child(5n+1) {
+#messages div:nth-child(6n+1) {
   text-align: right;
 }
-#messages div:nth-child(5n+2) {
+#messages div:nth-child(6n+2) {
   font-weight: bold;
 }
-#messages div:nth-child(5n+3),
-#messages div:nth-child(5n+4),
-#messages div:nth-child(5n+5) {
+#messages div:nth-child(6n+3),
+#messages div:nth-child(6n+4),
+#messages div:nth-child(6n+5) {
   margin-left: 1rem;
+}
+#messages div:nth-child(6n+5) {
+  text-align: right;
+  margin-right: 0.25rem;
 }
 .ok {
   color: green;
 }
-.ok::before {
-  content: "OK"
-}
 .warning {
   color: #ed7d31;
-}
-.warning::before {
-  content: "WARNING: "
 }
 .error {
   color: red;
 }
-.error::before {
-  content: "ERROR: "
-}
 .invalid {
   color: #888;
-}
-.invalid::before {
-  content: "NOT COUNTED: "
 }
     </style>
   </head>

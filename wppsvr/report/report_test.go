@@ -5,20 +5,8 @@ import (
 	"time"
 
 	"github.com/rothskeller/packet/message/allmsg"
-	"github.com/rothskeller/packet/wppsvr/config"
 	"github.com/rothskeller/packet/wppsvr/store"
 )
-
-var fakeConfig = config.Config{
-	ProblemActionFlags: map[string]config.Action{
-		"ToBBSDown":                   config.ActionDontCount | config.ActionReport,
-		"SubjectFormat":               config.ActionError | config.ActionReport,
-		"MultipleMessagesFromAddress": config.ActionReport,
-	},
-	Jurisdictions: map[string]string{
-		"SNY": "SNY",
-	},
-}
 
 var fakeSession1 = store.Session{
 	ID:       1,
@@ -28,12 +16,12 @@ var fakeSession1 = store.Session{
 	End:      time.Date(2022, 4, 18, 20, 0, 0, 0, time.Local),
 }
 var fakeSession2 = store.Session{
-	ID:              2,
-	CallSign:        "PKTEST",
-	Name:            "Test Check-Ins",
-	Start:           time.Date(2022, 4, 18, 0, 0, 0, 0, time.Local),
-	End:             time.Date(2022, 4, 18, 23, 59, 0, 0, time.Local),
-	ExcludeFromWeek: true,
+	ID:       2,
+	CallSign: "PKTEST",
+	Name:     "Test Check-Ins",
+	Start:    time.Date(2022, 4, 18, 0, 0, 0, 0, time.Local),
+	End:      time.Date(2022, 4, 18, 23, 59, 0, 0, time.Local),
+	Flags:    store.ExcludeFromWeek,
 }
 var fakeSession3 = store.Session{
 	ID:           3,
@@ -54,43 +42,49 @@ func (fakeStore) GetSessionMessages(sessionID int) []*store.Message {
 	case 1:
 		return []*store.Message{
 			{
+				LocalID:      "TST-001P",
 				FromAddress:  "k6sny@w1xsc.ampr.org",
 				FromCallSign: "K6SNY",
+				Score:        100,
 			},
 			{
+				LocalID:      "TST-002P",
 				FromAddress:  "kc6rsc@w1xsc.ampr.org",
 				FromCallSign: "KC6RSC",
+				Score:        100,
 			},
 		}
 	case 3:
 		return []*store.Message{
 			{
+				LocalID:      "TST-003P",
 				FromAddress:  "kc6rsc@w1xsc.ampr.org",
 				FromCallSign: "KC6RSC",
 				FromBBS:      "W1XSC",
-				Subject:      "STR-100P_I_MuniStat_Sunnyvale",
 				Jurisdiction: "SNY",
 				MessageType:  "plain",
-				Problems:     nil,
+				Score:        100,
+				Summary:      "OK",
 			},
 			{
+				LocalID:      "TST-004P",
 				FromAddress:  "kc6rsc@w1xsc.ampr.org",
 				FromCallSign: "KC6RSC",
 				FromBBS:      "W1XSC",
-				Subject:      "STR-100P_I_MuniStat_Sunnyvale",
 				Jurisdiction: "SNY",
 				MessageType:  "plain",
-				Problems:     nil,
+				Score:        100,
+				Summary:      "OK",
 			},
 			{
+				LocalID:      "TST-005P",
 				FromAddress:  "aa6bt@w3xsc.ampr.org",
 				FromCallSign: "AA6BT",
 				FromBBS:      "W3XSC",
-				Subject:      "BLAH",
 				Jurisdiction: "Unknown",
 				MessageType:  "plain",
-				Problems:     []string{"ToBBSDown", "SubjectFormat"},
-				Actions:      config.ActionReport | config.ActionError,
+				Score:        77,
+				Summary:      "multiple issues",
 			},
 		}
 	default:
@@ -119,13 +113,13 @@ at W2XSC between Wed 2022-04-13 00:00 and Tue 2022-04-19 20:00; not sent from
 W3XSC.
 
 ---- RESULTS
-1  OK
-1  ERROR
-1  Duplicate
+88% Average Score
+ 2  Counted
+ 1  Duplicate
 
 ---- MESSAGES
-AA6BT   @W3XSC   (???)  ERROR: multiple issues
-KC6RSC  @W1XSC*  (SNY)  OK
+AA6BT   @W3XSC   (???)   77%  multiple issues
+KC6RSC  @W1XSC*  (SNY)  100%  OK
 * multiple messages from this address; only the last one counts
 
 ---- SENT FROM
@@ -145,7 +139,6 @@ This report was generated on Tuesday, April 19, 2022 at 20:00 by wppsvr.
 func TestReport(t *testing.T) {
 	allmsg.Register()
 	now = func() time.Time { return time.Date(2022, 4, 19, 20, 0, 1, 0, time.Local) }
-	config.SetConfig(&fakeConfig)
 	actual := Generate(fakeStore{}, &fakeSession3).RenderPlainText()
 	if actual != expected {
 		t.Errorf("incorrect report output:\n%s", actual)

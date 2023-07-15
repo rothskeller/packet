@@ -37,7 +37,7 @@ func ForRunningSessions(st *store.Store) {
 			} else {
 				point = point.Truncate(time.Minute)
 			}
-			for point.After(ret.LastRun) && !ret.Interval.Match(point) {
+			for point.After(ret.LastRun) && !session.RetrieveInterval.Match(point) {
 				point = point.Add(-time.Minute)
 			}
 			if point.After(ret.LastRun) {
@@ -63,7 +63,7 @@ func ForSession(st *store.Store, session *store.Session) {
 		} else {
 			point = point.Truncate(time.Minute)
 		}
-		for point.After(ret.LastRun) && !ret.Interval.Match(point) {
+		for point.After(ret.LastRun) && !session.RetrieveInterval.Match(point) {
 			point = point.Add(-time.Minute)
 		}
 		if point.After(ret.LastRun) {
@@ -87,19 +87,19 @@ func checkBBS(st *store.Store, wg *sync.WaitGroup, session *store.Session, retri
 		serialMutex.Lock()
 		defer serialMutex.Unlock()
 	}
-	if conn = ConnectToBBS(retrieval.BBS, retrieval.Mailbox); conn == nil {
+	if conn = ConnectToBBS(retrieval.BBS, session.CallSign); conn == nil {
 		return
 	}
 	defer func() {
 		if err = conn.Close(); err != nil {
-			log.Printf("ERROR: closing connection to %s@%s: %s", retrieval.Mailbox, retrieval.BBS, err)
+			log.Printf("ERROR: closing connection to %s@%s: %s", session.CallSign, retrieval.BBS, err)
 		}
 	}()
 	for {
 		var message string
 
 		if message, err = conn.Read(msgnum); err != nil {
-			log.Printf("ERROR: reading messages to %s@%s: %s", retrieval.Mailbox, retrieval.BBS, err)
+			log.Printf("ERROR: reading messages to %s@%s: %s", session.CallSign, retrieval.BBS, err)
 			return
 		} else if message == "" { // no more messages
 			break
@@ -148,17 +148,17 @@ func handleMessage(st *store.Store, conn *jnos.Conn, session *store.Session, ret
 	analysis = analyze.Analyze(st, session, retrieval.BBS, message)
 	responses = analysis.Responses(st)
 	for _, response := range responses {
-		if !retrieval.DontSendResponses {
+		if session.Flags&store.DontSendResponses == 0 {
 			if err = conn.Send(response.Subject, response.Body, response.To); err != nil {
-				log.Printf("ERROR: sending message from %s@%s: %s", retrieval.Mailbox, retrieval.BBS, err)
+				log.Printf("ERROR: sending message from %s@%s: %s", session.CallSign, retrieval.BBS, err)
 				return
 			}
 		}
 		response.SendTime = time.Now()
 	}
-	if !retrieval.DontKillMessages {
+	if session.Flags&store.DontKillMessages == 0 {
 		if err = conn.Kill(msgnum); err != nil {
-			log.Printf("ERROR: killing message %d at %s@%s: %s", msgnum, retrieval.Mailbox, retrieval.BBS, err)
+			log.Printf("ERROR: killing message %d at %s@%s: %s", msgnum, session.CallSign, retrieval.BBS, err)
 			return
 		}
 	}

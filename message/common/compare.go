@@ -24,6 +24,28 @@ func ConsolidateCompareFields(fields []*message.CompareField) (score, outOf int,
 	return score, outOf, fields[:j]
 }
 
+// CompareCheckbox compares two values for a checkbox field.
+func CompareCheckbox(label, exp, act string) (c *message.CompareField) {
+	c = &message.CompareField{
+		Label: label, Expected: exp, Actual: act, OutOf: 2,
+	}
+	if exp == act {
+		c.ExpectedMask, c.ActualMask, c.Score = " ", " ", 2
+		if exp == "false" {
+			c.Expected, c.Actual = "", ""
+		}
+	} else {
+		c.ExpectedMask, c.ActualMask, c.Score = "*", "*", 0
+		if exp == "" || exp == "false" {
+			c.Expected = "not checked"
+		}
+		if act == "" || act == "false" {
+			c.Actual = "not checked"
+		}
+	}
+	return c
+}
+
 // CompareExact compares two values for a field, which are expected to be
 // exactly identical.
 func CompareExact(label, exp, act string) (c *message.CompareField) {
@@ -34,6 +56,12 @@ func CompareExact(label, exp, act string) (c *message.CompareField) {
 		c.ExpectedMask, c.ActualMask, c.Score = " ", " ", 2
 	} else {
 		c.ExpectedMask, c.ActualMask, c.Score = "*", "*", 0
+		if c.Expected == "" {
+			c.Expected = "(not set)"
+		}
+		if c.Actual == "" {
+			c.Actual = "(not set)"
+		}
 	}
 	return c
 }
@@ -56,15 +84,14 @@ func CompareExactMap(label, exp, act string, mapping map[string]string) (c *mess
 		c.ExpectedMask, c.ActualMask, c.Score = " ", " ", 2
 	} else {
 		c.ExpectedMask, c.ActualMask, c.Score = "*", "*", 0
+		if c.Expected == "" {
+			c.Expected = "(not set)"
+		}
+		if c.Actual == "" {
+			c.Actual = "(not set)"
+		}
 	}
 	return c
-}
-
-// CheckboxValueMap is a map for use with CompareExactMap for checkbox fields.
-var CheckboxValueMap = map[string]string{
-	"":        "not checked",
-	"false":   "not checked",
-	"checked": "checked",
 }
 
 var dateRE = regexp.MustCompile(`^(\d?\d)([-/.])(\d?\d)([-/.])(20)?(\d\d)$`)
@@ -82,6 +109,12 @@ func CompareDate(label, exp, act string) (c *message.CompareField) {
 	actM := dateRE.FindStringSubmatch(act)
 	if expM == nil || actM == nil {
 		c.ExpectedMask, c.ActualMask, c.Score = "*", "*", 0
+		if c.Expected == "" {
+			c.Expected = "(not set)"
+		}
+		if c.Actual == "" {
+			c.Actual = "(not set)"
+		}
 		return c
 	}
 	switch {
@@ -173,6 +206,12 @@ func CompareTime(label, exp, act string) (c *message.CompareField) {
 	actM := timeRE.FindStringSubmatch(act)
 	if expM == nil || actM == nil {
 		c.ExpectedMask, c.ActualMask, c.Score = "*", "*", 0
+		if c.Expected == "" {
+			c.Expected = "(not set)"
+		}
+		if c.Actual == "" {
+			c.Actual = "(not set)"
+		}
 		return c
 	}
 	switch {
@@ -220,6 +259,12 @@ func ComparePhoneNumber(label, exp, act string) (c *message.CompareField) {
 	anums := strings.Map(digitsOnly, act)
 	if enums != anums {
 		c.ExpectedMask, c.ActualMask, c.Score = "*", "*", 0
+		if c.Expected == "" {
+			c.Expected = "(not set)"
+		}
+		if c.Actual == "" {
+			c.Actual = "(not set)"
+		}
 	} else if exp != act {
 		// This is a bit simplistic — it would be nice to mark
 		// specifically the punctuation that's different, rather than
@@ -259,6 +304,12 @@ func CompareText(label, exp, act string) (c *message.CompareField) {
 	if len(et) == 0 && len(at) == 0 {
 		c.Score, c.OutOf = 1, 1
 		return c
+	}
+	if len(et) == 0 && len(at) != 0 {
+		et = append(et, token{tok: "(not set)"})
+	}
+	if len(et) != 0 && len(at) == 0 {
+		at = append(at, token{tok: "(not set)"})
 	}
 	// Max score is 2 points for each group, or 1 point for empty expected.
 	if c.OutOf = len(et) * 2; c.OutOf != 0 {

@@ -2,28 +2,25 @@ package store
 
 import (
 	"database/sql"
-	"strings"
 	"time"
-
-	"github.com/rothskeller/packet/wppsvr/config"
 )
 
 // A Message describes a single received message.
 type Message struct {
-	LocalID      string        `yaml:"localID"`
-	Hash         string        `yaml:"hash"`
-	DeliveryTime time.Time     `yaml:"deliveryTime"`
-	Message      string        `yaml:"message"`
-	Session      int           `yaml:"session"`
-	FromAddress  string        `yaml:"fromAddress"`
-	FromCallSign string        `yaml:"fromCallSign"`
-	FromBBS      string        `yaml:"fromBBS"`
-	ToBBS        string        `yaml:"toBBS"`
-	Jurisdiction string        `yaml:"jurisdiction"`
-	MessageType  string        `yaml:"messageType"`
-	Subject      string        `yaml:"subject"`
-	Problems     []string      `yaml:"problems"`
-	Actions      config.Action `yaml:"actions"`
+	LocalID      string    `yaml:"localID"`
+	Hash         string    `yaml:"hash"`
+	DeliveryTime time.Time `yaml:"deliveryTime"`
+	Message      string    `yaml:"message"`
+	Session      int       `yaml:"session"`
+	FromAddress  string    `yaml:"fromAddress"`
+	FromCallSign string    `yaml:"fromCallSign"`
+	FromBBS      string    `yaml:"fromBBS"`
+	ToBBS        string    `yaml:"toBBS"`
+	Jurisdiction string    `yaml:"jurisdiction"`
+	MessageType  string    `yaml:"messageType"`
+	Score        int       `yaml:"score"`
+	Summary      string    `yaml:"summary"`
+	Analysis     string    `yaml:"analysis"`
 }
 
 // SessionHasMessages returns whether there are any messages stored for the
@@ -50,15 +47,14 @@ func (st *Store) SessionHasMessages(sessionID int) bool {
 // is none.
 func (st *Store) GetMessage(localID string) *Message {
 	var (
-		m        Message
-		problems string
-		err      error
+		m   Message
+		err error
 	)
 	m.LocalID = localID
 	st.mutex.RLock()
 	defer st.mutex.RUnlock()
-	err = st.dbh.QueryRow("SELECT session, hash, deliverytime, message, fromaddress, fromcallsign, frombbs, tobbs, jurisdiction, messagetype, subject, problems, actions FROM message WHERE id=?", localID).
-		Scan(&m.Session, &m.Hash, &m.DeliveryTime, &m.Message, &m.FromAddress, &m.FromCallSign, &m.FromBBS, &m.ToBBS, &m.Jurisdiction, &m.MessageType, &m.Subject, &problems, &m.Actions)
+	err = st.dbh.QueryRow("SELECT session, hash, deliverytime, message, fromaddress, fromcallsign, frombbs, tobbs, jurisdiction, messagetype, score, summary, analysis FROM message WHERE id=?", localID).
+		Scan(&m.Session, &m.Hash, &m.DeliveryTime, &m.Message, &m.FromAddress, &m.FromCallSign, &m.FromBBS, &m.ToBBS, &m.Jurisdiction, &m.MessageType, &m.Score, &m.Summary, &m.Analysis)
 	switch err {
 	case nil:
 		break
@@ -67,7 +63,6 @@ func (st *Store) GetMessage(localID string) *Message {
 	default:
 		panic(err)
 	}
-	m.Problems = split(problems)
 	return &m
 }
 
@@ -75,15 +70,14 @@ func (st *Store) GetMessage(localID string) *Message {
 // is none.
 func (st *Store) GetMessageByHash(hash string) *Message {
 	var (
-		m        Message
-		problems string
-		err      error
+		m   Message
+		err error
 	)
 	m.Hash = hash
 	st.mutex.RLock()
 	defer st.mutex.RUnlock()
-	err = st.dbh.QueryRow("SELECT id, session, deliverytime, message, fromaddress, fromcallsign, frombbs, tobbs, jurisdiction, messagetype, subject, problems, actions FROM message WHERE hash=?", hash).
-		Scan(&m.LocalID, &m.Session, &m.DeliveryTime, &m.Message, &m.FromAddress, &m.FromCallSign, &m.FromBBS, &m.ToBBS, &m.Jurisdiction, &m.MessageType, &m.Subject, &problems, &m.Actions)
+	err = st.dbh.QueryRow("SELECT id, session, deliverytime, message, fromaddress, fromcallsign, frombbs, tobbs, jurisdiction, messagetype, score, summary, analysis FROM message WHERE hash=?", hash).
+		Scan(&m.LocalID, &m.Session, &m.DeliveryTime, &m.Message, &m.FromAddress, &m.FromCallSign, &m.FromBBS, &m.ToBBS, &m.Jurisdiction, &m.MessageType, &m.Score, &m.Summary, &m.Analysis)
 	switch err {
 	case nil:
 		break
@@ -92,7 +86,6 @@ func (st *Store) GetMessageByHash(hash string) *Message {
 	default:
 		panic(err)
 	}
-	m.Problems = split(problems)
 	return &m
 }
 
@@ -105,20 +98,17 @@ func (st *Store) GetSessionMessages(sessionID int) (messages []*Message) {
 	)
 	st.mutex.RLock()
 	defer st.mutex.RUnlock()
-	rows, err = st.dbh.Query("SELECT id, hash, deliverytime, message, fromaddress, fromcallsign, frombbs, tobbs, jurisdiction, messagetype, subject, problems, actions FROM message WHERE session=? ORDER BY deliverytime", sessionID)
+	rows, err = st.dbh.Query("SELECT id, hash, deliverytime, message, fromaddress, fromcallsign, frombbs, tobbs, jurisdiction, messagetype, score, summary, analysis FROM message WHERE session=? ORDER BY deliverytime", sessionID)
 	if err != nil {
 		panic(err)
 	}
 	for rows.Next() {
-		var (
-			m        Message
-			problems string
-		)
-		err = rows.Scan(&m.LocalID, &m.Hash, &m.DeliveryTime, &m.Message, &m.FromAddress, &m.FromCallSign, &m.FromBBS, &m.ToBBS, &m.Jurisdiction, &m.MessageType, &m.Subject, &problems, &m.Actions)
+		var m Message
+
+		err = rows.Scan(&m.LocalID, &m.Hash, &m.DeliveryTime, &m.Message, &m.FromAddress, &m.FromCallSign, &m.FromBBS, &m.ToBBS, &m.Jurisdiction, &m.MessageType, &m.Score, &m.Summary, &m.Analysis)
 		if err != nil {
 			panic(err)
 		}
-		m.Problems = split(problems)
 		m.Session = sessionID
 		messages = append(messages, &m)
 	}
@@ -154,8 +144,8 @@ func (st *Store) SaveMessage(m *Message) {
 
 	st.mutex.Lock()
 	defer st.mutex.Unlock()
-	_, err = st.dbh.Exec("INSERT INTO message (id, hash, deliverytime, message, session, fromaddress, fromcallsign, frombbs, tobbs, jurisdiction, messagetype, subject, problems, actions) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?)",
-		m.LocalID, m.Hash, m.DeliveryTime, m.Message, m.Session, m.FromAddress, m.FromCallSign, m.FromBBS, m.ToBBS, m.Jurisdiction, m.MessageType, m.Subject, strings.Join(m.Problems, ";"), m.Actions)
+	_, err = st.dbh.Exec("INSERT INTO message (id, hash, deliverytime, message, session, fromaddress, fromcallsign, frombbs, tobbs, jurisdiction, messagetype, score, summary, analysis) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?)",
+		m.LocalID, m.Hash, m.DeliveryTime, m.Message, m.Session, m.FromAddress, m.FromCallSign, m.FromBBS, m.ToBBS, m.Jurisdiction, m.MessageType, m.Score, m.Summary, m.Analysis)
 	if err != nil {
 		panic(err)
 	}

@@ -51,7 +51,11 @@ func (r *Report) htmlExpectsResults(sb *strings.Builder) {
 	if r.Modified {
 		sb.WriteString(`*`)
 	}
-	sb.WriteString(`</div><div class="key-text"><div>Message type:</div><div>`)
+	if r.HasModel {
+		sb.WriteString(`</div><div class="key-text"><div>Message:</div><div>copy of provided `)
+	} else {
+		sb.WriteString(`</div><div class="key-text"><div>Message type:</div><div>`)
+	}
 	sb.WriteString(html.EscapeString(english.Conjoin(r.MessageTypes, "or")))
 	sb.WriteString(`</div><div>Sent to:</div><div>`)
 	sb.WriteString(html.EscapeString(r.SentTo))
@@ -71,18 +75,13 @@ func (r *Report) htmlExpectsResults(sb *strings.Builder) {
 	}
 	sb.WriteString(`</div>`)
 	sb.WriteString(`<div class="block"><div class="block-title">Results</div><div class="key-value">`)
-	if r.OKCount+r.WarningCount+r.ErrorCount+r.InvalidCount+r.ReplacedCount+r.DroppedCount != 0 {
-		if r.OKCount != 0 {
-			fmt.Fprintf(sb, `<div>OK</div><div>%d</div>`, r.OKCount)
-		}
-		if r.WarningCount != 0 {
-			fmt.Fprintf(sb, `<div>WARNING</div><div>%d</div>`, r.WarningCount)
-		}
-		if r.ErrorCount != 0 {
-			fmt.Fprintf(sb, `<div>ERROR</div><div>%d</div>`, r.ErrorCount)
+	if r.ValidCount+r.InvalidCount+r.ReplacedCount+r.DroppedCount != 0 {
+		if r.ValidCount != 0 {
+			fmt.Fprintf(sb, `<div>Counted</div><div>%d</div><div>Average Score</div><div>%d%%</div>`,
+				r.ValidCount, r.AverageValidScore)
 		}
 		if r.InvalidCount != 0 {
-			fmt.Fprintf(sb, `<div class="gray">NOT COUNTED</div><div class="gray">%d</div>`, r.InvalidCount)
+			fmt.Fprintf(sb, `<div class="gray">Not Counted</div><div class="gray">%d</div>`, r.InvalidCount)
 		}
 		if r.ReplacedCount != 0 {
 			fmt.Fprintf(sb, `<div class="gray">Duplicate</div><div class="gray">%d</div>`, r.ReplacedCount)
@@ -144,7 +143,7 @@ func (r *Report) htmlMessages(sb *strings.Builder, links string) {
 	var hasMultiple bool
 	sb.WriteString(`<div class="block"><div class="block-title">Messages</div><div id="messages">`)
 	for _, m := range r.Messages {
-		var multiple string
+		var class, multiple string
 		if links == "" || (links != "" && links == m.FromCallSign) {
 			fmt.Fprintf(sb, `<div><a href="/message?id=%s">%s</a></div><div><a href="/message?id=%s">%s</a></div>`,
 				m.ID, html.EscapeString(m.Prefix), m.ID, html.EscapeString(m.Suffix))
@@ -154,8 +153,18 @@ func (r *Report) htmlMessages(sb *strings.Builder, links string) {
 		if m.Multiple {
 			multiple, hasMultiple = `*`, true
 		}
-		fmt.Fprintf(sb, `<div>%s%s</div><div>%s</div><div class="%s">%s</div>`,
-			m.Source, multiple, m.Jurisdiction, m.Class, m.Problem)
+		switch {
+		case m.Score == 0:
+			class = "invalid"
+		case m.Score == 100:
+			class = "ok"
+		case m.Score >= 90:
+			class = "warning"
+		default:
+			class = "error"
+		}
+		fmt.Fprintf(sb, `<div>%s%s</div><div>%s</div><div class="%s">%d%%</div><div class="%s">%s</div>`,
+			m.Source, multiple, m.Jurisdiction, class, m.Score, class, m.Summary)
 	}
 	sb.WriteString(`</div>`)
 	if hasMultiple {

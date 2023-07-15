@@ -1,34 +1,23 @@
 package webserver
 
 import (
-	"bytes"
 	_ "embed" // -
-	"fmt"
-	"io"
 	"net/http"
 	"regexp"
 	"strconv"
 	"strings"
 	"time"
 
-	"github.com/rothskeller/packet/wppsvr/config"
+	"github.com/rothskeller/packet/wppsvr/htmlb"
 	"github.com/rothskeller/packet/wppsvr/report"
 	"github.com/rothskeller/packet/wppsvr/store"
 )
 
-// contentMarker is the Marker in calendar.html for the place where the variable
-// content should be inserted.
-var contentMarker = []byte("@@CONTENT@@")
-
-//go:embed "calendar.html"
-var calendarHTML []byte
-
-var callsignRE = regexp.MustCompile(`(?i)^(?:A[A-L]|[KNW][A-Z]?)[0-9][A-Z]{1,3}$`)
+var callsignRE = regexp.MustCompile(`(?i)^(?:A[A-L][0-9][A-Z]{1,3}|[KNW][A-Z][0-9][A-Z]{1,3}|[KNW][0-9][A-Z]{2,3})$`)
 
 // serveCalendar handles GET /calendar requests.
 func (ws *webserver) serveCalendar(w http.ResponseWriter, r *http.Request) {
 	var (
-		content  int
 		view     string
 		callsign string
 		year     = time.Now().Year()
@@ -49,41 +38,52 @@ func (ws *webserver) serveCalendar(w http.ResponseWriter, r *http.Request) {
 	if y, err := strconv.Atoi(r.FormValue("year")); err == nil && y > 2000 && y < 3000 {
 		year = y
 	}
-	// Write the preamble.
+	// Start the HTML page.
 	w.Header().Set("Cache-Control", "nostore")
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")
-	content = bytes.Index(calendarHTML, contentMarker)
-	w.Write(calendarHTML[:content])
+	html := htmlb.HTML(w)
+	defer html.Close()
+	html.E("meta charset=utf-8")
+	html.E("title>Weekly Packet Practice - Santa Clara County ARES/RACES")
+	html.E("meta name=viewport content='width=device-width, initial-scale=1'")
+	html.E("link rel=stylesheet href=/static/common.css")
+	html.E("link rel=stylesheet href=/static/calendar.css")
+	html.E("script src=/static/calendar.js")
+	html.E("div id=org>Santa Clara County ARES<sup>®</sup>/RACES")
+	html.E("div id=title>Weekly Packet Practice")
+	html.E("div id=key>Click on any net date to see its report.")
 	// Write the view options.
 	if view == "counts" {
-		fmt.Fprintf(w, `<div id="view">Viewing Check-In Counts&nbsp&nbsp;|&nbsp; <a href="?year=%d&view=%s">View %s Results</a></div>`,
-			year, callsign, callsign)
+		html.E("div id=view>Viewing Check-In Counts  |  ").
+			E("a href=?year=%d&view=%s>View %s Results", year, callsign, callsign)
 	} else {
-		fmt.Fprintf(w, `<div id="view">Viewing %s Results&nbsp&nbsp;|&nbsp; <a href="?year=%d&view=counts">View Check-In Counts</a></div>`,
-			view, year)
+		html.E("div id=view>Viewing %s Results  |  ", view).
+			E("a href=?year=%d&view=counts>View Check-In Counts</a></div>", year)
 	}
-	// Write the year selector.
-	if ws.yearHasSessions(year-1) || canEditSessions(callsign) {
-		fmt.Fprintf(w, `<div id="year"><div id="lastyear"><a href="?year=%d&view=%s">&lt; %d</a></div>`, year-1, view, year-1)
-	} else {
-		fmt.Fprintf(w, `<div id="year"><div id="lastyear">&lt; %d</div>`, year-1)
-		// The year doesn't actually appear (color: transparent), but
-		// this makes the spacing correct.
+	// Write the year selector.  Last year and next year are always written
+	// so the spacing is correct, but if those years don't have sessions,
+	// they appear transparent.
+	yearsel := html.E("div id=year")
+	lastyear := yearsel.E("div id=lastyear")
+	if ws.yearHasSessions(year - 1) {
+		lastyear = lastyear.E("a href=?year=%d&view=%s", year-1, view)
 	}
-	fmt.Fprintf(w, `<div id="thisyear">%d</div>`, year)
-	if ws.yearHasSessions(year+1) || canEditSessions(callsign) {
-		fmt.Fprintf(w, `<div id="nextyear"><a href="?year=%d&view=%s">%d &gt;</a></div></div>`, year+1, view, year+1)
-	} else {
-		fmt.Fprintf(w, `<div id="nextyear">%d &gt;</div></div>`, year+1)
+	lastyear.TF("< %d", year-1)
+	yearsel.E("div id=thisyear>%d", year)
+	nextyear := yearsel.E("div id=nextyear")
+	if ws.yearHasSessions(year + 1) {
+		nextyear = nextyear.E("a href=?year=%d&view=%s", year+1, view)
 	}
+	nextyear.TF("%d >", year+1)
 	// Write the months.
-	io.WriteString(w, `<div id="calendar">`)
+	calendar := html.E("div id=calendar")
 	for month := time.January; month <= time.December; month++ {
-		ws.serveCalendarMonth(w, r, year, month, view)
+		ws.serveCalendarMonth(calendar, year, month, view)
 	}
-	io.WriteString(w, `</div>`)
-	// Close out the HTML.
-	w.Write(calendarHTML[content+len(contentMarker):])
+	// Give a link to the session editor, for those who can use it.
+	if canEditSessions(callsign) {
+		html.E("a id=edit href=/sessions>Edit Practice Session Definitions")
+	}
 }
 
 // isAllowedToView returns whether the viewer (identified by callsign) is
@@ -97,13 +97,13 @@ func isAllowedToView(callsign, view string) bool {
 }
 
 func (ws *webserver) yearHasSessions(year int) bool {
-	return ws.st.ExistRealizedSessions(
+	return ws.st.ExistSessions(
 		time.Date(year, 1, 1, 0, 0, 0, 0, time.Local),
 		time.Date(year+1, 1, 1, 0, 0, 0, 0, time.Local),
 	)
 }
 
-func (ws *webserver) serveCalendarMonth(w http.ResponseWriter, r *http.Request, year int, month time.Month, view string) {
+func (ws *webserver) serveCalendarMonth(calendar *htmlb.Element, year int, month time.Month, view string) {
 	var (
 		date     time.Time
 		sessions []*store.Session
@@ -112,10 +112,18 @@ func (ws *webserver) serveCalendarMonth(w http.ResponseWriter, r *http.Request, 
 		time.Date(year, month, 1, 0, 0, 0, 0, time.Local),
 		time.Date(year, month+1, 1, 0, 0, 0, 0, time.Local),
 	)
-	fmt.Fprintf(w, `<div class="month"><div class="monthname">%s</div><div class="weekday">S</div><div class="weekday">M</div><div class="weekday">T</div><div class="weekday">W</div><div class="weekday">T</div><div class="weekday">F</div><div class="weekday">S</div>`, month.String())
+	mdiv := calendar.E("div class=month")
+	mdiv.E("div class=monthname>%s", month.String())
+	mdiv.E("div class=weekday>S")
+	mdiv.E("div class=weekday>M")
+	mdiv.E("div class=weekday>T")
+	mdiv.E("div class=weekday>W")
+	mdiv.E("div class=weekday>T")
+	mdiv.E("div class=weekday>F")
+	mdiv.E("div class=weekday>S")
 	date = time.Date(year, month, 1, 0, 0, 0, 0, time.Local)
 	for i := 0; i < int(date.Weekday()); i++ {
-		io.WriteString(w, `<div></div>`)
+		mdiv.E("div")
 	}
 	for ; date.Month() == month; date = date.AddDate(0, 0, 1) {
 		var (
@@ -130,7 +138,7 @@ func (ws *webserver) serveCalendarMonth(w http.ResponseWriter, r *http.Request, 
 			}
 		}
 		if session == nil {
-			fmt.Fprintf(w, `<div class="day"><div class="date">%d</div></div>`, date.Day())
+			mdiv.E("div class=day").E("div class=date>%d", date.Day())
 			continue
 		}
 		if view == "counts" {
@@ -139,13 +147,13 @@ func (ws *webserver) serveCalendarMonth(w http.ResponseWriter, r *http.Request, 
 		} else {
 			ciClass, ciValue = ws.calendarCell(session, view)
 		}
-		fmt.Fprintf(w, `<div class="day net"><div class="date"><a href="report?date=%s">%d</a></div><div class="%s">%s</div></div>`,
-			date.Format("2006-01-02"), date.Day(), ciClass, ciValue)
+		ddiv := mdiv.E("div class='day net'")
+		ddiv.E("div class=date").E("a href=report?session=%d>%d", session.ID, date.Day())
+		ddiv.E("div class=%s>%s", ciClass, ciValue)
 	}
 	for i := int(date.Weekday()); i%7 != 0; i++ {
-		io.WriteString(w, `<div></div>`)
+		mdiv.E("div")
 	}
-	io.WriteString(w, `</div>`)
 }
 
 // sessionCheckInCount determines the check-in count for the session, for
@@ -165,25 +173,35 @@ func (ws *webserver) sessionCheckInCount(session *store.Session) int {
 func (ws *webserver) calendarCell(session *store.Session, callsign string) (class, value string) {
 	class, value = "noci", "—"
 	if session.ID == 0 {
-		return
+		return "noci", "—"
 	}
-	var fromAddrs = make(map[string]bool)
+	var fromAddrs = make(map[string]int)
+	var minscore = 0
 	for _, message := range ws.st.GetSessionMessages(session.ID) {
 		if message.FromCallSign != callsign {
 			continue
 		}
-		if message.Actions&(config.ActionDontCount|config.ActionDropMsg) != 0 {
+		if message.Score == 0 {
 			continue
 		}
-		class, value = "ok", "✓"
-		fromAddrs[message.FromAddress] = message.Actions&config.ActionError != 0
+		minscore = 100
+		fromAddrs[message.FromAddress] = message.Score
 	}
-	for _, haserr := range fromAddrs {
-		if haserr {
-			class, value = "error", "✕"
+	for _, score := range fromAddrs {
+		if score < minscore {
+			minscore = score
 		}
 	}
-	return
+	switch {
+	case minscore == 0:
+		return "noci", "—"
+	case minscore == 100:
+		return "ok", "✓"
+	case minscore >= 90:
+		return "warn", "⚠︎"
+	default:
+		return "error", "✕"
+	}
 }
 
 func sameDay(t1, t2 time.Time) bool {

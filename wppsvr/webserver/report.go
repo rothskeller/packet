@@ -3,7 +3,7 @@ package webserver
 import (
 	"io"
 	"net/http"
-	"time"
+	"strconv"
 
 	"github.com/rothskeller/packet/wppsvr/report"
 	"github.com/rothskeller/packet/wppsvr/store"
@@ -17,16 +17,14 @@ func (ws *webserver) serveReport(w http.ResponseWriter, r *http.Request) {
 	if callsign = checkLoggedIn(w, r); callsign == "" {
 		return
 	}
-	if date, err := time.ParseInLocation("2006-01-02", r.FormValue("date"), time.Local); err == nil {
-		if sessions := ws.st.GetSessions(date, date.AddDate(0, 0, 1)); len(sessions) != 0 {
-			session = sessions[0]
-		}
+	if sid, err := strconv.Atoi(r.FormValue("session")); err == nil {
+		session = ws.st.GetSession(sid)
 	}
 	if session == nil {
 		http.Error(w, "404 Not Found", http.StatusNotFound)
 		return
 	}
-	if session.Imported {
+	if session.Flags&store.Imported != 0 {
 		// This is a report imported from the old NCO scripts.  Display
 		// its report verbatim.
 		w.Header().Set("Content-Type", "text/plain")

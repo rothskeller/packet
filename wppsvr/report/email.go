@@ -56,7 +56,11 @@ func (r *Report) emailExpectsResults(w *quotedprintable.Writer) {
 	if r.Modified {
 		io.WriteString(w, `*`)
 	}
-	io.WriteString(w, `</div><table cellspacing="0" cellpadding="0"><tr><td style="white-space:nowrap;vertical-align:top;color:#666">Message type:</td><td style="padding-left:16px">`)
+	if r.HasModel {
+		io.WriteString(w, `</div><table cellspacing="0" cellpadding="0"><tr><td style="white-space:nowrap;vertical-align:top;color:#666">Message:</td><td style="padding-left:16px">copy of provided `)
+	} else {
+		io.WriteString(w, `</div><table cellspacing="0" cellpadding="0"><tr><td style="white-space:nowrap;vertical-align:top;color:#666">Message type:</td><td style="padding-left:16px">`)
+	}
 	io.WriteString(w, html.EscapeString(english.Conjoin(r.MessageTypes, "or")))
 	io.WriteString(w, `</td></tr><tr><td style="white-space:nowrap;padding-top:2px;color:#666">Sent to:</td><td style="padding:2px 0 0 16px">`)
 	io.WriteString(w, html.EscapeString(r.SentTo))
@@ -75,15 +79,9 @@ func (r *Report) emailExpectsResults(w *quotedprintable.Writer) {
 		io.WriteString(w, `<div>*modified during session</div>`)
 	}
 	io.WriteString(w, `</div></td><td style="padding-left:32px;vertical-align:top"><div style="max-width:640px;margin-bottom:24px"><div style="font-size:20px;font-weight:bold;color:#444">Results</div><table cellspacing="0" cellpadding="0">`)
-	if r.OKCount+r.WarningCount+r.ErrorCount+r.InvalidCount+r.ReplacedCount+r.DroppedCount != 0 {
-		if r.OKCount != 0 {
-			fmt.Fprintf(w, `<tr><td style="padding-top:2px;color:#666">OK</td><td style="padding:2px 0 0 16px;text-align:right">%d</td></tr>`, r.OKCount)
-		}
-		if r.WarningCount != 0 {
-			fmt.Fprintf(w, `<tr><td style="padding-top:2px;color:#666">WARNING</td><td style="padding:2px 0 0 16px;text-align:right">%d</td></tr>`, r.WarningCount)
-		}
-		if r.ErrorCount != 0 {
-			fmt.Fprintf(w, `<tr><td style="padding-top:2px;color:#666">ERROR</td><td style="padding:2px 0 0 16px;text-align:right">%d</td></tr>`, r.ErrorCount)
+	if r.ValidCount+r.InvalidCount+r.ReplacedCount+r.DroppedCount != 0 {
+		if r.ValidCount != 0 {
+			fmt.Fprintf(w, `<tr><td style="padding-top:2px;color:#666">Counted</td><td style="padding:2px 0 0 16px;text-align:right">%d</td></tr><tr><td style="padding-top:2px;padding-bottom:6px;color:#666">Average Score</td><td style="padding:2px 0 6px 16px;text-align:right">%d%%</td></tr>`, r.ValidCount, r.AverageValidScore)
 		}
 		if r.InvalidCount != 0 {
 			fmt.Fprintf(w, `<tr><td style="padding-top:2px;color:#666">NOT COUNTED</td><td style="padding:2px 0 0 16px;color:#888;text-align:right">%d</td></tr>`, r.InvalidCount)
@@ -150,15 +148,25 @@ func (r *Report) emailMessages(w *quotedprintable.Writer) {
 
 	io.WriteString(w, `<div style="max-width:640px;margin-bottom:24px"><div style="font-size:20px;font-weight:bold;color:#444">Messages</div><table cellspacing="0" cellpadding="0">`)
 	for _, m := range r.Messages {
-		var multiple string
+		var color, multiple string
 		fmt.Fprintf(w, `<tr><td style="padding-top:4px;text-align:right">%s</td><td style="padding-top:4px;font-weight:bold">%s</td>`, html.EscapeString(m.Prefix), html.EscapeString(m.Suffix))
 		if m.Multiple {
 			multiple, hasMultiple = `*`, true
 		}
-		fmt.Fprintf(w, `<td style="padding:4px 0 0 16px">%s%s</td><td style="padding:4px 0 0 16px">%s</td><td style="padding:4px 0 0 16px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:%s">%s`,
-			m.Source, multiple, m.Jurisdiction, classColor[m.Class], classLabel[m.Class])
-		if m.Problem != "" {
-			fmt.Fprintf(w, `%s [<a href="%s/message?hash=%s">details</a>]`, m.Problem, serverURL, m.Hash)
+		switch {
+		case m.Score == 0:
+			color = "#888"
+		case m.Score == 100:
+			color = "green"
+		case m.Score >= 90:
+			color = "#ed7d31"
+		default:
+			color = "red"
+		}
+		fmt.Fprintf(w, `<td style="padding:4px 0 0 16px">%s%s</td><td style="padding:4px 0 0 16px">%s</td><td style="padding:4px 0 0 16px;text-align:right;color:%s">%d%%</td><td style="padding:4px 0 0 4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:%s">%s`,
+			m.Source, multiple, m.Jurisdiction, color, m.Score, color, html.EscapeString(m.Summary))
+		if m.Score != 100 {
+			fmt.Fprintf(w, ` [<a href="%s/message?hash=%s">details</a>]`, serverURL, m.Hash)
 		}
 		fmt.Fprint(w, `</td></tr>`)
 	}
@@ -171,18 +179,4 @@ func (r *Report) emailMessages(w *quotedprintable.Writer) {
 
 func (r *Report) emailGenInfo(w *quotedprintable.Writer) {
 	fmt.Fprintf(w, `<div>%s</div>`, html.EscapeString(r.GenerationInfo))
-}
-
-var classColor = map[string]string{
-	"ok":      "green",
-	"warning": "#ed7d31",
-	"error":   "red",
-	"invalid": "#888",
-}
-
-var classLabel = map[string]string{
-	"ok":      "OK",
-	"warning": "WARNING: ",
-	"error":   "ERROR: ",
-	"invalid": "NOT COUNTED: ",
 }

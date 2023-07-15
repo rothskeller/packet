@@ -30,8 +30,12 @@ func (s *StdFields) Decode(tags map[string]string) {
 }
 
 var (
-	decodeSeverityMap = map[string]string{"E": "EMERGENCY", "U": "URGENT", "O": "OTHER"}
-	decodeHandlingMap = map[string]string{"I": "IMMEDIATE", "P": "PRIORITY", "R": "ROUTINE"}
+	// DecodeSeverityMap maps severity codes, as returned by DecodeSubject,
+	// into Situation Severity values.
+	DecodeSeverityMap = map[string]string{"E": "EMERGENCY", "U": "URGENT", "O": "OTHER"}
+	// DecodeHandlingMap maps handling codes, as returned by DecodeSubject,
+	// into Handling values.
+	DecodeHandlingMap = map[string]string{"I": "IMMEDIATE", "P": "PRIORITY", "R": "ROUTINE"}
 )
 
 // DecodeSubject decodes an XSC-standard message subject line into its component
@@ -63,12 +67,6 @@ func DecodeSubject(line string) (msgid, severity, handling, formtag, subject str
 	} else {
 		handling = parts[1]
 	}
-	if s, ok := decodeSeverityMap[severity]; ok {
-		severity = s
-	}
-	if h, ok := decodeHandlingMap[handling]; ok {
-		handling = h
-	}
 	return
 }
 
@@ -93,7 +91,7 @@ func DecodePIFO(body string) (f *PIFOForm) {
 	if strings.HasPrefix(body, "!SCCoPIFO!\n") {
 		f = new(PIFOForm)
 		body = body[11:]
-	} else if idx := strings.Index(body, "\n!SCCOPIFO!\n"); idx >= 0 {
+	} else if idx := strings.Index(body, "\n!SCCoPIFO!\n"); idx >= 0 {
 		f = new(PIFOForm)
 		f.TextBefore, body = body[:idx+1], body[idx+12:]
 	} else {
@@ -125,10 +123,13 @@ func DecodePIFO(body string) (f *PIFOForm) {
 		}
 		f.TaggedValues[tag] = value
 	}
-	if !strings.HasPrefix(body, "!/ADDON!\n") {
+	if !strings.HasPrefix(body, "!/ADDON!") || (len(body) > 8 && body[8] != '\n') {
 		return nil
 	}
-	f.TextAfter = body[9:]
+	f.TextAfter = body[8:]
+	if len(f.TextAfter) != 0 && f.TextAfter[0] == '\n' {
+		f.TextAfter = f.TextAfter[1:]
+	}
 	return f
 }
 

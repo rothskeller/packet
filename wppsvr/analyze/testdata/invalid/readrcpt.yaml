@@ -5,13 +5,13 @@ message: |
   From: kc6rsc@w1xsc.ampr.org
   To: pkttue@w4xsc.ampr.org
   Date: Sun, 09 Jan 2022 20:00:00 -0800
-  Subject: READ: RSC-100P_R_Practice KC6RSC, Steve, SNY, 1/11/2022
+  Subject: READ: RSC-100P_R_Hello
 
   !RR!timestamp!
   Your Message
 
   To: kc6rsc@w1xsc.ampr.org
-  Subject: RSC-100P_R_Practice KC6RSC, Steve, SNY, 1/11/2022
+  Subject: RSC-100P_R_Hello
 
   was read on timestamp
 
@@ -20,17 +20,7 @@ stored:
   deliveryTime: 2022-01-09T20:00:00-08:00
   fromAddress: kc6rsc@w1xsc.ampr.org
   messageType: READ
-  subject: 'READ: RSC-100P_R_Practice KC6RSC, Steve, SNY, 1/11/2022'
-  problems:
-    - ReadReceipt
-  actions: 11
-
-# Messages that should be sent in response:
-responses:
-  - localID: TUE-101P
-    to: kc6rsc@w1xsc.ampr.org
-    subject: TUE-101P_R_Unexpected READ receipt message
-    bodyREs:
-      - read receipt
-      - will not be counted
-      - Outpost Configuration Instructions
+  summary: unexpected READ receipt message
+analysisREs:
+  - read receipt
+  - Outpost Configuration Instructions

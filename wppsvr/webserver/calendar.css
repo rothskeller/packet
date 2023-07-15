@@ -1,0 +1,101 @@
+#key {
+  margin-top: 1rem;
+  text-align: center;
+}
+#year {
+  margin-top: 1rem;
+  display: flex;
+  align-items: center;
+  white-space: nowrap;
+}
+#lastyear {
+  margin-right: 2rem;
+  color: transparent;
+}
+#thisyear {
+  text-align: center;
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: #444;
+}
+#nextyear {
+  margin-left: 2rem;
+  text-align: right;
+  color: transparent;
+}
+#calendar {
+  margin-top: 1rem;
+  display: grid;
+  grid: repeat(12, max-content) / max-content;
+  gap: 2rem;
+}
+@media (min-width: 35em) {
+  #calendar {
+    grid: repeat(6, max-content) / repeat(2, max-content);
+  }
+}
+@media (min-width: 52em) {
+  #calendar {
+    grid: repeat(4, max-content) / repeat(3, max-content);
+  }
+}
+@media (min-width: 67em) {
+  #calendar {
+    grid: repeat(3, max-content) / repeat(4, max-content);
+  }
+}
+.month {
+  display: grid;
+  grid: repeat(7, max-content) / repeat(7, 2rem);
+  gap: 1px;
+}
+.monthname {
+  grid-column: 1 / 8;
+  margin-bottom: 0.25rem;
+  justify-self: center;
+  font-size: 1.25rem;
+}
+.weekday {
+  justify-self: center;
+  font-size: 0.75rem;
+  color: #888;
+  margin-bottom: 0.25rem;
+}
+.day {
+  outline: 1px solid #ccc;
+  height: 2.4rem;
+  padding-left: 0.125rem;
+  line-height: 1.2;
+  cursor: pointer;
+  user-select: none;
+}
+.date {
+  color: #888;
+}
+.date a,
+.date a:visited {
+  color: #888;
+  text-decoration: none;
+}
+.net {
+  background-color: #eef;
+}
+.noci {
+  text-align: center;
+}
+.ok {
+  text-align: center;
+  color: green;
+}
+.warn {
+  text-align: center;
+  color: #ed7d31;
+}
+.error {
+  text-align: center;
+  color: red;
+}
+#edit {
+  display: block;
+  margin: 1.5rem auto;
+}

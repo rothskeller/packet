@@ -25,7 +25,7 @@ func main() {
 		err      error
 	)
 	allmsg.Register()
-	if err = config.Read(analyze.ProblemLabels); err != nil {
+	if err = config.Read(); err != nil {
 		log.Fatal(err)
 	}
 	if st, err = store.Open(); err != nil {

@@ -24,7 +24,7 @@ message: |
   8.: [B]
   9a.: [A]
   9b.: [B]
-  10.: [Practice KC6RSC, Steve, SNY, 1/11/2022]
+  10.: [Hello]
   12.: [Test Message]
   OpCall: [KC6RSC]
   Method: [Other]
@@ -40,12 +40,12 @@ stored:
   fromAddress: kc6rsc@w1xsc.ampr.org
   fromCallSign: KC6RSC
   fromBBS: W1XSC
-  subject: RSC-100P_R_ICS213_XXX
   messageType: ICS213
   jurisdiction: SNY
-  problems:
-    - FormSubject
-  actions: 7
+  score: 50
+  summary: message subject doesn't agree with form contents
+analysisREs:
+  - PackItForms automatically generates
 
 # Messages that should be sent in response:
 responses:
@@ -54,9 +54,3 @@ responses:
     subject: 'DELIVERED: RSC-100P_R_ICS213_XXX'
     bodyREs:
       - ^!LMI!TUE-100P!DR!01/11/2022 20:00:01\n
-  - localID: TUE-102P
-    to: kc6rsc@w1xsc.ampr.org
-    subject: TUE-102P_R_Message subject doesn't agree with form contents
-    bodyREs:
-      - 'has\n    Subject: RSC-100P_R_ICS213_XXX'
-      - 'should have\n    Subject: RSC-100P_R_ICS213_Practice'

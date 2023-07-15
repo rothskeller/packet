@@ -15,5 +15,8 @@ func decode(subject, body string) *UnknownForm {
 		TaggedValues: form.TaggedValues,
 	}
 	f.OriginMsgID, _, f.Handling, f.FormTag, f.Subject = common.DecodeSubject(subject)
+	if h := common.DecodeHandlingMap[f.Handling]; h != "" {
+		f.Handling = h
+	}
 	return &f
 }

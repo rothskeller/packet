@@ -39,10 +39,11 @@ stored:
   fromBBS: W1XSC
   jurisdiction: SNY
   messageType: JurisStat
-  subject: RSC-100P_R_MuniStat_Sunnyvale
-  problems:
-    - FormHandlingOrder
-  actions: 7
+  score: 50
+  summary: incorrect handling order for form
+analysisREs:
+  - should have handling order
+  - SCCo ARES/RACES Recommended Form Routing
 
 # Messages that should be sent in response:
 responses:
@@ -51,9 +52,3 @@ responses:
     subject: 'DELIVERED: RSC-100P_R_MuniStat_Sunnyvale'
     bodyREs:
       - ^!LMI!TUE-100P!DR!01/11/2022 20:00:01\n
-  - localID: TUE-102P
-    to: kc6rsc@w1xsc.ampr.org
-    subject: TUE-102P_R_Incorrect handling order for form
-    bodyREs:
-      - It should have handling order
-      - SCCo ARES/RACES Recommended Form Routing

@@ -5,7 +5,7 @@ message: |
   From: kc6rsc@w1xsc.ampr.org
   To: pkttue@w4xsc.ampr.org
   Date: Sun, 09 Jan 2022 20:00:00 -0800
-  Subject: Practice KC6RSC, Steve, SNY, 1/11/2022
+  Subject: Hello
 
   Test message
 
@@ -17,21 +17,16 @@ stored:
   fromBBS: W1XSC
   jurisdiction: SNY
   messageType: plain
-  subject: Practice KC6RSC, Steve, SNY, 1/11/2022
-  problems:
-    - SubjectFormat
-  actions: 7
+  score: 50
+  summary: incorrect subject line format
+analysisREs:
+  - incorrect subject line format
+  - Standard Packet Message Subject Line
 
 # Messages that should be sent in response:
 responses:
   - localID: TUE-101P
     to: kc6rsc@w1xsc.ampr.org
-    subject: 'DELIVERED: Practice KC6RSC, Steve, SNY, 1/11/2022'
+    subject: 'DELIVERED: Hello'
     bodyREs:
       - ^!LMI!TUE-100P!DR!01/11/2022 20:00:01\n
-  - localID: TUE-102P
-    to: kc6rsc@w1xsc.ampr.org
-    subject: TUE-102P_R_Incorrect subject line format
-    bodyREs:
-      - incorrect subject line format
-      - Standard Packet Message Subject Line

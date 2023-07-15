@@ -14,6 +14,9 @@ func decode(subject, body string) *CheckOut {
 	if formtag != "" || !strings.HasPrefix(strings.ToLower(realsubj), "check-out ") {
 		return nil
 	}
+	if h := common.DecodeHandlingMap[handling]; h != "" {
+		handling = h
+	}
 	if match := checkOutBodyRE.FindStringSubmatch(body); match != nil {
 		var ci = CheckOut{OriginMsgID: msgid, Handling: handling}
 		if match[3] != "" {

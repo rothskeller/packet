@@ -18,6 +18,7 @@ type DeliveryReceipt struct {
 	MessageSubject string
 	LocalMessageID string
 	DeliveredTime  string
+	ExtraText      string
 }
 
 // Type returns the message type definition.

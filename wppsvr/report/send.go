@@ -21,8 +21,8 @@ import (
 func Send(st Store, conn *jnos.Conn, session *store.Session) {
 	report := Generate(st, session)
 	sendTo := session.ReportToText
-	if len(sendTo) != 0 && sendTo[0] == "MESSAGE-SENDERS" {
-		sendTo = append(report.Participants, sendTo[1:]...)
+	if session.Flags&store.ReportToSenders != 0 {
+		sendTo = append(sendTo, report.Participants...)
 	}
 	session.Report = report.RenderPlainText()
 	st.UpdateSession(session)

@@ -6,6 +6,7 @@ message: |
 
 # Analysis that should be stored:
 stored:
-  problems:
-    - MessageCorrupt
-  actions: 10
+  summary: message could not be parsed
+analysisREs:
+  - RFC-5322
+  - malformed MIME header

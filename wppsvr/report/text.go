@@ -39,8 +39,12 @@ func (r *Report) plainTextTitle(sb *strings.Builder) {
 
 func (r *Report) plainTextExpectsResults(sb *strings.Builder) {
 	var wrapper = english.NewWrapper(sb)
-	fmt.Fprintf(wrapper, "EXPECTATIONS:  %s sent to %s between %s and %s",
-		english.Conjoin(r.MessageTypes, "or"), r.SentTo, r.SentAfter, r.SentBefore)
+	var hasModel string
+	if r.HasModel {
+		hasModel = "copy of model "
+	}
+	fmt.Fprintf(wrapper, "EXPECTATIONS:  %s%s sent to %s between %s and %s",
+		hasModel, english.Conjoin(r.MessageTypes, "or"), r.SentTo, r.SentAfter, r.SentBefore)
 	if r.NotSentFrom != "" {
 		fmt.Fprintf(wrapper, "; not sent from %s", r.NotSentFrom)
 	}
@@ -52,23 +56,15 @@ func (r *Report) plainTextExpectsResults(sb *strings.Builder) {
 	wrapper.Close()
 
 	sb.WriteString("---- RESULTS\n")
-	if r.OKCount+r.WarningCount+r.ErrorCount+r.InvalidCount+r.ReplacedCount+r.DroppedCount != 0 {
+	if r.ValidCount+r.InvalidCount+r.ReplacedCount+r.DroppedCount != 0 {
 		var lines, col1, col2 []string
-		if r.OKCount != 0 {
-			col1 = append(col1, strconv.Itoa(r.OKCount))
-			col2 = append(col2, "OK")
-		}
-		if r.WarningCount != 0 {
-			col1 = append(col1, strconv.Itoa(r.WarningCount))
-			col2 = append(col2, "WARNING")
-		}
-		if r.ErrorCount != 0 {
-			col1 = append(col1, strconv.Itoa(r.ErrorCount))
-			col2 = append(col2, "ERROR")
+		if r.ValidCount != 0 {
+			col1 = append(col1, strconv.Itoa(r.AverageValidScore), strconv.Itoa(r.ValidCount))
+			col2 = append(col2, "Average Score", "Counted")
 		}
 		if r.InvalidCount != 0 {
 			col1 = append(col1, strconv.Itoa(r.InvalidCount))
-			col2 = append(col2, "NOT COUNTED")
+			col2 = append(col2, "Not Counted")
 		}
 		if r.ReplacedCount != 0 {
 			col1 = append(col1, strconv.Itoa(r.ReplacedCount))
@@ -79,7 +75,10 @@ func (r *Report) plainTextExpectsResults(sb *strings.Builder) {
 			col2 = append(col2, "Delivery receipt")
 		}
 		rightAlign(col1)
-		lines = sideBySide(col1, col2, 2)
+		if r.ValidCount != 0 {
+			col1[0] += "%"
+		}
+		lines = sideBySide(col1, col2, 1)
 		for _, line := range lines {
 			sb.WriteString(line)
 			sb.WriteByte('\n')
@@ -88,13 +87,6 @@ func (r *Report) plainTextExpectsResults(sb *strings.Builder) {
 		sb.WriteString("0  Messages")
 	}
 	sb.WriteByte('\n')
-}
-
-var plainTextClassLabels = map[string]string{
-	"ok":      "OK",
-	"warning": "WARNING: ",
-	"error":   "ERROR: ",
-	"invalid": "NOT COUNTED: ",
 }
 
 func (r *Report) plainTextMessages(sb *strings.Builder) {
@@ -114,7 +106,7 @@ func (r *Report) plainTextMessages(sb *strings.Builder) {
 		}
 		col3 = append(col3, "@"+m.Source+multiple)
 		col4 = append(col4, "("+m.Jurisdiction+")")
-		col5 = append(col5, plainTextClassLabels[m.Class]+m.Problem)
+		col5 = append(col5, fmt.Sprintf("%3d%%  %s", m.Score, m.Summary))
 	}
 	rightAlign(col1)
 	col1 = sideBySide(col1, col2, 0)

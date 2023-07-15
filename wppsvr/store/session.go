@@ -10,57 +10,80 @@ is an internal implementation detail.
 
 import (
 	"database/sql"
-	"sort"
+	"fmt"
+	"io"
+	"os"
+	"path/filepath"
+	"strconv"
 	"strings"
 	"time"
 
-	"github.com/rothskeller/packet/wppsvr/config"
+	"github.com/rothskeller/packet/envelope"
+	"github.com/rothskeller/packet/message"
 	"github.com/rothskeller/packet/wppsvr/interval"
 )
 
 // A Session defines the parameters of a single session instance.
 type Session struct {
-	ID              int          `yaml:"id"`
-	CallSign        string       `yaml:"callSign"`
-	Name            string       `yaml:"name"`
-	Prefix          string       `yaml:"prefix"`
-	Start           time.Time    `yaml:"start"`
-	End             time.Time    `yaml:"end"`
-	ExcludeFromWeek bool         `yaml:"-"`
-	ReportToText    []string     `yaml:"-"`
-	ReportToHTML    []string     `yaml:"-"`
-	ToBBSes         []string     `yaml:"toBBSes"`
-	DownBBSes       []string     `yaml:"downBBSes"`
-	Retrieve        []*Retrieval `yaml:"retrieve"`
-	MessageTypes    []string     `yaml:"messageTypes"`
-	Modified        bool         `yaml:"-"`
-	Running         bool         `yaml:"-"`
-	Imported        bool         `yaml:"-"`
-	Report          string       `yaml:"-"`
+	ID           int          `yaml:"id"`
+	CallSign     string       `yaml:"callSign"`
+	Name         string       `yaml:"name"`
+	Prefix       string       `yaml:"prefix"`
+	Start        time.Time    `yaml:"start"`
+	End          time.Time    `yaml:"end"`
+	ReportToText []string     `yaml:"-"`
+	ReportToHTML []string     `yaml:"-"`
+	ToBBSes      []string     `yaml:"toBBSes"`
+	DownBBSes    []string     `yaml:"downBBSes"`
+	Retrieve     []*Retrieval `yaml:"retrieve"`
+	MessageTypes []string     `yaml:"messageTypes"`
+	ModelMessage string       `yaml:"modelMessage"`
+	Instructions string       `yaml:"instructions"`
+	RetrieveAt   string       `yaml:"retrieveAt"`
+	Report       string       `yaml:"-"`
+	Flags        SessionFlags `yaml:"flags"`
+
+	ModelMsg         ModelMessage      `yaml:"-"`
+	RetrieveInterval interval.Interval `yaml:"-"`
 }
 
 // A Retrieval describes a single scheduled retrieval for a session.
 type Retrieval struct {
-	When              string            `yaml:"interval"`
-	BBS               string            `yaml:"bbs"`
-	Mailbox           string            `yaml:"mailbox"`
-	DontKillMessages  bool              `yaml:"dontKillMessages"`
-	DontSendResponses bool              `yaml:"dontSendResponses"`
-	LastRun           time.Time         `yaml:"lastRun"`
-	Interval          interval.Interval `yaml:"-"`
+	BBS     string    `yaml:"bbs"`
+	LastRun time.Time `yaml:"lastRun"`
 }
+
+// A ModelMessage is a parsed message that can be used as a model.
+type ModelMessage interface {
+	message.Message
+	message.ICompare
+}
+
+// SessionFlags is a collection of flags describing a session.
+type SessionFlags uint8
+
+// Values for SessionFlags
+const (
+	Running SessionFlags = (1 << iota)
+	ExcludeFromWeek
+	DontKillMessages
+	DontSendResponses
+	Imported
+	Modified
+	ReportToSenders
+)
 
 // GetRunningSessions returns the (unordered) list of all running sessions.
 func (s *Store) GetRunningSessions() (list []*Session) {
 	// Running sessions are always realized in the database, because the act
 	// of setting their running flag causes them to be realized.  So this is
 	// just a database query.
-	return s.getSessionsWhere("running")
+	return s.getSessionsWhere("flags&1")
 }
 
-// ExistRealizedSessions returns whether any realized sessions exist in the
-// specified time range (inclusive start, exclusive end).
-func (s *Store) ExistRealizedSessions(start, end time.Time) bool {
+// ExistSessions returns whether any sessions exist in the specified time range
+// (inclusive start, exclusive end).
+func (s *Store) ExistSessions(start, end time.Time) bool {
 	var (
 		dummy int
 	)
@@ -76,61 +99,20 @@ func (s *Store) ExistRealizedSessions(start, end time.Time) bool {
 	}
 }
 
-// GetRealizedSessions returns the set of sessions that end during the specified time
-// range (inclusive start, exclusive end).  The sessions are sorted by end time,
-// then by call sign.  Only sessions that have actually started are included;
-// future defined sessions are not.
-func (s *Store) GetRealizedSessions(start, end time.Time) (list []*Session) {
-	return s.getSessionsWhere("end>=? AND end<? ORDER BY end, callsign", start, end)
+// GetSession returns the session with the specified ID, or nil if there is
+// none.
+func (s *Store) GetSession(id int) *Session {
+	if list := s.getSessionsWhere("id=?", id); len(list) != 0 {
+		return list[0]
+	}
+	return nil
 }
 
-// GetSessions returns the set of sessions that end during the specified time
-// range (inclusive start, exclusive end).  The sessions are sorted by end time,
-// then by call sign.
+// GetSessions returns the set of sessions that end during the specified
+// time range (inclusive start, exclusive end).  The sessions are sorted by end
+// time, then by call sign.
 func (s *Store) GetSessions(start, end time.Time) (list []*Session) {
-	var sched []*Session
-
-	// Start by retrieving all realized sessions in the range from the
-	// database.
-	list = s.getSessionsWhere("end>=? AND end<? ORDER BY end, callsign", start, end)
-	// If the end of the range is in the past, we're done.
-	if !time.Now().Before(end) {
-		return list
-	}
-	// Get the list of future sessions defined by the configuration for the
-	// specified range.
-	if start.Before(time.Now()) {
-		start = time.Now()
-	}
-	sched = getConfiguredSessions(start, end)
-	// Add those scheduled sessions to the list, but only where they don't
-	// overlap sessions already in the list.
-	for _, session := range sched {
-		var overlap bool
-		for _, listed := range list {
-			if sessionOverlap(session, listed) {
-				overlap = true
-				break
-			}
-		}
-		if !overlap {
-			list = append(list, session)
-		}
-	}
-	// Sort the resulting list.
-	sort.Slice(list, func(i, j int) bool {
-		if !list[i].End.Equal(list[j].End) {
-			return list[i].End.Before(list[j].End)
-		}
-		return list[i].CallSign < list[j].CallSign
-	})
-	return list
-}
-func sessionOverlap(a, b *Session) bool {
-	if a.CallSign != b.CallSign {
-		return false
-	}
-	return a.Start.Before(b.End) && b.Start.Before(a.End)
+	return s.getSessionsWhere("end>=? AND end<? ORDER BY end, callsign", start, end)
 }
 
 // getSessionsWhere returns the (unordered) list of sessions matching the
@@ -142,7 +124,7 @@ func (s *Store) getSessionsWhere(where string, args ...interface{}) (list []*Ses
 	)
 	s.mutex.RLock()
 	defer s.mutex.RUnlock()
-	rows, err = s.dbh.Query("SELECT id, callsign, name, prefix, start, end, excludefromweek, reporttotext, reporttohtml, tobbses, downbbses, messagetypes, modified, running, imported, report FROM session WHERE "+where, args...)
+	rows, err = s.dbh.Query("SELECT id, callsign, name, prefix, start, end, reporttotext, reporttohtml, tobbses, downbbses, messagetypes, modelmessage, instructions, retrieveat, report, flags FROM session WHERE "+where, args...)
 	if err != nil {
 		panic(err)
 	}
@@ -156,7 +138,7 @@ func (s *Store) getSessionsWhere(where string, args ...interface{}) (list []*Ses
 			messagetypes string
 			rows2        *sql.Rows
 		)
-		err = rows.Scan(&session.ID, &session.CallSign, &session.Name, &session.Prefix, &session.Start, &session.End, &session.ExcludeFromWeek, &reporttotext, &reporttohtml, &tobbses, &downbbses, &messagetypes, &session.Modified, &session.Running, &session.Imported, &session.Report)
+		err = rows.Scan(&session.ID, &session.CallSign, &session.Name, &session.Prefix, &session.Start, &session.End, &reporttotext, &reporttohtml, &tobbses, &downbbses, &messagetypes, &session.ModelMessage, &session.Instructions, &session.RetrieveAt, &session.Report, &session.Flags)
 		if err != nil {
 			panic(err)
 		}
@@ -165,17 +147,24 @@ func (s *Store) getSessionsWhere(where string, args ...interface{}) (list []*Ses
 		session.ToBBSes = split(tobbses)
 		session.DownBBSes = split(downbbses)
 		session.MessageTypes = split(messagetypes)
-		rows2, err = s.dbh.Query(`SELECT interval, bbs, mailbox, dontkillmessages, dontsendresponses, lastrun FROM retrieval WHERE session=?`, session.ID)
+		session.RetrieveInterval = interval.Parse(session.RetrieveAt)
+		if session.ModelMessage != "" {
+			if _, subject, body, err := envelope.ParseSaved(session.ModelMessage); err == nil {
+				session.ModelMsg = message.Decode(subject, body).(ModelMessage)
+			} else {
+				panic(err)
+			}
+		}
+		rows2, err = s.dbh.Query(`SELECT bbs, lastrun FROM retrieval WHERE session=?`, session.ID)
 		if err != nil {
 			panic(err)
 		}
 		for rows2.Next() {
 			var r Retrieval
 
-			if err = rows2.Scan(&r.When, &r.BBS, &r.Mailbox, &r.DontKillMessages, &r.DontSendResponses, &r.LastRun); err != nil {
+			if err = rows2.Scan(&r.BBS, &r.LastRun); err != nil {
 				panic(err)
 			}
-			r.Interval = interval.Parse(r.When)
 			session.Retrieve = append(session.Retrieve, &r)
 		}
 		if err = rows2.Err(); err != nil {
@@ -200,11 +189,11 @@ func (s *Store) CreateSession(session *Session) {
 	s.mutex.Lock()
 	defer s.mutex.Unlock()
 	tx, err = s.dbh.Begin()
-	result, err = tx.Exec("INSERT INTO session (callsign, name, prefix, start, end, excludefromweek, reporttotext, reporttohtml, tobbses, downbbses, messagetypes, modified, running, imported, report) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)",
-		session.CallSign, session.Name, session.Prefix, session.Start, session.End, session.ExcludeFromWeek,
+	result, err = tx.Exec("INSERT INTO session (callsign, name, prefix, start, end, reporttotext, reporttohtml, tobbses, downbbses, messagetypes, modelmessage, instructions, retrieveat, report, flags) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)",
+		session.CallSign, session.Name, session.Prefix, session.Start, session.End,
 		strings.Join(session.ReportToText, ";"), strings.Join(session.ReportToHTML, ";"), strings.Join(session.ToBBSes, ";"),
-		strings.Join(session.DownBBSes, ";"), strings.Join(session.MessageTypes, ";"),
-		session.Modified, session.Running, session.Imported, session.Report)
+		strings.Join(session.DownBBSes, ";"), strings.Join(session.MessageTypes, ";"), session.ModelMessage,
+		session.Instructions, session.RetrieveAt, session.Report, session.Flags)
 	if err != nil {
 		panic(err)
 	}
@@ -214,8 +203,8 @@ func (s *Store) CreateSession(session *Session) {
 	}
 	session.ID = int(id)
 	for _, r := range session.Retrieve {
-		_, err = tx.Exec("INSERT INTO retrieval (session, interval, bbs, mailbox, dontkillmessages, dontsendresponses, lastrun) VALUES (?,?,?,?,?,?,?)",
-			session.ID, r.When, r.BBS, r.Mailbox, r.DontKillMessages, r.DontSendResponses, r.LastRun)
+		_, err = tx.Exec("INSERT INTO retrieval (session, bbs, lastrun) VALUES (?,?,?)",
+			session.ID, r.BBS, r.LastRun)
 		if err != nil {
 			panic(err)
 		}
@@ -241,11 +230,11 @@ func (s *Store) UpdateSession(session *Session) {
 	if tx, err = s.dbh.Begin(); err != nil {
 		panic(err)
 	}
-	_, err = tx.Exec("UPDATE session SET (callsign, name, prefix, start, end, excludefromweek, reporttotext, reporttohtml, tobbses, downbbses, messagetypes, modified, running, imported, report) = (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?) WHERE id=?",
-		session.CallSign, session.Name, session.Prefix, session.Start, session.End, session.ExcludeFromWeek,
+	_, err = tx.Exec("UPDATE session SET (callsign, name, prefix, start, end, reporttotext, reporttohtml, tobbses, downbbses, messagetypes, modelmessage, instructions, retrieveat, report, flags) = (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?) WHERE id=?",
+		session.CallSign, session.Name, session.Prefix, session.Start, session.End,
 		strings.Join(session.ReportToText, ";"), strings.Join(session.ReportToHTML, ";"), strings.Join(session.ToBBSes, ";"),
-		strings.Join(session.DownBBSes, ";"), strings.Join(session.MessageTypes, ";"),
-		session.Modified, session.Running, session.Imported, session.Report, session.ID)
+		strings.Join(session.DownBBSes, ";"), strings.Join(session.MessageTypes, ";"), session.ModelMessage,
+		session.Instructions, session.RetrieveAt, session.Report, session.Flags, session.ID)
 	if err != nil {
 		panic(err)
 	}
@@ -253,8 +242,8 @@ func (s *Store) UpdateSession(session *Session) {
 		panic(err)
 	}
 	for _, r := range session.Retrieve {
-		_, err = tx.Exec("INSERT INTO retrieval (session, interval, bbs, mailbox, dontkillmessages, dontsendresponses, lastrun) VALUES (?,?,?,?,?,?,?)",
-			session.ID, r.When, r.BBS, r.Mailbox, r.DontKillMessages, r.DontSendResponses, r.LastRun)
+		_, err = tx.Exec("INSERT INTO retrieval (session, bbs, lastrun) VALUES (?,?,?)",
+			session.ID, r.BBS, r.LastRun)
 		if err != nil {
 			panic(err)
 		}
@@ -264,56 +253,55 @@ func (s *Store) UpdateSession(session *Session) {
 	}
 }
 
-// getConfiguredSessions returns the sessions defined by the configuration that
-// end during the specified time range (inclusive start, exclusive end).  They
-// may or may not be realized in the database; the ID fields are not filled in.
-func getConfiguredSessions(start, end time.Time) (list []*Session) {
-	for callSign, params := range config.Get().Sessions {
-		var sessend time.Time
-
-		if sessend = start.Truncate(time.Minute); !start.Equal(sessend) {
-			sessend = sessend.Add(time.Minute)
-		}
-		for ; sessend.Before(end); sessend = sessend.Add(time.Minute) {
-			var session Session
-
-			if !params.EndInterval.Match(sessend) {
-				continue
-			}
-			session.CallSign = callSign
-			session.Name = params.Name
-			session.Prefix = params.Prefix
-			session.End = sessend
-			for session.Start = sessend.Add(-time.Minute); !params.StartInterval.Match(session.Start); session.Start = session.Start.Add(-time.Minute) {
-			}
-			session.ReportToText = params.ReportTo.Text
-			session.ReportToHTML = params.ReportTo.HTML
-			session.ExcludeFromWeek = params.ExcludeFromWeek
-			session.ToBBSes = params.ToBBSes.AllFor(session.End)
-			session.DownBBSes = params.DownBBSes.AllFor(session.End)
-			session.MessageTypes = params.MessageTypes.AllFor(session.End)
-			session.Retrieve = make([]*Retrieval, len(params.Retrieve))
-			for i, pr := range params.Retrieve {
-				session.Retrieve[i] = &Retrieval{
-					When:              pr.When,
-					BBS:               pr.BBS,
-					Mailbox:           pr.Mailbox,
-					DontKillMessages:  pr.DontKillMessages,
-					DontSendResponses: pr.DontSendResponses,
-					Interval:          pr.Interval,
-				}
-			}
-			list = append(list, &session)
-		}
-	}
-	return list
-}
-
 // DeleteSession deletes a session.
 func (s *Store) DeleteSession(session *Session) {
 	s.mutex.Lock()
 	defer s.mutex.Unlock()
 	if _, err := s.dbh.Exec(`DELETE FROM session WHERE id=?`, session.ID); err != nil {
 		panic(err)
+	}
+}
+
+// ModelImageCount returns the number of model images associated with the
+// session.  The images use 1-based numbering, so they are numbered 1 through
+// the return value of this function, inclusive.
+func (s *Store) ModelImageCount(sid int) (count int) {
+	prefix := fmt.Sprintf("s%d", sid)
+	matches, _ := filepath.Glob(prefix + "p*.*")
+	for _, match := range matches {
+		pstr := match[len(prefix)+1 : len(match)-len(filepath.Ext(match))]
+		if pnum, err := strconv.Atoi(pstr); err == nil && pnum > count {
+			count = pnum
+		}
+	}
+	return count
+}
+
+// ModelImage returns an open file handle to the specified model image page
+// number, or nil if there is no such image.  Model image page numbers start at
+// 1.  It is the caller's responsibility to close the handle.
+func (s *Store) ModelImage(sid int, pnum int) (fh *os.File) {
+	matches, _ := filepath.Glob(fmt.Sprintf("s%dp%d.*", sid, pnum))
+	if len(matches) == 1 {
+		fh, _ = os.Open(matches[0])
+	}
+	return fh
+}
+
+// DeleteModelImages removes all model images for the specified session.
+func (s *Store) DeleteModelImages(sid int) {
+	prefix := fmt.Sprintf("s%d", sid)
+	matches, _ := filepath.Glob(prefix + "p*.*")
+	for _, match := range matches {
+		os.Remove(match)
+	}
+}
+
+// SaveModelImage saves the specified model image for the specified session.
+func (s *Store) SaveModelImage(sid int, pnum int, name string, body io.Reader) {
+	fname := fmt.Sprintf("s%dp%d%s", sid, pnum, filepath.Ext(name))
+	if fh, err := os.Create(fname); err == nil {
+		io.Copy(fh, body)
+		fh.Close()
 	}
 }

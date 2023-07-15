@@ -1,0 +1,21 @@
+#main {
+  max-width: 40rem;
+}
+#plainmodel {
+  display: grid;
+  grid: auto-flow / max-content auto;
+  gap: 0.25rem 1rem;
+}
+#plainmodel div:nth-child(2n+1) {
+  font-weight: bold;
+}
+#plainmodel div:nth-child(2n) {
+  font-family: ui-monospace, SFMono-Regular, Consolas, 'Liberation Mono', Menlo, monospace;
+  white-space: pre-wrap;
+}
+@media print {
+  .modelimage {
+    width: 100%;
+    break-before: page;
+  }
+}

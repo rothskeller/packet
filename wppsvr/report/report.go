@@ -24,17 +24,17 @@ type Report struct {
 	SessionDate         string
 	Preliminary         bool
 	MessageTypes        []string
+	HasModel            bool
 	SentTo              string
 	SentBefore          string
 	SentAfter           string
 	NotSentFrom         string
 	Modified            bool
-	OKCount             int
-	WarningCount        int
-	ErrorCount          int
+	ValidCount          int
 	InvalidCount        int
 	ReplacedCount       int
 	DroppedCount        int
+	AverageValidScore   int
 	uniqueCallSigns     map[string]struct{}
 	UniqueCallSigns     int
 	UniqueCallSignsWeek int
@@ -70,6 +70,6 @@ type Message struct {
 	Source       string
 	Multiple     bool
 	Jurisdiction string
-	Class        string
-	Problem      string
+	Score        int
+	Summary      string
 }

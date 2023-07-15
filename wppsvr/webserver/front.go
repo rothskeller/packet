@@ -1,19 +1,13 @@
 package webserver
 
 import (
-	_ "embed" // -
-	"fmt"
-	"io"
 	"net/http"
-	"strings"
 	"time"
 
+	"github.com/rothskeller/packet/wppsvr/htmlb"
 	"github.com/rothskeller/packet/wppsvr/report"
 	"github.com/rothskeller/packet/wppsvr/store"
 )
-
-//go:embed "front.html"
-var frontHTML []byte
 
 // serveFrontPage handles GET / requests.  These could be either page requests,
 // asking for HTML, or fetch requests, asking for JSON.
@@ -22,89 +16,71 @@ func (ws *webserver) serveFrontPage(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "404 Not Found", http.StatusNotFound)
 		return
 	}
+	// We will include on the front page any sessions that end between the
+	// beginning of today and the end of the day six days forward.
+	now := time.Now()
+	start := time.Date(now.Year(), now.Month(), now.Day(), 0, 0, 0, 0, time.Local)
+	end := start.AddDate(0, 0, 7)
+	sessions := ws.st.GetSessions(start, end)
+	// If any of those sessions end within 4 minutes, our refresh time
+	// should be one minute after they end.  (The one minute delay allows
+	// time for the final retrieval.)  Otherwise, our refresh time should
+	// be 5 minutes.
+	refresh := 5 * 60
+	for _, session := range sessions {
+		delay := int(time.Until(session.End)/time.Second) + 60
+		if delay < refresh {
+			refresh = delay
+		}
+	}
+	// Start the HTML page.
 	w.Header().Set("Cache-Control", "nostore")
-	if strings.Contains(r.Header.Get("Accept"), "text/html") {
-		w.Header().Set("Content-Type", "text/html; charset=utf-8")
-		w.Write(frontHTML)
-		w.Write([]byte(`<script>var wppdata=`))
-		ws.emitFrontJSON(w)
-		w.Write([]byte(`;</script>`))
-	} else {
-		w.Header().Set("Content-Type", "application/json; charset=utf-8")
-		ws.emitFrontJSON(w)
+	w.Header().Set("Content-Type", "text/html; charset=utf-8")
+	html := htmlb.HTML(w)
+	defer html.Close()
+	html.E("meta charset=utf-8")
+	html.E("title>Weekly Packet Practice - Santa Clara County ARES/RACES")
+	html.E("meta name=viewport content='width=device-width, initial-scale=1'")
+	html.E("meta http-equiv=refresh content=%d", refresh)
+	html.E("link rel=stylesheet href=/static/common.css")
+	html.E("link rel=stylesheet href=/static/front.css")
+	html.E("script src=/static/front.js")
+	html.E("div id=org>Santa Clara County ARES<sup>®</sup>/RACES")
+	html.E("div id=title>Weekly Packet Practice")
+	// Render the rest of the page.
+	ws.renderSessionData(html, sessions)
+	renderLoginForm(html)
+}
+
+// renderSessionData renders the sessions on the page.
+func (ws *webserver) renderSessionData(html *htmlb.Element, sessions []*store.Session) {
+	flow := html.E("div id=sessions")
+	for _, session := range sessions {
+		bubble := flow.E("div class=bubble")
+		bubble.E("div class=label>%s", session.Name)
+		bubble.E("div class=date>%s", session.End.Format("Monday, January 2"))
+		bubble.E("a class=instructions href=/instructions?session=%d", session.ID).R("Instructions")
+		rep := report.Generate(ws.st, session)
+		bubble.E("div class=count>%d", rep.UniqueCallSigns)
+		if rep.UniqueCallSigns != 0 {
+			bubble.E("div class=score>%d", rep.AverageValidScore)
+		}
+		if session.Flags&store.Running != 0 {
+			bubble.E("div class=preliminary>preliminary")
+		}
 	}
 }
 
-// emitFrontJSON emits the JSON data for the front page.
-func (ws *webserver) emitFrontJSON(w io.Writer) {
-	var week1, week2, nextUpdate time.Time
-	var reload time.Duration
-
-	switch now := time.Now(); now.Weekday() {
-	case time.Sunday, time.Monday, time.Tuesday:
-		// On Sunday through Tuesday, show last week and this week.
-		week2 = now.AddDate(0, 0, -int(now.Weekday()))
-	default:
-		// On Wednesday through Saturday, show this week and next week.
-		week2 = now.AddDate(0, 0, 7-int(now.Weekday()))
-	}
-	week1 = week2.AddDate(0, 0, -7)
-	io.WriteString(w, "{")
-	ws.emitFrontJSONWeek(w, "week1", week1)
-	nextUpdate = ws.emitFrontJSONWeek(w, "week2", week2)
-	reload = time.Until(nextUpdate) + time.Minute
-	if reload > 5*time.Minute {
-		reload = 5 * time.Minute
-	}
-	fmt.Fprintf(w, `"reload":%d}`, reload/time.Second)
-}
-
-// emitFrontJSONWeek emits the data for a single week.
-func (ws *webserver) emitFrontJSONWeek(w io.Writer, name string, date time.Time) (nextUpdate time.Time) {
-	var specs, svecs *store.Session
-
-	date = time.Date(date.Year(), date.Month(), date.Day(), 0, 0, 0, 0, time.Local)
-	for _, session := range ws.st.GetSessions(date, date.AddDate(0, 0, 7)) {
-		switch session.CallSign {
-		case "PKTMON":
-			specs = session
-		case "PKTTUE":
-			svecs = session
-		}
-	}
-	fmt.Fprintf(w, `"%s":"%s",`, name, date.Format("January 2"))
-	if specs != nil {
-		r := report.Generate(ws.st, specs)
-		fmt.Fprintf(w, `"%sspecs":{"date":"%s","count":%d`, name, specs.End.Format("January 2"), r.UniqueCallSigns)
-		if count := r.OKCount + r.WarningCount + r.ErrorCount; count != 0 {
-			pct := (r.OKCount + r.WarningCount) * 100 / count
-			fmt.Fprintf(w, `,"correct":%d`, pct)
-		}
-		if specs.Running {
-			io.WriteString(w, `,"preliminary":true`)
-		}
-		io.WriteString(w, `},`)
-	}
-	if svecs != nil {
-		r := report.Generate(ws.st, svecs)
-		fmt.Fprintf(w, `"%ssvecs":{"date":"%s","count":%d`, name, svecs.End.Format("January 2"), r.UniqueCallSigns)
-		if count := r.OKCount + r.WarningCount + r.ErrorCount; count != 0 {
-			pct := (r.OKCount + r.WarningCount) * 100 / count
-			fmt.Fprintf(w, `,"correct":%d`, pct)
-		}
-		if svecs.Running {
-			io.WriteString(w, `,"preliminary":true`)
-		}
-		io.WriteString(w, `},`)
-		if r.UniqueCallSignsWeek != 0 {
-			fmt.Fprintf(w, `"%scombined":%d,`, name, r.UniqueCallSignsWeek)
-		}
-	}
-	if specs != nil && specs.Running {
-		return specs.End
-	} else if svecs != nil && svecs.Running {
-		return svecs.End
-	} else {
-		return time.Now().Add(5 * time.Minute)
-	}
+// renderLoginForm renders the login form on the page.
+func renderLoginForm(html *htmlb.Element) {
+	html.E("div id=login>For more detail, please log in.")
+	form := html.E("form id=form")
+	form.E("label for=callsign>Call Sign")
+	form.E("input type=text id=callsign name=callsign")
+	form.E("label for=password>Password")
+	form.E("input type=password id=password name=password")
+	form.E("div id=pwdhint>Use your password from scc-ares-races.org.")
+	submit := form.E("div id=submitline")
+	submit.E("input type=submit value='Log In'")
+	submit.E("span id=login-incorrect style=display:none>Login incorrect")
 }

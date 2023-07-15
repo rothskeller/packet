@@ -10,7 +10,6 @@ import (
 	"strings"
 
 	"github.com/rothskeller/packet/message/allmsg"
-	"github.com/rothskeller/packet/wppsvr/analyze"
 	"github.com/rothskeller/packet/wppsvr/config"
 )
 
@@ -20,7 +19,7 @@ func main() {
 		os.Exit(2)
 	}
 	allmsg.Register()
-	config.Read(analyze.ProblemLabels)
+	config.Read()
 	bbs := config.Get().BBSes[strings.ToUpper(os.Args[1])]
 	if bbs == nil {
 		fmt.Fprintf(os.Stderr, "ERROR: no such BBS %q\n", os.Args[1])

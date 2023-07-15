@@ -11,7 +11,6 @@ import (
 	"time"
 
 	"github.com/rothskeller/packet/message/allmsg"
-	"github.com/rothskeller/packet/wppsvr/analyze"
 	"github.com/rothskeller/packet/wppsvr/config"
 	"github.com/rothskeller/packet/wppsvr/report"
 	"github.com/rothskeller/packet/wppsvr/store"
@@ -36,7 +35,7 @@ func main() {
 		os.Exit(2)
 	}
 	allmsg.Register()
-	if err = config.Read(analyze.ProblemLabels); err != nil {
+	if err = config.Read(); err != nil {
 		log.Fatal(err)
 	}
 	if st, err = store.Open(); err != nil {

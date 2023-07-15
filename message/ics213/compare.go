@@ -27,7 +27,6 @@ func (exp *ICS213) Compare(actual message.Message) (score, outOf int, fields []*
 		}}
 	}
 	fields = []*message.CompareField{
-		common.CompareExact("Origin Message Number", exp.OriginMsgID, act.OriginMsgID),
 		common.CompareDate("Date", exp.Date, act.Date),
 		common.CompareTime("Time", exp.Time, act.Time),
 		common.CompareExact("Situation Severity", exp.Severity, act.Severity),
@@ -35,7 +34,7 @@ func (exp *ICS213) Compare(actual message.Message) (score, outOf int, fields []*
 		common.CompareExact("Take Action", exp.TakeAction, act.TakeAction),
 		common.CompareExact("Reply", exp.Reply, act.Reply),
 		common.CompareText("Reply By", exp.ReplyBy, act.ReplyBy),
-		common.CompareExactMap("For Your Information", exp.FYI, act.FYI, common.CheckboxValueMap),
+		common.CompareCheckbox("For Your Information", exp.FYI, act.FYI),
 		common.CompareText("To ICS Position", exp.ToICSPosition, act.ToICSPosition),
 		common.CompareText("To Location", exp.ToLocation, act.ToLocation),
 		common.CompareText("To Name", exp.ToName, act.ToName),
@@ -47,6 +46,9 @@ func (exp *ICS213) Compare(actual message.Message) (score, outOf int, fields []*
 		common.CompareText("Subject", exp.Subject, act.Subject),
 		common.CompareExact("Reference", exp.Reference, act.Reference),
 		common.CompareText("Message", exp.Message, act.Message),
+		common.CompareExact("Receiver/Sender", exp.ReceivedSent, act.ReceivedSent),
+		common.CompareExact("How Sent", exp.TxMethod, act.TxMethod),
+		common.CompareExact("How Sent (other)", exp.OtherMethod, act.OtherMethod),
 	}
 	return common.ConsolidateCompareFields(fields)
 }
