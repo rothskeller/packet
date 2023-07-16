@@ -144,7 +144,7 @@ func (st *Store) SaveMessage(m *Message) {
 
 	st.mutex.Lock()
 	defer st.mutex.Unlock()
-	_, err = st.dbh.Exec("INSERT INTO message (id, hash, deliverytime, message, session, fromaddress, fromcallsign, frombbs, tobbs, jurisdiction, messagetype, score, summary, analysis) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?)",
+	_, err = st.dbh.Exec("INSERT OR REPLACE INTO message (id, hash, deliverytime, message, session, fromaddress, fromcallsign, frombbs, tobbs, jurisdiction, messagetype, score, summary, analysis) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?)",
 		m.LocalID, m.Hash, m.DeliveryTime, m.Message, m.Session, m.FromAddress, m.FromCallSign, m.FromBBS, m.ToBBS, m.Jurisdiction, m.MessageType, m.Score, m.Summary, m.Analysis)
 	if err != nil {
 		panic(err)

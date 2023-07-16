@@ -48,20 +48,20 @@ func main() {
 		os.Exit(2)
 	}
 	messages = st.GetSessionMessages(session.ID)
-	st.DeleteSession(session)
-	st.CreateSession(session)
 	for _, message := range messages {
 		analysis := analyze.Analyze(st, session, message.ToBBS, message.Message)
-		responses := analysis.Responses(st)
-		for _, response := range responses {
-			response.SendTime = time.Now()
-		}
+		// responses := analysis.Responses(st)
+		// for _, response := range responses {
+		// 	response.SendTime = time.Now()
+		// }
 		analysis.Commit(st)
-		for _, response := range responses {
-			st.SaveResponse(response)
-		}
+		// for _, response := range responses {
+		// 	st.SaveResponse(response)
+		// }
 	}
-	rpt := report.Generate(st, session)
-	session.Report = rpt.RenderPlainText()
-	st.UpdateSession(session)
+	if session.Flags&store.Running == 0 && session.Report != "" {
+		rpt := report.Generate(st, session)
+		session.Report = rpt.RenderPlainText()
+		st.UpdateSession(session)
+	}
 }
