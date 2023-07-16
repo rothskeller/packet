@@ -413,9 +413,9 @@ func (a *Analysis) compareAgainstModel() {
 		return // No need to emit the comparison.
 	}
 	a.setSummary("message not transcribed correctly")
-	a.analysis.WriteString(`<h2>Message Not Transcribed Correctly</h2><p>There are differences between this message and the model message provided for this practice session:</p><div class="comparison"><div class="head"><div class="label">Field Name</div><div class="value">Model Message</div><div class="value">Received Message</div></div>`)
+	a.analysis.WriteString(`<h2>Message Not Transcribed Correctly</h2><p>There are differences between this message and the model message provided for this practice session:</p><div class="comparison"><div class="head"><div class="label">Field Name</div><div class="vmodel">Model Message</div><div class="vrecv">Received Message</div></div>`)
 	for _, f := range fields {
-		fmt.Fprintf(a.analysis, `<div class="field"><div class="label">%s</div><div class="value">%s</div><div class="value">%s</div></div>`,
+		fmt.Fprintf(a.analysis, `<div class="field"><div class="label">%s</div><div class="vmodel">%s</div><div class="vrecv">%s</div></div>`,
 			html.EscapeString(f.Label), formatFieldValue(f.Expected, f.ExpectedMask), formatFieldValue(f.Actual, f.ActualMask))
 	}
 	a.analysis.WriteString(`</div>`)
