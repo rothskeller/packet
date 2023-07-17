@@ -94,7 +94,7 @@ func (ws *webserver) serveInstructions(w http.ResponseWriter, r *http.Request) {
 		session.CallSign, session.Start.Format("15:04 on Monday"), session.End.Format("15:04 on Monday"))
 	switch len(session.DownBBSes) {
 	case 0:
-		break
+		para.R(" There are no simulated BBS outages for this session.")
 	case 1:
 		para.TF(" Do not use or send to %s during this session; it has a simulated outage.", session.DownBBSes[0])
 	default:
