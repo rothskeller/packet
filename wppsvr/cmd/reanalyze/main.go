@@ -49,19 +49,28 @@ func main() {
 	}
 	messages = st.GetSessionMessages(session.ID)
 	for _, message := range messages {
-		analysis := analyze.Analyze(st, session, message.ToBBS, message.Message)
-		// responses := analysis.Responses(st)
-		// for _, response := range responses {
-		// 	response.SendTime = time.Now()
-		// }
-		analysis.Commit(st)
-		// for _, response := range responses {
-		// 	st.SaveResponse(response)
-		// }
+		var fs = &filteredStore{st: st, id: message.LocalID}
+		analysis := analyze.Analyze(fs, session, message.ToBBS, message.Message)
+		analysis.Commit(fs)
 	}
 	if session.Flags&store.Running == 0 && session.Report != "" {
 		rpt := report.Generate(st, session)
 		session.Report = rpt.RenderPlainText()
 		st.UpdateSession(session)
 	}
+}
+
+type filteredStore struct {
+	st *store.Store
+	id string
+}
+
+func (fs *filteredStore) HasMessageHash(string) string {
+	return "" // we never already have the message.
+}
+func (fs *filteredStore) NextMessageID(string) string {
+	return fs.id // return the ID that the message was given originally
+}
+func (fs *filteredStore) SaveMessage(m *store.Message) {
+	fs.SaveMessage(m)
 }
