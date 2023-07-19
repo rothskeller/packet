@@ -13,9 +13,11 @@
   font-family: ui-monospace, SFMono-Regular, Consolas, 'Liberation Mono', Menlo, monospace;
   white-space: pre-wrap;
 }
+.modelimage {
+  width: 100%;
+}
 @media print {
   .modelimage {
-    width: 100%;
     break-before: page;
   }
 }
