@@ -37,6 +37,9 @@ func (s *StdFields) EncodeFooter(enc *PIFOEncoder) {
 
 // EncodeSubject encodes an XSC-standard message subject line.
 func EncodeSubject(msgid, handling, formtag, subject string) string {
+	if msgid == "" && handling == "" && formtag == "" {
+		return subject
+	}
 	if handling != "" {
 		handling = handling[:1]
 	}

@@ -11,7 +11,7 @@ import (
 
 func TestRoundTrip(t *testing.T) {
 	message.Register(&ics213.Type)
-	ics213 := message.Create("ICS213", "AA6AAA", "Nobody").(*ics213.ICS213)
+	ics213 := message.Create("ICS213").(*ics213.ICS213)
 	ics213.PIFOVersion = "3.9"
 	ics213.Subject = "Subject"
 	ics213.Message = "Message"

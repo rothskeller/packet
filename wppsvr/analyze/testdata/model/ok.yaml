@@ -18,6 +18,8 @@ session:
     9b.: [B]
     10.: [Hello]
     12.: [Test Message]
+    Method: [Other]
+    Other: [Packet]
     !/ADDON!
 
 # Message being analyzed:

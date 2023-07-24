@@ -7,10 +7,10 @@ import (
 	"time"
 )
 
-// RenderSaved renders the supplied envelope, subject, and body, in a form
-// suitable for later reading by ParseSaved.  Note that a few envelope fields
-// are not preserved, as noted in their documentation.
-func (env *Envelope) RenderSaved(subject, body string) string {
+// RenderSaved renders the supplied envelope and body, in a form suitable for
+// later reading by ParseSaved.  Note that a few envelope fields are not
+// preserved, as noted in their documentation.
+func (env *Envelope) RenderSaved(body string) string {
 	var sb strings.Builder
 	if env.ReceivedBBS != "" {
 		if env.ReceivedArea != "" {
@@ -21,14 +21,17 @@ func (env *Envelope) RenderSaved(subject, body string) string {
 				env.ReceivedBBS, env.ReceivedDate.Format(time.RFC1123Z))
 		}
 	}
+	if !env.IsFinal() && env.ReadyToSend {
+		sb.WriteString("X-Packet-Queued: true\n")
+	}
 	if env.From != "" {
 		fmt.Fprintf(&sb, "From: %s\n", env.From)
 	}
 	if len(env.To) != 0 {
 		fmt.Fprintf(&sb, "To: %s\n", strings.Join(env.To, ",\n\t"))
 	}
-	if subject != "" {
-		fmt.Fprintf(&sb, "Subject: %s\n", subject)
+	if env.SubjectLine != "" {
+		fmt.Fprintf(&sb, "Subject: %s\n", env.SubjectLine)
 	}
 	if !env.Date.IsZero() {
 		fmt.Fprintf(&sb, "Date: %s\n", env.Date.Format(time.RFC1123Z))

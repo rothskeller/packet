@@ -29,7 +29,9 @@ type Envelope struct {
 	// set only on messages retrieved from JNOS (as opposed to local
 	// storage).
 	BBSReceivedDate time.Time
-	// From is the sender of the message, from the From: header.
+	// From is the sender of the message, from the From: header.  Note that
+	// while From: headers are allowed by RFC-5322 to have more than one
+	// address, only the first one is stored in this field.
 	From string
 	// To is the set of destination addresses for the message, the union of
 	// the To:, Cc:, and Bcc: headers.
@@ -38,6 +40,8 @@ type Envelope struct {
 	// header.  It is set only for messages that have gone over the air
 	// (received or transmitted).
 	Date time.Time
+	// SubjectLine is the subject line of the message.
+	SubjectLine string
 	// NotPlainText is a flag indicating that the received message was not
 	// in plain text encoding.  This is a non-persistent field, set only for
 	// messages retrieved from JNOS (as opposed to local storage).
@@ -54,6 +58,10 @@ type Envelope struct {
 	// should send a read receipt for the message to its sender, when the
 	// message is first read by a human.
 	RequestReadReceipt bool
+	// ReadyToSend is a flag indicating that the (outgoing, untransmitted)
+	// message is ready to be sent.  When false, the message is a draft.
+	// This field is ignored for received or transmitted messages.
+	ReadyToSend bool
 }
 
 // IsReceived returns whether the message was received (as opposed to sent or

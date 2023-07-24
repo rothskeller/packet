@@ -10,10 +10,10 @@ import (
 func (m *CheckIn) EncodeSubject() string {
 	if m.TacticalCallSign != "" {
 		return common.EncodeSubject(m.OriginMsgID, m.Handling, "",
-			fmt.Sprintf("Check-In %s, %s\n", m.TacticalCallSign, m.TacticalStationName))
+			fmt.Sprintf("Check-In %s, %s", m.TacticalCallSign, m.TacticalStationName))
 	}
 	return common.EncodeSubject(m.OriginMsgID, m.Handling, "",
-		fmt.Sprintf("Check-In %s, %s\n", m.OperatorCallSign, m.OperatorName))
+		fmt.Sprintf("Check-In %s, %s", m.OperatorCallSign, m.OperatorName))
 }
 
 // EncodeBody encodes the message body.

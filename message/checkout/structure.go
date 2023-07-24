@@ -19,6 +19,16 @@ type CheckOut struct {
 	TacticalStationName string
 	OperatorCallSign    string
 	OperatorName        string
+	edit                *checkOutEdit
+}
+type checkOutEdit struct {
+	OriginMsgID         message.EditField
+	Handling            message.EditField
+	TacticalCallSign    message.EditField
+	TacticalStationName message.EditField
+	OperatorCallSign    message.EditField
+	OperatorName        message.EditField
+	fields              []*message.EditField
 }
 
 // Type returns the message type definition.

@@ -45,6 +45,7 @@ type ICS213 struct {
 	OtherMethod      string
 	OpDate           string
 	OpTime           string
+	edit             *ics213Edit
 }
 
 // Type returns the message type definition.

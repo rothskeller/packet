@@ -80,12 +80,11 @@ func (ws *webserver) serveInstructions(w http.ResponseWriter, r *http.Request) {
 		para.R(" plain text message with the text shown below")
 	default:
 		para.TF("the %s shown below", msg.Type().Name)
-		if f, ok := msg.(message.IKeyFields); ok {
-			kf := f.KeyFields()
-			if kf.Handling == "" {
+		if f, ok := msg.(message.KnownForm); ok {
+			if f.GetHandling() == "" {
 				needHandling = true
 			}
-			if kf.ToICSPosition == "" || kf.ToLocation == "" {
+			if kf := f.KeyFields(); kf.ToICSPosition == "" || kf.ToLocation == "" {
 				needDestination = true
 			}
 		}

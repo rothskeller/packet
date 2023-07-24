@@ -93,7 +93,7 @@ func (a *Analysis) messageCounts(parseErr error) bool {
 	if match := fromBBSRE.FindStringSubmatch(a.env.ReturnAddr); match != nil {
 		a.sm.FromBBS = strings.ToUpper(match[1])
 	}
-	if f, ok := a.msg.(message.IKeyFields); ok {
+	if f, ok := a.msg.(message.KnownForm); ok {
 		a.key = f.KeyFields()
 	}
 	if match := fromCallSignRE.FindStringSubmatch(a.env.ReturnAddr); match != nil && (fccCallSignRE.MatchString(match[1]) || a.sm.FromBBS != "") {
@@ -109,7 +109,7 @@ func (a *Analysis) messageCounts(parseErr error) bool {
 	}
 	if a.sm.FromCallSign == "" {
 		a.setSummary("no call sign in message")
-		if _, ok := a.msg.(message.IKeyFields); ok {
+		if _, ok := a.msg.(message.KnownForm); ok {
 			a.analysis.WriteString(`<h2>No Call Sign in Message</h2><p>This message cannot be counted because it’s not clear who sent it.  There is no call sign in the return address or in the Operator Call field of the form.  In order for the message to count, there must be a call sign in at least one of those places.</p>`)
 		} else {
 			a.analysis.WriteString(`<h2>No Call Sign in Message</h2><p>This message cannot be counted because it’s not clear who sent it.  There is no call sign in the return address.  In order the message to count, it must come from a BBS mailbox or email account whose name is a call sign.`)
@@ -162,16 +162,14 @@ func (a *Analysis) checkCorrectness() {
 	// Some checks only apply to form messages (of known form types).
 	if a.key != nil {
 		// Make sure the message subject matches the form.
-		if f, ok := a.msg.(message.IEncode); ok {
-			a.outOf++
-			subject := f.EncodeSubject()
-			if a.subject != subject && a.subject != strings.TrimRight(subject, " ") {
-				a.setSummary("message subject doesn't agree with form contents")
-				fmt.Fprintf(a.analysis, `<h2>Message Subject Doesn’t Agree with Form Contents</h2><p style="margin-bottom:0">This message has</p><div style="margin-left:2rem"><tt>Subject: %s</tt></div><div>but, based on the contents of the form, it should have</div><div style="margin-left:2rem"><tt>Subject: %s</tt></div><p style="margin-top:0">PackItForms automatically generates the Subject line from the form contents; it should not be overridden manually.</p>`,
-					html.EscapeString(a.subject), html.EscapeString(subject))
-			} else {
-				a.score++
-			}
+		a.outOf++
+		subject := a.msg.EncodeSubject()
+		if a.subject != subject && a.subject != strings.TrimRight(subject, " ") {
+			a.setSummary("message subject doesn't agree with form contents")
+			fmt.Fprintf(a.analysis, `<h2>Message Subject Doesn’t Agree with Form Contents</h2><p style="margin-bottom:0">This message has</p><div style="margin-left:2rem"><tt>Subject: %s</tt></div><div>but, based on the contents of the form, it should have</div><div style="margin-left:2rem"><tt>Subject: %s</tt></div><p style="margin-top:0">PackItForms automatically generates the Subject line from the form contents; it should not be overridden manually.</p>`,
+				html.EscapeString(a.subject), html.EscapeString(subject))
+		} else {
+			a.score++
 		}
 		// Make sure the message is valid according to PackItForms' rules.
 		if f, ok := a.msg.(message.IValidate); ok {
@@ -203,7 +201,7 @@ func (a *Analysis) checkCorrectness() {
 		} else {
 			a.score++
 		}
-		a.checkMessageNumber(a.key.OriginMsgID)
+		a.checkMessageNumber()
 	} else { // checks for plain text messages (or forms of unknown type)
 		// Check the message subject format.
 		a.outOf += 3
@@ -212,7 +210,7 @@ func (a *Analysis) checkCorrectness() {
 			a.setSummary("incorrect subject line format")
 			a.analysis.WriteString(`<h2>Incorrect Subject Line Format</h2><p>This message has an incorrect subject line format.  According to the SCCo “Standard Packet Message Subject Line” (available on the <a href="https://www.scc-ares-races.org/data/packet/index.html">“Packet BBS Service” page</a> of the county ARES website), the subject line should look like <tt>AAA-111P_R_Subject</tt>, where <tt>AAA-111P</tt> is the message number, <tt>R</tt> is the handling order code, and <tt>Subject</tt> is the message subject.</p>`)
 		} else {
-			a.checkMessageNumber(msgid)
+			a.checkMessageNumber()
 			a.score++
 			if severity != "" {
 				a.setSummary("severity on subject line")
@@ -256,7 +254,8 @@ func nonASCII(r rune) bool {
 
 // checkMessageNumber checks the validity of the message number passed to it.
 // (It comes from different places in forms and non-forms messages.)
-func (a *Analysis) checkMessageNumber(msgid string) {
+func (a *Analysis) checkMessageNumber() {
+	msgid := a.msg.(message.HumanMessage).GetOriginID()
 	if msgid != "" {
 		a.outOf++
 		if !msgnumRE.MatchString(msgid) {
@@ -286,12 +285,13 @@ func (a *Analysis) checkNonModel() {
 		// Make sure the message has a destination allowed by the
 		// recommended routing cheat sheet.
 		var (
-			mtc      *config.MessageTypeConfig
-			badpos   bool
-			badloc   bool
-			exppos   string
-			exploc   string
-			handling string
+			mtc     *config.MessageTypeConfig
+			badpos  bool
+			badloc  bool
+			exppos  string
+			exploc  string
+			exphand string
+			acthand string
 		)
 		mtc = config.Get().MessageTypes[a.msg.Type().Tag]
 		if len(mtc.ToICSPosition) != 0 {
@@ -335,16 +335,19 @@ func (a *Analysis) checkNonModel() {
 		}
 		// Make sure the message has a handling order allowed by the
 		// recommended routing cheat sheet.
-		handling = config.Get().MessageTypes[a.msg.Type().Tag].HandlingOrder
-		if handling == "computed" {
-			handling = config.ComputeRecommendedHandlingOrder(a.msg)
+		exphand = config.Get().MessageTypes[a.msg.Type().Tag].HandlingOrder
+		if exphand == "computed" {
+			exphand = config.ComputeRecommendedHandlingOrder(a.msg)
 		}
-		if handling != "" {
+		if exphand != "" {
 			a.outOf++
-			if handling != "" && handling != a.key.Handling {
+			if msg, ok := a.msg.(message.HumanMessage); ok {
+				acthand = msg.GetHandling()
+			}
+			if exphand != "" && exphand != acthand {
 				a.setSummary("incorrect handling order for form")
-				fmt.Fprintf(a.analysis, `<h2>Incorrect Handling Order for Form</h2><p>This message has handling order %s.  According to the “SCCo ARES/RACES Recommended Form Routing” document (available on the <a href="https://www.scc-ares-races.org/operations/go-kit-forms.html">“Go Kit Forms” page</a> of the county ARES website), it should have handling order %s.</p>`,
-					html.EscapeString(a.key.Handling), handling)
+				fmt.Fprintf(a.analysis, `<h2>Incorrect Handling Order for Form</h2><p>This message has handling order “%s”.  According to the “SCCo ARES/RACES Recommended Form Routing” document (available on the <a href="https://www.scc-ares-races.org/operations/go-kit-forms.html">“Go Kit Forms” page</a> of the county ARES website), it should have handling order “%s”.</p>`,
+					html.EscapeString(acthand), exphand)
 			} else {
 				a.score++
 			}

@@ -1,1 +1,20 @@
-Change session configuration from web UI.
+PDF generation in background.
+Word wrap in show.
+Handling new/old fields in edit.
+Maybe non-full-screen editing?
+
+Implement methods for all message types:
+            Compare Edit PDF Table
+ahfacstat
+checkin     N/A     X    N/A X
+checkout    N/A     X    N/A X
+eoc213rr    X       X    X   X
+ics213      X       X    X   X
+jurisstat
+plaintext   X       X    N/A X
+racesmar
+sheltstat
+unkform     N/A     N/A  N/A N/A
+havbed
+medfacstat
+medresreq

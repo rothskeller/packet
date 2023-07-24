@@ -43,6 +43,7 @@ type EOC213RR struct {
 	Water               string
 	Other               string
 	Instructions        string
+	edit                *eoc213RREdit
 }
 
 // Type returns the message type definition.

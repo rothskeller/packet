@@ -13,7 +13,6 @@ var savedTests = []struct {
 	name    string
 	saved   string
 	env     *Envelope
-	subject string
 	body    string
 	wantErr bool
 }{
@@ -31,45 +30,45 @@ var savedTests = []struct {
 		name:  "sent",
 		saved: "From: <nobody@nowhere>\nTo: <somebody@somewhere>\nSubject: Hello, World\nDate: Wed, 1 Dec 2021 08:04:29 +0000\n\nnothing\n",
 		env: &Envelope{
-			From: "<nobody@nowhere>",
-			To:   []string{"<somebody@somewhere>"},
-			Date: time.Date(2021, 12, 1, 8, 4, 29, 0, time.FixedZone("", 0)),
+			From:        "<nobody@nowhere>",
+			To:          []string{"<somebody@somewhere>"},
+			Date:        time.Date(2021, 12, 1, 8, 4, 29, 0, time.FixedZone("", 0)),
+			SubjectLine: "Hello, World",
 		},
-		subject: "Hello, World",
-		body:    "nothing\n",
+		body: "nothing\n",
 	},
 	{
 		name:  "multiple recipients",
 		saved: "From: <nobody@nowhere>\nTo: <somebody@somewhere>\nCc: <number2@somewhere>\nBcc: <number3@somewhere>\nSubject: Hello, World\nDate: Wed, 1 Dec 2021 08:04:29 +0000\n\nnothing\n",
 		env: &Envelope{
-			From: "<nobody@nowhere>",
-			To:   []string{"<somebody@somewhere>", "<number2@somewhere>", "<number3@somewhere>"},
-			Date: time.Date(2021, 12, 1, 8, 4, 29, 0, time.FixedZone("", 0)),
+			From:        "<nobody@nowhere>",
+			To:          []string{"<somebody@somewhere>", "<number2@somewhere>", "<number3@somewhere>"},
+			Date:        time.Date(2021, 12, 1, 8, 4, 29, 0, time.FixedZone("", 0)),
+			SubjectLine: "Hello, World",
 		},
-		subject: "Hello, World",
-		body:    "nothing\n",
+		body: "nothing\n",
 	},
 	{
 		name:  "XSC subject",
 		saved: "From: <nobody@nowhere>\nTo: <somebody@somewhere>\nSubject: AAA-111P_R_Hello, World\nDate: Wed, 1 Dec 2021 08:04:29 +0000\n\nnothing\n",
 		env: &Envelope{
-			From: "<nobody@nowhere>",
-			To:   []string{"<somebody@somewhere>"},
-			Date: time.Date(2021, 12, 1, 8, 4, 29, 0, time.FixedZone("", 0)),
+			From:        "<nobody@nowhere>",
+			To:          []string{"<somebody@somewhere>"},
+			Date:        time.Date(2021, 12, 1, 8, 4, 29, 0, time.FixedZone("", 0)),
+			SubjectLine: "AAA-111P_R_Hello, World",
 		},
-		subject: "AAA-111P_R_Hello, World",
-		body:    "nothing\n",
+		body: "nothing\n",
 	},
 	{
 		name:  "XSC subject with severity",
 		saved: "From: <nobody@nowhere>\nTo: <somebody@somewhere>\nSubject: AAA-111P_O/R_Hello, World\nDate: Wed, 1 Dec 2021 08:04:29 +0000\n\nnothing\n",
 		env: &Envelope{
-			From: "<nobody@nowhere>",
-			To:   []string{"<somebody@somewhere>"},
-			Date: time.Date(2021, 12, 1, 8, 4, 29, 0, time.FixedZone("", 0)),
+			From:        "<nobody@nowhere>",
+			To:          []string{"<somebody@somewhere>"},
+			Date:        time.Date(2021, 12, 1, 8, 4, 29, 0, time.FixedZone("", 0)),
+			SubjectLine: "AAA-111P_O/R_Hello, World",
 		},
-		subject: "AAA-111P_O/R_Hello, World",
-		body:    "nothing\n",
+		body: "nothing\n",
 	},
 	{
 		name:  "received",
@@ -81,9 +80,9 @@ var savedTests = []struct {
 			ReceivedBBS:  "bbs",
 			ReceivedArea: "area",
 			ReceivedDate: time.Date(2021, 12, 1, 8, 4, 29, 0, time.FixedZone("", 0)),
+			SubjectLine:  "Hello, World",
 		},
-		subject: "Hello, World",
-		body:    "nothing\n",
+		body: "nothing\n",
 	},
 	{
 		name:    "received with bad header",
@@ -114,7 +113,7 @@ var savedTests = []struct {
 func TestParse(t *testing.T) {
 	for _, tt := range savedTests {
 		t.Run(tt.name, func(t *testing.T) {
-			m, subject, body, err := ParseSaved(tt.saved)
+			m, body, err := ParseSaved(tt.saved)
 			if err != nil && !tt.wantErr {
 				t.Fatalf("unexpected error %s", err)
 			}
@@ -125,9 +124,6 @@ func TestParse(t *testing.T) {
 				spew.Fdump(os.Stderr, "actual", m)
 				spew.Fdump(os.Stderr, "expected", tt.env)
 				t.Fatal("incorrect result")
-			}
-			if subject != tt.subject {
-				t.Fatalf("subject %q should be %q", subject, tt.subject)
 			}
 			if body != tt.body {
 				t.Fatalf("body %q should be %q", body, tt.body)
@@ -142,7 +138,6 @@ var retrieveTests = []struct {
 	bbs       string
 	area      string
 	env       *Envelope
-	subject   string
 	body      string
 	wantErr   bool
 }{
@@ -150,7 +145,11 @@ var retrieveTests = []struct {
 		name:      "unparseable",
 		retrieved: "nothing\n",
 		bbs:       "bbs",
-		wantErr:   true,
+		env: &Envelope{
+			ReceivedBBS:  "bbs",
+			ReceivedDate: time.Date(2023, 1, 1, 0, 0, 0, 0, time.Local),
+		},
+		wantErr: true,
 	},
 	{
 		name:      "bounce",
@@ -166,9 +165,9 @@ var retrieveTests = []struct {
 			Autoresponse:    true,
 			BBSReceivedDate: time.Date(2021, 12, 1, 8, 4, 29, 0, time.Local),
 			NotPlainText:    true,
+			SubjectLine:     "Undeliverable: SERV Volunteer Hours for November 2021",
 		},
-		subject: "Undeliverable: SERV Volunteer Hours for November 2021",
-		body:    expectedBounceBody,
+		body: expectedBounceBody,
 	},
 	{
 		name:      "no plain text",
@@ -285,7 +284,7 @@ func TestReceive(t *testing.T) {
 	now = func() time.Time { return time.Date(2023, 1, 1, 0, 0, 0, 0, time.Local) }
 	for _, tt := range retrieveTests {
 		t.Run(tt.name, func(t *testing.T) {
-			m, subject, body, err := ParseRetrieved(tt.retrieved, tt.bbs, tt.area)
+			m, body, err := ParseRetrieved(tt.retrieved, tt.bbs, tt.area)
 			if err != nil && !tt.wantErr {
 				t.Fatalf("unexpected error %s", err)
 			}
@@ -296,9 +295,6 @@ func TestReceive(t *testing.T) {
 				spew.Fdump(os.Stderr, "actual", m)
 				spew.Fdump(os.Stderr, "expected", tt.env)
 				t.Fatal("incorrect result")
-			}
-			if subject != tt.subject {
-				t.Fatalf("subject %q should be %q", subject, tt.subject)
 			}
 			if body != tt.body {
 				t.Fatalf("body %q should be %q", body, tt.body)

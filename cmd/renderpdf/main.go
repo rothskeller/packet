@@ -23,12 +23,12 @@ func main() {
 			fmt.Fprintf(os.Stderr, "%s: %s\n", mfile, err)
 			continue
 		}
-		_, subject, body, err := envelope.ParseSaved(string(mbytes))
+		env, body, err := envelope.ParseSaved(string(mbytes))
 		if err != nil {
 			fmt.Fprintf(os.Stderr, "%s: %s\n", mfile, err)
 			continue
 		}
-		msg := message.Decode(subject, body)
+		msg := message.Decode(env.SubjectLine, body)
 		form, ok := msg.(message.IRenderPDF)
 		if !ok {
 			fmt.Fprintf(os.Stderr, "%s: PDF rendering for %ss is not available\n", mfile, msg.Type().Name)

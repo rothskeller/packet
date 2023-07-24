@@ -107,8 +107,8 @@ func testAnalyze(t *testing.T, testfile string) {
 	testdata.Config.Validate()
 	// If the test data file included a model message, we need to parse it.
 	if testdata.Session.ModelMessage != "" {
-		_, subject, body, _ := envelope.ParseSaved(testdata.Session.ModelMessage)
-		testdata.Session.ModelMsg = message.Decode(subject, body).(store.ModelMessage)
+		env, body, _ := envelope.ParseSaved(testdata.Session.ModelMessage)
+		testdata.Session.ModelMsg = message.Decode(env.SubjectLine, body).(message.ICompare)
 	}
 	// We'll need a fake store for the analyzer to use.
 	store := &fakeStore{seenHash: testdata.SeenHash, nextID: 100}

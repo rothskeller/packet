@@ -24,7 +24,7 @@ var ErrNoPlainTextBody = errors.New("message has no plain text body content")
 
 // ParseSaved parses the supplied string as a saved message (which could be
 // either incoming or outgoing).
-func ParseSaved(saved string) (_ *Envelope, subject, body string, err error) {
+func ParseSaved(saved string) (_ *Envelope, body string, err error) {
 	var (
 		env  Envelope
 		mm   *mail.Message
@@ -32,28 +32,28 @@ func ParseSaved(saved string) (_ *Envelope, subject, body string, err error) {
 	)
 	// Parse the message headers.  If we can't parse them, we go no further.
 	if mm, err = mail.ReadMessage(strings.NewReader(saved)); err != nil {
-		return nil, "", "", err
+		return nil, "", err
 	}
 	// Saved messages should not have a Content-Type or Content-Transfer-Encoding.
 	if mm.Header["Content-Type"] != nil || mm.Header["Content-Transfer-Encoding"] != nil {
-		return nil, "", "", errors.New("saved messages must be plain text only")
+		return nil, "", errors.New("saved messages must be plain text only")
 	}
 	// Create the message.
 	bbuf, _ = io.ReadAll(mm.Body)
 	if err = env.parseHeadersStored(mm.Header); err != nil {
-		return nil, "", "", err
+		return nil, "", err
 	}
 	if body, err = env.parseOutpost(string(bbuf)); err != nil {
-		return nil, "", "", err
+		return nil, "", err
 	}
-	return &env, mm.Header.Get("Subject"), body, nil
+	return &env, body, nil
 }
 
 // ParseRetrieved parses the supplied string as a message that was just
 // retrieved from the specified JNOS BBS.  If it is a bulletin, area should be
 // set to the bulletin area from which it was retrieved; otherwise, area should
 // be empty.
-func ParseRetrieved(retrieved, bbs, area string) (_ *Envelope, subject, body string, err error) {
+func ParseRetrieved(retrieved, bbs, area string) (_ *Envelope, body string, err error) {
 	var (
 		env   Envelope
 		efrom string
@@ -71,7 +71,7 @@ func ParseRetrieved(retrieved, bbs, area string) (_ *Envelope, subject, body str
 	}
 	// Parse the message headers.  If we can't parse them, we go no further.
 	if mm, err = mail.ReadMessage(strings.NewReader(retrieved)); err != nil {
-		return &env, "", "", err
+		return &env, "", err
 	}
 	// Extract the plain text portion of the body.
 	bbuf, _ = io.ReadAll(mm.Body)
@@ -84,7 +84,7 @@ func ParseRetrieved(retrieved, bbs, area string) (_ *Envelope, subject, body str
 	if body, err2 = env.parseOutpost(string(bbuf)); err == nil {
 		err = err2
 	}
-	return &env, mm.Header.Get("Subject"), body, err
+	return &env, body, err
 }
 
 // extractPlainText extracts the plain text portion of a message from its body.
@@ -180,6 +180,7 @@ func (env *Envelope) parseHeadersStored(h mail.Header) error {
 			return errors.New("incorrect Received: header format for stored received message")
 		}
 	}
+	env.ReadyToSend = h.Get("X-Packet-Queued") != ""
 	return nil
 }
 
@@ -241,12 +242,16 @@ func (env *Envelope) parseHeadersRetrieved(h mail.Header, efrom string) {
 // parseHeadersRetrieved.
 func (env *Envelope) parseHeadersCommon(h mail.Header) {
 	env.From = h.Get("From")
+	if addrs, err := mail.ParseAddressList(env.From); err == nil && len(addrs) > 1 {
+		env.From = addrs[0].String()
+	}
 	env.To = append(env.To, h["To"]...)
 	env.To = append(env.To, h["Cc"]...)
 	env.To = append(env.To, h["Bcc"]...)
 	if t, err := mail.ParseDate(h.Get("Date")); err == nil {
 		env.Date = t
 	}
+	env.SubjectLine = h.Get("Subject")
 }
 
 // parseOutpost handles the Outpost codes at the start of the body, if any.

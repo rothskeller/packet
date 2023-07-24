@@ -7,6 +7,26 @@ import (
 	"github.com/rothskeller/packet/message"
 )
 
+// Compare compares the standard fields of messages.  It returns the detailed
+// comparisons of each of the standard fields.  The comparison is not symmetric:
+// the receiver of the call is the "expected" fields and the argument is the
+// "actual" fields.
+func (exp *StdFields) Compare(act *StdFields) (fields []*message.CompareField) {
+	return []*message.CompareField{
+		CompareDate("Message Date", exp.MessageDate, act.MessageDate),
+		CompareTime("Message Time", exp.MessageTime, act.MessageTime),
+		CompareExact("Handling", exp.Handling, act.Handling),
+		CompareText("To ICS Position", exp.ToICSPosition, act.ToICSPosition),
+		CompareText("To Location", exp.ToLocation, act.ToLocation),
+		CompareText("To Name", exp.ToName, act.ToName),
+		CompareText("To Contact Info", exp.ToContact, act.ToContact),
+		CompareText("From ICS Position", exp.FromICSPosition, act.FromICSPosition),
+		CompareText("From Location", exp.FromLocation, act.FromLocation),
+		CompareText("From Name", exp.FromName, act.FromName),
+		CompareText("From Contact Info", exp.FromContact, act.FromContact),
+	}
+}
+
 // ConsolidateCompareFields takes a set of CompareFields, removes those for
 // which both "Expected" and "Actual" are empty, and returns the summed scores.
 func ConsolidateCompareFields(fields []*message.CompareField) (score, outOf int, _ []*message.CompareField) {

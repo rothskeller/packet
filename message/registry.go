@@ -40,14 +40,7 @@ func Register(mtype *Type) {
 		if fntype.Kind() != reflect.Func {
 			goto BADCREATE
 		}
-		switch fntype.NumIn() {
-		case 0:
-			break
-		case 2:
-			if fntype.In(0) != stringType || fntype.In(1) != stringType {
-				goto BADCREATE
-			}
-		default:
+		if fntype.NumIn() != 0 {
 			goto BADCREATE
 		}
 		if fntype.NumOut() != 1 || !fntype.Out(0).Implements(messageType) {
@@ -65,21 +58,16 @@ BADCREATE:
 }
 
 // Create creates a new, outgoing message with the specified type tag.  It
-// returns nil if the type tag is not registered.  The operator call sign and
-// name are filled into the message if it supports them.  All other message
-// fields have default values for an outgoing message.
-func Create(tag, opcall, opname string) Message {
+// returns nil if the type tag is not registered.  All message fields have
+// default values for an outgoing message.
+func Create(tag string) Message {
 	if createFn := RegisteredTypes[tag].Create; createFn != nil {
 		// We use reflection to build and make the call to the create
 		// function.  It's not very efficient, but it allows for each
 		// create function to have a clean, self-descriptive signature.
 		// In particular it allows them to declare their concrete return
 		// type rather than "any".
-		var args []reflect.Value
-		if reflect.TypeOf(createFn).NumIn() == 2 {
-			args = []reflect.Value{reflect.ValueOf(opcall), reflect.ValueOf(opname)}
-		}
-		rets := reflect.ValueOf(createFn).Call(args)
+		rets := reflect.ValueOf(createFn).Call(nil)
 		return rets[0].Interface().(Message)
 	}
 	return nil

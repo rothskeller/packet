@@ -43,7 +43,7 @@ type Session struct {
 	Report       string       `yaml:"-"`
 	Flags        SessionFlags `yaml:"flags"`
 
-	ModelMsg         ModelMessage      `yaml:"-"`
+	ModelMsg         message.ICompare  `yaml:"-"`
 	RetrieveInterval interval.Interval `yaml:"-"`
 }
 
@@ -51,12 +51,6 @@ type Session struct {
 type Retrieval struct {
 	BBS     string    `yaml:"bbs"`
 	LastRun time.Time `yaml:"lastRun"`
-}
-
-// A ModelMessage is a parsed message that can be used as a model.
-type ModelMessage interface {
-	message.Message
-	message.ICompare
 }
 
 // SessionFlags is a collection of flags describing a session.
@@ -149,8 +143,8 @@ func (s *Store) getSessionsWhere(where string, args ...interface{}) (list []*Ses
 		session.MessageTypes = split(messagetypes)
 		session.RetrieveInterval = interval.Parse(session.RetrieveAt)
 		if session.ModelMessage != "" {
-			if _, subject, body, err := envelope.ParseSaved(session.ModelMessage); err == nil {
-				session.ModelMsg = message.Decode(subject, body).(ModelMessage)
+			if env, body, err := envelope.ParseSaved(session.ModelMessage); err == nil {
+				session.ModelMsg = message.Decode(env.SubjectLine, body).(message.ICompare)
 			} else {
 				panic(err)
 			}

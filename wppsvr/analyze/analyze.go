@@ -62,7 +62,8 @@ func Analyze(st astore, session *store.Session, bbs, raw string) *Analysis {
 	sum = sha1.Sum([]byte(raw))
 	a.sm.Hash = hex.EncodeToString(sum[:])
 	// Log receipt of the message.
-	a.env, a.subject, a.body, err = envelope.ParseRetrieved(raw, bbs, "")
+	a.env, a.body, err = envelope.ParseRetrieved(raw, bbs, "")
+	a.subject = a.env.SubjectLine
 	a.sm.DeliveryTime = a.env.Date
 	a.sm.FromAddress = a.env.ReturnAddr
 	if err != nil && a.env.ReturnAddr == "" {

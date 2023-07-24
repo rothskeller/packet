@@ -17,6 +17,14 @@ type PlainText struct {
 	Handling    string
 	Subject     string
 	Body        string
+	edit        *plainTextEdit
+	editFields  []*message.EditField
+}
+type plainTextEdit struct {
+	OriginMsgID message.EditField
+	Handling    message.EditField
+	Subject     message.EditField
+	Body        message.EditField
 }
 
 // Type returns the message type definition.
