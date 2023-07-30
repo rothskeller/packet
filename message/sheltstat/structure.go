@@ -54,6 +54,7 @@ type SheltStat struct {
 	RepeaterOffset        string
 	Comments              string
 	RemoveFromList        string
+	edit                  *sheltStatEdit
 }
 
 // Type returns the message type definition.

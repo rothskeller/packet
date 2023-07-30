@@ -230,8 +230,8 @@ func (f *EOC213RR) EditFields() []*message.EditField {
 // message.
 func (f *EOC213RR) ApplyEdits() {
 	f.fromEdit()
-	f.validate()
 	f.toEdit()
+	f.validate()
 }
 
 func (f *EOC213RR) fromEdit() {

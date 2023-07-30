@@ -39,8 +39,8 @@ func (m *PlainText) EditFields() []*message.EditField {
 // ApplyEdits applies the revised Values in the EditFields to the message.
 func (m *PlainText) ApplyEdits() {
 	m.fromEdit()
-	m.validate()
 	m.toEdit()
+	m.validate()
 	m.OriginMsgID = strings.ToUpper(strings.TrimSpace(m.edit.OriginMsgID.Value))
 	m.Handling = common.ExpandRestricted(&m.edit.Handling)
 	m.Subject = strings.TrimSpace(m.edit.Subject.Value)

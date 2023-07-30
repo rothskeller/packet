@@ -9,8 +9,7 @@ import (
 
 type ics213Edit struct {
 	OriginMsgID     message.EditField
-	Date            message.EditField
-	Time            message.EditField
+	DateTime        message.EditField
 	Handling        message.EditField
 	TakeAction      message.EditField
 	Reply           message.EditField
@@ -36,8 +35,7 @@ func (f *ICS213) EditFields() []*message.EditField {
 	if f.edit == nil {
 		f.edit = &ics213Edit{
 			OriginMsgID: common.OriginMsgIDEditField,
-			Date:        common.MessageDateEditField,
-			Time:        common.MessageTimeEditField,
+			DateTime:    common.MessageDateTimeEditField,
 			Handling:    common.HandlingEditField,
 			TakeAction: message.EditField{
 				Label:   "Take Action",
@@ -101,8 +99,7 @@ func (f *ICS213) EditFields() []*message.EditField {
 		// Set the field list slice.
 		f.edit.fields = []*message.EditField{
 			&f.edit.OriginMsgID,
-			&f.edit.Date,
-			&f.edit.Time,
+			&f.edit.DateTime,
 			&f.edit.Handling,
 			&f.edit.TakeAction,
 			&f.edit.Reply,
@@ -131,14 +128,13 @@ func (f *ICS213) EditFields() []*message.EditField {
 // message.
 func (f *ICS213) ApplyEdits() {
 	f.fromEdit()
-	f.validate()
 	f.toEdit()
+	f.validate()
 }
 
 func (f *ICS213) fromEdit() {
 	f.OriginMsgID = common.CleanMessageNumber(f.edit.OriginMsgID.Value)
-	f.Date = common.CleanDate(f.edit.Date.Value)
-	f.Time = common.CleanTime(f.edit.Time.Value)
+	f.Date, f.Time = common.CleanDateTime(f.edit.DateTime.Value)
 	f.Handling = common.ExpandRestricted(&f.edit.Handling)
 	f.TakeAction = common.ExpandRestricted(&f.edit.TakeAction)
 	f.Reply = common.ExpandRestricted(&f.edit.Reply)
@@ -160,8 +156,7 @@ func (f *ICS213) fromEdit() {
 
 func (f *ICS213) toEdit() {
 	f.edit.OriginMsgID.Value = f.OriginMsgID
-	f.edit.Date.Value = f.Date
-	f.edit.Time.Value = f.Time
+	f.edit.DateTime.Value = common.SmartJoin(f.Date, f.Time, " ")
 	f.edit.Handling.Value = f.Handling
 	f.edit.TakeAction.Value = f.TakeAction
 	f.edit.Reply.Value = f.Reply
@@ -185,11 +180,8 @@ func (f *ICS213) validate() {
 	if common.ValidateRequired(&f.edit.OriginMsgID) {
 		common.ValidateMessageNumber(&f.edit.OriginMsgID)
 	}
-	if common.ValidateRequired(&f.edit.Date) {
-		common.ValidateDate(&f.edit.Date)
-	}
-	if common.ValidateRequired(&f.edit.Time) {
-		common.ValidateTime(&f.edit.Time)
+	if common.ValidateRequired(&f.edit.DateTime) {
+		common.ValidateDateTime(&f.edit.DateTime)
 	}
 	if common.ValidateRequired(&f.edit.Handling) {
 		common.ValidateRestricted(&f.edit.Handling)

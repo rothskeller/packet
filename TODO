@@ -1,19 +1,17 @@
 PDF generation in background.
-Word wrap in show.
 Handling new/old fields in edit.
-Maybe non-full-screen editing?
 
 Implement methods for all message types:
             Compare Edit PDF Table
-ahfacstat
+ahfacstat   X       X    X   X
 checkin     N/A     X    N/A X
 checkout    N/A     X    N/A X
 eoc213rr    X       X    X   X
 ics213      X       X    X   X
-jurisstat
+jurisstat   X       X    X   X
 plaintext   X       X    N/A X
-racesmar
-sheltstat
+racesmar    X       X    X   X
+sheltstat   X       X    X   X
 unkform     N/A     N/A  N/A N/A
 havbed
 medfacstat

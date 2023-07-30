@@ -1,8 +1,6 @@
 package checkin
 
 import (
-	"strings"
-
 	"github.com/rothskeller/packet/message"
 	"github.com/rothskeller/packet/message/common"
 )
@@ -50,14 +48,8 @@ func (m *CheckIn) EditFields() []*message.EditField {
 // ApplyEdits applies the revised Values in the EditFields to the message.
 func (m *CheckIn) ApplyEdits() {
 	m.fromEdit()
-	m.validate()
 	m.toEdit()
-	m.OriginMsgID = strings.ToUpper(strings.TrimSpace(m.edit.OriginMsgID.Value))
-	m.Handling = common.ExpandRestricted(&m.edit.Handling)
-	m.TacticalCallSign = strings.ToUpper(strings.TrimSpace(m.edit.TacticalCallSign.Value))
-	m.TacticalStationName = strings.TrimSpace(m.edit.TacticalStationName.Value)
-	m.OperatorCallSign = strings.ToUpper(strings.TrimSpace(m.edit.OperatorCallSign.Value))
-	m.OperatorName = strings.TrimSpace(m.edit.OperatorName.Value)
+	m.validate()
 }
 
 func (m *CheckIn) toEdit() {

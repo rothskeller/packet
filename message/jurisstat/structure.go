@@ -80,6 +80,7 @@ type JurisStat struct {
 	CivilUnrestComments           string
 	AnimalIssues                  string
 	AnimalIssuesComments          string
+	edit                          *jurisStatEdit
 }
 
 // Type returns the message type definition.

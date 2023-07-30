@@ -7,6 +7,8 @@ This repository contains software related to packet radio:
 * Package `envelope` understands how to extract packet message content out of
   RFC-4155 and RFC-4322 email encodings, and how to save and restore them from
   local files.
+* Package `incident` knows how to store a set of related messages for an
+  incident in a directory, and generate ICS-309 logs for them.
 * Package `jnos` is a library for communicating with JNOS BBS servers.  It
   includes transport adapters for RF (via a serial connection to a KPC 3 Plus
   TNC) and telnet.  It also includes a rudimentary JNOS BBS simulator for
@@ -15,8 +17,6 @@ This repository contains software related to packet radio:
   various types to be decoded, created, and manipulated.  It has subpackages
   with message type definitions for all of the public Santa Clara County
   standard message types.
-* Package `wppsvr` is the program that receives, responds to, and reports on
-  SCCo weekly packet practice messages.
 
 ## Legal Text
 

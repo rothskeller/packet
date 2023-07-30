@@ -8,14 +8,12 @@ import (
 	"time"
 
 	"github.com/rothskeller/packet/message"
-	"github.com/rothskeller/packet/wppsvr/english"
 )
 
 // StdFieldsEdit is the set of edit fields for the standard form fields.
 type StdFieldsEdit struct {
 	OriginMsgID     message.EditField
-	MessageDate     message.EditField
-	MessageTime     message.EditField
+	DateTime        message.EditField
 	Handling        message.EditField
 	ToICSPosition   message.EditField
 	ToLocation      message.EditField
@@ -32,8 +30,7 @@ type StdFieldsEdit struct {
 // StdFieldsEditTemplate is the template for edit fields for a standard form.
 var StdFieldsEditTemplate = StdFieldsEdit{
 	OriginMsgID:     OriginMsgIDEditField,
-	MessageDate:     MessageDateEditField,
-	MessageTime:     MessageTimeEditField,
+	DateTime:        MessageDateTimeEditField,
 	Handling:        HandlingEditField,
 	ToICSPosition:   ToICSPositionEditField,
 	ToLocation:      ToLocationEditField,
@@ -51,8 +48,7 @@ var StdFieldsEditTemplate = StdFieldsEdit{
 func (sfe *StdFieldsEdit) EditFields1() []*message.EditField {
 	return []*message.EditField{
 		&sfe.OriginMsgID,
-		&sfe.MessageDate,
-		&sfe.MessageTime,
+		&sfe.DateTime,
 		&sfe.Handling,
 		&sfe.ToICSPosition,
 		&sfe.ToLocation,
@@ -101,23 +97,18 @@ var (
 		Choices: []string{"ROUTINE", "PRIORITY", "IMMEDIATE"},
 		Help:    `This is the message handling order, which specifies how fast it needs to be delivered.  Allowed values are "ROUTINE" (within 2 hours), "PRIORITY" (within 1 hour), and "IMMEDIATE".  This field is required.`,
 	}
-	MessageDateEditField = message.EditField{
-		Label: "Message Date",
-		Width: 10,
-		Help:  "This is the date the message was written, in MM/DD/YYYY format.  It is required.",
-	}
-	MessageTimeEditField = message.EditField{
-		Label: "Message Time",
-		Width: 5,
-		Help:  "This is the time the message was written, in HH:MM notation (24-hour clock).  It is required.",
+	MessageDateTimeEditField = message.EditField{
+		Label: "Message Date/Time",
+		Width: 16,
+		Help:  "This is the date and time the message was written, in MM/DD/YYYY HH:MM format (24-hour clock).  It is required.",
 	}
 	OpRelayRcvdEditField = message.EditField{
-		Label: "Radio Operator: Relay Received",
+		Label: "Operator: Relay Received",
 		Width: 36,
 		Help:  "This is the name of the station from which this message was directly received.  It is filled in for messages that go through a relay station.",
 	}
 	OpRelaySentEditField = message.EditField{
-		Label: "Radio Operator: Relay Sent",
+		Label: "Operator: Relay Sent",
 		Width: 36,
 		Help:  "This is the name of the station to which this message was directly sent.  It is filled in for messages that go through a relay station.",
 	}
@@ -153,8 +144,7 @@ var (
 // canonical form, and puts them in the message.
 func (sf *StdFields) FromEdit(sfe *StdFieldsEdit) {
 	sf.OriginMsgID = CleanMessageNumber(sfe.OriginMsgID.Value)
-	sf.MessageDate = CleanDate(sfe.MessageDate.Value)
-	sf.MessageTime = CleanTime(sfe.MessageTime.Value)
+	sf.MessageDate, sf.MessageTime = CleanDateTime(sfe.DateTime.Value)
 	sf.Handling = ExpandRestricted(&sfe.Handling)
 	sf.ToICSPosition = strings.TrimSpace(sfe.ToICSPosition.Value)
 	sf.ToLocation = strings.TrimSpace(sfe.ToLocation.Value)
@@ -172,8 +162,7 @@ func (sf *StdFields) FromEdit(sfe *StdFieldsEdit) {
 // them in the edit fields.
 func (sf *StdFields) ToEdit(sfe *StdFieldsEdit) {
 	sfe.OriginMsgID.Value = sf.OriginMsgID
-	sfe.MessageDate.Value = sf.MessageDate
-	sfe.MessageTime.Value = sf.MessageTime
+	sfe.DateTime.Value = SmartJoin(sf.MessageDate, sf.MessageTime, " ")
 	sfe.Handling.Value = sf.Handling
 	sfe.ToICSPosition.Value = sf.ToICSPosition
 	sfe.ToLocation.Value = sf.ToLocation
@@ -192,11 +181,8 @@ func (sfe *StdFieldsEdit) Validate() {
 	if ValidateRequired(&sfe.OriginMsgID) {
 		ValidateMessageNumber(&sfe.OriginMsgID)
 	}
-	if ValidateRequired(&sfe.MessageDate) {
-		ValidateDate(&sfe.MessageDate)
-	}
-	if ValidateRequired(&sfe.MessageTime) {
-		ValidateTime(&sfe.MessageTime)
+	if ValidateRequired(&sfe.DateTime) {
+		ValidateDateTime(&sfe.DateTime)
 	}
 	if ValidateRequired(&sfe.Handling) {
 		ValidateRestricted(&sfe.Handling)
@@ -205,6 +191,14 @@ func (sfe *StdFieldsEdit) Validate() {
 	ValidateRequired(&sfe.ToLocation)
 	ValidateRequired(&sfe.FromICSPosition)
 	ValidateRequired(&sfe.FromLocation)
+}
+
+// CleanCardinal reduces any cardinal number to its canonical format.
+func CleanCardinal(s string) string {
+	if n, err := strconv.Atoi(strings.TrimSpace(s)); err == nil {
+		return strconv.Itoa(n)
+	}
+	return s
 }
 
 // CleanCheckbox converts any non-empty string to "checked".
@@ -238,6 +232,29 @@ func ValidateDate(ef *message.EditField) {
 		ef.Problem = ""
 	} else {
 		ef.Problem = fmt.Sprintf("The %q field does not contain a valid MM/DD/YYYY date.", ef.Label)
+	}
+}
+
+// CleanDateTime accepts loose formatting of date/time strings and converts them
+// into strictly valid formatting.  Anything unusable remains unchanged.
+func CleanDateTime(loose string) (date, time string) {
+	fields := strings.Fields(loose)
+	if len(fields) > 0 {
+		date = CleanDate(fields[0])
+	}
+	if len(fields) > 1 {
+		fields[1] = CleanTime(fields[1])
+		time = strings.Join(fields[1:], " ")
+	}
+	return date, time
+}
+
+// ValidateDateTime verifies that a string contains a valid date/time string.
+func ValidateDateTime(ef *message.EditField) {
+	if t, err := time.ParseInLocation("01/02/2006 15:04", ef.Value, time.Local); err == nil && ef.Value == t.Format("01/02/2006 15:04") {
+		ef.Problem = ""
+	} else {
+		ef.Problem = fmt.Sprintf("The %q field does not contain a valid date and time in MM/DD/YYYY HH:MM format.", ef.Label)
 	}
 }
 
@@ -289,6 +306,14 @@ func CleanPhoneNumber(loose string) string {
 	return loose
 }
 
+// CleanReal reduces any cardinal number to its canonical format.
+func CleanReal(s string) string {
+	if n, err := strconv.ParseFloat(strings.TrimSpace(s), 64); err == nil {
+		return strconv.FormatFloat(n, 'f', -1, 64)
+	}
+	return s
+}
+
 // ValidateRequired validates a field that must contain a value.  It returns
 // true if the field has a value.
 func ValidateRequired(ef *message.EditField) bool {
@@ -336,7 +361,7 @@ func ValidateRestricted(ef *message.EditField) {
 		}
 	}
 	ef.Problem = fmt.Sprintf("The %q field does not contain an allowed value.  Allowed values are %s.",
-		ef.Label, english.Conjoin(ef.Choices, "and"))
+		ef.Label, Conjoin(ef.Choices, "and"))
 }
 
 var tacticalCallSignRE = regexp.MustCompile(`^[A-Z][A-Z0-9]{5}$`)
@@ -350,14 +375,18 @@ func ValidateTacticalCallSign(ef *message.EditField) {
 	}
 }
 
-var timeLooseRE = regexp.MustCompile(`^(0?[1-9]|1[0-9]|2[0-3]):([0-5][0-9])$`)
+var timeLooseRE = regexp.MustCompile(`^([1-9]:|[01][0-9]:?|2[0-4]:?)([0-5][0-9])$`)
 
 // CleanTime accepts loose formatting of times and converts them into strictly
 // valid formatting.  Anything unusable remains unchanged.
 func CleanTime(loose string) string {
 	if match := timeLooseRE.FindStringSubmatch(strings.TrimSpace(loose)); match != nil {
+		// Add colon if needed.
+		if !strings.HasSuffix(match[1], ":") {
+			match[1] += ":"
+		}
 		// Add leading zero to hour if needed.
-		return fmt.Sprintf("%02s:%s", match[1], match[2])
+		return fmt.Sprintf("%03s%s", match[1], match[2])
 	}
 	return loose
 }
@@ -370,5 +399,20 @@ func ValidateTime(ef *message.EditField) {
 		ef.Problem = ""
 	} else {
 		ef.Problem = fmt.Sprintf("The %q field does not contain a valid HH:MM time.", ef.Label)
+	}
+}
+
+// Conjoin returns a set of strings joined together with the specified
+// conjunction and (of course) the Oxford comma.
+func Conjoin(ss []string, conj string) string {
+	switch len(ss) {
+	case 0:
+		return ""
+	case 1:
+		return ss[0]
+	case 2:
+		return fmt.Sprintf("%s %s %s", ss[0], conj, ss[1])
+	default:
+		return fmt.Sprintf("%s %s, %s", strings.Join(ss[:len(ss)-1], ", "), conj, ss[len(ss)-1])
 	}
 }

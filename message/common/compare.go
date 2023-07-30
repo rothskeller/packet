@@ -2,6 +2,7 @@ package common
 
 import (
 	"regexp"
+	"strconv"
 	"strings"
 
 	"github.com/rothskeller/packet/message"
@@ -42,6 +43,22 @@ func ConsolidateCompareFields(fields []*message.CompareField) (score, outOf int,
 		}
 	}
 	return score, outOf, fields[:j]
+}
+
+// CompareCardinal compares two values for a field that is supposed to contain
+// a cardinal number.
+func CompareCardinal(label, exp, act string) (c *message.CompareField) {
+	if eval, err := strconv.Atoi(exp); err == nil {
+		if aval, err := strconv.Atoi(act); err == nil {
+			if eval == aval {
+				return &message.CompareField{
+					Label: label, Expected: exp, Actual: act, Score: 2, OutOf: 2,
+					ExpectedMask: " ", ActualMask: " ",
+				}
+			}
+		}
+	}
+	return CompareExact(label, exp, act)
 }
 
 // CompareCheckbox compares two values for a checkbox field.
@@ -209,6 +226,22 @@ func CompareDate(label, exp, act string) (c *message.CompareField) {
 		c.Score = 0
 	}
 	return c
+}
+
+// CompareReal compares two values for a field that is supposed to contain a
+// real number.
+func CompareReal(label, exp, act string) (c *message.CompareField) {
+	if eval, err := strconv.ParseFloat(exp, 64); err == nil {
+		if aval, err := strconv.ParseFloat(act, 64); err == nil {
+			if eval == aval {
+				return &message.CompareField{
+					Label: label, Expected: exp, Actual: act, Score: 2, OutOf: 2,
+					ExpectedMask: " ", ActualMask: " ",
+				}
+			}
+		}
+	}
+	return CompareExact(label, exp, act)
 }
 
 var timeRE = regexp.MustCompile(`^(\d?\d)(:?)(\d\d)$`)

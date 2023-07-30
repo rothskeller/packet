@@ -75,14 +75,14 @@ func (f *SheltStat) Validate() (problems []string) {
 	if f.Longitude != "" && !common.PIFORealNumberRE.MatchString(f.Longitude) {
 		problems = append(problems, `The "Shelter Longitude" field does not contain a valid number.`)
 	}
-	if f.Capacity == "" {
-		problems = append(problems, `The "Capacity" field is required.`)
-	} else if !common.PIFOCardinalNumberRE.MatchString(f.Capacity) {
+	if f.Capacity == "" && f.ReportType == "Complete" {
+		problems = append(problems, `The "Capacity" field is required when "Report Type" is "Complete".`)
+	} else if f.Capacity != "" && !common.PIFOCardinalNumberRE.MatchString(f.Capacity) {
 		problems = append(problems, `The "Capacity" field does not contain a valid number.`)
 	}
-	if f.Occupancy == "" {
-		problems = append(problems, `The "Occupancy" field is required.`)
-	} else if !common.PIFOCardinalNumberRE.MatchString(f.Occupancy) {
+	if f.Occupancy == "" && f.ReportType == "Complete" {
+		problems = append(problems, `The "Occupancy" field is required when "Report Type" is "Complete".`)
+	} else if f.Occupancy != "" && !common.PIFOCardinalNumberRE.MatchString(f.Occupancy) {
 		problems = append(problems, `The "Occupancy" field does not contain a valid number.`)
 	}
 	switch f.PetFriendly {
