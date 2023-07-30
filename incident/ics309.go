@@ -41,10 +41,10 @@ func GenerateICS309(header *ICS309Header) (csv string, pdfs []string, err error)
 	var (
 		dir   *os.File
 		files []os.FileInfo
-		rmis  map[string]string
-		lmis  map[*envelope.Envelope]string
 		msgs  []*envelope.Envelope
 		form  [][]string
+		rmis  = make(map[string]string)
+		lmis  = make(map[*envelope.Envelope]string)
 	)
 	if dir, err = os.Open("."); err != nil {
 		return "", nil, err

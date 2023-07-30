@@ -112,7 +112,10 @@ func SaveMessage(lmi, rmi string, env *envelope.Envelope, msg message.Message) (
 	case *delivrcpt.DeliveryReceipt, *readrcpt.ReadReceipt:
 		panic("cannot call SaveMessage for receipt message; call SaveReceipt instead")
 	}
-	return saveMessage(lmi+".txt", rmi+".txt", env, msg)
+	if rmi != "" {
+		return saveMessage(lmi+".txt", rmi+".txt", env, msg)
+	}
+	return saveMessage(lmi+".txt", "", env, msg)
 }
 
 // SaveReceipt saves a receipt message to the incident directory, overwriting
