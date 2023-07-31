@@ -5,7 +5,6 @@ import (
 	"encoding/csv"
 	"fmt"
 	"os"
-	"path/filepath"
 	"sort"
 	"strconv"
 	"strings"
@@ -37,7 +36,7 @@ type ICS309Header struct {
 // an error if the directory could not be read or the files could not be
 // written.  Note that the generated files are removed by any call to
 // SaveMessage or SaveReceipt, since they could be stale.
-func GenerateICS309(header *ICS309Header) (csv string, pdfs []string, err error) {
+func GenerateICS309(header *ICS309Header) (csv, pdf string, err error) {
 	var (
 		dir   *os.File
 		files []os.FileInfo
@@ -47,11 +46,11 @@ func GenerateICS309(header *ICS309Header) (csv string, pdfs []string, err error)
 		lmis  = make(map[*envelope.Envelope]string)
 	)
 	if dir, err = os.Open("."); err != nil {
-		return "", nil, err
+		return "", "", err
 	}
 	defer dir.Close()
 	if files, err = dir.Readdir(0); err != nil {
-		return "", nil, err
+		return "", "", err
 	}
 	for _, fi := range files {
 		if !strings.HasSuffix(fi.Name(), ".txt") {
@@ -118,12 +117,12 @@ func GenerateICS309(header *ICS309Header) (csv string, pdfs []string, err error)
 	// Render the form.
 	RemoveICS309s()
 	if csv, err = render309CSV(header, form); err != nil {
-		return "", nil, err
+		return "", "", err
 	}
-	if pdfs, err = render309PDF(header, form); err != nil {
-		return "", nil, err
+	if pdf, err = render309PDF(header, form); err != nil {
+		return "", "", err
 	}
-	return csv, pdfs, nil
+	return csv, pdf, nil
 }
 
 // envelopeLess is the comparison function for sorting the message list.
@@ -212,75 +211,77 @@ func render309CSV(header *ICS309Header, form [][]string) (filename string, err e
 }
 
 // render309PDF renders the ICS-309 in PDF format.
-func render309PDF(header *ICS309Header, form [][]string) (filenames []string, err error) {
+func render309PDF(header *ICS309Header, form [][]string) (_ string, err error) {
+	const filename = "ics309.pdf"
 	var (
 		fh    *os.File
 		pdf   *pdfstruct.PDF
 		pages int
 	)
 	if ics309pdf == nil { // built without PDF support
-		return nil, err
+		return "", err
+	}
+	if fh, err = os.Create(filename); err != nil {
+		return "", err
+	}
+	defer fh.Close()
+	if _, err = fh.Write(ics309pdf); err != nil {
+		os.Remove(filename)
+		return "", err
+	}
+	if pdf, err = pdfstruct.Open(fh); err != nil {
+		os.Remove(filename)
+		return "", err
 	}
 	pages = (len(form) + 30) / 31
 	if pages == 0 {
 		pages = 1
 	}
+	for n := pages; n > 1; n-- {
+		if err = pdfform.ClonePage(pdf, 0, strconv.Itoa(n)); err != nil {
+			os.Remove(filename)
+			return "", err
+		}
+	}
 	for page := 1; page <= pages; page++ {
-		filename := "ics309.pdf"
-		if pages > 1 {
-			filename = fmt.Sprintf("ics309-p%d.pdf", page)
+		var prefix string
+		if page > 1 {
+			prefix = fmt.Sprintf("%d.", page)
 		}
-		if fh, err = os.Create(filename); err != nil {
-			return nil, err
-		}
-		defer fh.Close()
-		if _, err = fh.Write(ics309pdf); err != nil {
-			os.Remove(filename)
-			return nil, err
-		}
-		if pdf, err = pdfstruct.Open(fh); err != nil {
-			os.Remove(filename)
-			return nil, err
-		}
-		pdfform.SetField(pdf, "Incident Name", header.IncidentName, 0)
-		pdfform.SetField(pdf, "Activation Number", header.ActivationNum, 0)
-		pdfform.SetField(pdf, "OpPeriod Start Date", header.OpStartDate, 0)
-		pdfform.SetField(pdf, "OpPeriod Start Time", header.OpStartTime, 0)
-		pdfform.SetField(pdf, "OpPeriod End Date", header.OpEndDate, 0)
-		pdfform.SetField(pdf, "OpPeriod End Time", header.OpEndTime, 0)
-		pdfform.SetField(pdf, "Tactical Station", header.TacName+" "+header.TacCall, 0)
-		pdfform.SetField(pdf, "Operator", header.OpName+" "+header.OpCall, 0)
-		pdfform.SetField(pdf, "Prepared By", header.OpName+" "+header.OpCall, 0)
-		pdfform.SetField(pdf, "Prepared Time", time.Now().Format("01/02/2006 15:04"), 0)
-		pdfform.SetField(pdf, "Page Number", strconv.Itoa(page), 0)
-		pdfform.SetField(pdf, "Page Count", strconv.Itoa(pages), 0)
+		pdfform.SetField(pdf, prefix+"Incident Name", header.IncidentName, 0)
+		pdfform.SetField(pdf, prefix+"Activation Number", header.ActivationNum, 0)
+		pdfform.SetField(pdf, prefix+"OpPeriod Start Date", header.OpStartDate, 0)
+		pdfform.SetField(pdf, prefix+"OpPeriod Start Time", header.OpStartTime, 0)
+		pdfform.SetField(pdf, prefix+"OpPeriod End Date", header.OpEndDate, 0)
+		pdfform.SetField(pdf, prefix+"OpPeriod End Time", header.OpEndTime, 0)
+		pdfform.SetField(pdf, prefix+"Tactical Station", header.TacName+" "+header.TacCall, 0)
+		pdfform.SetField(pdf, prefix+"Operator", header.OpName+" "+header.OpCall, 0)
+		pdfform.SetField(pdf, prefix+"Prepared By", header.OpName+" "+header.OpCall, 0)
+		pdfform.SetField(pdf, prefix+"Prepared Time", time.Now().Format("01/02/2006 15:04"), 0)
+		pdfform.SetField(pdf, prefix+"Page Number", strconv.Itoa(page), 0)
+		pdfform.SetField(pdf, prefix+"Page Count", strconv.Itoa(pages), 0)
 		for i := 1; i <= 31; i++ {
 			idx := (page-1)*31 + i - 1
 			if idx >= len(form) {
 				break
 			}
-			pdfform.SetField(pdf, fmt.Sprintf("L%02d Time", i), form[idx][0][11:], 0) // time only, no date
-			pdfform.SetField(pdf, fmt.Sprintf("L%02d Fm Stn", i), form[idx][1], 0)
-			pdfform.SetField(pdf, fmt.Sprintf("L%02d Fm OID", i), form[idx][2], 0)
-			pdfform.SetField(pdf, fmt.Sprintf("L%02d To Stn", i), form[idx][3], 0)
-			pdfform.SetField(pdf, fmt.Sprintf("L%02d To DID", i), form[idx][4], 0)
-			pdfform.SetField(pdf, fmt.Sprintf("L%02d Msg", i), form[idx][5], 0)
+			pdfform.SetField(pdf, fmt.Sprintf("%sL%02d Time", prefix, i), form[idx][0][11:], 0) // time only, no date
+			pdfform.SetField(pdf, fmt.Sprintf("%sL%02d Fm Stn", prefix, i), form[idx][1], 0)
+			pdfform.SetField(pdf, fmt.Sprintf("%sL%02d Fm OID", prefix, i), form[idx][2], 0)
+			pdfform.SetField(pdf, fmt.Sprintf("%sL%02d To Stn", prefix, i), form[idx][3], 0)
+			pdfform.SetField(pdf, fmt.Sprintf("%sL%02d To DID", prefix, i), form[idx][4], 0)
+			pdfform.SetField(pdf, fmt.Sprintf("%sL%02d Msg", prefix, i), form[idx][5], 0)
 		}
-		if err = pdf.Write(); err != nil {
-			os.Remove(filename)
-			return nil, err
-		}
-		filenames = append(filenames, filename)
 	}
-	return filenames, nil
+	if err = pdf.Write(); err != nil {
+		os.Remove(filename)
+		return "", err
+	}
+	return filename, nil
 }
 
 // RemoveICS309s removes generated ICS-309 communication log files.
 func RemoveICS309s() {
 	os.Remove("ics309.csv")
 	os.Remove("ics309.pdf")
-	pages, _ := filepath.Glob("ics309-p*.pdf")
-	for _, page := range pages {
-		os.Remove(page)
-	}
 }
