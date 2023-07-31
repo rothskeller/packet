@@ -46,9 +46,6 @@ func (exp *ICS213) Compare(actual message.Message) (score, outOf int, fields []*
 		common.CompareText("Subject", exp.Subject, act.Subject),
 		common.CompareExact("Reference", exp.Reference, act.Reference),
 		common.CompareText("Message", exp.Message, act.Message),
-		common.CompareExact("Receiver/Sender", exp.ReceivedSent, act.ReceivedSent),
-		common.CompareExact("How Sent", exp.TxMethod, act.TxMethod),
-		common.CompareExact("How Sent (other)", exp.OtherMethod, act.OtherMethod),
 	}
 	return common.ConsolidateCompareFields(fields)
 }
