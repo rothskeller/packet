@@ -57,6 +57,9 @@ func (c Choices) ToHuman(s string) string { return s }
 // of the choices in the set, ToPIFO returns its argument unchanged.
 func (c Choices) ToPIFO(s string) string {
 	var match string
+	if s == "" {
+		return s
+	}
 	for _, v := range c {
 		if len(v) >= len(s) && strings.EqualFold(v[:len(s)], s) {
 			if match != "" {
