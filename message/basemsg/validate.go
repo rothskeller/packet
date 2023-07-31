@@ -83,6 +83,35 @@ func ValidDateTime(f *Field, date, tval string) string {
 	return ""
 }
 
+var fccCallSignRE = regexp.MustCompile(`^(?:A[A-L][0-9][A-Z]{1,3}|[KNW][0-9][A-Z]{2,3}|[KNW][A-Z][0-9][A-Z]{1,3})$`)
+
+// ValidFCCCallSign is a validation function for a field that can contain an FCC
+// call sign.
+func ValidFCCCallSign(f *Field) string {
+	if *f.Value != "" && !fccCallSignRE.MatchString(*f.Value) {
+		return fmt.Sprintf("The %q field does not contain a valid FCC call sign.", f.Label)
+	}
+	return ""
+}
+
+// ValidFrequency is a validation function for a field that can contain a
+// frequency in MHz.
+func ValidFrequency(f *Field) string {
+	if *f.Value != "" && !common.PIFOFrequencyRE.MatchString(*f.Value) {
+		return fmt.Sprintf("The %q field does not contain a valid frequency.", f.Label)
+	}
+	return ""
+}
+
+// ValidFrequencyOffset is a validation function for a field that can contain a
+// frequency offset in MHz.
+func ValidFrequencyOffset(f *Field) string {
+	if *f.Value != "" && !common.PIFOFrequencyOffsetRE.MatchString(*f.Value) {
+		return fmt.Sprintf("The %q field does not contain a valid frequency offset.", f.Label)
+	}
+	return ""
+}
+
 var messageIDRE = regexp.MustCompile(`^(?:[0-9][A-Z]{2}|[A-Z][A-Z0-9]{2})-(?:[1-9][0-9]{3,}|[0-9]{3})[A-Z]?$`)
 
 // ValidMessageNumber is a validation function for a field that can contain a
@@ -104,11 +133,31 @@ func ValidPhoneNumber(f *Field) string {
 	return ""
 }
 
+// ValidReal is a validation function for a field that can contain a real
+// number.
+func ValidReal(f *Field) string {
+	if *f.Value != "" && !common.PIFORealNumberRE.MatchString(*f.Value) {
+		return fmt.Sprintf("The %q field does not contain a valid number.", f.Label)
+	}
+	return ""
+}
+
 // ValidRestricted is a validation function for a field that can contain a value
 // from a restricted set.
 func ValidRestricted(f *Field) string {
 	if *f.Value != "" && !f.Choices.IsPIFO(*f.Value) {
 		return fmt.Sprintf("The %q field does not contain one of its allowed values.", f.Label)
+	}
+	return ""
+}
+
+var tacticalCallSignRE = regexp.MustCompile(`^[A-Z][A-Z0-9]{4,5}$`)
+
+// ValidTacticalCallSign is a validation function for a field that can contain a
+// tactical call sign.
+func ValidTacticalCallSign(f *Field) string {
+	if *f.Value != "" && !tacticalCallSignRE.MatchString(*f.Value) {
+		return fmt.Sprintf("The %q field does not contain a valid tactical call sign.", f.Label)
 	}
 	return ""
 }

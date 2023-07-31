@@ -118,6 +118,7 @@ func New() (f *JurisStat) {
 var pdfBase []byte
 
 func create(version *basemsg.FormVersion) message.Message {
+	const fieldCount = 80
 	var f = JurisStat{BaseMessage: basemsg.BaseMessage{
 		MessageType: &Type,
 		PDFBase:     pdfBase,
@@ -137,7 +138,7 @@ func create(version *basemsg.FormVersion) message.Message {
 			{Name: "Origin Msg Nbr Copy", Value: f.OriginMsgID},
 		}
 	})
-	f.Fields = make([]*basemsg.Field, 0, 80)
+	f.Fields = make([]*basemsg.Field, 0, fieldCount)
 	f.BaseForm.AddHeaderFields(&f.BaseMessage, &basePDFMaps)
 	f.Fields = append(f.Fields,
 		&basemsg.Field{
@@ -807,6 +808,9 @@ func create(version *basemsg.FormVersion) message.Message {
 		},
 	)
 	f.BaseForm.AddFooterFields(&f.BaseMessage, &basePDFMaps)
+	if len(f.Fields) > fieldCount {
+		panic("update JurisStat fieldCount")
+	}
 	return &f
 }
 

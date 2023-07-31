@@ -120,6 +120,7 @@ func New() (f *AHFacStat) {
 var pdfBase []byte
 
 func create(version *basemsg.FormVersion) message.Message {
+	const fieldCount = 130
 	var f = AHFacStat{BaseMessage: basemsg.BaseMessage{
 		MessageType: &Type,
 		PDFBase:     pdfBase,
@@ -128,7 +129,7 @@ func create(version *basemsg.FormVersion) message.Message {
 	f.BaseMessage.FSubject = &f.FacilityName
 	f.BaseMessage.FReportType = &f.ReportType
 	f.BaseMessage.FBody = &f.Summary
-	f.Fields = make([]*basemsg.Field, 0, 130)
+	f.Fields = make([]*basemsg.Field, 0, fieldCount)
 	f.BaseForm.AddHeaderFields(&f.BaseMessage, &baseform.DefaultPDFMaps)
 	f.Fields = append(f.Fields,
 		&basemsg.Field{
@@ -1451,6 +1452,9 @@ func create(version *basemsg.FormVersion) message.Message {
 		},
 	)
 	f.BaseForm.AddFooterFields(&f.BaseMessage, &baseform.DefaultPDFMaps)
+	if len(f.Fields) > fieldCount {
+		panic("update AHFacStat fieldCount")
+	}
 	return &f
 }
 

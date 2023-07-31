@@ -78,8 +78,6 @@ func (c Choices) ToPIFO(s string) string {
 // in the set.
 func (c Choices) ListHuman() []string { return c }
 
-/*
-
 // ChoicePairs is a wrapper around []string to make it a valid ChoiceMapper.
 // Each pair of strings in the slice is a PIFO and a human representation of a
 // choice.
@@ -147,4 +145,3 @@ func (c ChoicePairs) ListHuman() (human []string) {
 	}
 	return human
 }
-*/

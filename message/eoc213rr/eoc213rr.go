@@ -83,6 +83,7 @@ func New() (f *EOC213RR) {
 var pdfBase []byte
 
 func create(version *basemsg.FormVersion) message.Message {
+	const fieldCount = 51
 	var f = EOC213RR{BaseMessage: basemsg.BaseMessage{
 		MessageType: &Type,
 		PDFBase:     pdfBase,
@@ -91,7 +92,7 @@ func create(version *basemsg.FormVersion) message.Message {
 	}}
 	f.BaseMessage.FSubject = &f.IncidentName
 	f.BaseMessage.FBody = &f.Instructions
-	f.Fields = make([]*basemsg.Field, 0, 51)
+	f.Fields = make([]*basemsg.Field, 0, fieldCount)
 	f.BaseForm.AddHeaderFields(&f.BaseMessage, &baseform.DefaultPDFMaps)
 	f.Fields = append(f.Fields,
 		&basemsg.Field{
@@ -465,6 +466,9 @@ func create(version *basemsg.FormVersion) message.Message {
 		},
 	)
 	f.BaseForm.AddFooterFields(&f.BaseMessage, &baseform.DefaultPDFMaps)
+	if len(f.Fields) > fieldCount {
+		panic("update EOC213RR fieldCount")
+	}
 	return &f
 }
 

@@ -114,6 +114,7 @@ func New() (f *RACESMAR) {
 var pdfBase []byte
 
 func create(version *basemsg.FormVersion) message.Message {
+	const fieldCount = 74
 	var f = RACESMAR{BaseMessage: basemsg.BaseMessage{
 		MessageType: &Type,
 		PDFBase:     pdfBase,
@@ -121,7 +122,7 @@ func create(version *basemsg.FormVersion) message.Message {
 	}}
 	f.BaseMessage.FSubject = &f.AgencyName
 	f.BaseMessage.FBody = &f.Assignment
-	f.Fields = make([]*basemsg.Field, 0, 74)
+	f.Fields = make([]*basemsg.Field, 0, fieldCount)
 	f.BaseForm.AddHeaderFields(&f.BaseMessage, &basePDFMap)
 	f.Fields = append(f.Fields,
 		&basemsg.Field{
@@ -421,6 +422,9 @@ func create(version *basemsg.FormVersion) message.Message {
 		},
 	)
 	f.BaseForm.AddFooterFields(&f.BaseMessage, &basePDFMap)
+	if len(f.Fields) > fieldCount {
+		panic("update RACESMAR fieldCount")
+	}
 	return &f
 }
 
