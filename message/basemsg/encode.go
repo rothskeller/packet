@@ -18,7 +18,9 @@ func (bm *BaseMessage) EncodeSubject() string {
 	if bm.FHandling != nil {
 		handling = *bm.FHandling
 	}
-	formtag = bm.Form.Tag
+	if bm.Form != nil {
+		formtag = bm.Form.Tag
+	}
 	if bm.FSubject != nil {
 		subject = *bm.FSubject
 	}
