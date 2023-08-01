@@ -84,6 +84,9 @@ func New() (m *PlainText) {
 func decode(subject, body string) (f *PlainText) {
 	f = New()
 	f.OriginMsgID, _, f.Handling, _, f.Subject = common.DecodeSubject(subject)
+	if h := common.DecodeHandlingMap[f.Handling]; h != "" {
+		f.Handling = h
+	}
 	f.Body = body
 	return f
 }
