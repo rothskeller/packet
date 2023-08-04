@@ -42,6 +42,9 @@ func decode(subject, body string) (f *UnknownForm) {
 			Version: form.FormVersion,
 		},
 	}}
+	f.BaseMessage.FOriginMsgID = &f.OriginMsgID
+	f.BaseMessage.FHandling = &f.Handling
+	f.BaseMessage.FSubject = &f.Subject
 	f.OriginMsgID, _, f.Handling, f.Form.Tag, f.Subject = message.DecodeSubject(subject)
 	if h := message.DecodeHandlingMap[f.Handling]; h != "" {
 		f.Handling = h

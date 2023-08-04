@@ -16,7 +16,6 @@ var Type = message.Type{
 	Tag:         "EOC213RR",
 	Name:        "EOC-213RR resource request form",
 	Article:     "an",
-	PDFBase:     pdfBase,
 	PDFFontSize: 12,
 }
 
@@ -79,8 +78,6 @@ func New() (f *EOC213RR) {
 	f.DateInitiated = f.MessageDate
 	return f
 }
-
-var pdfBase []byte
 
 func create(version *message.FormVersion) message.Message {
 	const fieldCount = 51
@@ -406,5 +403,9 @@ func decode(subject, body string) (f *EOC213RR) {
 	if !strings.Contains(body, "form-scco-eoc-213rr.html") {
 		return nil
 	}
-	return message.DecodeForm(body, versions, create).(*EOC213RR)
+	if df, ok := message.DecodeForm(body, versions, create).(*EOC213RR); ok {
+		return df
+	} else {
+		return nil
+	}
 }

@@ -14,7 +14,6 @@ var Type = message.Type{
 	Tag:     "RACES-MAR",
 	Name:    "RACES mutual aid request form",
 	Article: "a",
-	PDFBase: pdfBase,
 }
 
 func init() {
@@ -109,8 +108,6 @@ func New() (f *RACESMAR) {
 	f.ToLocation = "County EOC"
 	return f
 }
-
-var pdfBase []byte
 
 func create(version *message.FormVersion) message.Message {
 	const fieldCount = 74
@@ -381,5 +378,9 @@ func decode(subject, body string) (f *RACESMAR) {
 	if !strings.Contains(body, "form-oa-mutual-aid-request") {
 		return nil
 	}
-	return message.DecodeForm(body, versions, create).(*RACESMAR)
+	if df, ok := message.DecodeForm(body, versions, create).(*RACESMAR); ok {
+		return df
+	} else {
+		return nil
+	}
 }

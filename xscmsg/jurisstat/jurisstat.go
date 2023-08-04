@@ -15,7 +15,6 @@ var Type = message.Type{
 	Tag:         "JurisStat",
 	Name:        "OA jurisdiction status form",
 	Article:     "an",
-	PDFBase:     pdfBase,
 	PDFFontSize: 10,
 }
 
@@ -114,8 +113,6 @@ func New() (f *JurisStat) {
 	f.ToLocation = "County EOC"
 	return f
 }
-
-var pdfBase []byte
 
 func create(version *message.FormVersion) message.Message {
 	const fieldCount = 80
@@ -632,5 +629,9 @@ func decode(subject, body string) (f *JurisStat) {
 	if !strings.Contains(body, "form-oa-muni-status.html") {
 		return nil
 	}
-	return message.DecodeForm(body, versions, create).(*JurisStat)
+	if df, ok := message.DecodeForm(body, versions, create).(*JurisStat); ok {
+		return df
+	} else {
+		return nil
+	}
 }

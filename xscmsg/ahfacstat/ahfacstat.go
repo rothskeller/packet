@@ -16,7 +16,6 @@ var Type = message.Type{
 	Tag:     "AHFacStat",
 	Name:    "allied health facility status form",
 	Article: "an",
-	PDFBase: pdfBase,
 }
 
 func init() {
@@ -115,8 +114,6 @@ func New() (f *AHFacStat) {
 	f.Handling = "ROUTINE"
 	return f
 }
-
-var pdfBase []byte
 
 func create(version *message.FormVersion) message.Message {
 	const fieldCount = 130
@@ -1316,7 +1313,11 @@ func decode(subject, body string) (f *AHFacStat) {
 	if !strings.Contains(body, "form-allied-health-facility-status.html") {
 		return nil
 	}
-	return message.DecodeForm(body, versions, create).(*AHFacStat)
+	if df, ok := message.DecodeForm(body, versions, create).(*AHFacStat); ok {
+		return df
+	} else {
+		return nil
+	}
 }
 
 func allOrNone(first, current *message.Field) string {

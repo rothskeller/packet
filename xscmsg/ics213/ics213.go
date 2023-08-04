@@ -13,7 +13,6 @@ var Type = message.Type{
 	Tag:     "ICS213",
 	Name:    "ICS-213 general message form",
 	Article: "an",
-	PDFBase: pdfBase,
 }
 
 func init() {
@@ -88,8 +87,6 @@ func (f *ICS213) SetOperator(opcall, opname string, received bool) {
 	f.TxMethod, f.OtherMethod = "Other", "Packet"
 	f.BaseMessage.SetOperator(opcall, opname, received)
 }
-
-var pdfBase []byte
 
 func create(version *message.FormVersion) message.Message {
 	const fieldCount = 34
@@ -359,13 +356,12 @@ func create(version *message.FormVersion) message.Message {
 			EditHelp:  `This is the name of the station to which this message was directly sent.  It is filled in for messages that go through a relay station.`,
 		}),
 		message.NewRestrictedField(&message.Field{
-			Label:    "Operator: Receiver/Sender",
-			Value:    &f.ReceivedSent,
-			Choices:  message.Choices{"sender", "receiver"},
-			Presence: message.Required,
-			PIFOTag:  "Rec-Sent",
-			PDFMap:   message.PDFNameMap{"How: Received", "", "Off", "sender", "0", "receiver", "1"},
-			Compare:  message.CompareNone,
+			Label:   "Operator: Receiver/Sender",
+			Value:   &f.ReceivedSent,
+			Choices: message.Choices{"sender", "receiver"},
+			PIFOTag: "Rec-Sent",
+			PDFMap:  message.PDFNameMap{"How: Received", "", "Off", "sender", "0", "receiver", "1"},
+			Compare: message.CompareNone,
 		}),
 		message.NewTextField(&message.Field{
 			Label:      "Operator: Call Sign",
@@ -455,7 +451,9 @@ func decode(subject, body string) (f *ICS213) {
 	if !strings.Contains(body, "form-ics213.html") {
 		return nil
 	}
-	if f = message.DecodeForm(body, versions, create).(*ICS213); f == nil {
+	if df, ok := message.DecodeForm(body, versions, create).(*ICS213); ok {
+		f = df
+	} else {
 		return nil
 	}
 	// We need to fix up the origin/my/destination message numbers in the

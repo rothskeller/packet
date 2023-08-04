@@ -15,7 +15,6 @@ var Type = message.Type{
 	Tag:         "SheltStat",
 	Name:        "OA shelter status form",
 	Article:     "an",
-	PDFBase:     pdfBase,
 	PDFFontSize: 10,
 }
 
@@ -88,8 +87,6 @@ func New() (f *SheltStat) {
 	f.Handling = "PRIORITY"
 	return f
 }
-
-var pdfBase []byte
 
 func create(version *message.FormVersion) message.Message {
 	const fieldCount = 63
@@ -596,7 +593,11 @@ func decode(subject, body string) (f *SheltStat) {
 	if !strings.Contains(body, "form-oa-shelter-status.html") {
 		return nil
 	}
-	return message.DecodeForm(body, versions, create).(*SheltStat)
+	if df, ok := message.DecodeForm(body, versions, create).(*SheltStat); ok {
+		return df
+	} else {
+		return nil
+	}
 }
 
 func formatFreq(freq, tone string) string {
