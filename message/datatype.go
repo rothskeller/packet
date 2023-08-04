@@ -1,4 +1,4 @@
-package basemsg
+package message
 
 import (
 	"fmt"
@@ -6,65 +6,26 @@ import (
 	"strconv"
 	"strings"
 	"time"
-
-	"github.com/rothskeller/packet/message"
-	"github.com/rothskeller/packet/message/common"
 )
 
-// AddFieldDefaults adds defaults to a Field.  It replaces nil functions with
-// default implementations.
-func AddFieldDefaults(f *Field) *Field {
-	if f.Choices == nil {
-		f.Choices = NoChoices{}
-	}
-	if f.Presence == nil {
-		f.Presence = func() (Presence, string) { return PresenceOptional, "" }
-	}
-	if f.PIFOValid == nil {
-		f.PIFOValid = func(f *Field) string { return "" }
-	}
-	if f.Compare == nil {
-		f.Compare = func(label, exp, act string) *message.CompareField { return nil }
-	}
-	if f.PDFMap == nil {
-		f.PDFMap = NoPDFField{}
-	}
-	if f.TableValue == nil {
-		f.TableValue = func(f *Field) string {
-			if f.Value == nil {
-				return ""
-			} else {
-				return f.Choices.ToHuman(*f.Value)
-			}
-		}
-	}
-	if f.EditValue == nil {
-		f.EditValue = func(f *Field) string {
-			if f.Value == nil {
-				return ""
-			} else {
-				return f.Choices.ToHuman(*f.Value)
-			}
-		}
-	}
-	if f.EditApply == nil {
-		f.EditApply = func(f *Field, s string) {
-			if f.Value != nil {
-				*f.Value = f.Choices.ToPIFO(strings.TrimSpace(s))
-			}
-		}
-	}
-	if f.EditValid == nil {
-		f.EditValid = f.PIFOValid
-	}
-	if f.EditSkip == nil {
-		f.EditSkip = func(f *Field) bool {
-			p, _ := f.Presence()
-			return p == PresenceNotAllowed
-		}
-	}
-	return f
-}
+// Regular expressions for data type validation.  The ones with PIFO* names are
+// taken from the PackItForms code, unmodified except for JavaScript-to-Go
+// conversion.
+var (
+	PIFOCardinalNumberRE  = regexp.MustCompile(`^[0-9]*$`)
+	dateLooseRE           = regexp.MustCompile(`^(0?[1-9]|1[0-2])[-./](0?[1-9]|[12][0-9]|3[01])[-./](?:20)?([0-9][0-9])$`)
+	PIFODateRE            = regexp.MustCompile(`^(?:0[1-9]|1[012])/(?:0[1-9]|1[0-9]|2[0-9]|3[01])/[1-2][0-9][0-9][0-9]$`)
+	fccCallSignRE         = regexp.MustCompile(`^(?:A[A-L][0-9][A-Z]{1,3}|[KNW][0-9][A-Z]{2,3}|[KNW][A-Z][0-9][A-Z]{1,3})$`)
+	PIFOFrequencyRE       = regexp.MustCompile(`^[0-9]+(?:\.[0-9]+)?$`)
+	PIFOFrequencyOffsetRE = regexp.MustCompile(`^(?:[-+]?[0-9]*\.[0-9]+|[-+]?[0-9]+|[-+])$`)
+	messageNumberLooseRE  = regexp.MustCompile(`^([A-Z0-9]{3})-(\d+)([A-Z]?)$`)
+	messageNumberRE       = regexp.MustCompile(`^(?:[0-9][A-Z]{2}|[A-Z][A-Z0-9]{2})-(?:[1-9][0-9]{3,}|[0-9]{3})[A-Z]?$`)
+	PIFOPhoneNumberRE     = regexp.MustCompile(`^[a-zA-Z ]*(?:[+][0-9]+ )?[0-9][0-9 -]*(?:[xX][0-9]+)?$`)
+	PIFORealNumberRE      = regexp.MustCompile(`^(?:[-+]?[0-9]*\.[0-9]+|[-+]?[0-9]+)$`)
+	tacticalCallSignRE    = regexp.MustCompile(`^[A-Z][A-Z0-9]{4,5}$`)
+	timeLooseRE           = regexp.MustCompile(`^([1-9]:|[01][0-9]:?|2[0-4]:?)([0-5][0-9])$`)
+	PIFOTimeRE            = regexp.MustCompile(`^(?:([01][0-9]|2[0-3]):?[0-5][0-9]|2400|24:00)$`)
+)
 
 // NewAggregatorField adds defaults to a Field that are appropriate for a
 // pseudo-field that displays and/or edits the contents of multiple other fields
@@ -96,7 +57,7 @@ func ApplyCardinalNumber(f *Field, v string) {
 // ValidCardinalNumber verifies that the provided string is a valid cardinal
 // number according to PackItForms.
 func ValidCardinalNumber(f *Field) string {
-	if *f.Value != "" && !common.PIFOCardinalNumberRE.MatchString(*f.Value) {
+	if *f.Value != "" && !PIFOCardinalNumberRE.MatchString(*f.Value) {
 		return fmt.Sprintf("The %q field does not contain a valid number.", f.Label)
 	}
 	return ""
@@ -110,7 +71,7 @@ func NewCardinalNumberField(f *Field) *Field {
 		f.PIFOValid = ValidCardinalNumber
 	}
 	if f.Compare == nil {
-		f.Compare = common.CompareCardinal
+		f.Compare = CompareCardinal
 	}
 	if f.EditApply == nil {
 		f.EditApply = ApplyCardinalNumber
@@ -126,7 +87,7 @@ func NewCardinalNumberField(f *Field) *Field {
 func NewDateTimeField(f *Field, date, tval *string) *Field {
 	if f.TableValue == nil {
 		f.TableValue = func(*Field) string {
-			return common.SmartJoin(*date, *tval, " ")
+			return SmartJoin(*date, *tval, " ")
 		}
 	}
 	if f.EditWidth == 0 {
@@ -137,7 +98,7 @@ func NewDateTimeField(f *Field, date, tval *string) *Field {
 	}
 	if f.EditValue == nil {
 		f.EditValue = func(*Field) string {
-			return common.SmartJoin(*date, *tval, " ")
+			return SmartJoin(*date, *tval, " ")
 		}
 	}
 	if f.EditApply == nil {
@@ -172,22 +133,20 @@ func NewDateTimeField(f *Field, date, tval *string) *Field {
 func NewDateWithTimeField(f *Field) *Field {
 	if f.PIFOValid == nil {
 		f.PIFOValid = func(f *Field) string {
-			if *f.Value != "" && !common.PIFODateRE.MatchString(*f.Value) {
+			if *f.Value != "" && !PIFODateRE.MatchString(*f.Value) {
 				return fmt.Sprintf("The %q field does not contain a valid date (MM/DD/YYYY).", f.Label)
 			}
 			return ""
 		}
 	}
 	if f.Compare == nil {
-		f.Compare = common.CompareDate
+		f.Compare = CompareDate
 	}
 	if f.TableValue == nil {
 		f.TableValue = TableOmit
 	}
 	return AddFieldDefaults(f)
 }
-
-var dateLooseRE = regexp.MustCompile(`^(0?[1-9]|1[0-2])[-./](0?[1-9]|[12][0-9]|3[01])[-./](?:20)?([0-9][0-9])$`)
 
 // NewDateWithoutTimeField adds defaults to a Field that are appropriate for a
 // field that contains an MM/DD/YYYY date, and that is not part of a
@@ -196,14 +155,14 @@ var dateLooseRE = regexp.MustCompile(`^(0?[1-9]|1[0-2])[-./](0?[1-9]|[12][0-9]|3
 func NewDateWithoutTimeField(f *Field) *Field {
 	if f.PIFOValid == nil {
 		f.PIFOValid = func(f *Field) string {
-			if *f.Value != "" && !common.PIFODateRE.MatchString(*f.Value) {
+			if *f.Value != "" && !PIFODateRE.MatchString(*f.Value) {
 				return fmt.Sprintf("The %q field does not contain a valid date (MM/DD/YYYY).", f.Label)
 			}
 			return ""
 		}
 	}
 	if f.Compare == nil {
-		f.Compare = common.CompareDate
+		f.Compare = CompareDate
 	}
 	if f.EditWidth == 0 {
 		f.EditWidth = 10
@@ -228,14 +187,12 @@ func NewDateWithoutTimeField(f *Field) *Field {
 	return NewAggregatorField(f)
 }
 
-var fccCallSignRE = regexp.MustCompile(`^(?:A[A-L][0-9][A-Z]{1,3}|[KNW][0-9][A-Z]{2,3}|[KNW][A-Z][0-9][A-Z]{1,3})$`)
-
 // NewFCCCallSignField adds defaults to a Field that are appropriate for a field
 // that contains an FCC call sign.  It modifies its argument and returns it for
 // chaining.
 func NewFCCCallSignField(f *Field) *Field {
 	if f.Compare == nil {
-		f.Compare = common.CompareExact
+		f.Compare = CompareExact
 	}
 	if f.EditWidth == 0 {
 		f.EditWidth = 6
@@ -262,14 +219,14 @@ func NewFCCCallSignField(f *Field) *Field {
 func NewFrequencyField(f *Field) *Field {
 	if f.PIFOValid == nil {
 		f.PIFOValid = func(f *Field) string {
-			if *f.Value != "" && !common.PIFOFrequencyRE.MatchString(*f.Value) {
+			if *f.Value != "" && !PIFOFrequencyRE.MatchString(*f.Value) {
 				return fmt.Sprintf("The %q field does not contain a valid frequency.", f.Label)
 			}
 			return ""
 		}
 	}
 	if f.Compare == nil {
-		f.Compare = common.CompareReal
+		f.Compare = CompareReal
 	}
 	if f.EditHint == "" {
 		f.EditHint = "MHz"
@@ -292,14 +249,14 @@ func NewFrequencyField(f *Field) *Field {
 func NewFrequencyOffsetField(f *Field) *Field {
 	if f.PIFOValid == nil {
 		f.PIFOValid = func(f *Field) string {
-			if *f.Value != "" && !common.PIFOFrequencyOffsetRE.MatchString(*f.Value) {
+			if *f.Value != "" && !PIFOFrequencyOffsetRE.MatchString(*f.Value) {
 				return fmt.Sprintf(`The %q field does not contain a valid frequency offset (a real number, a "+", or a "-").`, f.Label)
 			}
 			return ""
 		}
 	}
 	if f.Compare == nil {
-		f.Compare = common.CompareReal
+		f.Compare = CompareReal
 	}
 	if f.EditHint == "" {
 		f.EditHint = "MHz or +/-"
@@ -316,15 +273,12 @@ func NewFrequencyOffsetField(f *Field) *Field {
 	return AddFieldDefaults(f)
 }
 
-var messageNumberLooseRE = regexp.MustCompile(`^([A-Z0-9]{3})-(\d+)([A-Z]?)$`)
-var messageNumberRE = regexp.MustCompile(`^(?:[0-9][A-Z]{2}|[A-Z][A-Z0-9]{2})-(?:[1-9][0-9]{3,}|[0-9]{3})[A-Z]?$`)
-
 // NewMessageNumberField adds defaults to a Field that are appropriate for a
 // field that contains a packet message number.  It modifies its argument and
 // returns it for chaining.
 func NewMessageNumberField(f *Field) *Field {
 	if f.Compare == nil {
-		f.Compare = common.CompareExact
+		f.Compare = CompareExact
 	}
 	if f.EditWidth == 0 {
 		f.EditWidth = 9
@@ -367,14 +321,14 @@ func NewMultilineField(f *Field) *Field {
 func NewPhoneNumberField(f *Field) *Field {
 	if f.PIFOValid == nil {
 		f.PIFOValid = func(f *Field) string {
-			if *f.Value != "" && !common.PIFOPhoneNumberRE.MatchString(*f.Value) {
+			if *f.Value != "" && !PIFOPhoneNumberRE.MatchString(*f.Value) {
 				return fmt.Sprintf("The %q field does not contain a valid phone number.", f.Label)
 			}
 			return ""
 		}
 	}
 	if f.Compare == nil {
-		f.Compare = common.CompareExact
+		f.Compare = CompareExact
 	}
 	return AddFieldDefaults(f)
 }
@@ -385,14 +339,14 @@ func NewPhoneNumberField(f *Field) *Field {
 func NewRealNumberField(f *Field) *Field {
 	if f.PIFOValid == nil {
 		f.PIFOValid = func(f *Field) string {
-			if *f.Value != "" && !common.PIFORealNumberRE.MatchString(*f.Value) {
+			if *f.Value != "" && !PIFORealNumberRE.MatchString(*f.Value) {
 				return fmt.Sprintf("The %q field does not contain a valid number.", f.Label)
 			}
 			return ""
 		}
 	}
 	if f.Compare == nil {
-		f.Compare = common.CompareReal
+		f.Compare = CompareReal
 	}
 	if f.EditApply == nil {
 		f.EditApply = func(f *Field, v string) {
@@ -419,7 +373,7 @@ func NewRestrictedField(f *Field) *Field {
 		}
 	}
 	if f.Compare == nil {
-		f.Compare = common.CompareExact
+		f.Compare = CompareExact
 	}
 	return AddFieldDefaults(f)
 }
@@ -431,14 +385,12 @@ func NewStaticPDFContentField(f *Field) *Field {
 	return AddFieldDefaults(f)
 }
 
-var tacticalCallSignRE = regexp.MustCompile(`^[A-Z][A-Z0-9]{4,5}$`)
-
 // NewTacticalCallSignField adds defaults to a Field that are appropriate for a
 // field that contains a tactical call sign.  It modifies its argument and
 // returns it for chaining.
 func NewTacticalCallSignField(f *Field) *Field {
 	if f.Compare == nil {
-		f.Compare = common.CompareExact
+		f.Compare = CompareExact
 	}
 	if f.EditWidth == 0 {
 		f.EditWidth = 6
@@ -464,7 +416,7 @@ func NewTacticalCallSignField(f *Field) *Field {
 // argument and returns it for chaining.
 func NewTextField(f *Field) *Field {
 	if f.Compare == nil {
-		f.Compare = common.CompareText
+		f.Compare = CompareText
 	}
 	return AddFieldDefaults(f)
 }
@@ -476,22 +428,20 @@ func NewTextField(f *Field) *Field {
 func NewTimeWithDateField(f *Field) *Field {
 	if f.PIFOValid == nil {
 		f.PIFOValid = func(f *Field) string {
-			if *f.Value != "" && !common.PIFOTimeRE.MatchString(*f.Value) {
+			if *f.Value != "" && !PIFOTimeRE.MatchString(*f.Value) {
 				return fmt.Sprintf("The %q field does not contain a valid time (HH:MM, 24-hour clock).", f.Label)
 			}
 			return ""
 		}
 	}
 	if f.Compare == nil {
-		f.Compare = common.CompareTime
+		f.Compare = CompareTime
 	}
 	if f.TableValue == nil {
 		f.TableValue = TableOmit
 	}
 	return AddFieldDefaults(f)
 }
-
-var timeLooseRE = regexp.MustCompile(`^([1-9]:|[01][0-9]:?|2[0-4]:?)([0-5][0-9])$`)
 
 // NewTimeWithoutDateField adds defaults to a Field that are appropriate for a
 // field that contains an HH:MM time, and is not part of a
@@ -500,14 +450,14 @@ var timeLooseRE = regexp.MustCompile(`^([1-9]:|[01][0-9]:?|2[0-4]:?)([0-5][0-9])
 func NewTimeWithoutDateField(f *Field) *Field {
 	if f.PIFOValid == nil {
 		f.PIFOValid = func(f *Field) string {
-			if *f.Value != "" && !common.PIFOTimeRE.MatchString(*f.Value) {
+			if *f.Value != "" && !PIFOTimeRE.MatchString(*f.Value) {
 				return fmt.Sprintf("The %q field does not contain a valid time (HH:MM, 24-hour clock).", f.Label)
 			}
 			return ""
 		}
 	}
 	if f.Compare == nil {
-		f.Compare = common.CompareTime
+		f.Compare = CompareTime
 	}
 	if f.EditWidth == 0 {
 		f.EditWidth = 5

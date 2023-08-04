@@ -11,7 +11,7 @@ import (
 	"time"
 
 	"github.com/rothskeller/packet/envelope"
-	"github.com/rothskeller/packet/message/common"
+	"github.com/rothskeller/packet/message"
 	"github.com/rothskeller/pdf/pdfform"
 	"github.com/rothskeller/pdf/pdfstruct"
 )
@@ -164,11 +164,11 @@ func make309Line(m *envelope.Envelope, lmi, rmi string) []string {
 	}
 	sub = m.SubjectLine
 	if strings.HasPrefix(m.SubjectLine, "DELIVERED: ") {
-		if msgid, _, _, _, _ := common.DecodeSubject(m.SubjectLine[11:]); msgid != "" {
+		if msgid, _, _, _, _ := message.DecodeSubject(m.SubjectLine[11:]); msgid != "" {
 			sub = "Delivery receipt for " + msgid
 		}
 	} else if strings.HasPrefix(m.SubjectLine, "READ: ") {
-		if msgid, _, _, _, _ := common.DecodeSubject(m.SubjectLine[6:]); msgid != "" {
+		if msgid, _, _, _, _ := message.DecodeSubject(m.SubjectLine[6:]); msgid != "" {
 			sub = "Read receipt for " + msgid
 		}
 	}

@@ -5,8 +5,6 @@ import (
 	"sort"
 
 	"github.com/rothskeller/packet/message"
-	"github.com/rothskeller/packet/message/basemsg"
-	"github.com/rothskeller/packet/message/common"
 )
 
 // Type is the type definition for an unrecognized form message.
@@ -22,7 +20,7 @@ func init() {
 
 // UnknownForm holds the details of an unrecognized form message.
 type UnknownForm struct {
-	basemsg.BaseMessage
+	message.BaseMessage
 	OriginMsgID  string
 	Handling     string
 	Subject      string
@@ -33,43 +31,43 @@ type UnknownForm struct {
 // type.  It should return the decoded message if it belongs to this type, or
 // nil if it doesn't.
 func decode(subject, body string) (f *UnknownForm) {
-	form := common.DecodePIFO(body)
+	form := message.DecodePIFO(body)
 	if form == nil {
 		return nil
 	}
-	f = &UnknownForm{BaseMessage: basemsg.BaseMessage{
-		MessageType: &Type,
-		Form: &basemsg.FormVersion{
+	f = &UnknownForm{BaseMessage: message.BaseMessage{
+		Type: &Type,
+		Form: &message.FormVersion{
 			HTML:    form.HTMLIdent,
 			Version: form.FormVersion,
 		},
 	}}
-	f.OriginMsgID, _, f.Handling, f.Form.Tag, f.Subject = common.DecodeSubject(subject)
-	if h := common.DecodeHandlingMap[f.Handling]; h != "" {
+	f.OriginMsgID, _, f.Handling, f.Form.Tag, f.Subject = message.DecodeSubject(subject)
+	if h := message.DecodeHandlingMap[f.Handling]; h != "" {
 		f.Handling = h
 	}
-	f.Fields = []*basemsg.Field{
-		basemsg.NewCalculatedField(&basemsg.Field{
+	f.Fields = []*message.Field{
+		message.NewCalculatedField(&message.Field{
 			Label: "Form Type",
-			TableValue: func(*basemsg.Field) string {
+			TableValue: func(*message.Field) string {
 				return f.Form.HTML + " v" + f.Form.Version
 			},
 		}),
-		basemsg.NewMessageNumberField(&basemsg.Field{
+		message.NewMessageNumberField(&message.Field{
 			Label:    "Origin Message Number",
 			Value:    &f.OriginMsgID,
-			Presence: basemsg.Required,
+			Presence: message.Required,
 		}),
-		basemsg.NewRestrictedField(&basemsg.Field{
+		message.NewRestrictedField(&message.Field{
 			Label:    "Handling",
 			Value:    &f.Handling,
-			Choices:  basemsg.Choices{"ROUTINE", "PRIORITY", "IMMEDIATE"},
-			Presence: basemsg.Required,
+			Choices:  message.Choices{"ROUTINE", "PRIORITY", "IMMEDIATE"},
+			Presence: message.Required,
 		}),
-		basemsg.NewTextField(&basemsg.Field{
+		message.NewTextField(&message.Field{
 			Label:    "Subject",
 			Value:    &f.Subject,
-			Presence: basemsg.Required,
+			Presence: message.Required,
 		}),
 	}
 	var tags = make([]string, 0, len(form.TaggedValues))
@@ -79,7 +77,7 @@ func decode(subject, body string) (f *UnknownForm) {
 	sort.Strings(tags)
 	for _, tag := range tags {
 		value := form.TaggedValues[tag]
-		f.Fields = append(f.Fields, basemsg.NewTextField(&basemsg.Field{
+		f.Fields = append(f.Fields, message.NewTextField(&message.Field{
 			Label:   tag,
 			Value:   &value,
 			PIFOTag: tag,

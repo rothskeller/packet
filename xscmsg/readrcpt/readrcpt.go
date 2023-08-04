@@ -7,7 +7,6 @@ import (
 	"strings"
 
 	"github.com/rothskeller/packet/message"
-	"github.com/rothskeller/packet/message/basemsg"
 )
 
 // Type is the type definition for a read receipt.
@@ -23,7 +22,7 @@ func init() {
 
 // ReadReceipt holds the details of an XSC-standard read receipt message.
 type ReadReceipt struct {
-	basemsg.BaseMessage
+	message.BaseMessage
 	MessageTo      string
 	MessageSubject string
 	ReadTime       string
@@ -32,23 +31,23 @@ type ReadReceipt struct {
 
 // New creates a new read receipt message.
 func New() (m *ReadReceipt) {
-	m = &ReadReceipt{BaseMessage: basemsg.BaseMessage{MessageType: &Type}}
-	m.Fields = []*basemsg.Field{
-		basemsg.NewTextField(&basemsg.Field{
+	m = &ReadReceipt{BaseMessage: message.BaseMessage{Type: &Type}}
+	m.Fields = []*message.Field{
+		message.NewTextField(&message.Field{
 			Label:    "Message To",
 			Value:    &m.MessageTo,
-			Presence: basemsg.Required,
+			Presence: message.Required,
 		}),
-		basemsg.NewTextField(&basemsg.Field{
+		message.NewTextField(&message.Field{
 			Label: "Message Subject",
 			Value: &m.MessageSubject,
 		}),
-		basemsg.NewTextField(&basemsg.Field{
+		message.NewTextField(&message.Field{
 			Label:    "Read At",
 			Value:    &m.ReadTime,
-			Presence: basemsg.Required,
+			Presence: message.Required,
 		}),
-		basemsg.NewMultilineField(&basemsg.Field{
+		message.NewMultilineField(&message.Field{
 			Label: "Extra Text",
 			Value: &m.ExtraText,
 		}),

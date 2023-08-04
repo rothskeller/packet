@@ -7,15 +7,16 @@ import (
 	"time"
 
 	"github.com/rothskeller/packet/message"
-	"github.com/rothskeller/packet/message/baseform"
-	"github.com/rothskeller/packet/message/basemsg"
+	"github.com/rothskeller/packet/xscmsg/baseform"
 )
 
 // Type is the type definition for an OA jurisdiction status form.
 var Type = message.Type{
-	Tag:     "JurisStat",
-	Name:    "OA jurisdiction status form",
-	Article: "an",
+	Tag:         "JurisStat",
+	Name:        "OA jurisdiction status form",
+	Article:     "an",
+	PDFBase:     pdfBase,
+	PDFFontSize: 10,
 }
 
 // OldType is the previous type definition for an OA jurisdiction status form.
@@ -33,7 +34,7 @@ func init() {
 
 // versions is the list of supported versions.  The first one is used when
 // creating new forms.
-var versions = []*basemsg.FormVersion{
+var versions = []*message.FormVersion{
 	{HTML: "form-oa-muni-status.html", Version: "2.2", Tag: "JurisStat", FieldOrder: fieldOrder},
 	{HTML: "form-oa-muni-status.html", Version: "2.1", Tag: "MuniStat", FieldOrder: fieldOrder},
 	{HTML: "form-oa-muni-status.html", Version: "2.0", Tag: "MuniStat", FieldOrder: fieldOrder},
@@ -48,7 +49,7 @@ var fieldOrder = []string{
 
 // JurisStat holds an OA jurisdiction status form.
 type JurisStat struct {
-	basemsg.BaseMessage
+	message.BaseMessage
 	baseform.BaseForm
 	ReportType                    string
 	JurisdictionCode              string // added in 2.2
@@ -116,70 +117,67 @@ func New() (f *JurisStat) {
 
 var pdfBase []byte
 
-func create(version *basemsg.FormVersion) message.Message {
+func create(version *message.FormVersion) message.Message {
 	const fieldCount = 80
-	var f = JurisStat{BaseMessage: basemsg.BaseMessage{
-		MessageType: &Type,
-		PDFBase:     pdfBase,
-		PDFFontSize: 10,
-		Form:        version,
+	var f = JurisStat{BaseMessage: message.BaseMessage{
+		Type: &Type,
+		Form: version,
 	}}
 	if version.Version < "2.2" {
-		f.MessageType = &OldType
+		f.Type = &OldType
 	}
 	f.BaseMessage.FSubject = &f.Jurisdiction
-	f.BaseMessage.FReportType = &f.ReportType
 	f.BaseMessage.FBody = &f.CommunicationsComments
 	var basePDFMaps = baseform.DefaultPDFMaps
-	basePDFMaps.OriginMsgID = basemsg.PDFMapFunc(func(*basemsg.Field) []basemsg.PDFField {
-		return []basemsg.PDFField{
+	basePDFMaps.OriginMsgID = message.PDFMapFunc(func(*message.Field) []message.PDFField {
+		return []message.PDFField{
 			{Name: "Origin Msg Nbr", Value: f.OriginMsgID},
 			{Name: "Origin Msg Nbr Copy", Value: f.OriginMsgID},
 		}
 	})
-	f.Fields = make([]*basemsg.Field, 0, fieldCount)
+	f.Fields = make([]*message.Field, 0, fieldCount)
 	f.BaseForm.AddHeaderFields(&f.BaseMessage, &basePDFMaps)
 	f.Fields = append(f.Fields,
-		basemsg.NewRestrictedField(&basemsg.Field{
+		message.NewRestrictedField(&message.Field{
 			Label:    "Report Type",
 			Value:    &f.ReportType,
-			Choices:  basemsg.Choices{"Update", "Complete"},
-			Presence: basemsg.Required,
+			Choices:  message.Choices{"Update", "Complete"},
+			Presence: message.Required,
 			PIFOTag:  "19.",
-			PDFMap:   basemsg.PDFNameMap{"Report Type", "", "Off"},
+			PDFMap:   message.PDFNameMap{"Report Type", "", "Off"},
 			EditHelp: `This indicates whether the form should "Update" the previous status report for the jurisdiction, or whether it is a "Complete" replacement of the previous report.  This field is required.`,
 		}),
 	)
 	if f.Form.Version < "2.2" {
 		f.Fields = append(f.Fields,
-			basemsg.NewRestrictedField(&basemsg.Field{
+			message.NewRestrictedField(&message.Field{
 				Label:     "Jurisdiction Name",
 				Value:     &f.Jurisdiction,
-				Choices:   basemsg.Choices{"Campbell", "Cupertino", "Gilroy", "Los Altos", "Los Altos Hills", "Los Gatos", "Milpitas", "Monte Sereno", "Morgan Hill", "Mountain View", "Palo Alto", "San Jose", "Santa Clara", "Saratoga", "Sunnyvale", "Unincorporated"},
-				Presence:  basemsg.Required,
+				Choices:   message.Choices{"Campbell", "Cupertino", "Gilroy", "Los Altos", "Los Altos Hills", "Los Gatos", "Milpitas", "Monte Sereno", "Morgan Hill", "Mountain View", "Palo Alto", "San Jose", "Santa Clara", "Saratoga", "Sunnyvale", "Unincorporated"},
+				Presence:  message.Required,
 				PIFOTag:   "21.",
-				PDFMap:    basemsg.PDFName("Jurisdiction Name"),
+				PDFMap:    message.PDFName("Jurisdiction Name"),
 				EditWidth: 42,
 				EditHelp:  `This is the name of the jurisdiction being described by the form.  It is required.`,
 			}),
 		)
 	} else {
 		f.Fields = append(f.Fields,
-			basemsg.NewCalculatedField(&basemsg.Field{
+			message.NewCalculatedField(&message.Field{
 				Label:   "Jurisdiction Code",
 				Value:   &f.JurisdictionCode,
 				PIFOTag: "21.",
 			}),
-			basemsg.NewTextField(&basemsg.Field{
+			message.NewTextField(&message.Field{
 				Label:     "Jurisdiction Name",
 				Value:     &f.Jurisdiction,
-				Choices:   basemsg.Choices{"Campbell", "Cupertino", "Gilroy", "Los Altos", "Los Altos Hills", "Los Gatos", "Milpitas", "Monte Sereno", "Morgan Hill", "Mountain View", "Palo Alto", "San Jose", "Santa Clara", "Saratoga", "Sunnyvale", "Unincorporated"},
-				Presence:  basemsg.Required,
+				Choices:   message.Choices{"Campbell", "Cupertino", "Gilroy", "Los Altos", "Los Altos Hills", "Los Gatos", "Milpitas", "Monte Sereno", "Morgan Hill", "Mountain View", "Palo Alto", "San Jose", "Santa Clara", "Saratoga", "Sunnyvale", "Unincorporated"},
+				Presence:  message.Required,
 				PIFOTag:   "22.",
-				PDFMap:    basemsg.PDFName("Jurisdiction Name"),
+				PDFMap:    message.PDFName("Jurisdiction Name"),
 				EditWidth: 42,
 				EditHelp:  `This is the name of the jurisdiction being described by the form.  It is required.`,
-				EditApply: func(field *basemsg.Field, v string) {
+				EditApply: func(field *message.Field, v string) {
 					f.Jurisdiction = v
 					if v == "" || field.Choices.IsPIFO(v) {
 						f.JurisdictionCode = v
@@ -191,425 +189,425 @@ func create(version *basemsg.FormVersion) message.Message {
 		)
 	}
 	f.Fields = append(f.Fields,
-		basemsg.NewPhoneNumberField(&basemsg.Field{
+		message.NewPhoneNumberField(&message.Field{
 			Label:     "EOC Phone",
 			Value:     &f.EOCPhone,
 			Presence:  f.requiredForComplete,
 			PIFOTag:   "23.",
-			PDFMap:    basemsg.PDFName("EOC Phone"),
+			PDFMap:    message.PDFName("EOC Phone"),
 			EditWidth: 34,
 			EditHelp:  `This is the phone number of the jurisdiction's Emergency Operations Center (EOC).  It is required when "Report Type" is "Complete".`,
 		}),
-		basemsg.NewPhoneNumberField(&basemsg.Field{
+		message.NewPhoneNumberField(&message.Field{
 			Label:     "EOC Fax",
 			Value:     &f.EOCFax,
 			PIFOTag:   "24.",
-			PDFMap:    basemsg.PDFName("EOC Fax"),
+			PDFMap:    message.PDFName("EOC Fax"),
 			EditWidth: 37,
 			EditHelp:  `This is the fax number of the jurisdiction's Emergency Operations Center (EOC).`,
 		}),
-		basemsg.NewTextField(&basemsg.Field{
+		message.NewTextField(&message.Field{
 			Label:     "Primary EM Contact Name",
 			Value:     &f.PriEMContactName,
 			Presence:  f.requiredForComplete,
 			PIFOTag:   "25.",
-			PDFMap:    basemsg.PDFName("Pri EM Contact Name"),
+			PDFMap:    message.PDFName("Pri EM Contact Name"),
 			EditWidth: 27,
 			EditHelp:  `This is the name of the primary emergency manager of the jurisdiction.  It is required when "Report Type" is "Complete".`,
 		}),
-		basemsg.NewPhoneNumberField(&basemsg.Field{
+		message.NewPhoneNumberField(&message.Field{
 			Label:     "Primary EM Contact Phone",
 			Value:     &f.PriEMContactPhone,
 			Presence:  f.requiredForComplete,
 			PIFOTag:   "26.",
-			PDFMap:    basemsg.PDFName("Pri EM Contact Phone"),
+			PDFMap:    message.PDFName("Pri EM Contact Phone"),
 			EditWidth: 26,
 			EditHelp:  `This is the phone number of the primary emergency manager of the jurisdiction.  It is required when "Report Type" is "Complete".`,
 		}),
-		basemsg.NewTextField(&basemsg.Field{
+		message.NewTextField(&message.Field{
 			Label:     "Secondary EM Contact Name",
 			Value:     &f.SecEMContactName,
 			PIFOTag:   "27.",
-			PDFMap:    basemsg.PDFName("Sec EM Contact Name"),
+			PDFMap:    message.PDFName("Sec EM Contact Name"),
 			EditWidth: 26,
 			EditHelp:  `This is the name of the secondary emergency manager of the jurisdiction.`,
 		}),
-		basemsg.NewPhoneNumberField(&basemsg.Field{
+		message.NewPhoneNumberField(&message.Field{
 			Label:     "Secondary EM Contact Phone",
 			Value:     &f.SecEMContactPhone,
 			PIFOTag:   "28.",
-			PDFMap:    basemsg.PDFName("Sec EM Contact Phone"),
+			PDFMap:    message.PDFName("Sec EM Contact Phone"),
 			EditWidth: 26,
 			EditHelp:  `This is the phone number of the secondary emergency manager of the jurisdiction.`,
 		}),
-		basemsg.NewRestrictedField(&basemsg.Field{
+		message.NewRestrictedField(&message.Field{
 			Label:    "Govt. Office Status",
 			Value:    &f.OfficeStatus,
-			Choices:  basemsg.Choices{"Unknown", "Open", "Closed"},
+			Choices:  message.Choices{"Unknown", "Open", "Closed"},
 			Presence: f.requiredForComplete,
 			PIFOTag:  "29.",
-			PDFMap:   basemsg.PDFNameMap{"Office Status", "", "Off"},
+			PDFMap:   message.PDFNameMap{"Office Status", "", "Off"},
 			EditHelp: `This indicates whether the jurisdiction's regular business offices are open.  It is required when "Report Type" is "Complete".`,
 		}),
-		basemsg.NewDateWithTimeField(&basemsg.Field{
+		message.NewDateWithTimeField(&message.Field{
 			Label:   "Govt. Office Expected Open Date",
 			Value:   &f.GovExpectedOpenDate,
 			PIFOTag: "30.",
-			PDFMap:  basemsg.PDFName("Office Open Date"),
+			PDFMap:  message.PDFName("Office Open Date"),
 		}),
-		basemsg.NewTimeWithDateField(&basemsg.Field{
+		message.NewTimeWithDateField(&message.Field{
 			Label:   "Govt. Office Expected Open Time",
 			Value:   &f.GovExpectedOpenTime,
 			PIFOTag: "31.",
-			PDFMap:  basemsg.PDFName("Office Open Time"),
+			PDFMap:  message.PDFName("Office Open Time"),
 		}),
-		basemsg.NewDateTimeField(&basemsg.Field{
+		message.NewDateTimeField(&message.Field{
 			Label:    "Govt. Office Expected to Open",
 			EditHelp: `This is the date and time when the jurisdiction's regular business offices are expected to open, in MM/DD/YYYY HH:MM format (24-hour clock).`,
 		}, &f.GovExpectedOpenDate, &f.GovExpectedOpenTime),
-		basemsg.NewDateWithTimeField(&basemsg.Field{
+		message.NewDateWithTimeField(&message.Field{
 			Label:   "Govt. Office Expected Close Date",
 			Value:   &f.GovExpectedCloseDate,
 			PIFOTag: "32.",
-			PDFMap:  basemsg.PDFName("Office Close Date"),
+			PDFMap:  message.PDFName("Office Close Date"),
 		}),
-		basemsg.NewTimeWithDateField(&basemsg.Field{
+		message.NewTimeWithDateField(&message.Field{
 			Label:   "Govt. Office Expected Close Time",
 			Value:   &f.GovExpectedCloseTime,
 			PIFOTag: "33.",
-			PDFMap:  basemsg.PDFName("Office Close Time"),
+			PDFMap:  message.PDFName("Office Close Time"),
 		}),
-		basemsg.NewDateTimeField(&basemsg.Field{
+		message.NewDateTimeField(&message.Field{
 			Label:    "Govt. Office Expected to Close",
 			EditHelp: `This is the date and time when the jurisdiction's regular business offices are expected to close, in MM/DD/YYYY HH:MM format (24-hour clock).`,
 		}, &f.GovExpectedCloseDate, &f.GovExpectedCloseTime),
-		basemsg.NewRestrictedField(&basemsg.Field{
+		message.NewRestrictedField(&message.Field{
 			Label:    "EOC Open",
 			Value:    &f.EOCOpen,
-			Choices:  basemsg.Choices{"Unknown", "Yes", "No"},
+			Choices:  message.Choices{"Unknown", "Yes", "No"},
 			Presence: f.requiredForComplete,
 			PIFOTag:  "34.",
-			PDFMap:   basemsg.PDFNameMap{"EOC Open", "", "Off"},
+			PDFMap:   message.PDFNameMap{"EOC Open", "", "Off"},
 			EditHelp: `This indicates whether the jurisdiction's Emergency Operations Center (EOC) is open.  It is required when "Report Type" is "Complete".`,
 		}),
-		basemsg.NewRestrictedField(&basemsg.Field{
+		message.NewRestrictedField(&message.Field{
 			Label:    "EOC Activation Level",
 			Value:    &f.EOCActivationLevel,
-			Choices:  basemsg.Choices{"Normal", "Duty Officer", "Monitor", "Partial", "Full"},
+			Choices:  message.Choices{"Normal", "Duty Officer", "Monitor", "Partial", "Full"},
 			Presence: f.requiredForComplete,
 			PIFOTag:  "35.",
-			PDFMap:   basemsg.PDFNameMap{"Activation", "", "Off"},
+			PDFMap:   message.PDFNameMap{"Activation", "", "Off"},
 			EditHelp: `This indicates the activation level of the jurisdiction's Emergency Operations Center (EOC).  It is required when "Report Type" is "Complete".`,
 		}),
-		basemsg.NewDateWithTimeField(&basemsg.Field{
+		message.NewDateWithTimeField(&message.Field{
 			Label:   "EOC Expected to Open Date",
 			Value:   &f.EOCExpectedOpenDate,
 			PIFOTag: "36.",
-			PDFMap:  basemsg.PDFName("EOC Open Date"),
+			PDFMap:  message.PDFName("EOC Open Date"),
 		}),
-		basemsg.NewTimeWithDateField(&basemsg.Field{
+		message.NewTimeWithDateField(&message.Field{
 			Label:   "EOC Expected to Open Time",
 			Value:   &f.EOCExpectedOpenTime,
 			PIFOTag: "37.",
-			PDFMap:  basemsg.PDFName("EOC Open Time"),
+			PDFMap:  message.PDFName("EOC Open Time"),
 		}),
-		basemsg.NewDateTimeField(&basemsg.Field{
+		message.NewDateTimeField(&message.Field{
 			Label:    "EOC Expected to Open",
 			EditHelp: `This is the date and time when the jurisdiction's Emergency Operations Center (EOC) is expected to open, in MM/DD/YYYY HH:MM format (24-hour clock).`,
 		}, &f.EOCExpectedOpenDate, &f.EOCExpectedOpenTime),
-		basemsg.NewDateWithTimeField(&basemsg.Field{
+		message.NewDateWithTimeField(&message.Field{
 			Label:   "EOC Expected to Close Date",
 			Value:   &f.EOCExpectedCloseDate,
 			PIFOTag: "38.",
-			PDFMap:  basemsg.PDFName("EOC Close Date"),
+			PDFMap:  message.PDFName("EOC Close Date"),
 		}),
-		basemsg.NewTimeWithDateField(&basemsg.Field{
+		message.NewTimeWithDateField(&message.Field{
 			Label:   "EOC Expected to Close Time",
 			Value:   &f.EOCExpectedCloseTime,
 			PIFOTag: "39.",
-			PDFMap:  basemsg.PDFName("EOC Close Time"),
+			PDFMap:  message.PDFName("EOC Close Time"),
 		}),
-		basemsg.NewDateTimeField(&basemsg.Field{
+		message.NewDateTimeField(&message.Field{
 			Label:    "EOC Expected to Close",
 			EditHelp: `This is the date and time when the jurisdiction's Emergency Operations Center (EOC) is expected to close, in MM/DD/YYYY HH:MM format (24-hour clock).`,
 		}, &f.EOCExpectedCloseDate, &f.EOCExpectedCloseTime),
-		basemsg.NewRestrictedField(&basemsg.Field{
+		message.NewRestrictedField(&message.Field{
 			Label:    "State of Emergency",
 			Value:    &f.StateOfEmergency,
-			Choices:  basemsg.Choices{"Unknown", "Yes", "No"},
+			Choices:  message.Choices{"Unknown", "Yes", "No"},
 			Presence: f.requiredForComplete,
 			PIFOTag:  "40.",
-			PDFMap:   basemsg.PDFNameMap{"State of Emergency", "", "Off"},
+			PDFMap:   message.PDFNameMap{"State of Emergency", "", "Off"},
 			EditHelp: `This indicates whether the jurisdiction has a declared state of emergency.  It is required when "Report Type" is "Complete".`,
 		}),
-		basemsg.NewTextField(&basemsg.Field{
+		message.NewTextField(&message.Field{
 			Label: "How SOE Sent",
 			Value: &f.HowSOESent,
-			Presence: func() (basemsg.Presence, string) {
+			Presence: func() (message.Presence, string) {
 				if f.StateOfEmergency == "Yes" {
-					return basemsg.PresenceRequired, `when "State of Emergency" is "Yes"`
+					return message.PresenceRequired, `when "State of Emergency" is "Yes"`
 				} else {
-					return basemsg.PresenceNotAllowed, `when "State of Emergency" is not "Yes"`
+					return message.PresenceNotAllowed, `when "State of Emergency" is not "Yes"`
 				}
 			},
 			PIFOTag:   "99.",
-			PDFMap:    basemsg.PDFName("Attachment"),
+			PDFMap:    message.PDFName("Attachment"),
 			EditWidth: 58,
 			EditHelp:  `This describes where and how the jurisdiction's "state of emergency" declaration was delivered.`,
 		}),
-		basemsg.NewRestrictedField(&basemsg.Field{
+		message.NewRestrictedField(&message.Field{
 			Label:    "Communications",
 			Value:    &f.Communications,
-			Choices:  basemsg.Choices{"Unknown", "Normal", "Problem", "Failure", "Delayed", "Closed", "Early Out"},
+			Choices:  message.Choices{"Unknown", "Normal", "Problem", "Failure", "Delayed", "Closed", "Early Out"},
 			PIFOTag:  "41.0.",
-			PDFMap:   basemsg.PDFNameMap{"Communications", "", "Off"},
+			PDFMap:   message.PDFNameMap{"Communications", "", "Off"},
 			EditHelp: `This describes the current situation status with respect to communications.`,
 		}),
-		basemsg.NewMultilineField(&basemsg.Field{
+		message.NewMultilineField(&message.Field{
 			Label:     "Communications: Comments",
 			Value:     &f.CommunicationsComments,
 			PIFOTag:   "41.1.",
-			PDFMap:    basemsg.PDFName("Comm Comment"),
+			PDFMap:    message.PDFName("Comm Comment"),
 			EditWidth: 60,
 			EditHelp:  `These are comments on the current situation status with respect to communications.`,
 		}),
-		basemsg.NewRestrictedField(&basemsg.Field{
+		message.NewRestrictedField(&message.Field{
 			Label:    "Debris",
 			Value:    &f.Debris,
-			Choices:  basemsg.Choices{"Unknown", "Normal", "Problem", "Failure", "Delayed", "Closed", "Early Out"},
+			Choices:  message.Choices{"Unknown", "Normal", "Problem", "Failure", "Delayed", "Closed", "Early Out"},
 			PIFOTag:  "42.0.",
-			PDFMap:   basemsg.PDFNameMap{"Debris", "", "Off"},
+			PDFMap:   message.PDFNameMap{"Debris", "", "Off"},
 			EditHelp: `This describes the current situation status with respect to debris.`,
 		}),
-		basemsg.NewMultilineField(&basemsg.Field{
+		message.NewMultilineField(&message.Field{
 			Label:     "Debris: Comments",
 			Value:     &f.DebrisComments,
 			PIFOTag:   "42.1.",
-			PDFMap:    basemsg.PDFName("Debris Comment"),
+			PDFMap:    message.PDFName("Debris Comment"),
 			EditWidth: 60,
 			EditHelp:  `These are comments on the current situation status with respect to debris.`,
 		}),
-		basemsg.NewRestrictedField(&basemsg.Field{
+		message.NewRestrictedField(&message.Field{
 			Label:    "Flooding",
 			Value:    &f.Flooding,
-			Choices:  basemsg.Choices{"Unknown", "Normal", "Problem", "Failure", "Delayed", "Closed", "Early Out"},
+			Choices:  message.Choices{"Unknown", "Normal", "Problem", "Failure", "Delayed", "Closed", "Early Out"},
 			PIFOTag:  "43.0.",
-			PDFMap:   basemsg.PDFNameMap{"Flooding", "", "Off"},
+			PDFMap:   message.PDFNameMap{"Flooding", "", "Off"},
 			EditHelp: `This describes the current situation status with respect to flooding.`,
 		}),
-		basemsg.NewMultilineField(&basemsg.Field{
+		message.NewMultilineField(&message.Field{
 			Label:     "Flooding: Comments",
 			Value:     &f.FloodingComments,
 			PIFOTag:   "43.1.",
-			PDFMap:    basemsg.PDFName("Flood Comment"),
+			PDFMap:    message.PDFName("Flood Comment"),
 			EditWidth: 60,
 			EditHelp:  `These are comments on the current situation status with respect to flooding.`,
 		}),
-		basemsg.NewRestrictedField(&basemsg.Field{
+		message.NewRestrictedField(&message.Field{
 			Label:    "Hazmat",
 			Value:    &f.Hazmat,
-			Choices:  basemsg.Choices{"Unknown", "Normal", "Problem", "Failure", "Delayed", "Closed", "Early Out"},
+			Choices:  message.Choices{"Unknown", "Normal", "Problem", "Failure", "Delayed", "Closed", "Early Out"},
 			PIFOTag:  "44.0.",
-			PDFMap:   basemsg.PDFNameMap{"Hazmat", "", "Off"},
+			PDFMap:   message.PDFNameMap{"Hazmat", "", "Off"},
 			EditHelp: `This describes the current situation status with respect to hazmat.`,
 		}),
-		basemsg.NewMultilineField(&basemsg.Field{
+		message.NewMultilineField(&message.Field{
 			Label:     "Hazmat: Comments",
 			Value:     &f.HazmatComments,
 			PIFOTag:   "44.1.",
-			PDFMap:    basemsg.PDFName("Hazmat Comment"),
+			PDFMap:    message.PDFName("Hazmat Comment"),
 			EditWidth: 60,
 			EditHelp:  `These are comments on the current situation status with respect to hazmat.`,
 		}),
-		basemsg.NewRestrictedField(&basemsg.Field{
+		message.NewRestrictedField(&message.Field{
 			Label:    "Emergency Services",
 			Value:    &f.EmergencyServices,
-			Choices:  basemsg.Choices{"Unknown", "Normal", "Problem", "Failure", "Delayed", "Closed", "Early Out"},
+			Choices:  message.Choices{"Unknown", "Normal", "Problem", "Failure", "Delayed", "Closed", "Early Out"},
 			PIFOTag:  "45.0.",
-			PDFMap:   basemsg.PDFNameMap{"Em Svcs", "", "Off"},
+			PDFMap:   message.PDFNameMap{"Em Svcs", "", "Off"},
 			EditHelp: `This describes the current situation status with respect to emergency services.`,
 		}),
-		basemsg.NewMultilineField(&basemsg.Field{
+		message.NewMultilineField(&message.Field{
 			Label:     "Emergency Services: Comments",
 			Value:     &f.EmergencyServicesComments,
 			PIFOTag:   "45.1.",
-			PDFMap:    basemsg.PDFName("Em Svcs Comment"),
+			PDFMap:    message.PDFName("Em Svcs Comment"),
 			EditWidth: 60,
 			EditHelp:  `These are comments on the current situation status with respect to emergency services.`,
 		}),
-		basemsg.NewRestrictedField(&basemsg.Field{
+		message.NewRestrictedField(&message.Field{
 			Label:    "Casualties",
 			Value:    &f.Casualties,
-			Choices:  basemsg.Choices{"Unknown", "Normal", "Problem", "Failure", "Delayed", "Closed", "Early Out"},
+			Choices:  message.Choices{"Unknown", "Normal", "Problem", "Failure", "Delayed", "Closed", "Early Out"},
 			PIFOTag:  "46.0.",
-			PDFMap:   basemsg.PDFNameMap{"Casualties", "", "Off"},
+			PDFMap:   message.PDFNameMap{"Casualties", "", "Off"},
 			EditHelp: `This describes the current situation status with respect to casualties.`,
 		}),
-		basemsg.NewMultilineField(&basemsg.Field{
+		message.NewMultilineField(&message.Field{
 			Label:     "Casualties: Comments",
 			Value:     &f.CasualtiesComments,
 			PIFOTag:   "46.1.",
-			PDFMap:    basemsg.PDFName("Casualties Comment"),
+			PDFMap:    message.PDFName("Casualties Comment"),
 			EditWidth: 60,
 			EditHelp:  `These are comments on the current situation status with respect to casualties.`,
 		}),
-		basemsg.NewRestrictedField(&basemsg.Field{
+		message.NewRestrictedField(&message.Field{
 			Label:    "Utilities Gas",
 			Value:    &f.UtilitiesGas,
-			Choices:  basemsg.Choices{"Unknown", "Normal", "Problem", "Failure", "Delayed", "Closed", "Early Out"},
+			Choices:  message.Choices{"Unknown", "Normal", "Problem", "Failure", "Delayed", "Closed", "Early Out"},
 			PIFOTag:  "47.0.",
-			PDFMap:   basemsg.PDFNameMap{"Util Gas", "", "Off"},
+			PDFMap:   message.PDFNameMap{"Util Gas", "", "Off"},
 			EditHelp: `This describes the current situation status with respect to utilities (gas).`,
 		}),
-		basemsg.NewMultilineField(&basemsg.Field{
+		message.NewMultilineField(&message.Field{
 			Label:     "Utilities Gas: Comments",
 			Value:     &f.UtilitiesGasComments,
 			PIFOTag:   "47.1.",
-			PDFMap:    basemsg.PDFName("Util Gas Comment"),
+			PDFMap:    message.PDFName("Util Gas Comment"),
 			EditWidth: 60,
 			EditHelp:  `These are comments on the current situation status with respect to utilities (gas).`,
 		}),
-		basemsg.NewRestrictedField(&basemsg.Field{
+		message.NewRestrictedField(&message.Field{
 			Label:    "Utilities Electric",
 			Value:    &f.UtilitiesElectric,
-			Choices:  basemsg.Choices{"Unknown", "Normal", "Problem", "Failure", "Delayed", "Closed", "Early Out"},
+			Choices:  message.Choices{"Unknown", "Normal", "Problem", "Failure", "Delayed", "Closed", "Early Out"},
 			PIFOTag:  "48.0.",
-			PDFMap:   basemsg.PDFNameMap{"Util Elec", "", "Off"},
+			PDFMap:   message.PDFNameMap{"Util Elec", "", "Off"},
 			EditHelp: `This describes the current situation status with respect to utilities (electric).`,
 		}),
-		basemsg.NewMultilineField(&basemsg.Field{
+		message.NewMultilineField(&message.Field{
 			Label:     "Utilities Electric: Comments",
 			Value:     &f.UtilitiesElectricComments,
 			PIFOTag:   "48.1.",
-			PDFMap:    basemsg.PDFName("Util Elec Comment"),
+			PDFMap:    message.PDFName("Util Elec Comment"),
 			EditWidth: 60,
 			EditHelp:  `These are comments on the current situation status with respect to utilities (electric).`,
 		}),
-		basemsg.NewRestrictedField(&basemsg.Field{
+		message.NewRestrictedField(&message.Field{
 			Label:    "Infrastructure Power",
 			Value:    &f.InfrastructurePower,
-			Choices:  basemsg.Choices{"Unknown", "Normal", "Problem", "Failure", "Delayed", "Closed", "Early Out"},
+			Choices:  message.Choices{"Unknown", "Normal", "Problem", "Failure", "Delayed", "Closed", "Early Out"},
 			PIFOTag:  "49.0.",
-			PDFMap:   basemsg.PDFNameMap{"Infra Pwr", "", "Off"},
+			PDFMap:   message.PDFNameMap{"Infra Pwr", "", "Off"},
 			EditHelp: `This describes the current situation status with respect to infrastructure (power).`,
 		}),
-		basemsg.NewMultilineField(&basemsg.Field{
+		message.NewMultilineField(&message.Field{
 			Label:     "Infrastructure Power: Comments",
 			Value:     &f.InfrastructurePowerComments,
 			PIFOTag:   "49.1.",
-			PDFMap:    basemsg.PDFName("Infra Pwr Comment"),
+			PDFMap:    message.PDFName("Infra Pwr Comment"),
 			EditWidth: 60,
 			EditHelp:  `These are comments on the current situation status with respect to infrastructure (power).`,
 		}),
-		basemsg.NewRestrictedField(&basemsg.Field{
+		message.NewRestrictedField(&message.Field{
 			Label:    "Infrastructure Water",
 			Value:    &f.InfrastructureWater,
-			Choices:  basemsg.Choices{"Unknown", "Normal", "Problem", "Failure", "Delayed", "Closed", "Early Out"},
+			Choices:  message.Choices{"Unknown", "Normal", "Problem", "Failure", "Delayed", "Closed", "Early Out"},
 			PIFOTag:  "50.0.",
-			PDFMap:   basemsg.PDFNameMap{"Infra Water", "", "Off"},
+			PDFMap:   message.PDFNameMap{"Infra Water", "", "Off"},
 			EditHelp: `This describes the current situation status with respect to infrastructure (water).`,
 		}),
-		basemsg.NewMultilineField(&basemsg.Field{
+		message.NewMultilineField(&message.Field{
 			Label:     "Infrastructure Water: Comments",
 			Value:     &f.InfrastructureWaterComments,
 			PIFOTag:   "50.1.",
-			PDFMap:    basemsg.PDFName("Infra Water Comment"),
+			PDFMap:    message.PDFName("Infra Water Comment"),
 			EditWidth: 60,
 			EditHelp:  `These are comments on the current situation status with respect to infrastructure (water).`,
 		}),
-		basemsg.NewRestrictedField(&basemsg.Field{
+		message.NewRestrictedField(&message.Field{
 			Label:    "Infrastructure Sewer",
 			Value:    &f.InfrastructureSewer,
-			Choices:  basemsg.Choices{"Unknown", "Normal", "Problem", "Failure", "Delayed", "Closed", "Early Out"},
+			Choices:  message.Choices{"Unknown", "Normal", "Problem", "Failure", "Delayed", "Closed", "Early Out"},
 			PIFOTag:  "51.0.",
-			PDFMap:   basemsg.PDFNameMap{"Infra Sewer", "", "Off"},
+			PDFMap:   message.PDFNameMap{"Infra Sewer", "", "Off"},
 			EditHelp: `This describes the current situation status with respect to infrastructure (sewer).`,
 		}),
-		basemsg.NewMultilineField(&basemsg.Field{
+		message.NewMultilineField(&message.Field{
 			Label:     "Infrastructure Sewer: Comments",
 			Value:     &f.InfrastructureSewerComments,
 			PIFOTag:   "51.1.",
-			PDFMap:    basemsg.PDFName("Infra Sewer Comment"),
+			PDFMap:    message.PDFName("Infra Sewer Comment"),
 			EditWidth: 60,
 			EditHelp:  `These are comments on the current situation status with respect to infrastructure (sewer).`,
 		}),
-		basemsg.NewRestrictedField(&basemsg.Field{
+		message.NewRestrictedField(&message.Field{
 			Label:    "Search And Rescue",
 			Value:    &f.SearchAndRescue,
-			Choices:  basemsg.Choices{"Unknown", "Normal", "Problem", "Failure", "Delayed", "Closed", "Early Out"},
+			Choices:  message.Choices{"Unknown", "Normal", "Problem", "Failure", "Delayed", "Closed", "Early Out"},
 			PIFOTag:  "52.0.",
-			PDFMap:   basemsg.PDFNameMap{"SAR", "", "Off"},
+			PDFMap:   message.PDFNameMap{"SAR", "", "Off"},
 			EditHelp: `This describes the current situation status with respect to search and rescue.`,
 		}),
-		basemsg.NewMultilineField(&basemsg.Field{
+		message.NewMultilineField(&message.Field{
 			Label:     "Search And Rescue: Comments",
 			Value:     &f.SearchAndRescueComments,
 			PIFOTag:   "52.1.",
-			PDFMap:    basemsg.PDFName("SAR Comment"),
+			PDFMap:    message.PDFName("SAR Comment"),
 			EditWidth: 60,
 			EditHelp:  `These are comments on the current situation status with respect to search and rescue.`,
 		}),
-		basemsg.NewRestrictedField(&basemsg.Field{
+		message.NewRestrictedField(&message.Field{
 			Label:    "Transportation Roads",
 			Value:    &f.TransportationRoads,
-			Choices:  basemsg.Choices{"Unknown", "Normal", "Problem", "Failure", "Delayed", "Closed", "Early Out"},
+			Choices:  message.Choices{"Unknown", "Normal", "Problem", "Failure", "Delayed", "Closed", "Early Out"},
 			PIFOTag:  "53.0.",
-			PDFMap:   basemsg.PDFNameMap{"Trans Roads", "", "Off"},
+			PDFMap:   message.PDFNameMap{"Trans Roads", "", "Off"},
 			EditHelp: `This describes the current situation status with respect to transportation (roads).`,
 		}),
-		basemsg.NewMultilineField(&basemsg.Field{
+		message.NewMultilineField(&message.Field{
 			Label:     "Transportation Roads: Comments",
 			Value:     &f.TransportationRoadsComments,
 			PIFOTag:   "53.1.",
-			PDFMap:    basemsg.PDFName("Trans Roads Comment"),
+			PDFMap:    message.PDFName("Trans Roads Comment"),
 			EditWidth: 60,
 			EditHelp:  `These are comments on the current situation status with respect to transportation (roads).`,
 		}),
-		basemsg.NewRestrictedField(&basemsg.Field{
+		message.NewRestrictedField(&message.Field{
 			Label:    "Transportation Bridges",
 			Value:    &f.TransportationBridges,
-			Choices:  basemsg.Choices{"Unknown", "Normal", "Problem", "Failure", "Delayed", "Closed", "Early Out"},
+			Choices:  message.Choices{"Unknown", "Normal", "Problem", "Failure", "Delayed", "Closed", "Early Out"},
 			PIFOTag:  "54.0.",
-			PDFMap:   basemsg.PDFNameMap{"Trans Bridges", "", "Off"},
+			PDFMap:   message.PDFNameMap{"Trans Bridges", "", "Off"},
 			EditHelp: `This describes the current situation status with respect to transportation (bridges).`,
 		}),
-		basemsg.NewMultilineField(&basemsg.Field{
+		message.NewMultilineField(&message.Field{
 			Label:     "Transportation Bridges: Comments",
 			Value:     &f.TransportationBridgesComments,
 			PIFOTag:   "54.1.",
-			PDFMap:    basemsg.PDFName("Trans Bridges Comment"),
+			PDFMap:    message.PDFName("Trans Bridges Comment"),
 			EditWidth: 60,
 			EditHelp:  `These are comments on the current situation status with respect to transportation (bridges).`,
 		}),
-		basemsg.NewRestrictedField(&basemsg.Field{
+		message.NewRestrictedField(&message.Field{
 			Label:    "Civil Unrest",
 			Value:    &f.CivilUnrest,
-			Choices:  basemsg.Choices{"Unknown", "Normal", "Problem", "Failure", "Delayed", "Closed", "Early Out"},
+			Choices:  message.Choices{"Unknown", "Normal", "Problem", "Failure", "Delayed", "Closed", "Early Out"},
 			PIFOTag:  "55.0.",
-			PDFMap:   basemsg.PDFNameMap{"Civil", "", "Off"},
+			PDFMap:   message.PDFNameMap{"Civil", "", "Off"},
 			EditHelp: `This describes the current situation status with respect to civil unrest.`,
 		}),
-		basemsg.NewMultilineField(&basemsg.Field{
+		message.NewMultilineField(&message.Field{
 			Label:     "Civil Unrest: Comments",
 			Value:     &f.CivilUnrestComments,
 			PIFOTag:   "55.1.",
-			PDFMap:    basemsg.PDFName("Civil Comment"),
+			PDFMap:    message.PDFName("Civil Comment"),
 			EditWidth: 60,
 			EditHelp:  `These are comments on the current situation status with respect to civil unrest.`,
 		}),
-		basemsg.NewRestrictedField(&basemsg.Field{
+		message.NewRestrictedField(&message.Field{
 			Label:    "Animal Issues",
 			Value:    &f.AnimalIssues,
-			Choices:  basemsg.Choices{"Unknown", "Normal", "Problem", "Failure", "Delayed", "Closed", "Early Out"},
+			Choices:  message.Choices{"Unknown", "Normal", "Problem", "Failure", "Delayed", "Closed", "Early Out"},
 			PIFOTag:  "56.0.",
-			PDFMap:   basemsg.PDFNameMap{"Animal", "", "Off"},
+			PDFMap:   message.PDFNameMap{"Animal", "", "Off"},
 			EditHelp: `This describes the current situation status with respect to animal issues.`,
 		}),
-		basemsg.NewMultilineField(&basemsg.Field{
+		message.NewMultilineField(&message.Field{
 			Label:     "Animal Issues: Comments",
 			Value:     &f.AnimalIssuesComments,
 			PIFOTag:   "56.1.",
-			PDFMap:    basemsg.PDFName("Animal Comment"),
+			PDFMap:    message.PDFName("Animal Comment"),
 			EditWidth: 60,
 			EditHelp:  `These are comments on the current situation status with respect to animal issues.`,
 		}),
@@ -621,11 +619,11 @@ func create(version *basemsg.FormVersion) message.Message {
 	return &f
 }
 
-func (f *JurisStat) requiredForComplete() (basemsg.Presence, string) {
+func (f *JurisStat) requiredForComplete() (message.Presence, string) {
 	if f.ReportType == "Complete" {
-		return basemsg.PresenceRequired, `the "Report Type" is "Complete"`
+		return message.PresenceRequired, `the "Report Type" is "Complete"`
 	}
-	return basemsg.PresenceOptional, ""
+	return message.PresenceOptional, ""
 }
 
 func decode(subject, body string) (f *JurisStat) {
@@ -634,5 +632,5 @@ func decode(subject, body string) (f *JurisStat) {
 	if !strings.Contains(body, "form-oa-muni-status.html") {
 		return nil
 	}
-	return basemsg.Decode(body, versions, create).(*JurisStat)
+	return message.DecodeForm(body, versions, create).(*JurisStat)
 }

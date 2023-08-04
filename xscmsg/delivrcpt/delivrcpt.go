@@ -7,7 +7,6 @@ import (
 	"strings"
 
 	"github.com/rothskeller/packet/message"
-	"github.com/rothskeller/packet/message/basemsg"
 )
 
 // Type is the type definition for a delivery receipt.
@@ -24,7 +23,7 @@ func init() {
 // DeliveryReceipt holds the details of an XSC-standard delivery receipt
 // message.
 type DeliveryReceipt struct {
-	basemsg.BaseMessage
+	message.BaseMessage
 	MessageTo      string
 	MessageSubject string
 	LocalMessageID string
@@ -34,27 +33,28 @@ type DeliveryReceipt struct {
 
 // New creates a new delivery receipt message.
 func New() (m *DeliveryReceipt) {
-	m = &DeliveryReceipt{BaseMessage: basemsg.BaseMessage{MessageType: &Type}}
-	m.Fields = []*basemsg.Field{
-		basemsg.NewTextField(&basemsg.Field{
+	m = &DeliveryReceipt{BaseMessage: message.BaseMessage{Type: &Type}}
+	m.Fields = []*message.Field{
+		message.NewTextField(&message.Field{
 			Label:    "Message To",
 			Value:    &m.MessageTo,
-			Presence: basemsg.Required,
+			Presence: message.Required,
 		}),
-		basemsg.NewTextField(&basemsg.Field{
+		message.NewTextField(&message.Field{
 			Label: "Message Subject",
 			Value: &m.MessageSubject,
 		}),
-		basemsg.NewTextField(&basemsg.Field{
+		message.NewTextField(&message.Field{
 			Label:    "Delivered At",
 			Value:    &m.DeliveredTime,
-			Presence: basemsg.Required,
+			Presence: message.Required,
 		}),
-		basemsg.NewMessageNumberField(&basemsg.Field{
-			Label: "Message Number",
-			Value: &m.LocalMessageID,
+		message.NewMessageNumberField(&message.Field{
+			Label:    "Message Number",
+			Value:    &m.LocalMessageID,
+			Presence: message.Required,
 		}),
-		basemsg.NewMultilineField(&basemsg.Field{
+		message.NewMultilineField(&message.Field{
 			Label: "Extra Text",
 			Value: &m.ExtraText,
 		}),

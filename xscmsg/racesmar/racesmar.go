@@ -6,9 +6,7 @@ import (
 	"time"
 
 	"github.com/rothskeller/packet/message"
-	"github.com/rothskeller/packet/message/baseform"
-	"github.com/rothskeller/packet/message/basemsg"
-	"github.com/rothskeller/packet/message/common"
+	"github.com/rothskeller/packet/xscmsg/baseform"
 )
 
 // Type is the type definition for a RACES mutual aid request form.
@@ -16,6 +14,7 @@ var Type = message.Type{
 	Tag:     "RACES-MAR",
 	Name:    "RACES mutual aid request form",
 	Article: "a",
+	PDFBase: pdfBase,
 }
 
 func init() {
@@ -25,7 +24,7 @@ func init() {
 
 // versions is the list of supported versions.  The first one is used when
 // creating new forms.
-var versions = []*basemsg.FormVersion{
+var versions = []*message.FormVersion{
 	{HTML: "form-oa-mutual-aid-request-v2.html", Version: "2.4", Tag: "RACES-MAR", FieldOrder: fieldOrder},
 	{HTML: "form-oa-mutual-aid-request-v2.html", Version: "2.3", Tag: "RACES-MAR", FieldOrder: fieldOrder},
 	{HTML: "form-oa-mutual-aid-request-v2.html", Version: "2.1", Tag: "RACES-MAR", FieldOrder: fieldOrder},
@@ -45,40 +44,40 @@ var fieldOrder = []string{
 }
 
 var basePDFMap = baseform.BaseFormPDFMaps{
-	OriginMsgID: basemsg.PDFMapFunc(func(f *basemsg.Field) []basemsg.PDFField {
-		return []basemsg.PDFField{
+	OriginMsgID: message.PDFMapFunc(func(f *message.Field) []message.PDFField {
+		return []message.PDFField{
 			{Name: "OriginMsg", Value: *f.Value},
 			{Name: "ApprovedDate_2", Value: *f.Value},
 		}
 	}),
-	DestinationMsgID: basemsg.PDFName("DestinationMsg"),
-	MessageDate:      basemsg.PDFName("FormDate"),
-	MessageTime:      basemsg.PDFName("FormTime"),
-	Handling: basemsg.PDFNameMap{"Immediate",
+	DestinationMsgID: message.PDFName("DestinationMsg"),
+	MessageDate:      message.PDFName("FormDate"),
+	MessageTime:      message.PDFName("FormTime"),
+	Handling: message.PDFNameMap{"Immediate",
 		"", "Off",
 		"IMMEDIATE", "1",
 		"PRIORITY", "2",
 		"ROUTINE", "3",
 	},
-	ToICSPosition:   basemsg.PDFName("ToICSPosition"),
-	ToLocation:      basemsg.PDFName("ToICSLocation"),
-	ToName:          basemsg.PDFName("ToICSPosition_3"),
-	ToContact:       basemsg.PDFName("ToICSPosition_4"),
-	FromICSPosition: basemsg.PDFName("ToICSPosition_2"),
-	FromLocation:    basemsg.PDFName("ToICSLocation_2"),
-	FromName:        basemsg.PDFName("ToICSPosition_5"),
-	FromContact:     basemsg.PDFName("ToICSPosition_6"),
-	OpRelayRcvd:     basemsg.PDFName("OperatorRcvd"),
-	OpRelaySent:     basemsg.PDFName("OperatorSent"),
-	OpName:          basemsg.PDFName("OperatorName"),
-	OpCall:          basemsg.PDFName("OperatorCallSign"),
-	OpDate:          basemsg.PDFName("OperatorDate"),
-	OpTime:          basemsg.PDFName("OperatorTime"),
+	ToICSPosition:   message.PDFName("ToICSPosition"),
+	ToLocation:      message.PDFName("ToICSLocation"),
+	ToName:          message.PDFName("ToICSPosition_3"),
+	ToContact:       message.PDFName("ToICSPosition_4"),
+	FromICSPosition: message.PDFName("ToICSPosition_2"),
+	FromLocation:    message.PDFName("ToICSLocation_2"),
+	FromName:        message.PDFName("ToICSPosition_5"),
+	FromContact:     message.PDFName("ToICSPosition_6"),
+	OpRelayRcvd:     message.PDFName("OperatorRcvd"),
+	OpRelaySent:     message.PDFName("OperatorSent"),
+	OpName:          message.PDFName("OperatorName"),
+	OpCall:          message.PDFName("OperatorCallSign"),
+	OpDate:          message.PDFName("OperatorDate"),
+	OpTime:          message.PDFName("OperatorTime"),
 }
 
 // RACESMAR holds a RACES mutual aid request form.
 type RACESMAR struct {
-	basemsg.BaseMessage
+	message.BaseMessage
 	baseform.BaseForm
 	AgencyName            string
 	EventName             string
@@ -113,59 +112,58 @@ func New() (f *RACESMAR) {
 
 var pdfBase []byte
 
-func create(version *basemsg.FormVersion) message.Message {
+func create(version *message.FormVersion) message.Message {
 	const fieldCount = 74
-	var f = RACESMAR{BaseMessage: basemsg.BaseMessage{
-		MessageType: &Type,
-		PDFBase:     pdfBase,
-		Form:        version,
+	var f = RACESMAR{BaseMessage: message.BaseMessage{
+		Type: &Type,
+		Form: version,
 	}}
 	f.BaseMessage.FSubject = &f.AgencyName
 	f.BaseMessage.FBody = &f.Assignment
-	f.Fields = make([]*basemsg.Field, 0, fieldCount)
+	f.Fields = make([]*message.Field, 0, fieldCount)
 	f.BaseForm.AddHeaderFields(&f.BaseMessage, &basePDFMap)
 	f.Fields = append(f.Fields,
-		basemsg.NewTextField(&basemsg.Field{
+		message.NewTextField(&message.Field{
 			Label:     "Agency Name",
 			Value:     &f.AgencyName,
-			Presence:  basemsg.Required,
+			Presence:  message.Required,
 			PIFOTag:   "15.",
-			PDFMap:    basemsg.PDFName("ToICSPosition_7"),
+			PDFMap:    message.PDFName("ToICSPosition_7"),
 			EditWidth: 80,
 			EditHelp:  `This is the name of the agency requesting mutual aid.  It is required.`,
 		}),
-		basemsg.NewTextField(&basemsg.Field{
+		message.NewTextField(&message.Field{
 			Label:      "Event Name",
 			Value:      &f.EventName,
-			Presence:   basemsg.Required,
+			Presence:   message.Required,
 			PIFOTag:    "16a.",
-			PDFMap:     basemsg.PDFName("ToICSPosition_8"),
-			TableValue: basemsg.TableOmit,
+			PDFMap:     message.PDFName("ToICSPosition_8"),
+			TableValue: message.TableOmit,
 			EditWidth:  52,
 			EditHelp:   `This is the name of the event for which mutual aid is being requested.  It is required.`,
 		}),
-		basemsg.NewTextField(&basemsg.Field{
+		message.NewTextField(&message.Field{
 			Label:      "Event Number",
 			Value:      &f.EventNumber,
 			PIFOTag:    "16b.",
-			Compare:    common.CompareExact,
-			PDFMap:     basemsg.PDFName("Nbr"),
-			TableValue: basemsg.TableOmit,
+			Compare:    message.CompareExact,
+			PDFMap:     message.PDFName("Nbr"),
+			TableValue: message.TableOmit,
 			EditWidth:  17,
 			EditHelp:   `This is the requesting agency's activation number for the event for which mutual aid is being requested.`,
 		}),
-		basemsg.NewAggregatorField(&basemsg.Field{
+		message.NewAggregatorField(&message.Field{
 			Label: "Event Name/Number",
-			TableValue: func(*basemsg.Field) string {
-				return common.SmartJoin(f.EventName, f.EventNumber, " ")
+			TableValue: func(*message.Field) string {
+				return message.SmartJoin(f.EventName, f.EventNumber, " ")
 			},
 		}),
-		basemsg.NewMultilineField(&basemsg.Field{
+		message.NewMultilineField(&message.Field{
 			Label:     "Assignment",
 			Value:     &f.Assignment,
-			Presence:  basemsg.Required,
+			Presence:  message.Required,
 			PIFOTag:   "17.",
-			PDFMap:    basemsg.PDFName("Assignment"),
+			PDFMap:    message.PDFName("Assignment"),
 			EditWidth: 94,
 			EditHelp:  `This is a description of the assignment.  Describe the type of duties, conditions, any special equipment needed (other than 12-hour Go Kit). If multiple shifts are involved, give details. Provide enough detail for volunteer to decide if they are willing and able to accept the assignment.  This field is required.`,
 		}),
@@ -173,39 +171,39 @@ func create(version *basemsg.FormVersion) message.Message {
 	switch f.Form.Version {
 	case "1.6":
 		f.Fields = append(f.Fields,
-			basemsg.NewMultilineField(&basemsg.Field{
+			message.NewMultilineField(&message.Field{
 				Label:     "Resource Quantity",
 				Value:     &f.Resources[0].Qty,
-				Presence:  basemsg.Required,
+				Presence:  message.Required,
 				PIFOTag:   "18a.",
-				PDFMap:    basemsg.PDFName("Qty1"),
+				PDFMap:    message.PDFName("Qty1"),
 				EditWidth: 2,
 				EditHelp:  `This is the number of people requested.  It is required.`,
 			}),
-			basemsg.NewMultilineField(&basemsg.Field{
+			message.NewMultilineField(&message.Field{
 				Label:     "Role/Position",
 				Value:     &f.Resources[0].RolePos,
-				Presence:  basemsg.Required,
+				Presence:  message.Required,
 				PIFOTag:   "18b.",
-				PDFMap:    basemsg.PDFName("Position1"),
+				PDFMap:    message.PDFName("Position1"),
 				EditWidth: 31,
 				EditHelp:  `This is the role and position for which people are requested.  It is required.`,
 			}),
-			basemsg.NewMultilineField(&basemsg.Field{
+			message.NewMultilineField(&message.Field{
 				Label:     "Preferred Type",
 				Value:     &f.Resources[0].PreferredType,
-				Presence:  basemsg.Required,
+				Presence:  message.Required,
 				PIFOTag:   "18c.",
-				PDFMap:    basemsg.PDFName("Pref1"),
+				PDFMap:    message.PDFName("Pref1"),
 				EditWidth: 7,
 				EditHelp:  `This is the preferred resource type (credential) for the people being requested.  It is required.`,
 			}),
-			basemsg.NewMultilineField(&basemsg.Field{
+			message.NewMultilineField(&message.Field{
 				Label:     "Minimum Type",
 				Value:     &f.Resources[0].MinimumType,
-				Presence:  basemsg.Required,
+				Presence:  message.Required,
 				PIFOTag:   "18d.",
-				PDFMap:    basemsg.PDFName("Min1"),
+				PDFMap:    message.PDFName("Min1"),
 				EditWidth: 7,
 				EditHelp:  `This is the minimum resource type (credential) for the people being requested.  It is required.`,
 			}),
@@ -220,152 +218,152 @@ func create(version *basemsg.FormVersion) message.Message {
 		}
 	}
 	f.Fields = append(f.Fields,
-		basemsg.NewTextField(&basemsg.Field{
+		message.NewTextField(&message.Field{
 			Label:     "Requested Arrival Dates",
 			Value:     &f.RequestedArrivalDates,
-			Presence:  basemsg.Required,
+			Presence:  message.Required,
 			PIFOTag:   "19a.",
-			PDFMap:    basemsg.PDFName("ReqArriveDates"),
+			PDFMap:    message.PDFName("ReqArriveDates"),
 			EditWidth: 46,
 			EditHelp:  `This is the date(s) by when the requested people need to arrive.  It is required.`,
 		}),
-		basemsg.NewTextField(&basemsg.Field{
+		message.NewTextField(&message.Field{
 			Label:     "Requested Arrival Times",
 			Value:     &f.RequestedArrivalTimes,
-			Presence:  basemsg.Required,
+			Presence:  message.Required,
 			PIFOTag:   "19b.",
-			PDFMap:    basemsg.PDFName("ReqArriveTimes"),
+			PDFMap:    message.PDFName("ReqArriveTimes"),
 			EditWidth: 28,
 			EditHelp:  `This is the time(s) by when the requested people need to arrive.  It is required.`,
 		}),
-		basemsg.NewTextField(&basemsg.Field{
+		message.NewTextField(&message.Field{
 			Label:     "Needed Until Dates",
 			Value:     &f.NeededUntilDates,
-			Presence:  basemsg.Required,
+			Presence:  message.Required,
 			PIFOTag:   "20a.",
-			PDFMap:    basemsg.PDFName("NeedUntilDates"),
+			PDFMap:    message.PDFName("NeedUntilDates"),
 			EditWidth: 46,
 			EditHelp:  `This is the date(s) until which the requested people will be needed.  It is required.`,
 		}),
-		basemsg.NewTextField(&basemsg.Field{
+		message.NewTextField(&message.Field{
 			Label:     "Needed Until Times",
 			Value:     &f.NeededUntilTimes,
-			Presence:  basemsg.Required,
+			Presence:  message.Required,
 			PIFOTag:   "20b.",
-			PDFMap:    basemsg.PDFName("NeedUntilTimes"),
+			PDFMap:    message.PDFName("NeedUntilTimes"),
 			EditWidth: 28,
 			EditHelp:  `This is the time(s) until which the requested people will be needed.  It is required.`,
 		}),
-		basemsg.NewMultilineField(&basemsg.Field{
+		message.NewMultilineField(&message.Field{
 			Label:     "Reporting Location",
 			Value:     &f.ReportingLocation,
-			Presence:  basemsg.Required,
+			Presence:  message.Required,
 			PIFOTag:   "21.",
-			PDFMap:    basemsg.PDFName("ReportingLocation"),
+			PDFMap:    message.PDFName("ReportingLocation"),
 			EditWidth: 94,
 			EditHelp:  `This is the location to which the requested people should report.  Include street address, parking info, and entry instructions.  This field is required.`,
 		}),
-		basemsg.NewMultilineField(&basemsg.Field{
+		message.NewMultilineField(&message.Field{
 			Label:     "Contact on Arrival",
 			Value:     &f.ContactOnArrival,
-			Presence:  basemsg.Required,
+			Presence:  message.Required,
 			PIFOTag:   "22.",
-			PDFMap:    basemsg.PDFName("ContactOnArrival"),
+			PDFMap:    message.PDFName("ContactOnArrival"),
 			EditWidth: 94,
 			EditHelp:  `This is the name, position, and contact info (phone, frequency, ...) for the official that the requested people should contact upon arrival. This is typically a net control on a radio frequency or a specific person or function at a telephone number.  This field is required.`,
 		}),
-		basemsg.NewMultilineField(&basemsg.Field{
+		message.NewMultilineField(&message.Field{
 			Label:     "Travel Info",
 			Value:     &f.TravelInfo,
-			Presence:  basemsg.Required,
+			Presence:  message.Required,
 			PIFOTag:   "23.",
-			PDFMap:    basemsg.PDFName("TravelInfo"),
+			PDFMap:    message.PDFName("TravelInfo"),
 			EditWidth: 94,
 			EditHelp:  `This field describes how to travel to the reporting location.  Identify preferred routes, road closures, and hazards to be avoided during travel.  If an overnight stay is included, specify how lodging will be provided.  This field is required.`,
 		}),
-		basemsg.NewTextField(&basemsg.Field{
+		message.NewTextField(&message.Field{
 			Label:     "Requested By Name",
 			Value:     &f.RequestedByName,
-			Presence:  basemsg.Required,
+			Presence:  message.Required,
 			PIFOTag:   "24a.",
-			PDFMap:    basemsg.PDFName("RequestedName"),
+			PDFMap:    message.PDFName("RequestedName"),
 			EditWidth: 45,
 			EditHelp:  `This is the name of the official requesting mutual aid (typically the Radio Officer of the requesting agency).  It is required.`,
 		}),
-		basemsg.NewTextField(&basemsg.Field{
+		message.NewTextField(&message.Field{
 			Label:     "Requested By Title",
 			Value:     &f.RequestedByTitle,
-			Presence:  basemsg.Required,
+			Presence:  message.Required,
 			PIFOTag:   "24b.",
-			PDFMap:    basemsg.PDFName("RequestedTitle"),
+			PDFMap:    message.PDFName("RequestedTitle"),
 			EditWidth: 31,
 			EditHelp:  `This is the title of the official requesting mutual aid.  It is required.`,
 		}),
-		basemsg.NewTextField(&basemsg.Field{
+		message.NewTextField(&message.Field{
 			Label:     "Requested By Contact",
 			Value:     &f.RequestedByContact,
 			PIFOTag:   "24c.",
-			Compare:   common.CompareText,
-			PDFMap:    basemsg.PDFName("RequestedContact"),
+			Compare:   message.CompareText,
+			PDFMap:    message.PDFName("RequestedContact"),
 			EditWidth: 94,
 			EditHelp:  `This is the contact information (email, phone, frequency) of the official requesting mutual aid.  It is required.`,
 		}),
-		basemsg.NewTextField(&basemsg.Field{
+		message.NewTextField(&message.Field{
 			Label:     "Approved By Name",
 			Value:     &f.ApprovedByName,
-			Presence:  basemsg.Required,
+			Presence:  message.Required,
 			PIFOTag:   "25a.",
-			PDFMap:    basemsg.PDFName("ApprovedName"),
+			PDFMap:    message.PDFName("ApprovedName"),
 			EditWidth: 45,
 			EditHelp:  `This is the name of the agency official approving the mutual aid request.  It is required.`,
 		}),
-		basemsg.NewTextField(&basemsg.Field{
+		message.NewTextField(&message.Field{
 			Label:     "Approved By Title",
 			Value:     &f.ApprovedByTitle,
-			Presence:  basemsg.Required,
+			Presence:  message.Required,
 			PIFOTag:   "25b.",
-			PDFMap:    basemsg.PDFName("ApprovedTitle"),
+			PDFMap:    message.PDFName("ApprovedTitle"),
 			EditWidth: 31,
 			EditHelp:  `This is the title of the agency official approving the mutual aid request.  It is required.`,
 		}),
-		basemsg.NewTextField(&basemsg.Field{
+		message.NewTextField(&message.Field{
 			Label:     "Approved By Contact",
 			Value:     &f.ApprovedByContact,
-			Presence:  basemsg.Required,
+			Presence:  message.Required,
 			PIFOTag:   "25c.",
-			PDFMap:    basemsg.PDFName("ApprovedContact"),
+			PDFMap:    message.PDFName("ApprovedContact"),
 			EditWidth: 94,
 			EditHelp:  `This is the contact information (email, phone, frequency) for the agency official approving the mutual aid request.  It is required.`,
 		}),
 	)
 	if f.Form.Version >= "2.4" {
 		f.Fields = append(f.Fields,
-			basemsg.NewRestrictedField(&basemsg.Field{
+			message.NewRestrictedField(&message.Field{
 				Label:    "With Signature",
 				Value:    &f.WithSignature,
 				PIFOTag:  "25s.",
-				Choices:  basemsg.Choices{"checked"},
-				PDFMap:   basemsg.PDFNameMap{"ApprovedSignature", "checked", "[with signature]"},
+				Choices:  message.Choices{"checked"},
+				PDFMap:   message.PDFNameMap{"ApprovedSignature", "checked", "[with signature]"},
 				EditHelp: `This indicates that the original resource request form has been signed.`,
 			}),
 		)
 	}
 	f.Fields = append(f.Fields,
-		basemsg.NewDateWithTimeField(&basemsg.Field{
+		message.NewDateWithTimeField(&message.Field{
 			Label:    "Approved By Date",
 			Value:    &f.ApprovedByDate,
-			Presence: basemsg.Required,
+			Presence: message.Required,
 			PIFOTag:  "26a.",
-			PDFMap:   basemsg.PDFName("ApprovedDate"),
+			PDFMap:   message.PDFName("ApprovedDate"),
 		}),
-		basemsg.NewTimeWithDateField(&basemsg.Field{
+		message.NewTimeWithDateField(&message.Field{
 			Label:    "Approved By Time",
 			Value:    &f.ApprovedByTime,
-			Presence: basemsg.Required,
+			Presence: message.Required,
 			PIFOTag:  "26b.",
-			PDFMap:   basemsg.PDFName("ApprovedTime"),
+			PDFMap:   message.PDFName("ApprovedTime"),
 		}),
-		basemsg.NewDateTimeField(&basemsg.Field{
+		message.NewDateTimeField(&message.Field{
 			Label:    "Approved Date/Time",
 			EditHelp: `This is the date and time when the mutual aid request was approved by the official listed above, in MM/DD/YYYY HH:MM format (24-hour clock).  It is required.`,
 		}, &f.ApprovedByDate, &f.ApprovedByTime),
@@ -383,5 +381,5 @@ func decode(subject, body string) (f *RACESMAR) {
 	if !strings.Contains(body, "form-oa-mutual-aid-request") {
 		return nil
 	}
-	return basemsg.Decode(body, versions, create).(*RACESMAR)
+	return message.DecodeForm(body, versions, create).(*RACESMAR)
 }

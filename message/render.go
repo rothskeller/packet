@@ -1,30 +1,20 @@
-package basemsg
+package message
 
 import (
+	"errors"
 	"os"
 
-	"github.com/rothskeller/packet/message"
 	"github.com/rothskeller/pdf/pdfform"
 	"github.com/rothskeller/pdf/pdfstruct"
 )
 
-// TODO defining these functions on BaseMessage means that only messages for
-// which they're appropriate can leverage BaseMessage.
-
-// RenderTable renders the message as a set of field label / field value
-// pairs, intended for read-only display to a human.
-func (bm *BaseMessage) RenderTable() (lvs []message.LabelValue) {
-	for _, f := range bm.Fields {
-		if value := f.TableValue(f); value != "" {
-			lvs = append(lvs, message.LabelValue{Label: f.Label, Value: value})
-		}
-	}
-	return lvs
-}
-
 // TableOmit is a TableValue function that causes the field to be
 // unconditionally omitted from the table rendering.
 func TableOmit(*Field) string { return "" }
+
+// ErrNotSupported is the error returned if RenderPDF is called on a message
+// with a type that does not support PDF rendering.
+var ErrNotSupported = errors.New("message type does not support PDF rendering, or program was not built with -tags packetpdf")
 
 // RenderPDF renders the message as a PDF file with the specified filename,
 // overwriting any existing file with that name.
@@ -33,12 +23,15 @@ func (bm *BaseMessage) RenderPDF(filename string) (err error) {
 		fh  *os.File
 		pdf *pdfstruct.PDF
 	)
+	if bm.Type.PDFBase == nil {
+		return ErrNotSupported
+	}
 	// First, write the base PDF.
 	if fh, err = os.Create(filename); err != nil {
 		return err
 	}
 	defer fh.Close()
-	if _, err = fh.Write(bm.PDFBase); err != nil {
+	if _, err = fh.Write(bm.Type.PDFBase); err != nil {
 		os.Remove(filename)
 		return err
 	}
@@ -55,7 +48,7 @@ func (bm *BaseMessage) RenderPDF(filename string) (err error) {
 		}
 		for _, pf := range pdfFields {
 			if pf.Size == 0 {
-				pf.Size = bm.PDFFontSize
+				pf.Size = bm.Type.PDFFontSize
 			}
 			if err = pdfform.SetField(pdf, pf.Name, pf.Value, pf.Size); err != nil {
 				os.Remove(filename)

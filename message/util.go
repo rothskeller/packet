@@ -46,3 +46,16 @@ func OlderVersion(a, b string) bool {
 func startsWithDigit(s string) bool {
 	return s != "" && s[0] >= '0' && s[0] <= '9'
 }
+
+// SmartJoin joins the two provided strings with the provided separator, but
+// only when both are non-empty.  If one is empty, it returns the other.  If
+// both are empty, it returns an empty string.
+func SmartJoin(a, b, sep string) string {
+	if a != "" && b != "" {
+		return a + sep + b
+	}
+	if a == "" {
+		return b
+	}
+	return a
+}

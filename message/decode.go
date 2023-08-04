@@ -1,33 +1,12 @@
-package common
+package message
 
 import (
 	"regexp"
 	"strings"
 	"unicode/utf8"
-)
 
-// Decode pulls the standard form header and footer fields from the tags map.
-func (s *StdFields) Decode(tags map[string]string) {
-	s.OriginMsgID = tags["MsgNo"]
-	s.DestinationMsgID = tags["DestMsgNo"]
-	s.MessageDate = tags["1a."]
-	s.MessageTime = tags["1b."]
-	s.Handling = tags["5."]
-	s.ToICSPosition = tags["7a."]
-	s.ToLocation = tags["7b."]
-	s.ToName = tags["7c."]
-	s.ToContact = tags["7d."]
-	s.FromICSPosition = tags["8a."]
-	s.FromLocation = tags["8b."]
-	s.FromName = tags["8c."]
-	s.FromContact = tags["8d."]
-	s.OpRelayRcvd = tags["OpRelayRcvd"]
-	s.OpRelaySent = tags["OpRelaySent"]
-	s.OpName = tags["OpName"]
-	s.OpCall = tags["OpCall"]
-	s.OpDate = tags["OpDate"]
-	s.OpTime = tags["OpTime"]
-}
+	"golang.org/x/exp/slices"
+)
 
 var (
 	// DecodeSeverityMap maps severity codes, as returned by DecodeSubject,
@@ -37,6 +16,37 @@ var (
 	// into Handling values.
 	DecodeHandlingMap = map[string]string{"I": "IMMEDIATE", "P": "PRIORITY", "R": "ROUTINE"}
 )
+
+// DecodeForm decodes the message.  It returns whether the message was
+// recognized and decoded.
+func DecodeForm(body string, versions []*FormVersion, create func(*FormVersion) Message) (msg Message) {
+	var (
+		form *PIFOForm
+		bm   *BaseMessage
+	)
+	// Decode the form and check for an HTML/version combo we recognize.
+	if form = DecodePIFO(body); form == nil {
+		return nil // not a form or not encoded properly
+	}
+	if idx := slices.IndexFunc(versions, func(v *FormVersion) bool {
+		return form.HTMLIdent == v.HTML && form.FormVersion == v.Version
+	}); idx < 0 {
+		return nil // not an HTML/version combo we recognize
+	} else {
+		// Record which form version we actually saw.
+		msg = create(versions[idx])
+	}
+	bm = msg.(interface{ Base() *BaseMessage }).Base()
+	bm.PIFOVersion = form.PIFOVersion
+	for _, f := range bm.Fields {
+		if f.PIFOTag == "" {
+			continue // field is not part of PIFO encoding
+		}
+		*f.Value = form.TaggedValues[f.PIFOTag]
+	}
+	// TODO really should make sure there aren't any fields unaccounted for.
+	return msg
+}
 
 // DecodeSubject decodes an XSC-standard message subject line into its component
 // parts.  If the subject line does not follow the XSC standard, the function

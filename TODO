@@ -1,25 +1,2 @@
 PDF generation in background.
 Handling new/old fields in edit.
-
-Implement methods for all message types:
-            Compare Edit PDF Table
-ahfacstat   X       X    X   X
-checkin     N/A     X    N/A X
-checkout    N/A     X    N/A X
-eoc213rr    X       X    X   X
-ics213      X       X    X   X
-jurisstat   X       X    X   X
-plaintext   X       X    N/A X
-racesmar    X       X    X   X
-sheltstat   X       X    X   X
-unkform     N/A     N/A  N/A N/A
-havbed
-medfacstat
-medresreq
-
-
-Maybe change DataType into subclasses/embeds of Field?  Probably not, because of
-non-function members, but think about it.
-
-Remove Valid* and Apply* functions
-Move common code into basemsg, remove common

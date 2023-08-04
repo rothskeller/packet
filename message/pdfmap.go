@@ -1,4 +1,4 @@
-package basemsg
+package message
 
 // PDFMapper is the interface honored by a Field.PDFMap value.
 type PDFMapper interface {
@@ -13,7 +13,7 @@ type PDFField struct {
 	// Value is the value to be placed in the PDF field.
 	Value string
 	// Size is the font size to be used for the PDF field; it can be zero
-	// if supplied by the PDF template or the MessageType.PDFSize value.
+	// if supplied by the PDF template or the Type.PDFSize value.
 	Size float64
 }
 

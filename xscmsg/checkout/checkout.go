@@ -8,8 +8,6 @@ import (
 	"strings"
 
 	"github.com/rothskeller/packet/message"
-	"github.com/rothskeller/packet/message/basemsg"
-	"github.com/rothskeller/packet/message/common"
 )
 
 // Type is the type definition for a check-out message.
@@ -26,7 +24,7 @@ func init() {
 
 // CheckOut holds the details of an XSC-standard check-out message.
 type CheckOut struct {
-	basemsg.BaseMessage
+	message.BaseMessage
 	OriginMsgID         string
 	Handling            string
 	TacticalCallSign    string
@@ -42,71 +40,74 @@ func New() (m *CheckOut) {
 	return m
 }
 
+// SetOperator overrides the BaseMessage implementation and makes no change.
+func (m *CheckOut) SetOperator(string, string, bool) {}
+
 func create() (m *CheckOut) {
-	m = &CheckOut{BaseMessage: basemsg.BaseMessage{MessageType: &Type}}
+	m = &CheckOut{BaseMessage: message.BaseMessage{Type: &Type}}
 	m.BaseMessage.FOriginMsgID = &m.OriginMsgID
 	m.BaseMessage.FHandling = &m.Handling
 	m.BaseMessage.FOpCall = &m.OperatorCallSign
 	m.BaseMessage.FOpName = &m.OperatorName
-	m.Fields = []*basemsg.Field{
-		basemsg.NewMessageNumberField(&basemsg.Field{
+	m.Fields = []*message.Field{
+		message.NewMessageNumberField(&message.Field{
 			Label:    "Origin Message Number",
 			Value:    &m.OriginMsgID,
-			Presence: basemsg.Required,
+			Presence: message.Required,
 			EditHelp: `This is the message number assigned to the message by the origin station.  Valid message numbers have the form XXX-###P, where XXX is the three-character message number prefix assigned to the station, ### is a sequence number (any number of digits), and P is an optional suffix letter.  This field is required.`,
 		}),
-		basemsg.NewRestrictedField(&basemsg.Field{
+		message.NewRestrictedField(&message.Field{
 			Label:    "Handling",
 			Value:    &m.Handling,
-			Choices:  basemsg.Choices{"ROUTINE", "PRIORITY", "IMMEDIATE"},
-			Presence: basemsg.Required,
+			Choices:  message.Choices{"ROUTINE", "PRIORITY", "IMMEDIATE"},
+			Presence: message.Required,
 			EditHelp: `This is the message handling order, which specifies how fast it needs to be delivered.  Allowed values are "ROUTINE" (within 2 hours), "PRIORITY" (within 1 hour), and "IMMEDIATE".  This field is required.`,
 		}),
-		basemsg.NewTacticalCallSignField(&basemsg.Field{
+		message.NewTacticalCallSignField(&message.Field{
 			Label:      "Tactical Call Sign",
 			Value:      &m.TacticalCallSign,
-			TableValue: basemsg.TableOmit,
+			TableValue: message.TableOmit,
 			EditHelp:   `This is the tactical call sign assigned to the station being operated, if any.  It is expected to be five or six letters or digits, starting with a letter.`,
 		}),
-		basemsg.NewTextField(&basemsg.Field{
+		message.NewTextField(&message.Field{
 			Label: "Tactical Station Name",
 			Value: &m.TacticalStationName,
-			Presence: func() (basemsg.Presence, string) {
+			Presence: func() (message.Presence, string) {
 				if m.TacticalCallSign == "" {
-					return basemsg.PresenceNotAllowed, `unless "Tactical Call Sign" has a value`
+					return message.PresenceNotAllowed, `unless "Tactical Call Sign" has a value`
 				} else {
-					return basemsg.PresenceRequired, `when "Tactical Call Sign" has a value`
+					return message.PresenceRequired, `when "Tactical Call Sign" has a value`
 				}
 			},
-			TableValue: basemsg.TableOmit,
+			TableValue: message.TableOmit,
 			EditWidth:  80,
 			EditHelp:   `This is the name of the station being operated.  It must be set when the Tactical Call Sign is set.`,
 		}),
-		basemsg.NewAggregatorField(&basemsg.Field{
+		message.NewAggregatorField(&message.Field{
 			Label: "Tactical Station",
-			TableValue: func(f *basemsg.Field) string {
-				return common.SmartJoin(m.TacticalCallSign, m.TacticalStationName, " ")
+			TableValue: func(f *message.Field) string {
+				return message.SmartJoin(m.TacticalCallSign, m.TacticalStationName, " ")
 			},
 		}),
-		basemsg.NewFCCCallSignField(&basemsg.Field{
+		message.NewFCCCallSignField(&message.Field{
 			Label:      "Operator Call Sign",
 			Value:      &m.OperatorCallSign,
-			Presence:   basemsg.Required,
-			TableValue: basemsg.TableOmit,
+			Presence:   message.Required,
+			TableValue: message.TableOmit,
 			EditHelp:   `This is the FCC call sign assigned to the operator of the station.  It is required.`,
 		}),
-		basemsg.NewTextField(&basemsg.Field{
+		message.NewTextField(&message.Field{
 			Label:      "Operator Name",
 			Value:      &m.OperatorName,
-			Presence:   basemsg.Required,
-			TableValue: basemsg.TableOmit,
+			Presence:   message.Required,
+			TableValue: message.TableOmit,
 			EditWidth:  80,
 			EditHelp:   `This is the name of the operator of the station.  It is required.`,
 		}),
-		basemsg.NewAggregatorField(&basemsg.Field{
+		message.NewAggregatorField(&message.Field{
 			Label: "Operator",
-			TableValue: func(f *basemsg.Field) string {
-				return common.SmartJoin(m.OperatorCallSign, m.OperatorName, " ")
+			TableValue: func(f *message.Field) string {
+				return message.SmartJoin(m.OperatorCallSign, m.OperatorName, " ")
 			},
 		}),
 	}
@@ -116,11 +117,11 @@ func create() (m *CheckOut) {
 var checkInBodyRE = regexp.MustCompile(`(?im)^Check-Out\s+([A-Z][A-Z0-9]{2,5})\s*,(.*)(?:\n(A[A-L][0-9][A-Z]{1,3}|[KNW][0-9][A-Z]{2,3}|[KNW][A-Z][0-9][A-Z]{1,3})\s*,(.*))?`)
 
 func decode(subject, body string) (f *CheckOut) {
-	var msgid, _, handling, formtag, realsubj = common.DecodeSubject(subject)
+	var msgid, _, handling, formtag, realsubj = message.DecodeSubject(subject)
 	if formtag != "" || !strings.HasPrefix(strings.ToLower(realsubj), "check-out ") {
 		return nil
 	}
-	if h := common.DecodeHandlingMap[handling]; h != "" {
+	if h := message.DecodeHandlingMap[handling]; h != "" {
 		handling = h
 	}
 	if match := checkInBodyRE.FindStringSubmatch(body); match != nil {
@@ -143,10 +144,10 @@ func decode(subject, body string) (f *CheckOut) {
 // EncodeSubject encodes the message subject.
 func (m *CheckOut) EncodeSubject() string {
 	if m.TacticalCallSign != "" {
-		return common.EncodeSubject(m.OriginMsgID, m.Handling, "",
+		return message.EncodeSubject(m.OriginMsgID, m.Handling, "",
 			fmt.Sprintf("Check-Out %s, %s", m.TacticalCallSign, m.TacticalStationName))
 	}
-	return common.EncodeSubject(m.OriginMsgID, m.Handling, "",
+	return message.EncodeSubject(m.OriginMsgID, m.Handling, "",
 		fmt.Sprintf("Check-Out %s, %s", m.OperatorCallSign, m.OperatorName))
 }
 

@@ -29,17 +29,12 @@ func main() {
 			continue
 		}
 		msg := message.Decode(env.SubjectLine, body)
-		form, ok := msg.(message.IRenderPDF)
-		if !ok {
-			fmt.Fprintf(os.Stderr, "%s: PDF rendering for %ss is not available\n", mfile, msg.Type().Name)
-			continue
-		}
 		pfile := mfile
 		if strings.HasSuffix(mfile, ".txt") {
 			pfile = pfile[:len(mfile)-4]
 		}
 		pfile += ".pdf"
-		if err = form.RenderPDF(pfile); err != nil {
+		if err = msg.RenderPDF(pfile); err != nil {
 			fmt.Fprintf(os.Stderr, "%s: %s\n", pfile, err)
 		}
 	}

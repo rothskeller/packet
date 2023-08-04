@@ -1,57 +1,93 @@
-package common
+package message
 
 import (
 	"regexp"
 	"strconv"
 	"strings"
-
-	"github.com/rothskeller/packet/message"
 )
 
-// Compare compares the standard fields of messages.  It returns the detailed
-// comparisons of each of the standard fields.  The comparison is not symmetric:
-// the receiver of the call is the "expected" fields and the argument is the
-// "actual" fields.
-func (exp *StdFields) Compare(act *StdFields) (fields []*message.CompareField) {
-	return []*message.CompareField{
-		CompareDate("Message Date", exp.MessageDate, act.MessageDate),
-		CompareTime("Message Time", exp.MessageTime, act.MessageTime),
-		CompareExact("Handling", exp.Handling, act.Handling),
-		CompareText("To ICS Position", exp.ToICSPosition, act.ToICSPosition),
-		CompareText("To Location", exp.ToLocation, act.ToLocation),
-		CompareText("To Name", exp.ToName, act.ToName),
-		CompareText("To Contact Info", exp.ToContact, act.ToContact),
-		CompareText("From ICS Position", exp.FromICSPosition, act.FromICSPosition),
-		CompareText("From Location", exp.FromLocation, act.FromLocation),
-		CompareText("From Name", exp.FromName, act.FromName),
-		CompareText("From Contact Info", exp.FromContact, act.FromContact),
-	}
+// A CompareField structure represents a single field in the comparison of two
+// messages as performed by the Compare method.
+type CompareField struct {
+	// Label is the field label.
+	Label string
+	// Score is the comparison score for this field.  0 <= Score <= OutOf.
+	Score int
+	// OutOf is the maximum possible score for this field, i.e., the score
+	// for this field if its contents match exactly.
+	OutOf int
+	// Expected is the value of this field in the expected message (i.e.,
+	// the receiver of the Compare method), formatted for human viewing.
+	Expected string
+	// ExpectedMask is a string describing which characters of Expected are
+	// different from those in Actual.  Space characters in the mask
+	// correspond to characters in Expected that are properly matched by
+	// Actual.  "~" characters in the mask correspond to characters in
+	// Expected that have minor differences in Actual.  All other characters
+	// in the mask correspond to significant differences.  If ExpectedMask
+	// is shorter than Expected, the last character of ExpectedMask is
+	// implicitly repeated.
+	ExpectedMask string
+	// Actual is the value of this field in the actual message (i.e., the
+	// argument of the Compare method), formatted for human viewing.
+	Actual string
+	// ActualMask is a string describing which characters of Actual are
+	// different from those in Expected.  Space characters in the mask
+	// correspond to characters in Actual that properly match Expected.  "~"
+	// characters in the mask correspond to characters in Actual that have
+	// minor differences with Expected.  All other characters in the mask
+	// correspond to significant differences.  If ActualMask is shorter than
+	// Actual, the last character of ActualMask is implicitly repeated.
+	ActualMask string
 }
 
-// ConsolidateCompareFields takes a set of CompareFields, removes those for
-// which both "Expected" and "Actual" are empty, and returns the summed scores.
-func ConsolidateCompareFields(fields []*message.CompareField) (score, outOf int, _ []*message.CompareField) {
-	j := 0
-	for _, f := range fields {
-		if f.Expected != "" || f.Actual != "" {
-			if f.OutOf == 0 {
-				f.OutOf = 1
+// Compare compares two messages.  It returns a score indicating how closely
+// they match, and the detailed comparisons of each field in the message.  The
+// comparison is not symmetric:  the receiver of the call is the "expected"
+// message and the argument is the "actual" message.
+func (bm *BaseMessage) Compare(actual Message) (score int, outOf int, cfields []*CompareField) {
+	var act = actual.Base()
+
+	if act.Type != bm.Type {
+		return 0, 1, []*CompareField{{
+			Label: "Message Type",
+			Score: 0, OutOf: 1,
+			Expected:     bm.Type.Name,
+			ExpectedMask: "*",
+			Actual:       act.Type.Name,
+			ActualMask:   "*",
+		}}
+	}
+	for i, expf := range bm.Fields {
+		actf := act.Fields[i]
+		if expf.Value != nil && actf.Value != nil && (*expf.Value != "" || *actf.Value != "") {
+			comp := expf.Compare(expf.Label, *expf.Value, *actf.Value)
+			if comp == nil {
+				continue // omit from comparison
 			}
-			score, outOf = score+f.Score, outOf+f.OutOf
-			fields[j] = f
-			j++
+			if comp.OutOf == 0 {
+				comp.OutOf = 1
+			}
+			score, outOf = score+comp.Score, outOf+comp.OutOf
+			cfields = append(cfields, comp)
 		}
 	}
-	return score, outOf, fields[:j]
+	return score, outOf, cfields
+}
+
+// CompareNone is a "comparison" function that causes the field to be omitted
+// from the comparison.
+func CompareNone(string, string, string) *CompareField {
+	return nil
 }
 
 // CompareCardinal compares two values for a field that is supposed to contain
 // a cardinal number.
-func CompareCardinal(label, exp, act string) (c *message.CompareField) {
+func CompareCardinal(label, exp, act string) (c *CompareField) {
 	if eval, err := strconv.Atoi(exp); err == nil {
 		if aval, err := strconv.Atoi(act); err == nil {
 			if eval == aval {
-				return &message.CompareField{
+				return &CompareField{
 					Label: label, Expected: exp, Actual: act, Score: 2, OutOf: 2,
 					ExpectedMask: " ", ActualMask: " ",
 				}
@@ -62,8 +98,8 @@ func CompareCardinal(label, exp, act string) (c *message.CompareField) {
 }
 
 // CompareCheckbox compares two values for a checkbox field.
-func CompareCheckbox(label, exp, act string) (c *message.CompareField) {
-	c = &message.CompareField{
+func CompareCheckbox(label, exp, act string) (c *CompareField) {
+	c = &CompareField{
 		Label: label, Expected: exp, Actual: act, OutOf: 2,
 	}
 	if exp == act {
@@ -85,8 +121,8 @@ func CompareCheckbox(label, exp, act string) (c *message.CompareField) {
 
 // CompareExact compares two values for a field, which are expected to be
 // exactly identical.
-func CompareExact(label, exp, act string) (c *message.CompareField) {
-	c = &message.CompareField{
+func CompareExact(label, exp, act string) (c *CompareField) {
+	c = &CompareField{
 		Label: label, Expected: exp, Actual: act, OutOf: 2,
 	}
 	if exp == act {
@@ -105,10 +141,10 @@ func CompareExact(label, exp, act string) (c *message.CompareField) {
 
 // CompareExactMap compares two values for a field, which are expected to be
 // exactly identical.  It maps the values for human display.
-func CompareExactMap(label, exp, act string, mapping map[string]string) (c *message.CompareField) {
+func CompareExactMap(label, exp, act string, mapping map[string]string) (c *CompareField) {
 	var ok bool
 
-	c = &message.CompareField{
+	c = &CompareField{
 		Label: label, OutOf: 2,
 	}
 	if c.Expected, ok = mapping[exp]; !ok {
@@ -134,8 +170,8 @@ func CompareExactMap(label, exp, act string, mapping map[string]string) (c *mess
 var dateRE = regexp.MustCompile(`^(\d?\d)([-/.])(\d?\d)([-/.])(20)?(\d\d)$`)
 
 // CompareDate compares two values for a date field.
-func CompareDate(label, exp, act string) (c *message.CompareField) {
-	c = &message.CompareField{
+func CompareDate(label, exp, act string) (c *CompareField) {
+	c = &CompareField{
 		Label: label, Expected: exp, Actual: act, Score: 2, OutOf: 2,
 	}
 	if exp == act {
@@ -230,11 +266,11 @@ func CompareDate(label, exp, act string) (c *message.CompareField) {
 
 // CompareReal compares two values for a field that is supposed to contain a
 // real number.
-func CompareReal(label, exp, act string) (c *message.CompareField) {
+func CompareReal(label, exp, act string) (c *CompareField) {
 	if eval, err := strconv.ParseFloat(exp, 64); err == nil {
 		if aval, err := strconv.ParseFloat(act, 64); err == nil {
 			if eval == aval {
-				return &message.CompareField{
+				return &CompareField{
 					Label: label, Expected: exp, Actual: act, Score: 2, OutOf: 2,
 					ExpectedMask: " ", ActualMask: " ",
 				}
@@ -247,8 +283,8 @@ func CompareReal(label, exp, act string) (c *message.CompareField) {
 var timeRE = regexp.MustCompile(`^(\d?\d)(:?)(\d\d)$`)
 
 // CompareTime compares two values for a time field.
-func CompareTime(label, exp, act string) (c *message.CompareField) {
-	c = &message.CompareField{
+func CompareTime(label, exp, act string) (c *CompareField) {
+	c = &CompareField{
 		Label: label, Expected: exp, Actual: act, Score: 2, OutOf: 2,
 	}
 	if exp == act {
@@ -304,8 +340,8 @@ func CompareTime(label, exp, act string) (c *message.CompareField) {
 }
 
 // ComparePhoneNumber compares two values for a phone number field.
-func ComparePhoneNumber(label, exp, act string) (c *message.CompareField) {
-	c = &message.CompareField{
+func ComparePhoneNumber(label, exp, act string) (c *CompareField) {
+	c = &CompareField{
 		Label: label, Expected: exp, Actual: act, Score: 2, OutOf: 2,
 	}
 	enums := strings.Map(digitsOnly, exp)
@@ -344,10 +380,10 @@ func digitsOnly(r rune) rune {
 //     or absence of spaces on either side is ignored.
 //   - Runs of spaces without a newline in expected can be matched by a single
 //     (but not multiple) newline in actual, optionally surrounded by spaces.
-func CompareText(label, exp, act string) (c *message.CompareField) {
+func CompareText(label, exp, act string) (c *CompareField) {
 	var et, at []token
 
-	c = &message.CompareField{
+	c = &CompareField{
 		Label: label, Expected: exp, Actual: act,
 	}
 	// First, we split both "exp" and "act" into tokens.

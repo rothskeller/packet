@@ -146,7 +146,7 @@ func saveMessage(filename, linkname string, env *envelope.Envelope, msg message.
 	)
 	// Encode the message.
 	env.SubjectLine = msg.EncodeSubject()
-	if msg, ok := msg.(message.HumanMessage); ok && msg.GetHandling() == "IMMEDIATE" {
+	if b := msg.Base(); b.FHandling != nil && *b.FHandling == "IMMEDIATE" {
 		env.OutpostUrgent = true
 	} else {
 		env.OutpostUrgent = false
@@ -173,15 +173,13 @@ func saveMessage(filename, linkname string, env *envelope.Envelope, msg message.
 	// Remove any generated ICS-309 since it's now potentially out of date.
 	RemoveICS309s()
 	// If the message can be rendered as PDF, do that.
-	if msg, ok := msg.(message.IRenderPDF); ok {
-		filename = filename[:len(filename)-4] + ".pdf"
-		if err = msg.RenderPDF(filename); err != nil {
-			return err
-		}
-		if linkname != "" {
-			linkname = linkname[:len(linkname)-4] + ".pdf"
-			os.Symlink(filename, linkname) // error ignored
-		}
+	filename = filename[:len(filename)-4] + ".pdf"
+	if err = msg.RenderPDF(filename); err != nil && err != message.ErrNotSupported {
+		return err
+	}
+	if err == nil && linkname != "" {
+		linkname = linkname[:len(linkname)-4] + ".pdf"
+		os.Symlink(filename, linkname) // error ignored
 	}
 	return nil
 }

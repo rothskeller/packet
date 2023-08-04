@@ -14,9 +14,11 @@ This repository contains software related to packet radio:
   TNC) and telnet.  It also includes a rudimentary JNOS BBS simulator for
   testing purposes.
 * Package `message` is a registry for message types, allowing messages of
-  various types to be decoded, created, and manipulated.  It has subpackages
-  with message type definitions for all of the public Santa Clara County
-  standard message types.
+  various types to be decoded, created, and manipulated.  It also contains the
+  base implementation that underlies all message types.
+* Package `xscmsg` has subpackages with message type definitions for all of the
+  public Santa Clara County standard message types.  The main `xscmsg` has a
+  function to register them all.
 
 ## Legal Text
 

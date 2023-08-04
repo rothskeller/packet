@@ -3,8 +3,6 @@ package plaintext
 
 import (
 	"github.com/rothskeller/packet/message"
-	"github.com/rothskeller/packet/message/basemsg"
-	"github.com/rothskeller/packet/message/common"
 )
 
 // Type is the type definition for a plain text message.
@@ -21,7 +19,7 @@ func init() {
 
 // PlainText holds the details of a plain text message.
 type PlainText struct {
-	basemsg.BaseMessage
+	message.BaseMessage
 	OriginMsgID string
 	Handling    string
 	Subject     string
@@ -30,36 +28,36 @@ type PlainText struct {
 
 // New creates a new plain text message.
 func New() (m *PlainText) {
-	m = &PlainText{BaseMessage: basemsg.BaseMessage{MessageType: &Type}}
+	m = &PlainText{BaseMessage: message.BaseMessage{Type: &Type}}
 	m.BaseMessage.FOriginMsgID = &m.OriginMsgID
 	m.BaseMessage.FHandling = &m.Handling
 	m.BaseMessage.FSubject = &m.Subject
 	m.BaseMessage.FBody = &m.Body
-	m.Fields = []*basemsg.Field{
-		basemsg.NewMessageNumberField(&basemsg.Field{
+	m.Fields = []*message.Field{
+		message.NewMessageNumberField(&message.Field{
 			Label:    "Origin Message Number",
 			Value:    &m.OriginMsgID,
-			Presence: basemsg.Required,
+			Presence: message.Required,
 			EditHelp: `This is the message number assigned to the message by the origin station.  Valid message numbers have the form XXX-###P, where XXX is the three-character message number prefix assigned to the station, ### is a sequence number (any number of digits), and P is an optional suffix letter.  This field is required.`,
 		}),
-		basemsg.NewRestrictedField(&basemsg.Field{
+		message.NewRestrictedField(&message.Field{
 			Label:    "Handling",
 			Value:    &m.Handling,
-			Choices:  basemsg.Choices{"ROUTINE", "PRIORITY", "IMMEDIATE"},
-			Presence: basemsg.Required,
+			Choices:  message.Choices{"ROUTINE", "PRIORITY", "IMMEDIATE"},
+			Presence: message.Required,
 			EditHelp: `This is the message handling order, which specifies how fast it needs to be delivered.  Allowed values are "ROUTINE" (within 2 hours), "PRIORITY" (within 1 hour), and "IMMEDIATE".  This field is required.`,
 		}),
-		basemsg.NewTextField(&basemsg.Field{
+		message.NewTextField(&message.Field{
 			Label:     "Subject",
 			Value:     &m.Subject,
-			Presence:  basemsg.Required,
+			Presence:  message.Required,
 			EditWidth: 80,
 			EditHelp:  `This is the subject of the message.  It is required.`,
 		}),
-		basemsg.NewMultilineField(&basemsg.Field{
+		message.NewMultilineField(&message.Field{
 			Label:     "Message",
 			Value:     &m.Body,
-			Presence:  basemsg.Required,
+			Presence:  message.Required,
 			EditWidth: 80,
 			EditHelp:  `This is the body of the message.  It is required.`,
 		}),
@@ -72,8 +70,8 @@ func New() (m *PlainText) {
 // nil if it doesn't.
 func decode(subject, body string) (f *PlainText) {
 	f = New()
-	f.OriginMsgID, _, f.Handling, _, f.Subject = common.DecodeSubject(subject)
-	if h := common.DecodeHandlingMap[f.Handling]; h != "" {
+	f.OriginMsgID, _, f.Handling, _, f.Subject = message.DecodeSubject(subject)
+	if h := message.DecodeHandlingMap[f.Handling]; h != "" {
 		f.Handling = h
 	}
 	f.Body = body
