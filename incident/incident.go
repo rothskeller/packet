@@ -36,8 +36,8 @@ import (
 
 	"github.com/rothskeller/packet/envelope"
 	"github.com/rothskeller/packet/message"
-	"github.com/rothskeller/packet/message/delivrcpt"
-	"github.com/rothskeller/packet/message/readrcpt"
+	"github.com/rothskeller/packet/xscmsg/delivrcpt"
+	"github.com/rothskeller/packet/xscmsg/readrcpt"
 )
 
 // msgIDRE is a regular expression matching a valid message ID.  Its substrings

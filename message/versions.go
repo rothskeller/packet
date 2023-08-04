@@ -41,10 +41,7 @@ func OlderVersion(a, b string) bool {
 		aparts = aparts[1:]
 		bparts = bparts[1:]
 	}
-	if len(bparts) != 0 {
-		return true
-	}
-	return false
+	return len(bparts) != 0
 }
 func startsWithDigit(s string) bool {
 	return s != "" && s[0] >= '0' && s[0] <= '9'

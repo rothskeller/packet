@@ -4,18 +4,18 @@ package allmsg
 
 import (
 	"github.com/rothskeller/packet/message"
-	"github.com/rothskeller/packet/message/ahfacstat"
-	"github.com/rothskeller/packet/message/checkin"
-	"github.com/rothskeller/packet/message/checkout"
-	"github.com/rothskeller/packet/message/delivrcpt"
-	"github.com/rothskeller/packet/message/eoc213rr"
-	"github.com/rothskeller/packet/message/ics213"
-	"github.com/rothskeller/packet/message/jurisstat"
-	"github.com/rothskeller/packet/message/plaintext"
-	"github.com/rothskeller/packet/message/racesmar"
-	"github.com/rothskeller/packet/message/readrcpt"
-	"github.com/rothskeller/packet/message/sheltstat"
-	"github.com/rothskeller/packet/message/unkform"
+	"github.com/rothskeller/packet/xscmsg/ahfacstat"
+	"github.com/rothskeller/packet/xscmsg/checkin"
+	"github.com/rothskeller/packet/xscmsg/checkout"
+	"github.com/rothskeller/packet/xscmsg/delivrcpt"
+	"github.com/rothskeller/packet/xscmsg/eoc213rr"
+	"github.com/rothskeller/packet/xscmsg/ics213"
+	"github.com/rothskeller/packet/xscmsg/jurisstat"
+	"github.com/rothskeller/packet/xscmsg/plaintext"
+	"github.com/rothskeller/packet/xscmsg/racesmar"
+	"github.com/rothskeller/packet/xscmsg/readrcpt"
+	"github.com/rothskeller/packet/xscmsg/sheltstat"
+	"github.com/rothskeller/packet/xscmsg/unkform"
 )
 
 // Register registers all message types defined in sibling packages.

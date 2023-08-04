@@ -6,7 +6,7 @@ import (
 
 	"github.com/davecgh/go-spew/spew"
 	"github.com/rothskeller/packet/message"
-	"github.com/rothskeller/packet/message/ics213"
+	"github.com/rothskeller/packet/xscmsg/ics213"
 )
 
 func TestRoundTrip(t *testing.T) {
