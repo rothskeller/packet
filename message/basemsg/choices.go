@@ -32,6 +32,32 @@ type ChoiceMapper interface {
 	ListHuman() []string
 }
 
+// NoChoices is a zero implementation of ChoiceMapper for fields that don't have
+// choices.
+type NoChoices struct{}
+
+// IsHuman returns whether the supplied string is a human representation of one
+// of the choices in the set.
+func (NoChoices) IsHuman(s string) bool { return false }
+
+// IsPIFO returns whether the supplied string is a PIFO representation of one of
+// the choices in the set.
+func (NoChoices) IsPIFO(s string) bool { return false }
+
+// ToHuman translates the supplied choice from PIFO representation to human
+// representation.  If the supplied string is not a PIFO representation of one
+// of the choices in the set, ToHuman returns its argument unchanged.
+func (NoChoices) ToHuman(s string) string { return s }
+
+// ToPIFO translates the supplied choice from human representation to PIFO
+// representation.  If the supplied string is not a human representation of one
+// of the choices in the set, ToPIFO returns its argument unchanged.
+func (NoChoices) ToPIFO(s string) string { return s }
+
+// ListHuman returns a list of the human representations of the choices
+// in the set.
+func (NoChoices) ListHuman() []string { return nil }
+
 // Choices is a wrapper around []string to make it a valid ChoiceMapper.  Each
 // string in the slice is a choice whose PIFO and human representations are the
 // same.

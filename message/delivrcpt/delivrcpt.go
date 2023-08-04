@@ -34,7 +34,32 @@ type DeliveryReceipt struct {
 
 // New creates a new delivery receipt message.
 func New() (m *DeliveryReceipt) {
-	return &DeliveryReceipt{BaseMessage: basemsg.BaseMessage{MessageType: &Type}}
+	m = &DeliveryReceipt{BaseMessage: basemsg.BaseMessage{MessageType: &Type}}
+	m.Fields = []*basemsg.Field{
+		basemsg.NewTextField(&basemsg.Field{
+			Label:    "Message To",
+			Value:    &m.MessageTo,
+			Presence: basemsg.Required,
+		}),
+		basemsg.NewTextField(&basemsg.Field{
+			Label: "Message Subject",
+			Value: &m.MessageSubject,
+		}),
+		basemsg.NewTextField(&basemsg.Field{
+			Label:    "Delivered At",
+			Value:    &m.DeliveredTime,
+			Presence: basemsg.Required,
+		}),
+		basemsg.NewMessageNumberField(&basemsg.Field{
+			Label: "Message Number",
+			Value: &m.LocalMessageID,
+		}),
+		basemsg.NewMultilineField(&basemsg.Field{
+			Label: "Extra Text",
+			Value: &m.ExtraText,
+		}),
+	}
+	return m
 }
 
 // deliveryReceiptRE matches the first lines of a delivery receipt message.  Its

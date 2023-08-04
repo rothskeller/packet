@@ -2,7 +2,6 @@ package basemsg
 
 import (
 	"fmt"
-	"regexp"
 	"strconv"
 	"strings"
 	"time"
@@ -22,19 +21,24 @@ func (bm *BaseMessage) EditFields() []*message.EditField {
 	if bm.editFields == nil {
 		bm.editFieldMap = make(map[*Field]*message.EditField)
 		for _, f := range bm.Fields {
-			if f.EditWidth == 0 {
+			if f.EditHelp == "" {
 				continue // not editable
+			}
+			var choices = f.Choices.ListHuman()
+			var editWidth = f.EditWidth
+			for _, c := range choices {
+				if len(c) > editWidth {
+					editWidth = len(c)
+				}
 			}
 			var ef = message.EditField{
 				Label:          f.Label,
-				Width:          f.EditWidth,
+				Width:          editWidth,
 				Multiline:      f.Multiline,
 				LocalMessageID: bm.FOriginMsgID == f.Value,
 				Help:           f.EditHelp,
 				Hint:           f.EditHint,
-			}
-			if f.Choices != nil {
-				ef.Choices = f.Choices.ListHuman()
+				Choices:        choices,
 			}
 			bm.editFields = append(bm.editFields, &ef)
 			bm.editFieldMap[f] = &ef
@@ -42,21 +46,9 @@ func (bm *BaseMessage) EditFields() []*message.EditField {
 	}
 	for _, f := range bm.Fields {
 		if ef := bm.editFieldMap[f]; ef != nil {
-			if f.EditValue != nil {
-				ef.Value = f.EditValue(f)
-			} else if f.Choices != nil {
-				ef.Value = f.Choices.ToHuman(*f.Value)
-			} else {
-				ef.Value = *f.Value
-			}
-			if p := validatePresence(f); p != "" {
-				ef.Problem = p
-			} else if f.EditValid != nil {
+			ef.Value = f.EditValue(f)
+			if ef.Problem = validatePresence(f); ef.Problem == "" {
 				ef.Problem = f.EditValid(f)
-			} else if f.PIFOValid != nil {
-				ef.Problem = f.PIFOValid(f)
-			} else {
-				ef.Problem = ""
 			}
 		}
 	}
@@ -67,33 +59,14 @@ func (bm *BaseMessage) EditFields() []*message.EditField {
 func (bm *BaseMessage) ApplyEdits() {
 	for _, f := range bm.Fields {
 		if ef := bm.editFieldMap[f]; ef != nil {
-			value := strings.TrimSpace(ef.Value)
-			if f.EditApply != nil {
-				f.EditApply(f, value)
-			} else if f.Choices != nil {
-				*f.Value = f.Choices.ToPIFO(value)
-			} else {
-				*f.Value = value
-			}
-			if f.EditValue != nil {
-				ef.Value = f.EditValue(f)
-			} else if f.Choices != nil {
-				ef.Value = f.Choices.ToHuman(*f.Value)
-			} else {
-				ef.Value = *f.Value
-			}
+			f.EditApply(f, ef.Value)
+			ef.Value = f.EditValue(f)
 		}
 	}
 	for _, f := range bm.Fields {
 		if ef := bm.editFieldMap[f]; ef != nil {
-			if p := validatePresence(f); p != "" {
-				ef.Problem = p
-			} else if f.EditValid != nil {
+			if ef.Problem = validatePresence(f); ef.Problem == "" {
 				ef.Problem = f.EditValid(f)
-			} else if f.PIFOValid != nil {
-				ef.Problem = f.PIFOValid(f)
-			} else {
-				ef.Problem = ""
 			}
 		}
 	}
@@ -106,8 +79,6 @@ func ApplyCardinal(f *Field, v string) {
 	}
 	*f.Value = v
 }
-
-var dateLooseRE = regexp.MustCompile(`^(0?[1-9]|1[0-2])[-./](0?[1-9]|[12][0-9]|3[01])[-./](?:20)?([0-9][0-9])$`)
 
 // ApplyDate applies an edited value to a date field.
 func ApplyDate(f *Field, v string) {
@@ -140,8 +111,6 @@ func ValueDateTime(date, time string) string {
 	return common.SmartJoin(date, time, " ")
 }
 
-var messageNumberLooseRE = regexp.MustCompile(`^([A-Z0-9]{3})-(\d+)([A-Z]?)$`)
-
 // ApplyMessageNumber applies an edited value to a message number field.
 func ApplyMessageNumber(f *Field, v string) {
 	v = strings.ToUpper(v)
@@ -151,8 +120,6 @@ func ApplyMessageNumber(f *Field, v string) {
 	}
 	*f.Value = v
 }
-
-var timeLooseRE = regexp.MustCompile(`^([1-9]:|[01][0-9]:?|2[0-4]:?)([0-5][0-9])$`)
 
 // ApplyTime applies an edited value to a time field.
 func ApplyTime(f *Field, v string) {

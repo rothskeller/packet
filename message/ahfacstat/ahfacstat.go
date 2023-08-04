@@ -132,28 +132,24 @@ func create(version *basemsg.FormVersion) message.Message {
 	f.Fields = make([]*basemsg.Field, 0, fieldCount)
 	f.BaseForm.AddHeaderFields(&f.BaseMessage, &baseform.DefaultPDFMaps)
 	f.Fields = append(f.Fields,
-		&basemsg.Field{
+		basemsg.NewStaticPDFContentField(&basemsg.Field{
 			PDFMap: basemsg.PDFMapFunc(func(*basemsg.Field) []basemsg.PDFField {
 				return []basemsg.PDFField{{Name: "Form Type", Value: "Allied Health Facility Status"}}
 			}),
-		},
-		&basemsg.Field{
-			Label:     "Report Type",
-			PIFOTag:   "19.",
-			Value:     &f.ReportType,
-			Choices:   basemsg.Choices{"Update", "Complete"},
-			Presence:  basemsg.Required,
-			PIFOValid: basemsg.ValidRestricted,
-			Compare:   common.CompareExact,
-			EditWidth: 7,
-			EditHelp:  `This indicates whether the form should "Update" the previous status report for the facility, or whether it is a "Complete" replacement of the previous report.  This field is required.`,
-		},
-		&basemsg.Field{
+		}),
+		basemsg.NewRestrictedField(&basemsg.Field{
+			Label:    "Report Type",
+			Value:    &f.ReportType,
+			Choices:  basemsg.Choices{"Update", "Complete"},
+			Presence: basemsg.Required,
+			PIFOTag:  "19.",
+			EditHelp: `This indicates whether the form should "Update" the previous status report for the facility, or whether it is a "Complete" replacement of the previous report.  This field is required.`,
+		}),
+		basemsg.NewTextField(&basemsg.Field{
 			Label:    "Facility Name",
-			PIFOTag:  "20.",
 			Value:    &f.FacilityName,
 			Presence: basemsg.Required,
-			Compare:  common.CompareText,
+			PIFOTag:  "20.",
 			PDFMap: basemsg.PDFMapFunc(func(f *basemsg.Field) []basemsg.PDFField {
 				return []basemsg.PDFField{
 					{Name: "Form Topic", Value: *f.Value},
@@ -162,102 +158,74 @@ func create(version *basemsg.FormVersion) message.Message {
 			}),
 			EditWidth: 52,
 			EditHelp:  `This is the name of the facility whose status is being reported.  It is required.`,
-		},
-		&basemsg.Field{
+		}),
+		basemsg.NewTextField(&basemsg.Field{
 			Label:     "Facility Type",
-			PIFOTag:   "21.",
 			Value:     &f.FacilityType,
 			Presence:  f.requiredForComplete,
-			Compare:   common.CompareText,
+			PIFOTag:   "21.",
 			PDFMap:    basemsg.PDFName("facility type"),
 			EditWidth: 21,
 			EditHelp:  `This is the type of the facility, such as Skilled Nursing, Home Health, Dialysis, Community Health Center, Surgical Center, or Hospice.  It is required when the "Report Type" is "Complete".`,
-		},
-		&basemsg.Field{
-			Label:      "Date",
-			PIFOTag:    "22d.",
-			Value:      &f.Date,
-			Presence:   basemsg.Required,
-			PIFOValid:  basemsg.ValidDate,
-			Compare:    common.CompareDate,
-			PDFMap:     basemsg.PDFName("date"),
-			TableValue: basemsg.OmitFromTable,
-		},
-		&basemsg.Field{
-			Label:      "Time",
-			PIFOTag:    "22t.",
-			Value:      &f.Time,
-			Presence:   basemsg.Required,
-			PIFOValid:  basemsg.ValidTime,
-			Compare:    common.CompareTime,
-			PDFMap:     basemsg.PDFName("time"),
-			TableValue: basemsg.OmitFromTable,
-		},
-		&basemsg.Field{
-			Label: "Date/Time",
-			TableValue: func(*basemsg.Field) string {
-				return common.SmartJoin(f.Date, f.Time, " ")
-			},
-			EditWidth: 16,
-			EditHelp:  `This is the date and time of the status report, in MM/DD/YYYY HH:MM format (24-hour clock).  It is required.`,
-			EditHint:  "MM/DD/YYYY HH:MM",
-			EditValue: func(_ *basemsg.Field) string {
-				return basemsg.ValueDateTime(f.Date, f.Time)
-			},
-			EditApply: func(_ *basemsg.Field, value string) {
-				basemsg.ApplyDateTime(&f.Date, &f.Time, value)
-			},
-			EditValid: func(field *basemsg.Field) string {
-				return basemsg.ValidDateTime(field, f.Date, f.Time)
-			},
+		}),
+		basemsg.NewDateWithTimeField(&basemsg.Field{
+			Label:    "Date",
+			Value:    &f.Date,
 			Presence: basemsg.Required,
-		},
-		&basemsg.Field{
+			PIFOTag:  "22d.",
+			PDFMap:   basemsg.PDFName("date"),
+		}),
+		basemsg.NewTimeWithDateField(&basemsg.Field{
+			Label:    "Time",
+			Value:    &f.Time,
+			Presence: basemsg.Required,
+			PIFOTag:  "22t.",
+			PDFMap:   basemsg.PDFName("time"),
+		}),
+		basemsg.NewDateTimeField(&basemsg.Field{
+			Label:    "Date/Time",
+			Presence: basemsg.Required,
+			EditHelp: `This is the date and time of the status report, in MM/DD/YYYY HH:MM format (24-hour clock).  It is required.`,
+		}, &f.Date, &f.Time),
+		basemsg.NewTextField(&basemsg.Field{
 			Label:     "Contact Name",
-			PIFOTag:   "23.",
 			Value:     &f.ContactName,
 			Presence:  f.requiredForComplete,
-			Compare:   common.CompareText,
+			PIFOTag:   "23.",
 			PDFMap:    basemsg.PDFName("Contact Name"),
 			EditWidth: 52,
 			EditHelp:  `This is the name of the person to be contacted with questions about this report.  It is required when the "Report Type" is "Complete".`,
-		},
-		&basemsg.Field{
+		}),
+		basemsg.NewPhoneNumberField(&basemsg.Field{
 			Label:     "Contact Phone",
-			PIFOTag:   "23p.",
 			Value:     &f.ContactPhone,
 			Presence:  f.requiredForComplete,
-			PIFOValid: basemsg.ValidPhoneNumber,
-			Compare:   common.CompareExact,
+			PIFOTag:   "23p.",
 			PDFMap:    basemsg.PDFName("Phone"),
 			EditWidth: 19,
 			EditHelp:  `This is the phone number of the person to be contacted with questions about this report.  It is required when the "Report Type" is "Complete".`,
-		},
-		&basemsg.Field{
+		}),
+		basemsg.NewPhoneNumberField(&basemsg.Field{
 			Label:     "Contact Fax",
-			PIFOTag:   "23f.",
 			Value:     &f.ContactFax,
-			PIFOValid: basemsg.ValidPhoneNumber,
-			Compare:   common.CompareExact,
+			PIFOTag:   "23f.",
 			PDFMap:    basemsg.PDFName("Fax"),
 			EditWidth: 22,
 			EditHelp:  `This is the fax number of the person to be contacted with questions about this report.`,
-		},
-		&basemsg.Field{
+		}),
+		basemsg.NewTextField(&basemsg.Field{
 			Label:     "Other Contact",
-			PIFOTag:   "24.",
 			Value:     &f.OtherContact,
-			Compare:   common.CompareText,
 			PDFMap:    basemsg.PDFName("Other Phone Fax Cell Phone Radio"),
+			PIFOTag:   "24.",
 			EditWidth: 53,
 			EditHelp:  `This is additional contact information for the person to be contacted with questions about this report.`,
-		},
-		&basemsg.Field{
+		}),
+		basemsg.NewTextField(&basemsg.Field{
 			Label:    "Incident Name",
-			PIFOTag:  "25.",
 			Value:    &f.IncidentName,
 			Presence: f.requiredForComplete,
-			Compare:  common.CompareText,
+			PIFOTag:  "25.",
 			PDFMap: basemsg.PDFMapFunc(func(*basemsg.Field) []basemsg.PDFField {
 				return []basemsg.PDFField{{
 					Name:  "Incident Name and Date",
@@ -266,27 +234,20 @@ func create(version *basemsg.FormVersion) message.Message {
 			}),
 			EditWidth: 42,
 			EditHelp:  `This is the assigned incident name of the incident for which this report is filed.  It is required when the "Report Type" is "Complete".`,
-		},
-		&basemsg.Field{
-			Label:     "Incident Date",
-			PIFOTag:   "25d.",
-			Value:     &f.IncidentDate,
-			Presence:  f.requiredForComplete,
-			PIFOValid: basemsg.ValidDate,
-			Compare:   common.CompareDate,
-			EditWidth: 10,
-			EditHelp:  `This is the date of the incident for which this report is filed, in MM/DD/YYYY format.  It is required when the "Report Type" is "Complete".`,
-			EditHint:  "MM/DD/YYYY",
-			EditApply: basemsg.ApplyDate,
-		},
-		&basemsg.Field{
-			Label:     "Facility Status",
-			PIFOTag:   "35.",
-			Value:     &f.FacilityStatus,
-			Choices:   basemsg.Choices{"Fully Functional", "Limited Services", "Impaired/Closed"},
-			Presence:  f.requiredForComplete,
-			PIFOValid: basemsg.ValidRestricted,
-			Compare:   common.CompareExact,
+		}),
+		basemsg.NewDateWithoutTimeField(&basemsg.Field{
+			Label:    "Incident Date",
+			Value:    &f.IncidentDate,
+			Presence: f.requiredForComplete,
+			PIFOTag:  "25d.",
+			EditHelp: `This is the date of the incident for which this report is filed, in MM/DD/YYYY format.  It is required when the "Report Type" is "Complete".`,
+		}),
+		basemsg.NewRestrictedField(&basemsg.Field{
+			Label:    "Facility Status",
+			Value:    &f.FacilityStatus,
+			Choices:  basemsg.Choices{"Fully Functional", "Limited Services", "Impaired/Closed"},
+			Presence: f.requiredForComplete,
+			PIFOTag:  "35.",
 			PDFMap: basemsg.PDFMapFunc(func(f *basemsg.Field) []basemsg.PDFField {
 				var name string
 				switch *f.Value {
@@ -302,147 +263,123 @@ func create(version *basemsg.FormVersion) message.Message {
 				}
 				return nil
 			}),
-			EditWidth: 16,
-			EditHelp:  `This indicates the status of the facility.  It is required when the "Report Type" is "Complete".`,
-		},
-		&basemsg.Field{
+			EditHelp: `This indicates the status of the facility.  It is required when the "Report Type" is "Complete".`,
+		}),
+		basemsg.NewPhoneNumberField(&basemsg.Field{
 			Label:     "EOC Main Contact Number",
-			PIFOTag:   "27p.",
 			Value:     &f.EOCPhone,
 			Presence:  f.requiredForComplete,
-			PIFOValid: basemsg.ValidPhoneNumber,
-			Compare:   common.CompareExact,
+			PIFOTag:   "27p.",
 			PDFMap:    basemsg.PDFName("EOC MAIN CONTACT NUMBER"),
 			EditWidth: 19,
 			EditHelp:  `This is the main phone number for the facility's Emergency Operations Center (EOC).  It is required when the "Report Type" is "Complete".`,
-		},
-		&basemsg.Field{
+		}),
+		basemsg.NewPhoneNumberField(&basemsg.Field{
 			Label:     "EOC Main Contact Fax",
-			PIFOTag:   "27f.",
 			Value:     &f.EOCFax,
-			PIFOValid: basemsg.ValidPhoneNumber,
-			Compare:   common.CompareExact,
+			PIFOTag:   "27f.",
 			PDFMap:    basemsg.PDFName("EOC MAIN CONTACT FAX"),
 			EditWidth: 20,
 			EditHelp:  `This is the max fax number for the facility's Emergency Operations Center (EOC).`,
-		},
-		&basemsg.Field{
+		}),
+		basemsg.NewTextField(&basemsg.Field{
 			Label:     "Liaison Officer Name",
-			PIFOTag:   "28.",
 			Value:     &f.LiaisonName,
 			Presence:  f.requiredForComplete,
-			Compare:   common.CompareText,
+			PIFOTag:   "28.",
 			PDFMap:    basemsg.PDFName("NAME LIAISON TO PUBLIC HEALTHMEDICAL HEALTH BRANCH"),
 			EditWidth: 17,
 			EditHelp:  `This is the name of the facility's liaison to the Public Health or Medical Health Branch.  It is required when the "Report Type" is "Complete".`,
-		},
-		&basemsg.Field{
+		}),
+		basemsg.NewPhoneNumberField(&basemsg.Field{
 			Label:     "Liaison Contact Number",
-			PIFOTag:   "28p.",
 			Value:     &f.LiaisonPhone,
-			PIFOValid: basemsg.ValidPhoneNumber,
-			Compare:   common.CompareExact,
+			PIFOTag:   "28p.",
 			PDFMap:    basemsg.PDFName("CONTACT NUMBER"),
 			EditWidth: 17,
 			EditHelp:  `This is the phone number of the facility's liaison to the Public Health or Medical Health Branch.`,
-		},
-		&basemsg.Field{
+		}),
+		basemsg.NewTextField(&basemsg.Field{
 			Label:     "Info Officer Name",
-			PIFOTag:   "29.",
 			Value:     &f.InfoOfficerName,
-			Compare:   common.CompareText,
+			PIFOTag:   "29.",
 			PDFMap:    basemsg.PDFName("INFORMATION OFFICER NAME"),
 			EditWidth: 17,
 			EditHelp:  `This is the name of the facility's information officer.`,
-		},
-		&basemsg.Field{
+		}),
+		basemsg.NewPhoneNumberField(&basemsg.Field{
 			Label:     "Info Officer Contact Number",
-			PIFOTag:   "29p.",
 			Value:     &f.InfoOfficerPhone,
-			PIFOValid: basemsg.ValidPhoneNumber,
-			Compare:   common.CompareExact,
+			PIFOTag:   "29p.",
 			PDFMap:    basemsg.PDFName("CONTACT NUMBER_2"),
 			EditWidth: 17,
 			EditHelp:  `This is the phone number of the facility's information officer.`,
-		},
-		&basemsg.Field{
+		}),
+		basemsg.NewTextField(&basemsg.Field{
 			Label:     "Info Officer Contact Email",
-			PIFOTag:   "29e.",
 			Value:     &f.InfoOfficerEmail,
+			PIFOTag:   "29e.",
 			Compare:   common.CompareExact,
 			PDFMap:    basemsg.PDFName("CONTACT EMAIL"),
 			EditWidth: 17,
 			EditHelp:  `This is the email address of the facility's information officer.`,
-		},
-		&basemsg.Field{
+		}),
+		basemsg.NewTextField(&basemsg.Field{
 			Label:     "Not Active Contact Name",
-			PIFOTag:   "30.",
 			Value:     &f.ClosedContactName,
 			Presence:  f.requiredForComplete,
-			Compare:   common.CompareText,
+			PIFOTag:   "30.",
 			PDFMap:    basemsg.PDFName("IF EOC IS NOT ACTIVATED WHO SHOULD BE CONTACTED FOR QUESTIONSREQUESTS"),
 			EditWidth: 17,
 			EditHelp:  `This is the name of the person to be contacted with questions or requests when the facility's EOC is not activated.  It is required when the "Report Type" is "Complete".`,
-		},
-		&basemsg.Field{
+		}),
+		basemsg.NewPhoneNumberField(&basemsg.Field{
 			Label:     "Facility Contact Phone",
-			PIFOTag:   "30p.",
 			Value:     &f.ClosedContactPhone,
 			Presence:  f.requiredForComplete,
-			PIFOValid: basemsg.ValidPhoneNumber,
-			Compare:   common.CompareExact,
+			PIFOTag:   "30p.",
 			PDFMap:    basemsg.PDFName("CONTACT NUMBER_3"),
 			EditWidth: 17,
 			EditHelp:  `This is the phone number of the person to be contacted when the facility's EOC is not activated.  It is required when the "Report Type" is "Complete".`,
-		},
-		&basemsg.Field{
+		}),
+		basemsg.NewTextField(&basemsg.Field{
 			Label:     "Facility Contact Email",
-			PIFOTag:   "30e.",
 			Value:     &f.ClosedContactEmail,
 			Presence:  f.requiredForComplete,
+			PIFOTag:   "30e.",
 			Compare:   common.CompareExact,
 			PDFMap:    basemsg.PDFName("CONTACT EMAIL_2"),
 			EditWidth: 17,
 			EditHelp:  `This is the email address of the person to be contacted when the facility's EOC is not activated.  It is required when the "Report Type" is "Complete".`,
-		},
-		&basemsg.Field{
+		}),
+		basemsg.NewCardinalNumberField(&basemsg.Field{
 			Label:     "Patients To Evacuate",
-			PIFOTag:   "31a.",
 			Value:     &f.PatientsToEvacuate,
-			PIFOValid: basemsg.ValidCardinal,
-			Compare:   common.CompareCardinal,
+			PIFOTag:   "31a.",
 			PDFMap:    basemsg.PDFName("TOTALPATIENTS TO EVACUATE"),
 			EditWidth: 17,
 			EditHelp:  `This is the number of patients who need evacuation.`,
-			EditApply: basemsg.ApplyCardinal,
-		},
-		&basemsg.Field{
+		}),
+		basemsg.NewCardinalNumberField(&basemsg.Field{
 			Label:     "Patients Injured - Minor",
-			PIFOTag:   "31b.",
 			Value:     &f.PatientsInjuredMinor,
-			PIFOValid: basemsg.ValidCardinal,
-			Compare:   common.CompareCardinal,
+			PIFOTag:   "31b.",
 			PDFMap:    basemsg.PDFName("TOTALPATIENTS  INJURED  MINOR"),
 			EditWidth: 17,
 			EditHelp:  `This is the number of patients with minor injuries.`,
-			EditApply: basemsg.ApplyCardinal,
-		},
-		&basemsg.Field{
+		}),
+		basemsg.NewCardinalNumberField(&basemsg.Field{
 			Label:     "Patients Transferred",
-			PIFOTag:   "31c.",
 			Value:     &f.PatientsTransferred,
-			PIFOValid: basemsg.ValidCardinal,
-			Compare:   common.CompareCardinal,
+			PIFOTag:   "31c.",
 			PDFMap:    basemsg.PDFName("TOTALPATIENTS TRANSFERED OUT OF COUNTY"),
 			EditWidth: 17,
 			EditHelp:  `This is the number of patients who have been transferred out of the county.`,
-			EditApply: basemsg.ApplyCardinal,
-		},
-		&basemsg.Field{
+		}),
+		basemsg.NewTextField(&basemsg.Field{
 			Label:   "Other Patient Care Info",
-			PIFOTag: "33.",
 			Value:   &f.OtherPatientCare,
-			Compare: common.CompareText,
+			PIFOTag: "33.",
 			PDFMap: basemsg.PDFMapFunc(func(*basemsg.Field) []basemsg.PDFField {
 				// We put OtherCareBedsType in this field as
 				// well because the PDF doesn't have a fillable
@@ -454,69 +391,54 @@ func create(version *basemsg.FormVersion) message.Message {
 			}),
 			EditWidth: 27,
 			EditHelp:  `This field contains other patient care information as needed.`,
-		},
-		&basemsg.Field{
+		}),
+		basemsg.NewRestrictedField(&basemsg.Field{
 			Label:      "Attached Org Chart",
-			PIFOTag:    "26a.",
 			Value:      &f.AttachOrgChart,
 			Choices:    basemsg.Choices{"Yes", "No"},
-			PIFOValid:  basemsg.ValidRestricted,
-			Compare:    common.CompareExact,
+			PIFOTag:    "26a.",
 			PDFMap:     basemsg.PDFName("YesNoNHICSICS ORGANIZATION CHART"),
-			TableValue: basemsg.OmitFromTable,
-			EditWidth:  3,
+			TableValue: basemsg.TableOmit,
 			EditHelp:   `This indicates whether an NHICS/ICS organization chart is attached to the status report.`,
-		},
-		&basemsg.Field{
+		}),
+		basemsg.NewRestrictedField(&basemsg.Field{
 			Label:      "Attached Resource Requests",
-			PIFOTag:    "26b.",
 			Value:      &f.AttachRR,
 			Choices:    basemsg.Choices{"Yes", "No"},
 			Presence:   f.requiredForComplete,
-			PIFOValid:  basemsg.ValidRestricted,
-			Compare:    common.CompareExact,
+			PIFOTag:    "26b.",
 			PDFMap:     basemsg.PDFName("YesNoDEOC9A RESOURCE REQUEST FORMS"),
-			TableValue: basemsg.OmitFromTable,
-			EditWidth:  3,
+			TableValue: basemsg.TableOmit,
 			EditHelp:   `This indicates whether DEOC-9A resource request forms are attached to the status report.  It is required when the "Report Type" is "Complete".`,
-		},
-		&basemsg.Field{
+		}),
+		basemsg.NewRestrictedField(&basemsg.Field{
 			Label:      "Attached Status Report",
-			PIFOTag:    "26c.",
 			Value:      &f.AttachStatus,
 			Choices:    basemsg.Choices{"Yes", "No"},
-			PIFOValid:  basemsg.ValidRestricted,
-			Compare:    common.CompareExact,
+			PIFOTag:    "26c.",
 			PDFMap:     basemsg.PDFName("YesNoNHICSICS STATUS REPORT FORM  STANDARD"),
-			TableValue: basemsg.OmitFromTable,
-			EditWidth:  3,
+			TableValue: basemsg.TableOmit,
 			EditHelp:   `This indicates whether an NHICS/ICS standard status report form is attached to this status report.`,
-		},
-		&basemsg.Field{
+		}),
+		basemsg.NewRestrictedField(&basemsg.Field{
 			Label:      "Attached Incident Action Plan",
-			PIFOTag:    "26d.",
 			Value:      &f.AttachActionPlan,
 			Choices:    basemsg.Choices{"Yes", "No"},
-			PIFOValid:  basemsg.ValidRestricted,
-			Compare:    common.CompareExact,
+			PIFOTag:    "26d.",
 			PDFMap:     basemsg.PDFName("YesNoNHICSICS INCIDENT ACTION PLAN"),
-			TableValue: basemsg.OmitFromTable,
-			EditWidth:  3,
+			TableValue: basemsg.TableOmit,
 			EditHelp:   `This indicates whether an NHICS/ICS incident action plan is attached to the status report.`,
-		},
-		&basemsg.Field{
+		}),
+		basemsg.NewRestrictedField(&basemsg.Field{
 			Label:      "Attached Phone Directory",
-			PIFOTag:    "26e.",
 			Value:      &f.AttachDirectory,
 			Choices:    basemsg.Choices{"Yes", "No"},
-			PIFOValid:  basemsg.ValidRestricted,
-			Compare:    common.CompareExact,
+			PIFOTag:    "26e.",
 			PDFMap:     basemsg.PDFName("YesNoPHONECOMMUNICATIONS DIRECTORY"),
-			TableValue: basemsg.OmitFromTable,
-			EditWidth:  3,
+			TableValue: basemsg.TableOmit,
 			EditHelp:   `This indicates whether a phone/communications directory is attached to the status report.`,
-		},
-		&basemsg.Field{
+		}),
+		basemsg.NewAggregatorField(&basemsg.Field{
 			Label: "Attachments",
 			TableValue: func(*basemsg.Field) string {
 				var set []string
@@ -537,74 +459,66 @@ func create(version *basemsg.FormVersion) message.Message {
 				}
 				return strings.Join(set, ", ")
 			},
-		},
-		&basemsg.Field{
+		}),
+		basemsg.NewMultilineField(&basemsg.Field{
 			Label:     "General Summary",
-			PIFOTag:   "34.",
 			Value:     &f.Summary,
-			Compare:   common.CompareText,
+			PIFOTag:   "34.",
 			PDFMap:    basemsg.PDFName("GENERAL SUMMARY OF SITUATIONCONDITIONSRow1"),
 			EditWidth: 41,
-			Multiline: true,
 			EditHelp:  `This is a general summary of the situation and conditions at the facility.`,
-		},
-		&basemsg.Field{
+		}),
+		basemsg.NewCardinalNumberField(&basemsg.Field{
 			Label:      "Skilled Nursing Beds: Staffed M",
-			PIFOTag:    "40a.",
 			Value:      &f.SkilledNursingBeds.StaffedM,
-			PIFOValid:  basemsg.ValidCardinal,
-			Compare:    common.CompareCardinal,
+			PIFOTag:    "40a.",
 			PDFMap:     basemsg.PDFName("Staffed Bed MSKILLED NURSING"),
-			TableValue: basemsg.OmitFromTable,
-		},
+			TableValue: basemsg.TableOmit,
+		}),
 	)
 	var first = f.Fields[len(f.Fields)-1]
 	f.Fields = append(f.Fields,
-		&basemsg.Field{
+		basemsg.NewCardinalNumberField(&basemsg.Field{
 			Label:   "Skilled Nursing Beds: Staffed F",
-			PIFOTag: "40b.",
 			Value:   &f.SkilledNursingBeds.StaffedF,
+			PIFOTag: "40b.",
 			PIFOValid: func(field *basemsg.Field) string {
 				return allOrNone(first, field)
 			},
-			Compare:    common.CompareCardinal,
 			PDFMap:     basemsg.PDFName("Staffed BedFSKILLED NURSING"),
-			TableValue: basemsg.OmitFromTable,
-		},
-		&basemsg.Field{
+			TableValue: basemsg.TableOmit,
+		}),
+		basemsg.NewCardinalNumberField(&basemsg.Field{
 			Label:   "Skilled Nursing Beds: Vacant M",
-			PIFOTag: "40c.",
 			Value:   &f.SkilledNursingBeds.VacantM,
+			PIFOTag: "40c.",
 			PIFOValid: func(field *basemsg.Field) string {
 				return allOrNone(first, field)
 			},
-			Compare:    common.CompareCardinal,
 			PDFMap:     basemsg.PDFName("Vacant BedsMSKILLED NURSING"),
-			TableValue: basemsg.OmitFromTable,
-		},
-		&basemsg.Field{
+			TableValue: basemsg.TableOmit,
+		}),
+		basemsg.NewCardinalNumberField(&basemsg.Field{
 			Label:   "Skilled Nursing Beds: Vacant F",
-			PIFOTag: "40d.",
 			Value:   &f.SkilledNursingBeds.VacantF,
+			PIFOTag: "40d.",
 			PIFOValid: func(field *basemsg.Field) string {
 				return allOrNone(first, field)
 			},
-			Compare:    common.CompareCardinal,
 			PDFMap:     basemsg.PDFName("Vacant BedFSKILLED NURSING"),
-			TableValue: basemsg.OmitFromTable,
-		},
-		&basemsg.Field{
+			TableValue: basemsg.TableOmit,
+		}),
+		basemsg.NewCardinalNumberField(&basemsg.Field{
 			Label:   "Skilled Nursing Beds: Surge",
-			PIFOTag: "40e.",
 			Value:   &f.SkilledNursingBeds.Surge,
+			PIFOTag: "40e.",
 			PIFOValid: func(field *basemsg.Field) string {
 				return allOrNone(first, field)
 			},
-			Compare:    common.CompareCardinal,
 			PDFMap:     basemsg.PDFName("Surge SKILLED NURSING"),
-			TableValue: basemsg.OmitFromTable,
-		},
-		&basemsg.Field{
+			TableValue: basemsg.TableOmit,
+		}),
+		basemsg.NewAggregatorField(&basemsg.Field{
 			Label: "Skilled Nursing Beds",
 			TableValue: func(*basemsg.Field) string {
 				return bedsTableValue(&f.SkilledNursingBeds)
@@ -621,64 +535,58 @@ func create(version *basemsg.FormVersion) message.Message {
 			EditValid: func(field *basemsg.Field) string {
 				return bedsValid(field, &f.SkilledNursingBeds)
 			},
-		},
-		&basemsg.Field{
+		}),
+		basemsg.NewCardinalNumberField(&basemsg.Field{
 			Label:      "Assisted Living Beds: Staffed M",
-			PIFOTag:    "41a.",
 			Value:      &f.AssistedLivingBeds.StaffedM,
-			PIFOValid:  basemsg.ValidCardinal,
-			Compare:    common.CompareCardinal,
+			PIFOTag:    "41a.",
 			PDFMap:     basemsg.PDFName("Staffed Bed MASSISTED LIVING"),
-			TableValue: basemsg.OmitFromTable,
-		},
+			TableValue: basemsg.TableOmit,
+		}),
 	)
 	first = f.Fields[len(f.Fields)-1]
 	f.Fields = append(f.Fields,
-		&basemsg.Field{
+		basemsg.NewCardinalNumberField(&basemsg.Field{
 			Label:   "Assisted Living Beds: Staffed F",
-			PIFOTag: "41b.",
 			Value:   &f.AssistedLivingBeds.StaffedF,
+			PIFOTag: "41b.",
 			PIFOValid: func(field *basemsg.Field) string {
 				return allOrNone(first, field)
 			},
-			Compare:    common.CompareCardinal,
 			PDFMap:     basemsg.PDFName("Staffed BedFASSISTED LIVING"),
-			TableValue: basemsg.OmitFromTable,
-		},
-		&basemsg.Field{
+			TableValue: basemsg.TableOmit,
+		}),
+		basemsg.NewCardinalNumberField(&basemsg.Field{
 			Label:   "Assisted Living Beds: Vacant M",
-			PIFOTag: "41c.",
 			Value:   &f.AssistedLivingBeds.VacantM,
+			PIFOTag: "41c.",
 			PIFOValid: func(field *basemsg.Field) string {
 				return allOrNone(first, field)
 			},
-			Compare:    common.CompareCardinal,
 			PDFMap:     basemsg.PDFName("Vacant BedsMASSISTED LIVING"),
-			TableValue: basemsg.OmitFromTable,
-		},
-		&basemsg.Field{
+			TableValue: basemsg.TableOmit,
+		}),
+		basemsg.NewCardinalNumberField(&basemsg.Field{
 			Label:   "Assisted Living Beds: Vacant F",
-			PIFOTag: "41d.",
 			Value:   &f.AssistedLivingBeds.VacantF,
+			PIFOTag: "41d.",
 			PIFOValid: func(field *basemsg.Field) string {
 				return allOrNone(first, field)
 			},
-			Compare:    common.CompareCardinal,
 			PDFMap:     basemsg.PDFName("Vacant BedFASSISTED LIVING"),
-			TableValue: basemsg.OmitFromTable,
-		},
-		&basemsg.Field{
+			TableValue: basemsg.TableOmit,
+		}),
+		basemsg.NewCardinalNumberField(&basemsg.Field{
 			Label:   "Assisted Living Beds: Surge",
-			PIFOTag: "41e.",
 			Value:   &f.AssistedLivingBeds.Surge,
+			PIFOTag: "41e.",
 			PIFOValid: func(field *basemsg.Field) string {
 				return allOrNone(first, field)
 			},
-			Compare:    common.CompareCardinal,
 			PDFMap:     basemsg.PDFName("Surge ASSISTED LIVING"),
-			TableValue: basemsg.OmitFromTable,
-		},
-		&basemsg.Field{
+			TableValue: basemsg.TableOmit,
+		}),
+		basemsg.NewAggregatorField(&basemsg.Field{
 			Label: "Assisted Living Beds",
 			TableValue: func(*basemsg.Field) string {
 				return bedsTableValue(&f.AssistedLivingBeds)
@@ -695,64 +603,58 @@ func create(version *basemsg.FormVersion) message.Message {
 			EditValid: func(field *basemsg.Field) string {
 				return bedsValid(field, &f.AssistedLivingBeds)
 			},
-		},
-		&basemsg.Field{
+		}),
+		basemsg.NewCardinalNumberField(&basemsg.Field{
 			Label:      "Sub-Acute Beds: Staffed M",
-			PIFOTag:    "42a.",
 			Value:      &f.SubAcuteBeds.StaffedM,
-			PIFOValid:  basemsg.ValidCardinal,
-			Compare:    common.CompareCardinal,
+			PIFOTag:    "42a.",
 			PDFMap:     basemsg.PDFName("Staffed Bed MSURGICAL BEDS"), // name is wrong in PDF
-			TableValue: basemsg.OmitFromTable,
-		},
+			TableValue: basemsg.TableOmit,
+		}),
 	)
 	first = f.Fields[len(f.Fields)-1]
 	f.Fields = append(f.Fields,
-		&basemsg.Field{
+		basemsg.NewCardinalNumberField(&basemsg.Field{
 			Label:   "Sub-Acute Beds: Staffed F",
-			PIFOTag: "42b.",
 			Value:   &f.SubAcuteBeds.StaffedF,
+			PIFOTag: "42b.",
 			PIFOValid: func(field *basemsg.Field) string {
 				return allOrNone(first, field)
 			},
-			Compare:    common.CompareCardinal,
 			PDFMap:     basemsg.PDFName("Staffed BedFSURGICAL BEDS"), // name is wrong in PDF
-			TableValue: basemsg.OmitFromTable,
-		},
-		&basemsg.Field{
+			TableValue: basemsg.TableOmit,
+		}),
+		basemsg.NewCardinalNumberField(&basemsg.Field{
 			Label:   "Sub-Acute Beds: Vacant M",
-			PIFOTag: "42c.",
 			Value:   &f.SubAcuteBeds.VacantM,
+			PIFOTag: "42c.",
 			PIFOValid: func(field *basemsg.Field) string {
 				return allOrNone(first, field)
 			},
-			Compare:    common.CompareCardinal,
 			PDFMap:     basemsg.PDFName("Vacant BedsMSURGICAL BEDS"), // name is wrong in PDF
-			TableValue: basemsg.OmitFromTable,
-		},
-		&basemsg.Field{
+			TableValue: basemsg.TableOmit,
+		}),
+		basemsg.NewCardinalNumberField(&basemsg.Field{
 			Label:   "Sub-Acute Beds: Vacant F",
-			PIFOTag: "42d.",
 			Value:   &f.SubAcuteBeds.VacantF,
+			PIFOTag: "42d.",
 			PIFOValid: func(field *basemsg.Field) string {
 				return allOrNone(first, field)
 			},
-			Compare:    common.CompareCardinal,
 			PDFMap:     basemsg.PDFName("Vacant BedFSURGICAL BEDS"), // name is wrong in PDF
-			TableValue: basemsg.OmitFromTable,
-		},
-		&basemsg.Field{
+			TableValue: basemsg.TableOmit,
+		}),
+		basemsg.NewCardinalNumberField(&basemsg.Field{
 			Label:   "Sub-Acute Beds: Surge",
-			PIFOTag: "42e.",
 			Value:   &f.SubAcuteBeds.Surge,
+			PIFOTag: "42e.",
 			PIFOValid: func(field *basemsg.Field) string {
 				return allOrNone(first, field)
 			},
-			Compare:    common.CompareCardinal,
 			PDFMap:     basemsg.PDFName("Surge SURGICAL BEDS"), // name is wrong in PDF
-			TableValue: basemsg.OmitFromTable,
-		},
-		&basemsg.Field{
+			TableValue: basemsg.TableOmit,
+		}),
+		basemsg.NewAggregatorField(&basemsg.Field{
 			Label: "Sub-Acute Beds",
 			TableValue: func(*basemsg.Field) string {
 				return bedsTableValue(&f.SubAcuteBeds)
@@ -769,64 +671,58 @@ func create(version *basemsg.FormVersion) message.Message {
 			EditValid: func(field *basemsg.Field) string {
 				return bedsValid(field, &f.SubAcuteBeds)
 			},
-		},
-		&basemsg.Field{
+		}),
+		basemsg.NewCardinalNumberField(&basemsg.Field{
 			Label:      "Alzheimers Beds: Staffed M",
-			PIFOTag:    "43a.",
 			Value:      &f.AlzheimersBeds.StaffedM,
-			PIFOValid:  basemsg.ValidCardinal,
-			Compare:    common.CompareCardinal,
+			PIFOTag:    "43a.",
 			PDFMap:     basemsg.PDFName("Staffed Bed MSUBACUTE"), // name is wrong in PDF
-			TableValue: basemsg.OmitFromTable,
-		},
+			TableValue: basemsg.TableOmit,
+		}),
 	)
 	first = f.Fields[len(f.Fields)-1]
 	f.Fields = append(f.Fields,
-		&basemsg.Field{
+		basemsg.NewCardinalNumberField(&basemsg.Field{
 			Label:   "Alzheimers Beds: Staffed F",
-			PIFOTag: "43b.",
 			Value:   &f.AlzheimersBeds.StaffedF,
+			PIFOTag: "43b.",
 			PIFOValid: func(field *basemsg.Field) string {
 				return allOrNone(first, field)
 			},
-			Compare:    common.CompareCardinal,
 			PDFMap:     basemsg.PDFName("Staffed BedFSUBACUTE"), // name is wrong in PDF
-			TableValue: basemsg.OmitFromTable,
-		},
-		&basemsg.Field{
+			TableValue: basemsg.TableOmit,
+		}),
+		basemsg.NewCardinalNumberField(&basemsg.Field{
 			Label:   "Alzheimers Beds: Vacant M",
-			PIFOTag: "43c.",
 			Value:   &f.AlzheimersBeds.VacantM,
+			PIFOTag: "43c.",
 			PIFOValid: func(field *basemsg.Field) string {
 				return allOrNone(first, field)
 			},
-			Compare:    common.CompareCardinal,
 			PDFMap:     basemsg.PDFName("Vacant BedsMSUBACUTE"), // name is wrong in PDF
-			TableValue: basemsg.OmitFromTable,
-		},
-		&basemsg.Field{
+			TableValue: basemsg.TableOmit,
+		}),
+		basemsg.NewCardinalNumberField(&basemsg.Field{
 			Label:   "Alzheimers Beds: Vacant F",
-			PIFOTag: "43d.",
 			Value:   &f.AlzheimersBeds.VacantF,
+			PIFOTag: "43d.",
 			PIFOValid: func(field *basemsg.Field) string {
 				return allOrNone(first, field)
 			},
-			Compare:    common.CompareCardinal,
 			PDFMap:     basemsg.PDFName("Vacant BedFSUBACUTE"), // name is wrong in PDF
-			TableValue: basemsg.OmitFromTable,
-		},
-		&basemsg.Field{
+			TableValue: basemsg.TableOmit,
+		}),
+		basemsg.NewCardinalNumberField(&basemsg.Field{
 			Label:   "Alzheimers Beds: Surge",
-			PIFOTag: "43e.",
 			Value:   &f.AlzheimersBeds.Surge,
+			PIFOTag: "43e.",
 			PIFOValid: func(field *basemsg.Field) string {
 				return allOrNone(first, field)
 			},
-			Compare:    common.CompareCardinal,
 			PDFMap:     basemsg.PDFName("Surge SUBACUTE"), // name is wrong in PDF
-			TableValue: basemsg.OmitFromTable,
-		},
-		&basemsg.Field{
+			TableValue: basemsg.TableOmit,
+		}),
+		basemsg.NewAggregatorField(&basemsg.Field{
 			Label: "Alzheimers/Dementia Beds",
 			TableValue: func(*basemsg.Field) string {
 				return bedsTableValue(&f.AlzheimersBeds)
@@ -843,64 +739,58 @@ func create(version *basemsg.FormVersion) message.Message {
 			EditValid: func(field *basemsg.Field) string {
 				return bedsValid(field, &f.AlzheimersBeds)
 			},
-		},
-		&basemsg.Field{
+		}),
+		basemsg.NewCardinalNumberField(&basemsg.Field{
 			Label:      "Ped Sub-Acute Beds: Staffed M",
-			PIFOTag:    "44a.",
 			Value:      &f.PedSubAcuteBeds.StaffedM,
-			PIFOValid:  basemsg.ValidCardinal,
-			Compare:    common.CompareCardinal,
+			PIFOTag:    "44a.",
 			PDFMap:     basemsg.PDFName("Staffed Bed MALZEIMERSDIMENTIA"), // name is wrong in PDF
-			TableValue: basemsg.OmitFromTable,
-		},
+			TableValue: basemsg.TableOmit,
+		}),
 	)
 	first = f.Fields[len(f.Fields)-1]
 	f.Fields = append(f.Fields,
-		&basemsg.Field{
+		basemsg.NewCardinalNumberField(&basemsg.Field{
 			Label:   "Ped Sub-Acute Beds: Staffed F",
-			PIFOTag: "44b.",
 			Value:   &f.PedSubAcuteBeds.StaffedF,
+			PIFOTag: "44b.",
 			PIFOValid: func(field *basemsg.Field) string {
 				return allOrNone(first, field)
 			},
-			Compare:    common.CompareCardinal,
 			PDFMap:     basemsg.PDFName("Staffed BedFALZEIMERSDIMENTIA"), // name is wrong in PDF
-			TableValue: basemsg.OmitFromTable,
-		},
-		&basemsg.Field{
+			TableValue: basemsg.TableOmit,
+		}),
+		basemsg.NewCardinalNumberField(&basemsg.Field{
 			Label:   "Ped Sub-Acute Beds: Vacant M",
-			PIFOTag: "44c.",
 			Value:   &f.PedSubAcuteBeds.VacantM,
+			PIFOTag: "44c.",
 			PIFOValid: func(field *basemsg.Field) string {
 				return allOrNone(first, field)
 			},
-			Compare:    common.CompareCardinal,
 			PDFMap:     basemsg.PDFName("Vacant BedsMALZEIMERSDIMENTIA"), // name is wrong in PDF
-			TableValue: basemsg.OmitFromTable,
-		},
-		&basemsg.Field{
+			TableValue: basemsg.TableOmit,
+		}),
+		basemsg.NewCardinalNumberField(&basemsg.Field{
 			Label:   "Ped Sub-Acute Beds: Vacant F",
-			PIFOTag: "44d.",
 			Value:   &f.PedSubAcuteBeds.VacantF,
+			PIFOTag: "44d.",
 			PIFOValid: func(field *basemsg.Field) string {
 				return allOrNone(first, field)
 			},
-			Compare:    common.CompareCardinal,
 			PDFMap:     basemsg.PDFName("Vacant BedFALZEIMERSDIMENTIA"), // name is wrong in PDF
-			TableValue: basemsg.OmitFromTable,
-		},
-		&basemsg.Field{
+			TableValue: basemsg.TableOmit,
+		}),
+		basemsg.NewCardinalNumberField(&basemsg.Field{
 			Label:   "Ped Sub-Acute Beds: Surge",
-			PIFOTag: "44e.",
 			Value:   &f.PedSubAcuteBeds.Surge,
+			PIFOTag: "44e.",
 			PIFOValid: func(field *basemsg.Field) string {
 				return allOrNone(first, field)
 			},
-			Compare:    common.CompareCardinal,
 			PDFMap:     basemsg.PDFName("Surge ALZEIMERSDIMENTIA"), // name is wrong in PDF
-			TableValue: basemsg.OmitFromTable,
-		},
-		&basemsg.Field{
+			TableValue: basemsg.TableOmit,
+		}),
+		basemsg.NewAggregatorField(&basemsg.Field{
 			Label: "Pediatric Sub-Acute Beds",
 			TableValue: func(*basemsg.Field) string {
 				return bedsTableValue(&f.PedSubAcuteBeds)
@@ -917,64 +807,58 @@ func create(version *basemsg.FormVersion) message.Message {
 			EditValid: func(field *basemsg.Field) string {
 				return bedsValid(field, &f.PedSubAcuteBeds)
 			},
-		},
-		&basemsg.Field{
+		}),
+		basemsg.NewCardinalNumberField(&basemsg.Field{
 			Label:      "Psychiatric Beds: Staffed M",
-			PIFOTag:    "45a.",
 			Value:      &f.PsychiatricBeds.StaffedM,
-			PIFOValid:  basemsg.ValidCardinal,
-			Compare:    common.CompareCardinal,
+			PIFOTag:    "45a.",
 			PDFMap:     basemsg.PDFName("Staffed Bed MPEDIATRICSUB ACUTE"), // name is wrong in PDF
-			TableValue: basemsg.OmitFromTable,
-		},
+			TableValue: basemsg.TableOmit,
+		}),
 	)
 	first = f.Fields[len(f.Fields)-1]
 	f.Fields = append(f.Fields,
-		&basemsg.Field{
+		basemsg.NewCardinalNumberField(&basemsg.Field{
 			Label:   "Psychiatric Beds: Staffed F",
-			PIFOTag: "45b.",
 			Value:   &f.PsychiatricBeds.StaffedF,
+			PIFOTag: "45b.",
 			PIFOValid: func(field *basemsg.Field) string {
 				return allOrNone(first, field)
 			},
-			Compare:    common.CompareCardinal,
 			PDFMap:     basemsg.PDFName("Staffed BedFPEDIATRICSUB ACUTE"), // name is wrong in PDF
-			TableValue: basemsg.OmitFromTable,
-		},
-		&basemsg.Field{
+			TableValue: basemsg.TableOmit,
+		}),
+		basemsg.NewCardinalNumberField(&basemsg.Field{
 			Label:   "Psychiatric Beds: Vacant M",
-			PIFOTag: "45c.",
 			Value:   &f.PsychiatricBeds.VacantM,
+			PIFOTag: "45c.",
 			PIFOValid: func(field *basemsg.Field) string {
 				return allOrNone(first, field)
 			},
-			Compare:    common.CompareCardinal,
 			PDFMap:     basemsg.PDFName("Vacant BedsMPEDIATRICSUB ACUTE"), // name is wrong in PDF
-			TableValue: basemsg.OmitFromTable,
-		},
-		&basemsg.Field{
+			TableValue: basemsg.TableOmit,
+		}),
+		basemsg.NewCardinalNumberField(&basemsg.Field{
 			Label:   "Psychiatric Beds: Vacant F",
-			PIFOTag: "45d.",
 			Value:   &f.PsychiatricBeds.VacantF,
+			PIFOTag: "45d.",
 			PIFOValid: func(field *basemsg.Field) string {
 				return allOrNone(first, field)
 			},
-			Compare:    common.CompareCardinal,
 			PDFMap:     basemsg.PDFName("Vacant BedFPEDIATRICSUB ACUTE"), // name is wrong in PDF
-			TableValue: basemsg.OmitFromTable,
-		},
-		&basemsg.Field{
+			TableValue: basemsg.TableOmit,
+		}),
+		basemsg.NewCardinalNumberField(&basemsg.Field{
 			Label:   "Psychiatric Beds: Surge",
-			PIFOTag: "45e.",
 			Value:   &f.PsychiatricBeds.Surge,
+			PIFOTag: "45e.",
 			PIFOValid: func(field *basemsg.Field) string {
 				return allOrNone(first, field)
 			},
-			Compare:    common.CompareCardinal,
 			PDFMap:     basemsg.PDFName("Surge PEDIATRICSUB ACUTE"), // name is wrong in PDF
-			TableValue: basemsg.OmitFromTable,
-		},
-		&basemsg.Field{
+			TableValue: basemsg.TableOmit,
+		}),
+		basemsg.NewAggregatorField(&basemsg.Field{
 			Label: "Psychiatric Beds",
 			TableValue: func(*basemsg.Field) string {
 				return bedsTableValue(&f.PsychiatricBeds)
@@ -991,75 +875,69 @@ func create(version *basemsg.FormVersion) message.Message {
 			EditValid: func(field *basemsg.Field) string {
 				return bedsValid(field, &f.PsychiatricBeds)
 			},
-		},
-		&basemsg.Field{
+		}),
+		basemsg.NewTextField(&basemsg.Field{
 			Label:   "Other Care Beds Type",
-			PIFOTag: "46.",
 			Value:   &f.OtherCareBedsType,
+			PIFOTag: "46.",
 			Compare: common.CompareText,
 			// The PDF doesn't have a fillable field for this, so
 			// its value is added to the Other Patient Care Info
 			// field, above.
 			EditWidth: 17,
 			EditHelp:  `This is the other type of beds available at the facility, if any.`,
-		},
-		&basemsg.Field{
+		}),
+		basemsg.NewCardinalNumberField(&basemsg.Field{
 			Label:      "Other Care Beds: Staffed M",
-			PIFOTag:    "46a.",
 			Value:      &f.OtherCareBeds.StaffedM,
-			PIFOValid:  basemsg.ValidCardinal,
-			Compare:    common.CompareCardinal,
+			PIFOTag:    "46a.",
 			PDFMap:     basemsg.PDFName("Staffed Bed MPSYCHIATRIC"), // name is wrong in PDF
-			TableValue: basemsg.OmitFromTable,
-		},
+			TableValue: basemsg.TableOmit,
+		}),
 	)
 	first = f.Fields[len(f.Fields)-1]
 	f.Fields = append(f.Fields,
-		&basemsg.Field{
+		basemsg.NewCardinalNumberField(&basemsg.Field{
 			Label:   "Other Care Beds: Staffed F",
-			PIFOTag: "46b.",
 			Value:   &f.OtherCareBeds.StaffedF,
+			PIFOTag: "46b.",
 			PIFOValid: func(field *basemsg.Field) string {
 				return allOrNone(first, field)
 			},
-			Compare:    common.CompareCardinal,
 			PDFMap:     basemsg.PDFName("Staffed BedFPSYCHIATRIC"), // name is wrong in PDF
-			TableValue: basemsg.OmitFromTable,
-		},
-		&basemsg.Field{
+			TableValue: basemsg.TableOmit,
+		}),
+		basemsg.NewCardinalNumberField(&basemsg.Field{
 			Label:   "Other Care Beds: Vacant M",
-			PIFOTag: "46c.",
 			Value:   &f.OtherCareBeds.VacantM,
+			PIFOTag: "46c.",
 			PIFOValid: func(field *basemsg.Field) string {
 				return allOrNone(first, field)
 			},
-			Compare:    common.CompareCardinal,
 			PDFMap:     basemsg.PDFName("Vacant BedsMPSYCHIATRIC"), // name is wrong in PDF
-			TableValue: basemsg.OmitFromTable,
-		},
-		&basemsg.Field{
+			TableValue: basemsg.TableOmit,
+		}),
+		basemsg.NewCardinalNumberField(&basemsg.Field{
 			Label:   "Other Care Beds: Vacant F",
-			PIFOTag: "46d.",
 			Value:   &f.OtherCareBeds.VacantF,
+			PIFOTag: "46d.",
 			PIFOValid: func(field *basemsg.Field) string {
 				return allOrNone(first, field)
 			},
-			Compare:    common.CompareCardinal,
 			PDFMap:     basemsg.PDFName("Vacant BedFPSYCHIATRIC"), // name is wrong in PDF
-			TableValue: basemsg.OmitFromTable,
-		},
-		&basemsg.Field{
+			TableValue: basemsg.TableOmit,
+		}),
+		basemsg.NewCardinalNumberField(&basemsg.Field{
 			Label:   "Other Care Beds: Surge",
-			PIFOTag: "46e.",
 			Value:   &f.OtherCareBeds.Surge,
+			PIFOTag: "46e.",
 			PIFOValid: func(field *basemsg.Field) string {
 				return allOrNone(first, field)
 			},
-			Compare:    common.CompareCardinal,
 			PDFMap:     basemsg.PDFName("Surge PSYCHIATRIC"), // name is wrong in PDF
-			TableValue: basemsg.OmitFromTable,
-		},
-		&basemsg.Field{
+			TableValue: basemsg.TableOmit,
+		}),
+		basemsg.NewAggregatorField(&basemsg.Field{
 			Label: "Other Care Beds",
 			TableValue: func(*basemsg.Field) string {
 				return bedsTableValue(&f.OtherCareBeds)
@@ -1076,67 +954,61 @@ func create(version *basemsg.FormVersion) message.Message {
 			EditValid: func(field *basemsg.Field) string {
 				return bedsValid(field, &f.OtherCareBeds)
 			},
-			EditSkip: func() bool {
+			EditSkip: func(*basemsg.Field) bool {
 				return f.OtherCareBedsType == ""
 			},
-		},
-		&basemsg.Field{
+		}),
+		basemsg.NewCardinalNumberField(&basemsg.Field{
 			Label:      "Dialysis: Chairs",
-			PIFOTag:    "50a.",
 			Value:      &f.DialysisResources.Chairs,
-			PIFOValid:  basemsg.ValidCardinal,
-			Compare:    common.CompareCardinal,
+			PIFOTag:    "50a.",
 			PDFMap:     basemsg.PDFName("CHAIRS ROOMSDIALYSIS"),
-			TableValue: basemsg.OmitFromTable,
-		},
+			TableValue: basemsg.TableOmit,
+		}),
 	)
 	first = f.Fields[len(f.Fields)-1]
 	f.Fields = append(f.Fields,
-		&basemsg.Field{
+		basemsg.NewCardinalNumberField(&basemsg.Field{
 			Label:   "Dialysis: Vacant Chairs",
-			PIFOTag: "50b.",
 			Value:   &f.DialysisResources.VacantChairs,
+			PIFOTag: "50b.",
 			PIFOValid: func(field *basemsg.Field) string {
 				return allOrNone(first, field)
 			},
-			Compare:    common.CompareCardinal,
 			PDFMap:     basemsg.PDFName("VANCANT CHAIRS ROOMDIALYSIS"),
-			TableValue: basemsg.OmitFromTable,
-		},
-		&basemsg.Field{
+			TableValue: basemsg.TableOmit,
+		}),
+		basemsg.NewCardinalNumberField(&basemsg.Field{
 			Label:   "Dialysis: Front Staff",
-			PIFOTag: "50c.",
 			Value:   &f.DialysisResources.FrontStaff,
+			PIFOTag: "50c.",
 			PIFOValid: func(field *basemsg.Field) string {
 				return allOrNone(first, field)
 			},
-			Compare:    common.CompareCardinal,
 			PDFMap:     basemsg.PDFName("FRONT DESK STAFFDIALYSIS"),
-			TableValue: basemsg.OmitFromTable,
-		},
-		&basemsg.Field{
+			TableValue: basemsg.TableOmit,
+		}),
+		basemsg.NewCardinalNumberField(&basemsg.Field{
 			Label:   "Dialysis: Support Staff",
-			PIFOTag: "50d.",
 			Value:   &f.DialysisResources.SupportStaff,
+			PIFOTag: "50d.",
 			PIFOValid: func(field *basemsg.Field) string {
 				return allOrNone(first, field)
 			},
-			Compare:    common.CompareCardinal,
 			PDFMap:     basemsg.PDFName("MEDICAL SUPPORT STAFFDIALYSIS"),
-			TableValue: basemsg.OmitFromTable,
-		},
-		&basemsg.Field{
+			TableValue: basemsg.TableOmit,
+		}),
+		basemsg.NewCardinalNumberField(&basemsg.Field{
 			Label:   "Dialysis: Providers",
-			PIFOTag: "50e.",
 			Value:   &f.DialysisResources.Providers,
+			PIFOTag: "50e.",
 			PIFOValid: func(field *basemsg.Field) string {
 				return allOrNone(first, field)
 			},
-			Compare:    common.CompareCardinal,
 			PDFMap:     basemsg.PDFName("PROVIDER STAFFDIALYSIS"),
-			TableValue: basemsg.OmitFromTable,
-		},
-		&basemsg.Field{
+			TableValue: basemsg.TableOmit,
+		}),
+		basemsg.NewAggregatorField(&basemsg.Field{
 			Label: "Dialysis Resources",
 			TableValue: func(*basemsg.Field) string {
 				return resourcesTableValue(&f.DialysisResources)
@@ -1153,64 +1025,58 @@ func create(version *basemsg.FormVersion) message.Message {
 			EditValid: func(field *basemsg.Field) string {
 				return resourcesValid(field, &f.DialysisResources)
 			},
-		},
-		&basemsg.Field{
+		}),
+		basemsg.NewCardinalNumberField(&basemsg.Field{
 			Label:      "Surgical: Chairs",
-			PIFOTag:    "51a.",
 			Value:      &f.SurgicalResources.Chairs,
-			PIFOValid:  basemsg.ValidCardinal,
-			Compare:    common.CompareCardinal,
+			PIFOTag:    "51a.",
 			PDFMap:     basemsg.PDFName("CHAIRS ROOMSSURGICAL"),
-			TableValue: basemsg.OmitFromTable,
-		},
+			TableValue: basemsg.TableOmit,
+		}),
 	)
 	first = f.Fields[len(f.Fields)-1]
 	f.Fields = append(f.Fields,
-		&basemsg.Field{
+		basemsg.NewCardinalNumberField(&basemsg.Field{
 			Label:   "Surgical: Vacant Chairs",
-			PIFOTag: "51b.",
 			Value:   &f.SurgicalResources.VacantChairs,
+			PIFOTag: "51b.",
 			PIFOValid: func(field *basemsg.Field) string {
 				return allOrNone(first, field)
 			},
-			Compare:    common.CompareCardinal,
 			PDFMap:     basemsg.PDFName("VANCANT CHAIRS ROOMSURGICAL"),
-			TableValue: basemsg.OmitFromTable,
-		},
-		&basemsg.Field{
+			TableValue: basemsg.TableOmit,
+		}),
+		basemsg.NewCardinalNumberField(&basemsg.Field{
 			Label:   "Surgical: Front Staff",
-			PIFOTag: "51c.",
 			Value:   &f.SurgicalResources.FrontStaff,
+			PIFOTag: "51c.",
 			PIFOValid: func(field *basemsg.Field) string {
 				return allOrNone(first, field)
 			},
-			Compare:    common.CompareCardinal,
 			PDFMap:     basemsg.PDFName("FRONT DESK STAFFSURGICAL"),
-			TableValue: basemsg.OmitFromTable,
-		},
-		&basemsg.Field{
+			TableValue: basemsg.TableOmit,
+		}),
+		basemsg.NewCardinalNumberField(&basemsg.Field{
 			Label:   "Surgical: Support Staff",
-			PIFOTag: "51d.",
 			Value:   &f.SurgicalResources.SupportStaff,
+			PIFOTag: "51d.",
 			PIFOValid: func(field *basemsg.Field) string {
 				return allOrNone(first, field)
 			},
-			Compare:    common.CompareCardinal,
 			PDFMap:     basemsg.PDFName("MEDICAL SUPPORT STAFFSURGICAL"),
-			TableValue: basemsg.OmitFromTable,
-		},
-		&basemsg.Field{
+			TableValue: basemsg.TableOmit,
+		}),
+		basemsg.NewCardinalNumberField(&basemsg.Field{
 			Label:   "Surgical: Providers",
-			PIFOTag: "51e.",
 			Value:   &f.SurgicalResources.Providers,
+			PIFOTag: "51e.",
 			PIFOValid: func(field *basemsg.Field) string {
 				return allOrNone(first, field)
 			},
-			Compare:    common.CompareCardinal,
 			PDFMap:     basemsg.PDFName("PROVIDER STAFFSURGICAL"),
-			TableValue: basemsg.OmitFromTable,
-		},
-		&basemsg.Field{
+			TableValue: basemsg.TableOmit,
+		}),
+		basemsg.NewAggregatorField(&basemsg.Field{
 			Label: "Surgical Resources",
 			TableValue: func(*basemsg.Field) string {
 				return resourcesTableValue(&f.SurgicalResources)
@@ -1227,64 +1093,58 @@ func create(version *basemsg.FormVersion) message.Message {
 			EditValid: func(field *basemsg.Field) string {
 				return resourcesValid(field, &f.SurgicalResources)
 			},
-		},
-		&basemsg.Field{
+		}),
+		basemsg.NewCardinalNumberField(&basemsg.Field{
 			Label:      "Clinic: Chairs",
-			PIFOTag:    "52a.",
 			Value:      &f.ClinicResources.Chairs,
-			PIFOValid:  basemsg.ValidCardinal,
-			Compare:    common.CompareCardinal,
+			PIFOTag:    "52a.",
 			PDFMap:     basemsg.PDFName("CHAIRS ROOMSCLINIC"),
-			TableValue: basemsg.OmitFromTable,
-		},
+			TableValue: basemsg.TableOmit,
+		}),
 	)
 	first = f.Fields[len(f.Fields)-1]
 	f.Fields = append(f.Fields,
-		&basemsg.Field{
+		basemsg.NewCardinalNumberField(&basemsg.Field{
 			Label:   "Clinic: Vacant Chairs",
-			PIFOTag: "52b.",
 			Value:   &f.ClinicResources.VacantChairs,
+			PIFOTag: "52b.",
 			PIFOValid: func(field *basemsg.Field) string {
 				return allOrNone(first, field)
 			},
-			Compare:    common.CompareCardinal,
 			PDFMap:     basemsg.PDFName("VANCANT CHAIRS ROOMCLINIC"),
-			TableValue: basemsg.OmitFromTable,
-		},
-		&basemsg.Field{
+			TableValue: basemsg.TableOmit,
+		}),
+		basemsg.NewCardinalNumberField(&basemsg.Field{
 			Label:   "Clinic: Front Staff",
-			PIFOTag: "52c.",
 			Value:   &f.ClinicResources.FrontStaff,
+			PIFOTag: "52c.",
 			PIFOValid: func(field *basemsg.Field) string {
 				return allOrNone(first, field)
 			},
-			Compare:    common.CompareCardinal,
 			PDFMap:     basemsg.PDFName("FRONT DESK STAFFCLINIC"),
-			TableValue: basemsg.OmitFromTable,
-		},
-		&basemsg.Field{
+			TableValue: basemsg.TableOmit,
+		}),
+		basemsg.NewCardinalNumberField(&basemsg.Field{
 			Label:   "Clinic: Support Staff",
-			PIFOTag: "52d.",
 			Value:   &f.ClinicResources.SupportStaff,
+			PIFOTag: "52d.",
 			PIFOValid: func(field *basemsg.Field) string {
 				return allOrNone(first, field)
 			},
-			Compare:    common.CompareCardinal,
 			PDFMap:     basemsg.PDFName("MEDICAL SUPPORT STAFFCLINIC"),
-			TableValue: basemsg.OmitFromTable,
-		},
-		&basemsg.Field{
+			TableValue: basemsg.TableOmit,
+		}),
+		basemsg.NewCardinalNumberField(&basemsg.Field{
 			Label:   "Clinic: Providers",
-			PIFOTag: "52e.",
 			Value:   &f.ClinicResources.Providers,
+			PIFOTag: "52e.",
 			PIFOValid: func(field *basemsg.Field) string {
 				return allOrNone(first, field)
 			},
-			Compare:    common.CompareCardinal,
 			PDFMap:     basemsg.PDFName("PROVIDER STAFFCLINIC"),
-			TableValue: basemsg.OmitFromTable,
-		},
-		&basemsg.Field{
+			TableValue: basemsg.TableOmit,
+		}),
+		basemsg.NewAggregatorField(&basemsg.Field{
 			Label: "Clinic Resources",
 			TableValue: func(*basemsg.Field) string {
 				return resourcesTableValue(&f.ClinicResources)
@@ -1301,64 +1161,58 @@ func create(version *basemsg.FormVersion) message.Message {
 			EditValid: func(field *basemsg.Field) string {
 				return resourcesValid(field, &f.ClinicResources)
 			},
-		},
-		&basemsg.Field{
+		}),
+		basemsg.NewCardinalNumberField(&basemsg.Field{
 			Label:      "Home Health: Chairs",
-			PIFOTag:    "53a.",
 			Value:      &f.HomeHealthResources.Chairs,
-			PIFOValid:  basemsg.ValidCardinal,
-			Compare:    common.CompareCardinal,
+			PIFOTag:    "53a.",
 			PDFMap:     basemsg.PDFName("CHAIRS ROOMSHOMEHEALTH"),
-			TableValue: basemsg.OmitFromTable,
-		},
+			TableValue: basemsg.TableOmit,
+		}),
 	)
 	first = f.Fields[len(f.Fields)-1]
 	f.Fields = append(f.Fields,
-		&basemsg.Field{
+		basemsg.NewCardinalNumberField(&basemsg.Field{
 			Label:   "Home Health: Vacant Chairs",
-			PIFOTag: "53b.",
 			Value:   &f.HomeHealthResources.VacantChairs,
+			PIFOTag: "53b.",
 			PIFOValid: func(field *basemsg.Field) string {
 				return allOrNone(first, field)
 			},
-			Compare:    common.CompareCardinal,
 			PDFMap:     basemsg.PDFName("VANCANT CHAIRS ROOMHOMEHEALTH"),
-			TableValue: basemsg.OmitFromTable,
-		},
-		&basemsg.Field{
+			TableValue: basemsg.TableOmit,
+		}),
+		basemsg.NewCardinalNumberField(&basemsg.Field{
 			Label:   "Home Health: Front Staff",
-			PIFOTag: "53c.",
 			Value:   &f.HomeHealthResources.FrontStaff,
+			PIFOTag: "53c.",
 			PIFOValid: func(field *basemsg.Field) string {
 				return allOrNone(first, field)
 			},
-			Compare:    common.CompareCardinal,
 			PDFMap:     basemsg.PDFName("FRONT DESK STAFFHOMEHEALTH"),
-			TableValue: basemsg.OmitFromTable,
-		},
-		&basemsg.Field{
+			TableValue: basemsg.TableOmit,
+		}),
+		basemsg.NewCardinalNumberField(&basemsg.Field{
 			Label:   "Home Health: Support Staff",
-			PIFOTag: "53d.",
 			Value:   &f.HomeHealthResources.SupportStaff,
+			PIFOTag: "53d.",
 			PIFOValid: func(field *basemsg.Field) string {
 				return allOrNone(first, field)
 			},
-			Compare:    common.CompareCardinal,
 			PDFMap:     basemsg.PDFName("MEDICAL SUPPORT STAFFHOMEHEALTH"),
-			TableValue: basemsg.OmitFromTable,
-		},
-		&basemsg.Field{
+			TableValue: basemsg.TableOmit,
+		}),
+		basemsg.NewCardinalNumberField(&basemsg.Field{
 			Label:   "Home Health: Providers",
-			PIFOTag: "53e.",
 			Value:   &f.HomeHealthResources.Providers,
+			PIFOTag: "53e.",
 			PIFOValid: func(field *basemsg.Field) string {
 				return allOrNone(first, field)
 			},
-			Compare:    common.CompareCardinal,
 			PDFMap:     basemsg.PDFName("PROVIDER STAFFHOMEHEALTH"),
-			TableValue: basemsg.OmitFromTable,
-		},
-		&basemsg.Field{
+			TableValue: basemsg.TableOmit,
+		}),
+		basemsg.NewAggregatorField(&basemsg.Field{
 			Label: "Home Health Resources",
 			TableValue: func(*basemsg.Field) string {
 				return resourcesTableValue(&f.HomeHealthResources)
@@ -1375,64 +1229,58 @@ func create(version *basemsg.FormVersion) message.Message {
 			EditValid: func(field *basemsg.Field) string {
 				return resourcesValid(field, &f.HomeHealthResources)
 			},
-		},
-		&basemsg.Field{
+		}),
+		basemsg.NewCardinalNumberField(&basemsg.Field{
 			Label:      "Adult Day Ctr: Chairs",
-			PIFOTag:    "54a.",
 			Value:      &f.AdultDayCtrResources.Chairs,
-			PIFOValid:  basemsg.ValidCardinal,
-			Compare:    common.CompareCardinal,
+			PIFOTag:    "54a.",
 			PDFMap:     basemsg.PDFName("CHAIRS ROOMSADULT DAY CENTER"),
-			TableValue: basemsg.OmitFromTable,
-		},
+			TableValue: basemsg.TableOmit,
+		}),
 	)
 	first = f.Fields[len(f.Fields)-1]
 	f.Fields = append(f.Fields,
-		&basemsg.Field{
+		basemsg.NewCardinalNumberField(&basemsg.Field{
 			Label:   "Adult Day Ctr: Vacant Chairs",
-			PIFOTag: "54b.",
 			Value:   &f.AdultDayCtrResources.VacantChairs,
+			PIFOTag: "54b.",
 			PIFOValid: func(field *basemsg.Field) string {
 				return allOrNone(first, field)
 			},
-			Compare:    common.CompareCardinal,
 			PDFMap:     basemsg.PDFName("VANCANT CHAIRS ROOMADULT DAY CENTER"),
-			TableValue: basemsg.OmitFromTable,
-		},
-		&basemsg.Field{
+			TableValue: basemsg.TableOmit,
+		}),
+		basemsg.NewCardinalNumberField(&basemsg.Field{
 			Label:   "Adult Day Ctr: Front Staff",
-			PIFOTag: "54c.",
 			Value:   &f.AdultDayCtrResources.FrontStaff,
+			PIFOTag: "54c.",
 			PIFOValid: func(field *basemsg.Field) string {
 				return allOrNone(first, field)
 			},
-			Compare:    common.CompareCardinal,
 			PDFMap:     basemsg.PDFName("FRONT DESK STAFFADULT DAY CENTER"),
-			TableValue: basemsg.OmitFromTable,
-		},
-		&basemsg.Field{
+			TableValue: basemsg.TableOmit,
+		}),
+		basemsg.NewCardinalNumberField(&basemsg.Field{
 			Label:   "Adult Day Ctr: Support Staff",
-			PIFOTag: "54d.",
 			Value:   &f.AdultDayCtrResources.SupportStaff,
+			PIFOTag: "54d.",
 			PIFOValid: func(field *basemsg.Field) string {
 				return allOrNone(first, field)
 			},
-			Compare:    common.CompareCardinal,
 			PDFMap:     basemsg.PDFName("MEDICAL SUPPORT STAFFADULT DAY CENTER"),
-			TableValue: basemsg.OmitFromTable,
-		},
-		&basemsg.Field{
+			TableValue: basemsg.TableOmit,
+		}),
+		basemsg.NewCardinalNumberField(&basemsg.Field{
 			Label:   "Adult Day Ctr: Providers",
-			PIFOTag: "54e.",
 			Value:   &f.AdultDayCtrResources.Providers,
+			PIFOTag: "54e.",
 			PIFOValid: func(field *basemsg.Field) string {
 				return allOrNone(first, field)
 			},
-			Compare:    common.CompareCardinal,
 			PDFMap:     basemsg.PDFName("PROVIDER STAFFADULT DAY CENTER"),
-			TableValue: basemsg.OmitFromTable,
-		},
-		&basemsg.Field{
+			TableValue: basemsg.TableOmit,
+		}),
+		basemsg.NewAggregatorField(&basemsg.Field{
 			Label: "Adult Day Center Resources",
 			TableValue: func(*basemsg.Field) string {
 				return resourcesTableValue(&f.AdultDayCtrResources)
@@ -1449,7 +1297,7 @@ func create(version *basemsg.FormVersion) message.Message {
 			EditValid: func(field *basemsg.Field) string {
 				return resourcesValid(field, &f.AdultDayCtrResources)
 			},
-		},
+		}),
 	)
 	f.BaseForm.AddFooterFields(&f.BaseMessage, &baseform.DefaultPDFMaps)
 	if len(f.Fields) > fieldCount {
@@ -1481,7 +1329,7 @@ func allOrNone(first, current *basemsg.Field) string {
 	if *first.Value != "" && *current.Value == "" {
 		return fmt.Sprintf("The %q field is required when %q has a value.  (Either all fields on the row must have a value, or none.)", current.Label, first.Label)
 	}
-	return basemsg.ValidCardinal(current)
+	return basemsg.ValidCardinalNumber(current)
 }
 
 func bedsTableValue(beds *BedCounts) string {
@@ -1501,31 +1349,31 @@ func bedsApply(beds *BedCounts, value string) {
 	values := strings.Fields(value)
 	if len(values) > 0 {
 		f.Value = &beds.StaffedM
-		basemsg.ApplyCardinal(&f, values[0])
+		basemsg.ApplyCardinalNumber(&f, values[0])
 	} else {
 		beds.StaffedM = ""
 	}
 	if len(values) > 1 {
 		f.Value = &beds.StaffedF
-		basemsg.ApplyCardinal(&f, values[1])
+		basemsg.ApplyCardinalNumber(&f, values[1])
 	} else {
 		beds.StaffedF = ""
 	}
 	if len(values) > 2 {
 		f.Value = &beds.VacantM
-		basemsg.ApplyCardinal(&f, values[2])
+		basemsg.ApplyCardinalNumber(&f, values[2])
 	} else {
 		beds.VacantM = ""
 	}
 	if len(values) > 3 {
 		f.Value = &beds.VacantF
-		basemsg.ApplyCardinal(&f, values[3])
+		basemsg.ApplyCardinalNumber(&f, values[3])
 	} else {
 		beds.VacantF = ""
 	}
 	if len(values) > 4 {
 		f.Value = &beds.Surge
-		basemsg.ApplyCardinal(&f, strings.Join(values[4:], " "))
+		basemsg.ApplyCardinalNumber(&f, strings.Join(values[4:], " "))
 	} else {
 		beds.Surge = ""
 	}
@@ -1571,31 +1419,31 @@ func resourcesApply(resources *ResourceCounts, value string) {
 	values := strings.Fields(value)
 	if len(values) > 0 {
 		f.Value = &resources.Chairs
-		basemsg.ApplyCardinal(&f, values[0])
+		basemsg.ApplyCardinalNumber(&f, values[0])
 	} else {
 		resources.Chairs = ""
 	}
 	if len(values) > 1 {
 		f.Value = &resources.VacantChairs
-		basemsg.ApplyCardinal(&f, values[1])
+		basemsg.ApplyCardinalNumber(&f, values[1])
 	} else {
 		resources.VacantChairs = ""
 	}
 	if len(values) > 2 {
 		f.Value = &resources.FrontStaff
-		basemsg.ApplyCardinal(&f, values[2])
+		basemsg.ApplyCardinalNumber(&f, values[2])
 	} else {
 		resources.FrontStaff = ""
 	}
 	if len(values) > 3 {
 		f.Value = &resources.SupportStaff
-		basemsg.ApplyCardinal(&f, values[3])
+		basemsg.ApplyCardinalNumber(&f, values[3])
 	} else {
 		resources.SupportStaff = ""
 	}
 	if len(values) > 4 {
 		f.Value = &resources.Providers
-		basemsg.ApplyCardinal(&f, strings.Join(values[4:], " "))
+		basemsg.ApplyCardinalNumber(&f, strings.Join(values[4:], " "))
 	} else {
 		resources.Providers = ""
 	}

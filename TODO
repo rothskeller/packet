@@ -16,3 +16,10 @@ unkform     N/A     N/A  N/A N/A
 havbed
 medfacstat
 medresreq
+
+
+Maybe change DataType into subclasses/embeds of Field?  Probably not, because of
+non-function members, but think about it.
+
+Remove Valid* and Apply* functions
+Move common code into basemsg, remove common

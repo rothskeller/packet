@@ -100,139 +100,108 @@ func create(version *basemsg.FormVersion) message.Message {
 	f.Fields = make([]*basemsg.Field, 0, fieldCount)
 	if f.Form.Version < "2.2" {
 		f.Fields = append(f.Fields,
-			&basemsg.Field{
-				Label:     "Origin Message Number",
-				Value:     &f.OriginMsgID,
-				Presence:  basemsg.Required,
-				PIFOTag:   "2.", // may be changed to MsgNo by decode()
-				PDFMap:    basemsg.PDFName("Origin Msg #"),
-				EditWidth: 9,
-				EditHelp:  `This is the message number assigned to the message by the origin station.  Valid message numbers have the form XXX-###P, where XXX is the three-character message number prefix assigned to the station, ### is a sequence number (any number of digits), and P is an optional suffix letter.  This field is required.`,
-			},
-			&basemsg.Field{
+			basemsg.NewMessageNumberField(&basemsg.Field{
+				Label:    "Origin Message Number",
+				Value:    &f.OriginMsgID,
+				Presence: basemsg.Required,
+				PIFOTag:  "2.", // may be changed to MsgNo by decode()
+				PDFMap:   basemsg.PDFName("Origin Msg #"),
+				Compare:  basemsg.CompareNone,
+				EditHelp: `This is the message number assigned to the message by the origin station.  Valid message numbers have the form XXX-###P, where XXX is the three-character message number prefix assigned to the station, ### is a sequence number (any number of digits), and P is an optional suffix letter.  This field is required.`,
+			}),
+			basemsg.NewMessageNumberField(&basemsg.Field{
 				Label:      "My Message Number",
 				Value:      &f.myMsgID,
 				PIFOTag:    "MsgNo", // will be removed after decode()
-				TableValue: basemsg.OmitFromTable,
-			},
+				TableValue: basemsg.TableOmit,
+				Compare:    basemsg.CompareNone,
+			}),
 		)
 	} else {
 		f.Fields = append(f.Fields,
-			&basemsg.Field{
-				Label:     "Origin Message Number",
-				Value:     &f.OriginMsgID,
-				Presence:  basemsg.Required,
-				PIFOTag:   "MsgNo",
-				PDFMap:    basemsg.PDFName("Origin Msg #"),
-				EditWidth: 9,
-				EditHelp:  `This is the message number assigned to the message by the origin station.  Valid message numbers have the form XXX-###P, where XXX is the three-character message number prefix assigned to the station, ### is a sequence number (any number of digits), and P is an optional suffix letter.  This field is required.`,
-			},
+			basemsg.NewMessageNumberField(&basemsg.Field{
+				Label:    "Origin Message Number",
+				Value:    &f.OriginMsgID,
+				Presence: basemsg.Required,
+				PIFOTag:  "MsgNo",
+				PDFMap:   basemsg.PDFName("Origin Msg #"),
+				Compare:  basemsg.CompareNone,
+				EditHelp: `This is the message number assigned to the message by the origin station.  Valid message numbers have the form XXX-###P, where XXX is the three-character message number prefix assigned to the station, ### is a sequence number (any number of digits), and P is an optional suffix letter.  This field is required.`,
+			}),
 		)
 	}
 	f.Fields = append(f.Fields,
-		&basemsg.Field{
+		basemsg.NewMessageNumberField(&basemsg.Field{
 			Label:   "Destination Message Number",
 			Value:   &f.DestinationMsgID,
 			PIFOTag: "3.", // may be changed to MsgNo after decode()
 			PDFMap:  basemsg.PDFName("Destination Msg#"),
-		},
-		&basemsg.Field{
-			Label:      "Date",
-			Value:      &f.Date,
-			Presence:   basemsg.Required,
-			PIFOTag:    "1a.",
-			PIFOValid:  basemsg.ValidDate,
-			Compare:    common.CompareDate,
-			TableValue: basemsg.OmitFromTable,
-			PDFMap:     basemsg.PDFName("FormDate"),
-		},
-		&basemsg.Field{
-			Label:      "Time",
-			Value:      &f.Time,
-			Presence:   basemsg.Required,
-			PIFOTag:    "1b.",
-			PIFOValid:  basemsg.ValidTime,
-			Compare:    common.CompareTime,
-			TableValue: basemsg.OmitFromTable,
-			PDFMap:     basemsg.PDFName("FormTime"),
-		},
-		&basemsg.Field{
+		}),
+		basemsg.NewDateWithTimeField(&basemsg.Field{
+			Label:    "Date",
+			Value:    &f.Date,
+			Presence: basemsg.Required,
+			PIFOTag:  "1a.",
+			PDFMap:   basemsg.PDFName("FormDate"),
+		}),
+		basemsg.NewTimeWithDateField(&basemsg.Field{
+			Label:    "Time",
+			Value:    &f.Time,
+			Presence: basemsg.Required,
+			PIFOTag:  "1b.",
+			PDFMap:   basemsg.PDFName("FormTime"),
+		}),
+		basemsg.NewDateTimeField(&basemsg.Field{
 			Label:    "Date/Time",
 			Presence: basemsg.Required,
-			TableValue: func(*basemsg.Field) string {
-				return common.SmartJoin(f.Date, f.Time, " ")
-			},
-			EditWidth: 16,
-			EditHelp:  "This is the date and time the message was written, in MM/DD/YYYY HH:MM format (24-hour clock).  It is required.",
-			EditHint:  "MM/DD/YYYY HH:MM",
-			EditValue: func(_ *basemsg.Field) string {
-				return basemsg.ValueDateTime(f.Date, f.Time)
-			},
-			EditApply: func(_ *basemsg.Field, value string) {
-				basemsg.ApplyDateTime(&f.Date, &f.Time, value)
-			},
-			EditValid: func(field *basemsg.Field) string {
-				return basemsg.ValidDateTime(field, f.Date, f.Time)
-			},
-		},
+			EditHelp: "This is the date and time the message was written, in MM/DD/YYYY HH:MM format (24-hour clock).  It is required.",
+		}, &f.Date, &f.Time),
 	)
 	if f.Form.Version < "2.2" {
 		f.Fields = append(f.Fields,
-			&basemsg.Field{
-				Label:     "Situation Severity",
-				Value:     &f.Severity,
-				Choices:   basemsg.Choices{"OTHER", "URGENT", "EMERGENCY"},
-				Presence:  basemsg.Required,
-				PIFOTag:   "4.",
-				PIFOValid: basemsg.ValidRestricted,
-				Compare:   common.CompareExact,
-				EditWidth: 9,
-				EditHelp:  `This is the severity of the situation that caused the message to be sent.  It is required.`,
-			},
+			basemsg.NewRestrictedField(&basemsg.Field{
+				Label:    "Situation Severity",
+				Value:    &f.Severity,
+				Choices:  basemsg.Choices{"OTHER", "URGENT", "EMERGENCY"},
+				Presence: basemsg.Required,
+				PIFOTag:  "4.",
+				EditHelp: `This is the severity of the situation that caused the message to be sent.  It is required.`,
+			}),
 		)
 	}
 	f.Fields = append(f.Fields,
-		&basemsg.Field{
-			Label:     "Handling",
-			Value:     &f.Handling,
-			Choices:   basemsg.Choices{"ROUTINE", "PRIORITY", "IMMEDIATE"},
-			Presence:  basemsg.Required,
-			PIFOTag:   "5.",
-			PIFOValid: basemsg.ValidRestricted,
-			Compare:   common.CompareExact,
-			PDFMap:    basemsg.PDFNameMap{"Immediate", "", "Off", "PRIORITY", "1", "ROUTINE", "2", "IMMEDIATE", "3"},
-			EditWidth: 9,
-			EditHelp:  `This is the message handling order, which specifies how fast it needs to be delivered.  Allowed values are "ROUTINE" (within 2 hours), "PRIORITY" (within 1 hour), and "IMMEDIATE".  This field is required.`,
-		},
-		&basemsg.Field{
-			Label:     "Take Action",
-			Value:     &f.TakeAction,
-			Choices:   basemsg.Choices{"Yes", "No"},
-			PIFOTag:   "6a.",
-			PIFOValid: basemsg.ValidRestricted,
-			Compare:   common.CompareExact,
-			PDFMap:    basemsg.PDFNameMap{"TakeAction", "", "Off", "Yes", "1", "No", "2"},
-			EditWidth: 3,
-			EditHelp:  `This indicates whether the sender expects the recipient to take action based on this message.`,
-		},
-		&basemsg.Field{
-			Label:     "Reply",
-			Value:     &f.Reply,
-			Choices:   basemsg.Choices{"Yes", "No"},
-			PIFOTag:   "6b.",
-			PIFOValid: basemsg.ValidRestricted,
-			Compare:   common.CompareExact,
+		basemsg.NewRestrictedField(&basemsg.Field{
+			Label:    "Handling",
+			Value:    &f.Handling,
+			Choices:  basemsg.Choices{"ROUTINE", "PRIORITY", "IMMEDIATE"},
+			Presence: basemsg.Required,
+			PIFOTag:  "5.",
+			PDFMap:   basemsg.PDFNameMap{"Immediate", "", "Off", "PRIORITY", "1", "ROUTINE", "2", "IMMEDIATE", "3"},
+			EditHelp: `This is the message handling order, which specifies how fast it needs to be delivered.  Allowed values are "ROUTINE" (within 2 hours), "PRIORITY" (within 1 hour), and "IMMEDIATE".  This field is required.`,
+		}),
+		basemsg.NewRestrictedField(&basemsg.Field{
+			Label:    "Take Action",
+			Value:    &f.TakeAction,
+			Choices:  basemsg.Choices{"Yes", "No"},
+			PIFOTag:  "6a.",
+			PDFMap:   basemsg.PDFNameMap{"TakeAction", "", "Off", "Yes", "1", "No", "2"},
+			EditHelp: `This indicates whether the sender expects the recipient to take action based on this message.`,
+		}),
+		basemsg.NewRestrictedField(&basemsg.Field{
+			Label:   "Reply",
+			Value:   &f.Reply,
+			Choices: basemsg.Choices{"Yes", "No"},
+			PIFOTag: "6b.",
 			TableValue: func(*basemsg.Field) string {
 				if f.Reply == "Yes" && f.ReplyBy != "" {
 					return "Yes, by " + f.ReplyBy
 				}
 				return f.Reply
 			},
-			PDFMap:    basemsg.PDFNameMap{"Reply", "", "Off", "Yes", "Reply-Yes", "No", "Reply-No"},
-			EditWidth: 3,
-			EditHelp:  `This indicates whether the sender expects the recipient to reply to this message.`,
-		},
-		&basemsg.Field{
+			PDFMap:   basemsg.PDFNameMap{"Reply", "", "Off", "Yes", "Reply-Yes", "No", "Reply-No"},
+			EditHelp: `This indicates whether the sender expects the recipient to reply to this message.`,
+		}),
+		basemsg.NewTextField(&basemsg.Field{
 			Label: "Reply By",
 			Value: &f.ReplyBy,
 			Presence: func() (basemsg.Presence, string) {
@@ -243,57 +212,51 @@ func create(version *basemsg.FormVersion) message.Message {
 			},
 			PIFOTag:    "6d.",
 			Compare:    common.CompareExact,
-			TableValue: basemsg.OmitFromTable,
+			TableValue: basemsg.TableOmit,
 			PDFMap:     basemsg.PDFName("Reply_2"),
 			EditWidth:  5,
 			EditHelp:   `This is the time by which the sender expects a reply from the recipient.  It can be set only if "Reply" is "Yes".`,
-		},
+		}),
 	)
 	if f.Form.Version < "2.2" {
 		f.Fields = append(f.Fields,
-			&basemsg.Field{
-				Label:     "For Your Information",
-				Value:     &f.FYI,
-				Choices:   basemsg.Choices{"checked"},
-				PIFOTag:   "6c.",
-				PIFOValid: basemsg.ValidRestricted,
-				Compare:   common.CompareExact,
-				EditWidth: 7,
-				EditHelp:  `This indicates whether the message is merely informational.`,
-			},
+			basemsg.NewRestrictedField(&basemsg.Field{
+				Label:    "For Your Information",
+				Value:    &f.FYI,
+				Choices:  basemsg.Choices{"checked"},
+				PIFOTag:  "6c.",
+				EditHelp: `This indicates whether the message is merely informational.`,
+			}),
 		)
 	}
 	f.Fields = append(f.Fields,
-		&basemsg.Field{
+		basemsg.NewTextField(&basemsg.Field{
 			Label:     "To ICS Position",
 			Value:     &f.ToICSPosition,
 			Presence:  basemsg.Required,
 			PIFOTag:   "7.",
-			Compare:   common.CompareText,
 			PDFMap:    basemsg.PDFName("TO ICS Position"),
 			EditWidth: 40,
 			EditHelp:  `This is the ICS position to which the message is addressed.  It is required.`,
-		},
-		&basemsg.Field{
+		}),
+		basemsg.NewTextField(&basemsg.Field{
 			Label:     "To Location",
 			Value:     &f.ToLocation,
 			Presence:  basemsg.Required,
 			PIFOTag:   "9a.",
-			Compare:   common.CompareText,
 			PDFMap:    basemsg.PDFName("TO ICS Locatoin"),
 			EditWidth: 40,
 			EditHelp:  `This is the location of the recipient ICS position.  It is required.`,
-		},
-		&basemsg.Field{
+		}),
+		basemsg.NewTextField(&basemsg.Field{
 			Label:     "To Name",
 			Value:     &f.ToName,
 			PIFOTag:   "ToName",
-			Compare:   common.CompareText,
 			PDFMap:    basemsg.PDFName("TO ICS Name"),
 			EditWidth: 40,
 			EditHelp:  `This is the name of the person holding the recipient ICS position.  It is optional and rarely provided.`,
-		},
-		&basemsg.Field{
+		}),
+		basemsg.NewTextField(&basemsg.Field{
 			Label:     "To Telephone #",
 			Value:     &f.ToTelephone,
 			PIFOTag:   "ToTel",
@@ -301,37 +264,34 @@ func create(version *basemsg.FormVersion) message.Message {
 			PDFMap:    basemsg.PDFName("TO ICS Telephone"),
 			EditWidth: 40,
 			EditHelp:  `This is the telephone number for the receipient.  It is optional and rarely provided.`,
-		},
-		&basemsg.Field{
+		}),
+		basemsg.NewTextField(&basemsg.Field{
 			Label:     "From ICS Position",
 			Value:     &f.FromICSPosition,
 			Presence:  basemsg.Required,
 			PIFOTag:   "8.",
-			Compare:   common.CompareText,
 			PDFMap:    basemsg.PDFName("From ICS Position"),
 			EditWidth: 40,
 			EditHelp:  `This is the ICS position of the message author.  It is required.`,
-		},
-		&basemsg.Field{
+		}),
+		basemsg.NewTextField(&basemsg.Field{
 			Label:     "From Location",
 			Value:     &f.FromLocation,
 			Presence:  basemsg.Required,
 			PIFOTag:   "9b.",
-			Compare:   common.CompareText,
 			PDFMap:    basemsg.PDFName("From ICS Location"),
 			EditWidth: 40,
 			EditHelp:  `This is the location of the message author.  It is required.`,
-		},
-		&basemsg.Field{
+		}),
+		basemsg.NewTextField(&basemsg.Field{
 			Label:     "From Name",
 			Value:     &f.FromName,
 			PIFOTag:   "FmName",
-			Compare:   common.CompareText,
 			PDFMap:    basemsg.PDFName("From ICS Name"),
 			EditWidth: 40,
 			EditHelp:  `This is the name of the message author.  It is optional and rarely provided.`,
-		},
-		&basemsg.Field{
+		}),
+		basemsg.NewTextField(&basemsg.Field{
 			Label:     "From Telephone #",
 			Value:     &f.FromTelephone,
 			PIFOTag:   "FmTel",
@@ -339,18 +299,17 @@ func create(version *basemsg.FormVersion) message.Message {
 			PDFMap:    basemsg.PDFName("From ICS Telephone"),
 			EditWidth: 40,
 			EditHelp:  `This is the telephone number for the message author.  It is optional and rarely provided.`,
-		},
-		&basemsg.Field{
+		}),
+		basemsg.NewTextField(&basemsg.Field{
 			Label:     "Subject",
 			Value:     &f.Subject,
 			Presence:  basemsg.Required,
 			PIFOTag:   "10.",
-			Compare:   common.CompareText,
 			PDFMap:    basemsg.PDFName("Subject"),
 			EditWidth: 80,
 			EditHelp:  `This is the subject of the message.  It is required.`,
-		},
-		&basemsg.Field{
+		}),
+		basemsg.NewTextField(&basemsg.Field{
 			Label:     "Reference",
 			Value:     &f.Reference,
 			PIFOTag:   "11.",
@@ -358,66 +317,69 @@ func create(version *basemsg.FormVersion) message.Message {
 			PDFMap:    basemsg.PDFName("Reference"),
 			EditWidth: 55,
 			EditHelp:  `This is the origin message number of the previous message to which this message is responding.`,
-		},
-		&basemsg.Field{
+		}),
+		basemsg.NewMultilineField(&basemsg.Field{
 			Label:     "Message",
 			Value:     &f.Message,
 			Presence:  basemsg.Required,
 			PIFOTag:   "12.",
-			Compare:   common.CompareText,
 			PDFMap:    basemsg.PDFName("Message"),
 			EditWidth: 80,
 			Multiline: true,
 			EditHelp:  `This is the text of the message.  It is required.`,
-		},
-		&basemsg.Field{
+		}),
+		basemsg.NewTextField(&basemsg.Field{
 			Label:     "Operator: Relay Received",
 			Value:     &f.OpRelayRcvd,
 			PIFOTag:   "OpRelayRcvd",
 			PDFMap:    basemsg.PDFName("Relay Received"),
+			Compare:   basemsg.CompareNone,
 			EditWidth: 36,
 			EditHelp:  `This is the name of the station from which this message was directly received.  It is filled in for messages that go through a relay station.`,
-		},
-		&basemsg.Field{
+		}),
+		basemsg.NewTextField(&basemsg.Field{
 			Label:     "Operator: Relay Sent",
 			Value:     &f.OpRelaySent,
 			PIFOTag:   "OpRelaySent",
 			PDFMap:    basemsg.PDFName("Relay Sent"),
+			Compare:   basemsg.CompareNone,
 			EditWidth: 36,
 			EditHelp:  `This is the name of the station to which this message was directly sent.  It is filled in for messages that go through a relay station.`,
-		},
-		&basemsg.Field{
-			Label:     "Operator: Receiver/Sender",
-			Value:     &f.ReceivedSent,
-			Choices:   basemsg.Choices{"sender", "receiver"},
-			Presence:  basemsg.Required,
-			PIFOTag:   "Rec-Sent",
-			PIFOValid: basemsg.ValidRestricted,
-			PDFMap:    basemsg.PDFNameMap{"How: Received", "", "Off", "sender", "0", "receiver", "1"},
-		},
-		&basemsg.Field{
+		}),
+		basemsg.NewRestrictedField(&basemsg.Field{
+			Label:    "Operator: Receiver/Sender",
+			Value:    &f.ReceivedSent,
+			Choices:  basemsg.Choices{"sender", "receiver"},
+			Presence: basemsg.Required,
+			PIFOTag:  "Rec-Sent",
+			PDFMap:   basemsg.PDFNameMap{"How: Received", "", "Off", "sender", "0", "receiver", "1"},
+			Compare:  basemsg.CompareNone,
+		}),
+		basemsg.NewTextField(&basemsg.Field{
 			Label:      "Operator: Call Sign",
 			Value:      &f.OpCall,
 			Presence:   basemsg.Required,
 			PIFOTag:    "OpCall",
-			TableValue: basemsg.OmitFromTable,
+			TableValue: basemsg.TableOmit,
 			PDFMap:     basemsg.PDFName("Operation Call Sign"),
-		},
-		&basemsg.Field{
+			Compare:    basemsg.CompareNone,
+		}),
+		basemsg.NewTextField(&basemsg.Field{
 			Label:      "Operator: Name",
 			Value:      &f.OpName,
 			Presence:   basemsg.Required,
 			PIFOTag:    "OpName",
-			TableValue: basemsg.OmitFromTable,
+			TableValue: basemsg.TableOmit,
 			PDFMap:     basemsg.PDFName("Relay Received_2"),
-		},
-		&basemsg.Field{
+			Compare:    basemsg.CompareNone,
+		}),
+		basemsg.NewAggregatorField(&basemsg.Field{
 			Label: "Operator",
 			TableValue: func(*basemsg.Field) string {
 				return common.SmartJoin(f.OpCall, f.OpName, " ")
 			},
-		},
-		&basemsg.Field{
+		}),
+		basemsg.NewRestrictedField(&basemsg.Field{
 			Label:    "Operator: Tx Method",
 			Value:    &f.TxMethod,
 			Choices:  basemsg.Choices{"Telephone", "Dispatch Center", "EOC Radio", "FAX", "Courier", "Amateur Radio", "Other"},
@@ -429,9 +391,10 @@ func create(version *basemsg.FormVersion) message.Message {
 				}
 				return f.TxMethod
 			},
-			PDFMap: basemsg.PDFNameMap{"Telephone", "", "Off", "Telephone", "1", "Dispatch Center", "2", "EOC Radio", "3", "FAX", "4", "Courier", "5", "Amateur Radio", "6", "Other", "7"},
-		},
-		&basemsg.Field{
+			PDFMap:  basemsg.PDFNameMap{"Telephone", "", "Off", "Telephone", "1", "Dispatch Center", "2", "EOC Radio", "3", "FAX", "4", "Courier", "5", "Amateur Radio", "6", "Other", "7"},
+			Compare: basemsg.CompareNone,
+		}),
+		basemsg.NewTextField(&basemsg.Field{
 			Label: "Operator: Other Method",
 			Value: &f.OtherMethod,
 			Presence: func() (basemsg.Presence, string) {
@@ -441,34 +404,32 @@ func create(version *basemsg.FormVersion) message.Message {
 				return basemsg.PresenceOptional, ""
 			},
 			PIFOTag:    "Other",
-			TableValue: basemsg.OmitFromTable,
+			TableValue: basemsg.TableOmit,
 			PDFMap:     basemsg.PDFName("OtherText"),
-		},
-		&basemsg.Field{
+			Compare:    basemsg.CompareNone,
+		}),
+		basemsg.NewDateWithTimeField(&basemsg.Field{
 			Label:      "Operator: Date",
 			Value:      &f.OpDate,
 			Presence:   basemsg.Required,
 			PIFOTag:    "OpDate",
-			PIFOValid:  basemsg.ValidDate,
-			TableValue: basemsg.OmitFromTable,
+			TableValue: basemsg.TableOmit,
 			PDFMap:     basemsg.PDFName("OperatorDate"),
-		},
-		&basemsg.Field{
+			Compare:    basemsg.CompareNone,
+		}),
+		basemsg.NewTimeWithDateField(&basemsg.Field{
 			Label:      "Operator: Time",
 			Value:      &f.OpTime,
 			Presence:   basemsg.Required,
 			PIFOTag:    "OpTime",
-			PIFOValid:  basemsg.ValidTime,
-			TableValue: basemsg.OmitFromTable,
+			TableValue: basemsg.TableOmit,
 			PDFMap:     basemsg.PDFName("OperatorTime"),
-		},
-		&basemsg.Field{
+			Compare:    basemsg.CompareNone,
+		}),
+		basemsg.NewDateTimeField(&basemsg.Field{
 			Label:    "Operator: Date/Time",
 			Presence: basemsg.Required,
-			TableValue: func(*basemsg.Field) string {
-				return common.SmartJoin(f.OpDate, f.OpTime, " ")
-			},
-		},
+		}, &f.OpDate, &f.OpTime),
 	)
 	if len(f.Fields) > fieldCount {
 		panic("update ICS213 fieldCount")

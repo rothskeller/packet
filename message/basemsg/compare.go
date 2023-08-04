@@ -25,8 +25,11 @@ func (bm *BaseMessage) Compare(actual message.Message) (score int, outOf int, cf
 	act = actual.(interface{ Base() *BaseMessage }).Base() // TODO: remove cast when Base is part of message.Message
 	for i, expf := range bm.Fields {
 		actf := act.Fields[i]
-		if expf.Compare != nil && (*expf.Value != "" || *actf.Value != "") {
+		if expf.Value != nil && actf.Value != nil && (*expf.Value != "" || *actf.Value != "") {
 			comp := expf.Compare(expf.Label, *expf.Value, *actf.Value)
+			if comp == nil {
+				continue // omit from comparison
+			}
 			if comp.OutOf == 0 {
 				comp.OutOf = 1
 			}
@@ -35,4 +38,10 @@ func (bm *BaseMessage) Compare(actual message.Message) (score int, outOf int, cf
 		}
 	}
 	return score, outOf, cfields
+}
+
+// CompareNone is a "comparison" function that causes the field to be omitted
+// from the comparison.
+func CompareNone(string, string, string) *message.CompareField {
+	return nil
 }

@@ -15,23 +15,16 @@ import (
 // pairs, intended for read-only display to a human.
 func (bm *BaseMessage) RenderTable() (lvs []message.LabelValue) {
 	for _, f := range bm.Fields {
-		var value string
-		if f.TableValue != nil {
-			value = f.TableValue(f)
-		} else if f.Value != nil {
-			value = *f.Value
-			if f.Choices != nil {
-				value = f.Choices.ToHuman(value)
-			}
-		}
-		if value != "" {
+		if value := f.TableValue(f); value != "" {
 			lvs = append(lvs, message.LabelValue{Label: f.Label, Value: value})
 		}
 	}
 	return lvs
 }
 
-func OmitFromTable(*Field) string { return "" }
+// TableOmit is a TableValue function that causes the field to be
+// unconditionally omitted from the table rendering.
+func TableOmit(*Field) string { return "" }
 
 // RenderPDF renders the message as a PDF file with the specified filename,
 // overwriting any existing file with that name.

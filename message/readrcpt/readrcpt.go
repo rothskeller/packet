@@ -32,7 +32,28 @@ type ReadReceipt struct {
 
 // New creates a new read receipt message.
 func New() (m *ReadReceipt) {
-	return &ReadReceipt{BaseMessage: basemsg.BaseMessage{MessageType: &Type}}
+	m = &ReadReceipt{BaseMessage: basemsg.BaseMessage{MessageType: &Type}}
+	m.Fields = []*basemsg.Field{
+		basemsg.NewTextField(&basemsg.Field{
+			Label:    "Message To",
+			Value:    &m.MessageTo,
+			Presence: basemsg.Required,
+		}),
+		basemsg.NewTextField(&basemsg.Field{
+			Label: "Message Subject",
+			Value: &m.MessageSubject,
+		}),
+		basemsg.NewTextField(&basemsg.Field{
+			Label:    "Read At",
+			Value:    &m.ReadTime,
+			Presence: basemsg.Required,
+		}),
+		basemsg.NewMultilineField(&basemsg.Field{
+			Label: "Extra Text",
+			Value: &m.ExtraText,
+		}),
+	}
+	return m
 }
 
 // readReceiptRE matches the first lines of a read receipt message.  Its

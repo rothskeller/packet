@@ -112,101 +112,82 @@ func create(version *basemsg.FormVersion) message.Message {
 	f.Fields = make([]*basemsg.Field, 0, fieldCount)
 	f.BaseForm.AddHeaderFields(&f.BaseMessage, &basePDFMaps)
 	f.Fields = append(f.Fields,
-		&basemsg.Field{
-			Label:     "Report Type",
-			Value:     &f.ReportType,
-			Choices:   basemsg.Choices{"Update", "Complete"},
-			Presence:  basemsg.Required,
-			PIFOTag:   "19.",
-			PIFOValid: basemsg.ValidRestricted,
-			Compare:   common.CompareExact,
-			EditWidth: 7,
-			EditHelp:  `This indicates whether the form should "Update" the previous status report for the shelter, or whether it is a "Complete" replacement of the previous report.  This field is required.`,
-			PDFMap:    basemsg.PDFNameMap{"Report Type", "", "Off"},
-		},
-		&basemsg.Field{
+		basemsg.NewRestrictedField(&basemsg.Field{
+			Label:    "Report Type",
+			Value:    &f.ReportType,
+			Choices:  basemsg.Choices{"Update", "Complete"},
+			Presence: basemsg.Required,
+			PIFOTag:  "19.",
+			EditHelp: `This indicates whether the form should "Update" the previous status report for the shelter, or whether it is a "Complete" replacement of the previous report.  This field is required.`,
+			PDFMap:   basemsg.PDFNameMap{"Report Type", "", "Off"},
+		}),
+		basemsg.NewTextField(&basemsg.Field{
 			Label:     "Shelter Name",
 			Value:     &f.ShelterName,
 			Presence:  basemsg.Required,
 			PIFOTag:   "32.",
-			Compare:   common.CompareText,
 			PDFMap:    basemsg.PDFName("Shelter Name"),
 			EditWidth: 44,
 			EditHelp:  `This is the name of the shelter whose status is being reported.  It is required.`,
-		},
-		&basemsg.Field{
-			Label:     "Shelter Type",
-			Value:     &f.ShelterType,
-			Choices:   basemsg.Choices{"Type 1", "Type 2", "Type 3", "Type 4"},
-			Presence:  f.requiredForComplete,
-			PIFOTag:   "30.",
-			PIFOValid: basemsg.ValidRestricted,
-			Compare:   common.CompareExact,
-			PDFMap:    basemsg.PDFNameMap{"Shelter Type", "", "Off"},
-			EditWidth: 6,
-			EditHelp:  `This is the shelter type.  It is required when "Report Type" is "Complete".`,
-		},
-		&basemsg.Field{
-			Label:     "Shelter Status",
-			Value:     &f.ShelterStatus,
-			Choices:   basemsg.Choices{"Open", "Closed", "Full"},
-			Presence:  f.requiredForComplete,
-			PIFOTag:   "31.",
-			PIFOValid: basemsg.ValidRestricted,
-			Compare:   common.CompareExact,
-			PDFMap:    basemsg.PDFNameMap{"Shelter Status", "", "Off"},
-			EditWidth: 6,
-			EditHelp:  `This indicates the status of the shelter.  It is required when "Report Type" is "Complete".`,
-		},
-		&basemsg.Field{
+		}),
+		basemsg.NewRestrictedField(&basemsg.Field{
+			Label:    "Shelter Type",
+			Value:    &f.ShelterType,
+			Choices:  basemsg.Choices{"Type 1", "Type 2", "Type 3", "Type 4"},
+			Presence: f.requiredForComplete,
+			PIFOTag:  "30.",
+			PDFMap:   basemsg.PDFNameMap{"Shelter Type", "", "Off"},
+			EditHelp: `This is the shelter type.  It is required when "Report Type" is "Complete".`,
+		}),
+		basemsg.NewRestrictedField(&basemsg.Field{
+			Label:    "Shelter Status",
+			Value:    &f.ShelterStatus,
+			Choices:  basemsg.Choices{"Open", "Closed", "Full"},
+			Presence: f.requiredForComplete,
+			PIFOTag:  "31.",
+			PDFMap:   basemsg.PDFNameMap{"Shelter Status", "", "Off"},
+			EditHelp: `This indicates the status of the shelter.  It is required when "Report Type" is "Complete".`,
+		}),
+		basemsg.NewTextField(&basemsg.Field{
 			Label:     "Shelter Address",
 			Value:     &f.ShelterAddress,
 			Presence:  f.requiredForComplete,
 			PIFOTag:   "33a.",
-			Compare:   common.CompareText,
 			PDFMap:    basemsg.PDFName("Address"),
 			EditWidth: 75,
 			EditHelp:  `This is the street address of the shelter.  It is required when "Report Type" is "Complete".`,
-		},
+		}),
 	)
 	if f.Form.Version < "2.2" {
 		f.Fields = append(f.Fields,
-			&basemsg.Field{
+			basemsg.NewRestrictedField(&basemsg.Field{
 				Label:      "Shelter City",
 				Value:      &f.ShelterCity,
 				Choices:    basemsg.Choices{"Campbell", "Cupertino", "Gilroy", "Los Altos", "Los Altos Hills", "Los Gatos", "Milpitas", "Monte Sereno", "Morgan Hill", "Mountain View", "Palo Alto", "San Jose", "Santa Clara", "Saratoga", "Sunnyvale", "Unincorporated"},
 				Presence:   f.requiredForComplete,
 				PIFOTag:    "33b.",
-				PIFOValid:  basemsg.ValidRestricted,
-				Compare:    common.CompareExact,
 				PDFMap:     basemsg.PDFName("City"),
-				TableValue: basemsg.OmitFromTable,
-				EditWidth:  30,
+				TableValue: basemsg.TableOmit,
 				EditHelp:   `This is the name of the city in which the shelter is located.  It is required when "Report Type" is "Complete".`,
-				EditSkip:   func() bool { return f.ShelterAddress == "" },
-			},
+				EditSkip:   func(*basemsg.Field) bool { return f.ShelterAddress == "" },
+			}),
 		)
 	} else {
 		f.Fields = append(f.Fields,
-			&basemsg.Field{
-				Label:      "Shelter City Code",
-				Value:      &f.ShelterCityCode,
-				Choices:    basemsg.Choices{"Campbell", "Cupertino", "Gilroy", "Los Altos", "Los Altos Hills", "Los Gatos", "Milpitas", "Monte Sereno", "Morgan Hill", "Mountain View", "Palo Alto", "San Jose", "Santa Clara", "Saratoga", "Sunnyvale", "Unincorporated"},
-				Presence:   f.requiredForComplete,
-				PIFOTag:    "33b.",
-				PIFOValid:  basemsg.ValidRestricted,
-				Compare:    common.CompareExact,
-				TableValue: basemsg.OmitFromTable,
-			},
-			&basemsg.Field{
+			basemsg.NewCalculatedField(&basemsg.Field{
+				Label:    "Shelter City Code",
+				Value:    &f.ShelterCityCode,
+				Presence: f.requiredForComplete,
+				PIFOTag:  "33b.",
+			}),
+			basemsg.NewTextField(&basemsg.Field{
 				Label:      "Shelter City",
 				Value:      &f.ShelterCity,
 				Choices:    basemsg.Choices{"Campbell", "Cupertino", "Gilroy", "Los Altos", "Los Altos Hills", "Los Gatos", "Milpitas", "Monte Sereno", "Morgan Hill", "Mountain View", "Palo Alto", "San Jose", "Santa Clara", "Saratoga", "Sunnyvale", "Unincorporated"},
 				Presence:   f.requiredForComplete,
 				PIFOTag:    "34b.",
-				Compare:    common.CompareText,
 				PDFMap:     basemsg.PDFName("City"),
-				TableValue: basemsg.OmitFromTable,
+				TableValue: basemsg.TableOmit,
 				EditWidth:  30,
 				EditHelp:   `This is the name of the city in which the shelter is located.  It is required when "Report Type" is "Complete".`,
 				EditApply: func(field *basemsg.Field, s string) {
@@ -217,49 +198,46 @@ func create(version *basemsg.FormVersion) message.Message {
 						f.ShelterCityCode = "Unincorporated"
 					}
 				},
-				EditSkip: func() bool { return f.ShelterAddress == "" },
-			},
+				EditSkip: func(*basemsg.Field) bool { return f.ShelterAddress == "" },
+			}),
 		)
 	}
 	f.Fields = append(f.Fields,
-		&basemsg.Field{
+		basemsg.NewTextField(&basemsg.Field{
 			Label:      "Shelter State",
 			Value:      &f.ShelterState,
 			Choices:    basemsg.Choices{"CA"},
 			Presence:   f.requiredForComplete,
 			PIFOTag:    "33c.",
-			Compare:    common.CompareText,
 			PDFMap:     basemsg.PDFName("State"),
-			TableValue: basemsg.OmitFromTable,
+			TableValue: basemsg.TableOmit,
 			EditWidth:  12,
 			EditHelp:   `This is the name (or two-letter abbreviation) of the state in which the shelter is located.  It is required when "Report Type" is "Complete".`,
-			EditSkip:   func() bool { return f.ShelterCity == "" },
-		},
-		&basemsg.Field{
+			EditSkip:   func(*basemsg.Field) bool { return f.ShelterCity == "" },
+		}),
+		basemsg.NewTextField(&basemsg.Field{
 			Label:      "Shelter Zip",
 			Value:      &f.ShelterZip,
 			Presence:   f.requiredForComplete,
 			PIFOTag:    "33d.",
 			Compare:    common.CompareExact,
 			PDFMap:     basemsg.PDFName("Zip"),
-			TableValue: basemsg.OmitFromTable,
+			TableValue: basemsg.TableOmit,
 			EditWidth:  12,
 			EditHelp:   `This is the shelter's ZIP code.  It is required when "Report Type" is "Complete".`,
-			EditSkip:   func() bool { return f.ShelterState == "" },
-		},
-		&basemsg.Field{
+			EditSkip:   func(*basemsg.Field) bool { return f.ShelterState == "" },
+		}),
+		basemsg.NewAggregatorField(&basemsg.Field{
 			Label: "Shelter City",
 			TableValue: func(*basemsg.Field) string {
 				return common.SmartJoin(f.ShelterCity, common.SmartJoin(f.ShelterState, f.ShelterZip, "  "), ", ")
 			},
-		},
-		&basemsg.Field{
-			Label:     "Latitude",
-			Value:     &f.Latitude,
-			PIFOTag:   "37a.",
-			PIFOValid: basemsg.ValidReal,
-			Compare:   common.CompareReal,
-			PDFMap:    basemsg.PDFName("Latitude"),
+		}),
+		basemsg.NewRealNumberField(&basemsg.Field{
+			Label:   "Latitude",
+			Value:   &f.Latitude,
+			PIFOTag: "37a.",
+			PDFMap:  basemsg.PDFName("Latitude"),
 			TableValue: func(*basemsg.Field) string {
 				if f.Longitude == "" {
 					return f.Latitude
@@ -268,14 +246,12 @@ func create(version *basemsg.FormVersion) message.Message {
 			},
 			EditWidth: 30,
 			EditHelp:  `This is the latitude of the shelter location, expressed in fractional degrees.`,
-		},
-		&basemsg.Field{
-			Label:     "Longitude",
-			Value:     &f.Longitude,
-			PIFOTag:   "37b.",
-			PIFOValid: basemsg.ValidReal,
-			Compare:   common.CompareReal,
-			PDFMap:    basemsg.PDFName("Longitude"),
+		}),
+		basemsg.NewRealNumberField(&basemsg.Field{
+			Label:   "Longitude",
+			Value:   &f.Longitude,
+			PIFOTag: "37b.",
+			PDFMap:  basemsg.PDFName("Longitude"),
 			TableValue: func(*basemsg.Field) string {
 				if f.Longitude == "" {
 					return f.Latitude
@@ -290,9 +266,9 @@ func create(version *basemsg.FormVersion) message.Message {
 				}
 				return basemsg.ValidReal(field)
 			},
-			EditSkip: func() bool { return f.Latitude == "" },
-		},
-		&basemsg.Field{
+			EditSkip: func(*basemsg.Field) bool { return f.Latitude == "" },
+		}),
+		basemsg.NewAggregatorField(&basemsg.Field{
 			Label: "GPS Coordinates",
 			TableValue: func(*basemsg.Field) string {
 				if f.Latitude != "" && f.Longitude != "" {
@@ -300,15 +276,13 @@ func create(version *basemsg.FormVersion) message.Message {
 				}
 				return ""
 			},
-		},
-		&basemsg.Field{
-			Label:     "Capacity",
-			Value:     &f.Capacity,
-			Presence:  f.requiredForComplete,
-			PIFOTag:   "40a.",
-			PIFOValid: basemsg.ValidCardinal,
-			Compare:   common.CompareCardinal,
-			PDFMap:    basemsg.PDFName("Capacity"),
+		}),
+		basemsg.NewCardinalNumberField(&basemsg.Field{
+			Label:    "Capacity",
+			Value:    &f.Capacity,
+			Presence: f.requiredForComplete,
+			PIFOTag:  "40a.",
+			PDFMap:   basemsg.PDFName("Capacity"),
 			TableValue: func(*basemsg.Field) string {
 				if f.Occupancy == "" {
 					return f.Capacity
@@ -317,15 +291,13 @@ func create(version *basemsg.FormVersion) message.Message {
 			},
 			EditWidth: 6,
 			EditHelp:  `This is the number of people the shelter can accommodate.  It is required when "Report Type" is "Complete".`,
-		},
-		&basemsg.Field{
-			Label:     "Occupancy",
-			Value:     &f.Occupancy,
-			Presence:  f.requiredForComplete,
-			PIFOTag:   "40b.",
-			PIFOValid: basemsg.ValidCardinal,
-			Compare:   common.CompareCardinal,
-			PDFMap:    basemsg.PDFName("Occupancy"),
+		}),
+		basemsg.NewCardinalNumberField(&basemsg.Field{
+			Label:    "Occupancy",
+			Value:    &f.Occupancy,
+			Presence: f.requiredForComplete,
+			PIFOTag:  "40b.",
+			PDFMap:   basemsg.PDFName("Occupancy"),
 			TableValue: func(*basemsg.Field) string {
 				if f.Occupancy != "" && f.Capacity != "" {
 					return f.Occupancy + " out of " + f.Capacity
@@ -334,18 +306,17 @@ func create(version *basemsg.FormVersion) message.Message {
 			},
 			EditWidth: 6,
 			EditHelp:  `This is the number of people currently using the shelter.  It is required when "Report Type" is "Complete".`,
-			EditSkip:  func() bool { return f.ShelterAddress == "" },
-		},
-		&basemsg.Field{
+			EditSkip:  func(*basemsg.Field) bool { return f.ShelterAddress == "" },
+		}),
+		basemsg.NewTextField(&basemsg.Field{
 			Label:     "Meals Served",
 			Value:     &f.MealsServed,
 			PIFOTag:   "41.",
-			Compare:   common.CompareText,
 			PDFMap:    basemsg.PDFName("Meals"),
 			EditWidth: 65,
 			EditHelp:  `This is the number and/or description of meals served at the shelter in the last 24 hours.`,
-		},
-		&basemsg.Field{
+		}),
+		basemsg.NewTextField(&basemsg.Field{
 			Label:     "NSS Number",
 			Value:     &f.NSSNumber,
 			PIFOTag:   "42.",
@@ -353,103 +324,82 @@ func create(version *basemsg.FormVersion) message.Message {
 			PDFMap:    basemsg.PDFName("NSS Number"),
 			EditWidth: 65,
 			EditHelp:  `This is the NSS number of the shelter.`,
-		},
-		&basemsg.Field{
-			Label:     "Pet Friendly",
-			Value:     &f.PetFriendly,
-			Choices:   basemsg.ChoicePairs{"checked", "Yes", "false", "No"},
-			PIFOTag:   "43a.",
-			PIFOValid: basemsg.ValidRestricted,
-			Compare:   common.CompareExact,
-			PDFMap:    basemsg.PDFNameMap{"Pet Friendly", "", "Off", "false", "No", "checked", "Yes"},
-			EditWidth: 3,
-			EditHelp:  `This indicates whether the shelter can accept pets.`,
-		},
-		&basemsg.Field{
-			Label:     "Basic Safety Inspection",
-			Value:     &f.BasicSafetyInspection,
-			Choices:   basemsg.ChoicePairs{"checked", "Yes", "false", "No"},
-			PIFOTag:   "43b.",
-			PIFOValid: basemsg.ValidRestricted,
-			Compare:   common.CompareExact,
-			PDFMap:    basemsg.PDFNameMap{"Basic Safety Insp", "", "Off", "false", "No", "checked", "Yes"},
-			EditWidth: 3,
-			EditHelp:  `This indicates whether the shelter has had a basic safety inspection.`,
-		},
-		&basemsg.Field{
-			Label:     "ATC-20 Inspection",
-			Value:     &f.ATC20Inspection,
-			Choices:   basemsg.ChoicePairs{"checked", "Yes", "false", "No"},
-			PIFOTag:   "43c.",
-			PIFOValid: basemsg.ValidRestricted,
-			Compare:   common.CompareExact,
-			PDFMap:    basemsg.PDFNameMap{"ATC20 Insp", "", "Off", "false", "No", "checked", "Yes"},
-			EditWidth: 3,
-			EditHelp:  `This indicates whether the shelter has had an ATC-20 inspection.`,
-		},
-		&basemsg.Field{
+		}),
+		basemsg.NewRestrictedField(&basemsg.Field{
+			Label:    "Pet Friendly",
+			Value:    &f.PetFriendly,
+			Choices:  basemsg.ChoicePairs{"checked", "Yes", "false", "No"},
+			PIFOTag:  "43a.",
+			PDFMap:   basemsg.PDFNameMap{"Pet Friendly", "", "Off", "false", "No", "checked", "Yes"},
+			EditHelp: `This indicates whether the shelter can accept pets.`,
+		}),
+		basemsg.NewRestrictedField(&basemsg.Field{
+			Label:    "Basic Safety Inspection",
+			Value:    &f.BasicSafetyInspection,
+			Choices:  basemsg.ChoicePairs{"checked", "Yes", "false", "No"},
+			PIFOTag:  "43b.",
+			PDFMap:   basemsg.PDFNameMap{"Basic Safety Insp", "", "Off", "false", "No", "checked", "Yes"},
+			EditHelp: `This indicates whether the shelter has had a basic safety inspection.`,
+		}),
+		basemsg.NewRestrictedField(&basemsg.Field{
+			Label:    "ATC-20 Inspection",
+			Value:    &f.ATC20Inspection,
+			Choices:  basemsg.ChoicePairs{"checked", "Yes", "false", "No"},
+			PIFOTag:  "43c.",
+			PDFMap:   basemsg.PDFNameMap{"ATC20 Insp", "", "Off", "false", "No", "checked", "Yes"},
+			EditHelp: `This indicates whether the shelter has had an ATC-20 inspection.`,
+		}),
+		basemsg.NewMultilineField(&basemsg.Field{
 			Label:     "Available Services",
 			Value:     &f.AvailableServices,
 			PIFOTag:   "44.",
-			Compare:   common.CompareText,
 			PDFMap:    basemsg.PDFName("Available Services"),
 			EditWidth: 85,
 			EditHelp:  `This is a list of services available at the shelter.`,
-			Multiline: true,
-		},
-		&basemsg.Field{
+		}),
+		basemsg.NewTextField(&basemsg.Field{
 			Label:     "MOU",
 			Value:     &f.MOU,
 			PIFOTag:   "45.",
-			Compare:   common.CompareText,
 			PDFMap:    basemsg.PDFName("MOU"),
 			EditWidth: 64,
 			EditHelp:  `This indicates where and how the shelter's Memorandum of Understanding (MOU) was reported.`,
-		},
-		&basemsg.Field{
+		}),
+		basemsg.NewTextField(&basemsg.Field{
 			Label:     "Floor Plan",
 			Value:     &f.FloorPlan,
 			PIFOTag:   "46.",
-			Compare:   common.CompareText,
 			PDFMap:    basemsg.PDFName("Floorplan"),
 			EditWidth: 64,
 			EditHelp:  `This indicates where and how the shelter's floor plan was reported.`,
-		},
+		}),
 	)
 	if f.Form.Version < "2.2" {
 		f.Fields = append(f.Fields,
-			&basemsg.Field{
-				Label:     "Managed By",
-				Value:     &f.ManagedBy,
-				Choices:   basemsg.Choices{"American Red Cross", "Private", "Community", "Government", "Other"},
-				Presence:  f.requiredForComplete,
-				PIFOTag:   "50a.",
-				PIFOValid: basemsg.ValidRestricted,
-				Compare:   common.CompareExact,
-				PDFMap:    basemsg.PDFName("Managed By"),
-				EditWidth: 18,
-				EditHelp:  `This indicates what type of entity is managing the shelter.  It is required when "Report Type" is "Complete".`,
-			},
+			basemsg.NewRestrictedField(&basemsg.Field{
+				Label:    "Managed By",
+				Value:    &f.ManagedBy,
+				Choices:  basemsg.Choices{"American Red Cross", "Private", "Community", "Government", "Other"},
+				Presence: f.requiredForComplete,
+				PIFOTag:  "50a.",
+				PDFMap:   basemsg.PDFName("Managed By"),
+				EditHelp: `This indicates what type of entity is managing the shelter.  It is required when "Report Type" is "Complete".`,
+			}),
 		)
 	} else {
 		f.Fields = append(f.Fields,
-			&basemsg.Field{
-				Label:      "Managed By Code",
-				Value:      &f.ManagedByCode,
-				Choices:    basemsg.Choices{"American Red Cross", "Private", "Community", "Government", "Other"},
-				Presence:   f.requiredForComplete,
-				PIFOTag:    "50a.",
-				PIFOValid:  basemsg.ValidRestricted,
-				Compare:    common.CompareExact,
-				TableValue: basemsg.OmitFromTable,
-			},
-			&basemsg.Field{
+			basemsg.NewCalculatedField(&basemsg.Field{
+				Label:    "Managed By Code",
+				Value:    &f.ManagedByCode,
+				Presence: f.requiredForComplete,
+				PIFOTag:  "50a.",
+			}),
+			basemsg.NewTextField(&basemsg.Field{
 				Label:     "Managed By",
 				Value:     &f.ManagedBy,
 				Choices:   basemsg.Choices{"American Red Cross", "Private", "Community", "Government", "Other"},
 				Presence:  f.requiredForComplete,
 				PIFOTag:   "49a.",
-				Compare:   common.CompareText,
 				PDFMap:    basemsg.PDFName("Managed By"),
 				EditWidth: 18,
 				EditHelp:  `This indicates what type of entity is managing the shelter.  It is required when "Report Type" is "Complete".`,
@@ -467,15 +417,14 @@ func create(version *basemsg.FormVersion) message.Message {
 					}
 					return ""
 				},
-			},
+			}),
 		)
 	}
 	f.Fields = append(f.Fields,
-		&basemsg.Field{
+		basemsg.NewTextField(&basemsg.Field{
 			Label:     "Managed By Detail",
 			Value:     &f.ManagedByDetail,
 			PIFOTag:   "50b.",
-			Compare:   common.CompareText,
 			PDFMap:    basemsg.PDFName("Managed By Detail"),
 			EditWidth: 65,
 			EditHelp:  `This is additional detail about who is managing the shelter (particularly if "Managed By" is "Other").`,
@@ -485,181 +434,146 @@ func create(version *basemsg.FormVersion) message.Message {
 				}
 				return ""
 			},
-		},
-		&basemsg.Field{
+		}),
+		basemsg.NewTextField(&basemsg.Field{
 			Label:     "Primary Contact",
 			Value:     &f.PrimaryContact,
 			Presence:  f.requiredForComplete,
 			PIFOTag:   "51a.",
-			Compare:   common.CompareText,
 			PDFMap:    basemsg.PDFName("Pri Contact"),
 			EditWidth: 65,
 			EditHelp:  `This is the name of the primary contact person for the shelter.  It is required when "Report Type" is "Complete".`,
-		},
-		&basemsg.Field{
+		}),
+		basemsg.NewPhoneNumberField(&basemsg.Field{
 			Label:     "Primary Phone",
 			Value:     &f.PrimaryPhone,
 			Presence:  f.requiredForComplete,
 			PIFOTag:   "51b.",
-			PIFOValid: basemsg.ValidPhoneNumber,
-			Compare:   common.CompareExact,
 			PDFMap:    basemsg.PDFName("Pri Contact Phone"),
 			EditWidth: 65,
 			EditHelp:  `This is the phone number of the primary contact person for the shelter.  It is required when "Report Type" is "Complete".`,
-		},
-		&basemsg.Field{
+		}),
+		basemsg.NewTextField(&basemsg.Field{
 			Label:     "Secondary Contact",
 			Value:     &f.SecondaryContact,
 			PIFOTag:   "52a.",
-			Compare:   common.CompareText,
 			PDFMap:    basemsg.PDFName("Sec Contact"),
 			EditWidth: 65,
 			EditHelp:  `This is the name of the secondary contact person for the shelter.`,
-		},
-		&basemsg.Field{
+		}),
+		basemsg.NewPhoneNumberField(&basemsg.Field{
 			Label:     "Secondary Phone",
 			Value:     &f.SecondaryPhone,
 			PIFOTag:   "52b.",
-			PIFOValid: basemsg.ValidPhoneNumber,
-			Compare:   common.CompareExact,
 			PDFMap:    basemsg.PDFName("Sec Contact Phone"),
 			EditWidth: 65,
 			EditHelp:  `This is the phone number of the secondary contact person for the shelter.`,
-		},
-		&basemsg.Field{
+		}),
+		basemsg.NewTacticalCallSignField(&basemsg.Field{
 			Label:     "Tactical Call Sign",
 			Value:     &f.TacticalCallSign,
 			PIFOTag:   "60.",
-			Compare:   common.CompareExact,
 			PDFMap:    basemsg.PDFName("Tactical Call Sign"),
 			EditWidth: 29,
 			EditHelp:  `This is the tactical call sign assigned to the shelter for amateur radio communications.`,
-			EditApply: func(field *basemsg.Field, s string) {
-				*field.Value = strings.ToUpper(s)
-			},
-			EditValid: basemsg.ValidTacticalCallSign,
-		},
-		&basemsg.Field{
+		}),
+		basemsg.NewFCCCallSignField(&basemsg.Field{
 			Label:     "Repeater Call Sign",
 			Value:     &f.RepeaterCallSign,
 			PIFOTag:   "61.",
-			Compare:   common.CompareExact,
 			PDFMap:    basemsg.PDFName("Repeater Call Sign"),
 			EditWidth: 29,
 			EditHelp:  `This is the call sign of the amateur radio repeater that the shelter is monitoring for communications.`,
-			EditApply: func(field *basemsg.Field, s string) {
-				*field.Value = strings.ToUpper(s)
-			},
-			EditValid: basemsg.ValidFCCCallSign,
-		},
-		&basemsg.Field{
+		}),
+		basemsg.NewFrequencyField(&basemsg.Field{
 			Label:      "Repeater Input",
 			Value:      &f.RepeaterInput,
 			PIFOTag:    "62a.",
-			PIFOValid:  basemsg.ValidFrequency,
-			Compare:    common.CompareReal,
 			PDFMap:     basemsg.PDFName("Input Freq"),
-			TableValue: basemsg.OmitFromTable,
+			TableValue: basemsg.TableOmit,
 			EditWidth:  20,
 			EditHelp:   `This is the input frequency (in MHz) of the amateur radio repeater that the shelter is using for communications.`,
-			EditHint:   "MHz",
-		},
-		&basemsg.Field{
+		}),
+		basemsg.NewTextField(&basemsg.Field{
 			Label:      "Repeater Input Tone",
 			Value:      &f.RepeaterInputTone,
 			PIFOTag:    "62b.",
-			Compare:    common.CompareText,
 			PDFMap:     basemsg.PDFName("Input Tone"),
-			TableValue: basemsg.OmitFromTable,
+			TableValue: basemsg.TableOmit,
 			EditWidth:  30,
 			EditHelp:   `This is the analog CTCSS tone, P25 NAC, DMR TS/TG/CC, or other access details required by the amateur radio repeater that the shelter is using for communications.`,
-			EditSkip:   func() bool { return f.RepeaterInput == "" },
-		},
-		&basemsg.Field{
+			EditSkip:   func(*basemsg.Field) bool { return f.RepeaterInput == "" },
+		}),
+		basemsg.NewAggregatorField(&basemsg.Field{
 			Label: "Repeater Input",
 			TableValue: func(*basemsg.Field) string {
 				return formatFreq(f.RepeaterInput, f.RepeaterInputTone)
 			},
-		},
-		&basemsg.Field{
+		}),
+		basemsg.NewFrequencyField(&basemsg.Field{
 			Label:      "Repeater Output",
 			Value:      &f.RepeaterOutput,
 			PIFOTag:    "63a.",
-			PIFOValid:  basemsg.ValidFrequency,
-			Compare:    common.CompareReal,
 			PDFMap:     basemsg.PDFName("Output Freq"),
-			TableValue: basemsg.OmitFromTable,
+			TableValue: basemsg.TableOmit,
 			EditWidth:  20,
 			EditHelp:   `This is the output frequency (in MHz) of the amateur radio repeater that the shelter is using for communications.`,
-			EditHint:   "MHz",
-		},
-		&basemsg.Field{
+		}),
+		basemsg.NewTextField(&basemsg.Field{
 			Label:      "Repeater Output Tone",
 			Value:      &f.RepeaterOutputTone,
 			PIFOTag:    "63b.",
-			Compare:    common.CompareText,
 			PDFMap:     basemsg.PDFName("Output Tone"),
-			TableValue: basemsg.OmitFromTable,
+			TableValue: basemsg.TableOmit,
 			EditWidth:  30,
 			EditHelp:   `This is the analog CTCSS tone, P25 NAC, DMR TS/TG/CC, or other access details for the transmission from the amateur radio repeater that the shelter is using for communications.`,
-			EditSkip:   func() bool { return f.RepeaterOutput == "" },
-		},
-		&basemsg.Field{
+			EditSkip:   func(*basemsg.Field) bool { return f.RepeaterOutput == "" },
+		}),
+		basemsg.NewAggregatorField(&basemsg.Field{
 			Label: "Repeater Output",
 			TableValue: func(*basemsg.Field) string {
 				return formatFreq(f.RepeaterOutput, f.RepeaterOutputTone)
 			},
-		},
-		&basemsg.Field{
+		}),
+		basemsg.NewFrequencyOffsetField(&basemsg.Field{
 			Label:     "Repeater Offset",
 			Value:     &f.RepeaterOffset,
 			PIFOTag:   "62c.",
-			PIFOValid: basemsg.ValidFrequencyOffset,
-			Compare:   common.CompareExact,
 			PDFMap:    basemsg.PDFName("Offset"),
 			EditWidth: 15,
 			EditHelp:  `This is the offset for the amateur radio repeater that the shelter is using for communications.  It can be either a number in MHz, a "+", or a "-".`,
-			EditHint:  "MHz or +/-",
-			EditSkip:  func() bool { return (f.RepeaterInput == "") == (f.RepeaterOutput == "") },
-		},
-		&basemsg.Field{
+			EditSkip:  func(*basemsg.Field) bool { return (f.RepeaterInput == "") == (f.RepeaterOutput == "") },
+		}),
+		basemsg.NewMultilineField(&basemsg.Field{
 			Label:     "Comments",
 			Value:     &f.Comments,
 			PIFOTag:   "70.",
-			Compare:   common.CompareText,
 			PDFMap:    basemsg.PDFName("Comments"),
 			EditWidth: 85,
 			EditHelp:  `These are comments regarding the status of the shelter.`,
-			Multiline: true,
-		},
+		}),
 	)
 	if f.Form.Version < "2.3" {
 		f.Fields = append(f.Fields,
-			&basemsg.Field{
-				Label:     "Remove from List",
-				Value:     &f.RemoveFromList,
-				Choices:   basemsg.Choices{"checked"},
-				PIFOTag:   "71.",
-				PIFOValid: basemsg.ValidRestricted,
-				Compare:   common.CompareExact,
-				PDFMap:    basemsg.PDFNameMap{"Remove", "", "No", "checked", "Yes"},
-				EditWidth: 7,
-				EditHelp:  `This indicates whether the shelter should be removed from the receiver's list of shelters.`,
-			},
+			basemsg.NewRestrictedField(&basemsg.Field{
+				Label:    "Remove from List",
+				Value:    &f.RemoveFromList,
+				Choices:  basemsg.Choices{"checked"},
+				PIFOTag:  "71.",
+				PDFMap:   basemsg.PDFNameMap{"Remove", "", "No", "checked", "Yes"},
+				EditHelp: `This indicates whether the shelter should be removed from the receiver's list of shelters.`,
+			}),
 		)
 	} else {
 		f.Fields = append(f.Fields,
-			&basemsg.Field{
-				Label:     "Remove from List",
-				Value:     &f.RemoveFromList,
-				Choices:   basemsg.ChoicePairs{"checked", "Yes", "false", "No"},
-				PIFOTag:   "71.",
-				PIFOValid: basemsg.ValidRestricted,
-				Compare:   common.CompareExact,
-				PDFMap:    basemsg.PDFNameMap{"Remove", "", "Off", "false", "No", "checked", "Yes"},
-				EditWidth: 3,
-				EditHelp:  `This indicates whether the shelter should be removed from the receiver's list of shelters.`,
-			},
+			basemsg.NewRestrictedField(&basemsg.Field{
+				Label:    "Remove from List",
+				Value:    &f.RemoveFromList,
+				Choices:  basemsg.ChoicePairs{"checked", "Yes", "false", "No"},
+				PIFOTag:  "71.",
+				PDFMap:   basemsg.PDFNameMap{"Remove", "", "Off", "false", "No", "checked", "Yes"},
+				EditHelp: `This indicates whether the shelter should be removed from the receiver's list of shelters.`,
+			}),
 		)
 	}
 	f.BaseForm.AddFooterFields(&f.BaseMessage, &basePDFMaps)

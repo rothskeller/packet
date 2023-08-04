@@ -49,28 +49,28 @@ func decode(subject, body string) (f *UnknownForm) {
 		f.Handling = h
 	}
 	f.Fields = []*basemsg.Field{
-		{
+		basemsg.NewCalculatedField(&basemsg.Field{
 			Label: "Form Type",
 			TableValue: func(*basemsg.Field) string {
 				return f.Form.HTML + " v" + f.Form.Version
 			},
-		},
-		{
+		}),
+		basemsg.NewMessageNumberField(&basemsg.Field{
 			Label:    "Origin Message Number",
 			Value:    &f.OriginMsgID,
 			Presence: basemsg.Required,
-		},
-		{
+		}),
+		basemsg.NewRestrictedField(&basemsg.Field{
 			Label:    "Handling",
 			Value:    &f.Handling,
 			Choices:  basemsg.Choices{"ROUTINE", "PRIORITY", "IMMEDIATE"},
 			Presence: basemsg.Required,
-		},
-		{
+		}),
+		basemsg.NewTextField(&basemsg.Field{
 			Label:    "Subject",
 			Value:    &f.Subject,
 			Presence: basemsg.Required,
-		},
+		}),
 	}
 	var tags = make([]string, 0, len(form.TaggedValues))
 	for tag := range form.TaggedValues {
@@ -79,11 +79,11 @@ func decode(subject, body string) (f *UnknownForm) {
 	sort.Strings(tags)
 	for _, tag := range tags {
 		value := form.TaggedValues[tag]
-		f.Fields = append(f.Fields, &basemsg.Field{
+		f.Fields = append(f.Fields, basemsg.NewTextField(&basemsg.Field{
 			Label:   tag,
 			Value:   &value,
 			PIFOTag: tag,
-		})
+		}))
 	}
 	return f
 }

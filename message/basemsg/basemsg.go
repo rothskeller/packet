@@ -131,8 +131,7 @@ type Field struct {
 	Choices ChoiceMapper
 	// Presence is a function that returns whether the field is allowed or
 	// required.  The function may optionally return a reason, which is
-	// interpolated into validation problem strings when needed.  If this
-	// function is not provided, Optional is assumed.
+	// interpolated into validation problem strings when needed.
 	Presence func() (Presence, string)
 	// PIFOTag is the tag for this field in a PackItForms encoding.  If this
 	// is empty, the field will not be rendered in PackItForms encoding nor
@@ -141,57 +140,44 @@ type Field struct {
 	// PIFOValid checks the value of the field against the restrictions
 	// enforced by the PackItForms software.  It returns a problem
 	// description if the value is one that PackItForms would reject, and an
-	// empty string otherwise.  This function may be nil, which is treated
-	// as accepting any value.
+	// empty string otherwise.
 	PIFOValid func(*Field) string
 	// Compare compares an expected value of this field against an actual
-	// value of this field, and returns a description of the comparison.
-	// If this function is nil, this field does not participate in message
-	// comparison.
+	// value of this field, and returns a description of the comparison.  To
+	// disable comparison for a field, set this to CompareNone.
 	Compare func(label, exp, act string) *message.CompareField
 	// PDFMap is the mapper that tells how to render this field into a
-	// form-fillable PDF file.  If it is not set, this field is not rendered
-	// into the PDF.
+	// form-fillable PDF file.
 	PDFMap PDFMapper
 	// TableValue returns the value of this field when rendered in flat text
-	// table form.  If this function is nil, the internal (PIFO) value is
-	// rendered in the table.  To disable a field from appearing in the
-	// table rendering, provide the OmitFromTable function, which always
-	// returns an empty string.
+	// table form.  To omit a field from the table rendering, set this to
+	// TableOmit.
 	TableValue func(*Field) string
 	// EditWidth is the width in characters of the input control for this
 	// field.  It should correspond to the number of characters that will
-	// fit in the PDF rendering of the field, if applicable.  If this value
-	// is zero, the field is not editable.
+	// fit in the PDF rendering of the field, if applicable.
 	EditWidth int
 	// Multiline indicates that this field can contain multiple lines, i.e.,
 	// can contain newline characters.
 	Multiline bool
 	// EditHelp is the help text for the form field, describing its contents
-	// and its validity rules.
+	// and its validity rules.  If this is empty, the field is not editable.
 	EditHelp string
 	// EditHint is a short string giving a model for the field value (e.g.,
 	// "MM/DD/YYYY" for a date field).  It is optional, and will only be
 	// displayed if there is room for it.
 	EditHint string
 	// EditValue returns the editable representation of the value of the
-	// field.  If this function is not provided, Choices.ToHuman is called
-	// on the field's raw value.  If Choices is also not provided, the
-	// field's raw value is used directly.
+	// field.
 	EditValue func(*Field) string
-	// EditApply stores the supplied edited value into the field.  If this
-	// function is not provided, the field's raw value is set to the result
-	// of calling Choices.ToPIFO on the edited value.  If Choices is also
-	// not provided, the field's raw value is set to the edited value
-	// directly.
+	// EditApply stores the supplied edited value into the field, revising
+	// it if need be to convert from human to internal (PIFO) form.
 	EditApply func(*Field, string)
 	// EditValid checks the value of the field and returns a problem
-	// description, or an empty string if there are no problems.  If this
-	// function is not provided, PIFOValid is used.
+	// description, or an empty string if there are no problems.
 	EditValid func(*Field) string
 	// EditSkip returns whether the field should be skipped while editing
 	// the message (e.g., no entry in this field is valid because of the
-	// value of some earlier field).  If this function is not provided, the
-	// field is skipped when Presence returns NotAllowed.
-	EditSkip func() bool
+	// value of some earlier field).
+	EditSkip func(*Field) bool
 }

@@ -48,40 +48,26 @@ func create() (m *CheckIn) {
 	m.BaseMessage.FOpCall = &m.OperatorCallSign
 	m.BaseMessage.FOpName = &m.OperatorName
 	m.Fields = []*basemsg.Field{
-		{
-			Label:     "Origin Message Number",
-			Value:     &m.OriginMsgID,
-			Presence:  basemsg.Required,
-			Compare:   common.CompareExact,
-			EditWidth: 9,
-			EditHelp:  `This is the message number assigned to the message by the origin station.  Valid message numbers have the form XXX-###P, where XXX is the three-character message number prefix assigned to the station, ### is a sequence number (any number of digits), and P is an optional suffix letter.  This field is required.`,
-			EditHint:  "XXX-###P",
-			EditApply: basemsg.ApplyMessageNumber,
-			EditValid: basemsg.ValidMessageNumber,
-		},
-		{
-			Label:     "Handling",
-			Value:     &m.Handling,
-			Choices:   basemsg.Choices{"ROUTINE", "PRIORITY", "IMMEDIATE"},
-			Presence:  basemsg.Required,
-			Compare:   common.CompareExact,
-			EditWidth: 9,
-			EditHelp:  `This is the message handling order, which specifies how fast it needs to be delivered.  Allowed values are "ROUTINE" (within 2 hours), "PRIORITY" (within 1 hour), and "IMMEDIATE".  This field is required.`,
-			EditValid: basemsg.ValidRestricted,
-		},
-		{
+		basemsg.NewMessageNumberField(&basemsg.Field{
+			Label:    "Origin Message Number",
+			Value:    &m.OriginMsgID,
+			Presence: basemsg.Required,
+			EditHelp: `This is the message number assigned to the message by the origin station.  Valid message numbers have the form XXX-###P, where XXX is the three-character message number prefix assigned to the station, ### is a sequence number (any number of digits), and P is an optional suffix letter.  This field is required.`,
+		}),
+		basemsg.NewRestrictedField(&basemsg.Field{
+			Label:    "Handling",
+			Value:    &m.Handling,
+			Choices:  basemsg.Choices{"ROUTINE", "PRIORITY", "IMMEDIATE"},
+			Presence: basemsg.Required,
+			EditHelp: `This is the message handling order, which specifies how fast it needs to be delivered.  Allowed values are "ROUTINE" (within 2 hours), "PRIORITY" (within 1 hour), and "IMMEDIATE".  This field is required.`,
+		}),
+		basemsg.NewTacticalCallSignField(&basemsg.Field{
 			Label:      "Tactical Call Sign",
 			Value:      &m.TacticalCallSign,
-			Compare:    common.CompareExact,
-			TableValue: basemsg.OmitFromTable,
-			EditWidth:  6,
+			TableValue: basemsg.TableOmit,
 			EditHelp:   `This is the tactical call sign assigned to the station being operated, if any.  It is expected to be five or six letters or digits, starting with a letter.`,
-			EditApply: func(f *basemsg.Field, v string) {
-				*f.Value = strings.ToUpper(v)
-			},
-			EditValid: basemsg.ValidTacticalCallSign,
-		},
-		{
+		}),
+		basemsg.NewTextField(&basemsg.Field{
 			Label: "Tactical Station Name",
 			Value: &m.TacticalStationName,
 			Presence: func() (basemsg.Presence, string) {
@@ -91,45 +77,37 @@ func create() (m *CheckIn) {
 					return basemsg.PresenceRequired, `when "Tactical Call Sign" has a value`
 				}
 			},
-			Compare:    common.CompareText,
-			TableValue: basemsg.OmitFromTable,
+			TableValue: basemsg.TableOmit,
 			EditWidth:  80,
 			EditHelp:   `This is the name of the station being operated.  It must be set when the Tactical Call Sign is set.`,
-		},
-		{
+		}),
+		basemsg.NewAggregatorField(&basemsg.Field{
 			Label: "Tactical Station",
 			TableValue: func(f *basemsg.Field) string {
 				return common.SmartJoin(m.TacticalCallSign, m.TacticalStationName, " ")
 			},
-		},
-		{
+		}),
+		basemsg.NewFCCCallSignField(&basemsg.Field{
 			Label:      "Operator Call Sign",
 			Value:      &m.OperatorCallSign,
 			Presence:   basemsg.Required,
-			Compare:    common.CompareExact,
-			TableValue: basemsg.OmitFromTable,
-			EditWidth:  6,
+			TableValue: basemsg.TableOmit,
 			EditHelp:   `This is the FCC call sign assigned to the operator of the station.  It is required.`,
-			EditApply: func(f *basemsg.Field, v string) {
-				*f.Value = strings.ToUpper(v)
-			},
-			EditValid: basemsg.ValidFCCCallSign,
-		},
-		{
+		}),
+		basemsg.NewTextField(&basemsg.Field{
 			Label:      "Operator Name",
 			Value:      &m.OperatorName,
 			Presence:   basemsg.Required,
-			Compare:    common.CompareText,
-			TableValue: basemsg.OmitFromTable,
+			TableValue: basemsg.TableOmit,
 			EditWidth:  80,
 			EditHelp:   `This is the name of the operator of the station.  It is required.`,
-		},
-		{
+		}),
+		basemsg.NewAggregatorField(&basemsg.Field{
 			Label: "Operator",
 			TableValue: func(f *basemsg.Field) string {
 				return common.SmartJoin(m.OperatorCallSign, m.OperatorName, " ")
 			},
-		},
+		}),
 	}
 	return m
 }

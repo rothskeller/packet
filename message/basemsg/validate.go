@@ -2,7 +2,6 @@ package basemsg
 
 import (
 	"fmt"
-	"regexp"
 	"time"
 
 	"github.com/rothskeller/packet/message/common"
@@ -21,10 +20,8 @@ func (bm *BaseMessage) Validate() (problems []string) {
 			problems = append(problems, p)
 			continue
 		}
-		if f.PIFOValid != nil {
-			if problem := f.PIFOValid(f); problem != "" {
-				problems = append(problems, problem)
-			}
+		if problem := f.PIFOValid(f); problem != "" {
+			problems = append(problems, problem)
 		}
 	}
 	return problems
@@ -83,8 +80,6 @@ func ValidDateTime(f *Field, date, tval string) string {
 	return ""
 }
 
-var fccCallSignRE = regexp.MustCompile(`^(?:A[A-L][0-9][A-Z]{1,3}|[KNW][0-9][A-Z]{2,3}|[KNW][A-Z][0-9][A-Z]{1,3})$`)
-
 // ValidFCCCallSign is a validation function for a field that can contain an FCC
 // call sign.
 func ValidFCCCallSign(f *Field) string {
@@ -112,12 +107,10 @@ func ValidFrequencyOffset(f *Field) string {
 	return ""
 }
 
-var messageIDRE = regexp.MustCompile(`^(?:[0-9][A-Z]{2}|[A-Z][A-Z0-9]{2})-(?:[1-9][0-9]{3,}|[0-9]{3})[A-Z]?$`)
-
 // ValidMessageNumber is a validation function for a field that can contain a
 // message number.
 func ValidMessageNumber(f *Field) string {
-	if *f.Value != "" && !messageIDRE.MatchString(*f.Value) {
+	if *f.Value != "" && !messageNumberRE.MatchString(*f.Value) {
 		return fmt.Sprintf("The %q field does not contain a valid message number.", f.Label)
 	}
 	return ""
@@ -150,8 +143,6 @@ func ValidRestricted(f *Field) string {
 	}
 	return ""
 }
-
-var tacticalCallSignRE = regexp.MustCompile(`^[A-Z][A-Z0-9]{4,5}$`)
 
 // ValidTacticalCallSign is a validation function for a field that can contain a
 // tactical call sign.

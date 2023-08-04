@@ -36,44 +36,33 @@ func New() (m *PlainText) {
 	m.BaseMessage.FSubject = &m.Subject
 	m.BaseMessage.FBody = &m.Body
 	m.Fields = []*basemsg.Field{
-		{
-			Label:     "Origin Message Number",
-			Value:     &m.OriginMsgID,
-			Presence:  basemsg.Required,
-			Compare:   common.CompareExact,
-			EditWidth: 9,
-			EditHelp:  `This is the message number assigned to the message by the origin station.  Valid message numbers have the form XXX-###P, where XXX is the three-character message number prefix assigned to the station, ### is a sequence number (any number of digits), and P is an optional suffix letter.  This field is required.`,
-			EditHint:  "XXX-###P",
-			EditApply: basemsg.ApplyMessageNumber,
-			EditValid: basemsg.ValidMessageNumber,
-		},
-		{
-			Label:     "Handling",
-			Value:     &m.Handling,
-			Choices:   basemsg.Choices{"ROUTINE", "PRIORITY", "IMMEDIATE"},
-			Presence:  basemsg.Required,
-			Compare:   common.CompareExact,
-			EditWidth: 9,
-			EditHelp:  `This is the message handling order, which specifies how fast it needs to be delivered.  Allowed values are "ROUTINE" (within 2 hours), "PRIORITY" (within 1 hour), and "IMMEDIATE".  This field is required.`,
-			EditValid: basemsg.ValidRestricted,
-		},
-		{
+		basemsg.NewMessageNumberField(&basemsg.Field{
+			Label:    "Origin Message Number",
+			Value:    &m.OriginMsgID,
+			Presence: basemsg.Required,
+			EditHelp: `This is the message number assigned to the message by the origin station.  Valid message numbers have the form XXX-###P, where XXX is the three-character message number prefix assigned to the station, ### is a sequence number (any number of digits), and P is an optional suffix letter.  This field is required.`,
+		}),
+		basemsg.NewRestrictedField(&basemsg.Field{
+			Label:    "Handling",
+			Value:    &m.Handling,
+			Choices:  basemsg.Choices{"ROUTINE", "PRIORITY", "IMMEDIATE"},
+			Presence: basemsg.Required,
+			EditHelp: `This is the message handling order, which specifies how fast it needs to be delivered.  Allowed values are "ROUTINE" (within 2 hours), "PRIORITY" (within 1 hour), and "IMMEDIATE".  This field is required.`,
+		}),
+		basemsg.NewTextField(&basemsg.Field{
 			Label:     "Subject",
 			Value:     &m.Subject,
 			Presence:  basemsg.Required,
-			Compare:   common.CompareText,
 			EditWidth: 80,
 			EditHelp:  `This is the subject of the message.  It is required.`,
-		},
-		{
+		}),
+		basemsg.NewMultilineField(&basemsg.Field{
 			Label:     "Message",
 			Value:     &m.Body,
 			Presence:  basemsg.Required,
-			Compare:   common.CompareText,
 			EditWidth: 80,
-			Multiline: true,
 			EditHelp:  `This is the body of the message.  It is required.`,
-		},
+		}),
 	}
 	return m
 }

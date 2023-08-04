@@ -17,6 +17,11 @@ type PDFField struct {
 	Size float64
 }
 
+// NoPDFField is a zero implementation of PDFMapper that returns no mappings.
+type NoPDFField struct{}
+
+func (NoPDFField) RenderPDF(*Field) []PDFField { return nil }
+
 // PDFName is a simple implementation of PDFMapper.  It maps the field value,
 // unedited, to the specified PDF field name, with the default font size.
 type PDFName string
