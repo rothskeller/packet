@@ -1,6 +1,6 @@
-// Package allmsg contains a function to register all message types defined in
-// sibling packages.
-package allmsg
+// Package xscmsg contains a function to register all public Santa Clara County
+// message types (i.e., those defined in subpackages of xscmsg).
+package xscmsg
 
 import (
 	"github.com/rothskeller/packet/message"

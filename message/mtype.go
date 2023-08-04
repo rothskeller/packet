@@ -1,10 +1,6 @@
 // Package message contains the interfaces and registry for packet message
 // types.  The definitions in this package can be used to register package
 // message types and to itemize the registered types.
-//
-// Subpackages of this package provide definitions of all of the public,
-// standard message types used in Santa Clara County.  These definitions must be
-// registered at runtime with this package before they can be used.
 package message
 
 // Type gives the details of a registered message type.

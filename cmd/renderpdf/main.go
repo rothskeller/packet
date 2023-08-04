@@ -8,7 +8,7 @@ import (
 
 	"github.com/rothskeller/packet/envelope"
 	"github.com/rothskeller/packet/message"
-	"github.com/rothskeller/packet/xscmsg/allmsg"
+	"github.com/rothskeller/packet/xscmsg"
 )
 
 func main() {
@@ -16,7 +16,7 @@ func main() {
 		fmt.Fprintf(os.Stderr, "usage: renderpdf message-file...\n")
 		os.Exit(2)
 	}
-	allmsg.Register()
+	xscmsg.Register()
 	for _, mfile := range os.Args[1:] {
 		mbytes, err := os.ReadFile(mfile)
 		if err != nil {
