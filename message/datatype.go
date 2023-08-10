@@ -285,7 +285,7 @@ func NewFrequencyOffsetField(f *Field) *Field {
 // returns it for chaining.
 func NewMessageNumberField(f *Field) *Field {
 	if f.Compare == nil {
-		f.Compare = CompareExact
+		f.Compare = CompareNone
 	}
 	if f.EditWidth == 0 {
 		f.EditWidth = 9
