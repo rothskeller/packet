@@ -109,19 +109,21 @@ func create(version *message.FormVersion) message.Message {
 			EditWidth: 39,
 			EditHelp:  `This is the name of the incident for which resources are being requested.  It is required.`,
 		}),
-		message.NewDateWithTimeField(&message.Field{
+		message.NewDateField(true, &message.Field{
 			Label:    "Date Initiated",
 			Value:    &f.DateInitiated,
 			Presence: message.Required,
 			PIFOTag:  "22.",
 			PDFMap:   message.PDFName("2 Date Initiated"),
+			EditHelp: `This is the date on which the resource request was initiated, in MM/DD/YYYY format.  It is required.`,
 		}),
-		message.NewTimeWithDateField(&message.Field{
+		message.NewTimeField(true, &message.Field{
 			Label:    "Time Initiated",
 			Value:    &f.TimeInitiated,
 			Presence: message.Required,
 			PIFOTag:  "23.",
 			PDFMap:   message.PDFName("3 Time Initiated"),
+			EditHelp: `This is the time at which the resource request was initiated, in HH:MM format (24-hour clock).  It is required.`,
 		}),
 		message.NewDateTimeField(&message.Field{
 			Label:    "Date/Time Initiated",

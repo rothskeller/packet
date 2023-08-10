@@ -346,19 +346,21 @@ func create(version *message.FormVersion) message.Message {
 		)
 	}
 	f.Fields = append(f.Fields,
-		message.NewDateWithTimeField(&message.Field{
+		message.NewDateField(true, &message.Field{
 			Label:    "Approved By Date",
 			Value:    &f.ApprovedByDate,
 			Presence: message.Required,
 			PIFOTag:  "26a.",
 			PDFMap:   message.PDFName("ApprovedDate"),
+			EditHelp: `This is the date when the mutual aid request was approved by the official listed above, in MM/DD/YYYY format.  It is required.`,
 		}),
-		message.NewTimeWithDateField(&message.Field{
+		message.NewTimeField(true, &message.Field{
 			Label:    "Approved By Time",
 			Value:    &f.ApprovedByTime,
 			Presence: message.Required,
 			PIFOTag:  "26b.",
 			PDFMap:   message.PDFName("ApprovedTime"),
+			EditHelp: `This is the time when the mutual aid request was approved by the official listed above, in HH:MM format (24-hour clock).  It is required.`,
 		}),
 		message.NewDateTimeField(&message.Field{
 			Label:    "Approved Date/Time",

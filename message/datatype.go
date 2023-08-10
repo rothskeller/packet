@@ -68,10 +68,13 @@ func ValidCardinalNumber(f *Field) string {
 // returns it for chaining.
 func NewCardinalNumberField(f *Field) *Field {
 	if f.PIFOValid == nil {
+		f.PIFOValid = func(f *Field) string {
 			if p := f.PresenceValid(); p != "" {
 				return p
-	}
+			}
+			return ValidCardinalNumber(f)
 		}
+	}
 	if f.Compare == nil {
 		f.Compare = CompareCardinal
 	}
@@ -107,11 +110,11 @@ func NewDateTimeField(f *Field, date, tval *string) *Field {
 		f.EditApply = func(_ *Field, v string) {
 			words := strings.Fields(v)
 			if len(words) > 0 {
-				var f = NewDateWithoutTimeField(&Field{Value: date})
+				var f = NewDateField(false, &Field{Value: date})
 				f.EditApply(f, words[0])
 			}
 			if len(words) > 1 {
-				var f = NewTimeWithoutDateField(&Field{Value: tval})
+				var f = NewTimeField(false, &Field{Value: tval})
 				f.EditApply(f, strings.Join(words[1:], " "))
 			}
 		}
@@ -134,11 +137,11 @@ func NewDateTimeField(f *Field, date, tval *string) *Field {
 	return AddFieldDefaults(f)
 }
 
-// NewDateWithTimeField adds defaults to a Field that are appropriate for a
-// field that contains an MM/DD/YYYY date, and that is part of a
-// DateWithTime/TimeWithDate/DateTime field triplet.  It modifies its argument
-// and returns it for chaining.
-func NewDateWithTimeField(f *Field) *Field {
+// NewDateField adds defaults to a Field that are appropriate for a field that
+// contains an MM/DD/YYYY date.  If paired is true, it means this field is part
+// of a date/time field pair with a DateTimeField aggregator. It modifies its
+// argument and returns it for chaining.
+func NewDateField(paired bool, f *Field) *Field {
 	if f.PIFOValid == nil {
 		f.PIFOValid = func(f *Field) string {
 			if p := f.PresenceValid(); p != "" {
@@ -153,27 +156,8 @@ func NewDateWithTimeField(f *Field) *Field {
 	if f.Compare == nil {
 		f.Compare = CompareDate
 	}
-	if f.TableValue == nil {
+	if f.TableValue == nil && paired {
 		f.TableValue = TableOmit
-	}
-	return AddFieldDefaults(f)
-}
-
-// NewDateWithoutTimeField adds defaults to a Field that are appropriate for a
-// field that contains an MM/DD/YYYY date, and that is not part of a
-// DateWithTime/TimeWithDate/DateTime field triplet.  It modifies its argument
-// and returns it for chaining.
-func NewDateWithoutTimeField(f *Field) *Field {
-	if f.PIFOValid == nil {
-		f.PIFOValid = func(f *Field) string {
-			if *f.Value != "" && !PIFODateRE.MatchString(*f.Value) {
-				return fmt.Sprintf("The %q field does not contain a valid date (MM/DD/YYYY).", f.Label)
-			}
-			return ""
-		}
-	}
-	if f.Compare == nil {
-		f.Compare = CompareDate
 	}
 	if f.EditWidth == 0 {
 		f.EditWidth = 10
@@ -194,6 +178,9 @@ func NewDateWithoutTimeField(f *Field) *Field {
 			}
 			*f.Value = v
 		}
+	}
+	if f.EditSkip == nil && paired {
+		f.EditSkip = EditSkipAlways
 	}
 	return NewAggregatorField(f)
 }
@@ -456,11 +443,11 @@ func NewTextField(f *Field) *Field {
 	return AddFieldDefaults(f)
 }
 
-// NewTimeWithDateField adds defaults to a Field that are appropriate for a
-// field that contains an HH:MM time, and is part of a
-// DateWithTime/TimeWithDate/DateTime triplet.  It modifies its argument and
+// NewTimeField adds defaults to a Field that are appropriate for a field that
+// contains an HH:MM time.  If paired is true, the field is part of a date/time
+// field pair with a DateTimeField aggregator.  It modifies its argument and
 // returns it for chaining.
-func NewTimeWithDateField(f *Field) *Field {
+func NewTimeField(paired bool, f *Field) *Field {
 	if f.PIFOValid == nil {
 		f.PIFOValid = func(f *Field) string {
 			if p := f.PresenceValid(); p != "" {
@@ -475,27 +462,8 @@ func NewTimeWithDateField(f *Field) *Field {
 	if f.Compare == nil {
 		f.Compare = CompareTime
 	}
-	if f.TableValue == nil {
+	if f.TableValue == nil && paired {
 		f.TableValue = TableOmit
-	}
-	return AddFieldDefaults(f)
-}
-
-// NewTimeWithoutDateField adds defaults to a Field that are appropriate for a
-// field that contains an HH:MM time, and is not part of a
-// DateWithTime/TimeWithDate/DateTime triplet.  It modifies its argument and
-// returns it for chaining.
-func NewTimeWithoutDateField(f *Field) *Field {
-	if f.PIFOValid == nil {
-		f.PIFOValid = func(f *Field) string {
-			if *f.Value != "" && !PIFOTimeRE.MatchString(*f.Value) {
-				return fmt.Sprintf("The %q field does not contain a valid time (HH:MM, 24-hour clock).", f.Label)
-			}
-			return ""
-		}
-	}
-	if f.Compare == nil {
-		f.Compare = CompareTime
 	}
 	if f.EditWidth == 0 {
 		f.EditWidth = 5
@@ -516,6 +484,9 @@ func NewTimeWithoutDateField(f *Field) *Field {
 			}
 			*f.Value = v
 		}
+	}
+	if f.EditSkip == nil && paired {
+		f.EditSkip = EditSkipAlways
 	}
 	return AddFieldDefaults(f)
 }

@@ -146,19 +146,21 @@ func create(version *message.FormVersion) message.Message {
 			PIFOTag: "3.", // may be changed to MsgNo after decode()
 			PDFMap:  message.PDFName("Destination Msg#"),
 		}),
-		message.NewDateWithTimeField(&message.Field{
+		message.NewDateField(true, &message.Field{
 			Label:    "Date",
 			Value:    &f.Date,
 			Presence: message.Required,
 			PIFOTag:  "1a.",
 			PDFMap:   message.PDFName("FormDate"),
+			EditHelp: "This is the date the message was written, in MM/DD/YYYY format.  It is required.",
 		}),
-		message.NewTimeWithDateField(&message.Field{
+		message.NewTimeField(true, &message.Field{
 			Label:    "Time",
 			Value:    &f.Time,
 			Presence: message.Required,
 			PIFOTag:  "1b.",
 			PDFMap:   message.PDFName("FormTime"),
+			EditHelp: "This is the time the message was written, in HH:MM format (24-hour clock).  It is required.",
 		}),
 		message.NewDateTimeField(&message.Field{
 			Label:    "Date/Time",
@@ -416,7 +418,7 @@ func create(version *message.FormVersion) message.Message {
 			PDFMap:     message.PDFName("OtherText"),
 			Compare:    message.CompareNone,
 		}),
-		message.NewDateWithTimeField(&message.Field{
+		message.NewDateField(true, &message.Field{
 			Label:      "Operator: Date",
 			Value:      &f.OpDate,
 			Presence:   message.Required,
@@ -425,7 +427,7 @@ func create(version *message.FormVersion) message.Message {
 			PDFMap:     message.PDFName("OperatorDate"),
 			Compare:    message.CompareNone,
 		}),
-		message.NewTimeWithDateField(&message.Field{
+		message.NewTimeField(true, &message.Field{
 			Label:      "Operator: Time",
 			Value:      &f.OpTime,
 			Presence:   message.Required,

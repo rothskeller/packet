@@ -103,19 +103,21 @@ func (bf *BaseForm) AddHeaderFields(bm *message.BaseMessage, pdf *BaseFormPDFMap
 			PIFOTag: "DestMsgNo",
 			PDFMap:  pdf.DestinationMsgID,
 		}),
-		message.NewDateWithTimeField(&message.Field{
+		message.NewDateField(true, &message.Field{
 			Label:    "Message Date",
 			Value:    &bf.MessageDate,
 			Presence: message.Required,
 			PIFOTag:  "1a.",
 			PDFMap:   pdf.MessageDate,
+			EditHelp: "This is the date the message was written, in MM/DD/YYYY format.  It is required.",
 		}),
-		message.NewTimeWithDateField(&message.Field{
+		message.NewTimeField(true, &message.Field{
 			Label:    "Message Time",
 			Value:    &bf.MessageTime,
 			Presence: message.Required,
 			PIFOTag:  "1b.",
 			PDFMap:   pdf.MessageTime,
+			EditHelp: "This is the time the message was written, in HH:MM format (24-hour clock).  It is required.",
 		}),
 		message.NewDateTimeField(&message.Field{
 			Label:    "Message Date/Time",
@@ -250,7 +252,7 @@ func (bf *BaseForm) AddFooterFields(bm *message.BaseMessage, pdf *BaseFormPDFMap
 				return message.SmartJoin(bf.OpCall, bf.OpName, " ")
 			},
 		}),
-		message.NewDateWithTimeField(&message.Field{
+		message.NewDateField(true, &message.Field{
 			Label:    "Operator: Date",
 			Value:    &bf.OpDate,
 			Presence: message.Required,
@@ -258,7 +260,7 @@ func (bf *BaseForm) AddFooterFields(bm *message.BaseMessage, pdf *BaseFormPDFMap
 			PDFMap:   pdf.OpDate,
 			Compare:  message.CompareNone,
 		}),
-		message.NewTimeWithDateField(&message.Field{
+		message.NewTimeField(true, &message.Field{
 			Label:    "Operator: Time",
 			Value:    &bf.OpTime,
 			Presence: message.Required,

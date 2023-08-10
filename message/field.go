@@ -68,7 +68,8 @@ type Field struct {
 	EditValid func(*Field) string
 	// EditSkip returns whether the field should be skipped while editing
 	// the message (e.g., no entry in this field is valid because of the
-	// value of some earlier field).
+	// value of some earlier field).  This can be set to EditSkipAlways for
+	// a field that should be editable only when addressed by name.
 	EditSkip func(*Field) bool
 }
 
@@ -169,3 +170,8 @@ func AddFieldDefaults(f *Field) *Field {
 	}
 	return f
 }
+
+// EditSkipAlways is a value for Field.EditSkip that causes the field to always
+// be skipped during editing.  It is only accessible for editing when requested
+// specifically by name.
+func EditSkipAlways(*Field) bool { return true }

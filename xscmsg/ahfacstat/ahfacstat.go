@@ -162,19 +162,21 @@ func create(version *message.FormVersion) message.Message {
 			EditWidth: 21,
 			EditHelp:  `This is the type of the facility, such as Skilled Nursing, Home Health, Dialysis, Community Health Center, Surgical Center, or Hospice.  It is required when the "Report Type" is "Complete".`,
 		}),
-		message.NewDateWithTimeField(&message.Field{
+		message.NewDateField(true, &message.Field{
 			Label:    "Date",
 			Value:    &f.Date,
 			Presence: message.Required,
 			PIFOTag:  "22d.",
 			PDFMap:   message.PDFName("date"),
+			EditHelp: `This is the date of the status report, in MM/DD/YYYY format.  It is required.`,
 		}),
-		message.NewTimeWithDateField(&message.Field{
+		message.NewTimeField(true, &message.Field{
 			Label:    "Time",
 			Value:    &f.Time,
 			Presence: message.Required,
 			PIFOTag:  "22t.",
 			PDFMap:   message.PDFName("time"),
+			EditHelp: `This is the time of the status report, in HH:MM format (24-hour clock).  It is required.`,
 		}),
 		message.NewDateTimeField(&message.Field{
 			Label:    "Date/Time",
@@ -229,7 +231,7 @@ func create(version *message.FormVersion) message.Message {
 			EditWidth: 42,
 			EditHelp:  `This is the assigned incident name of the incident for which this report is filed.  It is required when the "Report Type" is "Complete".`,
 		}),
-		message.NewDateWithoutTimeField(&message.Field{
+		message.NewDateField(false, &message.Field{
 			Label:    "Incident Date",
 			Value:    &f.IncidentDate,
 			Presence: f.requiredForComplete,
@@ -468,6 +470,8 @@ func create(version *message.FormVersion) message.Message {
 			PIFOTag:    "40a.",
 			PDFMap:     message.PDFName("Staffed Bed MSKILLED NURSING"),
 			TableValue: message.TableOmit,
+			EditHelp:   `This is the number of staffed male skilled nursing beds at the facility.`,
+			EditSkip:   message.EditSkipAlways,
 		}),
 	)
 	var first = f.Fields[len(f.Fields)-1]
@@ -481,6 +485,8 @@ func create(version *message.FormVersion) message.Message {
 			},
 			PDFMap:     message.PDFName("Staffed BedFSKILLED NURSING"),
 			TableValue: message.TableOmit,
+			EditHelp:   `This is the number of staffed female skilled nursing beds at the facility.`,
+			EditSkip:   message.EditSkipAlways,
 		}),
 		message.NewCardinalNumberField(&message.Field{
 			Label:   "Skilled Nursing Beds: Vacant M",
@@ -491,6 +497,8 @@ func create(version *message.FormVersion) message.Message {
 			},
 			PDFMap:     message.PDFName("Vacant BedsMSKILLED NURSING"),
 			TableValue: message.TableOmit,
+			EditHelp:   `This is the number of vacant male skilled nursing beds at the facility.`,
+			EditSkip:   message.EditSkipAlways,
 		}),
 		message.NewCardinalNumberField(&message.Field{
 			Label:   "Skilled Nursing Beds: Vacant F",
@@ -501,6 +509,8 @@ func create(version *message.FormVersion) message.Message {
 			},
 			PDFMap:     message.PDFName("Vacant BedFSKILLED NURSING"),
 			TableValue: message.TableOmit,
+			EditHelp:   `This is the number of vacant female skilled nursing beds at the facility.`,
+			EditSkip:   message.EditSkipAlways,
 		}),
 		message.NewCardinalNumberField(&message.Field{
 			Label:   "Skilled Nursing Beds: Surge",
@@ -511,6 +521,8 @@ func create(version *message.FormVersion) message.Message {
 			},
 			PDFMap:     message.PDFName("Surge SKILLED NURSING"),
 			TableValue: message.TableOmit,
+			EditHelp:   `This is the number of surge capacity skilled nursing beds at the facility (over and above the vacant ones).`,
+			EditSkip:   message.EditSkipAlways,
 		}),
 		message.NewAggregatorField(&message.Field{
 			Label: "Skilled Nursing Beds",
@@ -536,6 +548,8 @@ func create(version *message.FormVersion) message.Message {
 			PIFOTag:    "41a.",
 			PDFMap:     message.PDFName("Staffed Bed MASSISTED LIVING"),
 			TableValue: message.TableOmit,
+			EditHelp:   `This is the number of staffed male assisted living beds at the facility.  Enter fi`,
+			EditSkip:   message.EditSkipAlways,
 		}),
 	)
 	first = f.Fields[len(f.Fields)-1]
@@ -549,6 +563,8 @@ func create(version *message.FormVersion) message.Message {
 			},
 			PDFMap:     message.PDFName("Staffed BedFASSISTED LIVING"),
 			TableValue: message.TableOmit,
+			EditHelp:   `This is the number of staffed female assisted living beds at the facility.`,
+			EditSkip:   message.EditSkipAlways,
 		}),
 		message.NewCardinalNumberField(&message.Field{
 			Label:   "Assisted Living Beds: Vacant M",
@@ -559,6 +575,8 @@ func create(version *message.FormVersion) message.Message {
 			},
 			PDFMap:     message.PDFName("Vacant BedsMASSISTED LIVING"),
 			TableValue: message.TableOmit,
+			EditHelp:   `This is the number of vacant male assisted living beds at the facility.`,
+			EditSkip:   message.EditSkipAlways,
 		}),
 		message.NewCardinalNumberField(&message.Field{
 			Label:   "Assisted Living Beds: Vacant F",
@@ -569,6 +587,8 @@ func create(version *message.FormVersion) message.Message {
 			},
 			PDFMap:     message.PDFName("Vacant BedFASSISTED LIVING"),
 			TableValue: message.TableOmit,
+			EditHelp:   `This is the number of vacant female assisted living beds at the facility.`,
+			EditSkip:   message.EditSkipAlways,
 		}),
 		message.NewCardinalNumberField(&message.Field{
 			Label:   "Assisted Living Beds: Surge",
@@ -579,6 +599,8 @@ func create(version *message.FormVersion) message.Message {
 			},
 			PDFMap:     message.PDFName("Surge ASSISTED LIVING"),
 			TableValue: message.TableOmit,
+			EditHelp:   `This is the number of surge capacity assisted living beds at the facility (over and above the vacant ones).`,
+			EditSkip:   message.EditSkipAlways,
 		}),
 		message.NewAggregatorField(&message.Field{
 			Label: "Assisted Living Beds",
@@ -604,6 +626,8 @@ func create(version *message.FormVersion) message.Message {
 			PIFOTag:    "42a.",
 			PDFMap:     message.PDFName("Staffed Bed MSURGICAL BEDS"), // name is wrong in PDF
 			TableValue: message.TableOmit,
+			EditHelp:   `This is the number of staffed male sub-acute beds at the facility.  Enter fi`,
+			EditSkip:   message.EditSkipAlways,
 		}),
 	)
 	first = f.Fields[len(f.Fields)-1]
@@ -617,6 +641,8 @@ func create(version *message.FormVersion) message.Message {
 			},
 			PDFMap:     message.PDFName("Staffed BedFSURGICAL BEDS"), // name is wrong in PDF
 			TableValue: message.TableOmit,
+			EditHelp:   `This is the number of staffed female sub-acute beds at the facility.`,
+			EditSkip:   message.EditSkipAlways,
 		}),
 		message.NewCardinalNumberField(&message.Field{
 			Label:   "Sub-Acute Beds: Vacant M",
@@ -627,6 +653,8 @@ func create(version *message.FormVersion) message.Message {
 			},
 			PDFMap:     message.PDFName("Vacant BedsMSURGICAL BEDS"), // name is wrong in PDF
 			TableValue: message.TableOmit,
+			EditHelp:   `This is the number of vacant male sub-acute beds at the facility.`,
+			EditSkip:   message.EditSkipAlways,
 		}),
 		message.NewCardinalNumberField(&message.Field{
 			Label:   "Sub-Acute Beds: Vacant F",
@@ -637,6 +665,8 @@ func create(version *message.FormVersion) message.Message {
 			},
 			PDFMap:     message.PDFName("Vacant BedFSURGICAL BEDS"), // name is wrong in PDF
 			TableValue: message.TableOmit,
+			EditHelp:   `This is the number of vacant female sub-acute beds at the facility.`,
+			EditSkip:   message.EditSkipAlways,
 		}),
 		message.NewCardinalNumberField(&message.Field{
 			Label:   "Sub-Acute Beds: Surge",
@@ -647,6 +677,8 @@ func create(version *message.FormVersion) message.Message {
 			},
 			PDFMap:     message.PDFName("Surge SURGICAL BEDS"), // name is wrong in PDF
 			TableValue: message.TableOmit,
+			EditHelp:   `This is the number of surge capacity sub-acute beds at the facility (over and above the vacant ones).`,
+			EditSkip:   message.EditSkipAlways,
 		}),
 		message.NewAggregatorField(&message.Field{
 			Label: "Sub-Acute Beds",
@@ -672,6 +704,8 @@ func create(version *message.FormVersion) message.Message {
 			PIFOTag:    "43a.",
 			PDFMap:     message.PDFName("Staffed Bed MSUBACUTE"), // name is wrong in PDF
 			TableValue: message.TableOmit,
+			EditHelp:   `This is the number of staffed male Alzheimers/dementia beds at the facility.  Enter fi`,
+			EditSkip:   message.EditSkipAlways,
 		}),
 	)
 	first = f.Fields[len(f.Fields)-1]
@@ -685,6 +719,8 @@ func create(version *message.FormVersion) message.Message {
 			},
 			PDFMap:     message.PDFName("Staffed BedFSUBACUTE"), // name is wrong in PDF
 			TableValue: message.TableOmit,
+			EditHelp:   `This is the number of staffed female Alzheimers/dementia beds at the facility.`,
+			EditSkip:   message.EditSkipAlways,
 		}),
 		message.NewCardinalNumberField(&message.Field{
 			Label:   "Alzheimers Beds: Vacant M",
@@ -695,6 +731,8 @@ func create(version *message.FormVersion) message.Message {
 			},
 			PDFMap:     message.PDFName("Vacant BedsMSUBACUTE"), // name is wrong in PDF
 			TableValue: message.TableOmit,
+			EditHelp:   `This is the number of vacant male Alzheimers/dementia beds at the facility.`,
+			EditSkip:   message.EditSkipAlways,
 		}),
 		message.NewCardinalNumberField(&message.Field{
 			Label:   "Alzheimers Beds: Vacant F",
@@ -705,6 +743,8 @@ func create(version *message.FormVersion) message.Message {
 			},
 			PDFMap:     message.PDFName("Vacant BedFSUBACUTE"), // name is wrong in PDF
 			TableValue: message.TableOmit,
+			EditHelp:   `This is the number of vacant female Alzheimers/dementia beds at the facility.`,
+			EditSkip:   message.EditSkipAlways,
 		}),
 		message.NewCardinalNumberField(&message.Field{
 			Label:   "Alzheimers Beds: Surge",
@@ -715,6 +755,8 @@ func create(version *message.FormVersion) message.Message {
 			},
 			PDFMap:     message.PDFName("Surge SUBACUTE"), // name is wrong in PDF
 			TableValue: message.TableOmit,
+			EditHelp:   `This is the number of surge capacity Alzheimers/dementia beds at the facility (over and above the vacant ones).`,
+			EditSkip:   message.EditSkipAlways,
 		}),
 		message.NewAggregatorField(&message.Field{
 			Label: "Alzheimers/Dementia Beds",
@@ -740,6 +782,8 @@ func create(version *message.FormVersion) message.Message {
 			PIFOTag:    "44a.",
 			PDFMap:     message.PDFName("Staffed Bed MALZEIMERSDIMENTIA"), // name is wrong in PDF
 			TableValue: message.TableOmit,
+			EditHelp:   `This is the number of staffed male pediatric sub-acute beds at the facility.  Enter fi`,
+			EditSkip:   message.EditSkipAlways,
 		}),
 	)
 	first = f.Fields[len(f.Fields)-1]
@@ -753,6 +797,8 @@ func create(version *message.FormVersion) message.Message {
 			},
 			PDFMap:     message.PDFName("Staffed BedFALZEIMERSDIMENTIA"), // name is wrong in PDF
 			TableValue: message.TableOmit,
+			EditHelp:   `This is the number of staffed female pediatric sub-acute beds at the facility.`,
+			EditSkip:   message.EditSkipAlways,
 		}),
 		message.NewCardinalNumberField(&message.Field{
 			Label:   "Ped Sub-Acute Beds: Vacant M",
@@ -763,6 +809,8 @@ func create(version *message.FormVersion) message.Message {
 			},
 			PDFMap:     message.PDFName("Vacant BedsMALZEIMERSDIMENTIA"), // name is wrong in PDF
 			TableValue: message.TableOmit,
+			EditHelp:   `This is the number of vacant male pediatric sub-acute beds at the facility.`,
+			EditSkip:   message.EditSkipAlways,
 		}),
 		message.NewCardinalNumberField(&message.Field{
 			Label:   "Ped Sub-Acute Beds: Vacant F",
@@ -773,6 +821,8 @@ func create(version *message.FormVersion) message.Message {
 			},
 			PDFMap:     message.PDFName("Vacant BedFALZEIMERSDIMENTIA"), // name is wrong in PDF
 			TableValue: message.TableOmit,
+			EditHelp:   `This is the number of vacant female pediatric sub-acute beds at the facility.`,
+			EditSkip:   message.EditSkipAlways,
 		}),
 		message.NewCardinalNumberField(&message.Field{
 			Label:   "Ped Sub-Acute Beds: Surge",
@@ -783,6 +833,8 @@ func create(version *message.FormVersion) message.Message {
 			},
 			PDFMap:     message.PDFName("Surge ALZEIMERSDIMENTIA"), // name is wrong in PDF
 			TableValue: message.TableOmit,
+			EditHelp:   `This is the number of surge capacity pediatric sub-acute beds at the facility (over and above the vacant ones).`,
+			EditSkip:   message.EditSkipAlways,
 		}),
 		message.NewAggregatorField(&message.Field{
 			Label: "Pediatric Sub-Acute Beds",
@@ -808,6 +860,8 @@ func create(version *message.FormVersion) message.Message {
 			PIFOTag:    "45a.",
 			PDFMap:     message.PDFName("Staffed Bed MPEDIATRICSUB ACUTE"), // name is wrong in PDF
 			TableValue: message.TableOmit,
+			EditHelp:   `This is the number of staffed male psychiatric beds at the facility.  Enter fi`,
+			EditSkip:   message.EditSkipAlways,
 		}),
 	)
 	first = f.Fields[len(f.Fields)-1]
@@ -821,6 +875,8 @@ func create(version *message.FormVersion) message.Message {
 			},
 			PDFMap:     message.PDFName("Staffed BedFPEDIATRICSUB ACUTE"), // name is wrong in PDF
 			TableValue: message.TableOmit,
+			EditHelp:   `This is the number of staffed female psychiatric beds at the facility.`,
+			EditSkip:   message.EditSkipAlways,
 		}),
 		message.NewCardinalNumberField(&message.Field{
 			Label:   "Psychiatric Beds: Vacant M",
@@ -831,6 +887,8 @@ func create(version *message.FormVersion) message.Message {
 			},
 			PDFMap:     message.PDFName("Vacant BedsMPEDIATRICSUB ACUTE"), // name is wrong in PDF
 			TableValue: message.TableOmit,
+			EditHelp:   `This is the number of vacant male psychiatric beds at the facility.`,
+			EditSkip:   message.EditSkipAlways,
 		}),
 		message.NewCardinalNumberField(&message.Field{
 			Label:   "Psychiatric Beds: Vacant F",
@@ -841,6 +899,8 @@ func create(version *message.FormVersion) message.Message {
 			},
 			PDFMap:     message.PDFName("Vacant BedFPEDIATRICSUB ACUTE"), // name is wrong in PDF
 			TableValue: message.TableOmit,
+			EditHelp:   `This is the number of vacant female psychiatric beds at the facility.`,
+			EditSkip:   message.EditSkipAlways,
 		}),
 		message.NewCardinalNumberField(&message.Field{
 			Label:   "Psychiatric Beds: Surge",
@@ -851,6 +911,8 @@ func create(version *message.FormVersion) message.Message {
 			},
 			PDFMap:     message.PDFName("Surge PEDIATRICSUB ACUTE"), // name is wrong in PDF
 			TableValue: message.TableOmit,
+			EditHelp:   `This is the number of surge capacity psychiatric beds at the facility (over and above the vacant ones).`,
+			EditSkip:   message.EditSkipAlways,
 		}),
 		message.NewAggregatorField(&message.Field{
 			Label: "Psychiatric Beds",
@@ -887,6 +949,8 @@ func create(version *message.FormVersion) message.Message {
 			PIFOTag:    "46a.",
 			PDFMap:     message.PDFName("Staffed Bed MPSYCHIATRIC"), // name is wrong in PDF
 			TableValue: message.TableOmit,
+			EditHelp:   `This is the number of staffed male beds at the facility of the named other type.  Enter fi`,
+			EditSkip:   message.EditSkipAlways,
 		}),
 	)
 	first = f.Fields[len(f.Fields)-1]
@@ -900,6 +964,8 @@ func create(version *message.FormVersion) message.Message {
 			},
 			PDFMap:     message.PDFName("Staffed BedFPSYCHIATRIC"), // name is wrong in PDF
 			TableValue: message.TableOmit,
+			EditHelp:   `This is the number of staffed female beds at the facility of the named other type.`,
+			EditSkip:   message.EditSkipAlways,
 		}),
 		message.NewCardinalNumberField(&message.Field{
 			Label:   "Other Care Beds: Vacant M",
@@ -910,6 +976,8 @@ func create(version *message.FormVersion) message.Message {
 			},
 			PDFMap:     message.PDFName("Vacant BedsMPSYCHIATRIC"), // name is wrong in PDF
 			TableValue: message.TableOmit,
+			EditHelp:   `This is the number of vacant male beds at the facility of the named other type.`,
+			EditSkip:   message.EditSkipAlways,
 		}),
 		message.NewCardinalNumberField(&message.Field{
 			Label:   "Other Care Beds: Vacant F",
@@ -920,6 +988,8 @@ func create(version *message.FormVersion) message.Message {
 			},
 			PDFMap:     message.PDFName("Vacant BedFPSYCHIATRIC"), // name is wrong in PDF
 			TableValue: message.TableOmit,
+			EditHelp:   `This is the number of vacant female beds at the facility of the named other type.`,
+			EditSkip:   message.EditSkipAlways,
 		}),
 		message.NewCardinalNumberField(&message.Field{
 			Label:   "Other Care Beds: Surge",
@@ -930,6 +1000,8 @@ func create(version *message.FormVersion) message.Message {
 			},
 			PDFMap:     message.PDFName("Surge PSYCHIATRIC"), // name is wrong in PDF
 			TableValue: message.TableOmit,
+			EditHelp:   `This is the number of surge capacity beds at the facility of the named other type (over and above the vacant ones).`,
+			EditSkip:   message.EditSkipAlways,
 		}),
 		message.NewAggregatorField(&message.Field{
 			Label: "Other Care Beds",
@@ -958,6 +1030,8 @@ func create(version *message.FormVersion) message.Message {
 			PIFOTag:    "50a.",
 			PDFMap:     message.PDFName("CHAIRS ROOMSDIALYSIS"),
 			TableValue: message.TableOmit,
+			EditHelp:   `This is the number of dialysis chairs at the facility.`,
+			EditSkip:   message.EditSkipAlways,
 		}),
 	)
 	first = f.Fields[len(f.Fields)-1]
@@ -971,6 +1045,8 @@ func create(version *message.FormVersion) message.Message {
 			},
 			PDFMap:     message.PDFName("VANCANT CHAIRS ROOMDIALYSIS"),
 			TableValue: message.TableOmit,
+			EditHelp:   `This is the number of vacant dialysis chairs at the facility.`,
+			EditSkip:   message.EditSkipAlways,
 		}),
 		message.NewCardinalNumberField(&message.Field{
 			Label:   "Dialysis: Front Staff",
@@ -981,6 +1057,8 @@ func create(version *message.FormVersion) message.Message {
 			},
 			PDFMap:     message.PDFName("FRONT DESK STAFFDIALYSIS"),
 			TableValue: message.TableOmit,
+			EditHelp:   `This is the number of dialysis front desk staff at the facility.`,
+			EditSkip:   message.EditSkipAlways,
 		}),
 		message.NewCardinalNumberField(&message.Field{
 			Label:   "Dialysis: Support Staff",
@@ -991,6 +1069,8 @@ func create(version *message.FormVersion) message.Message {
 			},
 			PDFMap:     message.PDFName("MEDICAL SUPPORT STAFFDIALYSIS"),
 			TableValue: message.TableOmit,
+			EditHelp:   `This is the number of dialysis support staff at the facility.`,
+			EditSkip:   message.EditSkipAlways,
 		}),
 		message.NewCardinalNumberField(&message.Field{
 			Label:   "Dialysis: Providers",
@@ -1001,6 +1081,8 @@ func create(version *message.FormVersion) message.Message {
 			},
 			PDFMap:     message.PDFName("PROVIDER STAFFDIALYSIS"),
 			TableValue: message.TableOmit,
+			EditHelp:   `This is the number of dialysis provider staff at the facility.`,
+			EditSkip:   message.EditSkipAlways,
 		}),
 		message.NewAggregatorField(&message.Field{
 			Label: "Dialysis Resources",
@@ -1026,6 +1108,8 @@ func create(version *message.FormVersion) message.Message {
 			PIFOTag:    "51a.",
 			PDFMap:     message.PDFName("CHAIRS ROOMSSURGICAL"),
 			TableValue: message.TableOmit,
+			EditHelp:   `This is the number of surgical rooms at the facility.`,
+			EditSkip:   message.EditSkipAlways,
 		}),
 	)
 	first = f.Fields[len(f.Fields)-1]
@@ -1039,6 +1123,8 @@ func create(version *message.FormVersion) message.Message {
 			},
 			PDFMap:     message.PDFName("VANCANT CHAIRS ROOMSURGICAL"),
 			TableValue: message.TableOmit,
+			EditHelp:   `This is the number of vacant surgical rooms at the facility.`,
+			EditSkip:   message.EditSkipAlways,
 		}),
 		message.NewCardinalNumberField(&message.Field{
 			Label:   "Surgical: Front Staff",
@@ -1049,6 +1135,8 @@ func create(version *message.FormVersion) message.Message {
 			},
 			PDFMap:     message.PDFName("FRONT DESK STAFFSURGICAL"),
 			TableValue: message.TableOmit,
+			EditHelp:   `This is the number of surgical front desk staff at the facility.`,
+			EditSkip:   message.EditSkipAlways,
 		}),
 		message.NewCardinalNumberField(&message.Field{
 			Label:   "Surgical: Support Staff",
@@ -1059,6 +1147,8 @@ func create(version *message.FormVersion) message.Message {
 			},
 			PDFMap:     message.PDFName("MEDICAL SUPPORT STAFFSURGICAL"),
 			TableValue: message.TableOmit,
+			EditHelp:   `This is the number of surgical support staff at the facility.`,
+			EditSkip:   message.EditSkipAlways,
 		}),
 		message.NewCardinalNumberField(&message.Field{
 			Label:   "Surgical: Providers",
@@ -1069,6 +1159,8 @@ func create(version *message.FormVersion) message.Message {
 			},
 			PDFMap:     message.PDFName("PROVIDER STAFFSURGICAL"),
 			TableValue: message.TableOmit,
+			EditHelp:   `This is the number of surgical provider staff at the facility.`,
+			EditSkip:   message.EditSkipAlways,
 		}),
 		message.NewAggregatorField(&message.Field{
 			Label: "Surgical Resources",
@@ -1094,6 +1186,8 @@ func create(version *message.FormVersion) message.Message {
 			PIFOTag:    "52a.",
 			PDFMap:     message.PDFName("CHAIRS ROOMSCLINIC"),
 			TableValue: message.TableOmit,
+			EditHelp:   `This is the number of clinic rooms at the facility.`,
+			EditSkip:   message.EditSkipAlways,
 		}),
 	)
 	first = f.Fields[len(f.Fields)-1]
@@ -1107,6 +1201,8 @@ func create(version *message.FormVersion) message.Message {
 			},
 			PDFMap:     message.PDFName("VANCANT CHAIRS ROOMCLINIC"),
 			TableValue: message.TableOmit,
+			EditHelp:   `This is the number of vacant clinic rooms at the facility.`,
+			EditSkip:   message.EditSkipAlways,
 		}),
 		message.NewCardinalNumberField(&message.Field{
 			Label:   "Clinic: Front Staff",
@@ -1117,6 +1213,8 @@ func create(version *message.FormVersion) message.Message {
 			},
 			PDFMap:     message.PDFName("FRONT DESK STAFFCLINIC"),
 			TableValue: message.TableOmit,
+			EditHelp:   `This is the number of clinic front desk staff at the facility.`,
+			EditSkip:   message.EditSkipAlways,
 		}),
 		message.NewCardinalNumberField(&message.Field{
 			Label:   "Clinic: Support Staff",
@@ -1127,6 +1225,8 @@ func create(version *message.FormVersion) message.Message {
 			},
 			PDFMap:     message.PDFName("MEDICAL SUPPORT STAFFCLINIC"),
 			TableValue: message.TableOmit,
+			EditHelp:   `This is the number of clinic support staff at the facility.`,
+			EditSkip:   message.EditSkipAlways,
 		}),
 		message.NewCardinalNumberField(&message.Field{
 			Label:   "Clinic: Providers",
@@ -1137,6 +1237,8 @@ func create(version *message.FormVersion) message.Message {
 			},
 			PDFMap:     message.PDFName("PROVIDER STAFFCLINIC"),
 			TableValue: message.TableOmit,
+			EditHelp:   `This is the number of clinic provider staff at the facility.`,
+			EditSkip:   message.EditSkipAlways,
 		}),
 		message.NewAggregatorField(&message.Field{
 			Label: "Clinic Resources",
@@ -1162,6 +1264,8 @@ func create(version *message.FormVersion) message.Message {
 			PIFOTag:    "53a.",
 			PDFMap:     message.PDFName("CHAIRS ROOMSHOMEHEALTH"),
 			TableValue: message.TableOmit,
+			EditHelp:   `This is the number of home health rooms at the facility.`,
+			EditSkip:   message.EditSkipAlways,
 		}),
 	)
 	first = f.Fields[len(f.Fields)-1]
@@ -1175,6 +1279,8 @@ func create(version *message.FormVersion) message.Message {
 			},
 			PDFMap:     message.PDFName("VANCANT CHAIRS ROOMHOMEHEALTH"),
 			TableValue: message.TableOmit,
+			EditHelp:   `This is the number of vacant home health rooms at the facility.`,
+			EditSkip:   message.EditSkipAlways,
 		}),
 		message.NewCardinalNumberField(&message.Field{
 			Label:   "Home Health: Front Staff",
@@ -1185,6 +1291,8 @@ func create(version *message.FormVersion) message.Message {
 			},
 			PDFMap:     message.PDFName("FRONT DESK STAFFHOMEHEALTH"),
 			TableValue: message.TableOmit,
+			EditHelp:   `This is the number of home health front desk staff at the facility.`,
+			EditSkip:   message.EditSkipAlways,
 		}),
 		message.NewCardinalNumberField(&message.Field{
 			Label:   "Home Health: Support Staff",
@@ -1195,6 +1303,8 @@ func create(version *message.FormVersion) message.Message {
 			},
 			PDFMap:     message.PDFName("MEDICAL SUPPORT STAFFHOMEHEALTH"),
 			TableValue: message.TableOmit,
+			EditHelp:   `This is the number of home health support staff at the facility.`,
+			EditSkip:   message.EditSkipAlways,
 		}),
 		message.NewCardinalNumberField(&message.Field{
 			Label:   "Home Health: Providers",
@@ -1205,6 +1315,8 @@ func create(version *message.FormVersion) message.Message {
 			},
 			PDFMap:     message.PDFName("PROVIDER STAFFHOMEHEALTH"),
 			TableValue: message.TableOmit,
+			EditHelp:   `This is the number of home health provider staff at the facility.`,
+			EditSkip:   message.EditSkipAlways,
 		}),
 		message.NewAggregatorField(&message.Field{
 			Label: "Home Health Resources",
@@ -1230,6 +1342,8 @@ func create(version *message.FormVersion) message.Message {
 			PIFOTag:    "54a.",
 			PDFMap:     message.PDFName("CHAIRS ROOMSADULT DAY CENTER"),
 			TableValue: message.TableOmit,
+			EditHelp:   `This is the number of adult day center chairs at the facility.`,
+			EditSkip:   message.EditSkipAlways,
 		}),
 	)
 	first = f.Fields[len(f.Fields)-1]
@@ -1243,6 +1357,8 @@ func create(version *message.FormVersion) message.Message {
 			},
 			PDFMap:     message.PDFName("VANCANT CHAIRS ROOMADULT DAY CENTER"),
 			TableValue: message.TableOmit,
+			EditHelp:   `This is the number of vacant adult day center chairs at the facility.`,
+			EditSkip:   message.EditSkipAlways,
 		}),
 		message.NewCardinalNumberField(&message.Field{
 			Label:   "Adult Day Ctr: Front Staff",
@@ -1253,6 +1369,8 @@ func create(version *message.FormVersion) message.Message {
 			},
 			PDFMap:     message.PDFName("FRONT DESK STAFFADULT DAY CENTER"),
 			TableValue: message.TableOmit,
+			EditHelp:   `This is the number of adult day center front desk staff at the facility.`,
+			EditSkip:   message.EditSkipAlways,
 		}),
 		message.NewCardinalNumberField(&message.Field{
 			Label:   "Adult Day Ctr: Support Staff",
@@ -1263,6 +1381,8 @@ func create(version *message.FormVersion) message.Message {
 			},
 			PDFMap:     message.PDFName("MEDICAL SUPPORT STAFFADULT DAY CENTER"),
 			TableValue: message.TableOmit,
+			EditHelp:   `This is the number of adult day center support staff at the facility.`,
+			EditSkip:   message.EditSkipAlways,
 		}),
 		message.NewCardinalNumberField(&message.Field{
 			Label:   "Adult Day Ctr: Providers",
@@ -1273,6 +1393,8 @@ func create(version *message.FormVersion) message.Message {
 			},
 			PDFMap:     message.PDFName("PROVIDER STAFFADULT DAY CENTER"),
 			TableValue: message.TableOmit,
+			EditHelp:   `This is the number of adult day center provider staff at the facility.`,
+			EditSkip:   message.EditSkipAlways,
 		}),
 		message.NewAggregatorField(&message.Field{
 			Label: "Adult Day Center Resources",
