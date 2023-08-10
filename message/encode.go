@@ -5,7 +5,7 @@ import (
 	"io"
 	"strings"
 
-	"golang.org/x/exp/slices"
+	"slices"
 )
 
 // EncodeSubject encodes the message subject line.

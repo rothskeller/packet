@@ -5,7 +5,7 @@ import (
 	"strings"
 	"unicode/utf8"
 
-	"golang.org/x/exp/slices"
+	"slices"
 )
 
 var (

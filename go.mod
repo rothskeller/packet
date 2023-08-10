@@ -1,6 +1,6 @@
 module github.com/rothskeller/packet
 
-go 1.18
+go 1.21
 
 require (
 	github.com/davecgh/go-spew v1.1.1
@@ -9,7 +9,4 @@ require (
 	golang.org/x/net v0.12.0
 )
 
-require (
-	golang.org/x/exp v0.0.0-20230725093048-515e97ebf090
-	golang.org/x/sys v0.10.0 // indirect
-)
+require golang.org/x/sys v0.10.0 // indirect

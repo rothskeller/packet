@@ -3,7 +3,7 @@ package message
 import (
 	"strings"
 
-	"golang.org/x/exp/slices"
+	"slices"
 )
 
 // A ChoiceMapper provides a set of choices for a Field and maps between
