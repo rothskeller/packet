@@ -409,6 +409,9 @@ func create(version *message.FormVersion) message.Message {
 					}
 				},
 				EditValid: func(f *message.Field) string {
+					if p := f.PresenceValid(); p != "" {
+						return p
+					}
 					if *f.Value != "" && !f.Choices.IsPIFO(*f.Value) {
 						return `The "Managed By" field should contain one of the recommended values ("American Red Cross", "Private", "Community", "Government", or "Other").  Other values can be successfully sent in a PackItForms message, but they cannot be rendered in the generated PDF.`
 					}

@@ -6,9 +6,7 @@ package message
 // those programs would flag or block.
 func (bm *BaseMessage) PIFOValid() (problems []string) {
 	for _, f := range bm.Fields {
-		if p := f.PresenceValid(); p != "" {
-			problems = append(problems, p)
-		} else if p = f.PIFOValid(f); p != "" {
+		if p := f.PIFOValid(f); p != "" {
 			problems = append(problems, p)
 		}
 	}

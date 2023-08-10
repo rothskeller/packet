@@ -125,7 +125,7 @@ func AddFieldDefaults(f *Field) *Field {
 		f.Presence = func() (Presence, string) { return PresenceOptional, "" }
 	}
 	if f.PIFOValid == nil {
-		f.PIFOValid = func(f *Field) string { return "" }
+		f.PIFOValid = func(f *Field) string { return f.PresenceValid() }
 	}
 	if f.Compare == nil {
 		f.Compare = func(label, exp, act string) *CompareField { return nil }

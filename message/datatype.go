@@ -68,8 +68,10 @@ func ValidCardinalNumber(f *Field) string {
 // returns it for chaining.
 func NewCardinalNumberField(f *Field) *Field {
 	if f.PIFOValid == nil {
-		f.PIFOValid = ValidCardinalNumber
+			if p := f.PresenceValid(); p != "" {
+				return p
 	}
+		}
 	if f.Compare == nil {
 		f.Compare = CompareCardinal
 	}
@@ -116,7 +118,13 @@ func NewDateTimeField(f *Field, date, tval *string) *Field {
 	}
 	if f.EditValid == nil {
 		f.EditValid = func(f *Field) string {
-			var dtval = *date + " " + *tval
+			if p := f.PresenceValid(); p != "" {
+				return p
+			}
+			var dtval = SmartJoin(*date, *tval, " ")
+			if dtval == "" {
+				return ""
+			}
 			if t, err := time.ParseInLocation("01/02/2006 15:04", dtval, time.Local); err != nil || dtval != t.Format("01/02/2006 15:04") {
 				return fmt.Sprintf("The %q field does not contain a valid date and time in MM/DD/YYYY HH:MM format.", f.Label)
 			}
@@ -133,6 +141,9 @@ func NewDateTimeField(f *Field, date, tval *string) *Field {
 func NewDateWithTimeField(f *Field) *Field {
 	if f.PIFOValid == nil {
 		f.PIFOValid = func(f *Field) string {
+			if p := f.PresenceValid(); p != "" {
+				return p
+			}
 			if *f.Value != "" && !PIFODateRE.MatchString(*f.Value) {
 				return fmt.Sprintf("The %q field does not contain a valid date (MM/DD/YYYY).", f.Label)
 			}
@@ -204,6 +215,9 @@ func NewFCCCallSignField(f *Field) *Field {
 	}
 	if f.EditValid == nil {
 		f.EditValid = func(f *Field) string {
+			if p := f.PresenceValid(); p != "" {
+				return p
+			}
 			if *f.Value != "" && !fccCallSignRE.MatchString(*f.Value) {
 				return fmt.Sprintf("The %q field does not contain a valid FCC call sign.", f.Label)
 			}
@@ -219,6 +233,9 @@ func NewFCCCallSignField(f *Field) *Field {
 func NewFrequencyField(f *Field) *Field {
 	if f.PIFOValid == nil {
 		f.PIFOValid = func(f *Field) string {
+			if p := f.PresenceValid(); p != "" {
+				return p
+			}
 			if *f.Value != "" && !PIFOFrequencyRE.MatchString(*f.Value) {
 				return fmt.Sprintf("The %q field does not contain a valid frequency.", f.Label)
 			}
@@ -249,6 +266,9 @@ func NewFrequencyField(f *Field) *Field {
 func NewFrequencyOffsetField(f *Field) *Field {
 	if f.PIFOValid == nil {
 		f.PIFOValid = func(f *Field) string {
+			if p := f.PresenceValid(); p != "" {
+				return p
+			}
 			if *f.Value != "" && !PIFOFrequencyOffsetRE.MatchString(*f.Value) {
 				return fmt.Sprintf(`The %q field does not contain a valid frequency offset (a real number, a "+", or a "-").`, f.Label)
 			}
@@ -298,6 +318,9 @@ func NewMessageNumberField(f *Field) *Field {
 	}
 	if f.EditValid == nil {
 		f.EditValid = func(f *Field) string {
+			if p := f.PresenceValid(); p != "" {
+				return p
+			}
 			if *f.Value != "" && !messageNumberRE.MatchString(*f.Value) {
 				return fmt.Sprintf("The %q field does not contain a valid message number.", f.Label)
 			}
@@ -321,6 +344,9 @@ func NewMultilineField(f *Field) *Field {
 func NewPhoneNumberField(f *Field) *Field {
 	if f.PIFOValid == nil {
 		f.PIFOValid = func(f *Field) string {
+			if p := f.PresenceValid(); p != "" {
+				return p
+			}
 			if *f.Value != "" && !PIFOPhoneNumberRE.MatchString(*f.Value) {
 				return fmt.Sprintf("The %q field does not contain a valid phone number.", f.Label)
 			}
@@ -339,6 +365,9 @@ func NewPhoneNumberField(f *Field) *Field {
 func NewRealNumberField(f *Field) *Field {
 	if f.PIFOValid == nil {
 		f.PIFOValid = func(f *Field) string {
+			if p := f.PresenceValid(); p != "" {
+				return p
+			}
 			if *f.Value != "" && !PIFORealNumberRE.MatchString(*f.Value) {
 				return fmt.Sprintf("The %q field does not contain a valid number.", f.Label)
 			}
@@ -366,6 +395,9 @@ func NewRealNumberField(f *Field) *Field {
 func NewRestrictedField(f *Field) *Field {
 	if f.PIFOValid == nil {
 		f.PIFOValid = func(f *Field) string {
+			if p := f.PresenceValid(); p != "" {
+				return p
+			}
 			if *f.Value != "" && !f.Choices.IsPIFO(*f.Value) {
 				return fmt.Sprintf("The %q field does not contain one of its allowed values.", f.Label)
 			}
@@ -402,6 +434,9 @@ func NewTacticalCallSignField(f *Field) *Field {
 	}
 	if f.EditValid == nil {
 		f.EditValid = func(f *Field) string {
+			if p := f.PresenceValid(); p != "" {
+				return p
+			}
 			if *f.Value != "" && !tacticalCallSignRE.MatchString(*f.Value) {
 				return fmt.Sprintf("The %q field does not contain a valid tactical call sign.", f.Label)
 			}
@@ -428,6 +463,9 @@ func NewTextField(f *Field) *Field {
 func NewTimeWithDateField(f *Field) *Field {
 	if f.PIFOValid == nil {
 		f.PIFOValid = func(f *Field) string {
+			if p := f.PresenceValid(); p != "" {
+				return p
+			}
 			if *f.Value != "" && !PIFOTimeRE.MatchString(*f.Value) {
 				return fmt.Sprintf("The %q field does not contain a valid time (HH:MM, 24-hour clock).", f.Label)
 			}
