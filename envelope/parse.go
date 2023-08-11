@@ -224,7 +224,7 @@ func (env *Envelope) parseHeadersRetrieved(h mail.Header, efrom string) {
 		// Most of those sources can have a name comment in the address,
 		// which we don't want.  Also, From can have more than one
 		// address in it, and we only want the first.
-		if addrs, err := mail.ParseAddressList(line); err == nil && len(addrs) > 0 {
+		if addrs, err := ParseAddressList(line); err == nil && len(addrs) > 0 {
 			env.ReturnAddr = addrs[0].Address
 		}
 	}
@@ -242,12 +242,30 @@ func (env *Envelope) parseHeadersRetrieved(h mail.Header, efrom string) {
 // parseHeadersRetrieved.
 func (env *Envelope) parseHeadersCommon(h mail.Header) {
 	env.From = h.Get("From")
-	if addrs, err := mail.ParseAddressList(env.From); err == nil && len(addrs) > 1 {
+	if addrs, err := ParseAddressList(env.From); err == nil && len(addrs) > 1 {
 		env.From = addrs[0].String()
 	}
-	env.To = append(env.To, h["To"]...)
-	env.To = append(env.To, h["Cc"]...)
-	env.To = append(env.To, h["Bcc"]...)
+	for _, list := range h["To"] {
+		if addrs, err := ParseAddressList(list); err == nil {
+			for _, addr := range addrs {
+				env.To = append(env.To, addr.Address)
+			}
+		}
+	}
+	for _, list := range h["Cc"] {
+		if addrs, err := ParseAddressList(list); err == nil {
+			for _, addr := range addrs {
+				env.To = append(env.To, addr.Address)
+			}
+		}
+	}
+	for _, list := range h["Bcc"] {
+		if addrs, err := ParseAddressList(list); err == nil {
+			for _, addr := range addrs {
+				env.To = append(env.To, addr.Address)
+			}
+		}
+	}
 	if t, err := mail.ParseDate(h.Get("Date")); err == nil {
 		env.Date = t
 	}

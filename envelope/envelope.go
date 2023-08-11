@@ -66,14 +66,14 @@ type Envelope struct {
 
 // IsReceived returns whether the message was received (as opposed to sent or
 // pending send).
-func (e *Envelope) IsReceived() bool {
-	return e.ReceivedBBS != ""
+func (env *Envelope) IsReceived() bool {
+	return env.ReceivedBBS != ""
 }
 
 // IsFinal returns whether the message has gone over the air (either received or
 // transmitted).  Note that even if this returns true, the message can still
 // be changed in some ways (e.g. to add a destination message number when a
 // delivery receipt arrives).
-func (e *Envelope) IsFinal() bool {
-	return !e.Date.IsZero()
+func (env *Envelope) IsFinal() bool {
+	return !env.Date.IsZero()
 }
