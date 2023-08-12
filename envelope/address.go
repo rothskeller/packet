@@ -1,17 +1,70 @@
 package envelope
 
+// This file contains code for parsing addresses and address lists.
+
 import (
 	"errors"
-	"net/mail"
 	"strings"
 )
 
+// Address is an address that can appear in the header of a message.  It
+// consists of an optional name comment followed by an xxx@yyy address.
+type Address struct {
+	Name    string
+	Address string
+}
+
+func (addr *Address) String() string {
+	var local, domain, _ = strings.Cut(addr.Address, "@")
+	// The local part may need to be quoted.
+	for i, r := range local {
+		if isAText(r) {
+			continue
+		}
+		if r == '.' && i > 0 && local[i-1] != '.' && i < len(local)-1 {
+			continue
+		}
+		local = quoteString(local)
+		break
+	}
+	if addr.Name == "" {
+		return local + "@" + domain
+	}
+	// The name may also need to be quoted.
+	var name = addr.Name
+	for _, r := range name {
+		if isAText(r) || isWhitespace(r) {
+			continue
+		}
+		name = quoteString(name)
+		break
+	}
+	return name + " <" + local + "@" + domain + ">"
+}
+
+func quoteString(s string) string {
+	var sb strings.Builder
+	sb.WriteByte('"')
+	for _, r := range s {
+		if !isQText(r) && !isWhitespace(r) {
+			sb.WriteByte('\\')
+		}
+		sb.WriteRune(r)
+	}
+	sb.WriteByte('"')
+	return sb.String()
+}
+
 /*
 This is the grammar we are parsing.  It is exactly as described in RFC-5322
-except for:
+except for one enhancement
+  (1) addr-spec can have a local-part without a domain
+and two limitations
   (1) no group list syntax
   (2) no obsolete syntax options
-  (3) addr-spec can have a local-part without a domain
+The enhancement allows us to send packet messages to other mailboxes on the
+same BBS without an @bbs suffix.  This style of addressing is discouraged but
+common.
 
    address-list    =   (address *("," address))
 
@@ -87,7 +140,7 @@ except for:
 
 */
 
-func ParseAddressList(s string) (addrs []*mail.Address, err error) {
+func ParseAddressList(s string) (addrs []*Address, err error) {
 	if addr, rest, ok := parseAddress(s); !ok {
 		return nil, errors.New("invalid address list")
 	} else {
@@ -109,15 +162,23 @@ func ParseAddressList(s string) (addrs []*mail.Address, err error) {
 	return addrs, nil
 }
 
-func parseAddress(s string) (addr *mail.Address, rest string, ok bool) {
+func ParseAddress(s string) (*Address, error) {
+	addr, rest, ok := parseAddress(s)
+	if !ok || rest != "" {
+		return nil, errors.New("invalid address")
+	}
+	return addr, nil
+}
+
+func parseAddress(s string) (addr *Address, rest string, ok bool) {
 	if addr, rest, ok = parseNameAddr(s); ok {
 		return
 	}
 	return parseAddrSpec(s)
 }
 
-func parseNameAddr(s string) (addr *mail.Address, rest string, ok bool) {
-	var a mail.Address
+func parseNameAddr(s string) (addr *Address, rest string, ok bool) {
+	var a Address
 
 	for {
 		word, rest, ok := parseWord(s)
@@ -147,8 +208,8 @@ func parseNameAddr(s string) (addr *mail.Address, rest string, ok bool) {
 	return &a, s, true
 }
 
-func parseAddrSpec(s string) (addr *mail.Address, rest string, ok bool) {
-	var a mail.Address
+func parseAddrSpec(s string) (addr *Address, rest string, ok bool) {
+	var a Address
 
 	if lp, rest, ok := parseLocalPart(s); ok {
 		a.Address = lp
@@ -389,4 +450,24 @@ func parseWhitespace(s string) (ws, rest string) {
 		return "", rest
 	}
 	return s[:idx], s[idx:]
+}
+
+func isAText(r rune) bool {
+	switch r {
+	case '.', '(', ')', '[', ']', ';', '@', '\\', ',', '<', '>', '"', ':':
+		return false
+	}
+	return isVChar(r)
+}
+
+func isQText(r rune) bool {
+	return r != '"' && r != '\\' && isVChar(r)
+}
+
+func isVChar(r rune) bool {
+	return '!' <= r && r <= '~'
+}
+
+func isWhitespace(r rune) bool {
+	return r == ' ' || r == '\t'
 }

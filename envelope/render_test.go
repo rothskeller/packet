@@ -5,7 +5,7 @@ import (
 )
 
 func TestEncodeReceived(t *testing.T) {
-	const start = "Received: FROM bbs.ampr.org BY pktmsg.local FOR area;\n\tWed, 01 Dec 2021 08:04:29 +0000\nFrom: <nobody@nowhere>\nTo: <somebody@somewhere>\nSubject: Hello, World\nDate: Wed, 01 Dec 2021 08:04:29 +0000\n\nnothing\n"
+	const start = "Received: FROM bbs.ampr.org BY pktmsg.local FOR area;\n\tWed, 01 Dec 2021 08:04:29 +0000\nFrom: Nobody <nobody@nowhere>\nTo: Somebody <somebody@somewhere>\nSubject: Hello, World\nDate: Wed, 01 Dec 2021 08:04:29 +0000\n\nnothing\n"
 	var env, body, _ = ParseSaved(start)
 	var end = env.RenderSaved(body)
 	if start != end {

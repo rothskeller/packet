@@ -242,27 +242,27 @@ func (env *Envelope) parseHeadersRetrieved(h mail.Header, efrom string) {
 // parseHeadersRetrieved.
 func (env *Envelope) parseHeadersCommon(h mail.Header) {
 	env.From = h.Get("From")
-	if addrs, err := ParseAddressList(env.From); err == nil && len(addrs) > 1 {
+	if addrs, err := ParseAddressList(env.From); err == nil && len(addrs) >= 1 {
 		env.From = addrs[0].String()
 	}
 	for _, list := range h["To"] {
 		if addrs, err := ParseAddressList(list); err == nil {
 			for _, addr := range addrs {
-				env.To = append(env.To, addr.Address)
+				env.To = append(env.To, addr.String())
 			}
 		}
 	}
 	for _, list := range h["Cc"] {
 		if addrs, err := ParseAddressList(list); err == nil {
 			for _, addr := range addrs {
-				env.To = append(env.To, addr.Address)
+				env.To = append(env.To, addr.String())
 			}
 		}
 	}
 	for _, list := range h["Bcc"] {
 		if addrs, err := ParseAddressList(list); err == nil {
 			for _, addr := range addrs {
-				env.To = append(env.To, addr.Address)
+				env.To = append(env.To, addr.String())
 			}
 		}
 	}

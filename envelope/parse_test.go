@@ -30,8 +30,8 @@ var savedTests = []struct {
 		name:  "sent",
 		saved: "From: <nobody@nowhere>\nTo: <somebody@somewhere>\nSubject: Hello, World\nDate: Wed, 1 Dec 2021 08:04:29 +0000\n\nnothing\n",
 		env: &Envelope{
-			From:        "<nobody@nowhere>",
-			To:          []string{"<somebody@somewhere>"},
+			From:        "nobody@nowhere",
+			To:          []string{"somebody@somewhere"},
 			Date:        time.Date(2021, 12, 1, 8, 4, 29, 0, time.FixedZone("", 0)),
 			SubjectLine: "Hello, World",
 		},
@@ -41,8 +41,8 @@ var savedTests = []struct {
 		name:  "multiple recipients",
 		saved: "From: <nobody@nowhere>\nTo: <somebody@somewhere>\nCc: <number2@somewhere>\nBcc: <number3@somewhere>\nSubject: Hello, World\nDate: Wed, 1 Dec 2021 08:04:29 +0000\n\nnothing\n",
 		env: &Envelope{
-			From:        "<nobody@nowhere>",
-			To:          []string{"<somebody@somewhere>", "<number2@somewhere>", "<number3@somewhere>"},
+			From:        "nobody@nowhere",
+			To:          []string{"somebody@somewhere", "number2@somewhere", "number3@somewhere"},
 			Date:        time.Date(2021, 12, 1, 8, 4, 29, 0, time.FixedZone("", 0)),
 			SubjectLine: "Hello, World",
 		},
@@ -52,8 +52,8 @@ var savedTests = []struct {
 		name:  "XSC subject",
 		saved: "From: <nobody@nowhere>\nTo: <somebody@somewhere>\nSubject: AAA-111P_R_Hello, World\nDate: Wed, 1 Dec 2021 08:04:29 +0000\n\nnothing\n",
 		env: &Envelope{
-			From:        "<nobody@nowhere>",
-			To:          []string{"<somebody@somewhere>"},
+			From:        "nobody@nowhere",
+			To:          []string{"somebody@somewhere"},
 			Date:        time.Date(2021, 12, 1, 8, 4, 29, 0, time.FixedZone("", 0)),
 			SubjectLine: "AAA-111P_R_Hello, World",
 		},
@@ -63,8 +63,8 @@ var savedTests = []struct {
 		name:  "XSC subject with severity",
 		saved: "From: <nobody@nowhere>\nTo: <somebody@somewhere>\nSubject: AAA-111P_O/R_Hello, World\nDate: Wed, 1 Dec 2021 08:04:29 +0000\n\nnothing\n",
 		env: &Envelope{
-			From:        "<nobody@nowhere>",
-			To:          []string{"<somebody@somewhere>"},
+			From:        "nobody@nowhere",
+			To:          []string{"somebody@somewhere"},
 			Date:        time.Date(2021, 12, 1, 8, 4, 29, 0, time.FixedZone("", 0)),
 			SubjectLine: "AAA-111P_O/R_Hello, World",
 		},
@@ -74,8 +74,8 @@ var savedTests = []struct {
 		name:  "received",
 		saved: "Received: FROM bbs.ampr.org BY pktmsg.local FOR area; Wed, 01 Dec 2021 08:04:29 +0000\nFrom: <nobody@nowhere>\nTo: <somebody@somewhere>\nSubject: Hello, World\nDate: Wed, 1 Dec 2021 08:04:29 +0000\n\nnothing\n",
 		env: &Envelope{
-			From:         "<nobody@nowhere>",
-			To:           []string{"<somebody@somewhere>"},
+			From:         "nobody@nowhere",
+			To:           []string{"somebody@somewhere"},
 			Date:         time.Date(2021, 12, 1, 8, 4, 29, 0, time.FixedZone("", 0)),
 			ReceivedBBS:  "bbs",
 			ReceivedArea: "area",
@@ -93,7 +93,7 @@ var savedTests = []struct {
 		name:  "Outpost flags",
 		saved: "From: <nobody@nowhere>\n\n!RDR!!RRR!!URG!nothing\n",
 		env: &Envelope{
-			From:                   "<nobody@nowhere>",
+			From:                   "nobody@nowhere",
 			OutpostUrgent:          true,
 			RequestDeliveryReceipt: true,
 			RequestReadReceipt:     true,
@@ -104,7 +104,7 @@ var savedTests = []struct {
 		name:  "base64 (Outpost)",
 		saved: "From: <nobody@nowhere>\n\n\n!B64!bm90aGluZwo=\n",
 		env: &Envelope{
-			From: "<nobody@nowhere>",
+			From: "nobody@nowhere",
 		},
 		body: "nothing\n",
 	},
@@ -158,7 +158,7 @@ var retrieveTests = []struct {
 		wantErr:   false,
 		env: &Envelope{
 			From:            "Microsoft Outlook <MicrosoftExchange329e71ec88ae4615bbc36ab6ce41109e@cityofsunnyvale.onmicrosoft.com>",
-			To:              []string{"<cert@sunnyvale.ca.gov>"},
+			To:              []string{"cert@sunnyvale.ca.gov"},
 			Date:            time.Date(2021, 12, 1, 8, 4, 29, 0, time.FixedZone("", 0)),
 			ReceivedBBS:     "bbs",
 			ReceivedDate:    time.Date(2023, 1, 1, 0, 0, 0, 0, time.Local),
