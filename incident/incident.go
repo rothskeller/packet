@@ -82,21 +82,27 @@ func LMIForRMI(rmi string) string {
 
 // ReadMessage reads a message from the incident directory and returns it.
 func ReadMessage(lmi string) (env *envelope.Envelope, msg message.Message, err error) {
-	var (
-		contents []byte
-		body     string
-	)
-	if !MsgIDRE.MatchString(lmi) {
-		return nil, nil, errors.New("invalid LMI")
-	}
-	if contents, err = os.ReadFile(lmi + ".txt"); err != nil {
-		return nil, nil, err
-	}
-	if env, body, err = envelope.ParseSaved(string(contents)); err != nil {
-		return env, nil, fmt.Errorf("stored message could not be parsed: %s", err)
+	var body string
+
+	if env, body, err = readEnvelope(lmi); err != nil {
+		return env, nil, err
 	}
 	msg = message.Decode(env.SubjectLine, body)
 	return env, msg, nil
+}
+func readEnvelope(lmi string) (env *envelope.Envelope, body string, err error) {
+	var contents []byte
+
+	if !MsgIDRE.MatchString(lmi) {
+		return nil, "", errors.New("invalid LMI")
+	}
+	if contents, err = os.ReadFile(lmi + ".txt"); err != nil {
+		return nil, "", err
+	}
+	if env, body, err = envelope.ParseSaved(string(contents)); err != nil {
+		return env, "", fmt.Errorf("stored message could not be parsed: %s", err)
+	}
+	return env, body, nil
 }
 
 // SaveMessage saves a (non-receipt) message to the incident directory,
