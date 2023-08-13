@@ -27,8 +27,11 @@ func (addr *Address) String() string {
 		local = quoteString(local)
 		break
 	}
+	if domain != "" {
+		local += "@" + domain
+	}
 	if addr.Name == "" {
-		return local + "@" + domain
+		return local
 	}
 	// The name may also need to be quoted.
 	var name = addr.Name
@@ -39,7 +42,7 @@ func (addr *Address) String() string {
 		name = quoteString(name)
 		break
 	}
-	return name + " <" + local + "@" + domain + ">"
+	return name + " <" + local + ">"
 }
 
 func quoteString(s string) string {
@@ -141,6 +144,10 @@ common.
 */
 
 func ParseAddressList(s string) (addrs []*Address, err error) {
+	_, s = parseWhitespace(s)
+	if s == "" {
+		return nil, nil
+	}
 	if addr, rest, ok := parseAddress(s); !ok {
 		return nil, errors.New("invalid address list")
 	} else {

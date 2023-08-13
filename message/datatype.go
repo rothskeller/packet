@@ -9,6 +9,8 @@ import (
 	"strconv"
 	"strings"
 	"time"
+
+	"github.com/rothskeller/packet/envelope"
 )
 
 // Regular expressions for data type validation.  The ones with PIFO* names are
@@ -29,6 +31,42 @@ var (
 	timeLooseRE           = regexp.MustCompile(`^([1-9]:|[01][0-9]:?|2[0-4]:?)([0-5][0-9])$`)
 	PIFOTimeRE            = regexp.MustCompile(`^(?:([01][0-9]|2[0-3]):?[0-5][0-9]|2400|24:00)$`)
 )
+
+// NewAddressListField adds defaults to a Field that are appropriate for a field
+// that contains a list of packet or email addresses.  It modifies its argument
+// and returns it for chaining.
+func NewAddressListField(f *Field) *Field {
+	if f.EditApply == nil {
+		f.EditApply = func(f *Field, s string) {
+			if addrs, err := envelope.ParseAddressList(s); err == nil {
+				// Normalize the syntax of each address by
+				// calling String() on it.  This quotes or
+				// unquotes things, adds or removes angle
+				// brackets, etc.
+				var strs = make([]string, len(addrs))
+				for i, a := range addrs {
+					strs[i] = a.String()
+				}
+				// Join the list, which normalizes the
+				// separation between addresses.
+				s = strings.Join(strs, ", ")
+			}
+			*f.Value = s
+		}
+	}
+	if f.EditValid == nil {
+		f.EditValid = func(f *Field) string {
+			if p := f.PresenceValid(); p != "" {
+				return p
+			}
+			if _, err := envelope.ParseAddressList(*f.Value); err != nil {
+				return fmt.Sprintf("The %q field does not contain a valid address list.", f.Label)
+			}
+			return ""
+		}
+	}
+	return AddFieldDefaults(f)
+}
 
 // NewAggregatorField adds defaults to a Field that are appropriate for a
 // pseudo-field that displays and/or edits the contents of multiple other fields

@@ -241,31 +241,11 @@ func (env *Envelope) parseHeadersRetrieved(h mail.Header, efrom string) {
 // parseHeadersCommon is the code that is common between parseHeadersStored and
 // parseHeadersRetrieved.
 func (env *Envelope) parseHeadersCommon(h mail.Header) {
-	env.From = h.Get("From")
-	if addrs, err := ParseAddressList(env.From); err == nil && len(addrs) >= 1 {
-		env.From = addrs[0].String()
-	}
-	for _, list := range h["To"] {
-		if addrs, err := ParseAddressList(list); err == nil {
-			for _, addr := range addrs {
-				env.To = append(env.To, addr.String())
-			}
-		}
-	}
-	for _, list := range h["Cc"] {
-		if addrs, err := ParseAddressList(list); err == nil {
-			for _, addr := range addrs {
-				env.To = append(env.To, addr.String())
-			}
-		}
-	}
-	for _, list := range h["Bcc"] {
-		if addrs, err := ParseAddressList(list); err == nil {
-			for _, addr := range addrs {
-				env.To = append(env.To, addr.String())
-			}
-		}
-	}
+	env.From = strings.Join(h["From"], ", ")
+	var to = h["To"]
+	to = append(to, h["Cc"]...)
+	to = append(to, h["Bcc"]...)
+	env.To = strings.Join(to, ", ")
 	if t, err := mail.ParseDate(h.Get("Date")); err == nil {
 		env.Date = t
 	}

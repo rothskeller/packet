@@ -150,8 +150,8 @@ func make309Line(m *envelope.Envelope, lmi, rmi string) []string {
 	if m.IsReceived() {
 		t = m.ReceivedDate
 		from = m.From
-		if addr, err := envelope.ParseAddress(from); err == nil {
-			from = addr.Address
+		if addrs, err := envelope.ParseAddressList(from); err == nil && len(addrs) != 0 {
+			from = addrs[0].Address
 		}
 		from, _, _ = strings.Cut(from, "@")
 		from = strings.ToUpper(from)
@@ -162,11 +162,9 @@ func make309Line(m *envelope.Envelope, lmi, rmi string) []string {
 	} else {
 		t = m.Date
 		oid, did = lmi, rmi
-		if len(m.To) != 0 {
-			to = m.To[0]
-			if addr, err := envelope.ParseAddress(to); err == nil {
-				to = addr.Address
-			}
+		to = m.To
+		if addrs, err := envelope.ParseAddressList(to); err == nil && len(addrs) != 0 {
+			to = addrs[0].Address
 		}
 		to, _, _ = strings.Cut(to, "@")
 		to = strings.ToUpper(to)

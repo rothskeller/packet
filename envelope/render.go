@@ -25,10 +25,26 @@ func (env *Envelope) RenderSaved(body string) string {
 		sb.WriteString("X-Packet-Queued: true\n")
 	}
 	if env.From != "" {
-		fmt.Fprintf(&sb, "From: %s\n", env.From)
+		if addrs, err := ParseAddressList(env.From); err == nil {
+			var from = make([]string, len(addrs))
+			for i, a := range addrs {
+				from[i] = a.String()
+			}
+			fmt.Fprintf(&sb, "From: %s\n", strings.Join(from, ",\n\t"))
+		} else {
+			fmt.Fprintf(&sb, "From: %s\n", env.From)
+		}
 	}
-	if len(env.To) != 0 {
-		fmt.Fprintf(&sb, "To: %s\n", strings.Join(env.To, ",\n\t"))
+	if env.To != "" {
+		if addrs, err := ParseAddressList(env.To); err == nil {
+			var to = make([]string, len(addrs))
+			for i, a := range addrs {
+				to[i] = a.String()
+			}
+			fmt.Fprintf(&sb, "To: %s\n", strings.Join(to, ",\n\t"))
+		} else {
+			fmt.Fprintf(&sb, "To: %s\n", env.To)
+		}
 	}
 	if env.SubjectLine != "" {
 		fmt.Fprintf(&sb, "Subject: %s\n", env.SubjectLine)

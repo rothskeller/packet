@@ -29,13 +29,13 @@ type Envelope struct {
 	// set only on messages retrieved from JNOS (as opposed to local
 	// storage).
 	BBSReceivedDate time.Time
-	// From is the sender of the message, from the From: header.  Note that
-	// while From: headers are allowed by RFC-5322 to have more than one
-	// address, only the first one is stored in this field.
+	// From is a comma-separated list of addresses of senders of the
+	// message, from the "From:" header.  In the vast majority of cases,
+	// there's only one address on the list.
 	From string
-	// To is the set of destination addresses for the message, the union of
-	// the To:, Cc:, and Bcc: headers.
-	To []string
+	// To is a comma-separated list of destination addresses for the message,
+	// from the "To:", "Cc:", and "Bcc:" headers (we don't distinguish).
+	To string
 	// Date is the date/time at which the message was sent, from the Date:
 	// header.  It is set only for messages that have gone over the air
 	// (received or transmitted).

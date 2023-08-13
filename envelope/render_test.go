@@ -15,18 +15,20 @@ func TestEncodeReceived(t *testing.T) {
 
 func TestEncodeOutpostFlags(t *testing.T) {
 	var env Envelope
-	env.To = []string{"nobody"}
+	env.To = "nobody"
 	env.OutpostUrgent = true
 	var save = env.RenderSaved("hello\n")
 	const expected = "To: nobody\n\n!URG!hello\n"
 	if save != expected {
+		println(save)
+		println(expected)
 		t.Fail()
 	}
 }
 
 func TestEncodeOutpostB64(t *testing.T) {
 	var env Envelope
-	env.To = []string{"nobody"}
+	env.To = "nobody"
 	var save = env.RenderSaved("hellö\n")
 	const expected = "To: nobody\n\n!B64!aGVsbMO2Cg==\n"
 	if save != expected {
