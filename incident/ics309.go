@@ -32,11 +32,13 @@ type ICS309Header struct {
 }
 
 // GenerateICS309 generates an ICS-309 communications log covering all of the
-// messages in the directory.  It returns the names of the generated files, or
-// an error if the directory could not be read or the files could not be
-// written.  Note that the generated files are removed by any call to
-// SaveMessage or SaveReceipt, since they could be stale.
-func GenerateICS309(header *ICS309Header) (csv, pdf string, err error) {
+// messages in the directory.  The log is generated in CSV format (ics309.csv),
+// and if PDF rendering support is built into the program, it is also generated
+// in PDF format (ics309.pdf).  GenerateICS309 returns an error if the directory
+// could not be read or the files could not be written.  Note that the generated
+// files are removed by any call to SaveMessage or SaveReceipt, since they could
+// be stale.
+func GenerateICS309(header *ICS309Header) (err error) {
 	var (
 		dir   *os.File
 		files []os.FileInfo
@@ -46,11 +48,11 @@ func GenerateICS309(header *ICS309Header) (csv, pdf string, err error) {
 		lmis  = make(map[*envelope.Envelope]string)
 	)
 	if dir, err = os.Open("."); err != nil {
-		return "", "", err
+		return err
 	}
 	defer dir.Close()
 	if files, err = dir.Readdir(0); err != nil {
-		return "", "", err
+		return err
 	}
 	for _, fi := range files {
 		if !strings.HasSuffix(fi.Name(), ".txt") {
@@ -70,7 +72,7 @@ func GenerateICS309(header *ICS309Header) (csv, pdf string, err error) {
 			} else {
 				lmi = fi.Name()[:len(fi.Name())-4]
 			}
-			if !msgIDRE.MatchString(lmi) {
+			if !MsgIDRE.MatchString(lmi) {
 				continue
 			}
 			if content, err = os.ReadFile(fi.Name()); err != nil {
@@ -92,7 +94,7 @@ func GenerateICS309(header *ICS309Header) (csv, pdf string, err error) {
 				lmi string
 			)
 			rmi = fi.Name()[:len(fi.Name())-4]
-			if !msgIDRE.MatchString(rmi) {
+			if !MsgIDRE.MatchString(rmi) {
 				continue
 			}
 			if lmi, err = os.Readlink(fi.Name()); err != nil {
@@ -102,7 +104,7 @@ func GenerateICS309(header *ICS309Header) (csv, pdf string, err error) {
 				continue
 			}
 			lmi = lmi[:len(lmi)-4]
-			if !msgIDRE.MatchString(lmi) {
+			if !MsgIDRE.MatchString(lmi) {
 				continue
 			}
 			rmis[lmi] = rmi
@@ -116,13 +118,13 @@ func GenerateICS309(header *ICS309Header) (csv, pdf string, err error) {
 	}
 	// Render the form.
 	RemoveICS309s()
-	if csv, err = render309CSV(header, form); err != nil {
-		return "", "", err
+	if err = render309CSV(header, form); err != nil {
+		return err
 	}
-	if pdf, err = render309PDF(header, form); err != nil {
-		return "", "", err
+	if err = render309PDF(header, form); err != nil {
+		return err
 	}
-	return csv, pdf, nil
+	return nil
 }
 
 // envelopeLess is the comparison function for sorting the message list.
@@ -189,14 +191,14 @@ func make309Line(m *envelope.Envelope, lmi, rmi string) []string {
 }
 
 // render309CSV renders the ICS-309 in CSV format.
-func render309CSV(header *ICS309Header, form [][]string) (filename string, err error) {
+func render309CSV(header *ICS309Header, form [][]string) (err error) {
+	const filename = "ics309.csv"
 	var (
 		fh *os.File
 		w  *csv.Writer
 	)
-	filename = "ics309.csv"
 	if fh, err = os.Create(filename); err != nil {
-		return "", err
+		return err
 	}
 	defer fh.Close()
 	w = csv.NewWriter(fh)
@@ -214,11 +216,11 @@ func render309CSV(header *ICS309Header, form [][]string) (filename string, err e
 	w.Write([]string{})
 	w.Write([]string{"Date/Time", "From Station", "Origin Msg ID", "To Station", "Dest Msg ID", "Subject"})
 	w.WriteAll(form)
-	return filename, nil
+	return nil
 }
 
 // render309PDF renders the ICS-309 in PDF format.
-func render309PDF(header *ICS309Header, form [][]string) (_ string, err error) {
+func render309PDF(header *ICS309Header, form [][]string) (err error) {
 	const filename = "ics309.pdf"
 	var (
 		fh    *os.File
@@ -226,19 +228,19 @@ func render309PDF(header *ICS309Header, form [][]string) (_ string, err error) {
 		pages int
 	)
 	if ics309pdf == nil { // built without PDF support
-		return "", err
+		return err
 	}
 	if fh, err = os.Create(filename); err != nil {
-		return "", err
+		return err
 	}
 	defer fh.Close()
 	if _, err = fh.Write(ics309pdf); err != nil {
 		os.Remove(filename)
-		return "", err
+		return err
 	}
 	if pdf, err = pdfstruct.Open(fh); err != nil {
 		os.Remove(filename)
-		return "", err
+		return err
 	}
 	pages = (len(form) + 30) / 31
 	if pages == 0 {
@@ -247,7 +249,7 @@ func render309PDF(header *ICS309Header, form [][]string) (_ string, err error) {
 	for n := pages; n > 1; n-- {
 		if err = pdfform.ClonePage(pdf, 0, strconv.Itoa(n)); err != nil {
 			os.Remove(filename)
-			return "", err
+			return err
 		}
 	}
 	for page := 1; page <= pages; page++ {
@@ -282,9 +284,9 @@ func render309PDF(header *ICS309Header, form [][]string) (_ string, err error) {
 	}
 	if err = pdf.Write(); err != nil {
 		os.Remove(filename)
-		return "", err
+		return err
 	}
-	return filename, nil
+	return nil
 }
 
 // RemoveICS309s removes generated ICS-309 communication log files.

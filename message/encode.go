@@ -1,5 +1,10 @@
 package message
 
+// This file contains the BaseMessage implementations of Message.EncodeSubject
+// and Message.EncodeBody, i.e., the functions to encode a message into a form
+// suitable for saving and/or transmitting.  It also contains the PackItForms
+// encoder.
+
 import (
 	"fmt"
 	"io"

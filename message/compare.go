@@ -1,5 +1,9 @@
 package message
 
+// This file defines CompareField (returned by Message.Compare), defines the
+// BaseMessage implementation of Message.Compare, and provides some commonly
+// used comparison functions (values for Field.Compare).
+
 import (
 	"regexp"
 	"strconv"

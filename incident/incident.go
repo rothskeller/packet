@@ -11,17 +11,17 @@
 // to «LMI».txt.
 //
 // Messages are automatically rendered in PDF format if the message type
-// supports it; the PDF version is stored in «LMI».pdf, with possible symbolic
-// link from «RMI».pdf.
+// supports it and PDF rendering is built into the program; the PDF version is
+// stored in «LMI».pdf, with possible symbolic link from «RMI».pdf.
 //
 // Delivery and read receipts are stored in «LMI».DR.txt and «LMI».RR.txt,
 // respectively; there are no «RMI» symbolic links for those.
 //
 // On request, package incident can also generate an ICS-309 message log for the
 // messages in the directory.  This is stored in CSV format in ics309.csv, and
-// if the package is built with the "packetpdf" build tag, it is rendered in
-// PDF format in ics309.pdf as well.  Both files are automatically removed when
-// any message is changed, so that the directory does not contain a stale log.
+// if PDF rendering is built into the program, it is rendered in PDF format in
+// ics309.pdf as well.  Both files are automatically removed when any message is
+// changed, so that the directory does not contain a stale log.
 package incident
 
 import (
@@ -40,14 +40,14 @@ import (
 	"github.com/rothskeller/packet/xscmsg/readrcpt"
 )
 
-// msgIDRE is a regular expression matching a valid message ID.  Its substrings
+// MsgIDRE is a regular expression matching a valid message ID.  Its substrings
 // are the three-character prefix, the three-or-more-digit sequence number, and
 // the optional suffix character.
-var msgIDRE = regexp.MustCompile(`^([0-9][A-Z]{2}|[A-Z][A-Z0-9]{2})-([1-9][0-9]{2,}|0[1-9][0-9]|00[1-9])([A-Z]?)$`)
+var MsgIDRE = regexp.MustCompile(`^([0-9][A-Z]{2}|[A-Z][A-Z0-9]{2})-([1-9][0-9]{2,}|0[1-9][0-9]|00[1-9])([A-Z]?)$`)
 
 // MessageExists returns true if a message exists with the specified LMI.
 func MessageExists(lmi string) bool {
-	if !msgIDRE.MatchString(lmi) {
+	if !MsgIDRE.MatchString(lmi) {
 		return false
 	}
 	if info, err := os.Stat(lmi + ".txt"); err == nil && info.Mode().IsRegular() {
@@ -64,7 +64,7 @@ func LMIForRMI(rmi string) string {
 		lmi  string
 		err  error
 	)
-	if !msgIDRE.MatchString(rmi) {
+	if !MsgIDRE.MatchString(rmi) {
 		return ""
 	}
 	if info, err = os.Stat(rmi + ".txt"); err != nil || info.Mode().Type() != os.ModeSymlink {
@@ -74,7 +74,7 @@ func LMIForRMI(rmi string) string {
 		return ""
 	}
 	lmi = lmi[:len(lmi)-4]
-	if !msgIDRE.MatchString(lmi) {
+	if !MsgIDRE.MatchString(lmi) {
 		return ""
 	}
 	return lmi
@@ -86,7 +86,7 @@ func ReadMessage(lmi string) (env *envelope.Envelope, msg message.Message, err e
 		contents []byte
 		body     string
 	)
-	if !msgIDRE.MatchString(lmi) {
+	if !MsgIDRE.MatchString(lmi) {
 		return nil, nil, errors.New("invalid LMI")
 	}
 	if contents, err = os.ReadFile(lmi + ".txt"); err != nil {
@@ -102,10 +102,10 @@ func ReadMessage(lmi string) (env *envelope.Envelope, msg message.Message, err e
 // SaveMessage saves a (non-receipt) message to the incident directory,
 // overwriting any previous message stored with the same LMI.
 func SaveMessage(lmi, rmi string, env *envelope.Envelope, msg message.Message) (err error) {
-	if !msgIDRE.MatchString(lmi) {
+	if !MsgIDRE.MatchString(lmi) {
 		return errors.New("invalid LMI")
 	}
-	if rmi != "" && !msgIDRE.MatchString(rmi) {
+	if rmi != "" && !MsgIDRE.MatchString(rmi) {
 		return errors.New("invalid RMI")
 	}
 	switch msg.(type) {
@@ -124,7 +124,7 @@ func SaveReceipt(lmi string, env *envelope.Envelope, msg message.Message) (err e
 	var (
 		filename string
 	)
-	if !msgIDRE.MatchString(lmi) {
+	if !MsgIDRE.MatchString(lmi) {
 		return errors.New("invalid LMI")
 	}
 	switch msg.(type) {
@@ -186,7 +186,7 @@ func saveMessage(filename, linkname string, env *envelope.Envelope, msg message.
 
 // RemoveMessage removes the message with the specified LMI.
 func RemoveMessage(lmi string) {
-	if !msgIDRE.MatchString(lmi) {
+	if !MsgIDRE.MatchString(lmi) {
 		panic("invalid LMI")
 	}
 	os.Remove(lmi + ".txt")
@@ -203,7 +203,7 @@ func UniqueMessageID(id string) string {
 		seq    int
 		suffix string
 	)
-	if match := msgIDRE.FindStringSubmatch(id); match != nil {
+	if match := MsgIDRE.FindStringSubmatch(id); match != nil {
 		prefix, suffix = match[1], match[3]
 		seq, _ = strconv.Atoi(match[2])
 	} else {
@@ -246,7 +246,7 @@ func AllLMIs() (lmis []string, err error) {
 			continue
 		}
 		lmi = fi.Name()[:len(fi.Name())-4]
-		if msgIDRE.MatchString(lmi) {
+		if MsgIDRE.MatchString(lmi) {
 			lmis = append(lmis, lmi)
 		}
 	}
@@ -281,7 +281,7 @@ func SeqToLMI(seq int, remote bool) (lmis []string, err error) {
 			continue
 		}
 		mid = fi.Name()[:len(fi.Name())-4]
-		if match := msgIDRE.FindStringSubmatch(mid); match == nil || match[2] != seqstr {
+		if match := MsgIDRE.FindStringSubmatch(mid); match == nil || match[2] != seqstr {
 			continue
 		}
 		switch fi.Mode().Type() {
@@ -290,6 +290,9 @@ func SeqToLMI(seq int, remote bool) (lmis []string, err error) {
 		case os.ModeSymlink:
 			var target string
 
+			if !remote {
+				break
+			}
 			if target, err = os.Readlink(fi.Name()); err != nil {
 				break
 			}
@@ -297,7 +300,7 @@ func SeqToLMI(seq int, remote bool) (lmis []string, err error) {
 				break
 			}
 			mid = target[:len(target)-4]
-			if match := msgIDRE.FindStringSubmatch(mid); match != nil && match[2] == seqstr {
+			if match := MsgIDRE.FindStringSubmatch(mid); match != nil && match[2] == seqstr {
 				lmis = append(lmis, mid)
 			}
 		}
@@ -330,7 +333,7 @@ func RemoteMap() (m map[string]string, err error) {
 		if !strings.HasSuffix(fi.Name(), ".txt") {
 			continue
 		}
-		if rmi = fi.Name()[:len(fi.Name())-4]; !msgIDRE.MatchString(rmi) {
+		if rmi = fi.Name()[:len(fi.Name())-4]; !MsgIDRE.MatchString(rmi) {
 			continue
 		}
 		if lmi, err = os.Readlink(fi.Name()); err != nil {
@@ -339,7 +342,7 @@ func RemoteMap() (m map[string]string, err error) {
 		if !strings.HasSuffix(lmi, ".txt") {
 			continue
 		}
-		if lmi = lmi[:len(lmi)-4]; !msgIDRE.MatchString(lmi) {
+		if lmi = lmi[:len(lmi)-4]; !MsgIDRE.MatchString(lmi) {
 			continue
 		}
 		m[lmi] = rmi
@@ -350,7 +353,7 @@ func RemoteMap() (m map[string]string, err error) {
 // HasDeliveryReceipt returns whether the message with the specified LMI has a
 // delivery receipt.
 func HasDeliveryReceipt(lmi string) bool {
-	if !msgIDRE.MatchString(lmi) {
+	if !MsgIDRE.MatchString(lmi) {
 		panic("HasDeliveryReceipt called for invalid LMI")
 	}
 	if _, err := os.Stat(lmi + ".DR.txt"); err == nil {

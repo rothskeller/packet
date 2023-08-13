@@ -1,5 +1,7 @@
 package message
 
+// This file defines the Field structure and related types and methods.
+
 import (
 	"fmt"
 	"strings"
@@ -170,6 +172,10 @@ func AddFieldDefaults(f *Field) *Field {
 	}
 	return f
 }
+
+// TableOmit is a TableValue function that causes the field to be
+// unconditionally omitted from the table rendering.
+func TableOmit(*Field) string { return "" }
 
 // EditSkipAlways is a value for Field.EditSkip that causes the field to always
 // be skipped during editing.  It is only accessible for editing when requested

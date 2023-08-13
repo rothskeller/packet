@@ -1,5 +1,8 @@
 package message
 
+// This file defines functions that add behavior to Field definitions based on
+// the type of data expected to be stored in that field.
+
 import (
 	"fmt"
 	"regexp"

@@ -29,9 +29,8 @@ type Message interface {
 	// RenderPDF renders the message as a PDF file with the specified
 	// filename, overwriting any existing file with that name.  This method
 	// will return ErrNotSupported for message types that do not support PDF
-	// rendering.  Note that the program needs to be built with the
-	// packet-pdf build tag in order for any message types to support PDF
-	// rendering.
+	// rendering.  Note that the program needs to be built with "-tags
+	// packetpdf" in order for any message types to support PDF rendering.
 	RenderPDF(filename string) error
 	// SetOperator sets the operator only fields of the message, if it has
 	// them.

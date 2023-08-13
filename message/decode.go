@@ -1,5 +1,8 @@
 package message
 
+// The code in this file handles decoding messages from their saved form into a
+// message.Message.
+
 import (
 	"regexp"
 	"strings"

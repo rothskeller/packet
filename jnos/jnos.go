@@ -26,14 +26,14 @@ import (
 type Transport interface {
 	// ReadUntil reads data from the BBS until the specified string is seen,
 	// or a timeout occurs.  It returns the data that was read (even if it
-	// returns an error.)  It returns ErrDisconnected if the connection to
+	// returns an error).  It returns ErrDisconnected if the connection to
 	// the BBS was lost, ErrTimeout if the read timed out before the
 	// specified string was found, and any other error if something else
 	// goes wrong.
 	ReadUntil(string) (string, error)
 	// ReadUntilT reads data from the BBS until the specified string is
 	// seen, or the specified timeout occurs.  It returns the data that was
-	// read (even if it returns an error.)  It returns ErrDisconnected if
+	// read (even if it returns an error).  It returns ErrDisconnected if
 	// the connection to the BBS was lost, ErrTimeout if the read timed out
 	// before the specified string was found, and any other error if
 	// something else goes wrong.
@@ -59,11 +59,10 @@ var ErrTimeout = errors.New("read timeout expired")
 
 // Conn is live connection to a JNOS BBS.
 type Conn struct {
-	t           Transport
-	partialRead string
-	ident       string
-	identEvery  time.Duration
-	nextIdent   time.Time
+	t          Transport
+	ident      string
+	identEvery time.Duration
+	nextIdent  time.Time
 }
 
 // jnosPromptRE is a regular expression matching the JNOS prompt.
@@ -97,7 +96,8 @@ func (c *Conn) IdentEvery(interval time.Duration, ident string) {
 	c.nextIdent = time.Now().Add(interval)
 }
 
-// Send sends a private message.
+// Send sends a private message.  Note that the "to" addresses must be bare
+// addresses without any display name or angle brackets.
 func (c *Conn) Send(subject, body string, to ...string) (err error) {
 	var cmd string
 
@@ -209,7 +209,7 @@ var listHeaderNone = "None to list."
 var listHeader = "St.  #  TO            FROM     DATE   SIZE SUBJECT"
 var listMsgLineRE = regexp.MustCompile(`^[> ]([D ])([HYN]) (  \d| \d\d|\d+) ([^ ].{12}) ([^ ].{7}) ((?:Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec) (?: \d|\d\d)) (   \d|  \d\d| \d\d\d|\d+) (.*)`)
 
-// List returns the list of messages.  If to is set, only messages sent to
+// List returns the list of messages.  If "to" is set, only messages sent to
 // addresses containing that string are returned.
 func (c *Conn) List(to string) (ml *MessageList, err error) {
 	var (
@@ -251,7 +251,7 @@ func (c *Conn) List(to string) (ml *MessageList, err error) {
 	// Line 4: possibly "None to list.", otherwise list header.
 	if line, err = c.readLine(); err != nil {
 		return nil, err
-	} else if line == "None to list." {
+	} else if line == listHeaderNone {
 		c.skipLinesUntilPrompt()
 		return nil, nil
 	} else if line != listHeader {

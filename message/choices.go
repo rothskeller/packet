@@ -1,5 +1,8 @@
 package message
 
+// This file defines the ChoiceMapper interface (value of Field.Choices) and
+// various implementations of it.
+
 import (
 	"strings"
 
