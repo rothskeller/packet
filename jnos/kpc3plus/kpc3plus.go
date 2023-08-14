@@ -9,17 +9,12 @@ import (
 	"errors"
 	"fmt"
 	"io"
-	"strconv"
 	"time"
 
-	"github.com/jacobsa/go-serial/serial"
+	"go.bug.st/serial"
 
 	"github.com/rothskeller/packet/jnos"
 )
-
-// trace is a flag indicating that data sent and retrieved should be echoed to
-// stdout.  It is normally false, but can be set to true for debugging.
-const trace = false
 
 // echoTimeout is the amount of time to wait for an echo of data sent.
 const echoTimeout = 200 * time.Millisecond
@@ -85,16 +80,20 @@ var postDisconnectCommands = []string{
 	"UNPROTO CQ",
 }
 
-// Connect connects to the JNOS BBS at bbsAddress, by way of a Kantronics KPC 3
+// Connect connects to the JNOS BBS at bbsAddress, by way of a Kantronics KPC-3
 // Plus TNC attached to serialPort, and returns an open jnos.Conn for
 // interaction with it.  (bbsAddress should consist of a call sign, a dash, and
 // a small integer SSID.)  It logs into the specified BBS mailbox.  If callsign
-// is set, it self-identifies periodically using the that call sign for FCC
-// compliance.  (callsign should be the licensed FCC call sign of the calling
-// user.)  If log is set, all traffic except echo-backs is logged to it.
+// is set and is different from mailbox, it self-identifies periodically using
+// that call sign for FCC compliance.  (callsign should be the licensed FCC call
+// sign of the calling user.)  If log is set, all traffic except echo-backs is
+// logged to it.
 func Connect(serialPort, bbsAddress, mailbox, callsign string, log io.Writer) (c *jnos.Conn, err error) {
 	var t *Transport
 
+	if callsign == mailbox {
+		callsign = "" // no need to ident
+	}
 	if t, err = open(serialPort, bbsAddress, mailbox, callsign, log); err != nil {
 		return nil, err
 	}
@@ -102,12 +101,14 @@ func Connect(serialPort, bbsAddress, mailbox, callsign string, log io.Writer) (c
 		t.Close()
 		return nil, fmt.Errorf("BBS connect: %s", err)
 	}
-	c.IdentEvery(10*time.Minute-30*time.Second, fmt.Sprintf("DE %s", callsign))
+	if callsign != "" {
+		c.IdentEvery(10*time.Minute-30*time.Second, fmt.Sprintf("DE %s", callsign))
+	}
 	return c, nil
 }
 
 // Open opens a transport to the JNOS BBS at bbsAddress, by way of a Kantronics
-// KPC 3 Plus TNC attached to serialPort.  (bbsAddress should consist of a call
+// KPC-3 Plus TNC attached to serialPort.  (bbsAddress should consist of a call
 // sign, a dash, and a small integer SSID.)  It logs into the mailbox
 // corresponding to the specified callsign, which must be the licensed FCC call
 // sign of the calling user.  (For connecting to other mailboxes, see the
@@ -121,8 +122,8 @@ func Open(serialPort, bbsAddress, callsign string, log io.Writer) (t *Transport,
 func open(serialPort, bbsAddress, mailbox, callsign string, log io.Writer) (t *Transport, err error) {
 	t = new(Transport)
 	t.log = log
-	if err = t.connectSerial(serialPort); err != nil {
-		return nil, fmt.Errorf("connectSerial: %s", err)
+	if t.serial, err = serial.Open(serialPort, &serial.Mode{}); err != nil {
+		return nil, fmt.Errorf("serial.Open: %s", err)
 	}
 	// Send a newline and check that we get a command prompt.  We may get
 	// other stuff ahead of it, and may get more than one command prompt.
@@ -175,11 +176,10 @@ ERROR:
 	return nil, fmt.Errorf("BBS connect: %s", err)
 }
 
-// Transport is the KPC 3 Plus transport to the JNOS BBS.
+// Transport is the KPC-3 Plus transport to the JNOS BBS.
 type Transport struct {
-	serial       io.ReadWriteCloser
-	readch       <-chan []byte
-	errch        <-chan error
+	serial       serial.Port
+	readbuf      []byte
 	pending      []byte
 	connected    bool
 	wasConnected bool
@@ -211,39 +211,30 @@ func (t *Transport) ReadUntilT(until string, timeout time.Duration) (s string, e
 // specified timeout occurs.  It returns the data that was read (even if it
 // returns an error).
 func (t *Transport) readUntil(until string, timeout time.Duration) (data string, err error) {
-	var (
-		untilb []byte
-		timer  *time.Timer
-	)
-	untilb = bytes.ReplaceAll([]byte(until), lf, crlf)
-	timer = time.NewTimer(timeout)
-	timer.Stop()
+	var untilb = bytes.ReplaceAll([]byte(until), lf, crlf)
+	if t.readbuf == nil {
+		t.readbuf = make([]byte, 1024)
+	}
 	for err == nil {
+		var count int
+
 		if data, err = t.checkDisconnected(); err != nil {
 			return data, err
 		}
 		if data = t.checkPending(untilb); data != "" {
 			return data, nil
 		}
-		timer.Reset(timeout)
-		select {
-		case read, ok := <-t.readch:
-			if !ok {
-				err = <-t.errch
-			} else {
-				t.pending = append(t.pending, read...)
-				if t.log != nil {
-					t.log.Write(read)
-				}
+		t.serial.SetReadTimeout(timeout)
+		count, err = t.serial.Read(t.readbuf)
+		if count != 0 {
+			if t.log != nil {
+				t.log.Write(t.readbuf[:count])
 			}
-			if !timer.Stop() {
-				<-timer.C
-			}
-		case <-timer.C:
+			t.pending = append(t.pending, t.readbuf[:count]...)
+		} else if err == nil {
 			err = jnos.ErrTimeout
 		}
 	}
-	traceReceived(t.pending)
 	data = string(bytes.ReplaceAll(t.pending, crlf, lf))
 	t.pending = t.pending[:0]
 	return data, err
@@ -252,16 +243,14 @@ func (t *Transport) readUntil(until string, timeout time.Duration) (data string,
 // checkDisconnected checks whether the pending input buffer includes a message
 // from the TNC indicating that its connection to the BBS was lost.  If so, it
 // returns a disconnected error, along with everything in the pending buffer
-// *except* that message.
+// prior to that message.
 func (t *Transport) checkDisconnected() (data string, err error) {
 	if !t.connected {
 		return "", nil
 	}
 	if idx := bytes.Index(t.pending, disconnectedMessage); idx >= 0 {
-		traceReceived(t.pending)
-		t.pending = append(t.pending[:idx], t.pending[idx+len(disconnectedMessage):]...)
-		data = string(bytes.ReplaceAll(t.pending, crlf, lf))
-		t.pending = t.pending[:0]
+		data = string(bytes.ReplaceAll(t.pending[:idx], crlf, lf))
+		t.pending = t.pending[idx+len(disconnectedMessage):]
 		t.connected = false
 		return data, jnos.ErrDisconnected
 	}
@@ -276,7 +265,6 @@ func (t *Transport) checkPending(until []byte) (data string) {
 	// there, return everything up through and including it.
 	if idx := bytes.Index(t.pending, until); idx >= 0 {
 		idx += len(until)
-		traceReceived(t.pending[:idx])
 		data = string(bytes.ReplaceAll(t.pending[:idx], crlf, lf))
 		t.pending = t.pending[idx:]
 		return data
@@ -296,10 +284,11 @@ func (t *Transport) Send(s string) (err error) {
 // echoed by the TNC, or after a timeout or other error.
 func (t *Transport) send(data string) (err error) {
 	var (
-		tosend []byte
-		echo   []byte
-		timer  *time.Timer
+		tosend  []byte
+		echo    []byte
+		plogoff int
 	)
+	plogoff = len(t.pending) // pending bytes already logged
 	tosend = bytes.ReplaceAll([]byte(data), lf, cr)
 	if len(tosend) == 0 || tosend[len(tosend)-1] != '\r' {
 		tosend = append(tosend, '\r')
@@ -308,31 +297,24 @@ func (t *Transport) send(data string) (err error) {
 		return err
 	}
 	echo = bytes.ReplaceAll(tosend, cr, crlf)
-	timer = time.NewTimer(echoTimeout)
-	timer.Stop()
 	for err == nil {
+		var count int
+
 		if _, err = t.checkDisconnected(); err != nil {
 			break
 		}
 		if idx := bytes.Index(t.pending, echo); idx >= 0 {
 			t.pending = append(t.pending[:idx], t.pending[idx+len(echo):]...)
-			if t.log != nil {
-				t.log.Write(t.pending)
+			if t.log != nil && len(t.pending) > plogoff {
+				t.log.Write(t.pending[plogoff:])
 			}
 			return nil
 		}
-		timer.Reset(echoTimeout)
-		select {
-		case read, ok := <-t.readch:
-			if !ok {
-				err = <-t.errch
-			} else {
-				t.pending = append(t.pending, read...)
-			}
-			if !timer.Stop() {
-				<-timer.C
-			}
-		case <-timer.C:
+		t.serial.SetReadTimeout(echoTimeout)
+		count, err = t.serial.Read(t.readbuf)
+		if count != 0 {
+			t.pending = append(t.pending, t.readbuf[:count]...)
+		} else if err == nil {
 			err = ErrBadEcho
 		}
 	}
@@ -343,11 +325,6 @@ func (t *Transport) send(data string) (err error) {
 func (t *Transport) sendRaw(data []byte) (err error) {
 	var count int
 
-	if trace {
-		for _, line := range traceLines(data) {
-			fmt.Printf("Tx %-36s >\n", line)
-		}
-	}
 	if t.log != nil {
 		t.log.Write(bytes.ReplaceAll(data, cr, crlf))
 	}
@@ -392,6 +369,7 @@ func (t *Transport) Close() (err error) {
 		}
 	}
 	// Apply all of the post-connect settings.
+	t.readUntil(commandPrompt, tncTimeout) // eat a prompt if there is one
 	if t.callsign != "" {
 		if err2 := t.send(fmt.Sprintf("MY %s\n", t.callsign)); err == nil && err2 != nil {
 			err = fmt.Errorf("cleanup: restore settings: %s", err2)
@@ -415,6 +393,8 @@ func (t *Transport) Close() (err error) {
 // the BBS.  If it hits an error, it returns the error and also a flag
 // indicating whether subsequent post-disconnect steps should be aborted.
 func (t *Transport) postIdentify() (abort bool, err error) {
+	// There may be a prompt waiting, which we should eat.  No error if not.
+	t.readUntil(commandPrompt, tncTimeout)
 	// Enter converse mode.
 	if err = t.send("CONV"); err != nil {
 		return false, fmt.Errorf("cleanup: send FCC ID: %s", err)
@@ -436,103 +416,9 @@ func (t *Transport) postIdentify() (abort bool, err error) {
 	if err2 := t.sendRaw([]byte{3}); err2 != nil {
 		return true, fmt.Errorf("cleanup: send FCC ID: exit CONVERS mode: %s", err2)
 	}
-	if _, err2 := t.readUntil(commandPrompt, tncTimeout); err2 != nil {
-		return true, fmt.Errorf("cleanup: send FCC ID: exit CONVERS mode: %s", err)
-	}
 	return false, err
 }
 
 // UseVerboseReads returns whether it's appropriate to use verbose reads
 // when communicating over this transport.
 func (t *Transport) UseVerboseReads() bool { return false }
-
-// connectSerial opens a connection to the specified serial port, and starts a
-// background reader thread for it.
-func (t *Transport) connectSerial(serialPort string) (err error) {
-	var oo = serial.OpenOptions{
-		PortName:          serialPort,
-		BaudRate:          9600,
-		DataBits:          8,
-		StopBits:          1,
-		ParityMode:        serial.PARITY_NONE,
-		RTSCTSFlowControl: true,
-		MinimumReadSize:   1,
-	}
-	if t.serial, err = serial.Open(oo); err != nil {
-		return err
-	}
-	var readch = make(chan []byte, 16)
-	var errch = make(chan error, 1)
-	go t.reader(readch, errch)
-	t.readch = readch
-	t.errch = errch
-	return nil
-}
-
-// reader is a background thread constantly reading the serial port.  Reader
-// sends incoming data on the readch channel until an error occurs, at which
-// point it closes the readch channel, sends the error on the errch channel,
-// and exits.  Note that when the connection is closed, an error is expected.
-func (t *Transport) reader(readch chan<- []byte, errch chan<- error) {
-	var (
-		buf   [1024]byte
-		count int
-		err   error
-	)
-	for {
-		count, err = t.serial.Read(buf[:])
-		if count != 0 {
-			var out = make([]byte, count)
-			copy(out, buf[:count])
-			readch <- out
-		}
-		if err != nil {
-			close(readch)
-			errch <- err
-			return
-		}
-	}
-}
-
-// traceReceived emits trace messages containing received data, if tracing is
-// enabled.
-func traceReceived(data []byte) {
-	if !trace || len(data) == 0 {
-		return
-	}
-	for _, line := range traceLines(data) {
-		fmt.Println("Rx                                      <", line)
-	}
-}
-
-// traceLines formats data appropriately for tracing.
-func traceLines(b []byte) (lines []string) {
-	var nl = bytes.IndexByte(b, '\n')
-	if nl < 0 {
-		nl = bytes.IndexByte(b, '\r')
-	}
-	for nl >= 0 {
-		lines = append(lines, traceLine(b[:nl+1])...)
-		b = b[nl+1:]
-		nl = bytes.IndexByte(b, '\n')
-		if nl < 0 {
-			nl = bytes.IndexByte(b, '\r')
-		}
-	}
-	if len(b) != 0 {
-		lines = append(lines, traceLine(b)...)
-	}
-	return lines
-}
-func traceLine(b []byte) (lines []string) {
-	var q = strconv.Quote(string(b))
-	q = q[1 : len(q)-1]
-	for len(q) >= 36 {
-		lines = append(lines, q[:36])
-		q = q[36:]
-	}
-	if len(q) != 0 {
-		lines = append(lines, q)
-	}
-	return lines
-}
