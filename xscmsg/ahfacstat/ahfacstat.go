@@ -9,6 +9,7 @@ import (
 
 	"github.com/rothskeller/packet/message"
 	"github.com/rothskeller/packet/xscmsg/baseform"
+	"golang.org/x/exp/slices"
 )
 
 // Type is the type definition for an allied health facility status form.
@@ -1462,7 +1463,10 @@ func bedsValue(beds *BedCounts) string {
 	if beds.StaffedM == "" && beds.StaffedF == "" && beds.VacantM == "" && beds.VacantF == "" && beds.Surge == "" {
 		return ""
 	}
-	return fmt.Sprintf("%s %s %s %s %s", beds.StaffedM, beds.StaffedF, beds.VacantM, beds.VacantF, beds.Surge)
+	return strings.Join(slices.DeleteFunc(
+		[]string{beds.StaffedM, beds.StaffedF, beds.VacantM, beds.VacantF, beds.Surge},
+		func(s string) bool { return s == "" },
+	), " ")
 }
 func bedsApply(beds *BedCounts, value string) {
 	var f message.Field
@@ -1532,7 +1536,10 @@ func resourcesValue(resources *ResourceCounts) string {
 	if resources.Chairs == "" && resources.VacantChairs == "" && resources.FrontStaff == "" && resources.SupportStaff == "" && resources.Providers == "" {
 		return ""
 	}
-	return fmt.Sprintf("%s %s %s %s %s", resources.Chairs, resources.VacantChairs, resources.FrontStaff, resources.SupportStaff, resources.Providers)
+	return strings.Join(slices.DeleteFunc(
+		[]string{resources.Chairs, resources.VacantChairs, resources.FrontStaff, resources.SupportStaff, resources.Providers},
+		func(s string) bool { return s == "" },
+	), " ")
 }
 func resourcesApply(resources *ResourceCounts, value string) {
 	var f message.Field

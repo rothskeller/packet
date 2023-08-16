@@ -17,7 +17,7 @@ import (
 // taken from the PackItForms code, unmodified except for JavaScript-to-Go
 // conversion.
 var (
-	PIFOCardinalNumberRE  = regexp.MustCompile(`^[0-9]*$`)
+	PIFOCardinalNumberRE  = regexp.MustCompile(`^[0-9]+$`) // changed * to +
 	dateLooseRE           = regexp.MustCompile(`^(0?[1-9]|1[0-2])[-./](0?[1-9]|[12][0-9]|3[01])[-./](?:20)?([0-9][0-9])$`)
 	PIFODateRE            = regexp.MustCompile(`^(?:0[1-9]|1[012])/(?:0[1-9]|1[0-9]|2[0-9]|3[01])/[1-2][0-9][0-9][0-9]$`)
 	fccCallSignRE         = regexp.MustCompile(`^(?:A[A-L][0-9][A-Z]{1,3}|[KNW][0-9][A-Z]{2,3}|[KNW][A-Z][0-9][A-Z]{1,3})$`)
