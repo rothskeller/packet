@@ -205,7 +205,8 @@ type MessageInfo struct {
 
 var listLine1Prefix = "Mail area: "
 var listLine2RE = regexp.MustCompile(`^(\d+) message(?:s)?  -  (\d+) new$`)
-var listHeaderNone = "None to list."
+var listHeaderNone1 = "None to list."
+var listHeaderNone2 = "No messages"
 var listHeader = "St.  #  TO            FROM     DATE   SIZE SUBJECT"
 var listMsgLineRE = regexp.MustCompile(`^[> ]([D ])([HYN]) (  \d| \d\d|\d+) ([^ ].{12}) ([^ ].{7}) ((?:Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec) (?: \d|\d\d)) (   \d|  \d\d| \d\d\d|\d+) (.*)`)
 
@@ -230,6 +231,9 @@ func (c *Conn) List(to string) (ml *MessageList, err error) {
 	// Line 1: Mail area: %s
 	if line, err = c.readLine(); err != nil {
 		return nil, err
+	} else if line == listHeaderNone1 || line == listHeaderNone2 {
+		c.skipLinesUntilPrompt()
+		return nil, nil
 	} else if !strings.HasPrefix(line, listLine1Prefix) {
 		return nil, fmt.Errorf(`expected "Mail area: %%s" received %q`, line)
 	}
@@ -251,7 +255,7 @@ func (c *Conn) List(to string) (ml *MessageList, err error) {
 	// Line 4: possibly "None to list.", otherwise list header.
 	if line, err = c.readLine(); err != nil {
 		return nil, err
-	} else if line == listHeaderNone {
+	} else if line == listHeaderNone1 || line == listHeaderNone2 {
 		c.skipLinesUntilPrompt()
 		return nil, nil
 	} else if line != listHeader {
