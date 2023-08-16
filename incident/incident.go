@@ -106,8 +106,9 @@ func readEnvelope(lmi string) (env *envelope.Envelope, body string, err error) {
 }
 
 // SaveMessage saves a (non-receipt) message to the incident directory,
-// overwriting any previous message stored with the same LMI.
-func SaveMessage(lmi, rmi string, env *envelope.Envelope, msg message.Message) (err error) {
+// overwriting any previous message stored with the same LMI.  If fast is true,
+// PDFs are not generated even when possible; stale PDFs are removed.
+func SaveMessage(lmi, rmi string, env *envelope.Envelope, msg message.Message, fast bool) (err error) {
 	if !MsgIDRE.MatchString(lmi) {
 		return errors.New("invalid LMI")
 	}
@@ -119,9 +120,9 @@ func SaveMessage(lmi, rmi string, env *envelope.Envelope, msg message.Message) (
 		panic("cannot call SaveMessage for receipt message; call SaveReceipt instead")
 	}
 	if rmi != "" {
-		return saveMessage(lmi+".txt", rmi+".txt", env, msg)
+		return saveMessage(lmi+".txt", rmi+".txt", env, msg, fast)
 	}
-	return saveMessage(lmi+".txt", "", env, msg)
+	return saveMessage(lmi+".txt", "", env, msg, fast)
 }
 
 // SaveReceipt saves a receipt message to the incident directory, overwriting
@@ -141,11 +142,11 @@ func SaveReceipt(lmi string, env *envelope.Envelope, msg message.Message) (err e
 	default:
 		panic("cannot call SaveReceipt on a non-receipt message")
 	}
-	return saveMessage(filename, "", env, msg)
+	return saveMessage(filename, "", env, msg, true)
 }
 
 // saveMessage is the common code between SaveMessage and SaveReceipt.
-func saveMessage(filename, linkname string, env *envelope.Envelope, msg message.Message) (err error) {
+func saveMessage(filename, linkname string, env *envelope.Envelope, msg message.Message, fast bool) (err error) {
 	var (
 		content string
 		modtime time.Time
@@ -180,12 +181,19 @@ func saveMessage(filename, linkname string, env *envelope.Envelope, msg message.
 	RemoveICS309s()
 	// If the message can be rendered as PDF, do that.
 	filename = filename[:len(filename)-4] + ".pdf"
-	if err = msg.RenderPDF(filename); err != nil && err != message.ErrNotSupported {
-		return err
-	}
-	if err == nil && linkname != "" {
-		linkname = linkname[:len(linkname)-4] + ".pdf"
-		os.Symlink(filename, linkname) // error ignored
+	if fast {
+		os.Remove(filename)
+		if linkname != "" {
+			os.Remove(linkname[:len(linkname)-4] + ".pdf")
+		}
+	} else {
+		if err = msg.RenderPDF(filename); err != nil && err != message.ErrNotSupported {
+			return err
+		}
+		if err == nil && linkname != "" {
+			linkname = linkname[:len(linkname)-4] + ".pdf"
+			os.Symlink(filename, linkname) // error ignored
+		}
 	}
 	return nil
 }
@@ -306,7 +314,7 @@ func SeqToLMI(seq int, remote bool) (lmis []string, err error) {
 				break
 			}
 			mid = target[:len(target)-4]
-			if match := MsgIDRE.FindStringSubmatch(mid); match != nil && match[2] == seqstr {
+			if MsgIDRE.MatchString(mid) {
 				lmis = append(lmis, mid)
 			}
 		}

@@ -69,7 +69,7 @@ func ReceiveMessage(raw, bbs, area, msgid, opcall, opname string) (
 	if b := msg.Base(); b.FOriginMsgID != nil {
 		rmi = *b.FOriginMsgID
 	}
-	if err = SaveMessage(lmi, rmi, env, msg); err != nil {
+	if err = SaveMessage(lmi, rmi, env, msg, false); err != nil {
 		err = fmt.Errorf("save received %s: %s", lmi, err)
 		return
 	}
@@ -123,7 +123,7 @@ func recordReceipt(env *envelope.Envelope, msg message.Message) (
 		err = ErrDuplicateReceipt
 		return
 	}
-	if err = SaveReceipt(lmi, oenv, omsg); err != nil {
+	if err = SaveReceipt(lmi, env, msg); err != nil {
 		err = fmt.Errorf("save receipt for %s: %s", lmi, err)
 		return
 	}
@@ -132,16 +132,16 @@ func recordReceipt(env *envelope.Envelope, msg message.Message) (
 	}
 	if mb := msg.Base(); mb.FDestinationMsgID != nil {
 		*mb.FDestinationMsgID = rmi
-		if err = SaveMessage(lmi, rmi, oenv, omsg); err != nil {
-			err = fmt.Errorf("add RMI: save message %s: %s", lmi, err)
-			return
-		}
+	}
+	if err = SaveMessage(lmi, rmi, oenv, omsg, false); err != nil {
+		err = fmt.Errorf("add RMI: save message %s: %s", lmi, err)
+		return
 	}
 	return
 }
 
-// subjectToLMI scans all saved messages, in reverse chronological order
-// looking for one with the specified subject.  If found, it returns the LMI.
+// subjectToLMI scans all sent messages in reverse chronological order looking
+// for one with the specified subject.  If found, it returns the LMI.
 func subjectToLMI(subject string) (lmi string, err error) {
 	lmis, err := AllLMIs()
 	if err != nil {
@@ -149,7 +149,8 @@ func subjectToLMI(subject string) (lmi string, err error) {
 	}
 	for i := len(lmis) - 1; i >= 0; i-- {
 		lmi = lmis[i]
-		if env, _, err := readEnvelope(lmi); err == nil && env.SubjectLine == subject {
+		if env, _, err := readEnvelope(lmi); err == nil &&
+			!env.IsReceived() && env.IsFinal() && env.SubjectLine == subject {
 			return lmi, nil
 		}
 	}
