@@ -86,6 +86,12 @@ type BaseMessage struct {
 	// FReference points to the value of the Reference field.  It is nil for
 	// message types that do not have that field.
 	FReference *string
+	// FTacCall points to the value of the Tactical Call Sign field.  It is
+	// nil for message types that do not have that field.
+	FTacCall *string
+	// FTacName points to the value of the Tactical Station Name field.  It
+	// is nil for message types that do not have that field.
+	FTacName *string
 	// FOpCall points to the value of the Operator Call Sign field.  It is
 	// nil for message types that do not have that field.
 	FOpCall *string

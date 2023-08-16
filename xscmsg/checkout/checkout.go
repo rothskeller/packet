@@ -49,6 +49,8 @@ func create() (m *CheckOut) {
 	m.BaseMessage.FHandling = &m.Handling
 	m.BaseMessage.FOpCall = &m.OperatorCallSign
 	m.BaseMessage.FOpName = &m.OperatorName
+	m.BaseMessage.FTacCall = &m.TacticalCallSign
+	m.BaseMessage.FTacName = &m.TacticalStationName
 	m.Fields = []*message.Field{
 		message.NewMessageNumberField(&message.Field{
 			Label:    "Origin Message Number",
