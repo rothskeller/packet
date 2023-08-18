@@ -73,6 +73,9 @@ type Field struct {
 	// value of some earlier field).  This can be set to EditSkipAlways for
 	// a field that should be editable only when addressed by name.
 	EditSkip func(*Field) bool
+	// HideValue indicates that the value of the field should be hidden.
+	// This is used for password fields.
+	HideValue bool
 }
 
 // Presence is a enumeration indicating whether a field is allowed or required.
