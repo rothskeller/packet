@@ -134,7 +134,7 @@ func open(serialPort, bbsAddress, mailbox, callsign string, log io.Writer) (t *T
 	for tries = 0; tries < 3; tries++ {
 		if err = t.sendRaw([]byte{'\r'}); err != nil {
 			err = fmt.Errorf("send initial newline: %s", err)
-			goto ERROR
+			goto TNCERROR
 		}
 		if _, err = t.readUntil(commandPrompt, tncTimeout); err == nil {
 			break
@@ -142,36 +142,39 @@ func open(serialPort, bbsAddress, mailbox, callsign string, log io.Writer) (t *T
 	}
 	if tries >= 3 {
 		err = fmt.Errorf("read initial prompt (after 3 tries): %s", err)
-		goto ERROR
+		goto TNCERROR
 	}
 	// Apply the pre-connect settings.
 	for _, c := range preConnectCommands {
 		if err = t.send(c); err != nil {
-			goto ERROR
+			goto TNCERROR
 		}
 		if _, err = t.readUntil(commandPrompt, tncTimeout); err != nil {
-			goto ERROR
+			goto TNCERROR
 		}
 	}
 	// Set the mailbox we want to connect to as our "call sign".
 	t.callsign = callsign
 	if err = t.send(fmt.Sprintf("MY %s\n", mailbox)); err != nil {
-		goto ERROR
+		goto TNCERROR
 	}
 	if _, err = t.readUntil(commandPrompt, tncTimeout); err != nil {
-		goto ERROR
+		goto TNCERROR
 	}
 	// Connect to the BBS.
 	t.wasConnected = true
 	if err = t.send(fmt.Sprintf("CONNECT %s\n", bbsAddress)); err != nil {
-		goto ERROR
+		goto BBSERROR
 	}
 	if _, err = t.readUntil(commandPrompt, tncTimeout); err != nil {
-		goto ERROR
+		goto BBSERROR
 	}
 	t.connected = true
 	return t, nil
-ERROR:
+TNCERROR:
+	t.Close()
+	return nil, fmt.Errorf("TNC setup: %s", err)
+BBSERROR:
 	t.Close()
 	return nil, fmt.Errorf("BBS connect: %s", err)
 }
@@ -346,10 +349,10 @@ func (t *Transport) Close() (err error) {
 		// *** DISCONNECTED message).  Send a Ctrl-C to get back into
 		// command mode.
 		if err = t.sendRaw([]byte{3}); err != nil {
-			return fmt.Errorf("unable to get back to command mode for cleanup: %s", err)
+			return fmt.Errorf("unable to get back to TNC command mode for cleanup: %s", err)
 		}
 		if _, err = t.readUntil(commandPrompt, tncTimeout); err != nil && err != jnos.ErrDisconnected {
-			return fmt.Errorf("unable to get back to command mode for cleanup: %s", err)
+			return fmt.Errorf("unable to get back to TNC command mode for cleanup: %s", err)
 		}
 		// Then tell the TNC to disconnect from the BBS, and wait until
 		// we get the *** DISCONNECTED message.
@@ -372,18 +375,18 @@ func (t *Transport) Close() (err error) {
 	t.readUntil(commandPrompt, tncTimeout) // eat a prompt if there is one
 	if t.callsign != "" {
 		if err2 := t.send(fmt.Sprintf("MY %s\n", t.callsign)); err == nil && err2 != nil {
-			err = fmt.Errorf("cleanup: restore settings: %s", err2)
+			err = fmt.Errorf("cleanup: restore TNC settings: %s", err2)
 		}
 		if _, err2 := t.readUntil(commandPrompt, tncTimeout); err == nil && err2 != nil {
-			err = fmt.Errorf("cleanup: restore settings: %s", err2)
+			err = fmt.Errorf("cleanup: restore TNC settings: %s", err2)
 		}
 	}
 	for _, c := range postDisconnectCommands {
 		if err2 := t.send(c); err == nil && err2 != nil {
-			err = fmt.Errorf("cleanup: restore settings: %s", err2)
+			err = fmt.Errorf("cleanup: restore TNC settings: %s", err2)
 		}
 		if _, err2 := t.readUntil(commandPrompt, tncTimeout); err == nil && err2 != nil {
-			err = fmt.Errorf("cleanup: restore settings: %s", err2)
+			err = fmt.Errorf("cleanup: restore TNC settings: %s", err2)
 		}
 	}
 	return err
