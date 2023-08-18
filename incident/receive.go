@@ -95,20 +95,26 @@ func recordReceipt(env *envelope.Envelope, msg message.Message) (
 ) {
 	var (
 		subject string
+		to      string
 		ext     string
 		rmi     string
 	)
 	switch msg := msg.(type) {
 	case *delivrcpt.DeliveryReceipt:
-		subject = msg.MessageSubject
+		subject, to = msg.MessageSubject, msg.MessageTo
 		ext = ".DR"
 		rmi = msg.LocalMessageID
 	case *readrcpt.ReadReceipt:
-		subject = msg.MessageSubject
+		subject, to = msg.MessageSubject, msg.MessageTo
 		ext = ".RR"
 	}
 	if subject != "" {
 		if lmi, err = subjectToLMI(subject); err != nil {
+			return "", nil, nil, err
+		}
+	}
+	if lmi == "" {
+		if lmi, err = makeFakeSentMessage(subject, to, env); err != nil {
 			return "", nil, nil, err
 		}
 	}
@@ -155,4 +161,37 @@ func subjectToLMI(subject string) (lmi string, err error) {
 		}
 	}
 	return "", nil
+}
+
+func makeFakeSentMessage(subject, to string, rcptenv *envelope.Envelope) (lmi string, err error) {
+	// Can we discern an LMI from the subject line of the message being
+	// receipted?
+	if lmi, _, _, _, _ = message.DecodeSubject(subject); !MsgIDRE.MatchString(lmi) {
+		return "", nil
+	}
+	// Is that LMI available?  We don't already have something named that?
+	if _, err = os.Stat(lmi + ".txt"); !errors.Is(err, os.ErrNotExist) {
+		return "", nil
+	}
+	// Create a fake sent message.
+	var env = new(envelope.Envelope)
+	env.Date = rcptenv.Date
+	env.From = rcptenv.To
+	env.SubjectLine = subject
+	env.To = to
+	var content = env.RenderSaved(`**** MESSAGE CONTENTS UNKNOWN ****
+
+A receipt was received for a message with this ID, but that message was sent
+in a different incident or by different software.
+`)
+	// Save the message to its text file.
+	if err = os.WriteFile(lmi+".txt", []byte(content), 0666); err != nil {
+		return "", err
+	}
+	// Set the modification time of the text file based on the envelope.
+	// (This allows AllLMIs to sort by file modification time.)
+	if !env.Date.IsZero() {
+		os.Chtimes(lmi+".txt", env.Date, env.Date) // error ignored
+	}
+	return lmi, nil
 }
