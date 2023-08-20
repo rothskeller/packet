@@ -475,14 +475,14 @@ func create(version *message.FormVersion) message.Message {
 			EditSkip:   message.EditSkipAlways,
 		}),
 	)
-	var first = f.Fields[len(f.Fields)-1]
+	var firstSkilledNursing = f.Fields[len(f.Fields)-1]
 	f.Fields = append(f.Fields,
 		message.NewCardinalNumberField(&message.Field{
 			Label:   "Skilled Nursing Beds: Staffed F",
 			Value:   &f.SkilledNursingBeds.StaffedF,
 			PIFOTag: "40b.",
 			PIFOValid: func(field *message.Field) string {
-				return allOrNone(first, field)
+				return allOrNone(firstSkilledNursing, field)
 			},
 			PDFMap:     message.PDFName("Staffed BedFSKILLED NURSING"),
 			TableValue: message.TableOmit,
@@ -494,7 +494,7 @@ func create(version *message.FormVersion) message.Message {
 			Value:   &f.SkilledNursingBeds.VacantM,
 			PIFOTag: "40c.",
 			PIFOValid: func(field *message.Field) string {
-				return allOrNone(first, field)
+				return allOrNone(firstSkilledNursing, field)
 			},
 			PDFMap:     message.PDFName("Vacant BedsMSKILLED NURSING"),
 			TableValue: message.TableOmit,
@@ -506,7 +506,7 @@ func create(version *message.FormVersion) message.Message {
 			Value:   &f.SkilledNursingBeds.VacantF,
 			PIFOTag: "40d.",
 			PIFOValid: func(field *message.Field) string {
-				return allOrNone(first, field)
+				return allOrNone(firstSkilledNursing, field)
 			},
 			PDFMap:     message.PDFName("Vacant BedFSKILLED NURSING"),
 			TableValue: message.TableOmit,
@@ -518,7 +518,7 @@ func create(version *message.FormVersion) message.Message {
 			Value:   &f.SkilledNursingBeds.Surge,
 			PIFOTag: "40e.",
 			PIFOValid: func(field *message.Field) string {
-				return allOrNone(first, field)
+				return allOrNone(firstSkilledNursing, field)
 			},
 			PDFMap:     message.PDFName("Surge SKILLED NURSING"),
 			TableValue: message.TableOmit,
@@ -549,18 +549,18 @@ func create(version *message.FormVersion) message.Message {
 			PIFOTag:    "41a.",
 			PDFMap:     message.PDFName("Staffed Bed MASSISTED LIVING"),
 			TableValue: message.TableOmit,
-			EditHelp:   `This is the number of staffed male assisted living beds at the facility.  Enter fi`,
+			EditHelp:   `This is the number of staffed male assisted living beds at the facility.`,
 			EditSkip:   message.EditSkipAlways,
 		}),
 	)
-	first = f.Fields[len(f.Fields)-1]
+	var firstAssistedLiving = f.Fields[len(f.Fields)-1]
 	f.Fields = append(f.Fields,
 		message.NewCardinalNumberField(&message.Field{
 			Label:   "Assisted Living Beds: Staffed F",
 			Value:   &f.AssistedLivingBeds.StaffedF,
 			PIFOTag: "41b.",
 			PIFOValid: func(field *message.Field) string {
-				return allOrNone(first, field)
+				return allOrNone(firstAssistedLiving, field)
 			},
 			PDFMap:     message.PDFName("Staffed BedFASSISTED LIVING"),
 			TableValue: message.TableOmit,
@@ -572,7 +572,7 @@ func create(version *message.FormVersion) message.Message {
 			Value:   &f.AssistedLivingBeds.VacantM,
 			PIFOTag: "41c.",
 			PIFOValid: func(field *message.Field) string {
-				return allOrNone(first, field)
+				return allOrNone(firstAssistedLiving, field)
 			},
 			PDFMap:     message.PDFName("Vacant BedsMASSISTED LIVING"),
 			TableValue: message.TableOmit,
@@ -584,7 +584,7 @@ func create(version *message.FormVersion) message.Message {
 			Value:   &f.AssistedLivingBeds.VacantF,
 			PIFOTag: "41d.",
 			PIFOValid: func(field *message.Field) string {
-				return allOrNone(first, field)
+				return allOrNone(firstAssistedLiving, field)
 			},
 			PDFMap:     message.PDFName("Vacant BedFASSISTED LIVING"),
 			TableValue: message.TableOmit,
@@ -596,7 +596,7 @@ func create(version *message.FormVersion) message.Message {
 			Value:   &f.AssistedLivingBeds.Surge,
 			PIFOTag: "41e.",
 			PIFOValid: func(field *message.Field) string {
-				return allOrNone(first, field)
+				return allOrNone(firstAssistedLiving, field)
 			},
 			PDFMap:     message.PDFName("Surge ASSISTED LIVING"),
 			TableValue: message.TableOmit,
@@ -627,18 +627,18 @@ func create(version *message.FormVersion) message.Message {
 			PIFOTag:    "42a.",
 			PDFMap:     message.PDFName("Staffed Bed MSURGICAL BEDS"), // name is wrong in PDF
 			TableValue: message.TableOmit,
-			EditHelp:   `This is the number of staffed male sub-acute beds at the facility.  Enter fi`,
+			EditHelp:   `This is the number of staffed male sub-acute beds at the facility.`,
 			EditSkip:   message.EditSkipAlways,
 		}),
 	)
-	first = f.Fields[len(f.Fields)-1]
+	var firstSubAcute = f.Fields[len(f.Fields)-1]
 	f.Fields = append(f.Fields,
 		message.NewCardinalNumberField(&message.Field{
 			Label:   "Sub-Acute Beds: Staffed F",
 			Value:   &f.SubAcuteBeds.StaffedF,
 			PIFOTag: "42b.",
 			PIFOValid: func(field *message.Field) string {
-				return allOrNone(first, field)
+				return allOrNone(firstSubAcute, field)
 			},
 			PDFMap:     message.PDFName("Staffed BedFSURGICAL BEDS"), // name is wrong in PDF
 			TableValue: message.TableOmit,
@@ -650,7 +650,7 @@ func create(version *message.FormVersion) message.Message {
 			Value:   &f.SubAcuteBeds.VacantM,
 			PIFOTag: "42c.",
 			PIFOValid: func(field *message.Field) string {
-				return allOrNone(first, field)
+				return allOrNone(firstSubAcute, field)
 			},
 			PDFMap:     message.PDFName("Vacant BedsMSURGICAL BEDS"), // name is wrong in PDF
 			TableValue: message.TableOmit,
@@ -662,7 +662,7 @@ func create(version *message.FormVersion) message.Message {
 			Value:   &f.SubAcuteBeds.VacantF,
 			PIFOTag: "42d.",
 			PIFOValid: func(field *message.Field) string {
-				return allOrNone(first, field)
+				return allOrNone(firstSubAcute, field)
 			},
 			PDFMap:     message.PDFName("Vacant BedFSURGICAL BEDS"), // name is wrong in PDF
 			TableValue: message.TableOmit,
@@ -674,7 +674,7 @@ func create(version *message.FormVersion) message.Message {
 			Value:   &f.SubAcuteBeds.Surge,
 			PIFOTag: "42e.",
 			PIFOValid: func(field *message.Field) string {
-				return allOrNone(first, field)
+				return allOrNone(firstSubAcute, field)
 			},
 			PDFMap:     message.PDFName("Surge SURGICAL BEDS"), // name is wrong in PDF
 			TableValue: message.TableOmit,
@@ -705,18 +705,18 @@ func create(version *message.FormVersion) message.Message {
 			PIFOTag:    "43a.",
 			PDFMap:     message.PDFName("Staffed Bed MSUBACUTE"), // name is wrong in PDF
 			TableValue: message.TableOmit,
-			EditHelp:   `This is the number of staffed male Alzheimers/dementia beds at the facility.  Enter fi`,
+			EditHelp:   `This is the number of staffed male Alzheimers/dementia beds at the facility.`,
 			EditSkip:   message.EditSkipAlways,
 		}),
 	)
-	first = f.Fields[len(f.Fields)-1]
+	var firstAlzheimers = f.Fields[len(f.Fields)-1]
 	f.Fields = append(f.Fields,
 		message.NewCardinalNumberField(&message.Field{
 			Label:   "Alzheimers Beds: Staffed F",
 			Value:   &f.AlzheimersBeds.StaffedF,
 			PIFOTag: "43b.",
 			PIFOValid: func(field *message.Field) string {
-				return allOrNone(first, field)
+				return allOrNone(firstAlzheimers, field)
 			},
 			PDFMap:     message.PDFName("Staffed BedFSUBACUTE"), // name is wrong in PDF
 			TableValue: message.TableOmit,
@@ -728,7 +728,7 @@ func create(version *message.FormVersion) message.Message {
 			Value:   &f.AlzheimersBeds.VacantM,
 			PIFOTag: "43c.",
 			PIFOValid: func(field *message.Field) string {
-				return allOrNone(first, field)
+				return allOrNone(firstAlzheimers, field)
 			},
 			PDFMap:     message.PDFName("Vacant BedsMSUBACUTE"), // name is wrong in PDF
 			TableValue: message.TableOmit,
@@ -740,7 +740,7 @@ func create(version *message.FormVersion) message.Message {
 			Value:   &f.AlzheimersBeds.VacantF,
 			PIFOTag: "43d.",
 			PIFOValid: func(field *message.Field) string {
-				return allOrNone(first, field)
+				return allOrNone(firstAlzheimers, field)
 			},
 			PDFMap:     message.PDFName("Vacant BedFSUBACUTE"), // name is wrong in PDF
 			TableValue: message.TableOmit,
@@ -752,7 +752,7 @@ func create(version *message.FormVersion) message.Message {
 			Value:   &f.AlzheimersBeds.Surge,
 			PIFOTag: "43e.",
 			PIFOValid: func(field *message.Field) string {
-				return allOrNone(first, field)
+				return allOrNone(firstAlzheimers, field)
 			},
 			PDFMap:     message.PDFName("Surge SUBACUTE"), // name is wrong in PDF
 			TableValue: message.TableOmit,
@@ -783,18 +783,18 @@ func create(version *message.FormVersion) message.Message {
 			PIFOTag:    "44a.",
 			PDFMap:     message.PDFName("Staffed Bed MALZEIMERSDIMENTIA"), // name is wrong in PDF
 			TableValue: message.TableOmit,
-			EditHelp:   `This is the number of staffed male pediatric sub-acute beds at the facility.  Enter fi`,
+			EditHelp:   `This is the number of staffed male pediatric sub-acute beds at the facility.`,
 			EditSkip:   message.EditSkipAlways,
 		}),
 	)
-	first = f.Fields[len(f.Fields)-1]
+	var firstPedSubAcute = f.Fields[len(f.Fields)-1]
 	f.Fields = append(f.Fields,
 		message.NewCardinalNumberField(&message.Field{
 			Label:   "Ped Sub-Acute Beds: Staffed F",
 			Value:   &f.PedSubAcuteBeds.StaffedF,
 			PIFOTag: "44b.",
 			PIFOValid: func(field *message.Field) string {
-				return allOrNone(first, field)
+				return allOrNone(firstPedSubAcute, field)
 			},
 			PDFMap:     message.PDFName("Staffed BedFALZEIMERSDIMENTIA"), // name is wrong in PDF
 			TableValue: message.TableOmit,
@@ -806,7 +806,7 @@ func create(version *message.FormVersion) message.Message {
 			Value:   &f.PedSubAcuteBeds.VacantM,
 			PIFOTag: "44c.",
 			PIFOValid: func(field *message.Field) string {
-				return allOrNone(first, field)
+				return allOrNone(firstPedSubAcute, field)
 			},
 			PDFMap:     message.PDFName("Vacant BedsMALZEIMERSDIMENTIA"), // name is wrong in PDF
 			TableValue: message.TableOmit,
@@ -818,7 +818,7 @@ func create(version *message.FormVersion) message.Message {
 			Value:   &f.PedSubAcuteBeds.VacantF,
 			PIFOTag: "44d.",
 			PIFOValid: func(field *message.Field) string {
-				return allOrNone(first, field)
+				return allOrNone(firstPedSubAcute, field)
 			},
 			PDFMap:     message.PDFName("Vacant BedFALZEIMERSDIMENTIA"), // name is wrong in PDF
 			TableValue: message.TableOmit,
@@ -830,7 +830,7 @@ func create(version *message.FormVersion) message.Message {
 			Value:   &f.PedSubAcuteBeds.Surge,
 			PIFOTag: "44e.",
 			PIFOValid: func(field *message.Field) string {
-				return allOrNone(first, field)
+				return allOrNone(firstPedSubAcute, field)
 			},
 			PDFMap:     message.PDFName("Surge ALZEIMERSDIMENTIA"), // name is wrong in PDF
 			TableValue: message.TableOmit,
@@ -861,18 +861,18 @@ func create(version *message.FormVersion) message.Message {
 			PIFOTag:    "45a.",
 			PDFMap:     message.PDFName("Staffed Bed MPEDIATRICSUB ACUTE"), // name is wrong in PDF
 			TableValue: message.TableOmit,
-			EditHelp:   `This is the number of staffed male psychiatric beds at the facility.  Enter fi`,
+			EditHelp:   `This is the number of staffed male psychiatric beds at the facility.`,
 			EditSkip:   message.EditSkipAlways,
 		}),
 	)
-	first = f.Fields[len(f.Fields)-1]
+	var firstPsychiatric = f.Fields[len(f.Fields)-1]
 	f.Fields = append(f.Fields,
 		message.NewCardinalNumberField(&message.Field{
 			Label:   "Psychiatric Beds: Staffed F",
 			Value:   &f.PsychiatricBeds.StaffedF,
 			PIFOTag: "45b.",
 			PIFOValid: func(field *message.Field) string {
-				return allOrNone(first, field)
+				return allOrNone(firstPsychiatric, field)
 			},
 			PDFMap:     message.PDFName("Staffed BedFPEDIATRICSUB ACUTE"), // name is wrong in PDF
 			TableValue: message.TableOmit,
@@ -884,7 +884,7 @@ func create(version *message.FormVersion) message.Message {
 			Value:   &f.PsychiatricBeds.VacantM,
 			PIFOTag: "45c.",
 			PIFOValid: func(field *message.Field) string {
-				return allOrNone(first, field)
+				return allOrNone(firstPsychiatric, field)
 			},
 			PDFMap:     message.PDFName("Vacant BedsMPEDIATRICSUB ACUTE"), // name is wrong in PDF
 			TableValue: message.TableOmit,
@@ -896,7 +896,7 @@ func create(version *message.FormVersion) message.Message {
 			Value:   &f.PsychiatricBeds.VacantF,
 			PIFOTag: "45d.",
 			PIFOValid: func(field *message.Field) string {
-				return allOrNone(first, field)
+				return allOrNone(firstPsychiatric, field)
 			},
 			PDFMap:     message.PDFName("Vacant BedFPEDIATRICSUB ACUTE"), // name is wrong in PDF
 			TableValue: message.TableOmit,
@@ -908,7 +908,7 @@ func create(version *message.FormVersion) message.Message {
 			Value:   &f.PsychiatricBeds.Surge,
 			PIFOTag: "45e.",
 			PIFOValid: func(field *message.Field) string {
-				return allOrNone(first, field)
+				return allOrNone(firstPsychiatric, field)
 			},
 			PDFMap:     message.PDFName("Surge PEDIATRICSUB ACUTE"), // name is wrong in PDF
 			TableValue: message.TableOmit,
@@ -950,18 +950,18 @@ func create(version *message.FormVersion) message.Message {
 			PIFOTag:    "46a.",
 			PDFMap:     message.PDFName("Staffed Bed MPSYCHIATRIC"), // name is wrong in PDF
 			TableValue: message.TableOmit,
-			EditHelp:   `This is the number of staffed male beds at the facility of the named other type.  Enter fi`,
+			EditHelp:   `This is the number of staffed male beds at the facility of the named other type.`,
 			EditSkip:   message.EditSkipAlways,
 		}),
 	)
-	first = f.Fields[len(f.Fields)-1]
+	var firstOtherCare = f.Fields[len(f.Fields)-1]
 	f.Fields = append(f.Fields,
 		message.NewCardinalNumberField(&message.Field{
 			Label:   "Other Care Beds: Staffed F",
 			Value:   &f.OtherCareBeds.StaffedF,
 			PIFOTag: "46b.",
 			PIFOValid: func(field *message.Field) string {
-				return allOrNone(first, field)
+				return allOrNone(firstOtherCare, field)
 			},
 			PDFMap:     message.PDFName("Staffed BedFPSYCHIATRIC"), // name is wrong in PDF
 			TableValue: message.TableOmit,
@@ -973,7 +973,7 @@ func create(version *message.FormVersion) message.Message {
 			Value:   &f.OtherCareBeds.VacantM,
 			PIFOTag: "46c.",
 			PIFOValid: func(field *message.Field) string {
-				return allOrNone(first, field)
+				return allOrNone(firstOtherCare, field)
 			},
 			PDFMap:     message.PDFName("Vacant BedsMPSYCHIATRIC"), // name is wrong in PDF
 			TableValue: message.TableOmit,
@@ -985,7 +985,7 @@ func create(version *message.FormVersion) message.Message {
 			Value:   &f.OtherCareBeds.VacantF,
 			PIFOTag: "46d.",
 			PIFOValid: func(field *message.Field) string {
-				return allOrNone(first, field)
+				return allOrNone(firstOtherCare, field)
 			},
 			PDFMap:     message.PDFName("Vacant BedFPSYCHIATRIC"), // name is wrong in PDF
 			TableValue: message.TableOmit,
@@ -997,7 +997,7 @@ func create(version *message.FormVersion) message.Message {
 			Value:   &f.OtherCareBeds.Surge,
 			PIFOTag: "46e.",
 			PIFOValid: func(field *message.Field) string {
-				return allOrNone(first, field)
+				return allOrNone(firstOtherCare, field)
 			},
 			PDFMap:     message.PDFName("Surge PSYCHIATRIC"), // name is wrong in PDF
 			TableValue: message.TableOmit,
@@ -1035,14 +1035,14 @@ func create(version *message.FormVersion) message.Message {
 			EditSkip:   message.EditSkipAlways,
 		}),
 	)
-	first = f.Fields[len(f.Fields)-1]
+	var firstDialysis = f.Fields[len(f.Fields)-1]
 	f.Fields = append(f.Fields,
 		message.NewCardinalNumberField(&message.Field{
 			Label:   "Dialysis: Vacant Chairs",
 			Value:   &f.DialysisResources.VacantChairs,
 			PIFOTag: "50b.",
 			PIFOValid: func(field *message.Field) string {
-				return allOrNone(first, field)
+				return allOrNone(firstDialysis, field)
 			},
 			PDFMap:     message.PDFName("VANCANT CHAIRS ROOMDIALYSIS"),
 			TableValue: message.TableOmit,
@@ -1054,7 +1054,7 @@ func create(version *message.FormVersion) message.Message {
 			Value:   &f.DialysisResources.FrontStaff,
 			PIFOTag: "50c.",
 			PIFOValid: func(field *message.Field) string {
-				return allOrNone(first, field)
+				return allOrNone(firstDialysis, field)
 			},
 			PDFMap:     message.PDFName("FRONT DESK STAFFDIALYSIS"),
 			TableValue: message.TableOmit,
@@ -1066,7 +1066,7 @@ func create(version *message.FormVersion) message.Message {
 			Value:   &f.DialysisResources.SupportStaff,
 			PIFOTag: "50d.",
 			PIFOValid: func(field *message.Field) string {
-				return allOrNone(first, field)
+				return allOrNone(firstDialysis, field)
 			},
 			PDFMap:     message.PDFName("MEDICAL SUPPORT STAFFDIALYSIS"),
 			TableValue: message.TableOmit,
@@ -1078,7 +1078,7 @@ func create(version *message.FormVersion) message.Message {
 			Value:   &f.DialysisResources.Providers,
 			PIFOTag: "50e.",
 			PIFOValid: func(field *message.Field) string {
-				return allOrNone(first, field)
+				return allOrNone(firstDialysis, field)
 			},
 			PDFMap:     message.PDFName("PROVIDER STAFFDIALYSIS"),
 			TableValue: message.TableOmit,
@@ -1113,14 +1113,14 @@ func create(version *message.FormVersion) message.Message {
 			EditSkip:   message.EditSkipAlways,
 		}),
 	)
-	first = f.Fields[len(f.Fields)-1]
+	var firstSurgical = f.Fields[len(f.Fields)-1]
 	f.Fields = append(f.Fields,
 		message.NewCardinalNumberField(&message.Field{
 			Label:   "Surgical: Vacant Chairs",
 			Value:   &f.SurgicalResources.VacantChairs,
 			PIFOTag: "51b.",
 			PIFOValid: func(field *message.Field) string {
-				return allOrNone(first, field)
+				return allOrNone(firstSurgical, field)
 			},
 			PDFMap:     message.PDFName("VANCANT CHAIRS ROOMSURGICAL"),
 			TableValue: message.TableOmit,
@@ -1132,7 +1132,7 @@ func create(version *message.FormVersion) message.Message {
 			Value:   &f.SurgicalResources.FrontStaff,
 			PIFOTag: "51c.",
 			PIFOValid: func(field *message.Field) string {
-				return allOrNone(first, field)
+				return allOrNone(firstSurgical, field)
 			},
 			PDFMap:     message.PDFName("FRONT DESK STAFFSURGICAL"),
 			TableValue: message.TableOmit,
@@ -1144,7 +1144,7 @@ func create(version *message.FormVersion) message.Message {
 			Value:   &f.SurgicalResources.SupportStaff,
 			PIFOTag: "51d.",
 			PIFOValid: func(field *message.Field) string {
-				return allOrNone(first, field)
+				return allOrNone(firstSurgical, field)
 			},
 			PDFMap:     message.PDFName("MEDICAL SUPPORT STAFFSURGICAL"),
 			TableValue: message.TableOmit,
@@ -1156,7 +1156,7 @@ func create(version *message.FormVersion) message.Message {
 			Value:   &f.SurgicalResources.Providers,
 			PIFOTag: "51e.",
 			PIFOValid: func(field *message.Field) string {
-				return allOrNone(first, field)
+				return allOrNone(firstSurgical, field)
 			},
 			PDFMap:     message.PDFName("PROVIDER STAFFSURGICAL"),
 			TableValue: message.TableOmit,
@@ -1191,14 +1191,14 @@ func create(version *message.FormVersion) message.Message {
 			EditSkip:   message.EditSkipAlways,
 		}),
 	)
-	first = f.Fields[len(f.Fields)-1]
+	var firstClinic = f.Fields[len(f.Fields)-1]
 	f.Fields = append(f.Fields,
 		message.NewCardinalNumberField(&message.Field{
 			Label:   "Clinic: Vacant Chairs",
 			Value:   &f.ClinicResources.VacantChairs,
 			PIFOTag: "52b.",
 			PIFOValid: func(field *message.Field) string {
-				return allOrNone(first, field)
+				return allOrNone(firstClinic, field)
 			},
 			PDFMap:     message.PDFName("VANCANT CHAIRS ROOMCLINIC"),
 			TableValue: message.TableOmit,
@@ -1210,7 +1210,7 @@ func create(version *message.FormVersion) message.Message {
 			Value:   &f.ClinicResources.FrontStaff,
 			PIFOTag: "52c.",
 			PIFOValid: func(field *message.Field) string {
-				return allOrNone(first, field)
+				return allOrNone(firstClinic, field)
 			},
 			PDFMap:     message.PDFName("FRONT DESK STAFFCLINIC"),
 			TableValue: message.TableOmit,
@@ -1222,7 +1222,7 @@ func create(version *message.FormVersion) message.Message {
 			Value:   &f.ClinicResources.SupportStaff,
 			PIFOTag: "52d.",
 			PIFOValid: func(field *message.Field) string {
-				return allOrNone(first, field)
+				return allOrNone(firstClinic, field)
 			},
 			PDFMap:     message.PDFName("MEDICAL SUPPORT STAFFCLINIC"),
 			TableValue: message.TableOmit,
@@ -1234,7 +1234,7 @@ func create(version *message.FormVersion) message.Message {
 			Value:   &f.ClinicResources.Providers,
 			PIFOTag: "52e.",
 			PIFOValid: func(field *message.Field) string {
-				return allOrNone(first, field)
+				return allOrNone(firstClinic, field)
 			},
 			PDFMap:     message.PDFName("PROVIDER STAFFCLINIC"),
 			TableValue: message.TableOmit,
@@ -1269,14 +1269,14 @@ func create(version *message.FormVersion) message.Message {
 			EditSkip:   message.EditSkipAlways,
 		}),
 	)
-	first = f.Fields[len(f.Fields)-1]
+	var firstHomeHealth = f.Fields[len(f.Fields)-1]
 	f.Fields = append(f.Fields,
 		message.NewCardinalNumberField(&message.Field{
 			Label:   "Home Health: Vacant Chairs",
 			Value:   &f.HomeHealthResources.VacantChairs,
 			PIFOTag: "53b.",
 			PIFOValid: func(field *message.Field) string {
-				return allOrNone(first, field)
+				return allOrNone(firstHomeHealth, field)
 			},
 			PDFMap:     message.PDFName("VANCANT CHAIRS ROOMHOMEHEALTH"),
 			TableValue: message.TableOmit,
@@ -1288,7 +1288,7 @@ func create(version *message.FormVersion) message.Message {
 			Value:   &f.HomeHealthResources.FrontStaff,
 			PIFOTag: "53c.",
 			PIFOValid: func(field *message.Field) string {
-				return allOrNone(first, field)
+				return allOrNone(firstHomeHealth, field)
 			},
 			PDFMap:     message.PDFName("FRONT DESK STAFFHOMEHEALTH"),
 			TableValue: message.TableOmit,
@@ -1300,7 +1300,7 @@ func create(version *message.FormVersion) message.Message {
 			Value:   &f.HomeHealthResources.SupportStaff,
 			PIFOTag: "53d.",
 			PIFOValid: func(field *message.Field) string {
-				return allOrNone(first, field)
+				return allOrNone(firstHomeHealth, field)
 			},
 			PDFMap:     message.PDFName("MEDICAL SUPPORT STAFFHOMEHEALTH"),
 			TableValue: message.TableOmit,
@@ -1312,7 +1312,7 @@ func create(version *message.FormVersion) message.Message {
 			Value:   &f.HomeHealthResources.Providers,
 			PIFOTag: "53e.",
 			PIFOValid: func(field *message.Field) string {
-				return allOrNone(first, field)
+				return allOrNone(firstHomeHealth, field)
 			},
 			PDFMap:     message.PDFName("PROVIDER STAFFHOMEHEALTH"),
 			TableValue: message.TableOmit,
@@ -1347,14 +1347,14 @@ func create(version *message.FormVersion) message.Message {
 			EditSkip:   message.EditSkipAlways,
 		}),
 	)
-	first = f.Fields[len(f.Fields)-1]
+	var firstAdultDayCtr = f.Fields[len(f.Fields)-1]
 	f.Fields = append(f.Fields,
 		message.NewCardinalNumberField(&message.Field{
 			Label:   "Adult Day Ctr: Vacant Chairs",
 			Value:   &f.AdultDayCtrResources.VacantChairs,
 			PIFOTag: "54b.",
 			PIFOValid: func(field *message.Field) string {
-				return allOrNone(first, field)
+				return allOrNone(firstAdultDayCtr, field)
 			},
 			PDFMap:     message.PDFName("VANCANT CHAIRS ROOMADULT DAY CENTER"),
 			TableValue: message.TableOmit,
@@ -1366,7 +1366,7 @@ func create(version *message.FormVersion) message.Message {
 			Value:   &f.AdultDayCtrResources.FrontStaff,
 			PIFOTag: "54c.",
 			PIFOValid: func(field *message.Field) string {
-				return allOrNone(first, field)
+				return allOrNone(firstAdultDayCtr, field)
 			},
 			PDFMap:     message.PDFName("FRONT DESK STAFFADULT DAY CENTER"),
 			TableValue: message.TableOmit,
@@ -1378,7 +1378,7 @@ func create(version *message.FormVersion) message.Message {
 			Value:   &f.AdultDayCtrResources.SupportStaff,
 			PIFOTag: "54d.",
 			PIFOValid: func(field *message.Field) string {
-				return allOrNone(first, field)
+				return allOrNone(firstAdultDayCtr, field)
 			},
 			PDFMap:     message.PDFName("MEDICAL SUPPORT STAFFADULT DAY CENTER"),
 			TableValue: message.TableOmit,
@@ -1390,7 +1390,7 @@ func create(version *message.FormVersion) message.Message {
 			Value:   &f.AdultDayCtrResources.Providers,
 			PIFOTag: "54e.",
 			PIFOValid: func(field *message.Field) string {
-				return allOrNone(first, field)
+				return allOrNone(firstAdultDayCtr, field)
 			},
 			PDFMap:     message.PDFName("PROVIDER STAFFADULT DAY CENTER"),
 			TableValue: message.TableOmit,
