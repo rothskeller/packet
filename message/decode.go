@@ -124,6 +124,12 @@ func DecodePIFO(body string) (f *PIFOForm) {
 			value string
 			ok    bool
 		)
+		if strings.HasPrefix(body, "\n") {
+			// Blank lines are allowed.  They can result from JNOS
+			// inserting line breaks in the wrong place.
+			body = body[1:]
+			continue
+		}
 		if match = fieldLineRE.FindStringSubmatch(body); match == nil {
 			break
 		}

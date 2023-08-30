@@ -106,18 +106,7 @@ func (e *PIFOEncoder) Write(tag, value string) {
 	if strings.HasSuffix(value, "`") {
 		value += "]]"
 	}
-	enc := fmt.Sprintf("%s: [%s]", tag, value)
-	for len(enc) != 0 && e.err == nil {
-		var toWrite string
-		if len(enc) > 128 {
-			toWrite, enc = enc[:128], enc[128:]
-		} else {
-			toWrite, enc = enc, ""
-		}
-		if _, e.err = io.WriteString(e.w, toWrite); e.err == nil {
-			_, e.err = e.w.Write([]byte{'\n'})
-		}
-	}
+	_, e.err = fmt.Fprintf(e.w, "%s: [%s]\n", tag, value)
 }
 
 // Close closes the form encoding.  It returns any error that occurred at any
