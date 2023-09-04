@@ -1,2 +1,3 @@
 PDF generation in background.
 Problems with initial sync with TNC
+Excess text in PDF field gets cut off, with no obvious indication.

@@ -303,6 +303,7 @@ func (c *Conn) List(to string) (ml *MessageList, err error) {
 }
 
 var msgLine1RE = regexp.MustCompile(`^Message #(?:\d+) (?:\[Deleted|Held\])?$`)
+var removeNewMailRE = regexp.MustCompile(`\nYou have new mail.*\n$`)
 
 // Read reads a single message given its number.  It returns nil if there is no
 // such message.
@@ -336,7 +337,9 @@ func (c *Conn) Read(msgnum int) (msg string, err error) {
 		}
 		if jnosPromptRE.MatchString(line) {
 			if sawHeader {
-				return sb.String(), nil
+				msg = sb.String()
+				msg = removeNewMailRE.ReplaceAllLiteralString(msg, "\n")
+				return msg, nil
 			}
 			return "", fmt.Errorf(`expected message body, received JNOS prompt`)
 		}
@@ -371,6 +374,9 @@ func (c *Conn) Kill(msgnums ...int) (err error) {
 		}
 		if jnosPromptRE.MatchString(line) {
 			return nil
+		}
+		if strings.HasPrefix(line, "You have new mail.") {
+			continue
 		}
 		if !killMsgRE.MatchString(line) {
 			c.skipLinesUntilPrompt()
