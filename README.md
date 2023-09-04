@@ -26,7 +26,4 @@ This software was written by Steve Roth, KC6RSC.
 
 Copyright © 2021–2023 by Steven Roth <steve@rothskeller.net>
 
-Permission to use, copy, modify, and/or distribute this software for any purpose
-with or without fee is hereby granted.
-
-DISCLAIMER: THIS SOFTWARE IS WITHOUT WARRANTY.
+See LICENSE.txt for license details.

@@ -4,7 +4,7 @@ go 1.21
 
 require (
 	github.com/davecgh/go-spew v1.1.1
-	github.com/rothskeller/pdf v1.1.1
+	github.com/rothskeller/pdf v1.2.0
 	go.bug.st/serial v1.6.0
 	golang.org/x/net v0.12.0
 )
