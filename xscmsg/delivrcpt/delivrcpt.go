@@ -64,7 +64,7 @@ func New() (m *DeliveryReceipt) {
 
 // deliveryReceiptRE matches the first lines of a delivery receipt message.  Its
 // substrings are the local message ID, the delivery time, and the To address.
-var deliveryReceiptRE = regexp.MustCompile(`^!LMI!([^!]+)!DR!(.+)\n.*\nTo: (.+)\nSubject:.*\nwas delivered on.*\nRecipient's Local.*\n`)
+var deliveryReceiptRE = regexp.MustCompile(`^\n*!LMI!([^!]+)!DR!(.+)\n.*\nTo: (.+)\nSubject:.*\nwas delivered on.*\nRecipient's Local.*\n`)
 
 func decode(subject, body string) *DeliveryReceipt {
 	if !strings.HasPrefix(subject, "DELIVERED: ") {

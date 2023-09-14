@@ -57,7 +57,7 @@ func New() (m *ReadReceipt) {
 
 // readReceiptRE matches the first lines of a read receipt message.  Its
 // substrings are the read time and the To address.
-var readReceiptRE = regexp.MustCompile(`^!RR!(.+)\n.*\n\nTo: (.+)`)
+var readReceiptRE = regexp.MustCompile(`^\n*!RR!(.+)\n.*\n\nTo: (.+)`)
 
 func decode(subject, body string) *ReadReceipt {
 	if !strings.HasPrefix(subject, "READ: ") {
