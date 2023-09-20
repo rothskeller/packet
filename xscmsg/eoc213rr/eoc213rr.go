@@ -186,6 +186,10 @@ func create(version *message.FormVersion) message.Message {
 				EditHelp:   `This indicates whether the original paper resource request form was signed.`,
 			}),
 		)
+	} else {
+		f.Fields = append(f.Fields,
+			message.NewCalculatedField(new(message.Field)),
+		)
 	}
 	f.Fields = append(f.Fields,
 		message.NewMultilineField(&message.Field{
