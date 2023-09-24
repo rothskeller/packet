@@ -34,7 +34,7 @@ func main() {
 			pfile = pfile[:len(mfile)-4]
 		}
 		pfile += ".pdf"
-		if err = msg.RenderPDF(pfile); err != nil {
+		if err = msg.RenderPDF(env, pfile); err != nil {
 			fmt.Fprintf(os.Stderr, "%s: %s\n", pfile, err)
 		}
 	}

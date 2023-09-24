@@ -6,7 +6,9 @@ import (
 	"regexp"
 	"strings"
 
+	"github.com/rothskeller/packet/envelope"
 	"github.com/rothskeller/packet/message"
+	"github.com/rothskeller/packet/xscmsg/plaintext"
 )
 
 // Type is the type definition for a check-in message.
@@ -159,4 +161,14 @@ func (m *CheckIn) EncodeBody() string {
 			m.TacticalCallSign, m.TacticalStationName, m.OperatorCallSign, m.OperatorName)
 	}
 	return fmt.Sprintf("Check-In %s, %s\n", m.OperatorCallSign, m.OperatorName)
+}
+
+func (m *CheckIn) RenderPDF(env *envelope.Envelope, filename string) error {
+	if plaintext.RenderPlainPDF == nil {
+		return message.ErrNotSupported
+	}
+	if env.SubjectLine == "" {
+		env.SubjectLine = m.EncodeSubject()
+	}
+	return plaintext.RenderPlainPDF(env, filename[:len(filename)-4], m.EncodeBody(), filename)
 }

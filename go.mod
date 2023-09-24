@@ -11,5 +11,6 @@ require (
 
 require (
 	github.com/creack/goselect v0.1.2 // indirect
+	github.com/go-pdf/fpdf v0.9.0
 	golang.org/x/sys v0.10.0 // indirect
 )

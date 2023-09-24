@@ -8,6 +8,7 @@ import (
 	"errors"
 	"os"
 
+	"github.com/rothskeller/packet/envelope"
 	"github.com/rothskeller/pdf/pdfform"
 	"github.com/rothskeller/pdf/pdfstruct"
 )
@@ -18,7 +19,7 @@ var ErrNotSupported = errors.New("message type does not support PDF rendering, o
 
 // RenderPDF renders the message as a PDF file with the specified filename,
 // overwriting any existing file with that name.
-func (bm *BaseMessage) RenderPDF(filename string) (err error) {
+func (bm *BaseMessage) RenderPDF(_ *envelope.Envelope, filename string) (err error) {
 	var (
 		fh  *os.File
 		pdf *pdfstruct.PDF

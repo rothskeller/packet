@@ -3,7 +3,11 @@
 // message types and to itemize the registered types.
 package message
 
-import "time"
+import (
+	"time"
+
+	"github.com/rothskeller/packet/envelope"
+)
 
 // Message is the interface that all message types implement.  In addition to
 // implementing this interface, all message types must embed BaseMessage, which
@@ -31,7 +35,7 @@ type Message interface {
 	// will return ErrNotSupported for message types that do not support PDF
 	// rendering.  Note that the program needs to be built with "-tags
 	// packetpdf" in order for any message types to support PDF rendering.
-	RenderPDF(filename string) error
+	RenderPDF(env *envelope.Envelope, filename string) error
 	// SetOperator sets the operator only fields of the message, if it has
 	// them.
 	SetOperator(opcall, opname string, received bool)

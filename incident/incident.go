@@ -210,7 +210,7 @@ func saveMessage(filename, linkname string, env *envelope.Envelope, msg message.
 			os.Remove(linkname[:len(linkname)-4] + ".pdf")
 		}
 	} else {
-		if err = msg.RenderPDF(filename); err != nil && err != message.ErrNotSupported {
+		if err = msg.RenderPDF(env, filename); err != nil && err != message.ErrNotSupported {
 			return err
 		}
 		if err == nil && linkname != "" {
