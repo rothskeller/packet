@@ -132,7 +132,7 @@ func SaveMessage(lmi, rmi string, env *envelope.Envelope, msg message.Message, f
 		return errors.New("invalid LMI")
 	}
 	if rmi != "" && !MsgIDRE.MatchString(rmi) {
-		return errors.New("invalid RMI")
+		rmi = "" // ignore ill-formed RMIs
 	}
 	switch msg.(type) {
 	case *delivrcpt.DeliveryReceipt, *readrcpt.ReadReceipt:
