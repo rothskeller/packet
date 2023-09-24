@@ -24,7 +24,7 @@ import (
 // with a telnet transport.  Any login and password is accepted.
 const ListenAddress = "localhost:63425"
 
-// Start starts a new JNOS simulator.  It returnsa handle to the simulator,
+// Start starts a new JNOS simulator.  It returns a handle to the simulator,
 // which can be examined after the interaction to see what messages were sent
 // through the simulated BBS.  The messages available to read from the
 // simulation are those in the supplied messages files, which can be mbox-style
@@ -126,6 +126,7 @@ func (s *Simulator) listen() {
 
 // handle handles a single incoming connection to the simulator.
 func (s *Simulator) handle(conn net.Conn) {
+	s.area = s.home
 	var scan = bufio.NewScanner(conn)
 	// First, lead the caller through a typical telnet login sequence, since
 	// Start returns a telnet transport.  We don't care what login or
@@ -179,11 +180,7 @@ func (s *Simulator) handle(conn net.Conn) {
 
 // handleArea handles the A command.
 func (s *Simulator) handleArea(conn net.Conn, command string) (err error) {
-	var (
-		area string
-	)
-	time.Sleep(2 * time.Second)
-	area = strings.ToLower(strings.TrimSpace(command[1:]))
+	var area = strings.ToLower(strings.TrimSpace(command[1:]))
 	if _, ok := s.messages[area]; !ok {
 		_, err = fmt.Fprintf(conn, "No such message area: %s\r\n", area)
 		return err
@@ -199,7 +196,6 @@ func (s *Simulator) handleList(conn net.Conn, command string) (err error) {
 		buf    bytes.Buffer
 		seen   bool
 	)
-	time.Sleep(2 * time.Second)
 	if strings.HasPrefix(command, "l>") {
 		wantto = strings.TrimSpace(command[2:])
 	}
@@ -270,7 +266,6 @@ func parseMessage(m string) (to, from, date string, size int, subject string) {
 func (s *Simulator) handleRead(conn net.Conn, command string) (err error) {
 	var msgnum int
 
-	time.Sleep(2 * time.Second)
 	if msgnum, err = strconv.Atoi(strings.TrimSpace(command[1:])); err != nil || msgnum < 1 || msgnum > len(s.messages[s.area]) {
 		_, err = conn.Write([]byte("Invalid Message\r\n"))
 		return err
@@ -288,7 +283,6 @@ func (s *Simulator) handleSend(conn net.Conn, scan *bufio.Scanner, command strin
 	var (
 		sb strings.Builder
 	)
-	time.Sleep(2 * time.Second)
 	if strings.HasPrefix(command, "sp ") {
 		// SP command.  Preserve the command line.
 		to := strings.TrimSpace(command[3:])
