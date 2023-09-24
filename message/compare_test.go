@@ -95,7 +95,7 @@ var compareTextTests = []struct {
 	},
 	{
 		"match with newline",
-		"Hello\nWorld",
+		"Hello¡\nWorld",
 		"Hello  \n  World",
 		4, 4,
 		"           ",
@@ -103,11 +103,19 @@ var compareTextTests = []struct {
 	},
 	{
 		"require newline",
-		"Hello\nWorld",
+		"Hello¡\nWorld",
 		"Hello World",
 		3, 4,
 		"     ~     ",
 		"     ~     ",
+	},
+	{
+		"don't require newline",
+		"Hello\nWorld",
+		"Hello World",
+		4, 4,
+		"           ",
+		"           ",
 	},
 	{
 		"require empty line",

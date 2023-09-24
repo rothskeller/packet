@@ -380,15 +380,17 @@ func digitsOnly(r rune) rune {
 //     group (without the "¡").  Otherwise, a group matches if the actual has
 //     the same case as the expected, is in all caps, or is in all lowercase.
 //   - Runs of spaces are treated as a single whitespace for comparison.
-//   - Newlines in expected must be matched by newlines in actual; the presence
-//     or absence of spaces on either side is ignored.
-//   - Runs of spaces without a newline in expected can be matched by a single
-//     (but not multiple) newline in actual, optionally surrounded by spaces.
+//   - Newlines in expected that are preceded by "¡" must be matched by newlines
+//     in actual (without the "¡").
+//   - Runs of more than one newline in expected must be matched by runs of more
+//     than one newline in actual, but not necessarily the same length runs.
+//   - Any other runs of whitespace in expected can be matched by any run of
+//     whitespace in actual that contains at most one newline.
 func CompareText(label, exp, act string) (c *CompareField) {
 	var et, at []token
 
 	c = &CompareField{
-		Label: label, Expected: exp, Actual: act,
+		Label: label, Expected: strings.ReplaceAll(exp, "¡", ""), Actual: act,
 	}
 	// First, we split both "exp" and "act" into tokens.
 	et = textCompareSplit(exp, true)
@@ -457,28 +459,35 @@ type token struct {
 //   - "" indicates no whitespace after the token.  This happens for the final
 //     token in the string: trailing whitespace is ignored.  It also happens for
 //     tokens that ended with a punctuation character as noted above.
-//   - " " indicates that the token was followed by one or more spaces with no
-//     newlines.
+//   - " " indicates that the token was followed by soft whitespace, i.e.,
+//     whitespace without a (required) newline.
 //   - "\n" indicates that the token was followed by a single newline, possibly
-//     with spaces on one or both sides.
+//     with spaces on one or both sides.  If exactAllowed is true, the newline
+//     is a required one (marked with "¡").
 //   - "\n\n" indicates that the token was followed by a string of whitespace
 //     containing multiple newlines (it doesn't matter how many).
 //
 // Each token has an exactCase flag, set if the token string begins with the "¡"
 // exact case marker.
-func textCompareSplit(s string, exactCaseAllowed bool) (tokens []token) {
+func textCompareSplit(s string, exactAllowed bool) (tokens []token) {
 	s = strings.TrimSpace(s) // ignore leading and trailing whitespace
 	for s != "" {
 		var (
 			tok       string
 			exactCase bool
+			exactNL   bool
 		)
 		if idx := strings.IndexAny(s, " \n"); idx >= 0 {
-			tok, s = s[:idx], s[idx:]
+			if exactAllowed && s[idx] == '\n' && idx >= 2 && s[idx-2:idx] == "¡" {
+				exactNL = true
+				tok, s = s[:idx-2], s[idx:]
+			} else {
+				tok, s = s[:idx], s[idx:]
+			}
 		} else {
 			tok, s = s, ""
 		}
-		if exactCase = exactCaseAllowed && strings.HasPrefix(tok, "¡"); exactCase {
+		if exactCase = exactAllowed && strings.HasPrefix(tok, "¡"); exactCase {
 			tok = tok[2:]
 		}
 		if len(tok) > 1 && strings.IndexByte(",:;?!", tok[len(tok)-1]) >= 0 {
@@ -486,18 +495,21 @@ func textCompareSplit(s string, exactCaseAllowed bool) (tokens []token) {
 			tok, exactCase = tok[len(tok)-1:], false
 		}
 		if idx := strings.IndexFunc(s, func(r rune) bool {
-			return r != ' ' && r != '\n'
+			return r != ' ' && r != '\n' && r != '¡'
 		}); idx >= 0 {
-			if nl1 := strings.IndexByte(s[:idx], '\n'); nl1 >= 0 {
-				if strings.IndexByte(s[nl1+1:idx], '\n') >= 0 {
+			ws := strings.TrimRight(s[:idx], "¡")
+			if nl1 := strings.IndexByte(ws, '\n'); nl1 >= 0 {
+				if strings.IndexByte(ws[nl1+1:], '\n') >= 0 {
 					tokens = append(tokens, token{exactCase, tok, "\n\n"})
-				} else {
+				} else if exactNL || !exactAllowed {
 					tokens = append(tokens, token{exactCase, tok, "\n"})
+				} else {
+					tokens = append(tokens, token{exactCase, tok, " "})
 				}
 			} else {
 				tokens = append(tokens, token{exactCase, tok, " "})
 			}
-			s = s[idx:]
+			s = s[len(ws):]
 		} else {
 			tokens = append(tokens, token{exactCase, tok, ""})
 		}
