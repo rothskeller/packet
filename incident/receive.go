@@ -69,7 +69,7 @@ func ReceiveMessage(raw, bbs, area, msgid, opcall, opname string) (
 	if b := msg.Base(); b.FOriginMsgID != nil {
 		rmi = *b.FOriginMsgID
 	}
-	if err = SaveMessage(lmi, rmi, env, msg, false); err != nil {
+	if err = SaveMessage(lmi, rmi, env, msg, false, true); err != nil {
 		err = fmt.Errorf("save received %s: %s", lmi, err)
 		return
 	}
@@ -141,7 +141,7 @@ func recordReceipt(env *envelope.Envelope, msg message.Message) (
 	if mb := msg.Base(); mb.FDestinationMsgID != nil {
 		*mb.FDestinationMsgID = rmi
 	}
-	if err = SaveMessage(lmi, rmi, oenv, omsg, false); err != nil {
+	if err = SaveMessage(lmi, rmi, oenv, omsg, false, false); err != nil {
 		err = fmt.Errorf("add RMI: save message %s: %s", lmi, err)
 		return
 	}

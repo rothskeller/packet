@@ -126,8 +126,10 @@ func readEnvelope(lmi, rtype string) (env *envelope.Envelope, body string, err e
 
 // SaveMessage saves a (non-receipt) message to the incident directory,
 // overwriting any previous message stored with the same LMI.  If fast is true,
-// PDFs are not generated even when possible; stale PDFs are removed.
-func SaveMessage(lmi, rmi string, env *envelope.Envelope, msg message.Message, fast bool) (err error) {
+// PDFs are not generated even when possible; stale PDFs are removed.  If
+// rawsubj is true, the envelope Subject: line is left unchanged rather than
+// being regenerated based on the message contents.
+func SaveMessage(lmi, rmi string, env *envelope.Envelope, msg message.Message, fast, rawsubj bool) (err error) {
 	if !MsgIDRE.MatchString(lmi) {
 		return errors.New("invalid LMI")
 	}
@@ -139,9 +141,9 @@ func SaveMessage(lmi, rmi string, env *envelope.Envelope, msg message.Message, f
 		panic("cannot call SaveMessage for receipt message; call SaveReceipt instead")
 	}
 	if rmi != "" {
-		return saveMessage(lmi+".txt", rmi+".txt", env, msg, fast)
+		return saveMessage(lmi+".txt", rmi+".txt", env, msg, fast, rawsubj)
 	}
-	return saveMessage(lmi+".txt", "", env, msg, fast)
+	return saveMessage(lmi+".txt", "", env, msg, fast, rawsubj)
 }
 
 // SaveReceipt saves a receipt message to the incident directory, overwriting
@@ -161,17 +163,19 @@ func SaveReceipt(lmi string, env *envelope.Envelope, msg message.Message) (err e
 	default:
 		panic("cannot call SaveReceipt on a non-receipt message")
 	}
-	return saveMessage(filename, "", env, msg, true)
+	return saveMessage(filename, "", env, msg, true, true)
 }
 
 // saveMessage is the common code between SaveMessage and SaveReceipt.
-func saveMessage(filename, linkname string, env *envelope.Envelope, msg message.Message, fast bool) (err error) {
+func saveMessage(filename, linkname string, env *envelope.Envelope, msg message.Message, fast, rawsubj bool) (err error) {
 	var (
 		content string
 		modtime time.Time
 	)
 	// Encode the message.
-	env.SubjectLine = msg.EncodeSubject()
+	if !rawsubj {
+		env.SubjectLine = msg.EncodeSubject()
+	}
 	if b := msg.Base(); b.FHandling != nil && *b.FHandling == "IMMEDIATE" {
 		env.OutpostUrgent = true
 	} else {
