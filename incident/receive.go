@@ -155,7 +155,7 @@ func subjectToLMI(subject string) (lmi string, err error) {
 	}
 	for i := len(lmis) - 1; i >= 0; i-- {
 		lmi = lmis[i]
-		if env, _, err := readEnvelope(lmi); err == nil &&
+		if env, _, err := readEnvelope(lmi, ""); err == nil &&
 			!env.IsReceived() && env.IsFinal() && env.SubjectLine == subject {
 			return lmi, nil
 		}

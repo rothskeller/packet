@@ -84,19 +84,38 @@ func LMIForRMI(rmi string) string {
 func ReadMessage(lmi string) (env *envelope.Envelope, msg message.Message, err error) {
 	var body string
 
-	if env, body, err = readEnvelope(lmi); err != nil {
+	if env, body, err = readEnvelope(lmi, ""); err != nil {
 		return env, nil, err
 	}
 	msg = message.Decode(env.SubjectLine, body)
 	return env, msg, nil
 }
-func readEnvelope(lmi string) (env *envelope.Envelope, body string, err error) {
-	var contents []byte
 
+// ReadReceipt reads a receipt for a message.  rtype must be "DR" or "RR".
+func ReadReceipt(lmi, rtype string) (env *envelope.Envelope, msg message.Message, err error) {
+	var body string
+
+	if env, body, err = readEnvelope(lmi, rtype); err != nil {
+		return env, nil, err
+	}
+	msg = message.Decode(env.SubjectLine, body)
+	return env, msg, nil
+}
+
+func readEnvelope(lmi, rtype string) (env *envelope.Envelope, body string, err error) {
+	var (
+		fname    string
+		contents []byte
+	)
 	if !MsgIDRE.MatchString(lmi) {
 		return nil, "", errors.New("invalid LMI")
 	}
-	if contents, err = os.ReadFile(lmi + ".txt"); err != nil {
+	fname = lmi
+	if rtype != "" {
+		fname += "." + rtype
+	}
+	fname += ".txt"
+	if contents, err = os.ReadFile(fname); err != nil {
 		return nil, "", err
 	}
 	if env, body, err = envelope.ParseSaved(string(contents)); err != nil {
