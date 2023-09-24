@@ -52,6 +52,9 @@ func (env *Envelope) RenderSaved(body string) string {
 	if !env.Date.IsZero() {
 		fmt.Fprintf(&sb, "Date: %s\n", env.Date.Format(time.RFC1123Z))
 	}
+	if env.DeliveredDate != "" {
+		fmt.Fprintf(&sb, "X-Packet-Delivered: %s as %s\n", env.DeliveredDate, env.DeliveredRMI)
+	}
 	sb.WriteByte('\n')
 	sb.WriteString(env.RenderBody(body))
 	return sb.String()

@@ -95,13 +95,14 @@ func recordReceipt(env *envelope.Envelope, msg message.Message) (
 ) {
 	var (
 		subject string
+		dtstamp string
 		to      string
 		ext     string
 		rmi     string
 	)
 	switch msg := msg.(type) {
 	case *delivrcpt.DeliveryReceipt:
-		subject, to = msg.MessageSubject, msg.MessageTo
+		subject, to, dtstamp = msg.MessageSubject, msg.MessageTo, msg.DeliveredTime
 		ext = ".DR"
 		rmi = msg.LocalMessageID
 	case *readrcpt.ReadReceipt:
@@ -136,6 +137,7 @@ func recordReceipt(env *envelope.Envelope, msg message.Message) (
 	if rmi == "" {
 		return // read receipt, nothing more to do
 	}
+	oenv.DeliveredDate, oenv.DeliveredRMI = dtstamp, rmi
 	if mb := msg.Base(); mb.FDestinationMsgID != nil {
 		*mb.FDestinationMsgID = rmi
 	}

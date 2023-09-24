@@ -62,6 +62,14 @@ type Envelope struct {
 	// message is ready to be sent.  When false, the message is a draft.
 	// This field is ignored for received or transmitted messages.
 	ReadyToSend bool
+	// DeliveredDate is the date/time when the (sent) message was delivered
+	// to its recipient, as pulled from the delivery receipt they sent back
+	// to us.  Note that this is a string, not a time.Time, because there is
+	// no standard format for it in the delivery receipt.
+	DeliveredDate string
+	// DeliveredRMI is the message ID assigned to the (sent) message by its
+	// recipient, as pulled from the delivery receipt they sent back to us.
+	DeliveredRMI string
 }
 
 // IsReceived returns whether the message was received (as opposed to sent or
