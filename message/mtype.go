@@ -96,14 +96,16 @@ BADCREATE:
 // returns nil if the type tag is not registered.  All message fields have
 // default values for an outgoing message.
 func Create(tag string) Message {
-	if createFn := RegisteredTypes[tag].Create; createFn != nil {
-		// We use reflection to build and make the call to the create
-		// function.  It's not very efficient, but it allows for each
-		// create function to have a clean, self-descriptive signature.
-		// In particular it allows them to declare their concrete return
-		// type rather than "any".
-		rets := reflect.ValueOf(createFn).Call(nil)
-		return rets[0].Interface().(Message)
+	if mtype := RegisteredTypes[tag]; mtype != nil {
+		if createFn := mtype.Create; createFn != nil {
+			// We use reflection to build and make the call to the create
+			// function.  It's not very efficient, but it allows for each
+			// create function to have a clean, self-descriptive signature.
+			// In particular it allows them to declare their concrete return
+			// type rather than "any".
+			rets := reflect.ValueOf(createFn).Call(nil)
+			return rets[0].Interface().(Message)
+		}
 	}
 	return nil
 }
