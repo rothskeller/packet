@@ -69,6 +69,12 @@ type BaseMessage struct {
 	// FDestinationMsgID points to the value of the Destination Message ID
 	// field.  It is nil for message types that do not have that field.
 	FDestinationMsgID *string
+	// FMessageDate points to the value of the message date field.  It is
+	// nil for message types that do not have that field.
+	FMessageDate *string
+	// FMessageTime points to the value of the message time field.  It is
+	// nil for message types that do not have that field.
+	FMessageTime *string
 	// FHandling points to the value of the Handling field.  It
 	// is nil for message types that do not have that field.
 	FHandling *string
@@ -87,6 +93,12 @@ type BaseMessage struct {
 	// FToLocation points to the value of the To Location field.  It
 	// is nil for message types that do not have that field.
 	FToLocation *string
+	// FFromICSPosition points to the value of the From ICS Position field.
+	// It is nil for message types that do not have that field.
+	FFromICSPosition *string
+	// FFromLocation points to the value of the From Location field.  It
+	// is nil for message types that do not have that field.
+	FFromLocation *string
 	// FReference points to the value of the Reference field.  It is nil for
 	// message types that do not have that field.
 	FReference *string

@@ -204,9 +204,13 @@ func (bf *BaseForm) AddHeaderFields(bm *message.BaseMessage, pdf *BaseFormPDFMap
 	)
 	bm.FOriginMsgID = &bf.OriginMsgID
 	bm.FDestinationMsgID = &bf.DestinationMsgID
+	bm.FMessageDate = &bf.MessageDate
+	bm.FMessageTime = &bf.MessageTime
 	bm.FHandling = &bf.Handling
 	bm.FToICSPosition = &bf.ToICSPosition
 	bm.FToLocation = &bf.ToLocation
+	bm.FFromICSPosition = &bf.FromICSPosition
+	bm.FFromLocation = &bf.FromLocation
 }
 func (bf *BaseForm) AddFooterFields(bm *message.BaseMessage, pdf *BaseFormPDFMaps) {
 	bm.Fields = append(bm.Fields,

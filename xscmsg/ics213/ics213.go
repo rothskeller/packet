@@ -96,9 +96,13 @@ func create(version *message.FormVersion) message.Message {
 	}}
 	f.BaseMessage.FOriginMsgID = &f.OriginMsgID
 	f.BaseMessage.FDestinationMsgID = &f.DestinationMsgID
+	f.BaseMessage.FMessageDate = &f.Date
+	f.BaseMessage.FMessageTime = &f.Time
 	f.BaseMessage.FHandling = &f.Handling
 	f.BaseMessage.FToICSPosition = &f.ToICSPosition
 	f.BaseMessage.FToLocation = &f.ToLocation
+	f.BaseMessage.FFromICSPosition = &f.FromICSPosition
+	f.BaseMessage.FFromLocation = &f.FromLocation
 	f.BaseMessage.FSubject = &f.Subject
 	f.BaseMessage.FReference = &f.Reference
 	f.BaseMessage.FBody = &f.Message
