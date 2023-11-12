@@ -153,9 +153,10 @@ func DecodePIFO(body string) (f *PIFOForm) {
 }
 
 // parseBracketedValue parses a field value in brackets.  Within the brackets,
-// \n represents a newline, \\ represents a backslash, literal newlines are
-// ignored, `] represents a close bracket, and `]]] represents a backtick at the
-// end of the string.  The final close bracket must be followed by a newline.
+// \n represents a newline, \\ represents a backslash, `] represents a close
+// bracket, and `]]] represents a backtick at the end of the string.  Literal
+// newlines are ignored, even in the middle of the above sequences.  The final
+// close bracket must be followed by a newline.
 func parseBracketedValue(body string) (value, nbody string, ok bool) {
 	for body != "" {
 		if body[0] == ']' { // close bracket ends the value
@@ -172,9 +173,19 @@ func parseBracketedValue(body string) (value, nbody string, ok bool) {
 			body = body[2:]
 			continue
 		}
+		if len(body) > 2 && body[0] == '\\' && body[1] == '\n' && body[2] == '\\' { // escaped backslashes are a single backslash
+			value += "\\"
+			body = body[3:]
+			continue
+		}
 		if len(body) > 1 && body[0] == '\\' && body[1] == 'n' { // escaped 'n's are newlines
 			value += "\n"
 			body = body[2:]
+			continue
+		}
+		if len(body) > 2 && body[0] == '\\' && body[1] == '\n' && body[2] == 'n' { // escaped 'n's are newlines
+			value += "\n"
+			body = body[3:]
 			continue
 		}
 		if len(body) > 3 && body[0] == '`' && body[1] == ']' && body[2] == ']' && body[3] == ']' {
@@ -184,9 +195,24 @@ func parseBracketedValue(body string) (value, nbody string, ok bool) {
 			body = body[4:]
 			break
 		}
+		if len(body) > 4 &&
+			((body[0] == '`' && body[1] == '\n' && body[2] == ']' && body[3] == ']' && body[4] == ']') ||
+				(body[0] == '`' && body[1] == ']' && body[2] == '\n' && body[3] == ']' && body[4] == ']') ||
+				(body[0] == '`' && body[1] == ']' && body[2] == ']' && body[3] == '\n' && body[4] == ']')) {
+			// backtick followed by three close brackets is a backtick that ends the string
+			ok = true
+			value += "`"
+			body = body[5:]
+			break
+		}
 		if len(body) > 1 && body[0] == '`' && body[1] == ']' { // backtick, close bracket is a literal close bracket
 			value += "]"
 			body = body[2:]
+			continue
+		}
+		if len(body) > 2 && body[0] == '`' && body[1] == '\n' && body[2] == ']' { // backtick, close bracket is a literal close bracket
+			value += "]"
+			body = body[3:]
 			continue
 		}
 		// anything else is copied literally
