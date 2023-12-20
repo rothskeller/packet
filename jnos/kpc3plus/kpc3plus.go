@@ -66,6 +66,8 @@ var preConnectCommands = []string{
 	"STREAMEV OFF",
 	"STREAMSW $00",
 	"UNPROTO IDENT",
+	"MXMIT ON",
+	"MCON OFF",
 	"MONITOR ON",
 }
 
