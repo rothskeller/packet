@@ -471,11 +471,10 @@ func decode(subject, body string) (f *ICS213) {
 	// DestinationMsgID.
 	if f.OriginMsgID != "" || f.ReceivedSent == "receiver" {
 		f.DestinationMsgID = f.myMsgID
-		f.Fields[2].PIFOTag = "MsgNo"
+		f.Fields[2].PIFOTag = ""
 	} else {
 		f.OriginMsgID = f.myMsgID
-		f.Fields[0].PIFOTag = "MsgNo"
+		f.Fields[0].PIFOTag = ""
 	}
-	f.Fields[1].PIFOTag = ""
 	return f
 }
