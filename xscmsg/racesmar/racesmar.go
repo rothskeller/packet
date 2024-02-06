@@ -344,6 +344,10 @@ func create(version *message.FormVersion) message.Message {
 				EditHelp: `This indicates that the original resource request form has been signed.`,
 			}),
 		)
+	} else {
+		f.Fields = append(f.Fields,
+			message.NewCalculatedField(new(message.Field)),
+		)
 	}
 	f.Fields = append(f.Fields,
 		message.NewDateField(true, &message.Field{
