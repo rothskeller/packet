@@ -84,7 +84,7 @@ func DecodeSubject(line string) (msgid, severity, handling, formtag, subject str
 }
 
 var (
-	headerRE    = regexp.MustCompile(`^#T: ([a-z][-a-z0-9]+\.html)\n#V: (\d+(?:\.\d+)*)-(\d+(?:\.\d+)*)\n`)
+	headerRE    = regexp.MustCompile(`^#T: ([a-z][-a-z0-9]+\.html)\n#V: (\d+(?:\.\d+)*[A-Za-z]?)-(\d+(?:\.\d+)*[A-Za-z]*)\n`)
 	fieldLineRE = regexp.MustCompile(`(?i)^([A-Z0-9][-A-Z0-9.]*): \[`)
 )
 

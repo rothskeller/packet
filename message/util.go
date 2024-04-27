@@ -1,50 +1,98 @@
 package message
 
 import (
-	"strconv"
 	"strings"
 )
 
 // OlderVersion compares two version numbers, and returns true if the first one
-// is older than the second one.  Each version number is a dot-separated
-// sequence of parts, each of which is compared independently with the
-// corresponding part in the other version number.  The parts are compared
-// numerically if they parse as integers, and as strings otherwise.  However, a
-// part that starts with a digit is always "newer" than a part that doesn't.
-// (This results in "undefined" being treated as infinitely old, which is what
-// we want.)
+// is older than the second one.  Each version number is split into a sequence
+// of dot-separated parts.  Any such parts that start with a digit and contain
+// non-digits are further split into the part with the leading digits and the
+// remainder.  The parts in the first version number are then compared one by
+// one with the corresponding parts of the second number until a difference is
+// found.  When both parts contain only digits, they are compared numerically
+// (e.g. 2 < 10).  When both parts contain non-digits, they are compared as
+// case-insensitive strings.  When the parts are of mixed type, a part
+// containing non-digits is "older" than the absence of a part, which is "older"
+// than a part containing only digits.
+//
+// This algorithm ensures that "undefined" is older than any numeric version,
+// and that "3.15alpha" is older than "3.15".
 func OlderVersion(a, b string) bool {
-	aparts := strings.Split(a, ".")
-	bparts := strings.Split(b, ".")
-	for len(aparts) != 0 && len(bparts) != 0 {
-		anum, aerr := strconv.Atoi(aparts[0])
-		bnum, berr := strconv.Atoi(bparts[0])
-		if aerr == nil && berr == nil {
-			if anum < bnum {
-				return true
-			}
-			if anum > bnum {
-				return false
-			}
-		} else if startsWithDigit(aparts[0]) && !startsWithDigit(bparts[0]) {
+	for {
+		var apart, bpart string
+		var astr, bstr bool
+
+		if a == "" && b == "" {
 			return false
-		} else if !startsWithDigit(aparts[0]) && startsWithDigit(bparts[0]) {
-			return true
-		} else {
-			if aparts[0] < bparts[0] {
+		}
+		apart, a, astr = versionPart(a)
+		bpart, b, bstr = versionPart(b)
+		switch {
+		case apart == "":
+			switch {
+			case bpart == "":
+				break
+			case bstr:
+				return false
+			default: // !bstr
 				return true
 			}
-			if aparts[0] > bparts[0] {
+		case astr:
+			switch {
+			case bpart == "":
+				return true
+			case bstr:
+				apart = strings.ToLower(apart)
+				bpart = strings.ToLower(bpart)
+				if apart != bpart {
+					return apart < bpart
+				}
+			default: // !bstr
+				return true
+			}
+		default: // !astr
+			switch {
+			case bpart == "":
 				return false
+			case bstr:
+				return false
+			default: // !bstr
+				if apart == bpart {
+					// nothing
+				} else if len(apart) == len(bpart) {
+					return apart < bpart
+				} else {
+					return len(apart) < len(bpart)
+				}
 			}
 		}
-		aparts = aparts[1:]
-		bparts = bparts[1:]
 	}
-	return len(bparts) != 0
 }
-func startsWithDigit(s string) bool {
-	return s != "" && s[0] >= '0' && s[0] <= '9'
+func versionPart(s string) (part, rest string, nonDigits bool) {
+LOOP:
+	for s != "" {
+		switch s[0] {
+		case '.':
+			s = s[1:]
+			break LOOP
+		case '0', '1', '2', '3', '4', '5', '6', '7', '8', '9':
+			part += string(s[0])
+			s = s[1:]
+		default:
+			if part == "" || nonDigits {
+				nonDigits = true
+				part += string(s[0])
+				s = s[1:]
+			} else {
+				break LOOP
+			}
+		}
+	}
+	for !nonDigits && len(part) > 1 && part[0] == '0' {
+		part = part[1:]
+	}
+	return part, s, nonDigits
 }
 
 // SmartJoin joins the two provided strings with the provided separator, but
