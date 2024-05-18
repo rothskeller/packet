@@ -95,7 +95,7 @@
           <tbody><tr>
             <th>ICS Position:</th>
             <td style="padding-right:0;">
-              <table class="combobox">
+              <table class="combobox" id="to-ics-position-box">
                 <tbody><tr>
                   <td>
                     <input type="text" name="7a.to-ics-position" required="required" tabindex="8"/>
@@ -106,9 +106,9 @@
                     </span>
                   </td>
                 </tr><tr>
-                  <td colspan="2" class="dropdown-list" style="display:none;">
+                  <td colspan="2" class="dropdown-menu">
                     <div>
-                      <div id="to-ics-position-options">
+                      <div>
                       </div>
                     </div>
                   </td>
@@ -133,7 +133,7 @@
           <tbody><tr>
             <th>Location:</th>
             <td style="padding-right:0;">
-              <table class="combobox">
+              <table class="combobox" id="to-location-box">
                 <tbody><tr>
                   <td>
                     <input type="text" name="7b.to-location" required="required" tabindex="9"/>
@@ -144,9 +144,9 @@
                     </span>
                   </td>
                 </tr><tr>
-                  <td colspan="2" class="dropdown-list" style="display:none;">
+                  <td colspan="2" class="dropdown-menu">
                     <div>
-                      <div id="to-location-options">
+                      <div>
                       </div>
                     </div>
                   </td>
@@ -501,14 +501,14 @@
         <input type="button" id="opdirect-submit" tabindex="600" disabled="disabled" value="Submit to Outpost" onclick="opdirect_submit(event)" style="font-weight:bold"/>
         <input type="button" id="email-submit" tabindex="601" disabled="disabled" value="Submit via Email" onclick="email_submit(event)" style="font-weight:bold"/>
           
-        <input type="button" id="clear-form" tabindex="603" value="Reset Form" onclick="clear_form(event)"/>
-        <input type="button" id="show-PDF-form" tabindex="604" class="hidden" hidden="hidden" value="Show PDF"/>
+        <input type="button" id="clear-form" tabindex="602" value="Reset Form" onclick="clear_form(event)"/>
+        <input type="button" id="show-PDF-form" tabindex="603" class="hidden" hidden="hidden" value="Show PDF"/>
         <span id="invalid-example">
           <input type="text" class="invalid" disabled="disabled" style="margin-left:1em;width:2em;border:1px solid #cccccc;"/>
             = required
         </span>
       </td><td style="vertical-align:middle;align:right;width:1px;white-space:nowrap;">
-        <input type="button" id="show-hide-data" tabindex="602" value="Show Text Message" onclick="toggle_form_data_visibility(event)"/>
+        <input type="button" id="show-hide-data" tabindex="604" value="Show Text Message" onclick="toggle_form_data_visibility(event)"/>
         <div id="error-indicator">Error</div>
       </td>
     </tr>

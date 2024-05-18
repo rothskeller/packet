@@ -27,6 +27,8 @@ func init() {
 // versions is the list of supported versions.  The first one is used when
 // creating new forms.
 var versions = []*message.FormVersion{
+	{HTML: "form-allied-health-facility-status.html", Version: "2.6", Tag: "AHFacStat", FieldOrder: fieldOrder},
+	{HTML: "form-allied-health-facility-status.html", Version: "2.4", Tag: "AHFacStat", FieldOrder: fieldOrder},
 	{HTML: "form-allied-health-facility-status.html", Version: "2.3", Tag: "AHFacStat", FieldOrder: fieldOrder},
 	{HTML: "form-allied-health-facility-status.html", Version: "2.2", Tag: "AHFacStat", FieldOrder: fieldOrder},
 	{HTML: "form-allied-health-facility-status.html", Version: "2.1", Tag: "AHFacStat", FieldOrder: fieldOrder},
