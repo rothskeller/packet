@@ -24,6 +24,6 @@ This repository contains software related to packet radio:
 
 This software was written by Steve Roth, KC6RSC.
 
-Copyright © 2021–2023 by Steven Roth <steve@rothskeller.net>
+Copyright © 2021–2024 by Steven Roth <steve@rothskeller.net>
 
 See LICENSE.txt for license details.

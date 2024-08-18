@@ -12,8 +12,6 @@ import (
 	"github.com/rothskeller/packet/xscmsg/readrcpt"
 )
 
-var ErrDuplicateReceipt = errors.New("duplicate receipt")
-
 // ReceiveMessage takes a raw message received from JNOS and saves it in the
 // incident. "bbs" and "area" are the names of the BBS from which the message
 // was retrieved and, if the message is a bulletin, the bulletin area from which
@@ -30,9 +28,7 @@ var ErrDuplicateReceipt = errors.New("duplicate receipt")
 // If the received message is a receipt, it will be returned as "env" and "msg".
 // If the receipt can be matched against a previously sent message in the
 // incident, that previously sent message is returned as "lmi", "oenv", and
-// "omsg" are the message for which it is a receipt.  Note: in the case where
-// a receipt has already been received for the message, all five return values
-// are filled in, and "err" will be ErrDuplicateReceipt.
+// "omsg" are the message for which it is a receipt.
 //
 // If the received message has an error, "err" will be set and the other return
 // values will be zero.
@@ -95,19 +91,15 @@ func recordReceipt(env *envelope.Envelope, msg message.Message) (
 ) {
 	var (
 		subject string
-		dtstamp string
 		to      string
-		ext     string
 		rmi     string
 	)
 	switch msg := msg.(type) {
 	case *delivrcpt.DeliveryReceipt:
-		subject, to, dtstamp = msg.MessageSubject, msg.MessageTo, msg.DeliveredTime
-		ext = ".DR"
+		subject, to = msg.MessageSubject, msg.MessageTo
 		rmi = msg.LocalMessageID
 	case *readrcpt.ReadReceipt:
 		subject, to = msg.MessageSubject, msg.MessageTo
-		ext = ".RR"
 	}
 	if subject != "" {
 		if lmi, err = subjectToLMI(subject); err != nil {
@@ -126,10 +118,6 @@ func recordReceipt(env *envelope.Envelope, msg message.Message) (
 		err = fmt.Errorf("read message %s for receipt: %s", lmi, err)
 		return
 	}
-	if _, err = os.Stat(lmi + ext); !errors.Is(err, os.ErrNotExist) {
-		err = ErrDuplicateReceipt
-		return
-	}
 	if err = SaveReceipt(lmi, env, msg); err != nil {
 		err = fmt.Errorf("save receipt for %s: %s", lmi, err)
 		return
@@ -137,8 +125,7 @@ func recordReceipt(env *envelope.Envelope, msg message.Message) (
 	if rmi == "" {
 		return // read receipt, nothing more to do
 	}
-	oenv.DeliveredDate, oenv.DeliveredRMI = dtstamp, rmi
-	if mb := msg.Base(); mb.FDestinationMsgID != nil {
+	if mb := msg.Base(); mb.FDestinationMsgID != nil && *mb.FDestinationMsgID == "" {
 		*mb.FDestinationMsgID = rmi
 	}
 	if err = SaveMessage(lmi, rmi, oenv, omsg, false, false); err != nil {

@@ -5,6 +5,7 @@ import (
 	"encoding/csv"
 	"fmt"
 	"os"
+	"regexp"
 	"sort"
 	"strconv"
 	"strings"
@@ -31,6 +32,8 @@ type ICS309Header struct {
 	TacName       string
 }
 
+var receiptExtRE = regexp.MustCompile(`\.[DR]\d+\.txt$`)
+
 // GenerateICS309 generates an ICS-309 communications log covering all of the
 // messages in the directory.  The log is generated in CSV format (ics309.csv),
 // and if PDF rendering support is built into the program, it is also generated
@@ -44,7 +47,6 @@ func GenerateICS309(header *ICS309Header) (err error) {
 		files []os.FileInfo
 		msgs  []*envelope.Envelope
 		form  [][]string
-		rmis  = make(map[string]string)
 		lmis  = make(map[*envelope.Envelope]string)
 	)
 	if dir, err = os.Open("."); err != nil {
@@ -55,66 +57,46 @@ func GenerateICS309(header *ICS309Header) (err error) {
 		return err
 	}
 	for _, fi := range files {
-		if !strings.HasSuffix(fi.Name(), ".txt") {
+		var (
+			lmi     string
+			rcpt    bool
+			content []byte
+			env     *envelope.Envelope
+		)
+		if !strings.HasSuffix(fi.Name(), ".txt") || !fi.Mode().IsRegular() {
 			continue
 		}
-		switch fi.Mode().Type() {
-		case 0: // regular file
-			var (
-				lmi     string
-				rcpt    bool
-				content []byte
-				env     *envelope.Envelope
-			)
-			if strings.HasSuffix(fi.Name(), ".DR.txt") || strings.HasSuffix(fi.Name(), ".RR.txt") {
-				lmi = fi.Name()[:len(fi.Name())-7]
-				rcpt = true
-			} else {
-				lmi = fi.Name()[:len(fi.Name())-4]
-			}
-			if !MsgIDRE.MatchString(lmi) {
-				continue
-			}
-			if content, err = os.ReadFile(fi.Name()); err != nil {
-				continue
-			}
-			if env, _, err = envelope.ParseSaved(string(content)); err != nil {
-				continue
-			}
-			if !env.IsFinal() {
-				continue
-			}
-			msgs = append(msgs, env)
-			if !rcpt {
-				lmis[env] = lmi
-			}
-		case os.ModeSymlink:
-			var (
-				rmi string
-				lmi string
-			)
-			rmi = fi.Name()[:len(fi.Name())-4]
-			if !MsgIDRE.MatchString(rmi) {
-				continue
-			}
-			if lmi, err = os.Readlink(fi.Name()); err != nil {
-				continue
-			}
-			if !strings.HasSuffix(lmi, ".txt") {
-				continue
-			}
-			lmi = lmi[:len(lmi)-4]
-			if !MsgIDRE.MatchString(lmi) {
-				continue
-			}
-			rmis[lmi] = rmi
+		if idxs := receiptExtRE.FindStringIndex(fi.Name()); idxs != nil {
+			lmi, rcpt = fi.Name()[:idxs[0]], true
+		} else {
+			lmi = fi.Name()[:len(fi.Name())-4]
+		}
+		if !MsgIDRE.MatchString(lmi) {
+			continue
+		}
+		if content, err = os.ReadFile(fi.Name()); err != nil {
+			continue
+		}
+		if env, _, err = envelope.ParseSaved(string(content)); err != nil {
+			continue
+		}
+		if !env.IsFinal() {
+			continue
+		}
+		msgs = append(msgs, env)
+		if !rcpt {
+			lmis[env] = lmi
 		}
 	}
 	// Sort the list chronologically.
 	sort.Slice(msgs, func(i, j int) bool { return envelopeLess(msgs[i], msgs[j]) })
 	// Generate the form data.
 	for _, m := range msgs {
-		form = append(form, make309Line(m, lmis[m], rmis[lmis[m]]))
+		if lines, err := make309Lines(m, lmis[m]); err != nil {
+			return err
+		} else {
+			form = append(form, lines...)
+		}
 	}
 	// Render the form.
 	RemoveICS309s()
@@ -143,11 +125,26 @@ func envelopeLess(a, b *envelope.Envelope) bool {
 	return at.Before(bt)
 }
 
-// make309Line generates the ICS-309 form data for a single message.
-func make309Line(m *envelope.Envelope, lmi, rmi string) []string {
+// make309Lines generates one or more ICS-309 form lines for a single message.
+func make309Lines(m *envelope.Envelope, lmi string) (lines [][]string, err error) {
+	if m.IsReceived() {
+		return [][]string{make309Line(m, lmi, nil)}, nil
+	} else {
+		if delivs, err := Deliveries(lmi); err != nil {
+			return nil, err
+		} else {
+			lines = make([][]string, len(delivs))
+			for i, deliv := range delivs {
+				lines[i] = make309Line(m, lmi, deliv)
+			}
+		}
+		return lines, nil
+	}
+}
+func make309Line(m *envelope.Envelope, lmi string, deliv *DeliveryInfo) []string {
 	var t time.Time
 	var from, oid, to, did, sub string
-	if m.IsReceived() {
+	if deliv == nil {
 		t = m.ReceivedDate
 		from = m.From
 		if addrs, err := envelope.ParseAddressList(from); err == nil && len(addrs) != 0 {
@@ -155,16 +152,17 @@ func make309Line(m *envelope.Envelope, lmi, rmi string) []string {
 		}
 		from, _, _ = strings.Cut(from, "@")
 		from = strings.ToUpper(from)
-		oid, did = rmi, lmi
+		oid, _, _, _, _ = message.DecodeSubject(m.SubjectLine)
+		did = lmi
 		if m.ReceivedArea != "" {
 			to = strings.ToUpper(m.ReceivedArea)
 		}
 	} else {
 		t = m.Date
-		oid, did = lmi, rmi
-		to = m.To
-		if addrs, err := envelope.ParseAddressList(to); err == nil && len(addrs) != 0 {
-			to = addrs[0].Address
+		oid, did = lmi, deliv.RemoteMessageID
+		to = deliv.Recipient
+		if addr, err := envelope.ParseAddress(to); err == nil {
+			to = addr.Address
 		}
 		to, _, _ = strings.Cut(to, "@")
 		to = strings.ToUpper(to)

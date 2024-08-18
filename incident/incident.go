@@ -6,16 +6,19 @@
 // program.
 //
 // Within the directory, each non-receipt message is stored in a file called
-// «LMI».txt, where «LMI» is the local message ID for the message.  If the
-// remote message ID for the message is known, a symbolic link «RMI».txt points
-// to «LMI».txt.
+// «LMI».txt, where «LMI» is the local message ID for the message.  If any
+// remote message IDs for the message are known, symbolic links name «RMI».txt
+// point to «LMI».txt.  (There may be multiple remote message IDs if the message
+// was sent to multiple recipients.)
 //
 // Messages are automatically rendered in PDF format if the message type
 // supports it and PDF rendering is built into the program; the PDF version is
 // stored in «LMI».pdf, with possible symbolic link from «RMI».pdf.
 //
-// Delivery and read receipts are stored in «LMI».DR.txt and «LMI».RR.txt,
-// respectively; there are no «RMI» symbolic links for those.
+// Delivery and read receipts are stored in «LMI».DR#.txt and «LMI».RR#.txt,
+// respectively, where '#' is either absent or a serial number starting with 2.
+// (Multiple receipts may be received for a message if it was sent to multiple
+// recipients.)  There are no «RMI» symbolic links for those.
 //
 // On request, package incident can also generate an ICS-309 message log for the
 // messages in the directory.  This is stored in CSV format in ics309.csv, and
@@ -91,18 +94,18 @@ func ReadMessage(lmi string) (env *envelope.Envelope, msg message.Message, err e
 	return env, msg, nil
 }
 
-// ReadReceipt reads a receipt for a message.  rtype must be "DR" or "RR".
-func ReadReceipt(lmi, rtype string) (env *envelope.Envelope, msg message.Message, err error) {
+// ReadReceipt reads a receipt for a message.  rcpt must be "DR#" or "RR#".
+func ReadReceipt(lmi, rcpt string) (env *envelope.Envelope, msg message.Message, err error) {
 	var body string
 
-	if env, body, err = readEnvelope(lmi, rtype); err != nil {
+	if env, body, err = readEnvelope(lmi, rcpt); err != nil {
 		return env, nil, err
 	}
 	msg = message.Decode(env.SubjectLine, body)
 	return env, msg, nil
 }
 
-func readEnvelope(lmi, rtype string) (env *envelope.Envelope, body string, err error) {
+func readEnvelope(lmi, rcpt string) (env *envelope.Envelope, body string, err error) {
 	var (
 		fname    string
 		contents []byte
@@ -111,8 +114,8 @@ func readEnvelope(lmi, rtype string) (env *envelope.Envelope, body string, err e
 		return nil, "", errors.New("invalid LMI")
 	}
 	fname = lmi
-	if rtype != "" {
-		fname += "." + rtype
+	if rcpt != "" {
+		fname += "." + rcpt
 	}
 	fname += ".txt"
 	if contents, err = os.ReadFile(fname); err != nil {
@@ -125,10 +128,11 @@ func readEnvelope(lmi, rtype string) (env *envelope.Envelope, body string, err e
 }
 
 // SaveMessage saves a (non-receipt) message to the incident directory,
-// overwriting any previous message stored with the same LMI.  If fast is true,
-// PDFs are not generated even when possible; stale PDFs are removed.  If
-// rawsubj is true, the envelope Subject: line is left unchanged rather than
-// being regenerated based on the message contents.
+// overwriting any previous message stored with the same LMI.  If rmi is not
+// empty, an RMI symlink is created.  (Existing RMI symlinks are not disturbed.)
+// If fast is true, PDFs are not generated even when possible; stale PDFs are
+// removed.  If rawsubj is true, the envelope Subject: line is left unchanged
+// rather than being regenerated based on the message contents.
 func SaveMessage(lmi, rmi string, env *envelope.Envelope, msg message.Message, fast, rawsubj bool) (err error) {
 	if !MsgIDRE.MatchString(lmi) {
 		return errors.New("invalid LMI")
@@ -146,22 +150,33 @@ func SaveMessage(lmi, rmi string, env *envelope.Envelope, msg message.Message, f
 	return saveMessage(lmi+".txt", "", env, msg, fast, rawsubj)
 }
 
-// SaveReceipt saves a receipt message to the incident directory, overwriting
-// any previous stored receipt of the same type with the same LMI.
+// SaveReceipt saves a receipt message to the incident directory, with a unique
+// sequence number to avoid overwriting other receipts for the same message.
 func SaveReceipt(lmi string, env *envelope.Envelope, msg message.Message) (err error) {
 	var (
+		base     string
 		filename string
+		seq      = 1
 	)
 	if !MsgIDRE.MatchString(lmi) {
 		return errors.New("invalid LMI")
 	}
 	switch msg.(type) {
 	case *delivrcpt.DeliveryReceipt:
-		filename = lmi + ".DR.txt"
+		base = lmi + ".DR"
 	case *readrcpt.ReadReceipt:
-		filename = lmi + ".RR.txt"
+		base = lmi + ".RR"
 	default:
 		panic("cannot call SaveReceipt on a non-receipt message")
+	}
+	filename = base + ".txt"
+	for {
+		if _, err := os.Stat(filename); os.IsNotExist(err) {
+			break
+		} else {
+			seq++
+			filename = fmt.Sprintf("%s%d.txt", base, seq)
+		}
 	}
 	return saveMessage(filename, "", env, msg, true, true)
 }
@@ -209,6 +224,8 @@ func saveMessage(filename, linkname string, env *envelope.Envelope, msg message.
 		if linkname != "" {
 			os.Remove(linkname[:len(linkname)-4] + ".pdf")
 		}
+		// This code could leave symlinks to nonexistent PDFs if there
+		// are RMI links other than linkname.  TODO
 	} else {
 		if err = msg.RenderPDF(env, filename); err != nil && err != message.ErrNotSupported {
 			return err
@@ -228,6 +245,9 @@ func RemoveMessage(lmi string) {
 	}
 	os.Remove(lmi + ".txt")
 	os.Remove(lmi + ".pdf")
+	// This code could leave RMI symlinks to the message.  But client code
+	// doesn't call this except for unsent messages, so it shouldn't be an
+	// issue.
 }
 
 // UniqueMessageID returns the provided message ID if there is no existing
@@ -345,56 +365,126 @@ func SeqToLMI(seq int, remote bool) (lmis []string, err error) {
 	return lmis, nil
 }
 
-// RemoteMap returns a map from local message ID to remote message ID for those
-// messages that have a remote message ID.  It returns an error only if the
-// directory cannot be read.
-func RemoteMap() (m map[string]string, err error) {
-	var (
-		dir   *os.File
-		files []os.FileInfo
-	)
-	if dir, err = os.Open("."); err != nil {
-		return nil, err
-	}
-	defer dir.Close()
-	if files, err = dir.Readdir(0); err != nil {
-		return nil, err
-	}
-	m = make(map[string]string)
-	for _, fi := range files {
-		var lmi, rmi string
-
-		if fi.Mode().Type() != os.ModeSymlink {
-			continue
-		}
-		if !strings.HasSuffix(fi.Name(), ".txt") {
-			continue
-		}
-		if rmi = fi.Name()[:len(fi.Name())-4]; !MsgIDRE.MatchString(rmi) {
-			continue
-		}
-		if lmi, err = os.Readlink(fi.Name()); err != nil {
-			continue
-		}
-		if !strings.HasSuffix(lmi, ".txt") {
-			continue
-		}
-		if lmi = lmi[:len(lmi)-4]; !MsgIDRE.MatchString(lmi) {
-			continue
-		}
-		m[lmi] = rmi
-	}
-	return m, nil
+// A DeliveryInfo structure describes the delivery of a message to a recipient.
+type DeliveryInfo struct {
+	// Recipient is the address of the recipient to which the message was
+	// addressed.  Display names are removed and domains are fleshed out.
+	Recipient string
+	// DeliveredTime is the date and time when the message was delivered to
+	// the recipient, as described in the delivery receipt they sent back.
+	// (It is a string because there is no standard time formatting for this
+	// delivery receipt field.)  It is empty if no delivery receipt has been
+	// received from this recipient.
+	DeliveredTime string
+	// RemoteMessageID is the message ID assigned to the message by the
+	// recipient.  It is empty if no delivery receipt has been received from
+	// this recipient.
+	RemoteMessageID string
+	// receivedBBS is the BBS where we retrieved the delivery receipt, which
+	// presumably is also the BBS through which we sent the message.  We
+	// need this to resolve addresses without a domain.
+	receivedBBS string
 }
 
-// HasDeliveryReceipt returns whether the message with the specified LMI has a
-// delivery receipt.
-func HasDeliveryReceipt(lmi string) bool {
-	if !MsgIDRE.MatchString(lmi) {
-		panic("HasDeliveryReceipt called for invalid LMI")
+// Deliveries returns the delivery information for an outgoing message.  One
+// DeliveryInfo structure is returned for each distinct To/Cc/Bcc address in the
+// message.  An error is returned only if files cannot be read or decoded.
+func Deliveries(lmi string) (delivs []*DeliveryInfo, err error) {
+	var (
+		env   *envelope.Envelope
+		addrs []*envelope.Address
+		seq   = 2
+	)
+	if env, _, err = readEnvelope(lmi, ""); err != nil {
+		return nil, err
 	}
-	if _, err := os.Stat(lmi + ".DR.txt"); err == nil {
+	if env.IsReceived() {
+		return nil, fmt.Errorf("%s: not an outgoing message", lmi)
+	}
+	if addrs, err = envelope.ParseAddressList(env.To); err != nil {
+		return nil, fmt.Errorf("%s: invalid To field: %s", lmi, err)
+	}
+	delivs = make([]*DeliveryInfo, len(addrs))
+	for i, addr := range addrs {
+		delivs[i] = &DeliveryInfo{Recipient: addr.Address}
+	}
+	if deliv, err := readDelivery(lmi + ".DR.txt"); err != nil && !os.IsNotExist(err) {
+		return nil, err
+	} else if deliv != nil {
+		delivs = assignDelivery(delivs, deliv)
+	}
+	for {
+		if deliv, err := readDelivery(fmt.Sprintf("%s.DR%d.txt", lmi, seq)); err != nil && !os.IsNotExist(err) {
+			return nil, err
+		} else if deliv != nil {
+			delivs = assignDelivery(delivs, deliv)
+		} else {
+			break
+		}
+		seq++
+	}
+	return delivs, nil
+}
+
+// readDelivery reads a delivery receipt and creates a DeliveryInfo.
+func readDelivery(fname string) (deliv *DeliveryInfo, err error) {
+	var (
+		contents []byte
+		env      *envelope.Envelope
+		body     string
+		msg      message.Message
+		dr       *delivrcpt.DeliveryReceipt
+	)
+	if contents, err = os.ReadFile(fname); err != nil {
+		return nil, err
+	}
+	if env, body, err = envelope.ParseSaved(string(contents)); err != nil {
+		return nil, fmt.Errorf("%s: stored message could not be parsed: %s", fname, err)
+	}
+	if addrs, err := envelope.ParseAddressList(env.From); err == nil {
+		env.From = addrs[0].Address
+	}
+	msg = message.Decode(env.SubjectLine, body)
+	if dr, _ = msg.(*delivrcpt.DeliveryReceipt); dr == nil || !env.IsReceived() {
+		return nil, fmt.Errorf("%s: not a received delivery receipt", fname)
+	}
+	return &DeliveryInfo{env.From, dr.DeliveredTime, dr.LocalMessageID, env.ReceivedBBS}, nil
+}
+
+// assignDelivery assigns a DeliveryInfo to the correct recipient in the
+// list of deliveries.  If no matching recipient is found, one is added.
+func assignDelivery(delivs []*DeliveryInfo, deliv *DeliveryInfo) []*DeliveryInfo {
+	for _, d := range delivs {
+		if recipientMatch(d.Recipient, deliv) {
+			d.DeliveredTime, d.RemoteMessageID = deliv.DeliveredTime, deliv.RemoteMessageID
+			return delivs
+		}
+	}
+	return append(delivs, deliv)
+}
+
+// recipientMatch returns whether the Recipient in candidate is a match for the
+// target recipient.
+func recipientMatch(tgt string, candidate *DeliveryInfo) bool {
+	tlocal, tdomain, _ := strings.Cut(tgt, "@")
+	clocal, cdomain, _ := strings.Cut(candidate.Recipient, "@")
+	if !strings.EqualFold(tlocal, clocal) {
+		return false
+	}
+	if tdomain == "" {
+		tdomain = strings.ToLower(candidate.receivedBBS)
+	}
+	tfirst, trest, _ := strings.Cut(tdomain, ".")
+	cfirst, crest, _ := strings.Cut(cdomain, ".")
+	if !strings.EqualFold(tfirst, cfirst) {
+		return false
+	}
+	tscco := trest == "" || !strings.EqualFold(trest, "ampr.org") || !strings.EqualFold(trest, "scc-ares-races.org")
+	cscco := crest == "" || !strings.EqualFold(crest, "ampr.org") || !strings.EqualFold(crest, "scc-ares-races.org")
+	if tscco != cscco {
+		return false
+	} else if tscco && cscco {
 		return true
 	}
-	return false
+	return strings.EqualFold(trest, crest)
 }

@@ -166,11 +166,6 @@ func extractPlainText(header textproto.MIMEHeader, body []byte) (nbody []byte, n
 // package generates when saving a received message.
 var receivedRE = regexp.MustCompile(`^FROM (\S+)\.ampr\.org BY pktmsg.local(?: FOR (\S+))?; (\w\w\w, \d\d \w\w\w \d\d\d\d \d\d:\d\d:\d\d [-+]\d\d\d\d)$`)
 
-// deliveredRE is the regular expression for the "X-Packet-Delivered: " line
-// that this package generates when saving a sent message for which a delivery
-// receipt has been received.
-var deliveredRE = regexp.MustCompile(`^(.*) as (.*?)$`)
-
 // parseHeadersSaved parses the headers of a saved message.
 func (env *Envelope) parseHeadersStored(h mail.Header) error {
 	env.parseHeadersCommon(h)
@@ -186,9 +181,6 @@ func (env *Envelope) parseHeadersStored(h mail.Header) error {
 		}
 	}
 	env.ReadyToSend = h.Get("X-Packet-Queued") != ""
-	if match := deliveredRE.FindStringSubmatch(h.Get("X-Packet-Delivered")); match != nil {
-		env.DeliveredDate, env.DeliveredRMI = match[1], match[2]
-	}
 	return nil
 }
 

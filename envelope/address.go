@@ -8,7 +8,9 @@ import (
 )
 
 // Address is an address that can appear in the header of a message.  It
-// consists of an optional name comment followed by an xxx@yyy address.
+// consists of an optional name comment followed by an xxx or xxx@yyy address.
+// It is roughly similar to mail.Address, but does not require the Address part
+// to contain a domain.
 type Address struct {
 	Name    string
 	Address string

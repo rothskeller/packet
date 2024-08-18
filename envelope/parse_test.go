@@ -108,16 +108,6 @@ var savedTests = []struct {
 		},
 		body: "nothing\n",
 	},
-	{
-		name:  "delivered",
-		saved: "From: <nobody@nowhere>\nX-Packet-Delivered: a as b as c\n\nnothing\n",
-		env: &Envelope{
-			From:          "<nobody@nowhere>",
-			DeliveredDate: "a as b",
-			DeliveredRMI:  "c",
-		},
-		body: "nothing\n",
-	},
 }
 
 func TestParse(t *testing.T) {
