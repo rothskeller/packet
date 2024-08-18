@@ -227,12 +227,11 @@ func saveMessage(filename, linkname string, env *envelope.Envelope, msg message.
 		// This code could leave symlinks to nonexistent PDFs if there
 		// are RMI links other than linkname.  TODO
 	} else {
-		if err = msg.RenderPDF(env, filename); err != nil && err != message.ErrNotSupported {
-			return err
-		}
-		if err == nil && linkname != "" {
+		// Render the PDF.  Ignore errors (can't allow them to prevent
+		// us from saving a received message).
+		if err = msg.RenderPDF(env, filename); err == nil && linkname != "" {
 			linkname = linkname[:len(linkname)-4] + ".pdf"
-			os.Symlink(filename, linkname) // error ignored
+			os.Symlink(filename, linkname)
 		}
 	}
 	return nil
