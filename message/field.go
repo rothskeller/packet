@@ -41,6 +41,9 @@ type Field struct {
 	// PDFMap is the mapper that tells how to render this field into a
 	// form-fillable PDF file.
 	PDFMap PDFMapper
+	// PDFRenderer is an optional object that renders the value of this
+	// field into a PDF.
+	PDFRenderer PDFRenderer
 	// TableValue returns the value of this field when rendered in flat text
 	// table form.  To omit a field from the table rendering, set this to
 	// TableOmit.
