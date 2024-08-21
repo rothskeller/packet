@@ -1,9 +1,11 @@
 package incident
 
 import (
+	"bytes"
 	_ "embed" // .
 	"encoding/csv"
 	"fmt"
+	"io"
 	"os"
 	"regexp"
 	"sort"
@@ -11,10 +13,12 @@ import (
 	"strings"
 	"time"
 
+	"github.com/phpdave11/gofpdf"
+	"github.com/phpdave11/gofpdf/contrib/gofpdi"
+
 	"github.com/rothskeller/packet/envelope"
 	"github.com/rothskeller/packet/message"
-	"github.com/rothskeller/pdf/pdfform"
-	"github.com/rothskeller/pdf/pdfstruct"
+	"github.com/rothskeller/pdf/pdffont"
 )
 
 // An ICS309Header structure contains all of the information needed for the
@@ -219,70 +223,100 @@ func render309CSV(header *ICS309Header, form [][]string) (err error) {
 func render309PDF(header *ICS309Header, form [][]string) (err error) {
 	const filename = "ics309.pdf"
 	var (
-		fh    *os.File
-		pdf   *pdfstruct.PDF
-		pages int
+		rdr   io.ReadSeeker
+		pdf   *gofpdf.Fpdf
+		imp   *gofpdi.Importer
+		tpl   int
+		pages = (len(form) + 30) / 31
+		page  = 1
 	)
 	if ics309pdf == nil { // built without PDF support
-		return err
+		return nil
 	}
-	if fh, err = os.Create(filename); err != nil {
-		return err
-	}
-	defer fh.Close()
-	if _, err = fh.Write(ics309pdf); err != nil {
-		os.Remove(filename)
-		return err
-	}
-	if pdf, err = pdfstruct.Open(fh); err != nil {
-		os.Remove(filename)
-		return err
-	}
-	pages = (len(form) + 30) / 31
-	if pages == 0 {
-		pages = 1
-	}
-	for n := pages; n > 1; n-- {
-		if err = pdfform.ClonePage(pdf, 0, strconv.Itoa(n)); err != nil {
-			os.Remove(filename)
-			return err
+	// Create the output PDF and the importer from the base PDF.
+	rdr = bytes.NewReader(ics309pdf)
+	pdf = gofpdf.New("P", "pt", "Letter", "")
+	pdf.SetAutoPageBreak(false, 0)
+	pdf.SetMargins(0, 0, 0)
+	pdf.SetFont("Helvetica", "", 12)
+	pdf.SetTextColor(0, 0, 153)
+	imp = gofpdi.NewImporter()
+	// Add the form pages.
+	tpl = imp.ImportPageFromStream(pdf, &rdr, 1, "/MediaBox")
+	for len(form) != 0 {
+		pdf.AddPage()
+		imp.UseImportedTemplate(pdf, tpl, 0, 0, 612, 792)
+		render309PDFHeaderFooter(pdf, header, page, pages)
+		for i := 0; i < len(form) && i < 31; i++ {
+			render309PDFLine(pdf, i, form[i])
 		}
+		form = form[min(len(form), 31):]
+		page++
 	}
-	for page := 1; page <= pages; page++ {
-		var prefix string
-		if page > 1 {
-			prefix = fmt.Sprintf("%d.", page)
-		}
-		pdfform.SetField(pdf, prefix+"Incident Name", header.IncidentName, 0)
-		pdfform.SetField(pdf, prefix+"Activation Number", header.ActivationNum, 0)
-		pdfform.SetField(pdf, prefix+"OpPeriod Start Date", header.OpStartDate, 0)
-		pdfform.SetField(pdf, prefix+"OpPeriod Start Time", header.OpStartTime, 0)
-		pdfform.SetField(pdf, prefix+"OpPeriod End Date", header.OpEndDate, 0)
-		pdfform.SetField(pdf, prefix+"OpPeriod End Time", header.OpEndTime, 0)
-		pdfform.SetField(pdf, prefix+"Tactical Station", header.TacName+" "+header.TacCall, 0)
-		pdfform.SetField(pdf, prefix+"Operator", header.OpName+" "+header.OpCall, 0)
-		pdfform.SetField(pdf, prefix+"Prepared By", header.OpName+" "+header.OpCall, 0)
-		pdfform.SetField(pdf, prefix+"Prepared Time", time.Now().Format("01/02/2006 15:04"), 0)
-		pdfform.SetField(pdf, prefix+"Page Number", strconv.Itoa(page), 0)
-		pdfform.SetField(pdf, prefix+"Page Count", strconv.Itoa(pages), 0)
-		for i := 1; i <= 31; i++ {
-			idx := (page-1)*31 + i - 1
-			if idx >= len(form) {
-				break
-			}
-			pdfform.SetField(pdf, fmt.Sprintf("%sL%02d Time", prefix, i), form[idx][0][11:], 0) // time only, no date
-			pdfform.SetField(pdf, fmt.Sprintf("%sL%02d Fm Stn", prefix, i), form[idx][1], 0)
-			pdfform.SetField(pdf, fmt.Sprintf("%sL%02d Fm OID", prefix, i), form[idx][2], 0)
-			pdfform.SetField(pdf, fmt.Sprintf("%sL%02d To Stn", prefix, i), form[idx][3], 0)
-			pdfform.SetField(pdf, fmt.Sprintf("%sL%02d To DID", prefix, i), form[idx][4], 0)
-			pdfform.SetField(pdf, fmt.Sprintf("%sL%02d Msg", prefix, i), form[idx][5], 0)
-		}
-	}
-	if err = pdf.Write(); err != nil {
+	// Add the instructions page.
+	pdf.AddPage()
+	imp.UseImportedTemplate(pdf, imp.ImportPageFromStream(pdf, &rdr, 2, "/MediaBox"), 0, 0, 612, 792)
+	// Write the file.
+	if err = pdf.OutputFileAndClose(filename); err != nil {
 		os.Remove(filename)
 		return err
 	}
 	return nil
+}
+
+func render309PDFHeaderFooter(pdf *gofpdf.Fpdf, header *ICS309Header, page, pages int) {
+	render309PDFString(pdf, header.IncidentName, 140, 50, 200, 12)
+	render309PDFString(pdf, header.ActivationNum, 158, 65, 182, 12)
+	render309PDFString(pdf, header.OpStartDate, 380, 50, 70, 12)
+	render309PDFString(pdf, header.OpStartTime, 380, 65, 70, 12)
+	render309PDFString(pdf, header.OpEndDate, 473, 50, 100, 12)
+	render309PDFString(pdf, header.OpEndTime, 473, 65, 100, 12)
+	render309PDFString(pdf, header.TacName+" "+header.TacCall, 41, 95, 267, 16)
+	render309PDFString(pdf, header.OpName+" "+header.OpCall, 315, 95, 257, 16)
+	render309PDFString(pdf, header.OpName+" "+header.OpCall, 42, 665, 167, 13)
+	render309PDFString(pdf, time.Now().Format("01/02/2006 15:04"), 343, 665, 117, 13)
+	render309PDFString(pdf, strconv.Itoa(page), 498, 665, 23, 13)
+	render309PDFString(pdf, strconv.Itoa(pages), 540, 665, 24, 13)
+}
+
+func render309PDFLine(pdf *gofpdf.Fpdf, lnum int, fields []string) {
+	y := 15.69*float64(lnum) + 166.15
+	render309PDFString(pdf, fields[0][11:], 39, y, 48, 12) // time only, no date
+	render309PDFString(pdf, fields[1], 93, y, 53, 12)
+	render309PDFString(pdf, fields[2], 151, y, 58, 12)
+	render309PDFString(pdf, fields[3], 215, y, 53, 12)
+	render309PDFString(pdf, fields[4], 272, y, 63, 12)
+	render309PDFString(pdf, fields[5], 340, y, 233, 12)
+}
+
+func render309PDFString(pdf *gofpdf.Fpdf, s string, x, y, w, h float64) {
+	var fontSize = 12.0
+
+	/* red background of rectangle for layout validation
+	pdf.SetAlpha(0.5, "")
+	pdf.SetFillColor(255, 0, 0)
+	pdf.Rect(x, y, w, h, "F")
+	pdf.SetAlpha(1.0, "")
+	*/
+	if s == "" {
+		return
+	}
+	for {
+		if sw, _, _ := pdffont.Measure(s, "Helvetica", fontSize); sw <= w {
+			break
+		}
+		if fontSize-0.5 < 10.0 {
+			break
+		}
+		fontSize -= 0.5
+	}
+	habove, hbelow := pdffont.FontMetrics("Helvetica", fontSize)
+	height := habove + hbelow
+	top := y + (h-height)/2 + habove
+	pdf.SetFontSize(fontSize)
+	pdf.ClipRect(x, y, w, h, false)
+	pdf.Text(x, top, s)
+	pdf.ClipEnd()
 }
 
 // RemoveICS309s removes generated ICS-309 communication log files.
