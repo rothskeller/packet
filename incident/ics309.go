@@ -18,7 +18,7 @@ import (
 
 	"github.com/rothskeller/packet/envelope"
 	"github.com/rothskeller/packet/message"
-	"github.com/rothskeller/pdf/pdffont"
+	"github.com/rothskeller/pdf/pdftext"
 )
 
 // An ICS309Header structure contains all of the information needed for the
@@ -238,8 +238,6 @@ func render309PDF(header *ICS309Header, form [][]string) (err error) {
 	pdf = gofpdf.New("P", "pt", "Letter", "")
 	pdf.SetAutoPageBreak(false, 0)
 	pdf.SetMargins(0, 0, 0)
-	pdf.SetFont("Helvetica", "", 12)
-	pdf.SetTextColor(0, 0, 153)
 	imp = gofpdi.NewImporter()
 	// Add the form pages.
 	tpl = imp.ImportPageFromStream(pdf, &rdr, 1, "/MediaBox")
@@ -290,33 +288,14 @@ func render309PDFLine(pdf *gofpdf.Fpdf, lnum int, fields []string) {
 }
 
 func render309PDFString(pdf *gofpdf.Fpdf, s string, x, y, w, h float64) {
-	var fontSize = 12.0
-
 	/* red background of rectangle for layout validation
 	pdf.SetAlpha(0.5, "")
 	pdf.SetFillColor(255, 0, 0)
 	pdf.Rect(x, y, w, h, "F")
 	pdf.SetAlpha(1.0, "")
 	*/
-	if s == "" {
-		return
-	}
-	for {
-		if sw, _, _ := pdffont.Measure(s, "Helvetica", fontSize); sw <= w {
-			break
-		}
-		if fontSize-0.5 < 10.0 {
-			break
-		}
-		fontSize -= 0.5
-	}
-	habove, hbelow := pdffont.FontMetrics("Helvetica", fontSize)
-	height := habove + hbelow
-	top := y + (h-height)/2 + habove
-	pdf.SetFontSize(fontSize)
-	pdf.ClipRect(x, y, w, h, false)
-	pdf.Text(x, top, s)
-	pdf.ClipEnd()
+	pdftext.Draw(pdf, s, x, y, w, h, pdftext.Style{
+		MinFontSize: 10, VAlign: "baseline", Clip: 1, Color: []byte{0, 0, 153}})
 }
 
 // RemoveICS309s removes generated ICS-309 communication log files.

@@ -24,6 +24,7 @@ type Type struct {
 	// file.  It can be zero if all of the fields already have assigned
 	// sizes in the PDF file.
 	PDFFontSize float64
+	PDFRenderV2 bool
 	// Create is a function for creating a new message of the type.  If
 	// Create is nil, end users are not allowed to create new messages of
 	// the type.  Otherwise, create must be a function with the signature
