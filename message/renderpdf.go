@@ -10,6 +10,7 @@ import (
 	"fmt"
 	"io"
 	"os"
+	"strings"
 
 	"github.com/phpdave11/gofpdf"
 	"github.com/phpdave11/gofpdf/contrib/gofpdi"
@@ -83,6 +84,7 @@ func (bm *BaseMessage) renderPDFV1(filename string) (err error) {
 			if pf.Size == 0 {
 				pf.Size = bm.Type.PDFFontSize
 			}
+			pf.Value = strings.ReplaceAll(pf.Value, "¡", "")
 			if err = pdfform.SetField(pdf, pf.Name, pf.Value, pf.Size); err != nil {
 				os.Remove(filename)
 				return err
@@ -186,9 +188,14 @@ type PDFTextRenderer struct {
 	// Page is the page number onto which the field should be rendered.
 	// For convenience, zero is treated as 1.
 	Page int
-	// X, Y, W, and H are the position (upper left corner) and dimensions of
-	// the box into which to render the text.
-	X, Y, W, H float64
+	// X and Y are the upper left corner of the text box.
+	X, Y float64
+	// W and H are the dimensions of the text box.  If set, they take
+	// precedence over R and B, respectively.
+	W, H float64
+	// R ("right") and B ("bottom") are the bottom right corner of the text
+	// box.  They are ignored if W and H are set, respectively.
+	R, B float64
 	// Style is the styling to apply to the text.
 	Style PDFTextStyle
 }
@@ -197,19 +204,28 @@ type PDFTextStyle = pdftext.Style
 func (r *PDFTextRenderer) RenderToPDF(f *Field, pdf *gofpdf.Fpdf, page int) error {
 	var (
 		fits  bool
+		value string
+		w, h  = r.W, r.H
 		style = pdftext.Style{MinFontSize: 10.0, LineHeight: 1.15, Color: []byte{0, 0, 153}, Wrap: 1}
 	)
 	if (r.Page == 0 && page != 1) || (r.Page != 0 && r.Page != page) {
 		return nil
 	}
+	if w == 0 {
+		w = r.R - r.X
+	}
+	if h == 0 {
+		h = r.B - r.Y
+	}
 	style = style.Merge(r.Style)
 	if ShowLayout {
 		pdf.SetFillColor(255, 0, 0)
 		pdf.SetAlpha(0.5, "")
-		pdf.Rect(r.X, r.Y, r.W, r.H, "F")
+		pdf.Rect(r.X, r.Y, w, h, "F")
 		pdf.SetAlpha(1.0, "")
 	}
-	if fits = pdftext.Draw(pdf, *f.Value, r.X, r.Y, r.W, r.H, style); !fits {
+	value = strings.ReplaceAll(*f.Value, "¡", "")
+	if fits = pdftext.Draw(pdf, value, r.X, r.Y, w, h, style); !fits {
 		return Warning{fmt.Errorf("value of %q does not fit in PDF", f.Label)}
 	}
 	return nil
@@ -240,6 +256,43 @@ func (r *PDFStaticTextRenderer) RenderToPDF(_ *Field, pdf *gofpdf.Fpdf, page int
 		pdf.SetAlpha(1.0, "")
 	}
 	pdftext.Draw(pdf, r.Text, r.X, r.Y, 10000, r.H, pdftext.Style{
+		LineHeight: 1.2, Color: []byte{0, 0, 153},
+	})
+	return nil
+}
+
+// PDFMappedTextRenderer is a PDFRenderer that draws a static text string, from
+// a mapping based on the field value, at the specified place.
+type PDFMappedTextRenderer struct {
+	// Page is the page number onto which the string should be rendered.
+	// For convenience, zero is treated as 1.
+	Page int
+	// X and Y are the position (upper left corner) of the box into which to
+	// render the string.
+	X, Y float64
+	// H and B are the height or the bottom of the box into which to render
+	// the string.  One of the two should be set.
+	H, B float64
+	// Map maps from the field value to the string to be rendered.
+	Map map[string]string
+}
+
+func (r *PDFMappedTextRenderer) RenderToPDF(f *Field, pdf *gofpdf.Fpdf, page int) error {
+	if (r.Page == 0 && page != 1) || (r.Page != 0 && r.Page != page) {
+		return nil
+	}
+	var h = r.H
+	if h == 0 {
+		h = r.B - r.Y
+	}
+	if ShowLayout {
+		pdf.SetFillColor(255, 0, 0)
+		pdf.SetAlpha(0.5, "")
+		pdf.Rect(r.X, r.Y, 10, h, "F")
+		pdf.Polygon([]gofpdf.PointType{{X: r.X + 10, Y: r.Y}, {X: r.X + 20, Y: r.Y + h/2}, {X: r.X + 10, Y: r.Y + h}}, "F")
+		pdf.SetAlpha(1.0, "")
+	}
+	pdftext.Draw(pdf, r.Map[*f.Value], r.X, r.Y, 10000, h, pdftext.Style{
 		LineHeight: 1.2, Color: []byte{0, 0, 153},
 	})
 	return nil

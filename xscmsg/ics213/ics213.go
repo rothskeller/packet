@@ -195,9 +195,9 @@ func create(version *message.FormVersion) message.Message {
 			PDFRenderer: &message.PDFRadioRenderer{
 				Radius: 3.5,
 				Points: map[string][]float64{
-					"ROUTINE":    {509.5, 83.5},
-					"PRIORITY":   {412, 83.5},
-					"IMMEDIATE:": {304.5, 84},
+					"ROUTINE":   {509.5, 83.5},
+					"PRIORITY":  {412, 83.5},
+					"IMMEDIATE": {304.5, 84},
 				},
 			},
 			EditHelp: `This is the message handling order, which specifies how fast it needs to be delivered.  Allowed values are "ROUTINE" (within 2 hours), "PRIORITY" (within 1 hour), and "IMMEDIATE".  This field is required.`,
