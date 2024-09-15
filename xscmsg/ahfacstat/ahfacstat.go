@@ -136,9 +136,6 @@ func create(version *message.FormVersion) message.Message {
 	f.BaseForm.AddHeaderFields(&f.BaseMessage, &pdf)
 	f.Fields = append(f.Fields,
 		message.NewStaticPDFContentField(&message.Field{
-			PDFMap: message.PDFMapFunc(func(*message.Field) []message.PDFField {
-				return []message.PDFField{{Name: "Form Type", Value: "Allied Health Facility Status"}}
-			}),
 			PDFRenderer: &message.PDFStaticTextRenderer{
 				Page: 1, X: 119, Y: 225, H: 17,
 				Text: "Allied Health Facility Status",
@@ -157,12 +154,6 @@ func create(version *message.FormVersion) message.Message {
 			Value:    &f.FacilityName,
 			Presence: message.Required,
 			PIFOTag:  "20.",
-			PDFMap: message.PDFMapFunc(func(f *message.Field) []message.PDFField {
-				return []message.PDFField{
-					{Name: "Form Topic", Value: *f.Value},
-					{Name: "FACILTY TYPE TIME DATE FACILITY NAME", Value: *f.Value},
-				}
-			}),
 			PDFRenderer: message.PDFMultiRenderer{
 				&message.PDFTextRenderer{Page: 1, X: 351, Y: 225, W: 222, H: 17, Style: message.PDFTextStyle{VAlign: "baseline"}},
 				&message.PDFTextRenderer{Page: 2, X: 20, Y: 118, W: 320, H: 24, Style: message.PDFTextStyle{VAlign: "baseline"}},
@@ -175,7 +166,6 @@ func create(version *message.FormVersion) message.Message {
 			Value:       &f.FacilityType,
 			Presence:    f.requiredForComplete,
 			PIFOTag:     "21.",
-			PDFMap:      message.PDFName("facility type"),
 			PDFRenderer: &message.PDFTextRenderer{Page: 2, X: 344, Y: 118, W: 135, H: 24, Style: message.PDFTextStyle{VAlign: "baseline"}},
 			EditWidth:   21,
 			EditHelp:    `This is the type of the facility, such as Skilled Nursing, Home Health, Dialysis, Community Health Center, Surgical Center, or Hospice.  It is required when the "Report Type" is "Complete".`,
@@ -185,7 +175,6 @@ func create(version *message.FormVersion) message.Message {
 			Value:       &f.Date,
 			Presence:    message.Required,
 			PIFOTag:     "22d.",
-			PDFMap:      message.PDFName("date"),
 			PDFRenderer: &message.PDFTextRenderer{Page: 2, X: 482, Y: 118, W: 67, H: 24, Style: message.PDFTextStyle{VAlign: "baseline"}},
 			EditHelp:    `This is the date of the status report, in MM/DD/YYYY format.  It is required.`,
 		}),
@@ -194,7 +183,6 @@ func create(version *message.FormVersion) message.Message {
 			Value:       &f.Time,
 			Presence:    message.Required,
 			PIFOTag:     "22t.",
-			PDFMap:      message.PDFName("time"),
 			PDFRenderer: &message.PDFTextRenderer{Page: 2, X: 552, Y: 118, W: 37, H: 24, Style: message.PDFTextStyle{VAlign: "baseline"}},
 			EditHelp:    `This is the time of the status report, in HH:MM format (24-hour clock).  It is required.`,
 		}),
@@ -208,7 +196,6 @@ func create(version *message.FormVersion) message.Message {
 			Value:       &f.ContactName,
 			Presence:    f.requiredForComplete,
 			PIFOTag:     "23.",
-			PDFMap:      message.PDFName("Contact Name"),
 			PDFRenderer: &message.PDFTextRenderer{Page: 2, X: 20, Y: 152, W: 314, H: 23, Style: message.PDFTextStyle{VAlign: "baseline"}},
 			EditWidth:   52,
 			EditHelp:    `This is the name of the person to be contacted with questions about this report.  It is required when the "Report Type" is "Complete".`,
@@ -218,7 +205,6 @@ func create(version *message.FormVersion) message.Message {
 			Value:       &f.ContactPhone,
 			Presence:    f.requiredForComplete,
 			PIFOTag:     "23p.",
-			PDFMap:      message.PDFName("Phone"),
 			PDFRenderer: &message.PDFTextRenderer{Page: 2, X: 339, Y: 152, W: 112, H: 23, Style: message.PDFTextStyle{VAlign: "baseline"}},
 			EditWidth:   19,
 			EditHelp:    `This is the phone number of the person to be contacted with questions about this report.  It is required when the "Report Type" is "Complete".`,
@@ -227,7 +213,6 @@ func create(version *message.FormVersion) message.Message {
 			Label:       "Contact Fax",
 			Value:       &f.ContactFax,
 			PIFOTag:     "23f.",
-			PDFMap:      message.PDFName("Fax"),
 			PDFRenderer: &message.PDFTextRenderer{Page: 2, X: 455, Y: 152, W: 134, H: 23, Style: message.PDFTextStyle{VAlign: "baseline"}},
 			EditWidth:   22,
 			EditHelp:    `This is the fax number of the person to be contacted with questions about this report.`,
@@ -235,23 +220,16 @@ func create(version *message.FormVersion) message.Message {
 		message.NewTextField(&message.Field{
 			Label:       "Other Contact",
 			Value:       &f.OtherContact,
-			PDFMap:      message.PDFName("Other Phone Fax Cell Phone Radio"),
 			PDFRenderer: &message.PDFTextRenderer{Page: 2, X: 20, Y: 186, W: 314, H: 21, Style: message.PDFTextStyle{VAlign: "baseline"}},
 			PIFOTag:     "24.",
 			EditWidth:   53,
 			EditHelp:    `This is additional contact information for the person to be contacted with questions about this report.`,
 		}),
 		message.NewTextField(&message.Field{
-			Label:    "Incident Name",
-			Value:    &f.IncidentName,
-			Presence: f.requiredForComplete,
-			PIFOTag:  "25.",
-			PDFMap: message.PDFMapFunc(func(*message.Field) []message.PDFField {
-				return []message.PDFField{{
-					Name:  "Incident Name and Date",
-					Value: message.SmartJoin(f.IncidentName, f.IncidentDate, " "),
-				}}
-			}),
+			Label:       "Incident Name",
+			Value:       &f.IncidentName,
+			Presence:    f.requiredForComplete,
+			PIFOTag:     "25.",
 			PDFRenderer: &message.PDFTextRenderer{Page: 2, X: 339, Y: 186, W: 179, H: 21, Style: message.PDFTextStyle{VAlign: "baseline"}},
 			EditWidth:   42,
 			EditHelp:    `This is the assigned incident name of the incident for which this report is filed.  It is required when the "Report Type" is "Complete".`,
@@ -270,21 +248,6 @@ func create(version *message.FormVersion) message.Message {
 			Choices:  message.Choices{"Fully Functional", "Limited Services", "Impaired/Closed"},
 			Presence: f.requiredForComplete,
 			PIFOTag:  "35.",
-			PDFMap: message.PDFMapFunc(func(f *message.Field) []message.PDFField {
-				var name string
-				switch *f.Value {
-				case "Fully Functional":
-					name = "CHECK ONEGREEN FULLY FUNCTIONAL"
-				case "Limited Services":
-					name = "CHECK ONERED LIMITED SERVICES"
-				case "Impaired/Closed":
-					name = "CHECK ONEBLACK IMPAIREDCLOSED"
-				}
-				if name != "" {
-					return []message.PDFField{{Name: name, Value: "X"}}
-				}
-				return nil
-			}),
 			PDFRenderer: &message.PDFCheckRenderer{
 				Page: 2, W: 12, H: 12,
 				Points: map[string][]float64{
@@ -300,7 +263,6 @@ func create(version *message.FormVersion) message.Message {
 			Value:       &f.EOCPhone,
 			Presence:    f.requiredForComplete,
 			PIFOTag:     "27p.",
-			PDFMap:      message.PDFName("EOC MAIN CONTACT NUMBER"),
 			PDFRenderer: &message.PDFTextRenderer{Page: 2, X: 233, Y: 294, W: 101, H: 13, Style: message.PDFTextStyle{VAlign: "baseline"}},
 			EditWidth:   19,
 			EditHelp:    `This is the main phone number for the facility's Emergency Operations Center (EOC).  It is required when the "Report Type" is "Complete".`,
@@ -309,7 +271,6 @@ func create(version *message.FormVersion) message.Message {
 			Label:       "EOC Main Contact Fax",
 			Value:       &f.EOCFax,
 			PIFOTag:     "27f.",
-			PDFMap:      message.PDFName("EOC MAIN CONTACT FAX"),
 			PDFRenderer: &message.PDFTextRenderer{Page: 2, X: 233, Y: 309, W: 101, H: 13},
 			EditWidth:   20,
 			EditHelp:    `This is the max fax number for the facility's Emergency Operations Center (EOC).`,
@@ -319,7 +280,6 @@ func create(version *message.FormVersion) message.Message {
 			Value:       &f.LiaisonName,
 			Presence:    f.requiredForComplete,
 			PIFOTag:     "28.",
-			PDFMap:      message.PDFName("NAME LIAISON TO PUBLIC HEALTHMEDICAL HEALTH BRANCH"),
 			PDFRenderer: &message.PDFTextRenderer{Page: 2, X: 233, Y: 324, W: 101, H: 20},
 			EditWidth:   17,
 			EditHelp:    `This is the name of the facility's liaison to the Public Health or Medical Health Branch.  It is required when the "Report Type" is "Complete".`,
@@ -328,7 +288,6 @@ func create(version *message.FormVersion) message.Message {
 			Label:       "Liaison Contact Number",
 			Value:       &f.LiaisonPhone,
 			PIFOTag:     "28p.",
-			PDFMap:      message.PDFName("CONTACT NUMBER"),
 			PDFRenderer: &message.PDFTextRenderer{Page: 2, X: 233, Y: 347, W: 101, H: 13},
 			EditWidth:   17,
 			EditHelp:    `This is the phone number of the facility's liaison to the Public Health or Medical Health Branch.`,
@@ -337,7 +296,6 @@ func create(version *message.FormVersion) message.Message {
 			Label:       "Info Officer Name",
 			Value:       &f.InfoOfficerName,
 			PIFOTag:     "29.",
-			PDFMap:      message.PDFName("INFORMATION OFFICER NAME"),
 			PDFRenderer: &message.PDFTextRenderer{Page: 2, X: 233, Y: 362, W: 101, H: 14},
 			EditWidth:   17,
 			EditHelp:    `This is the name of the facility's information officer.`,
@@ -346,7 +304,6 @@ func create(version *message.FormVersion) message.Message {
 			Label:       "Info Officer Contact Number",
 			Value:       &f.InfoOfficerPhone,
 			PIFOTag:     "29p.",
-			PDFMap:      message.PDFName("CONTACT NUMBER_2"),
 			PDFRenderer: &message.PDFTextRenderer{Page: 2, X: 233, Y: 378, W: 101, H: 13},
 			EditWidth:   17,
 			EditHelp:    `This is the phone number of the facility's information officer.`,
@@ -356,7 +313,6 @@ func create(version *message.FormVersion) message.Message {
 			Value:       &f.InfoOfficerEmail,
 			PIFOTag:     "29e.",
 			Compare:     message.CompareExact,
-			PDFMap:      message.PDFName("CONTACT EMAIL"),
 			PDFRenderer: &message.PDFTextRenderer{Page: 2, X: 233, Y: 393, W: 101, H: 14},
 			EditWidth:   17,
 			EditHelp:    `This is the email address of the facility's information officer.`,
@@ -366,7 +322,6 @@ func create(version *message.FormVersion) message.Message {
 			Value:       &f.ClosedContactName,
 			Presence:    f.requiredForComplete,
 			PIFOTag:     "30.",
-			PDFMap:      message.PDFName("IF EOC IS NOT ACTIVATED WHO SHOULD BE CONTACTED FOR QUESTIONSREQUESTS"),
 			PDFRenderer: &message.PDFTextRenderer{Page: 2, X: 233, Y: 409, W: 101, H: 26},
 			EditWidth:   17,
 			EditHelp:    `This is the name of the person to be contacted with questions or requests when the facility's EOC is not activated.  It is required when the "Report Type" is "Complete".`,
@@ -376,7 +331,6 @@ func create(version *message.FormVersion) message.Message {
 			Value:       &f.ClosedContactPhone,
 			Presence:    f.requiredForComplete,
 			PIFOTag:     "30p.",
-			PDFMap:      message.PDFName("CONTACT NUMBER_3"),
 			PDFRenderer: &message.PDFTextRenderer{Page: 2, X: 233, Y: 437, W: 101, H: 14, Style: message.PDFTextStyle{VAlign: "baseline"}},
 			EditWidth:   17,
 			EditHelp:    `This is the phone number of the person to be contacted when the facility's EOC is not activated.  It is required when the "Report Type" is "Complete".`,
@@ -387,7 +341,6 @@ func create(version *message.FormVersion) message.Message {
 			Presence:    f.requiredForComplete,
 			PIFOTag:     "30e.",
 			Compare:     message.CompareExact,
-			PDFMap:      message.PDFName("CONTACT EMAIL_2"),
 			PDFRenderer: &message.PDFTextRenderer{Page: 2, X: 233, Y: 453, W: 101, H: 13, Style: message.PDFTextStyle{VAlign: "baseline"}},
 			EditWidth:   17,
 			EditHelp:    `This is the email address of the person to be contacted when the facility's EOC is not activated.  It is required when the "Report Type" is "Complete".`,
@@ -396,7 +349,6 @@ func create(version *message.FormVersion) message.Message {
 			Label:       "Patients To Evacuate",
 			Value:       &f.PatientsToEvacuate,
 			PIFOTag:     "31a.",
-			PDFMap:      message.PDFName("TOTALPATIENTS TO EVACUATE"),
 			PDFRenderer: &message.PDFTextRenderer{Page: 2, X: 233, Y: 484, W: 101, H: 14, Style: message.PDFTextStyle{VAlign: "baseline"}},
 			EditWidth:   17,
 			EditHelp:    `This is the number of patients who need evacuation.`,
@@ -405,7 +357,6 @@ func create(version *message.FormVersion) message.Message {
 			Label:       "Patients Injured - Minor",
 			Value:       &f.PatientsInjuredMinor,
 			PIFOTag:     "31b.",
-			PDFMap:      message.PDFName("TOTALPATIENTS  INJURED  MINOR"),
 			PDFRenderer: &message.PDFTextRenderer{Page: 2, X: 233, Y: 501, W: 101, H: 13, Style: message.PDFTextStyle{VAlign: "baseline"}},
 			EditWidth:   17,
 			EditHelp:    `This is the number of patients with minor injuries.`,
@@ -414,24 +365,14 @@ func create(version *message.FormVersion) message.Message {
 			Label:       "Patients Transferred",
 			Value:       &f.PatientsTransferred,
 			PIFOTag:     "31c.",
-			PDFMap:      message.PDFName("TOTALPATIENTS TRANSFERED OUT OF COUNTY"),
 			PDFRenderer: &message.PDFTextRenderer{Page: 2, X: 233, Y: 516, W: 101, H: 14, Style: message.PDFTextStyle{VAlign: "baseline"}},
 			EditWidth:   17,
 			EditHelp:    `This is the number of patients who have been transferred out of the county.`,
 		}),
 		message.NewTextField(&message.Field{
-			Label:   "Other Patient Care Info",
-			Value:   &f.OtherPatientCare,
-			PIFOTag: "33.",
-			PDFMap: message.PDFMapFunc(func(*message.Field) []message.PDFField {
-				// We put OtherCareBedsType in this field as
-				// well because the PDF doesn't have a fillable
-				// field for it, but PackItForms does.
-				return []message.PDFField{{
-					Name:  "OTHER PATIENT CARE INFORMATION",
-					Value: message.SmartJoin(f.OtherPatientCare, f.OtherCareBedsType, " "),
-				}}
-			}),
+			Label:       "Other Patient Care Info",
+			Value:       &f.OtherPatientCare,
+			PIFOTag:     "33.",
 			PDFRenderer: &message.PDFTextRenderer{Page: 2, X: 233, Y: 532, W: 101, H: 13, Style: message.PDFTextStyle{VAlign: "baseline"}},
 			EditWidth:   27,
 			EditHelp:    `This field contains other patient care information as needed.`,
@@ -441,7 +382,6 @@ func create(version *message.FormVersion) message.Message {
 			Value:       &f.AttachOrgChart,
 			Choices:     message.Choices{"Yes", "No"},
 			PIFOTag:     "26a.",
-			PDFMap:      message.PDFName("YesNoNHICSICS ORGANIZATION CHART"),
 			PDFRenderer: &message.PDFTextRenderer{Page: 2, X: 521, Y: 227, W: 68, H: 13, Style: message.PDFTextStyle{VAlign: "baseline"}},
 			TableValue:  message.TableOmit,
 			EditHelp:    `This indicates whether an NHICS/ICS organization chart is attached to the status report.`,
@@ -452,7 +392,6 @@ func create(version *message.FormVersion) message.Message {
 			Choices:     message.Choices{"Yes", "No"},
 			Presence:    f.requiredForComplete,
 			PIFOTag:     "26b.",
-			PDFMap:      message.PDFName("YesNoDEOC9A RESOURCE REQUEST FORMS"),
 			PDFRenderer: &message.PDFTextRenderer{Page: 2, X: 521, Y: 243, W: 68, H: 12, Style: message.PDFTextStyle{VAlign: "baseline"}},
 			TableValue:  message.TableOmit,
 			EditHelp:    `This indicates whether DEOC-9A resource request forms are attached to the status report.  It is required when the "Report Type" is "Complete".`,
@@ -462,7 +401,6 @@ func create(version *message.FormVersion) message.Message {
 			Value:       &f.AttachStatus,
 			Choices:     message.Choices{"Yes", "No"},
 			PIFOTag:     "26c.",
-			PDFMap:      message.PDFName("YesNoNHICSICS STATUS REPORT FORM  STANDARD"),
 			PDFRenderer: &message.PDFTextRenderer{Page: 2, X: 521, Y: 257, W: 68, H: 18, Style: message.PDFTextStyle{VAlign: "baseline"}},
 			TableValue:  message.TableOmit,
 			EditHelp:    `This indicates whether an NHICS/ICS standard status report form is attached to this status report.`,
@@ -472,7 +410,6 @@ func create(version *message.FormVersion) message.Message {
 			Value:       &f.AttachActionPlan,
 			Choices:     message.Choices{"Yes", "No"},
 			PIFOTag:     "26d.",
-			PDFMap:      message.PDFName("YesNoNHICSICS INCIDENT ACTION PLAN"),
 			PDFRenderer: &message.PDFTextRenderer{Page: 2, X: 521, Y: 277, W: 68, H: 15, Style: message.PDFTextStyle{VAlign: "baseline"}},
 			TableValue:  message.TableOmit,
 			EditHelp:    `This indicates whether an NHICS/ICS incident action plan is attached to the status report.`,
@@ -482,7 +419,6 @@ func create(version *message.FormVersion) message.Message {
 			Value:       &f.AttachDirectory,
 			Choices:     message.Choices{"Yes", "No"},
 			PIFOTag:     "26e.",
-			PDFMap:      message.PDFName("YesNoPHONECOMMUNICATIONS DIRECTORY"),
 			PDFRenderer: &message.PDFTextRenderer{Page: 2, X: 521, Y: 294, W: 68, H: 13, Style: message.PDFTextStyle{VAlign: "baseline"}},
 			TableValue:  message.TableOmit,
 			EditHelp:    `This indicates whether a phone/communications directory is attached to the status report.`,
@@ -513,7 +449,6 @@ func create(version *message.FormVersion) message.Message {
 			Label:       "General Summary",
 			Value:       &f.Summary,
 			PIFOTag:     "34.",
-			PDFMap:      message.PDFName("GENERAL SUMMARY OF SITUATIONCONDITIONSRow1"),
 			PDFRenderer: &message.PDFTextRenderer{Page: 2, X: 339, Y: 326, W: 250, H: 79, Style: message.PDFTextStyle{VAlign: "top"}},
 			EditWidth:   41,
 			EditHelp:    `This is a general summary of the situation and conditions at the facility.`,
@@ -522,7 +457,6 @@ func create(version *message.FormVersion) message.Message {
 			Label:       "Skilled Nursing Beds: Staffed M",
 			Value:       &f.SkilledNursingBeds.StaffedM,
 			PIFOTag:     "40a.",
-			PDFMap:      message.PDFName("Staffed Bed MSKILLED NURSING"),
 			PDFRenderer: &message.PDFTextRenderer{Page: 2, X: 455, Y: 437, W: 25, H: 14, Style: message.PDFTextStyle{HAlign: "right", VAlign: "baseline"}},
 			TableValue:  message.TableOmit,
 			EditHelp:    `This is the number of staffed male skilled nursing beds at the facility.`,
@@ -538,7 +472,6 @@ func create(version *message.FormVersion) message.Message {
 			PIFOValid: func(field *message.Field) string {
 				return allOrNone(firstSkilledNursing, field)
 			},
-			PDFMap:      message.PDFName("Staffed BedFSKILLED NURSING"),
 			PDFRenderer: &message.PDFTextRenderer{Page: 2, X: 484, Y: 437, W: 21, H: 14, Style: message.PDFTextStyle{HAlign: "right", VAlign: "baseline"}},
 			TableValue:  message.TableOmit,
 			EditHelp:    `This is the number of staffed female skilled nursing beds at the facility.`,
@@ -551,7 +484,6 @@ func create(version *message.FormVersion) message.Message {
 			PIFOValid: func(field *message.Field) string {
 				return allOrNone(firstSkilledNursing, field)
 			},
-			PDFMap:      message.PDFName("Vacant BedsMSKILLED NURSING"),
 			PDFRenderer: &message.PDFTextRenderer{Page: 2, X: 509, Y: 437, W: 22, H: 14, Style: message.PDFTextStyle{HAlign: "right", VAlign: "baseline"}},
 			TableValue:  message.TableOmit,
 			EditHelp:    `This is the number of vacant male skilled nursing beds at the facility.`,
@@ -564,7 +496,6 @@ func create(version *message.FormVersion) message.Message {
 			PIFOValid: func(field *message.Field) string {
 				return allOrNone(firstSkilledNursing, field)
 			},
-			PDFMap:      message.PDFName("Vacant BedFSKILLED NURSING"),
 			PDFRenderer: &message.PDFTextRenderer{Page: 2, X: 535, Y: 437, W: 21, H: 14, Style: message.PDFTextStyle{HAlign: "right", VAlign: "baseline"}},
 			TableValue:  message.TableOmit,
 			EditHelp:    `This is the number of vacant female skilled nursing beds at the facility.`,
@@ -577,7 +508,6 @@ func create(version *message.FormVersion) message.Message {
 			PIFOValid: func(field *message.Field) string {
 				return allOrNone(firstSkilledNursing, field)
 			},
-			PDFMap:      message.PDFName("Surge SKILLED NURSING"),
 			PDFRenderer: &message.PDFTextRenderer{Page: 2, X: 560, Y: 437, W: 29, H: 14, Style: message.PDFTextStyle{HAlign: "right", VAlign: "baseline"}},
 			TableValue:  message.TableOmit,
 			EditHelp:    `This is the number of surge capacity skilled nursing beds at the facility (over and above the vacant ones).`,
@@ -605,7 +535,6 @@ func create(version *message.FormVersion) message.Message {
 			Label:       "Assisted Living Beds: Staffed M",
 			Value:       &f.AssistedLivingBeds.StaffedM,
 			PIFOTag:     "41a.",
-			PDFMap:      message.PDFName("Staffed Bed MASSISTED LIVING"),
 			PDFRenderer: &message.PDFTextRenderer{Page: 2, X: 455, Y: 453, W: 25, H: 13, Style: message.PDFTextStyle{HAlign: "right", VAlign: "baseline"}},
 			TableValue:  message.TableOmit,
 			EditHelp:    `This is the number of staffed male assisted living beds at the facility.`,
@@ -621,7 +550,6 @@ func create(version *message.FormVersion) message.Message {
 			PIFOValid: func(field *message.Field) string {
 				return allOrNone(firstAssistedLiving, field)
 			},
-			PDFMap:      message.PDFName("Staffed BedFASSISTED LIVING"),
 			PDFRenderer: &message.PDFTextRenderer{Page: 2, X: 484, Y: 453, W: 21, H: 13, Style: message.PDFTextStyle{HAlign: "right", VAlign: "baseline"}},
 			TableValue:  message.TableOmit,
 			EditHelp:    `This is the number of staffed female assisted living beds at the facility.`,
@@ -634,7 +562,6 @@ func create(version *message.FormVersion) message.Message {
 			PIFOValid: func(field *message.Field) string {
 				return allOrNone(firstAssistedLiving, field)
 			},
-			PDFMap:      message.PDFName("Vacant BedsMASSISTED LIVING"),
 			PDFRenderer: &message.PDFTextRenderer{Page: 2, X: 509, Y: 453, W: 22, H: 13, Style: message.PDFTextStyle{HAlign: "right", VAlign: "baseline"}},
 			TableValue:  message.TableOmit,
 			EditHelp:    `This is the number of vacant male assisted living beds at the facility.`,
@@ -647,7 +574,6 @@ func create(version *message.FormVersion) message.Message {
 			PIFOValid: func(field *message.Field) string {
 				return allOrNone(firstAssistedLiving, field)
 			},
-			PDFMap:      message.PDFName("Vacant BedFASSISTED LIVING"),
 			PDFRenderer: &message.PDFTextRenderer{Page: 2, X: 535, Y: 453, W: 21, H: 13, Style: message.PDFTextStyle{HAlign: "right", VAlign: "baseline"}},
 			TableValue:  message.TableOmit,
 			EditHelp:    `This is the number of vacant female assisted living beds at the facility.`,
@@ -660,7 +586,6 @@ func create(version *message.FormVersion) message.Message {
 			PIFOValid: func(field *message.Field) string {
 				return allOrNone(firstAssistedLiving, field)
 			},
-			PDFMap:      message.PDFName("Surge ASSISTED LIVING"),
 			PDFRenderer: &message.PDFTextRenderer{Page: 2, X: 560, Y: 453, W: 29, H: 13, Style: message.PDFTextStyle{HAlign: "right", VAlign: "baseline"}},
 			TableValue:  message.TableOmit,
 			EditHelp:    `This is the number of surge capacity assisted living beds at the facility (over and above the vacant ones).`,
@@ -688,7 +613,6 @@ func create(version *message.FormVersion) message.Message {
 			Label:       "Sub-Acute Beds: Staffed M",
 			Value:       &f.SubAcuteBeds.StaffedM,
 			PIFOTag:     "42a.",
-			PDFMap:      message.PDFName("Staffed Bed MSURGICAL BEDS"), // name is wrong in PDF
 			PDFRenderer: &message.PDFTextRenderer{Page: 2, X: 455, Y: 468, W: 25, H: 14, Style: message.PDFTextStyle{HAlign: "right", VAlign: "baseline"}},
 			TableValue:  message.TableOmit,
 			EditHelp:    `This is the number of staffed male sub-acute beds at the facility.`,
@@ -704,7 +628,6 @@ func create(version *message.FormVersion) message.Message {
 			PIFOValid: func(field *message.Field) string {
 				return allOrNone(firstSubAcute, field)
 			},
-			PDFMap:      message.PDFName("Staffed BedFSURGICAL BEDS"), // name is wrong in PDF
 			PDFRenderer: &message.PDFTextRenderer{Page: 2, X: 484, Y: 468, W: 21, H: 14, Style: message.PDFTextStyle{HAlign: "right", VAlign: "baseline"}},
 			TableValue:  message.TableOmit,
 			EditHelp:    `This is the number of staffed female sub-acute beds at the facility.`,
@@ -717,7 +640,6 @@ func create(version *message.FormVersion) message.Message {
 			PIFOValid: func(field *message.Field) string {
 				return allOrNone(firstSubAcute, field)
 			},
-			PDFMap:      message.PDFName("Vacant BedsMSURGICAL BEDS"), // name is wrong in PDF
 			PDFRenderer: &message.PDFTextRenderer{Page: 2, X: 509, Y: 468, W: 22, H: 14, Style: message.PDFTextStyle{HAlign: "right", VAlign: "baseline"}},
 			TableValue:  message.TableOmit,
 			EditHelp:    `This is the number of vacant male sub-acute beds at the facility.`,
@@ -730,7 +652,6 @@ func create(version *message.FormVersion) message.Message {
 			PIFOValid: func(field *message.Field) string {
 				return allOrNone(firstSubAcute, field)
 			},
-			PDFMap:      message.PDFName("Vacant BedFSURGICAL BEDS"), // name is wrong in PDF
 			PDFRenderer: &message.PDFTextRenderer{Page: 2, X: 535, Y: 468, W: 21, H: 14, Style: message.PDFTextStyle{HAlign: "right", VAlign: "baseline"}},
 			TableValue:  message.TableOmit,
 			EditHelp:    `This is the number of vacant female sub-acute beds at the facility.`,
@@ -743,7 +664,6 @@ func create(version *message.FormVersion) message.Message {
 			PIFOValid: func(field *message.Field) string {
 				return allOrNone(firstSubAcute, field)
 			},
-			PDFMap:      message.PDFName("Surge SURGICAL BEDS"), // name is wrong in PDF
 			PDFRenderer: &message.PDFTextRenderer{Page: 2, X: 560, Y: 468, W: 29, H: 14, Style: message.PDFTextStyle{HAlign: "right", VAlign: "baseline"}},
 			TableValue:  message.TableOmit,
 			EditHelp:    `This is the number of surge capacity sub-acute beds at the facility (over and above the vacant ones).`,
@@ -771,7 +691,6 @@ func create(version *message.FormVersion) message.Message {
 			Label:       "Alzheimers Beds: Staffed M",
 			Value:       &f.AlzheimersBeds.StaffedM,
 			PIFOTag:     "43a.",
-			PDFMap:      message.PDFName("Staffed Bed MSUBACUTE"), // name is wrong in PDF
 			PDFRenderer: &message.PDFTextRenderer{Page: 2, X: 455, Y: 484, W: 25, H: 14, Style: message.PDFTextStyle{HAlign: "right", VAlign: "baseline"}},
 			TableValue:  message.TableOmit,
 			EditHelp:    `This is the number of staffed male Alzheimers/dementia beds at the facility.`,
@@ -787,7 +706,6 @@ func create(version *message.FormVersion) message.Message {
 			PIFOValid: func(field *message.Field) string {
 				return allOrNone(firstAlzheimers, field)
 			},
-			PDFMap:      message.PDFName("Staffed BedFSUBACUTE"), // name is wrong in PDF
 			PDFRenderer: &message.PDFTextRenderer{Page: 2, X: 484, Y: 484, W: 21, H: 14, Style: message.PDFTextStyle{HAlign: "right", VAlign: "baseline"}},
 			TableValue:  message.TableOmit,
 			EditHelp:    `This is the number of staffed female Alzheimers/dementia beds at the facility.`,
@@ -800,7 +718,6 @@ func create(version *message.FormVersion) message.Message {
 			PIFOValid: func(field *message.Field) string {
 				return allOrNone(firstAlzheimers, field)
 			},
-			PDFMap:      message.PDFName("Vacant BedsMSUBACUTE"), // name is wrong in PDF
 			PDFRenderer: &message.PDFTextRenderer{Page: 2, X: 509, Y: 484, W: 22, H: 14, Style: message.PDFTextStyle{HAlign: "right", VAlign: "baseline"}},
 			TableValue:  message.TableOmit,
 			EditHelp:    `This is the number of vacant male Alzheimers/dementia beds at the facility.`,
@@ -813,7 +730,6 @@ func create(version *message.FormVersion) message.Message {
 			PIFOValid: func(field *message.Field) string {
 				return allOrNone(firstAlzheimers, field)
 			},
-			PDFMap:      message.PDFName("Vacant BedFSUBACUTE"), // name is wrong in PDF
 			PDFRenderer: &message.PDFTextRenderer{Page: 2, X: 535, Y: 484, W: 21, H: 14, Style: message.PDFTextStyle{HAlign: "right", VAlign: "baseline"}},
 			TableValue:  message.TableOmit,
 			EditHelp:    `This is the number of vacant female Alzheimers/dementia beds at the facility.`,
@@ -826,7 +742,6 @@ func create(version *message.FormVersion) message.Message {
 			PIFOValid: func(field *message.Field) string {
 				return allOrNone(firstAlzheimers, field)
 			},
-			PDFMap:      message.PDFName("Surge SUBACUTE"), // name is wrong in PDF
 			PDFRenderer: &message.PDFTextRenderer{Page: 2, X: 560, Y: 484, W: 29, H: 14, Style: message.PDFTextStyle{HAlign: "right", VAlign: "baseline"}},
 			TableValue:  message.TableOmit,
 			EditHelp:    `This is the number of surge capacity Alzheimers/dementia beds at the facility (over and above the vacant ones).`,
@@ -854,7 +769,6 @@ func create(version *message.FormVersion) message.Message {
 			Label:       "Ped Sub-Acute Beds: Staffed M",
 			Value:       &f.PedSubAcuteBeds.StaffedM,
 			PIFOTag:     "44a.",
-			PDFMap:      message.PDFName("Staffed Bed MALZEIMERSDIMENTIA"), // name is wrong in PDF
 			PDFRenderer: &message.PDFTextRenderer{Page: 2, X: 455, Y: 501, W: 25, H: 13, Style: message.PDFTextStyle{HAlign: "right", VAlign: "baseline"}},
 			TableValue:  message.TableOmit,
 			EditHelp:    `This is the number of staffed male pediatric sub-acute beds at the facility.`,
@@ -870,7 +784,6 @@ func create(version *message.FormVersion) message.Message {
 			PIFOValid: func(field *message.Field) string {
 				return allOrNone(firstPedSubAcute, field)
 			},
-			PDFMap:      message.PDFName("Staffed BedFALZEIMERSDIMENTIA"), // name is wrong in PDF
 			PDFRenderer: &message.PDFTextRenderer{Page: 2, X: 484, Y: 501, W: 21, H: 13, Style: message.PDFTextStyle{HAlign: "right", VAlign: "baseline"}},
 			TableValue:  message.TableOmit,
 			EditHelp:    `This is the number of staffed female pediatric sub-acute beds at the facility.`,
@@ -883,7 +796,6 @@ func create(version *message.FormVersion) message.Message {
 			PIFOValid: func(field *message.Field) string {
 				return allOrNone(firstPedSubAcute, field)
 			},
-			PDFMap:      message.PDFName("Vacant BedsMALZEIMERSDIMENTIA"), // name is wrong in PDF
 			PDFRenderer: &message.PDFTextRenderer{Page: 2, X: 509, Y: 501, W: 22, H: 13, Style: message.PDFTextStyle{HAlign: "right", VAlign: "baseline"}},
 			TableValue:  message.TableOmit,
 			EditHelp:    `This is the number of vacant male pediatric sub-acute beds at the facility.`,
@@ -896,7 +808,6 @@ func create(version *message.FormVersion) message.Message {
 			PIFOValid: func(field *message.Field) string {
 				return allOrNone(firstPedSubAcute, field)
 			},
-			PDFMap:      message.PDFName("Vacant BedFALZEIMERSDIMENTIA"), // name is wrong in PDF
 			PDFRenderer: &message.PDFTextRenderer{Page: 2, X: 535, Y: 501, W: 21, H: 13, Style: message.PDFTextStyle{HAlign: "right", VAlign: "baseline"}},
 			TableValue:  message.TableOmit,
 			EditHelp:    `This is the number of vacant female pediatric sub-acute beds at the facility.`,
@@ -909,7 +820,6 @@ func create(version *message.FormVersion) message.Message {
 			PIFOValid: func(field *message.Field) string {
 				return allOrNone(firstPedSubAcute, field)
 			},
-			PDFMap:      message.PDFName("Surge ALZEIMERSDIMENTIA"), // name is wrong in PDF
 			PDFRenderer: &message.PDFTextRenderer{Page: 2, X: 560, Y: 501, W: 29, H: 13, Style: message.PDFTextStyle{HAlign: "right", VAlign: "baseline"}},
 			TableValue:  message.TableOmit,
 			EditHelp:    `This is the number of surge capacity pediatric sub-acute beds at the facility (over and above the vacant ones).`,
@@ -937,7 +847,6 @@ func create(version *message.FormVersion) message.Message {
 			Label:       "Psychiatric Beds: Staffed M",
 			Value:       &f.PsychiatricBeds.StaffedM,
 			PIFOTag:     "45a.",
-			PDFMap:      message.PDFName("Staffed Bed MPEDIATRICSUB ACUTE"), // name is wrong in PDF
 			PDFRenderer: &message.PDFTextRenderer{Page: 2, X: 455, Y: 516, W: 25, H: 14, Style: message.PDFTextStyle{HAlign: "right", VAlign: "baseline"}},
 			TableValue:  message.TableOmit,
 			EditHelp:    `This is the number of staffed male psychiatric beds at the facility.`,
@@ -953,7 +862,6 @@ func create(version *message.FormVersion) message.Message {
 			PIFOValid: func(field *message.Field) string {
 				return allOrNone(firstPsychiatric, field)
 			},
-			PDFMap:      message.PDFName("Staffed BedFPEDIATRICSUB ACUTE"), // name is wrong in PDF
 			PDFRenderer: &message.PDFTextRenderer{Page: 2, X: 484, Y: 516, W: 21, H: 14, Style: message.PDFTextStyle{HAlign: "right", VAlign: "baseline"}},
 			TableValue:  message.TableOmit,
 			EditHelp:    `This is the number of staffed female psychiatric beds at the facility.`,
@@ -966,7 +874,6 @@ func create(version *message.FormVersion) message.Message {
 			PIFOValid: func(field *message.Field) string {
 				return allOrNone(firstPsychiatric, field)
 			},
-			PDFMap:      message.PDFName("Vacant BedsMPEDIATRICSUB ACUTE"), // name is wrong in PDF
 			PDFRenderer: &message.PDFTextRenderer{Page: 2, X: 509, Y: 516, W: 22, H: 14, Style: message.PDFTextStyle{HAlign: "right", VAlign: "baseline"}},
 			TableValue:  message.TableOmit,
 			EditHelp:    `This is the number of vacant male psychiatric beds at the facility.`,
@@ -979,7 +886,6 @@ func create(version *message.FormVersion) message.Message {
 			PIFOValid: func(field *message.Field) string {
 				return allOrNone(firstPsychiatric, field)
 			},
-			PDFMap:      message.PDFName("Vacant BedFPEDIATRICSUB ACUTE"), // name is wrong in PDF
 			PDFRenderer: &message.PDFTextRenderer{Page: 2, X: 535, Y: 516, W: 21, H: 14, Style: message.PDFTextStyle{HAlign: "right", VAlign: "baseline"}},
 			TableValue:  message.TableOmit,
 			EditHelp:    `This is the number of vacant female psychiatric beds at the facility.`,
@@ -992,7 +898,6 @@ func create(version *message.FormVersion) message.Message {
 			PIFOValid: func(field *message.Field) string {
 				return allOrNone(firstPsychiatric, field)
 			},
-			PDFMap:      message.PDFName("Surge PEDIATRICSUB ACUTE"), // name is wrong in PDF
 			PDFRenderer: &message.PDFTextRenderer{Page: 2, X: 560, Y: 516, W: 29, H: 14, Style: message.PDFTextStyle{HAlign: "right", VAlign: "baseline"}},
 			TableValue:  message.TableOmit,
 			EditHelp:    `This is the number of surge capacity psychiatric beds at the facility (over and above the vacant ones).`,
@@ -1032,7 +937,6 @@ func create(version *message.FormVersion) message.Message {
 			Label:       "Other Care Beds: Staffed M",
 			Value:       &f.OtherCareBeds.StaffedM,
 			PIFOTag:     "46a.",
-			PDFMap:      message.PDFName("Staffed Bed MPSYCHIATRIC"), // name is wrong in PDF
 			PDFRenderer: &message.PDFTextRenderer{Page: 2, X: 455, Y: 532, W: 25, H: 13, Style: message.PDFTextStyle{HAlign: "right", VAlign: "baseline"}},
 			TableValue:  message.TableOmit,
 			EditHelp:    `This is the number of staffed male beds at the facility of the named other type.`,
@@ -1048,7 +952,6 @@ func create(version *message.FormVersion) message.Message {
 			PIFOValid: func(field *message.Field) string {
 				return allOrNone(firstOtherCare, field)
 			},
-			PDFMap:      message.PDFName("Staffed BedFPSYCHIATRIC"), // name is wrong in PDF
 			PDFRenderer: &message.PDFTextRenderer{Page: 2, X: 484, Y: 532, W: 21, H: 13, Style: message.PDFTextStyle{HAlign: "right", VAlign: "baseline"}},
 			TableValue:  message.TableOmit,
 			EditHelp:    `This is the number of staffed female beds at the facility of the named other type.`,
@@ -1061,7 +964,6 @@ func create(version *message.FormVersion) message.Message {
 			PIFOValid: func(field *message.Field) string {
 				return allOrNone(firstOtherCare, field)
 			},
-			PDFMap:      message.PDFName("Vacant BedsMPSYCHIATRIC"), // name is wrong in PDF
 			PDFRenderer: &message.PDFTextRenderer{Page: 2, X: 509, Y: 532, W: 22, H: 13, Style: message.PDFTextStyle{HAlign: "right", VAlign: "baseline"}},
 			TableValue:  message.TableOmit,
 			EditHelp:    `This is the number of vacant male beds at the facility of the named other type.`,
@@ -1074,7 +976,6 @@ func create(version *message.FormVersion) message.Message {
 			PIFOValid: func(field *message.Field) string {
 				return allOrNone(firstOtherCare, field)
 			},
-			PDFMap:      message.PDFName("Vacant BedFPSYCHIATRIC"), // name is wrong in PDF
 			PDFRenderer: &message.PDFTextRenderer{Page: 2, X: 535, Y: 532, W: 21, H: 13, Style: message.PDFTextStyle{HAlign: "right", VAlign: "baseline"}},
 			TableValue:  message.TableOmit,
 			EditHelp:    `This is the number of vacant female beds at the facility of the named other type.`,
@@ -1087,7 +988,6 @@ func create(version *message.FormVersion) message.Message {
 			PIFOValid: func(field *message.Field) string {
 				return allOrNone(firstOtherCare, field)
 			},
-			PDFMap:      message.PDFName("Surge PSYCHIATRIC"), // name is wrong in PDF
 			PDFRenderer: &message.PDFTextRenderer{Page: 2, X: 560, Y: 532, W: 29, H: 13, Style: message.PDFTextStyle{HAlign: "right", VAlign: "baseline"}},
 			TableValue:  message.TableOmit,
 			EditHelp:    `This is the number of surge capacity beds at the facility of the named other type (over and above the vacant ones).`,
@@ -1118,7 +1018,6 @@ func create(version *message.FormVersion) message.Message {
 			Label:       "Dialysis: Chairs",
 			Value:       &f.DialysisResources.Chairs,
 			PIFOTag:     "50a.",
-			PDFMap:      message.PDFName("CHAIRS ROOMSDIALYSIS"),
 			PDFRenderer: &message.PDFTextRenderer{Page: 2, X: 455, Y: 584, W: 25, H: 14, Style: message.PDFTextStyle{HAlign: "right", VAlign: "baseline"}},
 			TableValue:  message.TableOmit,
 			EditHelp:    `This is the number of dialysis chairs at the facility.`,
@@ -1134,7 +1033,6 @@ func create(version *message.FormVersion) message.Message {
 			PIFOValid: func(field *message.Field) string {
 				return allOrNone(firstDialysis, field)
 			},
-			PDFMap:      message.PDFName("VANCANT CHAIRS ROOMDIALYSIS"),
 			PDFRenderer: &message.PDFTextRenderer{Page: 2, X: 484, Y: 584, W: 21, H: 14, Style: message.PDFTextStyle{HAlign: "right", VAlign: "baseline"}},
 			TableValue:  message.TableOmit,
 			EditHelp:    `This is the number of vacant dialysis chairs at the facility.`,
@@ -1147,7 +1045,6 @@ func create(version *message.FormVersion) message.Message {
 			PIFOValid: func(field *message.Field) string {
 				return allOrNone(firstDialysis, field)
 			},
-			PDFMap:      message.PDFName("FRONT DESK STAFFDIALYSIS"),
 			PDFRenderer: &message.PDFTextRenderer{Page: 2, X: 509, Y: 584, W: 22, H: 14, Style: message.PDFTextStyle{HAlign: "right", VAlign: "baseline"}},
 			TableValue:  message.TableOmit,
 			EditHelp:    `This is the number of dialysis front desk staff at the facility.`,
@@ -1160,7 +1057,6 @@ func create(version *message.FormVersion) message.Message {
 			PIFOValid: func(field *message.Field) string {
 				return allOrNone(firstDialysis, field)
 			},
-			PDFMap:      message.PDFName("MEDICAL SUPPORT STAFFDIALYSIS"),
 			PDFRenderer: &message.PDFTextRenderer{Page: 2, X: 535, Y: 584, W: 21, H: 14, Style: message.PDFTextStyle{HAlign: "right", VAlign: "baseline"}},
 			TableValue:  message.TableOmit,
 			EditHelp:    `This is the number of dialysis support staff at the facility.`,
@@ -1173,7 +1069,6 @@ func create(version *message.FormVersion) message.Message {
 			PIFOValid: func(field *message.Field) string {
 				return allOrNone(firstDialysis, field)
 			},
-			PDFMap:      message.PDFName("PROVIDER STAFFDIALYSIS"),
 			PDFRenderer: &message.PDFTextRenderer{Page: 2, X: 560, Y: 584, W: 29, H: 14, Style: message.PDFTextStyle{HAlign: "right", VAlign: "baseline"}},
 			TableValue:  message.TableOmit,
 			EditHelp:    `This is the number of dialysis provider staff at the facility.`,
@@ -1201,7 +1096,6 @@ func create(version *message.FormVersion) message.Message {
 			Label:       "Surgical: Chairs",
 			Value:       &f.SurgicalResources.Chairs,
 			PIFOTag:     "51a.",
-			PDFMap:      message.PDFName("CHAIRS ROOMSSURGICAL"),
 			PDFRenderer: &message.PDFTextRenderer{Page: 2, X: 455, Y: 600, W: 25, H: 13, Style: message.PDFTextStyle{HAlign: "right", VAlign: "baseline"}},
 			TableValue:  message.TableOmit,
 			EditHelp:    `This is the number of surgical rooms at the facility.`,
@@ -1217,7 +1111,6 @@ func create(version *message.FormVersion) message.Message {
 			PIFOValid: func(field *message.Field) string {
 				return allOrNone(firstSurgical, field)
 			},
-			PDFMap:      message.PDFName("VANCANT CHAIRS ROOMSURGICAL"),
 			PDFRenderer: &message.PDFTextRenderer{Page: 2, X: 484, Y: 600, W: 21, H: 13, Style: message.PDFTextStyle{HAlign: "right", VAlign: "baseline"}},
 			TableValue:  message.TableOmit,
 			EditHelp:    `This is the number of vacant surgical rooms at the facility.`,
@@ -1230,7 +1123,6 @@ func create(version *message.FormVersion) message.Message {
 			PIFOValid: func(field *message.Field) string {
 				return allOrNone(firstSurgical, field)
 			},
-			PDFMap:      message.PDFName("FRONT DESK STAFFSURGICAL"),
 			PDFRenderer: &message.PDFTextRenderer{Page: 2, X: 509, Y: 600, W: 22, H: 13, Style: message.PDFTextStyle{HAlign: "right", VAlign: "baseline"}},
 			TableValue:  message.TableOmit,
 			EditHelp:    `This is the number of surgical front desk staff at the facility.`,
@@ -1243,7 +1135,6 @@ func create(version *message.FormVersion) message.Message {
 			PIFOValid: func(field *message.Field) string {
 				return allOrNone(firstSurgical, field)
 			},
-			PDFMap:      message.PDFName("MEDICAL SUPPORT STAFFSURGICAL"),
 			PDFRenderer: &message.PDFTextRenderer{Page: 2, X: 535, Y: 600, W: 21, H: 13, Style: message.PDFTextStyle{HAlign: "right", VAlign: "baseline"}},
 			TableValue:  message.TableOmit,
 			EditHelp:    `This is the number of surgical support staff at the facility.`,
@@ -1256,7 +1147,6 @@ func create(version *message.FormVersion) message.Message {
 			PIFOValid: func(field *message.Field) string {
 				return allOrNone(firstSurgical, field)
 			},
-			PDFMap:      message.PDFName("PROVIDER STAFFSURGICAL"),
 			PDFRenderer: &message.PDFTextRenderer{Page: 2, X: 560, Y: 600, W: 29, H: 13, Style: message.PDFTextStyle{HAlign: "right", VAlign: "baseline"}},
 			TableValue:  message.TableOmit,
 			EditHelp:    `This is the number of surgical provider staff at the facility.`,
@@ -1284,7 +1174,6 @@ func create(version *message.FormVersion) message.Message {
 			Label:       "Clinic: Chairs",
 			Value:       &f.ClinicResources.Chairs,
 			PIFOTag:     "52a.",
-			PDFMap:      message.PDFName("CHAIRS ROOMSCLINIC"),
 			PDFRenderer: &message.PDFTextRenderer{Page: 2, X: 455, Y: 616, W: 25, H: 13, Style: message.PDFTextStyle{HAlign: "right", VAlign: "baseline"}},
 			TableValue:  message.TableOmit,
 			EditHelp:    `This is the number of clinic rooms at the facility.`,
@@ -1300,7 +1189,6 @@ func create(version *message.FormVersion) message.Message {
 			PIFOValid: func(field *message.Field) string {
 				return allOrNone(firstClinic, field)
 			},
-			PDFMap:      message.PDFName("VANCANT CHAIRS ROOMCLINIC"),
 			PDFRenderer: &message.PDFTextRenderer{Page: 2, X: 484, Y: 616, W: 21, H: 13, Style: message.PDFTextStyle{HAlign: "right", VAlign: "baseline"}},
 			TableValue:  message.TableOmit,
 			EditHelp:    `This is the number of vacant clinic rooms at the facility.`,
@@ -1313,7 +1201,6 @@ func create(version *message.FormVersion) message.Message {
 			PIFOValid: func(field *message.Field) string {
 				return allOrNone(firstClinic, field)
 			},
-			PDFMap:      message.PDFName("FRONT DESK STAFFCLINIC"),
 			PDFRenderer: &message.PDFTextRenderer{Page: 2, X: 509, Y: 616, W: 22, H: 13, Style: message.PDFTextStyle{HAlign: "right", VAlign: "baseline"}},
 			TableValue:  message.TableOmit,
 			EditHelp:    `This is the number of clinic front desk staff at the facility.`,
@@ -1326,7 +1213,6 @@ func create(version *message.FormVersion) message.Message {
 			PIFOValid: func(field *message.Field) string {
 				return allOrNone(firstClinic, field)
 			},
-			PDFMap:      message.PDFName("MEDICAL SUPPORT STAFFCLINIC"),
 			PDFRenderer: &message.PDFTextRenderer{Page: 2, X: 535, Y: 616, W: 21, H: 13, Style: message.PDFTextStyle{HAlign: "right", VAlign: "baseline"}},
 			TableValue:  message.TableOmit,
 			EditHelp:    `This is the number of clinic support staff at the facility.`,
@@ -1339,7 +1225,6 @@ func create(version *message.FormVersion) message.Message {
 			PIFOValid: func(field *message.Field) string {
 				return allOrNone(firstClinic, field)
 			},
-			PDFMap:      message.PDFName("PROVIDER STAFFCLINIC"),
 			PDFRenderer: &message.PDFTextRenderer{Page: 2, X: 560, Y: 616, W: 29, H: 13, Style: message.PDFTextStyle{HAlign: "right", VAlign: "baseline"}},
 			TableValue:  message.TableOmit,
 			EditHelp:    `This is the number of clinic provider staff at the facility.`,
@@ -1367,7 +1252,6 @@ func create(version *message.FormVersion) message.Message {
 			Label:       "Home Health: Chairs",
 			Value:       &f.HomeHealthResources.Chairs,
 			PIFOTag:     "53a.",
-			PDFMap:      message.PDFName("CHAIRS ROOMSHOMEHEALTH"),
 			PDFRenderer: &message.PDFTextRenderer{Page: 2, X: 455, Y: 632, W: 25, H: 13, Style: message.PDFTextStyle{HAlign: "right", VAlign: "baseline"}},
 			TableValue:  message.TableOmit,
 			EditHelp:    `This is the number of home health rooms at the facility.`,
@@ -1383,7 +1267,6 @@ func create(version *message.FormVersion) message.Message {
 			PIFOValid: func(field *message.Field) string {
 				return allOrNone(firstHomeHealth, field)
 			},
-			PDFMap:      message.PDFName("VANCANT CHAIRS ROOMHOMEHEALTH"),
 			PDFRenderer: &message.PDFTextRenderer{Page: 2, X: 484, Y: 632, W: 21, H: 13, Style: message.PDFTextStyle{HAlign: "right", VAlign: "baseline"}},
 			TableValue:  message.TableOmit,
 			EditHelp:    `This is the number of vacant home health rooms at the facility.`,
@@ -1396,7 +1279,6 @@ func create(version *message.FormVersion) message.Message {
 			PIFOValid: func(field *message.Field) string {
 				return allOrNone(firstHomeHealth, field)
 			},
-			PDFMap:      message.PDFName("FRONT DESK STAFFHOMEHEALTH"),
 			PDFRenderer: &message.PDFTextRenderer{Page: 2, X: 509, Y: 632, W: 22, H: 13, Style: message.PDFTextStyle{HAlign: "right", VAlign: "baseline"}},
 			TableValue:  message.TableOmit,
 			EditHelp:    `This is the number of home health front desk staff at the facility.`,
@@ -1409,7 +1291,6 @@ func create(version *message.FormVersion) message.Message {
 			PIFOValid: func(field *message.Field) string {
 				return allOrNone(firstHomeHealth, field)
 			},
-			PDFMap:      message.PDFName("MEDICAL SUPPORT STAFFHOMEHEALTH"),
 			PDFRenderer: &message.PDFTextRenderer{Page: 2, X: 535, Y: 632, W: 21, H: 13, Style: message.PDFTextStyle{HAlign: "right", VAlign: "baseline"}},
 			TableValue:  message.TableOmit,
 			EditHelp:    `This is the number of home health support staff at the facility.`,
@@ -1422,7 +1303,6 @@ func create(version *message.FormVersion) message.Message {
 			PIFOValid: func(field *message.Field) string {
 				return allOrNone(firstHomeHealth, field)
 			},
-			PDFMap:      message.PDFName("PROVIDER STAFFHOMEHEALTH"),
 			PDFRenderer: &message.PDFTextRenderer{Page: 2, X: 560, Y: 632, W: 29, H: 13, Style: message.PDFTextStyle{HAlign: "right", VAlign: "baseline"}},
 			TableValue:  message.TableOmit,
 			EditHelp:    `This is the number of home health provider staff at the facility.`,
@@ -1450,7 +1330,6 @@ func create(version *message.FormVersion) message.Message {
 			Label:       "Adult Day Ctr: Chairs",
 			Value:       &f.AdultDayCtrResources.Chairs,
 			PIFOTag:     "54a.",
-			PDFMap:      message.PDFName("CHAIRS ROOMSADULT DAY CENTER"),
 			PDFRenderer: &message.PDFTextRenderer{Page: 2, X: 455, Y: 647, W: 25, H: 13, Style: message.PDFTextStyle{HAlign: "right", VAlign: "baseline"}},
 			TableValue:  message.TableOmit,
 			EditHelp:    `This is the number of adult day center chairs at the facility.`,
@@ -1466,7 +1345,6 @@ func create(version *message.FormVersion) message.Message {
 			PIFOValid: func(field *message.Field) string {
 				return allOrNone(firstAdultDayCtr, field)
 			},
-			PDFMap:      message.PDFName("VANCANT CHAIRS ROOMADULT DAY CENTER"),
 			PDFRenderer: &message.PDFTextRenderer{Page: 2, X: 484, Y: 647, W: 21, H: 13, Style: message.PDFTextStyle{HAlign: "right", VAlign: "baseline"}},
 			TableValue:  message.TableOmit,
 			EditHelp:    `This is the number of vacant adult day center chairs at the facility.`,
@@ -1479,7 +1357,6 @@ func create(version *message.FormVersion) message.Message {
 			PIFOValid: func(field *message.Field) string {
 				return allOrNone(firstAdultDayCtr, field)
 			},
-			PDFMap:      message.PDFName("FRONT DESK STAFFADULT DAY CENTER"),
 			PDFRenderer: &message.PDFTextRenderer{Page: 2, X: 509, Y: 647, W: 22, H: 13, Style: message.PDFTextStyle{HAlign: "right", VAlign: "baseline"}},
 			TableValue:  message.TableOmit,
 			EditHelp:    `This is the number of adult day center front desk staff at the facility.`,
@@ -1492,7 +1369,6 @@ func create(version *message.FormVersion) message.Message {
 			PIFOValid: func(field *message.Field) string {
 				return allOrNone(firstAdultDayCtr, field)
 			},
-			PDFMap:      message.PDFName("MEDICAL SUPPORT STAFFADULT DAY CENTER"),
 			PDFRenderer: &message.PDFTextRenderer{Page: 2, X: 535, Y: 647, W: 21, H: 13, Style: message.PDFTextStyle{HAlign: "right", VAlign: "baseline"}},
 			TableValue:  message.TableOmit,
 			EditHelp:    `This is the number of adult day center support staff at the facility.`,
@@ -1505,7 +1381,6 @@ func create(version *message.FormVersion) message.Message {
 			PIFOValid: func(field *message.Field) string {
 				return allOrNone(firstAdultDayCtr, field)
 			},
-			PDFMap:      message.PDFName("PROVIDER STAFFADULT DAY CENTER"),
 			PDFRenderer: &message.PDFTextRenderer{Page: 2, X: 560, Y: 647, W: 29, H: 13, Style: message.PDFTextStyle{HAlign: "right", VAlign: "baseline"}},
 			TableValue:  message.TableOmit,
 			EditHelp:    `This is the number of adult day center provider staff at the facility.`,
