@@ -147,6 +147,39 @@ func (c *Conn) Send(subject, body string, to ...string) (err error) {
 	return nil
 }
 
+// SendBulletin sends a bulletin message.  Note that the "to" address must be
+// a bare address without any display name or angle brackets.
+func (c *Conn) SendBulletin(subject, body string, to string) (err error) {
+	defer c.maybeIdent()
+	if err = c.t.Send(fmt.Sprintf("SB %s\n", to)); err != nil {
+		return err
+	}
+	if _, err = c.t.ReadUntil("Subject:\n"); err != nil {
+		return err
+	}
+	if err = c.t.Send(subject + "\n"); err != nil {
+		return err
+	}
+	if _, err = c.t.ReadUntil("Enter message.  End with /EX or ^Z in first column (^A aborts):\n"); err != nil {
+		return err
+	}
+	if !strings.HasSuffix(body, "\n") {
+		body += "\n/EX\n"
+	} else {
+		body += "/EX\n"
+	}
+	if err = c.t.Send(body); err != nil {
+		return err
+	}
+	if _, err = c.t.ReadUntil("Msg queued\n"); err != nil {
+		return err
+	}
+	if err = c.skipLinesUntilPrompt(); err != nil {
+		return err
+	}
+	return nil
+}
+
 // SetArea switches to the specified message area.
 func (c *Conn) SetArea(area string) error {
 	var (

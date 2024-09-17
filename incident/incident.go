@@ -189,7 +189,11 @@ func saveMessage(filename, linkname string, env *envelope.Envelope, msg message.
 	)
 	// Encode the message.
 	if !rawsubj {
-		env.SubjectLine = msg.EncodeSubject()
+		if env.Bulletin {
+			env.SubjectLine = msg.EncodeBulletinSubject()
+		} else {
+			env.SubjectLine = msg.EncodeSubject()
+		}
 	}
 	if b := msg.Base(); b.FHandling != nil && *b.FHandling == "IMMEDIATE" {
 		env.OutpostUrgent = true
