@@ -61,7 +61,7 @@ func ParseRetrieved(retrieved, bbs, area string) (_ *Envelope, body string, err 
 		bbuf  []byte
 		err2  error
 	)
-	env.ReceivedBBS, env.ReceivedArea = bbs, area
+	env.ReceivedBBS, env.ReceivedArea, env.Bulletin = bbs, area, area != ""
 	env.ReceivedDate = now()
 	// If there is an envelope From line, remove it from the raw message.
 	if strings.HasPrefix(retrieved, "From ") {
@@ -173,6 +173,7 @@ func (env *Envelope) parseHeadersStored(h mail.Header) error {
 		if match := receivedRE.FindStringSubmatch(recv); match != nil {
 			env.ReceivedBBS = match[1]
 			env.ReceivedArea = match[2]
+			env.Bulletin = env.ReceivedArea != ""
 			env.ReceivedDate, _ = time.Parse("Mon, 02 Jan 2006 15:04:05 -0700", match[3])
 		} else {
 			// This shouldn't happen:  stored messages with a Received: header
@@ -181,6 +182,9 @@ func (env *Envelope) parseHeadersStored(h mail.Header) error {
 		}
 	}
 	env.ReadyToSend = h.Get("X-Packet-Queued") != ""
+	if h.Get("X-Packet-Bulletin") != "" {
+		env.Bulletin = true
+	}
 	return nil
 }
 

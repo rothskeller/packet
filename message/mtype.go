@@ -55,15 +55,17 @@ func Register(mtype *Type) {
 
 	// Check the validity of the decode function now, where it's easy to
 	// report which function is bad if we have to.
-	fntype = reflect.TypeOf(mtype.Decode)
-	if fntype.Kind() != reflect.Func {
-		goto BADDECODE
-	}
-	if fntype.NumIn() != 2 || fntype.In(0) != stringType || fntype.In(1) != stringType {
-		goto BADDECODE
-	}
-	if fntype.NumOut() != 1 || !fntype.Out(0).Implements(messageType) {
-		goto BADDECODE
+	if mtype.Decode != nil {
+		fntype = reflect.TypeOf(mtype.Decode)
+		if fntype.Kind() != reflect.Func {
+			goto BADDECODE
+		}
+		if fntype.NumIn() != 2 || fntype.In(0) != stringType || fntype.In(1) != stringType {
+			goto BADDECODE
+		}
+		if fntype.NumOut() != 1 || !fntype.Out(0).Implements(messageType) {
+			goto BADDECODE
+		}
 	}
 	// Also check the validity of the create function, if any.
 	if mtype.Create != nil {
@@ -80,7 +82,9 @@ func Register(mtype *Type) {
 	}
 	// Now register the type.
 	RegisteredTypes[mtype.Tag] = mtype
-	decodeFunctions = append(decodeFunctions, mtype.Decode)
+	if mtype.Decode != nil {
+		decodeFunctions = append(decodeFunctions, mtype.Decode)
+	}
 	return
 BADDECODE:
 	panic("illegal decode function signature for message type " + mtype.Tag)

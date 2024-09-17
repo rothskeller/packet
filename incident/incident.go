@@ -39,7 +39,9 @@ import (
 
 	"github.com/rothskeller/packet/envelope"
 	"github.com/rothskeller/packet/message"
+	"github.com/rothskeller/packet/xscmsg/bulletin"
 	"github.com/rothskeller/packet/xscmsg/delivrcpt"
+	"github.com/rothskeller/packet/xscmsg/plaintext"
 	"github.com/rothskeller/packet/xscmsg/readrcpt"
 )
 
@@ -91,6 +93,9 @@ func ReadMessage(lmi string) (env *envelope.Envelope, msg message.Message, err e
 		return env, nil, err
 	}
 	msg = message.Decode(env.SubjectLine, body)
+	if pt, ok := msg.(*plaintext.PlainText); ok && env.Bulletin {
+		msg = bulletin.FromPlainText(pt)
+	}
 	return env, msg, nil
 }
 

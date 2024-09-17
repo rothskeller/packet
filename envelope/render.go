@@ -24,6 +24,9 @@ func (env *Envelope) RenderSaved(body string) string {
 	if !env.IsFinal() && env.ReadyToSend {
 		sb.WriteString("X-Packet-Queued: true\n")
 	}
+	if env.ReceivedArea == "" && env.Bulletin {
+		sb.WriteString("X-Packet-Bulletin: true\n")
+	}
 	if env.From != "" {
 		if addrs, err := ParseAddressList(env.From); err == nil {
 			var from = make([]string, len(addrs))

@@ -63,6 +63,9 @@ type Envelope struct {
 	// message is ready to be sent.  When false, the message is a draft.
 	// This field is ignored for received or transmitted messages.
 	ReadyToSend bool
+	// Bulletin is a flag indicating that this message is a bulletin (either
+	// incoming or outgoing).
+	Bulletin bool
 }
 
 // IsReceived returns whether the message was received (as opposed to sent or
