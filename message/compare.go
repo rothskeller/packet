@@ -446,6 +446,7 @@ type token struct {
 	exactCase bool
 	tok       string
 	sep       string // "", " ", "\n", or "\n\n".
+	seplen    int
 }
 
 // textCompareSplit breaks the supplied string into tokens.  A token is a run of
@@ -491,7 +492,7 @@ func textCompareSplit(s string, exactAllowed bool) (tokens []token) {
 			tok = tok[2:]
 		}
 		if len(tok) > 1 && strings.IndexByte(",:;?!", tok[len(tok)-1]) >= 0 {
-			tokens = append(tokens, token{exactCase, tok[:len(tok)-1], ""})
+			tokens = append(tokens, token{exactCase, tok[:len(tok)-1], "", 0})
 			tok, exactCase = tok[len(tok)-1:], false
 		}
 		if idx := strings.IndexFunc(s, func(r rune) bool {
@@ -500,18 +501,18 @@ func textCompareSplit(s string, exactAllowed bool) (tokens []token) {
 			ws := strings.TrimRight(s[:idx], "¡")
 			if nl1 := strings.IndexByte(ws, '\n'); nl1 >= 0 {
 				if strings.IndexByte(ws[nl1+1:], '\n') >= 0 {
-					tokens = append(tokens, token{exactCase, tok, "\n\n"})
+					tokens = append(tokens, token{exactCase, tok, "\n\n", idx})
 				} else if exactNL || !exactAllowed {
-					tokens = append(tokens, token{exactCase, tok, "\n"})
+					tokens = append(tokens, token{exactCase, tok, "\n", idx})
 				} else {
-					tokens = append(tokens, token{exactCase, tok, " "})
+					tokens = append(tokens, token{exactCase, tok, " ", idx})
 				}
 			} else {
-				tokens = append(tokens, token{exactCase, tok, " "})
+				tokens = append(tokens, token{exactCase, tok, " ", idx})
 			}
 			s = s[len(ws):]
 		} else {
-			tokens = append(tokens, token{exactCase, tok, ""})
+			tokens = append(tokens, token{exactCase, tok, "", 0})
 		}
 	}
 	return tokens
@@ -530,12 +531,12 @@ func diffTokens(et, at []token, matrix [][]int, wl, hl int) (oet, oat []token) {
 		oat = append(oat, at[hl-1])
 	} else if hl > 0 && (wl == 0 || matrix[wl][hl-1] > matrix[wl-1][hl]) {
 		oet, oat = diffTokens(et, at, matrix, wl, hl-1)
-		oet = append(oet, token{false, "", ""})
+		oet = append(oet, token{false, "", "", 0})
 		oat = append(oat, at[hl-1])
 	} else if wl > 0 && (hl == 0 || matrix[wl][hl-1] <= matrix[wl-1][hl]) {
 		oet, oat = diffTokens(et, at, matrix, wl-1, hl)
 		oet = append(oet, et[wl-1])
-		oat = append(oat, token{false, "", ""})
+		oat = append(oat, token{false, "", "", 0})
 	} else {
 		oet = make([]token, wl)
 		copy(oet, et)
@@ -602,7 +603,7 @@ func penalty(exp, act token) int {
 func makeMaskStrings(et, at []token) (em, am string) {
 	for i := range et {
 		if et[i].tok != "" && at[i].tok != "" { // same token
-			if penalty(token{et[i].exactCase, et[i].tok, ""}, token{false, at[i].tok, ""}) != 0 {
+			if penalty(token{et[i].exactCase, et[i].tok, "", 0}, token{false, at[i].tok, "", 0}) != 0 {
 				em += strings.Repeat("~", len(et[i].tok))
 				am += strings.Repeat("~", len(at[i].tok))
 			} else {
@@ -610,15 +611,15 @@ func makeMaskStrings(et, at []token) (em, am string) {
 				am += strings.Repeat(" ", len(at[i].tok))
 			}
 			if et[i].sep != at[i].sep {
-				em += strings.Repeat("~", len(et[i].sep))
-				am += strings.Repeat("~", len(at[i].sep))
+				em += strings.Repeat("~", et[i].seplen)
+				am += strings.Repeat("~", at[i].seplen)
 			} else {
-				em += strings.Repeat(" ", len(et[i].sep))
-				am += strings.Repeat(" ", len(at[i].sep))
+				em += strings.Repeat(" ", et[i].seplen)
+				am += strings.Repeat(" ", at[i].seplen)
 			}
 		} else {
-			em += strings.Repeat("*", len(et[i].tok)+len(et[i].sep))
-			am += strings.Repeat("*", len(at[i].tok)+len(at[i].sep))
+			em += strings.Repeat("*", len(et[i].tok)+et[i].seplen)
+			am += strings.Repeat("*", len(at[i].tok)+at[i].seplen)
 		}
 	}
 	return em, am
