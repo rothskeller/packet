@@ -21,7 +21,7 @@ import (
 
 // ShowLayout is a global flag that can be set by callers.  When true, generated
 // PDFs have a pink background in every field, showing the exact field placement.
-var ShowLayout = true
+var ShowLayout = false
 
 // Warning is a wrapper around an error that makes it semantically a warning
 // (operation completed with issues) rather than a true error (operation
