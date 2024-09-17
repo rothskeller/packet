@@ -10,10 +10,9 @@ import (
 
 // Type is the type definition for an ICS-213 general message form.
 var Type = message.Type{
-	Tag:         "ICS213",
-	Name:        "ICS-213 general message form",
-	Article:     "an",
-	PDFRenderV2: true,
+	Tag:     "ICS213",
+	Name:    "ICS-213 general message form",
+	Article: "an",
 }
 
 func init() {

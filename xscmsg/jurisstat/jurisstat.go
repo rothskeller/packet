@@ -12,10 +12,9 @@ import (
 
 // Type is the type definition for an OA jurisdiction status form.
 var Type = message.Type{
-	Tag:         "JurisStat",
-	Name:        "OA jurisdiction status form",
-	Article:     "an",
-	PDFRenderV2: true,
+	Tag:     "JurisStat",
+	Name:    "OA jurisdiction status form",
+	Article: "an",
 }
 
 // OldType is the previous type definition for an OA jurisdiction status form.
@@ -46,33 +45,33 @@ var fieldOrder = []string{
 	"54.0.", "54.1.", "55.0.", "55.1.", "56.0.", "56.1.", "OpRelayRcvd", "OpRelaySent", "OpName", "OpCall", "OpDate", "OpTime",
 }
 var basePDFRenderers = baseform.BaseFormPDF{
-	OriginMsgIDR: message.PDFMultiRenderer{
+	OriginMsgID: message.PDFMultiRenderer{
 		&message.PDFTextRenderer{Page: 1, X: 223, Y: 60, R: 349, B: 77, Style: message.PDFTextStyle{VAlign: "baseline"}},
 		&message.PDFTextRenderer{Page: 2, X: 468, Y: 31, R: 573, B: 47},
 		&message.PDFTextRenderer{Page: 3, X: 468, Y: 31, R: 573, B: 47},
 	},
-	DestinationMsgIDR: &message.PDFTextRenderer{Page: 1, X: 446, Y: 60, R: 573, B: 77, Style: message.PDFTextStyle{VAlign: "baseline"}},
-	MessageDateR:      &message.PDFTextRenderer{Page: 1, X: 70, Y: 119, R: 138, B: 140, Style: message.PDFTextStyle{VAlign: "baseline"}},
-	MessageTimeR:      &message.PDFTextRenderer{Page: 1, X: 201, Y: 119, R: 236, B: 140, Style: message.PDFTextStyle{VAlign: "baseline"}},
-	HandlingR: &message.PDFRadioRenderer{Page: 1, Points: map[string][]float64{
+	DestinationMsgID: &message.PDFTextRenderer{Page: 1, X: 446, Y: 60, R: 573, B: 77, Style: message.PDFTextStyle{VAlign: "baseline"}},
+	MessageDate:      &message.PDFTextRenderer{Page: 1, X: 70, Y: 119, R: 138, B: 140, Style: message.PDFTextStyle{VAlign: "baseline"}},
+	MessageTime:      &message.PDFTextRenderer{Page: 1, X: 201, Y: 119, R: 236, B: 140, Style: message.PDFTextStyle{VAlign: "baseline"}},
+	Handling: &message.PDFRadioRenderer{Page: 1, Points: map[string][]float64{
 		"IMMEDIATE": {306, 129},
 		"PRIORITY":  {408, 129},
 		"ROUTINE":   {494, 129},
 	}},
-	ToICSPositionR:   &message.PDFTextRenderer{Page: 1, X: 127, Y: 141, R: 303, B: 162, Style: message.PDFTextStyle{VAlign: "baseline"}},
-	ToLocationR:      &message.PDFTextRenderer{Page: 1, X: 127, Y: 164, R: 303, B: 185, Style: message.PDFTextStyle{VAlign: "baseline"}},
-	ToNameR:          &message.PDFTextRenderer{Page: 1, X: 127, Y: 186, R: 303, B: 207, Style: message.PDFTextStyle{VAlign: "baseline"}},
-	ToContactR:       &message.PDFTextRenderer{Page: 1, X: 127, Y: 209, R: 303, B: 230, Style: message.PDFTextStyle{VAlign: "baseline"}},
-	FromICSPositionR: &message.PDFTextRenderer{Page: 1, X: 398, Y: 141, R: 573, B: 162, Style: message.PDFTextStyle{VAlign: "baseline"}},
-	FromLocationR:    &message.PDFTextRenderer{Page: 1, X: 398, Y: 164, R: 573, B: 185, Style: message.PDFTextStyle{VAlign: "baseline"}},
-	FromNameR:        &message.PDFTextRenderer{Page: 1, X: 398, Y: 186, R: 573, B: 207, Style: message.PDFTextStyle{VAlign: "baseline"}},
-	FromContactR:     &message.PDFTextRenderer{Page: 1, X: 398, Y: 209, R: 573, B: 230, Style: message.PDFTextStyle{VAlign: "baseline"}},
-	OpRelayRcvdR:     &message.PDFTextRenderer{Page: 3, X: 110, Y: 509, R: 321, B: 526, Style: message.PDFTextStyle{VAlign: "baseline"}},
-	OpRelaySentR:     &message.PDFTextRenderer{Page: 3, X: 358, Y: 509, R: 573, B: 526, Style: message.PDFTextStyle{VAlign: "baseline"}},
-	OpNameR:          &message.PDFTextRenderer{Page: 3, X: 76, Y: 528, R: 250, B: 545, Style: message.PDFTextStyle{VAlign: "baseline"}},
-	OpCallR:          &message.PDFTextRenderer{Page: 3, X: 302, Y: 528, R: 367, B: 545, Style: message.PDFTextStyle{VAlign: "baseline"}},
-	OpDateR:          &message.PDFTextRenderer{Page: 3, X: 413, Y: 528, R: 473, B: 545, Style: message.PDFTextStyle{VAlign: "baseline"}},
-	OpTimeR:          &message.PDFTextRenderer{Page: 3, X: 539, Y: 528, R: 573, B: 545, Style: message.PDFTextStyle{VAlign: "baseline"}},
+	ToICSPosition:   &message.PDFTextRenderer{Page: 1, X: 127, Y: 141, R: 303, B: 162, Style: message.PDFTextStyle{VAlign: "baseline"}},
+	ToLocation:      &message.PDFTextRenderer{Page: 1, X: 127, Y: 164, R: 303, B: 185, Style: message.PDFTextStyle{VAlign: "baseline"}},
+	ToName:          &message.PDFTextRenderer{Page: 1, X: 127, Y: 186, R: 303, B: 207, Style: message.PDFTextStyle{VAlign: "baseline"}},
+	ToContact:       &message.PDFTextRenderer{Page: 1, X: 127, Y: 209, R: 303, B: 230, Style: message.PDFTextStyle{VAlign: "baseline"}},
+	FromICSPosition: &message.PDFTextRenderer{Page: 1, X: 398, Y: 141, R: 573, B: 162, Style: message.PDFTextStyle{VAlign: "baseline"}},
+	FromLocation:    &message.PDFTextRenderer{Page: 1, X: 398, Y: 164, R: 573, B: 185, Style: message.PDFTextStyle{VAlign: "baseline"}},
+	FromName:        &message.PDFTextRenderer{Page: 1, X: 398, Y: 186, R: 573, B: 207, Style: message.PDFTextStyle{VAlign: "baseline"}},
+	FromContact:     &message.PDFTextRenderer{Page: 1, X: 398, Y: 209, R: 573, B: 230, Style: message.PDFTextStyle{VAlign: "baseline"}},
+	OpRelayRcvd:     &message.PDFTextRenderer{Page: 3, X: 110, Y: 509, R: 321, B: 526, Style: message.PDFTextStyle{VAlign: "baseline"}},
+	OpRelaySent:     &message.PDFTextRenderer{Page: 3, X: 358, Y: 509, R: 573, B: 526, Style: message.PDFTextStyle{VAlign: "baseline"}},
+	OpName:          &message.PDFTextRenderer{Page: 3, X: 76, Y: 528, R: 250, B: 545, Style: message.PDFTextStyle{VAlign: "baseline"}},
+	OpCall:          &message.PDFTextRenderer{Page: 3, X: 302, Y: 528, R: 367, B: 545, Style: message.PDFTextStyle{VAlign: "baseline"}},
+	OpDate:          &message.PDFTextRenderer{Page: 3, X: 413, Y: 528, R: 473, B: 545, Style: message.PDFTextStyle{VAlign: "baseline"}},
+	OpTime:          &message.PDFTextRenderer{Page: 3, X: 539, Y: 528, R: 573, B: 545, Style: message.PDFTextStyle{VAlign: "baseline"}},
 }
 
 // JurisStat holds an OA jurisdiction status form.

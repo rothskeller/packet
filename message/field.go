@@ -38,9 +38,6 @@ type Field struct {
 	// value of this field, and returns a description of the comparison.  To
 	// disable comparison for a field, set this to CompareNone.
 	Compare func(label, exp, act string) *CompareField
-	// PDFMap is the mapper that tells how to render this field into a
-	// form-fillable PDF file.
-	PDFMap PDFMapper
 	// PDFRenderer is an optional object that renders the value of this
 	// field into a PDF.
 	PDFRenderer PDFRenderer
@@ -138,9 +135,6 @@ func AddFieldDefaults(f *Field) *Field {
 	}
 	if f.Compare == nil {
 		f.Compare = func(label, exp, act string) *CompareField { return nil }
-	}
-	if f.PDFMap == nil {
-		f.PDFMap = NoPDFField{}
 	}
 	if f.TableValue == nil {
 		f.TableValue = func(f *Field) string {

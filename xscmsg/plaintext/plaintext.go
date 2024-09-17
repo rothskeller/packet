@@ -39,7 +39,6 @@ func New() (m *PlainText) {
 			Label:    "Origin Message Number",
 			Value:    &m.OriginMsgID,
 			Presence: message.Required,
-			PDFMap:   message.PDFName("MsgNo"),
 			EditHelp: `This is the message number assigned to the message by the origin station.  Valid message numbers have the form XXX-###P, where XXX is the three-character message number prefix assigned to the station, ### is a sequence number (any number of digits), and P is an optional suffix letter.  This field is required.`,
 		}),
 		message.NewRestrictedField(&message.Field{
@@ -47,7 +46,6 @@ func New() (m *PlainText) {
 			Value:    &m.Handling,
 			Choices:  message.Choices{"ROUTINE", "PRIORITY", "IMMEDIATE"},
 			Presence: message.Required,
-			PDFMap:   message.PDFName("Handling"),
 			EditHelp: `This is the message handling order, which specifies how fast it needs to be delivered.  Allowed values are "ROUTINE" (within 2 hours), "PRIORITY" (within 1 hour), and "IMMEDIATE".  This field is required.`,
 		}),
 		message.NewTextField(&message.Field{
@@ -55,7 +53,6 @@ func New() (m *PlainText) {
 			Value:     &m.Subject,
 			Presence:  message.Required,
 			EditWidth: 80,
-			PDFMap:    message.PDFName("Subject"),
 			EditHelp:  `This is the subject of the message.  It is required.`,
 		}),
 		message.NewMultilineField(&message.Field{
@@ -63,7 +60,6 @@ func New() (m *PlainText) {
 			Value:     &m.Body,
 			Presence:  message.Required,
 			EditWidth: 80,
-			PDFMap:    message.PDFName("Body"),
 			EditHelp:  `This is the body of the message.  It is required.`,
 		}),
 	}
@@ -85,11 +81,11 @@ func decode(subject, body string) (f *PlainText) {
 
 func (m *PlainText) EncodeBody() string { return m.Body }
 
-var RenderPlainPDF func(env *envelope.Envelope, lmi, body, filename string) error
+var RenderPlainPDF func(env *envelope.Envelope, label, lmi, body, filename string) error
 
 func (m *PlainText) RenderPDF(env *envelope.Envelope, filename string) (err error) {
 	if RenderPlainPDF == nil {
 		return message.ErrNotSupported
 	}
-	return RenderPlainPDF(env, filename[:len(filename)-4], m.Body, filename)
+	return RenderPlainPDF(env, "PLAIN TEXT MESSAGE", filename[:len(filename)-4], m.Body, filename)
 }

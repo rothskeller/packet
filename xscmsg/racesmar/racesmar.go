@@ -11,10 +11,9 @@ import (
 
 // Type is the type definition for a RACES mutual aid request form.
 var Type = message.Type{
-	Tag:         "RACES-MAR",
-	Name:        "RACES mutual aid request form",
-	Article:     "a",
-	PDFRenderV2: true,
+	Tag:     "RACES-MAR",
+	Name:    "RACES mutual aid request form",
+	Article: "a",
 }
 
 func init() {
@@ -43,32 +42,32 @@ var fieldOrder = []string{
 	"OpDate", "OpTime",
 }
 var basePDFRenderers = baseform.BaseFormPDF{
-	OriginMsgIDR: &message.PDFMultiRenderer{
+	OriginMsgID: &message.PDFMultiRenderer{
 		&message.PDFTextRenderer{X: 227, Y: 53, R: 346, B: 64, Style: message.PDFTextStyle{VAlign: "baseline"}},
 		&message.PDFTextRenderer{Page: 2, X: 394, Y: 33, R: 503, B: 45},
 	},
-	DestinationMsgIDR: &message.PDFTextRenderer{X: 456, Y: 53, R: 570, B: 64, Style: message.PDFTextStyle{VAlign: "baseline"}},
-	MessageDateR:      &message.PDFTextRenderer{X: 78, Y: 91, R: 125, B: 101, Style: message.PDFTextStyle{VAlign: "baseline", FontSize: 9}},
-	MessageTimeR:      &message.PDFTextRenderer{X: 178, Y: 91, R: 214, B: 101, Style: message.PDFTextStyle{VAlign: "baseline", FontSize: 9}},
-	HandlingR: &message.PDFRadioRenderer{Radius: 3.5, Points: map[string][]float64{
+	DestinationMsgID: &message.PDFTextRenderer{X: 456, Y: 53, R: 570, B: 64, Style: message.PDFTextStyle{VAlign: "baseline"}},
+	MessageDate:      &message.PDFTextRenderer{X: 78, Y: 91, R: 125, B: 101, Style: message.PDFTextStyle{VAlign: "baseline", FontSize: 9}},
+	MessageTime:      &message.PDFTextRenderer{X: 178, Y: 91, R: 214, B: 101, Style: message.PDFTextStyle{VAlign: "baseline", FontSize: 9}},
+	Handling: &message.PDFRadioRenderer{Radius: 3.5, Points: map[string][]float64{
 		"IMMEDIATE": {308, 96},
 		"PRIORITY":  {407, 96},
 		"ROUTINE":   {493, 96},
 	}},
-	ToICSPositionR:   &message.PDFTextRenderer{X: 139, Y: 109, R: 290, B: 122, Style: message.PDFTextStyle{VAlign: "baseline"}},
-	ToLocationR:      &message.PDFTextRenderer{X: 139, Y: 126, R: 288, B: 138, Style: message.PDFTextStyle{VAlign: "baseline"}},
-	ToNameR:          &message.PDFTextRenderer{X: 139, Y: 142, R: 290, B: 155, Style: message.PDFTextStyle{VAlign: "baseline"}},
-	ToContactR:       &message.PDFTextRenderer{X: 139, Y: 161, R: 290, B: 173, Style: message.PDFTextStyle{VAlign: "baseline"}},
-	FromICSPositionR: &message.PDFTextRenderer{X: 400, Y: 109, R: 551, B: 122, Style: message.PDFTextStyle{VAlign: "baseline"}},
-	FromLocationR:    &message.PDFTextRenderer{X: 400, Y: 126, R: 549, B: 138, Style: message.PDFTextStyle{VAlign: "baseline"}},
-	FromNameR:        &message.PDFTextRenderer{X: 400, Y: 142, R: 551, B: 155, Style: message.PDFTextStyle{VAlign: "baseline"}},
-	FromContactR:     &message.PDFTextRenderer{X: 400, Y: 161, R: 551, B: 173, Style: message.PDFTextStyle{VAlign: "baseline"}},
-	OpRelayRcvdR:     &message.PDFTextRenderer{X: 110, Y: 716, R: 272, B: 728, Style: message.PDFTextStyle{VAlign: "baseline"}},
-	OpRelaySentR:     &message.PDFTextRenderer{X: 356, Y: 716, R: 520, B: 728, Style: message.PDFTextStyle{VAlign: "baseline"}},
-	OpNameR:          &message.PDFTextRenderer{X: 75, Y: 734, R: 240, B: 748, Style: message.PDFTextStyle{VAlign: "baseline"}},
-	OpCallR:          &message.PDFTextRenderer{X: 301, Y: 734, R: 358, B: 748, Style: message.PDFTextStyle{VAlign: "baseline"}},
-	OpDateR:          &message.PDFTextRenderer{X: 430, Y: 734, R: 479, B: 748, Style: message.PDFTextStyle{VAlign: "baseline"}},
-	OpTimeR:          &message.PDFTextRenderer{X: 519, Y: 734, R: 572, B: 748, Style: message.PDFTextStyle{VAlign: "baseline"}},
+	ToICSPosition:   &message.PDFTextRenderer{X: 139, Y: 109, R: 290, B: 122, Style: message.PDFTextStyle{VAlign: "baseline"}},
+	ToLocation:      &message.PDFTextRenderer{X: 139, Y: 126, R: 288, B: 138, Style: message.PDFTextStyle{VAlign: "baseline"}},
+	ToName:          &message.PDFTextRenderer{X: 139, Y: 142, R: 290, B: 155, Style: message.PDFTextStyle{VAlign: "baseline"}},
+	ToContact:       &message.PDFTextRenderer{X: 139, Y: 161, R: 290, B: 173, Style: message.PDFTextStyle{VAlign: "baseline"}},
+	FromICSPosition: &message.PDFTextRenderer{X: 400, Y: 109, R: 551, B: 122, Style: message.PDFTextStyle{VAlign: "baseline"}},
+	FromLocation:    &message.PDFTextRenderer{X: 400, Y: 126, R: 549, B: 138, Style: message.PDFTextStyle{VAlign: "baseline"}},
+	FromName:        &message.PDFTextRenderer{X: 400, Y: 142, R: 551, B: 155, Style: message.PDFTextStyle{VAlign: "baseline"}},
+	FromContact:     &message.PDFTextRenderer{X: 400, Y: 161, R: 551, B: 173, Style: message.PDFTextStyle{VAlign: "baseline"}},
+	OpRelayRcvd:     &message.PDFTextRenderer{X: 110, Y: 716, R: 272, B: 728, Style: message.PDFTextStyle{VAlign: "baseline"}},
+	OpRelaySent:     &message.PDFTextRenderer{X: 356, Y: 716, R: 520, B: 728, Style: message.PDFTextStyle{VAlign: "baseline"}},
+	OpName:          &message.PDFTextRenderer{X: 75, Y: 734, R: 240, B: 748, Style: message.PDFTextStyle{VAlign: "baseline"}},
+	OpCall:          &message.PDFTextRenderer{X: 301, Y: 734, R: 358, B: 748, Style: message.PDFTextStyle{VAlign: "baseline"}},
+	OpDate:          &message.PDFTextRenderer{X: 430, Y: 734, R: 479, B: 748, Style: message.PDFTextStyle{VAlign: "baseline"}},
+	OpTime:          &message.PDFTextRenderer{X: 519, Y: 734, R: 572, B: 748, Style: message.PDFTextStyle{VAlign: "baseline"}},
 }
 
 // RACESMAR holds a RACES mutual aid request form.

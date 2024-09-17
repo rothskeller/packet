@@ -5,6 +5,7 @@ package xscmsg
 import (
 	"github.com/rothskeller/packet/message"
 	"github.com/rothskeller/packet/xscmsg/ahfacstat"
+	"github.com/rothskeller/packet/xscmsg/bulletin"
 	"github.com/rothskeller/packet/xscmsg/checkin"
 	"github.com/rothskeller/packet/xscmsg/checkout"
 	"github.com/rothskeller/packet/xscmsg/delivrcpt"
@@ -21,6 +22,7 @@ import (
 // Register registers all message types defined in sibling packages.
 func Register() {
 	message.Register(&ahfacstat.Type)
+	message.Register(&bulletin.Type)
 	message.Register(&eoc213rr.Type)
 	message.Register(&ics213.Type)
 	message.Register(&jurisstat.Type)

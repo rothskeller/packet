@@ -13,10 +13,9 @@ import (
 
 // Type is the type definition for an EOC-213RR resource request form.
 var Type = message.Type{
-	Tag:         "EOC213RR",
-	Name:        "EOC-213RR resource request form",
-	Article:     "an",
-	PDFRenderV2: true,
+	Tag:     "EOC213RR",
+	Name:    "EOC-213RR resource request form",
+	Article: "an",
 }
 
 func init() {
@@ -89,8 +88,8 @@ func create(version *message.FormVersion) message.Message {
 	f.BaseMessage.FBody = &f.Instructions
 	f.Fields = make([]*message.Field, 0, fieldCount)
 	var pdf = baseform.RoutingSlipPDFRenderers
-	pdf.OriginMsgIDR = message.PDFMultiRenderer{
-		pdf.OriginMsgIDR,
+	pdf.OriginMsgID = message.PDFMultiRenderer{
+		pdf.OriginMsgID,
 		&message.PDFTextRenderer{Page: 2, X: 486, Y: 20, R: 586, H: 12, Style: message.PDFTextStyle{HAlign: "right"}},
 		&message.PDFTextRenderer{Page: 3, X: 486, Y: 20, R: 586, H: 12, Style: message.PDFTextStyle{HAlign: "right"}},
 	}

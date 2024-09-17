@@ -14,10 +14,9 @@ import (
 
 // Type is the type definition for an allied health facility status form.
 var Type = message.Type{
-	Tag:         "AHFacStat",
-	Name:        "allied health facility status form",
-	Article:     "an",
-	PDFRenderV2: true,
+	Tag:     "AHFacStat",
+	Name:    "allied health facility status form",
+	Article: "an",
 }
 
 func init() {
@@ -126,8 +125,8 @@ func create(version *message.FormVersion) message.Message {
 		Form: version,
 	}}
 	var pdf = baseform.RoutingSlipPDFRenderers
-	pdf.OriginMsgIDR = message.PDFMultiRenderer{
-		pdf.OriginMsgIDR,
+	pdf.OriginMsgID = message.PDFMultiRenderer{
+		pdf.OriginMsgID,
 		&message.PDFTextRenderer{Page: 2, X: 492, Y: 36, W: 100, H: 17, Style: message.PDFTextStyle{HAlign: "right"}},
 	}
 	f.BaseMessage.FSubject = &f.FacilityName

@@ -20,11 +20,6 @@ type Type struct {
 	// to create a PDF rendering of the message.  It is nil if PDF rendering
 	// is not supported.
 	PDFBase []byte
-	// PDFFontSize is default font size for the fillable fields in the PDF
-	// file.  It can be zero if all of the fields already have assigned
-	// sizes in the PDF file.
-	PDFFontSize float64
-	PDFRenderV2 bool
 	// Create is a function for creating a new message of the type.  If
 	// Create is nil, end users are not allowed to create new messages of
 	// the type.  Otherwise, create must be a function with the signature

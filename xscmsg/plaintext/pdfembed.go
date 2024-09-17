@@ -26,7 +26,7 @@ func init() {
 	RenderPlainPDF = renderPDFActual
 }
 
-func renderPDFActual(env *envelope.Envelope, lmi, body, filename string) error {
+func renderPDFActual(env *envelope.Envelope, label, lmi, body, filename string) error {
 	pdf := fpdf.New("P", "pt", "Letter", "")
 	pdf.AddUTF8FontFromBytes("Go", "", goRegular)
 	pdf.AddUTF8FontFromBytes("Go", "B", goBold)
@@ -35,7 +35,7 @@ func renderPDFActual(env *envelope.Envelope, lmi, body, filename string) error {
 	pdf.SetAutoPageBreak(true, 48)
 	pdf.AddPage()
 	pdf.SetFont("Go", "B", 14)
-	pdf.CellFormat(0, 21, "PLAIN TEXT MESSAGE", "", 1, "L", false, 0, "")
+	pdf.CellFormat(0, 21, label, "", 1, "L", false, 0, "")
 	pdf.SetFontSize(12)
 	if env.From != "" {
 		pdf.Cell(63, 14.4, "From")
@@ -78,6 +78,8 @@ func getReceived(lmi string, env *envelope.Envelope) string {
 	if env.IsReceived() {
 		return fmt.Sprintf("%s as %s", env.ReceivedDate.Format("01/02/2006 15:04"), lmi)
 	}
+	// Not using incident.ReadReceipt here because that would create an
+	// import cycle.
 	contents, err := os.ReadFile(lmi + ".DR.txt")
 	if err != nil {
 		return ""

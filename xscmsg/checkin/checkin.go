@@ -170,5 +170,5 @@ func (m *CheckIn) RenderPDF(env *envelope.Envelope, filename string) error {
 	if env.SubjectLine == "" {
 		env.SubjectLine = m.EncodeSubject()
 	}
-	return plaintext.RenderPlainPDF(env, filename[:len(filename)-4], m.EncodeBody(), filename)
+	return plaintext.RenderPlainPDF(env, "CHECK-IN MESSAGE", filename[:len(filename)-4], m.EncodeBody(), filename)
 }
