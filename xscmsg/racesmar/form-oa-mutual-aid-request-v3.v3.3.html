@@ -1,0 +1,721 @@
+<!DOCTYPE html><html><head>
+    <meta http-equiv="Content-type" content="text/html;charset=UTF-8"/>
+    <link rel="stylesheet" type="text/css" href="resources/css/loading.css"/>
+    <link rel="stylesheet" type="text/css" href="resources/css/pack-it-forms.css"/>
+    <link rel="stylesheet" type="text/css" href="resources/css/ics-header.css"/>
+    <link rel="stylesheet" type="text/css" href="resources/css/ics-footer.css"/>
+    <style>
+      table.block-border {
+          border-left:4px solid #000000;
+          border-right:4px solid #000000;
+      }
+      table.resource-table td {
+          padding-bottom: 1px;
+          padding-top: 1px;
+      }
+      table.resource-table table.same-line-label-layout td {
+          padding-left:0px;
+          padding-right:0px;
+      }
+      td {
+          white-space: nowrap;
+      }
+      tr.assignments-header>td {
+          background-color:#ccffcc;
+          text-align: center;
+          vertical-align: middle;
+      }
+      td[data-copy-from] {
+          white-space: normal;
+      }
+      [data-copy-from], .data-copy-from {
+          font-family: consolas,monaco,profont,monospace;
+          font-weight: bold;
+          margin-left: 0px;
+      }
+      table.same-line-label-layout td[data-copy-from] {
+          padding-left: 0px;
+      }
+      div.bubble { /* a speech bubble */
+          position: absolute;
+          bottom: 15px;
+          background-color: #ffffdd;
+          border: 2px solid #666;
+          box-shadow: 3px 3px 15px 1px #888;
+          border-radius: 2ex;
+          -webkit-border-radius: 2ex;
+          -moz-border-radius: 2ex;
+          padding: 1ex;
+      }
+      div.bubble:before { /* the outside of the pointer */
+          content: "";
+          position: absolute;
+          bottom: -20px;
+          left: 10px;
+          border-width: 20px 10px 0;
+          border-style: solid;
+          border-color: #666 transparent;
+          display: block;
+          width: 0;
+      }
+      div.bubble:after { /* the inside of the pointer */
+          content: "";
+          position: absolute;
+          bottom: -16px;
+          left: 11px;
+          border-width: 18px 9px 0;
+          border-style: solid;
+          border-color: #ffffdd transparent;
+          display: block;
+          width: 0;
+      }
+      div.bubble>input[type="button"] {
+          background-color: #ffffff;
+          border: 2px solid #666;
+          margin-left: 1em;
+          width: 3em;
+      }
+    </style>
+    <script type="text/javascript" src="resources/js/pack-it-forms.js"></script>
+    <script type="text/javascript" src="resources/integration/integration.js"></script>
+    <script type="text/javascript">
+      function forEachSelected(selector, callback) {
+          array_for_each(document.querySelectorAll(selector), callback);
+      }
+      var standardRoles = ['',
+                           'Field Communicator',
+                           'Net Control Operator',
+                           'Packet Operator',
+                           'Shadow Communicator'];
+      function showStandardTypes(row, show, role) {
+          var prefix = role ? role.substring(0, 1) : 'Type ';
+          var types = ['', prefix + '1', prefix + '2', prefix + '3'];
+          ['c', 'd'].forEach(function(column) {
+              forEachSelected('select[name^="18.' + row + column + '."]', function(type) {
+                  if (show) {
+                      var options = type.children;
+                      for (var t = 0; t < types.length; ++t) {
+                          options[t].innerText = types[t];
+                      }
+                      type.required = true;
+                      type.style.removeProperty('display');
+                  } else {
+                      type.style.display = 'none';
+                      type.required = false;
+                      if (type.value) type.value = '';
+                  }
+              });
+          });
+      }
+      function showFreeFormPrompt(row, show) {
+          var prompt = document.getElementById('18.' + row + '-prompt');
+          if (show) {
+              prompt.style.removeProperty('visibility');
+          } else {
+              prompt.style.visibility = 'hidden';
+          }
+      }
+      function showTypes(row, role) {
+          if (!role.required) {
+              forEachSelected('input[name^="18.' + row + 'a."]', function(qty) {
+                  if (role.value) {
+                      qty.required = true;
+                  } else {
+                      qty.removeAttribute('required');
+                  }
+              });
+          }
+          var standard = standardRoles.indexOf(role.value) > 0;
+          if (standard) {
+              showFreeFormPrompt(row, false);
+              showStandardTypes(row, true, role.value);
+          } else {
+              showStandardTypes(row, false);
+              showFreeFormPrompt(row, !!role.value);
+          }
+      }
+      function setupResourceRow(row) {
+          forEachSelected('input[name^="18.' + row + 'b."]', function(role) {
+              showTypes(row, role);
+              role.addEventListener('change', function(event) {
+                  showTypes(row, role);
+              });
+          });
+          showFreeFormPrompt(row, false);
+          var ok = document.getElementById('18.' + row + '-ok');
+          ok.addEventListener('click', function(event) {
+              showFreeFormPrompt(row, false);
+              document.querySelector('textarea[name="17.assignment"]').focus();
+          });
+      }
+      integration.after("load_configuration", function setComboBoxOptions() {
+          ComboBox.getByName("7a.to-ics-position").setOptions(
+              ['RACES Chief Radio Officer', 'RACES Unit', 'Operations Section']);
+          for (var row = 1; row <= 5; ++row) {
+              ComboBox.getByName("18." + row + "b.role").setOptions(standardRoles);
+          }
+      });
+      integration.after("setup_inputs", function() {
+          for (var row = 1; row <= 5; ++row) {
+              setupResourceRow(row); // creates a closure around this row
+          }
+          if (envelope.viewer != 'receiver') {
+              document.getElementById('page2').style.display = 'none';
+          } else {
+              forEachSelected('[data-copy-from]', function(target) {
+                  target.getAttribute('data-copy-from').split(',').forEach(function(sourceName) {
+                      forEachSelected('[name^="' + sourceName + '"]', function(source) {
+                          if (source.style.display != 'none') {
+                              switch(source.type) {
+                              case 'checkbox':
+                                  target.checked = source.checked;
+                                  break;
+                              case 'select-one':
+                                  target.innerText = source.options[source.selectedIndex].innerText;
+                                  break;
+                              default:
+                                  target.innerText = source.value;
+                              }
+                          }
+                      });
+                  });
+              });
+              document.getElementById("from-date-time").innerHTML =
+                  document.querySelector('input[name^="20a."]').value
+                  + '&nbsp;&nbsp;'
+                  + document.querySelector('input[name^="20b."]').value;
+              document.getElementById("to-date-time").innerHTML =
+                  document.querySelector('input[name^="20c."]').value
+                  + '&nbsp;&nbsp;'
+                  + document.querySelector('input[name^="20d."]').value;
+          }
+      });
+    </script>
+    <meta name="pack-it-forms-pdf-URL" content="pdf/XSC_RACES_MA_Req_v20240711_V1_Test76.pdf"/>
+    <meta name="pack-it-forms-subject-suffix" content="_RACES-MAR_{{field:15.agency}}"/>
+    <title>RACES Mutual Aid Request</title>
+  </head>
+
+  <body>
+    <div class="version">3.3</div>
+    &lt;%#include%&gt;resources/html/loading.html&lt;%/include%&gt;
+    <form id="the-form" name="the-form">
+      <table id="scco-banner" class="noborder">
+        <tbody><tr>
+          <td style="font-size:150%;font-weight:bold;">
+            Santa Clara County RACES -- Mutual Aid Request
+          </td><td style="text-align:right;vertical-align:bottom;">
+            <span class="templated">Version: 20240711<br/>PIF: {{version}}</span>
+          </td>
+        </tr>
+      </tbody></table>
+      <table>
+        <tbody><tr>
+          <td style="width:1px;" class="block-caption">
+            Radio Operator Only:
+          </td><td>
+            <b>Origin Msg #:</b>
+            <input type="text" name="MsgNo" class="message-number no-msg-init" tabindex="1" value="{{envelope:sender_message_number}}" required=""/>
+          </td><td>
+            <b>Destination Msg #:</b>
+            <input type="text" class="message-number" disabled="disabled" tabindex="2" value="{{envelope:receiver_message_number}}"/>
+          </td>
+        </tr>
+      </tbody></table>
+      <table class="block-border" style="border-top:4px solid #000;">
+        <tbody><tr>
+          <td colspan="3" class="block-caption" style="background-color:#ffff66;text-align:left;">
+            This Section to be Completed by Requesting Agency:
+          </td>
+        </tr><tr>
+          <td>
+            <b>Date:</b>
+            <input type="text" name="1a.date" class="date" value="{{date}}" required="" tabindex="3"/>
+          </td><td>
+            <b>Time:</b>
+           <input type="text" name="1b.time" class="time" required="" tabindex="4"/>
+          </td><td class="label-sameline">
+            <b>Handling:</b>
+            <div class="required-group" style="margin-left:0.5em;padding-left:0;padding-right:0.5em;">
+              <label>
+                <input type="radio" name="5.handling" tabindex="5" required="" value="IMMEDIATE"/>Immediate
+                <span style="font-weight:normal;">(ASAP)</span>
+              </label>
+              <label style="margin-left:1em;margin-right:1em;">
+                <input type="radio" name="5.handling" tabindex="6" required="" value="PRIORITY"/>Priority
+                <span style="font-weight:normal;">(&lt;1 hr)</span>
+              </label>
+              <label>
+                <input type="radio" name="5.handling" tabindex="7" checked="" required="" value="ROUTINE"/>Routine
+                <span style="font-weight:normal;">(&lt;2 hrs)</span>
+              </label>
+            </div>
+          </td>
+        </tr>
+      </tbody></table>
+      <table class="block-border" id="form-row-3">
+        <tbody><tr>
+          <td rowspan="4" class="block-caption" style="width:1px;">
+            T<br/>O
+          </td><td>
+            <table class="same-line-label-layout">
+              <tbody><tr>
+                <th>ICS Position:</th>
+                <td style="padding-right:0;">
+                  &lt;%#run%&gt;include(&#39;resources/html/combobox.html&#39;, {
+                  name: &#34;7a.to-ics-position&#34;,
+                  value: &#34;RACES Chief Radio Officer&#34;,
+                  tabindex: &#34;8&#34;,
+                  attributes: &#39;required&#39;
+                  })&lt;%/run%&gt;
+                </td>
+              </tr>
+            </tbody></table>
+          </td><td rowspan="4" class="block-caption" style="width:1px;">
+            F<br/>R<br/>O<br/>M
+          </td><td>
+            <table class="same-line-label-layout">
+              <tbody><tr>
+                <th>ICS Position:</th>
+                <td><input type="text" name="8a.from-ics-position" required="" tabindex="12"/></td>
+              </tr>
+            </tbody></table>
+          </td>
+        </tr><tr>
+          <td>
+            <table class="same-line-label-layout">
+              <tbody><tr>
+                <th>Location:</th>
+                <td style="padding-right:0;">
+                  &lt;%#run%&gt;include(&#39;resources/html/combobox.html&#39;, {
+                  name: &#34;7b.to-location&#34;,
+                  value: &#34;County EOC&#34;,
+                  tabindex: &#34;9&#34;,
+                  attributes: &#39;required&#39;
+                  })&lt;%/run%&gt;
+                </td>
+              </tr>
+            </tbody></table>
+          </td><td>
+            <table class="same-line-label-layout">
+              <tbody><tr>
+                <th>Location:</th>
+                <td><input type="text" name="8b.from-location" required="" tabindex="13"/></td>
+              </tr>
+            </tbody></table>
+          </td>
+        </tr><tr>
+          <td>
+            <table class="same-line-label-layout">
+              <tbody><tr>
+                <th>Name:</th>
+                <td><input type="text" name="7c.to-name" tabindex="10"/></td>
+              </tr>
+            </tbody></table>
+          </td><td>
+            <table class="same-line-label-layout">
+              <tbody><tr>
+                <th>Name:</th>
+                <td><input type="text" name="8c.from-name" tabindex="14"/></td>
+              </tr>
+            </tbody></table>
+          </td>
+        </tr><tr>
+          <td>
+            <table class="same-line-label-layout">
+              <tbody><tr>
+                <th>Contact Info:</th>
+                <td><input type="text" name="7d.to-contact" tabindex="11"/></td>
+              </tr>
+            </tbody></table>
+          </td><td>
+            <table class="same-line-label-layout">
+              <tbody><tr>
+                <th>Contact Info:</th>
+                <td><input type="text" name="8d.from-contact" tabindex="15"/></td>
+              </tr>
+            </tbody></table>
+          </td>
+        </tr>
+      </tbody></table>
+      <table class="block-border fullsize-textfields" style="border-bottom:4px solid #000;">
+        <tbody><tr>
+          <td><label>Agency</label></td>
+          <td colspan="4">
+            <table class="same-line-label-layout">
+              <tbody><tr>
+                <td style="width:1px;">Name:</td>
+                <td><input type="text" name="15.agency" tabindex="20" required=""/></td>
+                <td style="width:1px;border-left:1px solid #aaaaaa;">If Reauthorization,<br/>original msg #:</td>
+                <td style="width:10em;">
+                  <input type="text" name="15b.original-msg-number" class="message-number" tabindex="21"/>
+                </td>
+              </tr>
+            </tbody></table>
+          </td>
+        </tr><tr>
+          <td><label>Event/Incident</label></td>
+          <td colspan="4">
+            <table class="same-line-label-layout">
+              <tbody><tr>
+                <td style="width:1px;">Name:</td>
+                <td><input type="text" name="16a.event-name" tabindex="22" required=""/></td>
+                <td style="width:1px;border-left:1px solid #aaaaaa;">Agency Act. #:</td>
+                <td style="width:10em;">
+                  <input type="text" name="16b.event-number" style="width:10em;" tabindex="23"/>
+                </td>
+              </tr>
+            </tbody></table>
+          </td>
+        </tr><tr>
+          <td style="width:1px;">
+            <label>Assignment</label>
+          </td><td colspan="4" style="padding-right:1em;">
+            <textarea name="17.assignment" tabindex="24" required="" rows="4" placeholder="(General duties, conditions, equipment needed, etc.)"></textarea>
+          </td>
+        </tr><tr>
+          <td style="white-space:normal;">
+            <label>Amateur Radio Resources Requested, in order of priority needed.</label>
+            <span style="font-size:85%;">(A new request form is needed for each Location and Operational Period.)</span>
+          </td>
+          <td colspan="4" style="padding:0px;">
+            
+              &lt;%#run%&gt;nextTabIndex = 25;
+              include(&#39;parts/resource-requested.html&#39;, {row: &#34;1&#34;, required: &#39; required&#39;,
+              placeholder: &#39; placeholder=&#34;for example, Checkpoint&#34;&#39;})&lt;%/run%&gt;
+              &lt;%#run%&gt;include(&#39;parts/resource-requested.html&#39;, {row: &#34;2&#34;})&lt;%/run%&gt;
+              &lt;%#run%&gt;include(&#39;parts/resource-requested.html&#39;, {row: &#34;3&#34;})&lt;%/run%&gt;
+              &lt;%#run%&gt;include(&#39;parts/resource-requested.html&#39;, {row: &#34;4&#34;})&lt;%/run%&gt;
+              &lt;%#run%&gt;include(&#39;parts/resource-requested.html&#39;, {row: &#34;5&#34;})&lt;%/run%&gt;
+            <table class="resource-table">
+              <tbody><tr>
+                <td class="block-caption" style="width:1px;text-align:right;">Qty</td>
+                <td class="block-caption">Role</td>
+                <td class="block-caption">Position</td>
+                <td class="block-caption" style="width:1px;">Preferred Type</td>
+                <td class="block-caption" style="width:1px;">Minimum Type</td>
+              </tr></tbody></table>
+          </td>
+        </tr><tr>
+          <td style="width:1px;">
+            <label>Partial Assignment</label>
+          </td><td colspan="4" style="font-size:95%;white-space:normal;">
+            Requests will be filled as resources become available.
+            If this is not acceptable, check the boxes in &#34;Position&#34; above
+            to indicate which resources must be assigned together.
+            This could limit the resources assigned.
+          </td>
+        </tr><tr>
+          <td style="width:1px;">
+            <label>Requested Arrival</label>
+          </td><td colspan="2">
+            <table class="same-line-label-layout">
+              <tbody><tr>
+                <td style="width:1px;">Date:</td>
+                <td><input type="text" name="19a.arrival-date" class="date" tabindex="50" required=""/></td>
+              </tr>
+            </tbody></table>
+          </td><td colspan="2"> 
+            <table class="same-line-label-layout">
+              <tbody><tr>
+                <td style="width:1px;">Time (24hr):</td>
+                <td><input type="text" name="19b.arrival-time" class="time" tabindex="51" required=""/></td>
+              </tr>
+            </tbody></table>
+          </td>
+        </tr><tr>
+          <td>
+            <label>Oper. Period</label>
+          </td><td colspan="4">
+            <table class="same-line-label-layout">
+              <tbody><tr>
+                <td style="width:1px;">From Date:</td>
+                <td style="padding:0px;">
+                  <input type="text" name="20a.from-date" class="date" tabindex="52" required=""/>
+                </td>
+                <td style="width:1px;">From Time (24hr):</td>
+                <td style="padding:0px;">
+                  <input type="text" name="20b.from-time" class="time" style="width:4em;" tabindex="53" required=""/>
+                </td>
+                <td style="width:1px;">To Date:</td>
+                <td style="padding:0px;">
+                  <input type="text" name="20c.from-date" class="date" tabindex="54" required=""/>
+                </td>
+                <td style="width:1px;">To Time (24hr):</td>
+                <td style="padding:0px;">
+                  <input type="text" name="20d.from-time" class="time" style="width:4em;" tabindex="55" required=""/>
+                </td>
+              </tr>
+            </tbody></table>
+          </td>
+        </tr><tr>
+          <td style="white-space:normal;width:1px;">
+            <label>Reporting Location</label>
+          </td><td colspan="4" style="padding-right:1em;">
+            <textarea name="21.reporting-location" tabindex="60" required="" rows="2" placeholder="Street Address, Parking, Entry Instructions"></textarea>
+          </td>
+        </tr><tr>
+          <td style="width:1px;">
+            <label>Contact on Arrival</label>
+          </td><td colspan="4" style="padding-right:1em;">
+            <textarea name="22.contact-on-arrival" tabindex="61" required="" rows="2" placeholder="Name/Position and contact info"></textarea>
+          </td>
+        </tr><tr>
+          <td>
+            <label>Travel Info</label>
+          </td><td colspan="4" style="padding-right:1em;">
+            <textarea name="23.travel-info" required="" tabindex="62" rows="2" placeholder="Routes, Hazards, Lodging"></textarea>
+          </td>
+        </tr><tr>
+          <td rowspan="2">
+            <label>Requested By</label>
+          </td><td colspan="2">
+            <table class="same-line-label-layout">
+              <tbody><tr>
+                <td style="width:1px;">Name:</td>
+                <td><input type="text" name="24a.requester-name" tabindex="63" required=""/></td>
+              </tr>
+            </tbody></table>
+          </td><td colspan="2">
+            <table class="same-line-label-layout">
+              <tbody><tr>
+                <td style="width:1px;">Title:</td>
+                <td><input type="text" name="24b.requester-title" tabindex="64" required=""/></td>
+              </tr>
+            </tbody></table>
+          </td>
+        </tr><tr>
+          <td colspan="4">
+            <table class="same-line-label-layout">
+              <tbody><tr>
+                <td style="width:1px;">Contact:</td>
+                <td>
+                  <input type="text" name="24c.requester-contact" tabindex="65" required="" placeholder="E-mail, phone, frequency"/>
+                </td>
+              </tr>
+            </tbody></table>
+          </td>
+        </tr><tr>
+          <td rowspan="3">
+            <label>Approved By</label>
+            <br/><span style="white-space:normal;">(Authorized agency official)</span>
+          </td>
+          <td colspan="2">
+            <table class="same-line-label-layout">
+              <tbody><tr>
+                <td style="width:1px;">Name:</td>
+                <td><input type="text" name="25a.agency-approver-name" tabindex="70" required=""/></td>
+              </tr>
+            </tbody></table>
+          </td><td colspan="2">
+            <table class="same-line-label-layout">
+              <tbody><tr>
+                <td style="width:1px;">Title:</td>
+                <td><input type="text" name="25b.agency-approver-title" tabindex="71" required=""/></td>
+              </tr>
+            </tbody></table>
+          </td>
+        </tr><tr>
+          <td colspan="4">
+            <table class="same-line-label-layout">
+              <tbody><tr>
+                <td style="width:1px;">Contact:</td>
+                <td>
+                  <input type="text" name="25c.agency-approver-contact" tabindex="72" required="" placeholder="E-mail, phone, frequency"/>
+                </td>
+              </tr>
+            </tbody></table>
+          </td>
+        </tr><tr>
+          <td colspan="2" style="padding-left:1em;">
+            <table class="same-line-label-layout">
+              <tbody><tr>
+                <td style="width:1px;padding-left:0px;">
+                  <label for="25s" style="font-weight:normal;">Signature:</label>
+                </td>
+                <td style="width:1em;">
+                  <input type="checkbox" id="25s" name="25s.with-signature"/>
+                </td>
+                <td style="padding-left:0px;text-align:left;">
+                  <label for="25s" style="font-weight:normal;">
+                    with signature
+                  </label>
+                </td>
+              </tr>
+            </tbody></table>
+          </td><td style="width:11em;">
+            <table class="same-line-label-layout">
+              <tbody><tr>
+                <td style="width:1px;">Date:</td>
+                <td><input type="text" name="26a.agency-approved-date" tabindex="73" required="" class="date" value="{{date}}"/></td>
+              </tr>
+            </tbody></table>
+          </td><td style="width:10em;">
+            <table class="same-line-label-layout">
+              <tbody><tr>
+                <td style="width:1px;">Time:</td>
+                <td><input type="text" name="26b.agency-approved-time" tabindex="74" required="" class="time"/></td>
+              </tr>
+            </tbody></table>
+          </td>
+        </tr>
+      </tbody></table>
+      &lt;%#include%&gt;resources/html/scco-footer.html&lt;%/include%&gt;
+    </form>
+    <div id="page2" class="any-form" style="page-break-inside:avoid;">
+      <table class="same-line-label-layout">
+        <tbody><tr>
+          <td>Santa Clara County RACES -- Mutual Aid Request</td>
+          <td style="text-align:right;">Radio Origin Msg #:</td>
+          <td data-copy-from="MsgNo" style="padding-left:0px;width:6em;"></td>
+        </tr>
+      </tbody></table>
+      <table>
+        <tbody><tr>
+          <td colspan="5" class="block-caption" style="background-color:#aaffaa;border-top:1px solid #aaaaaa;">
+            This Section to be completed by Santa Clara County Op Area:
+          </td>
+        </tr><tr>
+          <td style="width:1px;height:2em;"><b>Reviewed By</b> (CRO)</td>
+          <td colspan="2" style="height:0.25in;">Name:</td>
+          <td style="width:9em;">Date:</td>
+          <td style="width:9em;">Time (24hr):</td>
+        </tr><tr>
+          <td style="height:2em;"><b>Agency</b></td>
+          <td colspan="2" style="white-space:normal;">
+            Name: <span data-copy-from="15."></span>
+          </td><td colspan="2" style="white-space:normal;">
+            If Reauthorization, original msg #:
+            <br/><span data-copy-from="15b."></span>
+          </td>
+        </tr><tr>
+          <td rowspan="2"><b>Approved By</b><br/>(SCCo OEM official)</td>
+          <td colspan="2" style="height:2em;">Name:</td>
+          <td colspan="2">Title:</td>
+        </tr><tr>
+          <td colspan="2" style="height:2em;">Signature:</td>
+          <td>Date:</td>
+          <td>Time (24hr):</td>
+        </tr><tr>
+          <td style="height:2em;"><b>Completed</b></td>
+          <td colspan="2">Name:</td>
+          <td>Date:</td>
+          <td>Time (24hr):</td>
+        </tr>
+      </tbody></table>
+      <table>
+        <tbody><tr>
+          <td colspan="5" class="block-caption" style="background-color:#aaffaa;">
+            This Section to be Used for Resource Assignment by SCC EOC RACES Radio Room:
+          </td>
+        </tr><tr>
+          <td><b>SCCo OP AREA ACTIVATION #:</b></td>
+        </tr>
+      </tbody></table>
+      <table>
+        <tbody><tr>
+          <td style="width:1px;">
+            <label>Assignment</label>
+            <br/>(General duties, conditions,
+            <br/>equipment needed, etc.)
+          </td>
+          <td data-copy-from="17."></td>
+        </tr>
+      </tbody></table>
+      <table>
+        <tbody><tr>
+          <td style="width:1px;">
+            <label>Requested Arrival</label>
+          </td><td colspan="2">
+            Date(s): <span data-copy-from="19a."></span>
+          </td><td>
+            Time(s): <span data-copy-from="19b."></span>
+          </td>
+        </tr><tr>
+          <td>
+            <label>Oper. Period</label>
+          </td><td>
+            From (Date/Time 24hr): <span id="from-date-time" class="data-copy-from">
+          </span></td><td colspan="2">
+            To (Date/Time 24hr): <span id="to-date-time" class="data-copy-from"></span>
+          </td>
+        </tr><tr>
+          <td>
+            <label>Reporting Location</label>
+          </td><td colspan="3" data-copy-from="21.">
+          </td>
+        </tr><tr>
+          <td>
+            <label>Contact on Arrival</label>
+          </td><td colspan="3" data-copy-from="22.">
+          </td>
+        </tr><tr>
+          <td>
+            <label>Travel Info</label>
+          </td><td colspan="3" data-copy-from="23.">
+          </td>
+        </tr><tr>
+          <td style="white-space:normal;">
+            <label>Amateur Radio Resources Requested, in order of priority needed</label>
+          </td><td colspan="3" style="padding:0px;">
+            
+              &lt;%#run%&gt;include(&#39;parts/resource-requested-copy.html&#39;, {row: &#34;1&#34;})&lt;%/run%&gt;
+              &lt;%#run%&gt;include(&#39;parts/resource-requested-copy.html&#39;, {row: &#34;2&#34;})&lt;%/run%&gt;
+              &lt;%#run%&gt;include(&#39;parts/resource-requested-copy.html&#39;, {row: &#34;3&#34;})&lt;%/run%&gt;
+              &lt;%#run%&gt;include(&#39;parts/resource-requested-copy.html&#39;, {row: &#34;4&#34;})&lt;%/run%&gt;
+              &lt;%#run%&gt;include(&#39;parts/resource-requested-copy.html&#39;, {row: &#34;5&#34;})&lt;%/run%&gt;
+            <table class="resource-table">
+              <tbody><tr style="font-weight:bold;">
+                <td style="text-align:right;width:1px;">Qty</td>
+                <td>Role</td>
+                <td>
+                  Position <span style="float:right;">PA</span>
+                </td>
+                <td style="width:1px;">Preferred</td>
+                <td style="width:1px;">Minimum</td>
+              </tr></tbody></table>
+          </td>
+        </tr>
+      </tbody></table>
+      <table>
+        <tbody><tr class="assignments-header">
+          <td colspan="7">
+            <b>Assignments </b>--
+            use extra lines for additional notes
+            (attach additional sheets if needed)
+          </td>
+        </tr><tr class="assignments-header">
+          <td style="width:5em;"><b>Date</b></td>
+          <td style="width:5em;"><b>Time</b></td>
+          <td><b>Name</b></td>
+          <td style="width:5em;"><b>Call Sign</b></td>
+          <td><b>Role</b></td>
+          <td><b>Notes</b></td>
+          <td style="width:11em;"><b>Assigned<br/>Date/Time</b></td>
+        </tr><tr>
+          <td style="height:2.5ex;"></td><td></td><td></td><td></td><td></td><td></td><td></td>
+        </tr><tr>
+          <td style="height:2.5ex;"></td><td></td><td></td><td></td><td></td><td></td><td></td>
+        </tr><tr>
+          <td style="height:2.5ex;"></td><td></td><td></td><td></td><td></td><td></td><td></td>
+        </tr><tr>
+          <td style="height:2.5ex;"></td><td></td><td></td><td></td><td></td><td></td><td></td>
+        </tr><tr>
+          <td style="height:2.5ex;"></td><td></td><td></td><td></td><td></td><td></td><td></td>
+        </tr><tr>
+          <td style="height:2.5ex;"></td><td></td><td></td><td></td><td></td><td></td><td></td>
+        </tr><tr>
+          <td style="height:2.5ex;"></td><td></td><td></td><td></td><td></td><td></td><td></td>
+        </tr><tr>
+          <td style="height:2.5ex;"></td><td></td><td></td><td></td><td></td><td></td><td></td>
+        </tr><tr>
+          <td style="height:2.5ex;"></td><td></td><td></td><td></td><td></td><td></td><td></td>
+        </tr><tr>
+          <td style="height:2.5ex;"></td><td></td><td></td><td></td><td></td><td></td><td></td>
+        </tr>
+      </tbody></table>
+    </div>
+    &lt;%#include%&gt;resources/html/submit-buttons.html&lt;%/include%&gt;
+  
+
+</body></html>

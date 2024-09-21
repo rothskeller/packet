@@ -33,8 +33,10 @@ var formToPackage = map[string]string{
 	"form-oa-muni-status.html":                     "jurisstat",
 	"form-oa-mutual-aid-request-v2.html":           "racesmar",
 	"form-oa-mutual-aid-request-v2.read-only.html": "",
+	"form-oa-mutual-aid-request-v3.html":           "racesmar",
 	"form-oa-mutual-aid-request.html":              "racesmar",
 	"form-oa-shelter-status.html":                  "sheltstat",
+	"form-report-911.html":                         "",
 	"form-scco-eoc-213rr-v2.html":                  "",
 	"form-scco-eoc-213rr.html":                     "eoc213rr",
 }
@@ -50,6 +52,9 @@ func main() {
 	}
 	if len(os.Args) > 2 {
 		outdir = os.Args[2]
+	}
+	if pifodir, err = filepath.Abs(pifodir); err != nil {
+		log.Fatal(err)
 	}
 	if outdir, err = filepath.Abs(outdir); err != nil {
 		log.Fatal(err)
