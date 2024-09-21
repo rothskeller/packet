@@ -17,7 +17,7 @@ var Type = message.Type{
 }
 
 func init() {
-	Type.Decode = decode
+	message.Register(&Type, decode, nil)
 }
 
 // ReadReceipt holds the details of an XSC-standard read receipt message.
@@ -59,8 +59,8 @@ func New() (m *ReadReceipt) {
 // substrings are the read time and the To address.
 var readReceiptRE = regexp.MustCompile(`^\n*!RR!(.+)\n.*\n\nTo: (.+)`)
 
-func decode(subject, body string) *ReadReceipt {
-	if !strings.HasPrefix(subject, "READ: ") {
+func decode(subject, body string, form *message.PIFOForm, _ int) message.Message {
+	if !strings.HasPrefix(subject, "READ: ") || form != nil {
 		return nil
 	}
 	if match := readReceiptRE.FindStringSubmatch(body); match != nil {

@@ -19,8 +19,7 @@ var Type = message.Type{
 }
 
 func init() {
-	Type.Create = New
-	Type.Decode = decode
+	message.Register(&Type, decode, create)
 }
 
 // CheckIn holds the details of an XSC-standard check-in message.
@@ -35,8 +34,8 @@ type CheckIn struct {
 }
 
 // New creates a new, outgoing message of the type.
-func New() (m *CheckIn) {
-	m = create()
+func create() message.Message {
+	m := make()
 	m.Handling = "ROUTINE"
 	return m
 }
@@ -44,7 +43,7 @@ func New() (m *CheckIn) {
 // SetOperator overrides the BaseMessage implementation and makes no change.
 func (m *CheckIn) SetOperator(string, string, bool) {}
 
-func create() (m *CheckIn) {
+func make() (m *CheckIn) {
 	m = &CheckIn{BaseMessage: message.BaseMessage{Type: &Type}}
 	m.BaseMessage.FOriginMsgID = &m.OriginMsgID
 	m.BaseMessage.FHandling = &m.Handling
@@ -119,7 +118,7 @@ func create() (m *CheckIn) {
 
 var checkInBodyRE = regexp.MustCompile(`(?im)^Check-In\s+([A-Z][A-Z0-9]{2,5})\s*,(.*)(?:\n(A[A-L][0-9][A-Z]{1,3}|[KNW][0-9][A-Z]{2,3}|[KNW][A-Z][0-9][A-Z]{1,3})\s*,(.*))?`)
 
-func decode(subject, body string) (f *CheckIn) {
+func decode(subject, body string, _ *message.PIFOForm, _ int) message.Message {
 	var msgid, _, handling, formtag, realsubj = message.DecodeSubject(subject)
 	if formtag != "" || !strings.HasPrefix(strings.ToLower(realsubj), "check-in ") {
 		return nil
@@ -128,7 +127,7 @@ func decode(subject, body string) (f *CheckIn) {
 		handling = h
 	}
 	if match := checkInBodyRE.FindStringSubmatch(body); match != nil {
-		var ci = create()
+		var ci = make()
 		ci.OriginMsgID, ci.Handling = msgid, handling
 		if match[3] != "" {
 			ci.TacticalCallSign = match[1]

@@ -7,8 +7,6 @@ import (
 	"regexp"
 	"strings"
 	"unicode/utf8"
-
-	"slices"
 )
 
 var (
@@ -22,24 +20,8 @@ var (
 
 // DecodeForm decodes the message.  It returns whether the message was
 // recognized and decoded.
-func DecodeForm(body string, versions []*FormVersion, create func(*FormVersion) Message) (msg Message) {
-	var (
-		form *PIFOForm
-		bm   *BaseMessage
-	)
-	// Decode the form and check for an HTML/version combo we recognize.
-	if form = DecodePIFO(body); form == nil {
-		return nil // not a form or not encoded properly
-	}
-	if idx := slices.IndexFunc(versions, func(v *FormVersion) bool {
-		return form.HTMLIdent == v.HTML && form.FormVersion == v.Version
-	}); idx < 0 {
-		return nil // not an HTML/version combo we recognize
-	} else {
-		// Record which form version we actually saw.
-		msg = create(versions[idx])
-	}
-	bm = msg.(interface{ Base() *BaseMessage }).Base()
+func DecodeForm(form *PIFOForm, msg Message) {
+	var bm = msg.(interface{ Base() *BaseMessage }).Base()
 	bm.PIFOVersion = form.PIFOVersion
 	for _, f := range bm.Fields {
 		if f.PIFOTag == "" {
@@ -48,7 +30,6 @@ func DecodeForm(body string, versions []*FormVersion, create func(*FormVersion) 
 		*f.Value = form.TaggedValues[f.PIFOTag]
 	}
 	// TODO really should make sure there aren't any fields unaccounted for.
-	return msg
 }
 
 // DecodeSubject decodes an XSC-standard message subject line into its component

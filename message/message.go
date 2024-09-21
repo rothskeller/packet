@@ -56,9 +56,6 @@ type BaseMessage struct {
 	// PIFOVersion is the PIFO version found when decoding the message.  It
 	// is set only for messages with PIFO encoding.
 	PIFOVersion string
-	// FormVersion identifies the form and version in the message.  It is
-	// set only for messages with PIFO encoding.
-	Form *FormVersion
 	// Fields is an ordered list of fields in the message.  This is the
 	// core of the shared message functionality:  most operations are
 	// implemented by iterating through these fields.
@@ -127,21 +124,6 @@ type BaseMessage struct {
 	// text field of the message.  It is nil for message types that do not
 	// have any such field.
 	FBody *string
-}
-
-// A FormVersion identifies a version of a PackItForms form.
-type FormVersion struct {
-	// HTML is the HTML filename that identifies the type of form.
-	HTML string
-	// Version is the version number of the form.
-	Version string
-	// Tag is the tag for the form type, which goes in the subject line.
-	Tag string
-	// FieldOrder is an ordered list of field tags.  When provided,
-	// generated forms list the fields in that order.  (Should any fields be
-	// omitted from the list, they are put at the start of the form, before
-	// those in the list.)
-	FieldOrder []string
 }
 
 // Base returns the BaseMessage structure for the message.

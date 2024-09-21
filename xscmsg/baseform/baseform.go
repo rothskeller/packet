@@ -281,3 +281,25 @@ func (bf *BaseForm) AddFooterFields(bm *message.BaseMessage, pdf *BaseFormPDF) {
 	bm.FOpDate = &bf.OpDate
 	bm.FOpTime = &bf.OpTime
 }
+
+func (bf *BaseForm) CopyHeaderFields(from *BaseForm) {
+	bf.OriginMsgID = from.OriginMsgID
+	bf.DestinationMsgID = from.DestinationMsgID
+	bf.MessageDate = from.MessageDate
+	bf.MessageTime = from.MessageTime
+	bf.Handling = from.Handling
+	bf.ToICSPosition = from.ToICSPosition
+	bf.ToLocation = from.ToLocation
+	bf.ToName = from.ToName
+	bf.ToContact = from.ToContact
+	bf.FromICSPosition = from.FromICSPosition
+	bf.FromLocation = from.FromLocation
+	bf.FromName = from.FromName
+	bf.FromContact = from.FromContact
+}
+func (bf *BaseForm) CopyFooterFields(from *BaseForm) {
+	bf.OpName = from.OpName
+	bf.OpCall = from.OpCall
+	bf.OpDate = from.OpDate
+	bf.OpTime = from.OpTime
+}

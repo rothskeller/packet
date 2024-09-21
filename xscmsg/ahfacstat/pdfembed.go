@@ -10,5 +10,5 @@ import (
 var pdfBaseEmbed []byte
 
 func init() {
-	Type.PDFBase = pdfBaseEmbed
+	Type26.PDFBase = pdfBaseEmbed
 }

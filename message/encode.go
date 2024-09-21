@@ -23,8 +23,8 @@ func (bm *BaseMessage) EncodeSubject() string {
 	if bm.FHandling != nil {
 		handling = *bm.FHandling
 	}
-	if bm.Form != nil {
-		formtag = bm.Form.Tag
+	if bm.Type.HTML != "" {
+		formtag = bm.Type.Tag
 	}
 	if bm.FSubject != nil {
 		subject = *bm.FSubject
@@ -37,8 +37,8 @@ func (bm *BaseMessage) EncodeSubject() string {
 func (bm *BaseMessage) EncodeBulletinSubject() string {
 	var formtag, subject string
 
-	if bm.Form != nil {
-		formtag = bm.Form.Tag
+	if bm.Type.HTML != "" {
+		formtag = bm.Type.Tag
 	}
 	if bm.FSubject != nil {
 		subject = *bm.FSubject
@@ -54,22 +54,22 @@ func (bm *BaseMessage) EncodeBody() string {
 		enc    *PIFOEncoder
 		values []string
 	)
-	if bm.Form.HTML == "" {
+	if bm.Type.HTML == "" {
 		panic("BaseMessage.EncodeBody can only encode PackItForms; other message types must override")
 	}
-	enc = NewPIFOEncoder(&sb, bm.Form.HTML, bm.Form.Version)
-	values = make([]string, len(bm.Form.FieldOrder))
+	enc = NewPIFOEncoder(&sb, bm.Type.HTML, bm.Type.Version)
+	values = make([]string, len(bm.Type.FieldOrder))
 	for _, f := range bm.Fields {
 		if f.PIFOTag == "" || *f.Value == "" {
 			continue
 		}
-		if idx := slices.Index(bm.Form.FieldOrder, f.PIFOTag); idx >= 0 {
+		if idx := slices.Index(bm.Type.FieldOrder, f.PIFOTag); idx >= 0 {
 			values[idx] = *f.Value
 		} else {
 			enc.Write(f.PIFOTag, *f.Value)
 		}
 	}
-	for i, tag := range bm.Form.FieldOrder {
+	for i, tag := range bm.Type.FieldOrder {
 		if values[i] != "" {
 			enc.Write(tag, values[i])
 		}

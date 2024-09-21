@@ -6,9 +6,9 @@ import (
 	_ "embed" // .
 )
 
-//go:embed XSC_RACES_MA_Req_v20220129.pdf
+//go:embed XSC_RACES_MA_Req_v20240711_V1_Test76_p12.pdf
 var pdfBaseEmbed []byte
 
 func init() {
-	Type.PDFBase = pdfBaseEmbed
+	Type33.PDFBase = pdfBaseEmbed
 }

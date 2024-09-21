@@ -14,8 +14,7 @@ var Type = message.Type{
 }
 
 func init() {
-	Type.Create = New
-	Type.Decode = decode
+	message.Register(&Type, decode, New)
 }
 
 // PlainText holds the details of a plain text message.
@@ -28,8 +27,8 @@ type PlainText struct {
 }
 
 // New creates a new plain text message.
-func New() (m *PlainText) {
-	m = &PlainText{BaseMessage: message.BaseMessage{Type: &Type}}
+func New() message.Message {
+	var m = &PlainText{BaseMessage: message.BaseMessage{Type: &Type}}
 	m.BaseMessage.FOriginMsgID = &m.OriginMsgID
 	m.BaseMessage.FHandling = &m.Handling
 	m.BaseMessage.FSubject = &m.Subject
@@ -69,8 +68,11 @@ func New() (m *PlainText) {
 // This function is called to find out whether an incoming message matches this
 // type.  It should return the decoded message if it belongs to this type, or
 // nil if it doesn't.
-func decode(subject, body string) (f *PlainText) {
-	f = New()
+func decode(subject, body string, form *message.PIFOForm, pass int) message.Message {
+	if pass != 2 || form != nil {
+		return nil
+	}
+	var f = New().(*PlainText)
 	f.OriginMsgID, _, f.Handling, _, f.Subject = message.DecodeSubject(subject)
 	if h := message.DecodeHandlingMap[f.Handling]; h != "" {
 		f.Handling = h

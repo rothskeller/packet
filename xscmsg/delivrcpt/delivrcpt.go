@@ -17,7 +17,7 @@ var Type = message.Type{
 }
 
 func init() {
-	Type.Decode = decode
+	message.Register(&Type, decode, nil)
 }
 
 // DeliveryReceipt holds the details of an XSC-standard delivery receipt
@@ -66,8 +66,8 @@ func New() (m *DeliveryReceipt) {
 // substrings are the local message ID, the delivery time, and the To address.
 var deliveryReceiptRE = regexp.MustCompile(`^\n*!LMI!([^!]+)!DR!(.+)\n.*\nTo: (.+)\nSubject:.*\nwas delivered on.*\nRecipient's Local.*\n`)
 
-func decode(subject, body string) *DeliveryReceipt {
-	if !strings.HasPrefix(subject, "DELIVERED: ") {
+func decode(subject, body string, form *message.PIFOForm, _ int) message.Message {
+	if !strings.HasPrefix(subject, "DELIVERED: ") || form != nil {
 		return nil
 	}
 	if match := deliveryReceiptRE.FindStringSubmatch(body); match != nil {

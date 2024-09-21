@@ -15,7 +15,7 @@ var Type = message.Type{
 }
 
 func init() {
-	Type.Decode = decode
+	message.Register(&Type, decode, nil)
 }
 
 // UnknownForm holds the details of an unrecognized form message.
@@ -30,22 +30,18 @@ type UnknownForm struct {
 // This function is called to find out whether an incoming message matches this
 // type.  It should return the decoded message if it belongs to this type, or
 // nil if it doesn't.
-func decode(subject, body string) (f *UnknownForm) {
-	form := message.DecodePIFO(body)
-	if form == nil {
+func decode(subject, body string, form *message.PIFOForm, pass int) message.Message {
+	if pass != 2 || form == nil {
 		return nil
 	}
-	f = &UnknownForm{BaseMessage: message.BaseMessage{
-		Type: &Type,
-		Form: &message.FormVersion{
-			HTML:    form.HTMLIdent,
-			Version: form.FormVersion,
-		},
-	}}
+	var typeCopy = Type
+	typeCopy.HTML = form.HTMLIdent
+	typeCopy.Version = form.FormVersion
+	var f = &UnknownForm{BaseMessage: message.BaseMessage{Type: &typeCopy}}
 	f.BaseMessage.FOriginMsgID = &f.OriginMsgID
 	f.BaseMessage.FHandling = &f.Handling
 	f.BaseMessage.FSubject = &f.Subject
-	f.OriginMsgID, _, f.Handling, f.Form.Tag, f.Subject = message.DecodeSubject(subject)
+	f.OriginMsgID, _, f.Handling, f.Type.Tag, f.Subject = message.DecodeSubject(subject)
 	if h := message.DecodeHandlingMap[f.Handling]; h != "" {
 		f.Handling = h
 	}
@@ -53,7 +49,7 @@ func decode(subject, body string) (f *UnknownForm) {
 		message.NewCalculatedField(&message.Field{
 			Label: "Form Type",
 			TableValue: func(*message.Field) string {
-				return f.Form.HTML + " v" + f.Form.Version
+				return f.Type.HTML + " v" + f.Type.Version
 			},
 		}),
 		message.NewMessageNumberField(&message.Field{
