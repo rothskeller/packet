@@ -79,7 +79,7 @@ func make24() *RACESMAR24 {
 	f.BaseMessage.FSubject = &f.AgencyName
 	f.BaseMessage.FBody = &f.Assignment
 	f.Fields = make([]*message.Field, 0, fieldCount)
-	f.BaseForm.AddHeaderFields(&f.BaseMessage, &basePDFRenderers)
+	f.BaseForm.AddHeaderFields(&f.BaseMessage, nil)
 	f.Fields = append(f.Fields,
 		message.NewTextField(&message.Field{
 			Label:    "Agency Name",
@@ -217,7 +217,7 @@ func make24() *RACESMAR24 {
 			Label: "Approved Date/Time",
 		}, &f.ApprovedByDate, &f.ApprovedByTime),
 	)
-	f.BaseForm.AddFooterFields(&f.BaseMessage, &basePDFRenderers)
+	f.BaseForm.AddFooterFields(&f.BaseMessage, nil)
 	if len(f.Fields) > fieldCount {
 		panic("update RACESMAR24 fieldCount")
 	}

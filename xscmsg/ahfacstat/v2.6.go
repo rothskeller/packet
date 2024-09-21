@@ -71,28 +71,28 @@ type AHFacStat26 struct {
 	AttachActionPlan     string
 	AttachDirectory      string
 	Summary              string
-	SkilledNursingBeds   BedCounts
-	AssistedLivingBeds   BedCounts
-	SubAcuteBeds         BedCounts
-	AlzheimersBeds       BedCounts
-	PedSubAcuteBeds      BedCounts
-	PsychiatricBeds      BedCounts
+	SkilledNursingBeds   BedCounts26
+	AssistedLivingBeds   BedCounts26
+	SubAcuteBeds         BedCounts26
+	AlzheimersBeds       BedCounts26
+	PedSubAcuteBeds      BedCounts26
+	PsychiatricBeds      BedCounts26
 	OtherCareBedsType    string
-	OtherCareBeds        BedCounts
-	DialysisResources    ResourceCounts
-	SurgicalResources    ResourceCounts
-	ClinicResources      ResourceCounts
-	HomeHealthResources  ResourceCounts
-	AdultDayCtrResources ResourceCounts
+	OtherCareBeds        BedCounts26
+	DialysisResources    ResourceCounts26
+	SurgicalResources    ResourceCounts26
+	ClinicResources      ResourceCounts26
+	HomeHealthResources  ResourceCounts26
+	AdultDayCtrResources ResourceCounts26
 }
-type BedCounts struct {
+type BedCounts26 struct {
 	StaffedM string
 	StaffedF string
 	VacantM  string
 	VacantF  string
 	Surge    string
 }
-type ResourceCounts struct {
+type ResourceCounts26 struct {
 	Chairs       string
 	VacantChairs string
 	FrontStaff   string
@@ -456,7 +456,7 @@ func make26() (f *AHFacStat26) {
 			Value:   &f.SkilledNursingBeds.StaffedF,
 			PIFOTag: "40b.",
 			PIFOValid: func(field *message.Field) string {
-				return allOrNone(firstSkilledNursing, field)
+				return allOrNone26(firstSkilledNursing, field)
 			},
 			PDFRenderer: &message.PDFTextRenderer{Page: 2, X: 484, Y: 437, W: 21, H: 14, Style: message.PDFTextStyle{HAlign: "right", VAlign: "baseline"}},
 			TableValue:  message.TableOmit,
@@ -468,7 +468,7 @@ func make26() (f *AHFacStat26) {
 			Value:   &f.SkilledNursingBeds.VacantM,
 			PIFOTag: "40c.",
 			PIFOValid: func(field *message.Field) string {
-				return allOrNone(firstSkilledNursing, field)
+				return allOrNone26(firstSkilledNursing, field)
 			},
 			PDFRenderer: &message.PDFTextRenderer{Page: 2, X: 509, Y: 437, W: 22, H: 14, Style: message.PDFTextStyle{HAlign: "right", VAlign: "baseline"}},
 			TableValue:  message.TableOmit,
@@ -480,7 +480,7 @@ func make26() (f *AHFacStat26) {
 			Value:   &f.SkilledNursingBeds.VacantF,
 			PIFOTag: "40d.",
 			PIFOValid: func(field *message.Field) string {
-				return allOrNone(firstSkilledNursing, field)
+				return allOrNone26(firstSkilledNursing, field)
 			},
 			PDFRenderer: &message.PDFTextRenderer{Page: 2, X: 535, Y: 437, W: 21, H: 14, Style: message.PDFTextStyle{HAlign: "right", VAlign: "baseline"}},
 			TableValue:  message.TableOmit,
@@ -492,7 +492,7 @@ func make26() (f *AHFacStat26) {
 			Value:   &f.SkilledNursingBeds.Surge,
 			PIFOTag: "40e.",
 			PIFOValid: func(field *message.Field) string {
-				return allOrNone(firstSkilledNursing, field)
+				return allOrNone26(firstSkilledNursing, field)
 			},
 			PDFRenderer: &message.PDFTextRenderer{Page: 2, X: 560, Y: 437, W: 29, H: 14, Style: message.PDFTextStyle{HAlign: "right", VAlign: "baseline"}},
 			TableValue:  message.TableOmit,
@@ -502,19 +502,19 @@ func make26() (f *AHFacStat26) {
 		message.NewAggregatorField(&message.Field{
 			Label: "Skilled Nursing Beds",
 			TableValue: func(*message.Field) string {
-				return bedsTableValue(&f.SkilledNursingBeds)
+				return bedsTableValue26(&f.SkilledNursingBeds)
 			},
 			EditWidth: 20,
 			EditHelp:  `This is the number of skilled nursing beds at the facility.  Enter five numbers separated by spaces: the numbers of staffed beds for male patients, staffed beds for female patients, vacant beds for male patients, vacant beds for female patients, and surge beds (over and above the vacant ones).`,
 			EditHint:  "M, F, V.M, V.F, Surge",
 			EditValue: func(*message.Field) string {
-				return bedsValue(&f.SkilledNursingBeds)
+				return bedsValue26(&f.SkilledNursingBeds)
 			},
 			EditApply: func(_ *message.Field, value string) {
-				bedsApply(&f.SkilledNursingBeds, value)
+				bedsApply26(&f.SkilledNursingBeds, value)
 			},
 			EditValid: func(field *message.Field) string {
-				return bedsValid(field, &f.SkilledNursingBeds)
+				return bedsValid26(field, &f.SkilledNursingBeds)
 			},
 		}),
 		message.NewCardinalNumberField(&message.Field{
@@ -534,7 +534,7 @@ func make26() (f *AHFacStat26) {
 			Value:   &f.AssistedLivingBeds.StaffedF,
 			PIFOTag: "41b.",
 			PIFOValid: func(field *message.Field) string {
-				return allOrNone(firstAssistedLiving, field)
+				return allOrNone26(firstAssistedLiving, field)
 			},
 			PDFRenderer: &message.PDFTextRenderer{Page: 2, X: 484, Y: 453, W: 21, H: 13, Style: message.PDFTextStyle{HAlign: "right", VAlign: "baseline"}},
 			TableValue:  message.TableOmit,
@@ -546,7 +546,7 @@ func make26() (f *AHFacStat26) {
 			Value:   &f.AssistedLivingBeds.VacantM,
 			PIFOTag: "41c.",
 			PIFOValid: func(field *message.Field) string {
-				return allOrNone(firstAssistedLiving, field)
+				return allOrNone26(firstAssistedLiving, field)
 			},
 			PDFRenderer: &message.PDFTextRenderer{Page: 2, X: 509, Y: 453, W: 22, H: 13, Style: message.PDFTextStyle{HAlign: "right", VAlign: "baseline"}},
 			TableValue:  message.TableOmit,
@@ -558,7 +558,7 @@ func make26() (f *AHFacStat26) {
 			Value:   &f.AssistedLivingBeds.VacantF,
 			PIFOTag: "41d.",
 			PIFOValid: func(field *message.Field) string {
-				return allOrNone(firstAssistedLiving, field)
+				return allOrNone26(firstAssistedLiving, field)
 			},
 			PDFRenderer: &message.PDFTextRenderer{Page: 2, X: 535, Y: 453, W: 21, H: 13, Style: message.PDFTextStyle{HAlign: "right", VAlign: "baseline"}},
 			TableValue:  message.TableOmit,
@@ -570,7 +570,7 @@ func make26() (f *AHFacStat26) {
 			Value:   &f.AssistedLivingBeds.Surge,
 			PIFOTag: "41e.",
 			PIFOValid: func(field *message.Field) string {
-				return allOrNone(firstAssistedLiving, field)
+				return allOrNone26(firstAssistedLiving, field)
 			},
 			PDFRenderer: &message.PDFTextRenderer{Page: 2, X: 560, Y: 453, W: 29, H: 13, Style: message.PDFTextStyle{HAlign: "right", VAlign: "baseline"}},
 			TableValue:  message.TableOmit,
@@ -580,19 +580,19 @@ func make26() (f *AHFacStat26) {
 		message.NewAggregatorField(&message.Field{
 			Label: "Assisted Living Beds",
 			TableValue: func(*message.Field) string {
-				return bedsTableValue(&f.AssistedLivingBeds)
+				return bedsTableValue26(&f.AssistedLivingBeds)
 			},
 			EditWidth: 20,
 			EditHelp:  `This is the number of assisted living beds at the facility.  Enter five numbers separated by spaces or commas: the numbers of staffed beds for male patients, staffed beds for female patients, vacant beds for male patients, vacant beds for female patients, and surge beds (over and above the vacant ones).`,
 			EditHint:  "M, F, V.M, V.F, Surge",
 			EditValue: func(*message.Field) string {
-				return bedsValue(&f.AssistedLivingBeds)
+				return bedsValue26(&f.AssistedLivingBeds)
 			},
 			EditApply: func(_ *message.Field, value string) {
-				bedsApply(&f.AssistedLivingBeds, value)
+				bedsApply26(&f.AssistedLivingBeds, value)
 			},
 			EditValid: func(field *message.Field) string {
-				return bedsValid(field, &f.AssistedLivingBeds)
+				return bedsValid26(field, &f.AssistedLivingBeds)
 			},
 		}),
 		message.NewCardinalNumberField(&message.Field{
@@ -612,7 +612,7 @@ func make26() (f *AHFacStat26) {
 			Value:   &f.SubAcuteBeds.StaffedF,
 			PIFOTag: "42b.",
 			PIFOValid: func(field *message.Field) string {
-				return allOrNone(firstSubAcute, field)
+				return allOrNone26(firstSubAcute, field)
 			},
 			PDFRenderer: &message.PDFTextRenderer{Page: 2, X: 484, Y: 468, W: 21, H: 14, Style: message.PDFTextStyle{HAlign: "right", VAlign: "baseline"}},
 			TableValue:  message.TableOmit,
@@ -624,7 +624,7 @@ func make26() (f *AHFacStat26) {
 			Value:   &f.SubAcuteBeds.VacantM,
 			PIFOTag: "42c.",
 			PIFOValid: func(field *message.Field) string {
-				return allOrNone(firstSubAcute, field)
+				return allOrNone26(firstSubAcute, field)
 			},
 			PDFRenderer: &message.PDFTextRenderer{Page: 2, X: 509, Y: 468, W: 22, H: 14, Style: message.PDFTextStyle{HAlign: "right", VAlign: "baseline"}},
 			TableValue:  message.TableOmit,
@@ -636,7 +636,7 @@ func make26() (f *AHFacStat26) {
 			Value:   &f.SubAcuteBeds.VacantF,
 			PIFOTag: "42d.",
 			PIFOValid: func(field *message.Field) string {
-				return allOrNone(firstSubAcute, field)
+				return allOrNone26(firstSubAcute, field)
 			},
 			PDFRenderer: &message.PDFTextRenderer{Page: 2, X: 535, Y: 468, W: 21, H: 14, Style: message.PDFTextStyle{HAlign: "right", VAlign: "baseline"}},
 			TableValue:  message.TableOmit,
@@ -648,7 +648,7 @@ func make26() (f *AHFacStat26) {
 			Value:   &f.SubAcuteBeds.Surge,
 			PIFOTag: "42e.",
 			PIFOValid: func(field *message.Field) string {
-				return allOrNone(firstSubAcute, field)
+				return allOrNone26(firstSubAcute, field)
 			},
 			PDFRenderer: &message.PDFTextRenderer{Page: 2, X: 560, Y: 468, W: 29, H: 14, Style: message.PDFTextStyle{HAlign: "right", VAlign: "baseline"}},
 			TableValue:  message.TableOmit,
@@ -658,19 +658,19 @@ func make26() (f *AHFacStat26) {
 		message.NewAggregatorField(&message.Field{
 			Label: "Sub-Acute Beds",
 			TableValue: func(*message.Field) string {
-				return bedsTableValue(&f.SubAcuteBeds)
+				return bedsTableValue26(&f.SubAcuteBeds)
 			},
 			EditWidth: 20,
 			EditHelp:  `This is the number of sub-acute beds at the facility.  Enter five numbers separated by spaces or commas: the numbers of staffed beds for male patients, staffed beds for female patients, vacant beds for male patients, vacant beds for female patients, and surge beds (over and above the vacant ones).`,
 			EditHint:  "M, F, V.M, V.F, Surge",
 			EditValue: func(*message.Field) string {
-				return bedsValue(&f.SubAcuteBeds)
+				return bedsValue26(&f.SubAcuteBeds)
 			},
 			EditApply: func(_ *message.Field, value string) {
-				bedsApply(&f.SubAcuteBeds, value)
+				bedsApply26(&f.SubAcuteBeds, value)
 			},
 			EditValid: func(field *message.Field) string {
-				return bedsValid(field, &f.SubAcuteBeds)
+				return bedsValid26(field, &f.SubAcuteBeds)
 			},
 		}),
 		message.NewCardinalNumberField(&message.Field{
@@ -690,7 +690,7 @@ func make26() (f *AHFacStat26) {
 			Value:   &f.AlzheimersBeds.StaffedF,
 			PIFOTag: "43b.",
 			PIFOValid: func(field *message.Field) string {
-				return allOrNone(firstAlzheimers, field)
+				return allOrNone26(firstAlzheimers, field)
 			},
 			PDFRenderer: &message.PDFTextRenderer{Page: 2, X: 484, Y: 484, W: 21, H: 14, Style: message.PDFTextStyle{HAlign: "right", VAlign: "baseline"}},
 			TableValue:  message.TableOmit,
@@ -702,7 +702,7 @@ func make26() (f *AHFacStat26) {
 			Value:   &f.AlzheimersBeds.VacantM,
 			PIFOTag: "43c.",
 			PIFOValid: func(field *message.Field) string {
-				return allOrNone(firstAlzheimers, field)
+				return allOrNone26(firstAlzheimers, field)
 			},
 			PDFRenderer: &message.PDFTextRenderer{Page: 2, X: 509, Y: 484, W: 22, H: 14, Style: message.PDFTextStyle{HAlign: "right", VAlign: "baseline"}},
 			TableValue:  message.TableOmit,
@@ -714,7 +714,7 @@ func make26() (f *AHFacStat26) {
 			Value:   &f.AlzheimersBeds.VacantF,
 			PIFOTag: "43d.",
 			PIFOValid: func(field *message.Field) string {
-				return allOrNone(firstAlzheimers, field)
+				return allOrNone26(firstAlzheimers, field)
 			},
 			PDFRenderer: &message.PDFTextRenderer{Page: 2, X: 535, Y: 484, W: 21, H: 14, Style: message.PDFTextStyle{HAlign: "right", VAlign: "baseline"}},
 			TableValue:  message.TableOmit,
@@ -726,7 +726,7 @@ func make26() (f *AHFacStat26) {
 			Value:   &f.AlzheimersBeds.Surge,
 			PIFOTag: "43e.",
 			PIFOValid: func(field *message.Field) string {
-				return allOrNone(firstAlzheimers, field)
+				return allOrNone26(firstAlzheimers, field)
 			},
 			PDFRenderer: &message.PDFTextRenderer{Page: 2, X: 560, Y: 484, W: 29, H: 14, Style: message.PDFTextStyle{HAlign: "right", VAlign: "baseline"}},
 			TableValue:  message.TableOmit,
@@ -736,19 +736,19 @@ func make26() (f *AHFacStat26) {
 		message.NewAggregatorField(&message.Field{
 			Label: "Alzheimers/Dementia Beds",
 			TableValue: func(*message.Field) string {
-				return bedsTableValue(&f.AlzheimersBeds)
+				return bedsTableValue26(&f.AlzheimersBeds)
 			},
 			EditWidth: 20,
 			EditHelp:  `This is the number of Alzheimers/dementia beds at the facility.  Enter five numbers separated by spaces or commas: the numbers of staffed beds for male patients, staffed beds for female patients, vacant beds for male patients, vacant beds for female patients, and surge beds (over and above the vacant ones).`,
 			EditHint:  "M, F, V.M, V.F, Surge",
 			EditValue: func(*message.Field) string {
-				return bedsValue(&f.AlzheimersBeds)
+				return bedsValue26(&f.AlzheimersBeds)
 			},
 			EditApply: func(_ *message.Field, value string) {
-				bedsApply(&f.AlzheimersBeds, value)
+				bedsApply26(&f.AlzheimersBeds, value)
 			},
 			EditValid: func(field *message.Field) string {
-				return bedsValid(field, &f.AlzheimersBeds)
+				return bedsValid26(field, &f.AlzheimersBeds)
 			},
 		}),
 		message.NewCardinalNumberField(&message.Field{
@@ -768,7 +768,7 @@ func make26() (f *AHFacStat26) {
 			Value:   &f.PedSubAcuteBeds.StaffedF,
 			PIFOTag: "44b.",
 			PIFOValid: func(field *message.Field) string {
-				return allOrNone(firstPedSubAcute, field)
+				return allOrNone26(firstPedSubAcute, field)
 			},
 			PDFRenderer: &message.PDFTextRenderer{Page: 2, X: 484, Y: 501, W: 21, H: 13, Style: message.PDFTextStyle{HAlign: "right", VAlign: "baseline"}},
 			TableValue:  message.TableOmit,
@@ -780,7 +780,7 @@ func make26() (f *AHFacStat26) {
 			Value:   &f.PedSubAcuteBeds.VacantM,
 			PIFOTag: "44c.",
 			PIFOValid: func(field *message.Field) string {
-				return allOrNone(firstPedSubAcute, field)
+				return allOrNone26(firstPedSubAcute, field)
 			},
 			PDFRenderer: &message.PDFTextRenderer{Page: 2, X: 509, Y: 501, W: 22, H: 13, Style: message.PDFTextStyle{HAlign: "right", VAlign: "baseline"}},
 			TableValue:  message.TableOmit,
@@ -792,7 +792,7 @@ func make26() (f *AHFacStat26) {
 			Value:   &f.PedSubAcuteBeds.VacantF,
 			PIFOTag: "44d.",
 			PIFOValid: func(field *message.Field) string {
-				return allOrNone(firstPedSubAcute, field)
+				return allOrNone26(firstPedSubAcute, field)
 			},
 			PDFRenderer: &message.PDFTextRenderer{Page: 2, X: 535, Y: 501, W: 21, H: 13, Style: message.PDFTextStyle{HAlign: "right", VAlign: "baseline"}},
 			TableValue:  message.TableOmit,
@@ -804,7 +804,7 @@ func make26() (f *AHFacStat26) {
 			Value:   &f.PedSubAcuteBeds.Surge,
 			PIFOTag: "44e.",
 			PIFOValid: func(field *message.Field) string {
-				return allOrNone(firstPedSubAcute, field)
+				return allOrNone26(firstPedSubAcute, field)
 			},
 			PDFRenderer: &message.PDFTextRenderer{Page: 2, X: 560, Y: 501, W: 29, H: 13, Style: message.PDFTextStyle{HAlign: "right", VAlign: "baseline"}},
 			TableValue:  message.TableOmit,
@@ -814,19 +814,19 @@ func make26() (f *AHFacStat26) {
 		message.NewAggregatorField(&message.Field{
 			Label: "Pediatric Sub-Acute Beds",
 			TableValue: func(*message.Field) string {
-				return bedsTableValue(&f.PedSubAcuteBeds)
+				return bedsTableValue26(&f.PedSubAcuteBeds)
 			},
 			EditWidth: 20,
 			EditHelp:  `This is the number of pediatric sub-acute beds at the facility.  Enter five numbers separated by spaces or commas: the numbers of staffed beds for male patients, staffed beds for female patients, vacant beds for male patients, vacant beds for female patients, and surge beds (over and above the vacant ones).`,
 			EditHint:  "M, F, V.M, V.F, Surge",
 			EditValue: func(*message.Field) string {
-				return bedsValue(&f.PedSubAcuteBeds)
+				return bedsValue26(&f.PedSubAcuteBeds)
 			},
 			EditApply: func(_ *message.Field, value string) {
-				bedsApply(&f.PedSubAcuteBeds, value)
+				bedsApply26(&f.PedSubAcuteBeds, value)
 			},
 			EditValid: func(field *message.Field) string {
-				return bedsValid(field, &f.PedSubAcuteBeds)
+				return bedsValid26(field, &f.PedSubAcuteBeds)
 			},
 		}),
 		message.NewCardinalNumberField(&message.Field{
@@ -846,7 +846,7 @@ func make26() (f *AHFacStat26) {
 			Value:   &f.PsychiatricBeds.StaffedF,
 			PIFOTag: "45b.",
 			PIFOValid: func(field *message.Field) string {
-				return allOrNone(firstPsychiatric, field)
+				return allOrNone26(firstPsychiatric, field)
 			},
 			PDFRenderer: &message.PDFTextRenderer{Page: 2, X: 484, Y: 516, W: 21, H: 14, Style: message.PDFTextStyle{HAlign: "right", VAlign: "baseline"}},
 			TableValue:  message.TableOmit,
@@ -858,7 +858,7 @@ func make26() (f *AHFacStat26) {
 			Value:   &f.PsychiatricBeds.VacantM,
 			PIFOTag: "45c.",
 			PIFOValid: func(field *message.Field) string {
-				return allOrNone(firstPsychiatric, field)
+				return allOrNone26(firstPsychiatric, field)
 			},
 			PDFRenderer: &message.PDFTextRenderer{Page: 2, X: 509, Y: 516, W: 22, H: 14, Style: message.PDFTextStyle{HAlign: "right", VAlign: "baseline"}},
 			TableValue:  message.TableOmit,
@@ -870,7 +870,7 @@ func make26() (f *AHFacStat26) {
 			Value:   &f.PsychiatricBeds.VacantF,
 			PIFOTag: "45d.",
 			PIFOValid: func(field *message.Field) string {
-				return allOrNone(firstPsychiatric, field)
+				return allOrNone26(firstPsychiatric, field)
 			},
 			PDFRenderer: &message.PDFTextRenderer{Page: 2, X: 535, Y: 516, W: 21, H: 14, Style: message.PDFTextStyle{HAlign: "right", VAlign: "baseline"}},
 			TableValue:  message.TableOmit,
@@ -882,7 +882,7 @@ func make26() (f *AHFacStat26) {
 			Value:   &f.PsychiatricBeds.Surge,
 			PIFOTag: "45e.",
 			PIFOValid: func(field *message.Field) string {
-				return allOrNone(firstPsychiatric, field)
+				return allOrNone26(firstPsychiatric, field)
 			},
 			PDFRenderer: &message.PDFTextRenderer{Page: 2, X: 560, Y: 516, W: 29, H: 14, Style: message.PDFTextStyle{HAlign: "right", VAlign: "baseline"}},
 			TableValue:  message.TableOmit,
@@ -892,19 +892,19 @@ func make26() (f *AHFacStat26) {
 		message.NewAggregatorField(&message.Field{
 			Label: "Psychiatric Beds",
 			TableValue: func(*message.Field) string {
-				return bedsTableValue(&f.PsychiatricBeds)
+				return bedsTableValue26(&f.PsychiatricBeds)
 			},
 			EditWidth: 20,
 			EditHelp:  `This is the number of psychiatric beds at the facility.  Enter five numbers separated by spaces or commas: the numbers of staffed beds for male patients, staffed beds for female patients, vacant beds for male patients, vacant beds for female patients, and surge beds (over and above the vacant ones).`,
 			EditHint:  "M, F, V.M, V.F, Surge",
 			EditValue: func(*message.Field) string {
-				return bedsValue(&f.PsychiatricBeds)
+				return bedsValue26(&f.PsychiatricBeds)
 			},
 			EditApply: func(_ *message.Field, value string) {
-				bedsApply(&f.PsychiatricBeds, value)
+				bedsApply26(&f.PsychiatricBeds, value)
 			},
 			EditValid: func(field *message.Field) string {
-				return bedsValid(field, &f.PsychiatricBeds)
+				return bedsValid26(field, &f.PsychiatricBeds)
 			},
 		}),
 		message.NewTextField(&message.Field{
@@ -936,7 +936,7 @@ func make26() (f *AHFacStat26) {
 			Value:   &f.OtherCareBeds.StaffedF,
 			PIFOTag: "46b.",
 			PIFOValid: func(field *message.Field) string {
-				return allOrNone(firstOtherCare, field)
+				return allOrNone26(firstOtherCare, field)
 			},
 			PDFRenderer: &message.PDFTextRenderer{Page: 2, X: 484, Y: 532, W: 21, H: 13, Style: message.PDFTextStyle{HAlign: "right", VAlign: "baseline"}},
 			TableValue:  message.TableOmit,
@@ -948,7 +948,7 @@ func make26() (f *AHFacStat26) {
 			Value:   &f.OtherCareBeds.VacantM,
 			PIFOTag: "46c.",
 			PIFOValid: func(field *message.Field) string {
-				return allOrNone(firstOtherCare, field)
+				return allOrNone26(firstOtherCare, field)
 			},
 			PDFRenderer: &message.PDFTextRenderer{Page: 2, X: 509, Y: 532, W: 22, H: 13, Style: message.PDFTextStyle{HAlign: "right", VAlign: "baseline"}},
 			TableValue:  message.TableOmit,
@@ -960,7 +960,7 @@ func make26() (f *AHFacStat26) {
 			Value:   &f.OtherCareBeds.VacantF,
 			PIFOTag: "46d.",
 			PIFOValid: func(field *message.Field) string {
-				return allOrNone(firstOtherCare, field)
+				return allOrNone26(firstOtherCare, field)
 			},
 			PDFRenderer: &message.PDFTextRenderer{Page: 2, X: 535, Y: 532, W: 21, H: 13, Style: message.PDFTextStyle{HAlign: "right", VAlign: "baseline"}},
 			TableValue:  message.TableOmit,
@@ -972,7 +972,7 @@ func make26() (f *AHFacStat26) {
 			Value:   &f.OtherCareBeds.Surge,
 			PIFOTag: "46e.",
 			PIFOValid: func(field *message.Field) string {
-				return allOrNone(firstOtherCare, field)
+				return allOrNone26(firstOtherCare, field)
 			},
 			PDFRenderer: &message.PDFTextRenderer{Page: 2, X: 560, Y: 532, W: 29, H: 13, Style: message.PDFTextStyle{HAlign: "right", VAlign: "baseline"}},
 			TableValue:  message.TableOmit,
@@ -982,19 +982,19 @@ func make26() (f *AHFacStat26) {
 		message.NewAggregatorField(&message.Field{
 			Label: "Other Care Beds",
 			TableValue: func(*message.Field) string {
-				return bedsTableValue(&f.OtherCareBeds)
+				return bedsTableValue26(&f.OtherCareBeds)
 			},
 			EditWidth: 20,
 			EditHelp:  `This is the number of beds at the facility of the named other type.  Enter five numbers separated by spaces or commas: the numbers of staffed beds for male patients, staffed beds for female patients, vacant beds for male patients, vacant beds for female patients, and surge beds (over and above the vacant ones).`,
 			EditHint:  "M, F, V.M, V.F, Surge",
 			EditValue: func(*message.Field) string {
-				return bedsValue(&f.OtherCareBeds)
+				return bedsValue26(&f.OtherCareBeds)
 			},
 			EditApply: func(_ *message.Field, value string) {
-				bedsApply(&f.OtherCareBeds, value)
+				bedsApply26(&f.OtherCareBeds, value)
 			},
 			EditValid: func(field *message.Field) string {
-				return bedsValid(field, &f.OtherCareBeds)
+				return bedsValid26(field, &f.OtherCareBeds)
 			},
 			EditSkip: func(*message.Field) bool {
 				return f.OtherCareBedsType == ""
@@ -1017,7 +1017,7 @@ func make26() (f *AHFacStat26) {
 			Value:   &f.DialysisResources.VacantChairs,
 			PIFOTag: "50b.",
 			PIFOValid: func(field *message.Field) string {
-				return allOrNone(firstDialysis, field)
+				return allOrNone26(firstDialysis, field)
 			},
 			PDFRenderer: &message.PDFTextRenderer{Page: 2, X: 484, Y: 584, W: 21, H: 14, Style: message.PDFTextStyle{HAlign: "right", VAlign: "baseline"}},
 			TableValue:  message.TableOmit,
@@ -1029,7 +1029,7 @@ func make26() (f *AHFacStat26) {
 			Value:   &f.DialysisResources.FrontStaff,
 			PIFOTag: "50c.",
 			PIFOValid: func(field *message.Field) string {
-				return allOrNone(firstDialysis, field)
+				return allOrNone26(firstDialysis, field)
 			},
 			PDFRenderer: &message.PDFTextRenderer{Page: 2, X: 509, Y: 584, W: 22, H: 14, Style: message.PDFTextStyle{HAlign: "right", VAlign: "baseline"}},
 			TableValue:  message.TableOmit,
@@ -1041,7 +1041,7 @@ func make26() (f *AHFacStat26) {
 			Value:   &f.DialysisResources.SupportStaff,
 			PIFOTag: "50d.",
 			PIFOValid: func(field *message.Field) string {
-				return allOrNone(firstDialysis, field)
+				return allOrNone26(firstDialysis, field)
 			},
 			PDFRenderer: &message.PDFTextRenderer{Page: 2, X: 535, Y: 584, W: 21, H: 14, Style: message.PDFTextStyle{HAlign: "right", VAlign: "baseline"}},
 			TableValue:  message.TableOmit,
@@ -1053,7 +1053,7 @@ func make26() (f *AHFacStat26) {
 			Value:   &f.DialysisResources.Providers,
 			PIFOTag: "50e.",
 			PIFOValid: func(field *message.Field) string {
-				return allOrNone(firstDialysis, field)
+				return allOrNone26(firstDialysis, field)
 			},
 			PDFRenderer: &message.PDFTextRenderer{Page: 2, X: 560, Y: 584, W: 29, H: 14, Style: message.PDFTextStyle{HAlign: "right", VAlign: "baseline"}},
 			TableValue:  message.TableOmit,
@@ -1063,19 +1063,19 @@ func make26() (f *AHFacStat26) {
 		message.NewAggregatorField(&message.Field{
 			Label: "Dialysis Resources",
 			TableValue: func(*message.Field) string {
-				return resourcesTableValue(&f.DialysisResources)
+				return resourcesTableValue26(&f.DialysisResources)
 			},
 			EditWidth: 20,
 			EditHelp:  `This is the number of dialysis resources at the facility.  Enter five numbers separated by spaces or commas: the numbers of chairs or rooms, vacant chairs or rooms, front desk staff, medical support staff, and providers.`,
 			EditHint:  "Ch, V.Ch, FDS, MSS, Prov.",
 			EditValue: func(*message.Field) string {
-				return resourcesValue(&f.DialysisResources)
+				return resourcesValue26(&f.DialysisResources)
 			},
 			EditApply: func(_ *message.Field, value string) {
-				resourcesApply(&f.DialysisResources, value)
+				resourcesApply26(&f.DialysisResources, value)
 			},
 			EditValid: func(field *message.Field) string {
-				return resourcesValid(field, &f.DialysisResources)
+				return resourcesValid26(field, &f.DialysisResources)
 			},
 		}),
 		message.NewCardinalNumberField(&message.Field{
@@ -1095,7 +1095,7 @@ func make26() (f *AHFacStat26) {
 			Value:   &f.SurgicalResources.VacantChairs,
 			PIFOTag: "51b.",
 			PIFOValid: func(field *message.Field) string {
-				return allOrNone(firstSurgical, field)
+				return allOrNone26(firstSurgical, field)
 			},
 			PDFRenderer: &message.PDFTextRenderer{Page: 2, X: 484, Y: 600, W: 21, H: 13, Style: message.PDFTextStyle{HAlign: "right", VAlign: "baseline"}},
 			TableValue:  message.TableOmit,
@@ -1107,7 +1107,7 @@ func make26() (f *AHFacStat26) {
 			Value:   &f.SurgicalResources.FrontStaff,
 			PIFOTag: "51c.",
 			PIFOValid: func(field *message.Field) string {
-				return allOrNone(firstSurgical, field)
+				return allOrNone26(firstSurgical, field)
 			},
 			PDFRenderer: &message.PDFTextRenderer{Page: 2, X: 509, Y: 600, W: 22, H: 13, Style: message.PDFTextStyle{HAlign: "right", VAlign: "baseline"}},
 			TableValue:  message.TableOmit,
@@ -1119,7 +1119,7 @@ func make26() (f *AHFacStat26) {
 			Value:   &f.SurgicalResources.SupportStaff,
 			PIFOTag: "51d.",
 			PIFOValid: func(field *message.Field) string {
-				return allOrNone(firstSurgical, field)
+				return allOrNone26(firstSurgical, field)
 			},
 			PDFRenderer: &message.PDFTextRenderer{Page: 2, X: 535, Y: 600, W: 21, H: 13, Style: message.PDFTextStyle{HAlign: "right", VAlign: "baseline"}},
 			TableValue:  message.TableOmit,
@@ -1131,7 +1131,7 @@ func make26() (f *AHFacStat26) {
 			Value:   &f.SurgicalResources.Providers,
 			PIFOTag: "51e.",
 			PIFOValid: func(field *message.Field) string {
-				return allOrNone(firstSurgical, field)
+				return allOrNone26(firstSurgical, field)
 			},
 			PDFRenderer: &message.PDFTextRenderer{Page: 2, X: 560, Y: 600, W: 29, H: 13, Style: message.PDFTextStyle{HAlign: "right", VAlign: "baseline"}},
 			TableValue:  message.TableOmit,
@@ -1141,19 +1141,19 @@ func make26() (f *AHFacStat26) {
 		message.NewAggregatorField(&message.Field{
 			Label: "Surgical Resources",
 			TableValue: func(*message.Field) string {
-				return resourcesTableValue(&f.SurgicalResources)
+				return resourcesTableValue26(&f.SurgicalResources)
 			},
 			EditWidth: 20,
 			EditHelp:  `This is the number of surgical resources at the facility.  Enter five numbers separated by spaces or commas: the numbers of chairs or rooms, vacant chairs or rooms, front desk staff, medical support staff, and providers.`,
 			EditHint:  "Ch, V.Ch, FDS, MSS, Prov.",
 			EditValue: func(*message.Field) string {
-				return resourcesValue(&f.SurgicalResources)
+				return resourcesValue26(&f.SurgicalResources)
 			},
 			EditApply: func(_ *message.Field, value string) {
-				resourcesApply(&f.SurgicalResources, value)
+				resourcesApply26(&f.SurgicalResources, value)
 			},
 			EditValid: func(field *message.Field) string {
-				return resourcesValid(field, &f.SurgicalResources)
+				return resourcesValid26(field, &f.SurgicalResources)
 			},
 		}),
 		message.NewCardinalNumberField(&message.Field{
@@ -1173,7 +1173,7 @@ func make26() (f *AHFacStat26) {
 			Value:   &f.ClinicResources.VacantChairs,
 			PIFOTag: "52b.",
 			PIFOValid: func(field *message.Field) string {
-				return allOrNone(firstClinic, field)
+				return allOrNone26(firstClinic, field)
 			},
 			PDFRenderer: &message.PDFTextRenderer{Page: 2, X: 484, Y: 616, W: 21, H: 13, Style: message.PDFTextStyle{HAlign: "right", VAlign: "baseline"}},
 			TableValue:  message.TableOmit,
@@ -1185,7 +1185,7 @@ func make26() (f *AHFacStat26) {
 			Value:   &f.ClinicResources.FrontStaff,
 			PIFOTag: "52c.",
 			PIFOValid: func(field *message.Field) string {
-				return allOrNone(firstClinic, field)
+				return allOrNone26(firstClinic, field)
 			},
 			PDFRenderer: &message.PDFTextRenderer{Page: 2, X: 509, Y: 616, W: 22, H: 13, Style: message.PDFTextStyle{HAlign: "right", VAlign: "baseline"}},
 			TableValue:  message.TableOmit,
@@ -1197,7 +1197,7 @@ func make26() (f *AHFacStat26) {
 			Value:   &f.ClinicResources.SupportStaff,
 			PIFOTag: "52d.",
 			PIFOValid: func(field *message.Field) string {
-				return allOrNone(firstClinic, field)
+				return allOrNone26(firstClinic, field)
 			},
 			PDFRenderer: &message.PDFTextRenderer{Page: 2, X: 535, Y: 616, W: 21, H: 13, Style: message.PDFTextStyle{HAlign: "right", VAlign: "baseline"}},
 			TableValue:  message.TableOmit,
@@ -1209,7 +1209,7 @@ func make26() (f *AHFacStat26) {
 			Value:   &f.ClinicResources.Providers,
 			PIFOTag: "52e.",
 			PIFOValid: func(field *message.Field) string {
-				return allOrNone(firstClinic, field)
+				return allOrNone26(firstClinic, field)
 			},
 			PDFRenderer: &message.PDFTextRenderer{Page: 2, X: 560, Y: 616, W: 29, H: 13, Style: message.PDFTextStyle{HAlign: "right", VAlign: "baseline"}},
 			TableValue:  message.TableOmit,
@@ -1219,19 +1219,19 @@ func make26() (f *AHFacStat26) {
 		message.NewAggregatorField(&message.Field{
 			Label: "Clinic Resources",
 			TableValue: func(*message.Field) string {
-				return resourcesTableValue(&f.ClinicResources)
+				return resourcesTableValue26(&f.ClinicResources)
 			},
 			EditWidth: 20,
 			EditHelp:  `This is the number of clinic resources at the facility.  Enter five numbers separated by spaces or commas: the numbers of chairs or rooms, vacant chairs or rooms, front desk staff, medical support staff, and providers.`,
 			EditHint:  "Ch, V.Ch, FDS, MSS, Prov.",
 			EditValue: func(*message.Field) string {
-				return resourcesValue(&f.ClinicResources)
+				return resourcesValue26(&f.ClinicResources)
 			},
 			EditApply: func(_ *message.Field, value string) {
-				resourcesApply(&f.ClinicResources, value)
+				resourcesApply26(&f.ClinicResources, value)
 			},
 			EditValid: func(field *message.Field) string {
-				return resourcesValid(field, &f.ClinicResources)
+				return resourcesValid26(field, &f.ClinicResources)
 			},
 		}),
 		message.NewCardinalNumberField(&message.Field{
@@ -1251,7 +1251,7 @@ func make26() (f *AHFacStat26) {
 			Value:   &f.HomeHealthResources.VacantChairs,
 			PIFOTag: "53b.",
 			PIFOValid: func(field *message.Field) string {
-				return allOrNone(firstHomeHealth, field)
+				return allOrNone26(firstHomeHealth, field)
 			},
 			PDFRenderer: &message.PDFTextRenderer{Page: 2, X: 484, Y: 632, W: 21, H: 13, Style: message.PDFTextStyle{HAlign: "right", VAlign: "baseline"}},
 			TableValue:  message.TableOmit,
@@ -1263,7 +1263,7 @@ func make26() (f *AHFacStat26) {
 			Value:   &f.HomeHealthResources.FrontStaff,
 			PIFOTag: "53c.",
 			PIFOValid: func(field *message.Field) string {
-				return allOrNone(firstHomeHealth, field)
+				return allOrNone26(firstHomeHealth, field)
 			},
 			PDFRenderer: &message.PDFTextRenderer{Page: 2, X: 509, Y: 632, W: 22, H: 13, Style: message.PDFTextStyle{HAlign: "right", VAlign: "baseline"}},
 			TableValue:  message.TableOmit,
@@ -1275,7 +1275,7 @@ func make26() (f *AHFacStat26) {
 			Value:   &f.HomeHealthResources.SupportStaff,
 			PIFOTag: "53d.",
 			PIFOValid: func(field *message.Field) string {
-				return allOrNone(firstHomeHealth, field)
+				return allOrNone26(firstHomeHealth, field)
 			},
 			PDFRenderer: &message.PDFTextRenderer{Page: 2, X: 535, Y: 632, W: 21, H: 13, Style: message.PDFTextStyle{HAlign: "right", VAlign: "baseline"}},
 			TableValue:  message.TableOmit,
@@ -1287,7 +1287,7 @@ func make26() (f *AHFacStat26) {
 			Value:   &f.HomeHealthResources.Providers,
 			PIFOTag: "53e.",
 			PIFOValid: func(field *message.Field) string {
-				return allOrNone(firstHomeHealth, field)
+				return allOrNone26(firstHomeHealth, field)
 			},
 			PDFRenderer: &message.PDFTextRenderer{Page: 2, X: 560, Y: 632, W: 29, H: 13, Style: message.PDFTextStyle{HAlign: "right", VAlign: "baseline"}},
 			TableValue:  message.TableOmit,
@@ -1297,19 +1297,19 @@ func make26() (f *AHFacStat26) {
 		message.NewAggregatorField(&message.Field{
 			Label: "Home Health Resources",
 			TableValue: func(*message.Field) string {
-				return resourcesTableValue(&f.HomeHealthResources)
+				return resourcesTableValue26(&f.HomeHealthResources)
 			},
 			EditWidth: 20,
 			EditHelp:  `This is the number of home health resources at the facility.  Enter five numbers separated by spaces or commas: the numbers of chairs or rooms, vacant chairs or rooms, front desk staff, medical support staff, and providers.`,
 			EditHint:  "Ch, V.Ch, FDS, MSS, Prov.",
 			EditValue: func(*message.Field) string {
-				return resourcesValue(&f.HomeHealthResources)
+				return resourcesValue26(&f.HomeHealthResources)
 			},
 			EditApply: func(_ *message.Field, value string) {
-				resourcesApply(&f.HomeHealthResources, value)
+				resourcesApply26(&f.HomeHealthResources, value)
 			},
 			EditValid: func(field *message.Field) string {
-				return resourcesValid(field, &f.HomeHealthResources)
+				return resourcesValid26(field, &f.HomeHealthResources)
 			},
 		}),
 		message.NewCardinalNumberField(&message.Field{
@@ -1329,7 +1329,7 @@ func make26() (f *AHFacStat26) {
 			Value:   &f.AdultDayCtrResources.VacantChairs,
 			PIFOTag: "54b.",
 			PIFOValid: func(field *message.Field) string {
-				return allOrNone(firstAdultDayCtr, field)
+				return allOrNone26(firstAdultDayCtr, field)
 			},
 			PDFRenderer: &message.PDFTextRenderer{Page: 2, X: 484, Y: 647, W: 21, H: 13, Style: message.PDFTextStyle{HAlign: "right", VAlign: "baseline"}},
 			TableValue:  message.TableOmit,
@@ -1341,7 +1341,7 @@ func make26() (f *AHFacStat26) {
 			Value:   &f.AdultDayCtrResources.FrontStaff,
 			PIFOTag: "54c.",
 			PIFOValid: func(field *message.Field) string {
-				return allOrNone(firstAdultDayCtr, field)
+				return allOrNone26(firstAdultDayCtr, field)
 			},
 			PDFRenderer: &message.PDFTextRenderer{Page: 2, X: 509, Y: 647, W: 22, H: 13, Style: message.PDFTextStyle{HAlign: "right", VAlign: "baseline"}},
 			TableValue:  message.TableOmit,
@@ -1353,7 +1353,7 @@ func make26() (f *AHFacStat26) {
 			Value:   &f.AdultDayCtrResources.SupportStaff,
 			PIFOTag: "54d.",
 			PIFOValid: func(field *message.Field) string {
-				return allOrNone(firstAdultDayCtr, field)
+				return allOrNone26(firstAdultDayCtr, field)
 			},
 			PDFRenderer: &message.PDFTextRenderer{Page: 2, X: 535, Y: 647, W: 21, H: 13, Style: message.PDFTextStyle{HAlign: "right", VAlign: "baseline"}},
 			TableValue:  message.TableOmit,
@@ -1365,7 +1365,7 @@ func make26() (f *AHFacStat26) {
 			Value:   &f.AdultDayCtrResources.Providers,
 			PIFOTag: "54e.",
 			PIFOValid: func(field *message.Field) string {
-				return allOrNone(firstAdultDayCtr, field)
+				return allOrNone26(firstAdultDayCtr, field)
 			},
 			PDFRenderer: &message.PDFTextRenderer{Page: 2, X: 560, Y: 647, W: 29, H: 13, Style: message.PDFTextStyle{HAlign: "right", VAlign: "baseline"}},
 			TableValue:  message.TableOmit,
@@ -1375,19 +1375,19 @@ func make26() (f *AHFacStat26) {
 		message.NewAggregatorField(&message.Field{
 			Label: "Adult Day Center Resources",
 			TableValue: func(*message.Field) string {
-				return resourcesTableValue(&f.AdultDayCtrResources)
+				return resourcesTableValue26(&f.AdultDayCtrResources)
 			},
 			EditWidth: 20,
 			EditHelp:  `This is the number of adult day center resources at the facility.  Enter five numbers separated by spaces or commas: the numbers of chairs or rooms, vacant chairs or rooms, front desk staff, medical support staff, and providers.`,
 			EditHint:  "Ch, V.Ch, FDS, MSS, Prov.",
 			EditValue: func(*message.Field) string {
-				return resourcesValue(&f.AdultDayCtrResources)
+				return resourcesValue26(&f.AdultDayCtrResources)
 			},
 			EditApply: func(_ *message.Field, value string) {
-				resourcesApply(&f.AdultDayCtrResources, value)
+				resourcesApply26(&f.AdultDayCtrResources, value)
 			},
 			EditValid: func(field *message.Field) string {
-				return resourcesValid(field, &f.AdultDayCtrResources)
+				return resourcesValid26(field, &f.AdultDayCtrResources)
 			},
 		}),
 	)
@@ -1414,7 +1414,7 @@ func decode26(_, _ string, form *message.PIFOForm, _ int) message.Message {
 	return df
 }
 
-func allOrNone(first, current *message.Field) string {
+func allOrNone26(first, current *message.Field) string {
 	if *first.Value == "" && *current.Value != "" {
 		return fmt.Sprintf("The %q field must not have a value unless %q has a value.  (Either all fields on the row must have a value, or none.)", current.Label, first.Label)
 	}
@@ -1424,13 +1424,13 @@ func allOrNone(first, current *message.Field) string {
 	return message.ValidCardinalNumber(current)
 }
 
-func bedsTableValue(beds *BedCounts) string {
+func bedsTableValue26(beds *BedCounts26) string {
 	if beds.StaffedM == "" && beds.StaffedF == "" && beds.VacantM == "" && beds.VacantF == "" && beds.Surge == "" {
 		return ""
 	}
 	return fmt.Sprintf("%3s %3s %3s %3s %3s", beds.StaffedM, beds.StaffedF, beds.VacantM, beds.VacantF, beds.Surge)
 }
-func bedsValue(beds *BedCounts) string {
+func bedsValue26(beds *BedCounts26) string {
 	if beds.StaffedM == "" && beds.StaffedF == "" && beds.VacantM == "" && beds.VacantF == "" && beds.Surge == "" {
 		return ""
 	}
@@ -1439,7 +1439,7 @@ func bedsValue(beds *BedCounts) string {
 		func(s string) bool { return s == "" },
 	), " ")
 }
-func bedsApply(beds *BedCounts, value string) {
+func bedsApply26(beds *BedCounts26, value string) {
 	var f message.Field
 	values := strings.Fields(value)
 	if len(values) > 0 {
@@ -1473,7 +1473,7 @@ func bedsApply(beds *BedCounts, value string) {
 		beds.Surge = ""
 	}
 }
-func bedsValid(field *message.Field, beds *BedCounts) string {
+func bedsValid26(field *message.Field, beds *BedCounts26) string {
 	if beds.StaffedM == "" && beds.StaffedF == "" && beds.VacantM == "" && beds.VacantF == "" && beds.Surge == "" {
 		return ""
 	}
@@ -1497,13 +1497,13 @@ INVALID:
 	return fmt.Sprintf("The %q field does not contain a valid value.  It should contain five numbers separated by spaces.", field.Label)
 }
 
-func resourcesTableValue(resources *ResourceCounts) string {
+func resourcesTableValue26(resources *ResourceCounts26) string {
 	if resources.Chairs == "" && resources.VacantChairs == "" && resources.FrontStaff == "" && resources.SupportStaff == "" && resources.Providers == "" {
 		return ""
 	}
 	return fmt.Sprintf("%3s %3s %3s %3s %3s", resources.Chairs, resources.VacantChairs, resources.FrontStaff, resources.SupportStaff, resources.Providers)
 }
-func resourcesValue(resources *ResourceCounts) string {
+func resourcesValue26(resources *ResourceCounts26) string {
 	if resources.Chairs == "" && resources.VacantChairs == "" && resources.FrontStaff == "" && resources.SupportStaff == "" && resources.Providers == "" {
 		return ""
 	}
@@ -1512,7 +1512,7 @@ func resourcesValue(resources *ResourceCounts) string {
 		func(s string) bool { return s == "" },
 	), " ")
 }
-func resourcesApply(resources *ResourceCounts, value string) {
+func resourcesApply26(resources *ResourceCounts26, value string) {
 	var f message.Field
 	values := strings.Fields(value)
 	if len(values) > 0 {
@@ -1546,7 +1546,7 @@ func resourcesApply(resources *ResourceCounts, value string) {
 		resources.Providers = ""
 	}
 }
-func resourcesValid(field *message.Field, resources *ResourceCounts) string {
+func resourcesValid26(field *message.Field, resources *ResourceCounts26) string {
 	if resources.Chairs == "" && resources.VacantChairs == "" && resources.FrontStaff == "" && resources.SupportStaff == "" && resources.Providers == "" {
 		return ""
 	}
