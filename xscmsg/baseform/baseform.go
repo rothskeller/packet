@@ -88,6 +88,11 @@ var RoutingSlipPDFRenderers = BaseFormPDF{
 }
 
 func (bf *BaseForm) AddHeaderFields(bm *message.BaseMessage, pdf *BaseFormPDF) {
+	var emptyPDF BaseFormPDF
+
+	if pdf == nil {
+		pdf = &emptyPDF
+	}
 	bm.Fields = append(bm.Fields,
 		message.NewMessageNumberField(&message.Field{
 			Label:       "Origin Message Number",
@@ -213,6 +218,11 @@ func (bf *BaseForm) AddHeaderFields(bm *message.BaseMessage, pdf *BaseFormPDF) {
 	bm.FFromLocation = &bf.FromLocation
 }
 func (bf *BaseForm) AddFooterFields(bm *message.BaseMessage, pdf *BaseFormPDF) {
+	var emptyPDF BaseFormPDF
+
+	if pdf == nil {
+		pdf = &emptyPDF
+	}
 	bm.Fields = append(bm.Fields,
 		message.NewTextField(&message.Field{
 			Label:       "Operator: Relay Received",

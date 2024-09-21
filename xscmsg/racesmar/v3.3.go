@@ -35,7 +35,6 @@ var Type33 = message.Type{
 }
 
 func init() {
-	println("register")
 	message.Register(&Type33, decode33, create33)
 }
 
