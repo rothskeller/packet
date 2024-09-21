@@ -391,7 +391,8 @@ type DeliveryInfo struct {
 
 // Deliveries returns the delivery information for an outgoing message.  One
 // DeliveryInfo structure is returned for each distinct To/Cc/Bcc address in the
-// message.  An error is returned only if files cannot be read or decoded.
+// message.  (If there are none, a single structure is returned.)  An error is
+// returned only if files cannot be read or decoded.
 func Deliveries(lmi string) (delivs []*DeliveryInfo, err error) {
 	var (
 		env   *envelope.Envelope
@@ -406,6 +407,9 @@ func Deliveries(lmi string) (delivs []*DeliveryInfo, err error) {
 	}
 	if addrs, err = envelope.ParseAddressList(env.To); err != nil {
 		return nil, fmt.Errorf("%s: invalid To field: %s", lmi, err)
+	}
+	if len(addrs) == 0 {
+		return []*DeliveryInfo{{}}, nil
 	}
 	delivs = make([]*DeliveryInfo, len(addrs))
 	for i, addr := range addrs {
