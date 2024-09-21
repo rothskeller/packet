@@ -29,6 +29,9 @@ func main() {
 			continue
 		}
 		msg := message.Decode(env.SubjectLine, body)
+		if len(msg.Base().UnknownFields) != 0 {
+			fmt.Fprintf(os.Stderr, "WARNING: unknown fields in form: %s\n", strings.Join(msg.Base().UnknownFields, " "))
+		}
 		pfile := mfile
 		if strings.HasSuffix(mfile, ".txt") {
 			pfile = pfile[:len(mfile)-4]

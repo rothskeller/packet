@@ -4,6 +4,7 @@ import (
 	"errors"
 	"fmt"
 	"os"
+	"strings"
 	"time"
 
 	"github.com/rothskeller/packet/envelope"
@@ -11,6 +12,11 @@ import (
 	"github.com/rothskeller/packet/xscmsg/delivrcpt"
 	"github.com/rothskeller/packet/xscmsg/readrcpt"
 )
+
+type Warning struct{ err error }
+
+func (w Warning) Error() string { return w.err.Error() }
+func (w Warning) Unwrap() error { return w.err }
 
 // ReceiveMessage takes a raw message received from JNOS and saves it in the
 // incident. "bbs" and "area" are the names of the BBS from which the message
@@ -31,7 +37,8 @@ import (
 // "omsg" are the message for which it is a receipt.
 //
 // If the received message has an error, "err" will be set and the other return
-// values will be zero.
+// values will be zero.  If the received message has a warning, "err" will be
+// set to a Warning value, and the other return values will be set as above.
 func ReceiveMessage(raw, bbs, area, msgid, opcall, opname string) (
 	lmi string, env *envelope.Envelope, msg message.Message, oenv *envelope.Envelope, omsg message.Message, err error,
 ) {
@@ -47,6 +54,9 @@ func ReceiveMessage(raw, bbs, area, msgid, opcall, opname string) (
 		return // autoresponses are ignored
 	}
 	msg = message.Decode(env.SubjectLine, body)
+	if len(msg.Base().UnknownFields) != 0 {
+		err = Warning{fmt.Errorf("unknown fields in form: %s", strings.Join(msg.Base().UnknownFields, " "))}
+	}
 	// If it's a receipt, it's handled specially.
 	switch msg.(type) {
 	case *delivrcpt.DeliveryReceipt, *readrcpt.ReadReceipt:
@@ -65,8 +75,8 @@ func ReceiveMessage(raw, bbs, area, msgid, opcall, opname string) (
 	if b := msg.Base(); b.FOriginMsgID != nil {
 		rmi = *b.FOriginMsgID
 	}
-	if err = SaveMessage(lmi, rmi, env, msg, false, true); err != nil {
-		err = fmt.Errorf("save received %s: %s", lmi, err)
+	if err2 := SaveMessage(lmi, rmi, env, msg, false, true); err2 != nil {
+		err = fmt.Errorf("save received %s: %s", lmi, err2)
 		return
 	}
 	if area != "" { // bulletin: no delivery receipt
@@ -81,7 +91,7 @@ func ReceiveMessage(raw, bbs, area, msgid, opcall, opname string) (
 	var denv = new(envelope.Envelope)
 	denv.SubjectLine = dr.EncodeSubject()
 	denv.To = env.From
-	return lmi, env, msg, denv, dr, nil
+	return lmi, env, msg, denv, dr, err
 }
 
 // recordReceipt matches a received receipt with the corresponding outgoing

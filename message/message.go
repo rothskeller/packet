@@ -56,6 +56,9 @@ type BaseMessage struct {
 	// PIFOVersion is the PIFO version found when decoding the message.  It
 	// is set only for messages with PIFO encoding.
 	PIFOVersion string
+	// UnknownFields is a list of field tags that were not recognized during
+	// decoding.
+	UnknownFields []string
 	// Fields is an ordered list of fields in the message.  This is the
 	// core of the shared message functionality:  most operations are
 	// implemented by iterating through these fields.

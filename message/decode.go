@@ -21,6 +21,7 @@ var (
 // DecodeForm decodes the message.  It returns whether the message was
 // recognized and decoded.
 func DecodeForm(form *PIFOForm, msg Message) {
+	var seen = make(map[string]bool)
 	var bm = msg.(interface{ Base() *BaseMessage }).Base()
 	bm.PIFOVersion = form.PIFOVersion
 	for _, f := range bm.Fields {
@@ -28,8 +29,13 @@ func DecodeForm(form *PIFOForm, msg Message) {
 			continue // field is not part of PIFO encoding
 		}
 		*f.Value = form.TaggedValues[f.PIFOTag]
+		seen[f.PIFOTag] = true
 	}
-	// TODO really should make sure there aren't any fields unaccounted for.
+	for tag := range form.TaggedValues {
+		if !seen[tag] {
+			bm.UnknownFields = append(bm.UnknownFields, tag)
+		}
+	}
 }
 
 // DecodeSubject decodes an XSC-standard message subject line into its component
