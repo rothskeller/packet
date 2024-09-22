@@ -107,7 +107,7 @@ func EncodeBulletinSubject(formtag, subject string) string {
 // form type.  version is the form version number.
 func NewPIFOEncoder(w io.Writer, html, version string) *PIFOEncoder {
 	e := PIFOEncoder{w: w}
-	_, e.err = fmt.Fprintf(w, "!SCCoPIFO!\n#T: %s\n#V: 3.11-%s\n", html, version)
+	_, e.err = fmt.Fprintf(w, "!SCCoPIFO!\n#T: %s\n#V: 3.13-%s\n", html, version)
 	return &e
 }
 
