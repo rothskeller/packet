@@ -35,10 +35,13 @@ var Type33 = message.Type{
 }
 
 func init() {
+	// Register 2.4 first so that it's the default for creation if no
+	// version number is given.
+	message.Register(&Type24, decode24, create24)
 	message.Register(&Type33, decode33, create33)
 }
 
-var basePDFRenderers = baseform.BaseFormPDF{
+var basePDFRenderers33 = baseform.BaseFormPDF{
 	OriginMsgID: &message.PDFMultiRenderer{
 		&message.PDFTextRenderer{X: 223, Y: 50, R: 348, B: 67, Style: message.PDFTextStyle{VAlign: "baseline"}},
 		&message.PDFTextRenderer{Page: 2, X: 420, Y: 36, R: 574, B: 48},
@@ -123,7 +126,7 @@ func make33() *RACESMAR33 {
 	f.BaseMessage.FSubject = &f.AgencyName
 	f.BaseMessage.FBody = &f.Assignment
 	f.Fields = make([]*message.Field, 0, fieldCount)
-	f.BaseForm.AddHeaderFields(&f.BaseMessage, &basePDFRenderers)
+	f.BaseForm.AddHeaderFields(&f.BaseMessage, &basePDFRenderers33)
 	f.Fields = append(f.Fields,
 		message.NewTextField(&message.Field{
 			Label:       "Agency Name",
@@ -352,7 +355,7 @@ func make33() *RACESMAR33 {
 			EditHelp: `This is the date and time when the mutual aid request was approved by the official listed above, in MM/DD/YYYY HH:MM format (24-hour clock).  It is required.`,
 		}, &f.ApprovedByDate, &f.ApprovedByTime),
 	)
-	f.BaseForm.AddFooterFields(&f.BaseMessage, &basePDFRenderers)
+	f.BaseForm.AddFooterFields(&f.BaseMessage, &basePDFRenderers33)
 	if len(f.Fields) > fieldCount {
 		panic("update RACESMAR fieldCount")
 	}

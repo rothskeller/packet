@@ -225,11 +225,45 @@ func decode21(_, _ string, form *message.PIFOForm, _ int) message.Message {
 }
 
 func (f *RACESMAR21) Compare(actual message.Message) (int, int, []*message.CompareField) {
-	return f.convertTo33().Compare(actual)
+	if _, ok := actual.(*RACESMAR33); ok {
+		return f.convertTo33().Compare(actual)
+	}
+	return f.convertTo24().Compare(actual)
 }
 
 func (f *RACESMAR21) RenderPDF(env *envelope.Envelope, filename string) error {
-	return f.convertTo33().RenderPDF(env, filename)
+	return f.convertTo24().RenderPDF(env, filename)
+}
+
+func (f *RACESMAR21) convertTo24() (c *RACESMAR24) {
+	c = create24().(*RACESMAR24)
+	c.CopyHeaderFields(&f.BaseForm)
+	c.AgencyName = f.AgencyName
+	c.EventName = f.EventName
+	c.EventNumber = f.EventNumber
+	c.Assignment = f.Assignment
+	for i := 0; i < 5; i++ {
+		c.Resources[i] = f.Resources[i].convertTo24()
+	}
+	c.RequestedArrivalDates = f.RequestedArrivalDates
+	c.RequestedArrivalTimes = f.RequestedArrivalTimes
+	c.NeededUntilDates = f.NeededUntilDates
+	c.NeededUntilTimes = f.NeededUntilTimes
+	c.ReportingLocation = f.ReportingLocation
+	c.ContactOnArrival = f.ContactOnArrival
+	c.TravelInfo = f.TravelInfo
+	c.RequestedByName = f.RequestedByName
+	c.RequestedByTitle = f.RequestedByTitle
+	c.RequestedByContact = f.RequestedByContact
+	c.ApprovedByName = f.ApprovedByName
+	c.ApprovedByTitle = f.ApprovedByTitle
+	c.ApprovedByContact = f.ApprovedByContact
+	c.ApprovedByDate = f.ApprovedByDate
+	c.ApprovedByTime = f.ApprovedByTime
+	c.OpRelayRcvd = f.OpRelayRcvd
+	c.OpRelaySent = f.OpRelaySent
+	c.CopyFooterFields(&f.BaseForm)
+	return c
 }
 
 func (f *RACESMAR21) convertTo33() (c *RACESMAR33) {
@@ -294,6 +328,15 @@ func (r *Resource21) Fields(index int) []*message.Field {
 			PIFOTag:  fmt.Sprintf("18.%dd.", index),
 		}),
 	}
+}
+
+func (r Resource21) convertTo24() (c Resource24) {
+	c.Qty = r.Qty
+	c.Position = r.RolePos
+	c.RolePos = r.RolePos
+	c.PreferredType = r.PreferredType
+	c.MinimumType = r.MinimumType
+	return c
 }
 
 func (r Resource21) convertTo33() (c Resource33) {
