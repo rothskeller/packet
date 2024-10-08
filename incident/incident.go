@@ -90,7 +90,7 @@ func ReadMessage(lmi string) (env *envelope.Envelope, msg message.Message, err e
 	if env, body, err = readEnvelope(lmi, ""); err != nil {
 		return env, nil, err
 	}
-	msg = message.Decode(env.SubjectLine, body)
+	msg = message.Decode(env, body)
 	return env, msg, nil
 }
 
@@ -101,7 +101,7 @@ func ReadReceipt(lmi, rcpt string) (env *envelope.Envelope, msg message.Message,
 	if env, body, err = readEnvelope(lmi, rcpt); err != nil {
 		return env, nil, err
 	}
-	msg = message.Decode(env.SubjectLine, body)
+	msg = message.Decode(env, body)
 	return env, msg, nil
 }
 
@@ -189,11 +189,7 @@ func saveMessage(filename, linkname string, env *envelope.Envelope, msg message.
 	)
 	// Encode the message.
 	if !rawsubj {
-		if env.Bulletin {
-			env.SubjectLine = msg.EncodeBulletinSubject()
-		} else {
-			env.SubjectLine = msg.EncodeSubject()
-		}
+		env.SubjectLine = msg.EncodeSubject()
 	}
 	if b := msg.Base(); b.FHandling != nil && *b.FHandling == "IMMEDIATE" {
 		env.OutpostUrgent = true
@@ -451,7 +447,7 @@ func readDelivery(fname string) (deliv *DeliveryInfo, err error) {
 	if addrs, err := envelope.ParseAddressList(env.From); err == nil {
 		env.From = addrs[0].Address
 	}
-	msg = message.Decode(env.SubjectLine, body)
+	msg = message.Decode(env, body)
 	if dr, _ = msg.(*delivrcpt.DeliveryReceipt); dr == nil || !env.IsReceived() {
 		return nil, fmt.Errorf("%s: not a received delivery receipt", fname)
 	}

@@ -4,6 +4,7 @@ package xscmsg
 
 import (
 	_ "github.com/rothskeller/packet/xscmsg/ahfacstat"
+	_ "github.com/rothskeller/packet/xscmsg/bulletin"
 	_ "github.com/rothskeller/packet/xscmsg/checkin"
 	_ "github.com/rothskeller/packet/xscmsg/checkout"
 	_ "github.com/rothskeller/packet/xscmsg/delivrcpt"

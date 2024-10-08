@@ -356,7 +356,7 @@ func (f *SheltStat22) requiredForComplete() (message.Presence, string) {
 	return message.PresenceOptional, ""
 }
 
-func decode22(_, _ string, form *message.PIFOForm, _ int) message.Message {
+func decode22(_ *envelope.Envelope, _ string, form *message.PIFOForm, _ int) message.Message {
 	if form == nil || form.HTMLIdent != Type22.HTML || form.FormVersion != Type22.Version {
 		return nil
 	}

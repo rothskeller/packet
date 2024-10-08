@@ -119,8 +119,8 @@ func make() (m *CheckOut) {
 
 var checkInBodyRE = regexp.MustCompile(`(?im)^Check-Out\s+([A-Z][A-Z0-9]{2,5})\s*,(.*)(?:\n(A[A-L][0-9][A-Z]{1,3}|[KNW][0-9][A-Z]{2,3}|[KNW][A-Z][0-9][A-Z]{1,3})\s*,(.*))?`)
 
-func decode(subject, body string, _ *message.PIFOForm, _ int) message.Message {
-	var msgid, _, handling, formtag, realsubj = message.DecodeSubject(subject)
+func decode(env *envelope.Envelope, body string, _ *message.PIFOForm, _ int) message.Message {
+	var msgid, _, handling, formtag, realsubj = message.DecodeSubject(env.SubjectLine)
 	if formtag != "" || !strings.HasPrefix(strings.ToLower(realsubj), "check-out ") {
 		return nil
 	}

@@ -425,7 +425,7 @@ func (f *JurisStat21) requiredForComplete() (message.Presence, string) {
 	return message.PresenceOptional, ""
 }
 
-func decode21(_, _ string, form *message.PIFOForm, _ int) message.Message {
+func decode21(_ *envelope.Envelope, _ string, form *message.PIFOForm, _ int) message.Message {
 	if form == nil || form.HTMLIdent != Type21.HTML || form.FormVersion != Type21.Version {
 		return nil
 	}

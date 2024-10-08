@@ -68,12 +68,12 @@ func New() message.Message {
 // This function is called to find out whether an incoming message matches this
 // type.  It should return the decoded message if it belongs to this type, or
 // nil if it doesn't.
-func decode(subject, body string, form *message.PIFOForm, pass int) message.Message {
-	if pass != 2 || form != nil {
+func decode(env *envelope.Envelope, body string, form *message.PIFOForm, pass int) message.Message {
+	if pass != 2 || form != nil || env.Bulletin {
 		return nil
 	}
 	var f = New().(*PlainText)
-	f.OriginMsgID, _, f.Handling, _, f.Subject = message.DecodeSubject(subject)
+	f.OriginMsgID, _, f.Handling, _, f.Subject = message.DecodeSubject(env.SubjectLine)
 	if h := message.DecodeHandlingMap[f.Handling]; h != "" {
 		f.Handling = h
 	}

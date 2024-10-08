@@ -5,6 +5,7 @@ package sheltstat
 import (
 	"time"
 
+	"github.com/rothskeller/packet/envelope"
 	"github.com/rothskeller/packet/message"
 	"github.com/rothskeller/packet/xscmsg/baseform"
 )
@@ -576,7 +577,7 @@ func (f *SheltStat23) requiredForComplete() (message.Presence, string) {
 	return message.PresenceOptional, ""
 }
 
-func decode23(_, _ string, form *message.PIFOForm, _ int) message.Message {
+func decode23(_ *envelope.Envelope, _ string, form *message.PIFOForm, _ int) message.Message {
 	if form == nil || form.HTMLIdent != Type23.HTML || form.FormVersion != Type23.Version {
 		return nil
 	}

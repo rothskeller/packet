@@ -7,6 +7,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/rothskeller/packet/envelope"
 	"github.com/rothskeller/packet/message"
 	"github.com/rothskeller/packet/xscmsg/baseform"
 	"golang.org/x/exp/slices"
@@ -1405,7 +1406,7 @@ func (f *AHFacStat26) requiredForComplete() (message.Presence, string) {
 	return message.PresenceOptional, ""
 }
 
-func decode26(_, _ string, form *message.PIFOForm, _ int) message.Message {
+func decode26(_ *envelope.Envelope, _ string, form *message.PIFOForm, _ int) message.Message {
 	if form == nil || form.HTMLIdent != Type26.HTML || form.FormVersion != Type26.Version {
 		return nil
 	}

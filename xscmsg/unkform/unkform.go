@@ -4,6 +4,7 @@ package unkform
 import (
 	"sort"
 
+	"github.com/rothskeller/packet/envelope"
 	"github.com/rothskeller/packet/message"
 )
 
@@ -30,7 +31,7 @@ type UnknownForm struct {
 // This function is called to find out whether an incoming message matches this
 // type.  It should return the decoded message if it belongs to this type, or
 // nil if it doesn't.
-func decode(subject, body string, form *message.PIFOForm, pass int) message.Message {
+func decode(env *envelope.Envelope, body string, form *message.PIFOForm, pass int) message.Message {
 	if pass != 2 || form == nil {
 		return nil
 	}
@@ -41,7 +42,7 @@ func decode(subject, body string, form *message.PIFOForm, pass int) message.Mess
 	f.BaseMessage.FOriginMsgID = &f.OriginMsgID
 	f.BaseMessage.FHandling = &f.Handling
 	f.BaseMessage.FSubject = &f.Subject
-	f.OriginMsgID, _, f.Handling, f.Type.Tag, f.Subject = message.DecodeSubject(subject)
+	f.OriginMsgID, _, f.Handling, f.Type.Tag, f.Subject = message.DecodeSubject(env.SubjectLine)
 	if h := message.DecodeHandlingMap[f.Handling]; h != "" {
 		f.Handling = h
 	}

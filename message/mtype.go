@@ -1,5 +1,7 @@
 package message
 
+import "github.com/rothskeller/packet/envelope"
+
 // This file contains the definition of message.Type, the registry of message
 // types, and the Create and Decode calls that walk that registry.
 
@@ -39,14 +41,14 @@ var RegisteredTypes = make(map[string][]*Type)
 
 // decodeFunctions is the ordered list of functions to call to try decoding a
 // message.
-var decodeFunctions []func(subject, body string, form *PIFOForm, pass int) Message
+var decodeFunctions []func(env *envelope.Envelope, body string, form *PIFOForm, pass int) Message
 
 // Register registers a message type.  The order of registration is significant
 // for decoding messages:  catch-all decoders (e.g. UnknownForm and PlainText)
-// must be registered last.  The decode function must examine the subject,
+// must be registered last.  The decode function must examine the envelope,
 // body, and form (which may be nil); if they are correct for the message type,
 // it must return the decoded message; otherwise, it must return nil.
-func Register(mtype *Type, decode func(subject, body string, form *PIFOForm, pass int) Message, create func() Message) {
+func Register(mtype *Type, decode func(env *envelope.Envelope, body string, form *PIFOForm, pass int) Message, create func() Message) {
 	mtype.create = create
 	RegisteredTypes[mtype.Tag] = append(RegisteredTypes[mtype.Tag], mtype)
 	decodeFunctions = append(decodeFunctions, decode)
@@ -68,14 +70,14 @@ func Create(tag, version string) Message {
 
 // Decode decodes the supplied message and returns the typed, decoded message.
 // It returns nil if no registered type can decode the message.  (Between them,
-// he UnknownForm and PlainText message types can decode any message, so if they
-// are registered, a nil return is not possible.)
-func Decode(subject string, body string) (msg Message) {
+// the UnknownForm, Bulletin, and PlainText message types can decode any
+// message, so if they are registered, a nil return is not possible.)
+func Decode(env *envelope.Envelope, body string) (msg Message) {
 	// Decode the PIFO form in the message if any.
 	var form = DecodePIFO(body)
 	for pass := 1; pass <= 2; pass++ {
 		for _, fn := range decodeFunctions {
-			if msg = fn(subject, body, form, pass); msg != nil {
+			if msg = fn(env, body, form, pass); msg != nil {
 				return msg
 			}
 		}

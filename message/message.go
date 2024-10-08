@@ -17,9 +17,6 @@ type Message interface {
 	Base() *BaseMessage
 	// EncodeSubject encodes the message subject line.
 	EncodeSubject() string
-	// EncodeBulletinSubject encodes the message subject line, appropriately
-	// for posting as a bulletin.
-	EncodeBulletinSubject() string
 	// EncodeBody encodes the message body, suitable for transmission or
 	// storage.
 	EncodeBody() string

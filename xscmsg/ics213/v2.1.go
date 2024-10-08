@@ -323,7 +323,7 @@ func make21() (f *ICS213v21) {
 	return f
 }
 
-func decode21(_, _ string, form *message.PIFOForm, _ int) message.Message {
+func decode21(_ *envelope.Envelope, _ string, form *message.PIFOForm, _ int) message.Message {
 	if form == nil || form.HTMLIdent != Type21.HTML || form.FormVersion != Type21.Version {
 		return nil
 	}

@@ -6,6 +6,7 @@ import (
 	"regexp"
 	"strings"
 
+	"github.com/rothskeller/packet/envelope"
 	"github.com/rothskeller/packet/message"
 )
 
@@ -66,13 +67,13 @@ func New() (m *DeliveryReceipt) {
 // substrings are the local message ID, the delivery time, and the To address.
 var deliveryReceiptRE = regexp.MustCompile(`^\n*!LMI!([^!]+)!DR!(.+)\n.*\nTo: (.+)\nSubject:.*\nwas delivered on.*\nRecipient's Local.*\n`)
 
-func decode(subject, body string, form *message.PIFOForm, _ int) message.Message {
-	if !strings.HasPrefix(subject, "DELIVERED: ") || form != nil {
+func decode(env *envelope.Envelope, body string, form *message.PIFOForm, _ int) message.Message {
+	if !strings.HasPrefix(env.SubjectLine, "DELIVERED: ") || form != nil {
 		return nil
 	}
 	if match := deliveryReceiptRE.FindStringSubmatch(body); match != nil {
 		dr := New()
-		dr.MessageSubject = subject[11:]
+		dr.MessageSubject = env.SubjectLine[11:]
 		dr.MessageTo = match[3]
 		dr.LocalMessageID = match[1]
 		dr.DeliveredTime = match[2]

@@ -6,6 +6,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/rothskeller/packet/envelope"
 	"github.com/rothskeller/packet/message"
 	"github.com/rothskeller/packet/xscmsg/baseform"
 )
@@ -362,7 +363,7 @@ func make33() *RACESMAR33 {
 	return &f
 }
 
-func decode33(_, _ string, form *message.PIFOForm, _ int) message.Message {
+func decode33(_ *envelope.Envelope, _ string, form *message.PIFOForm, _ int) message.Message {
 	var df *RACESMAR33
 
 	if form == nil || form.HTMLIdent != Type33.HTML || form.FormVersion != Type33.Version {

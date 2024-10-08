@@ -2,6 +2,7 @@
 package ics213
 
 import (
+	"github.com/rothskeller/packet/envelope"
 	"github.com/rothskeller/packet/message"
 )
 
@@ -19,7 +20,7 @@ func init() {
 	message.Register(&Type20, decode20, nil)
 }
 
-func decode20(_, _ string, form *message.PIFOForm, _ int) message.Message {
+func decode20(_ *envelope.Envelope, _ string, form *message.PIFOForm, _ int) message.Message {
 	if form == nil || form.HTMLIdent != Type20.HTML || form.FormVersion != Type20.Version {
 		return nil
 	}

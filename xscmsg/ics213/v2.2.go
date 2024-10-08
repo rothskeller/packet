@@ -4,6 +4,7 @@ package ics213
 import (
 	"time"
 
+	"github.com/rothskeller/packet/envelope"
 	"github.com/rothskeller/packet/message"
 )
 
@@ -412,7 +413,7 @@ func make22() (f *ICS213v22) {
 	return f
 }
 
-func decode22(_, _ string, form *message.PIFOForm, _ int) message.Message {
+func decode22(_ *envelope.Envelope, _ string, form *message.PIFOForm, _ int) message.Message {
 	if form == nil || form.HTMLIdent != Type22.HTML || form.FormVersion != Type22.Version {
 		return nil
 	}

@@ -28,7 +28,7 @@ func main() {
 			fmt.Fprintf(os.Stderr, "%s: %s\n", mfile, err)
 			continue
 		}
-		msg := message.Decode(env.SubjectLine, body)
+		msg := message.Decode(env, body)
 		if len(msg.Base().UnknownFields) != 0 {
 			fmt.Fprintf(os.Stderr, "WARNING: unknown fields in form: %s\n", strings.Join(msg.Base().UnknownFields, " "))
 		}

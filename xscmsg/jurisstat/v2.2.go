@@ -5,6 +5,7 @@ package jurisstat
 import (
 	"time"
 
+	"github.com/rothskeller/packet/envelope"
 	"github.com/rothskeller/packet/message"
 	"github.com/rothskeller/packet/xscmsg/baseform"
 )
@@ -761,7 +762,7 @@ func (f *JurisStat22) requiredForComplete() (message.Presence, string) {
 	return message.PresenceOptional, ""
 }
 
-func decode22(_, _ string, form *message.PIFOForm, _ int) message.Message {
+func decode22(_ *envelope.Envelope, _ string, form *message.PIFOForm, _ int) message.Message {
 	if form == nil || form.HTMLIdent != Type22.HTML || form.FormVersion != Type22.Version {
 		return nil
 	}

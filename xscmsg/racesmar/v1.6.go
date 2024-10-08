@@ -221,7 +221,7 @@ func make16() *RACESMAR16 {
 	return &f
 }
 
-func decode16(_, _ string, form *message.PIFOForm, _ int) message.Message {
+func decode16(_ *envelope.Envelope, _ string, form *message.PIFOForm, _ int) message.Message {
 	var df *RACESMAR16
 
 	if form == nil || form.HTMLIdent != Type16.HTML || form.FormVersion != Type16.Version {

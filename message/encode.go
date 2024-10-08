@@ -32,20 +32,6 @@ func (bm *BaseMessage) EncodeSubject() string {
 	return EncodeSubject(msgid, handling, formtag, subject)
 }
 
-// EncodeBulletinSubject encodes the message subject line, appropriately
-// for a bulletin.
-func (bm *BaseMessage) EncodeBulletinSubject() string {
-	var formtag, subject string
-
-	if bm.Type.HTML != "" {
-		formtag = bm.Type.Tag
-	}
-	if bm.FSubject != nil {
-		subject = *bm.FSubject
-	}
-	return EncodeBulletinSubject(formtag, subject)
-}
-
 // EncodeBody encodes the message body, suitable for transmission or
 // storage.
 func (bm *BaseMessage) EncodeBody() string {
@@ -92,14 +78,6 @@ func EncodeSubject(msgid, handling, formtag, subject string) string {
 		return fmt.Sprintf("%s_%s_%s", msgid, handling, subject)
 	}
 	return fmt.Sprintf("%s_%s_%s_%s", msgid, handling, formtag, subject)
-}
-
-// EncodeBulletinSubject encodes a message subject line for a bulletin.
-func EncodeBulletinSubject(formtag, subject string) string {
-	if formtag == "" {
-		return subject
-	}
-	return formtag + "_" + subject
 }
 
 // NewPIFOEncoder creates a new PackItForms encoder that writes form data to the

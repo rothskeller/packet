@@ -53,7 +53,7 @@ func ReceiveMessage(raw, bbs, area, msgid, opcall, opname string) (
 		env = nil
 		return // autoresponses are ignored
 	}
-	msg = message.Decode(env.SubjectLine, body)
+	msg = message.Decode(env, body)
 	if len(msg.Base().UnknownFields) != 0 {
 		err = Warning{fmt.Errorf("unknown fields in form: %s", strings.Join(msg.Base().UnknownFields, " "))}
 	}

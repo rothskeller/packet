@@ -14,13 +14,13 @@ import (
 )
 
 //go:embed Go-Regular.ttf
-var goRegular []byte
+var GoRegular []byte
 
 //go:embed Go-Bold.ttf
-var goBold []byte
+var GoBold []byte
 
 //go:embed Go-Mono.ttf
-var goMono []byte
+var GoMono []byte
 
 func init() {
 	RenderPlainPDF = renderPDFActual
@@ -28,9 +28,9 @@ func init() {
 
 func renderPDFActual(env *envelope.Envelope, label, lmi, body, filename string) error {
 	pdf := fpdf.New("P", "pt", "Letter", "")
-	pdf.AddUTF8FontFromBytes("Go", "", goRegular)
-	pdf.AddUTF8FontFromBytes("Go", "B", goBold)
-	pdf.AddUTF8FontFromBytes("Go-Mono", "", goMono)
+	pdf.AddUTF8FontFromBytes("Go", "", GoRegular)
+	pdf.AddUTF8FontFromBytes("Go", "B", GoBold)
+	pdf.AddUTF8FontFromBytes("Go-Mono", "", GoMono)
 	pdf.SetMargins(36, 36, 36)
 	pdf.SetAutoPageBreak(true, 48)
 	pdf.AddPage()
@@ -88,7 +88,7 @@ func getReceived(lmi string, env *envelope.Envelope) string {
 	if err != nil {
 		return ""
 	}
-	msg := message.Decode(env.SubjectLine, drbody)
+	msg := message.Decode(env, drbody)
 	if dr, ok := msg.(*delivrcpt.DeliveryReceipt); ok {
 		return fmt.Sprintf("%s as %s", dr.DeliveredTime, dr.LocalMessageID)
 	}

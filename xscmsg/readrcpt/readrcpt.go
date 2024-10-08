@@ -6,6 +6,7 @@ import (
 	"regexp"
 	"strings"
 
+	"github.com/rothskeller/packet/envelope"
 	"github.com/rothskeller/packet/message"
 )
 
@@ -59,13 +60,13 @@ func New() (m *ReadReceipt) {
 // substrings are the read time and the To address.
 var readReceiptRE = regexp.MustCompile(`^\n*!RR!(.+)\n.*\n\nTo: (.+)`)
 
-func decode(subject, body string, form *message.PIFOForm, _ int) message.Message {
-	if !strings.HasPrefix(subject, "READ: ") || form != nil {
+func decode(env *envelope.Envelope, body string, form *message.PIFOForm, _ int) message.Message {
+	if !strings.HasPrefix(env.SubjectLine, "READ: ") || form != nil {
 		return nil
 	}
 	if match := readReceiptRE.FindStringSubmatch(body); match != nil {
 		rr := New()
-		rr.MessageSubject = subject[6:]
+		rr.MessageSubject = env.SubjectLine[6:]
 		rr.MessageTo = match[2]
 		rr.ReadTime = match[2]
 		rr.ExtraText = strings.TrimSpace(body[len(match[0]):])
