@@ -36,7 +36,7 @@ type ICS309Header struct {
 	TacName       string
 }
 
-var receiptExtRE = regexp.MustCompile(`\.[DR]\d+\.txt$`)
+var receiptExtRE = regexp.MustCompile(`\.[DR]R\d*\.txt$`)
 
 // GenerateICS309 generates an ICS-309 communications log covering all of the
 // messages in the directory.  The log is generated in CSV format (ics309.csv),
@@ -133,6 +133,8 @@ func envelopeLess(a, b *envelope.Envelope) bool {
 func make309Lines(m *envelope.Envelope, lmi string) (lines [][]string, err error) {
 	if m.IsReceived() {
 		return [][]string{make309Line(m, lmi, nil)}, nil
+	} else if lmi == "" { // outgoing receipt
+		return [][]string{make309Line(m, "", &DeliveryInfo{Recipient: m.To})}, nil
 	} else {
 		if delivs, err := Deliveries(lmi); err != nil {
 			return nil, err
@@ -145,6 +147,7 @@ func make309Lines(m *envelope.Envelope, lmi string) (lines [][]string, err error
 		return lines, nil
 	}
 }
+
 func make309Line(m *envelope.Envelope, lmi string, deliv *DeliveryInfo) []string {
 	var t time.Time
 	var from, oid, to, did, sub string
@@ -295,7 +298,8 @@ func render309PDFString(pdf *gofpdf.Fpdf, s string, x, y, w, h float64) {
 	pdf.SetAlpha(1.0, "")
 	*/
 	pdftext.Draw(pdf, s, x, y, w, h, pdftext.Style{
-		MinFontSize: 10, VAlign: "baseline", Clip: 1, Color: []byte{0, 0, 153}})
+		MinFontSize: 10, VAlign: "baseline", Clip: 1, Color: []byte{0, 0, 153},
+	})
 }
 
 // RemoveICS309s removes generated ICS-309 communication log files.
