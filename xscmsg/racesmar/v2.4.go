@@ -106,7 +106,7 @@ var basePDFRenderers24 = baseform.BaseFormPDF{
 }
 
 func create24() message.Message {
-	var f = make24()
+	f := make24()
 	f.MessageDate = time.Now().Format("01/02/2006")
 	f.Handling = "ROUTINE"
 	f.ToLocation = "County EOC"
@@ -115,11 +115,11 @@ func create24() message.Message {
 
 func make24() *RACESMAR24 {
 	const fieldCount = 74
-	var f = RACESMAR24{BaseMessage: message.BaseMessage{Type: &Type24}}
-	f.BaseMessage.FSubject = &f.AgencyName
-	f.BaseMessage.FBody = &f.Assignment
+	f := RACESMAR24{BaseMessage: message.BaseMessage{Type: &Type24}}
+	f.FSubject = &f.AgencyName
+	f.FBody = &f.Assignment
 	f.Fields = make([]*message.Field, 0, fieldCount)
-	f.BaseForm.AddHeaderFields(&f.BaseMessage, &basePDFRenderers24)
+	f.AddHeaderFields(&f.BaseMessage, &basePDFRenderers24)
 	f.Fields = append(f.Fields,
 		message.NewTextField(&message.Field{
 			Label:       "Agency Name",
@@ -316,7 +316,7 @@ func make24() *RACESMAR24 {
 			EditHelp: `This is the date and time when the mutual aid request was approved by the official listed above, in MM/DD/YYYY HH:MM format (24-hour clock).  It is required.`,
 		}, &f.ApprovedByDate, &f.ApprovedByTime),
 	)
-	f.BaseForm.AddFooterFields(&f.BaseMessage, &basePDFRenderers24)
+	f.AddFooterFields(&f.BaseMessage, &basePDFRenderers24)
 	if len(f.Fields) > fieldCount {
 		panic("update RACESMAR24 fieldCount")
 	}
@@ -464,6 +464,7 @@ func (r *Resource24) requiredIfQtyElseNotAllowed() (message.Presence, string) {
 		return message.PresenceNotAllowed, "there is no quantity for the resource"
 	}
 }
+
 func (r *Resource24) notAllowedWithoutQty() (message.Presence, string) {
 	if r.Qty == "" {
 		return message.PresenceNotAllowed, "there is no quantity for the resource"
@@ -480,24 +481,28 @@ func (r *Resource24) IsHuman(s string) bool {
 	}
 	return false
 }
+
 func (r *Resource24) IsPIFO(s string) bool {
 	if cm := typeMap[r.Role]; cm != nil {
 		return cm.IsPIFO(s)
 	}
 	return false
 }
+
 func (r *Resource24) ToHuman(s string) string {
 	if cm := typeMap[r.Role]; cm != nil {
 		return cm.ToHuman(s)
 	}
 	return s
 }
+
 func (r *Resource24) ToPIFO(s string) string {
 	if cm := typeMap[r.Role]; cm != nil {
 		return cm.ToPIFO(s)
 	}
 	return s
 }
+
 func (r *Resource24) ListHuman() []string {
 	if cm := typeMap[r.Role]; cm != nil {
 		return cm.ListHuman()
@@ -511,12 +516,12 @@ func (r Resource24) convertTo33() (c Resource33) {
 	c.Position = r.Position
 	if tm, ok := typeMap[r.Role]; ok {
 		if idx := slices.Index(tm.(message.Choices), r.PreferredType); idx >= 0 {
-			c.PreferredType = resourceTypes[idx]
+			c.PreferredType = resourceTypes33[idx*2]
 		} else {
 			c.PreferredType = r.PreferredType
 		}
 		if idx := slices.Index(tm.(message.Choices), r.MinimumType); idx >= 0 {
-			c.MinimumType = resourceTypes[idx]
+			c.MinimumType = resourceTypes33[idx*2]
 		} else {
 			c.MinimumType = r.MinimumType
 		}

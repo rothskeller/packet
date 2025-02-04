@@ -71,11 +71,11 @@ type Resource21 struct {
 
 func make21() *RACESMAR21 {
 	const fieldCount = 63
-	var f = RACESMAR21{BaseMessage: message.BaseMessage{Type: &Type21}}
-	f.BaseMessage.FSubject = &f.AgencyName
-	f.BaseMessage.FBody = &f.Assignment
+	f := RACESMAR21{BaseMessage: message.BaseMessage{Type: &Type21}}
+	f.FSubject = &f.AgencyName
+	f.FBody = &f.Assignment
 	f.Fields = make([]*message.Field, 0, fieldCount)
-	f.BaseForm.AddHeaderFields(&f.BaseMessage, nil)
+	f.AddHeaderFields(&f.BaseMessage, nil)
 	f.Fields = append(f.Fields,
 		message.NewTextField(&message.Field{
 			Label:    "Agency Name",
@@ -206,7 +206,7 @@ func make21() *RACESMAR21 {
 			Label: "Approved Date/Time",
 		}, &f.ApprovedByDate, &f.ApprovedByTime),
 	)
-	f.BaseForm.AddFooterFields(&f.BaseMessage, nil)
+	f.AddFooterFields(&f.BaseMessage, nil)
 	if len(f.Fields) > fieldCount {
 		panic("update RACESMAR21 fieldCount")
 	}
@@ -342,7 +342,6 @@ func (r Resource21) convertTo24() (c Resource24) {
 func (r Resource21) convertTo33() (c Resource33) {
 	c.Qty = r.Qty
 	c.Position = r.RolePos
-	c.RolePos = r.RolePos
 	c.PreferredType = r.PreferredType
 	c.MinimumType = r.MinimumType
 	return c

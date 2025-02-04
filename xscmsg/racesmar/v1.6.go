@@ -60,11 +60,11 @@ type RACESMAR16 struct {
 
 func make16() *RACESMAR16 {
 	const fieldCount = 47
-	var f = RACESMAR16{BaseMessage: message.BaseMessage{Type: &Type16}}
-	f.BaseMessage.FSubject = &f.AgencyName
-	f.BaseMessage.FBody = &f.Assignment
+	f := RACESMAR16{BaseMessage: message.BaseMessage{Type: &Type16}}
+	f.FSubject = &f.AgencyName
+	f.FBody = &f.Assignment
 	f.Fields = make([]*message.Field, 0, fieldCount)
-	f.BaseForm.AddHeaderFields(&f.BaseMessage, nil)
+	f.AddHeaderFields(&f.BaseMessage, nil)
 	f.Fields = append(f.Fields,
 		message.NewTextField(&message.Field{
 			Label:    "Agency Name",
@@ -214,7 +214,7 @@ func make16() *RACESMAR16 {
 			Label: "Approved Date/Time",
 		}, &f.ApprovedByDate, &f.ApprovedByTime),
 	)
-	f.BaseForm.AddFooterFields(&f.BaseMessage, nil)
+	f.AddFooterFields(&f.BaseMessage, nil)
 	if len(f.Fields) > fieldCount {
 		panic("update RACESMAR16 fieldCount")
 	}
@@ -285,7 +285,6 @@ func (f *RACESMAR16) convertTo33() (c *RACESMAR33) {
 	c.Assignment = f.Assignment
 	c.Resources[0].Qty = f.ResourceQty
 	c.Resources[0].Position = f.ResourceRolePos
-	c.Resources[0].RolePos = f.ResourceRolePos
 	c.Resources[0].PreferredType = f.ResourcePreferredType
 	c.Resources[0].MinimumType = f.ResourceMinimumType
 	c.RequestedArrivalDate = f.RequestedArrivalDates

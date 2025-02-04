@@ -74,11 +74,11 @@ type Resource23 struct {
 
 func make23() *RACESMAR23 {
 	const fieldCount = 73
-	var f = RACESMAR23{BaseMessage: message.BaseMessage{Type: &Type23}}
-	f.BaseMessage.FSubject = &f.AgencyName
-	f.BaseMessage.FBody = &f.Assignment
+	f := RACESMAR23{BaseMessage: message.BaseMessage{Type: &Type23}}
+	f.FSubject = &f.AgencyName
+	f.FBody = &f.Assignment
 	f.Fields = make([]*message.Field, 0, fieldCount)
-	f.BaseForm.AddHeaderFields(&f.BaseMessage, nil)
+	f.AddHeaderFields(&f.BaseMessage, nil)
 	f.Fields = append(f.Fields,
 		message.NewTextField(&message.Field{
 			Label:    "Agency Name",
@@ -209,7 +209,7 @@ func make23() *RACESMAR23 {
 			Label: "Approved Date/Time",
 		}, &f.ApprovedByDate, &f.ApprovedByTime),
 	)
-	f.BaseForm.AddFooterFields(&f.BaseMessage, nil)
+	f.AddFooterFields(&f.BaseMessage, nil)
 	if len(f.Fields) > fieldCount {
 		panic("update RACESMAR23 fieldCount")
 	}
@@ -352,6 +352,7 @@ func (r *Resource23) Fields(index int) []*message.Field {
 		}),
 	}
 }
+
 func (r *Resource23) requiredIfQtyElseNotAllowed() (message.Presence, string) {
 	if r.Qty != "" {
 		return message.PresenceRequired, "there is a quantity for the resource"
@@ -359,6 +360,7 @@ func (r *Resource23) requiredIfQtyElseNotAllowed() (message.Presence, string) {
 		return message.PresenceNotAllowed, "there is no quantity for the resource"
 	}
 }
+
 func (r *Resource23) notAllowedWithoutQty() (message.Presence, string) {
 	if r.Qty == "" {
 		return message.PresenceNotAllowed, "there is no quantity for the resource"
@@ -375,24 +377,28 @@ func (r *Resource23) IsHuman(s string) bool {
 	}
 	return false
 }
+
 func (r *Resource23) IsPIFO(s string) bool {
 	if cm := typeMap[r.Role]; cm != nil {
 		return cm.IsPIFO(s)
 	}
 	return false
 }
+
 func (r *Resource23) ToHuman(s string) string {
 	if cm := typeMap[r.Role]; cm != nil {
 		return cm.ToHuman(s)
 	}
 	return s
 }
+
 func (r *Resource23) ToPIFO(s string) string {
 	if cm := typeMap[r.Role]; cm != nil {
 		return cm.ToPIFO(s)
 	}
 	return s
 }
+
 func (r *Resource23) ListHuman() []string {
 	if cm := typeMap[r.Role]; cm != nil {
 		return cm.ListHuman()
@@ -404,21 +410,9 @@ func (r Resource23) convertTo24() (c Resource24) {
 	c.Qty = r.Qty
 	c.Role = r.Role
 	c.Position = r.Position
-	if tm, ok := typeMap[r.Role]; ok {
-		if idx := slices.Index(tm.(message.Choices), r.PreferredType); idx >= 0 {
-			c.PreferredType = resourceTypes[idx]
-		} else {
-			c.PreferredType = r.PreferredType
-		}
-		if idx := slices.Index(tm.(message.Choices), r.MinimumType); idx >= 0 {
-			c.MinimumType = resourceTypes[idx]
-		} else {
-			c.MinimumType = r.MinimumType
-		}
-	} else {
-		c.PreferredType = r.PreferredType
-		c.MinimumType = r.MinimumType
-	}
+	c.RolePos = r.RolePos
+	c.PreferredType = r.PreferredType
+	c.MinimumType = r.MinimumType
 	return c
 }
 
@@ -428,12 +422,12 @@ func (r Resource23) convertTo33() (c Resource33) {
 	c.Position = r.Position
 	if tm, ok := typeMap[r.Role]; ok {
 		if idx := slices.Index(tm.(message.Choices), r.PreferredType); idx >= 0 {
-			c.PreferredType = resourceTypes[idx]
+			c.PreferredType = resourceTypes33[idx*2]
 		} else {
 			c.PreferredType = r.PreferredType
 		}
 		if idx := slices.Index(tm.(message.Choices), r.MinimumType); idx >= 0 {
-			c.MinimumType = resourceTypes[idx]
+			c.MinimumType = resourceTypes33[idx*2]
 		} else {
 			c.MinimumType = r.MinimumType
 		}

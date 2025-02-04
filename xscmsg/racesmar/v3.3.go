@@ -107,14 +107,13 @@ type Resource33 struct {
 	Qty           string
 	Role          string
 	Position      string
-	RolePos       string
 	Together      string
 	PreferredType string
 	MinimumType   string
 }
 
 func create33() message.Message {
-	var f = make33()
+	f := make33()
 	f.MessageDate = time.Now().Format("01/02/2006")
 	f.Handling = "ROUTINE"
 	f.ToLocation = "County EOC"
@@ -123,11 +122,11 @@ func create33() message.Message {
 
 func make33() *RACESMAR33 {
 	const fieldCount = 85
-	var f = RACESMAR33{BaseMessage: message.BaseMessage{Type: &Type33}}
-	f.BaseMessage.FSubject = &f.AgencyName
-	f.BaseMessage.FBody = &f.Assignment
+	f := RACESMAR33{BaseMessage: message.BaseMessage{Type: &Type33}}
+	f.FSubject = &f.AgencyName
+	f.FBody = &f.Assignment
 	f.Fields = make([]*message.Field, 0, fieldCount)
-	f.BaseForm.AddHeaderFields(&f.BaseMessage, &basePDFRenderers33)
+	f.AddHeaderFields(&f.BaseMessage, &basePDFRenderers33)
 	f.Fields = append(f.Fields,
 		message.NewTextField(&message.Field{
 			Label:       "Agency Name",
@@ -356,7 +355,7 @@ func make33() *RACESMAR33 {
 			EditHelp: `This is the date and time when the mutual aid request was approved by the official listed above, in MM/DD/YYYY HH:MM format (24-hour clock).  It is required.`,
 		}, &f.ApprovedByDate, &f.ApprovedByTime),
 	)
-	f.BaseForm.AddFooterFields(&f.BaseMessage, &basePDFRenderers33)
+	f.AddFooterFields(&f.BaseMessage, &basePDFRenderers33)
 	if len(f.Fields) > fieldCount {
 		panic("update RACESMAR fieldCount")
 	}
@@ -388,7 +387,7 @@ func (f *RACESMAR33) Compare(actual message.Message) (int, int, []*message.Compa
 	return f.BaseMessage.Compare(actual)
 }
 
-var resourceTypes = message.Choices{"Type I", "Type II", "Type III", "Type IV", "Type V"}
+var resourceTypes33 = message.ChoicePairs{"1", "Type I", "2", "Type II", "3", "Type III", "4", "Type IV", "5", "Type V"}
 
 func (r *Resource33) Fields(index int) []*message.Field {
 	var qtyPresence, rolePresence, posPresence, togetherPresence, typePresence func() (message.Presence, string)
@@ -417,15 +416,12 @@ func (r *Resource33) Fields(index int) []*message.Field {
 			Label:       fmt.Sprintf("Resource %d Role", index),
 			Value:       &r.Role,
 			Presence:    rolePresence,
-			PIFOTag:     fmt.Sprintf("18.%de.", index),
+			PIFOTag:     fmt.Sprintf("18.%db.", index),
 			Choices:     message.Choices{"Field Communicator", "Net Control Operator", "Packet Operator", "Shadow Communicator"},
 			PDFRenderer: &message.PDFTextRenderer{X: 163, Y: 326.5 + 19.3*float64(index), R: 268, H: 17, Style: message.PDFTextStyle{VAlign: "baseline"}},
 			EditHelp:    `This is the role of the people requested on this row.  It is required when there is a quantity on the row.`,
 			EditApply: func(f *message.Field, s string) {
 				*f.Value = f.Choices.ToPIFO(strings.TrimSpace(s))
-				if r.Position != "" {
-					r.RolePos = message.SmartJoin(r.Role, "/ "+r.Position, " ")
-				}
 			},
 		}),
 		message.NewTextField(&message.Field{
@@ -438,9 +434,6 @@ func (r *Resource33) Fields(index int) []*message.Field {
 			EditHelp:    `This is the position to be held by the people requested on this row.`,
 			EditApply: func(_ *message.Field, s string) {
 				r.Position = strings.TrimSpace(s)
-				if r.Position != "" {
-					r.RolePos = message.SmartJoin(r.Role, "/ "+r.Position, " ")
-				}
 			},
 		}),
 		message.NewRestrictedField(&message.Field{
@@ -454,16 +447,11 @@ func (r *Resource33) Fields(index int) []*message.Field {
 			}},
 			EditHelp: `If this box is checked, this position should be filled only if the other positions with this box checked can also be filled.`,
 		}),
-		message.NewCalculatedField(&message.Field{
-			Label:   fmt.Sprintf("Resource %d Role/Position", index),
-			Value:   &r.RolePos,
-			PIFOTag: fmt.Sprintf("18.%db.", index),
-		}),
 		message.NewRestrictedField(&message.Field{
 			Label:       fmt.Sprintf("Resource %d Preferred Type", index),
 			Value:       &r.PreferredType,
 			Presence:    typePresence,
-			Choices:     resourceTypes,
+			Choices:     resourceTypes33,
 			PIFOTag:     fmt.Sprintf("18.%dc.", index),
 			PDFRenderer: &message.PDFTextRenderer{X: 424, Y: 326.5 + 19.3*float64(index), R: 497, H: 17, Style: message.PDFTextStyle{VAlign: "baseline"}},
 			EditHelp:    `This is the preferred resource type (credential) for the people requested on this row.  It is required when there is a quantity on the row.`,
@@ -472,13 +460,14 @@ func (r *Resource33) Fields(index int) []*message.Field {
 			Label:       fmt.Sprintf("Resource %d Minimum Type", index),
 			Value:       &r.MinimumType,
 			Presence:    typePresence,
-			Choices:     resourceTypes,
+			Choices:     resourceTypes33,
 			PIFOTag:     fmt.Sprintf("18.%dd.", index),
 			PDFRenderer: &message.PDFTextRenderer{X: 501, Y: 326.5 + 19.3*float64(index), R: 572, H: 17, Style: message.PDFTextStyle{VAlign: "baseline"}},
 			EditHelp:    `This is the minimum resource type (credential) for the people requested on this row.  It is required when there is a quantity on the row.`,
 		}),
 	}
 }
+
 func (r *Resource33) requiredIfQtyElseNotAllowed() (message.Presence, string) {
 	if r.Qty != "" {
 		return message.PresenceRequired, "there is a quantity for the resource"
@@ -486,6 +475,7 @@ func (r *Resource33) requiredIfQtyElseNotAllowed() (message.Presence, string) {
 		return message.PresenceNotAllowed, "there is no quantity for the resource"
 	}
 }
+
 func (r *Resource33) notAllowedWithoutQty() (message.Presence, string) {
 	if r.Qty == "" {
 		return message.PresenceNotAllowed, "there is no quantity for the resource"
