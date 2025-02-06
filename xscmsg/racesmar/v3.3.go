@@ -36,10 +36,10 @@ var Type33 = message.Type{
 }
 
 func init() {
-	// Register 2.4 first so that it's the default for creation if no
+	// Register 3.3 first so that it's the default for creation if no
 	// version number is given.
-	message.Register(&Type24, decode24, create24)
 	message.Register(&Type33, decode33, create33)
+	message.Register(&Type24, decode24, create24)
 }
 
 var basePDFRenderers33 = baseform.BaseFormPDF{
