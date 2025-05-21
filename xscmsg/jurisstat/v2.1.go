@@ -90,10 +90,10 @@ type JurisStat21 struct {
 func make21() (f *JurisStat21) {
 	const fieldCount = 79
 	f = &JurisStat21{BaseMessage: message.BaseMessage{Type: &Type21}}
-	f.BaseMessage.FSubject = &f.Jurisdiction
-	f.BaseMessage.FBody = &f.CommunicationsComments
+	f.FSubject = &f.Jurisdiction
+	f.FBody = &f.CommunicationsComments
 	f.Fields = make([]*message.Field, 0, fieldCount)
-	f.BaseForm.AddHeaderFields(&f.BaseMessage, nil)
+	f.AddHeaderFields(&f.BaseMessage, nil)
 	f.Fields = append(f.Fields,
 		message.NewRestrictedField(&message.Field{
 			Label:    "Report Type",
@@ -411,7 +411,7 @@ func make21() (f *JurisStat21) {
 			PIFOTag: "56.1.",
 		}),
 	)
-	f.BaseForm.AddFooterFields(&f.BaseMessage, nil)
+	f.AddFooterFields(&f.BaseMessage, nil)
 	if len(f.Fields) > fieldCount {
 		panic("update JurisStat21 fieldCount")
 	}
@@ -429,7 +429,7 @@ func decode21(_ *envelope.Envelope, _ string, form *message.PIFOForm, _ int) mes
 	if form == nil || form.HTMLIdent != Type21.HTML || form.FormVersion != Type21.Version {
 		return nil
 	}
-	var df = make21()
+	df := make21()
 	message.DecodeForm(form, df)
 	return df
 }

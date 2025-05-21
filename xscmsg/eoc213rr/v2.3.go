@@ -63,10 +63,10 @@ type EOC213RR23 struct {
 func make23() (f *EOC213RR23) {
 	const fieldCount = 49
 	f = &EOC213RR23{BaseMessage: message.BaseMessage{Type: &Type23}}
-	f.BaseMessage.FSubject = &f.IncidentName
-	f.BaseMessage.FBody = &f.Instructions
+	f.FSubject = &f.IncidentName
+	f.FBody = &f.Instructions
 	f.Fields = make([]*message.Field, 0, fieldCount)
-	f.BaseForm.AddHeaderFields(&f.BaseMessage, nil)
+	f.AddHeaderFields(&f.BaseMessage, nil)
 	f.Fields = append(f.Fields,
 		message.NewTextField(&message.Field{
 			Label:    "Incident Name",
@@ -267,7 +267,7 @@ func make23() (f *EOC213RR23) {
 			PIFOTag: "37.",
 		}),
 	)
-	f.BaseForm.AddFooterFields(&f.BaseMessage, nil)
+	f.AddFooterFields(&f.BaseMessage, nil)
 	if len(f.Fields) > fieldCount {
 		panic("update EOC213RR23 fieldCount")
 	}
@@ -278,7 +278,7 @@ func decode23(_ *envelope.Envelope, _ string, form *message.PIFOForm, _ int) mes
 	if form == nil || form.HTMLIdent != Type23.HTML || form.FormVersion != Type23.Version {
 		return nil
 	}
-	var df = make23()
+	df := make23()
 	message.DecodeForm(form, df)
 	return df
 }

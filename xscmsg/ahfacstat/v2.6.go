@@ -102,7 +102,7 @@ type ResourceCounts26 struct {
 }
 
 func create26() message.Message {
-	var f = make26()
+	f := make26()
 	f.MessageDate = time.Now().Format("01/02/2006")
 	f.Date = f.MessageDate
 	f.Handling = "ROUTINE"
@@ -112,15 +112,15 @@ func create26() message.Message {
 func make26() (f *AHFacStat26) {
 	const fieldCount = 130
 	f = &AHFacStat26{BaseMessage: message.BaseMessage{Type: &Type26}}
-	var pdf = baseform.RoutingSlipPDFRenderers
+	pdf := baseform.RoutingSlipPDFRenderers
 	pdf.OriginMsgID = message.PDFMultiRenderer{
 		pdf.OriginMsgID,
 		&message.PDFTextRenderer{Page: 2, X: 492, Y: 36, W: 100, H: 17, Style: message.PDFTextStyle{HAlign: "right"}},
 	}
-	f.BaseMessage.FSubject = &f.FacilityName
-	f.BaseMessage.FBody = &f.Summary
+	f.FSubject = &f.FacilityName
+	f.FBody = &f.Summary
 	f.Fields = make([]*message.Field, 0, fieldCount)
-	f.BaseForm.AddHeaderFields(&f.BaseMessage, &pdf)
+	f.AddHeaderFields(&f.BaseMessage, &pdf)
 	f.Fields = append(f.Fields,
 		message.NewStaticPDFContentField(&message.Field{
 			PDFRenderer: &message.PDFStaticTextRenderer{
@@ -450,7 +450,7 @@ func make26() (f *AHFacStat26) {
 			EditSkip:    message.EditSkipAlways,
 		}),
 	)
-	var firstSkilledNursing = f.Fields[len(f.Fields)-1]
+	firstSkilledNursing := f.Fields[len(f.Fields)-1]
 	f.Fields = append(f.Fields,
 		message.NewCardinalNumberField(&message.Field{
 			Label:   "Skilled Nursing Beds: Staffed F",
@@ -528,7 +528,7 @@ func make26() (f *AHFacStat26) {
 			EditSkip:    message.EditSkipAlways,
 		}),
 	)
-	var firstAssistedLiving = f.Fields[len(f.Fields)-1]
+	firstAssistedLiving := f.Fields[len(f.Fields)-1]
 	f.Fields = append(f.Fields,
 		message.NewCardinalNumberField(&message.Field{
 			Label:   "Assisted Living Beds: Staffed F",
@@ -606,7 +606,7 @@ func make26() (f *AHFacStat26) {
 			EditSkip:    message.EditSkipAlways,
 		}),
 	)
-	var firstSubAcute = f.Fields[len(f.Fields)-1]
+	firstSubAcute := f.Fields[len(f.Fields)-1]
 	f.Fields = append(f.Fields,
 		message.NewCardinalNumberField(&message.Field{
 			Label:   "Sub-Acute Beds: Staffed F",
@@ -684,7 +684,7 @@ func make26() (f *AHFacStat26) {
 			EditSkip:    message.EditSkipAlways,
 		}),
 	)
-	var firstAlzheimers = f.Fields[len(f.Fields)-1]
+	firstAlzheimers := f.Fields[len(f.Fields)-1]
 	f.Fields = append(f.Fields,
 		message.NewCardinalNumberField(&message.Field{
 			Label:   "Alzheimers Beds: Staffed F",
@@ -762,7 +762,7 @@ func make26() (f *AHFacStat26) {
 			EditSkip:    message.EditSkipAlways,
 		}),
 	)
-	var firstPedSubAcute = f.Fields[len(f.Fields)-1]
+	firstPedSubAcute := f.Fields[len(f.Fields)-1]
 	f.Fields = append(f.Fields,
 		message.NewCardinalNumberField(&message.Field{
 			Label:   "Ped Sub-Acute Beds: Staffed F",
@@ -840,7 +840,7 @@ func make26() (f *AHFacStat26) {
 			EditSkip:    message.EditSkipAlways,
 		}),
 	)
-	var firstPsychiatric = f.Fields[len(f.Fields)-1]
+	firstPsychiatric := f.Fields[len(f.Fields)-1]
 	f.Fields = append(f.Fields,
 		message.NewCardinalNumberField(&message.Field{
 			Label:   "Psychiatric Beds: Staffed F",
@@ -930,7 +930,7 @@ func make26() (f *AHFacStat26) {
 			EditSkip:    message.EditSkipAlways,
 		}),
 	)
-	var firstOtherCare = f.Fields[len(f.Fields)-1]
+	firstOtherCare := f.Fields[len(f.Fields)-1]
 	f.Fields = append(f.Fields,
 		message.NewCardinalNumberField(&message.Field{
 			Label:   "Other Care Beds: Staffed F",
@@ -1011,7 +1011,7 @@ func make26() (f *AHFacStat26) {
 			EditSkip:    message.EditSkipAlways,
 		}),
 	)
-	var firstDialysis = f.Fields[len(f.Fields)-1]
+	firstDialysis := f.Fields[len(f.Fields)-1]
 	f.Fields = append(f.Fields,
 		message.NewCardinalNumberField(&message.Field{
 			Label:   "Dialysis: Vacant Chairs",
@@ -1089,7 +1089,7 @@ func make26() (f *AHFacStat26) {
 			EditSkip:    message.EditSkipAlways,
 		}),
 	)
-	var firstSurgical = f.Fields[len(f.Fields)-1]
+	firstSurgical := f.Fields[len(f.Fields)-1]
 	f.Fields = append(f.Fields,
 		message.NewCardinalNumberField(&message.Field{
 			Label:   "Surgical: Vacant Chairs",
@@ -1167,7 +1167,7 @@ func make26() (f *AHFacStat26) {
 			EditSkip:    message.EditSkipAlways,
 		}),
 	)
-	var firstClinic = f.Fields[len(f.Fields)-1]
+	firstClinic := f.Fields[len(f.Fields)-1]
 	f.Fields = append(f.Fields,
 		message.NewCardinalNumberField(&message.Field{
 			Label:   "Clinic: Vacant Chairs",
@@ -1245,7 +1245,7 @@ func make26() (f *AHFacStat26) {
 			EditSkip:    message.EditSkipAlways,
 		}),
 	)
-	var firstHomeHealth = f.Fields[len(f.Fields)-1]
+	firstHomeHealth := f.Fields[len(f.Fields)-1]
 	f.Fields = append(f.Fields,
 		message.NewCardinalNumberField(&message.Field{
 			Label:   "Home Health: Vacant Chairs",
@@ -1323,7 +1323,7 @@ func make26() (f *AHFacStat26) {
 			EditSkip:    message.EditSkipAlways,
 		}),
 	)
-	var firstAdultDayCtr = f.Fields[len(f.Fields)-1]
+	firstAdultDayCtr := f.Fields[len(f.Fields)-1]
 	f.Fields = append(f.Fields,
 		message.NewCardinalNumberField(&message.Field{
 			Label:   "Adult Day Ctr: Vacant Chairs",
@@ -1392,7 +1392,7 @@ func make26() (f *AHFacStat26) {
 			},
 		}),
 	)
-	f.BaseForm.AddFooterFields(&f.BaseMessage, &pdf)
+	f.AddFooterFields(&f.BaseMessage, &pdf)
 	if len(f.Fields) > fieldCount {
 		panic("update AHFacStat26 fieldCount")
 	}
@@ -1410,7 +1410,7 @@ func decode26(_ *envelope.Envelope, _ string, form *message.PIFOForm, _ int) mes
 	if form == nil || form.HTMLIdent != Type26.HTML || form.FormVersion != Type26.Version {
 		return nil
 	}
-	var df = make26()
+	df := make26()
 	message.DecodeForm(form, df)
 	return df
 }
@@ -1431,6 +1431,7 @@ func bedsTableValue26(beds *BedCounts26) string {
 	}
 	return fmt.Sprintf("%3s %3s %3s %3s %3s", beds.StaffedM, beds.StaffedF, beds.VacantM, beds.VacantF, beds.Surge)
 }
+
 func bedsValue26(beds *BedCounts26) string {
 	if beds.StaffedM == "" && beds.StaffedF == "" && beds.VacantM == "" && beds.VacantF == "" && beds.Surge == "" {
 		return ""
@@ -1440,6 +1441,7 @@ func bedsValue26(beds *BedCounts26) string {
 		func(s string) bool { return s == "" },
 	), " ")
 }
+
 func bedsApply26(beds *BedCounts26, value string) {
 	var f message.Field
 	values := strings.Fields(value)
@@ -1474,6 +1476,7 @@ func bedsApply26(beds *BedCounts26, value string) {
 		beds.Surge = ""
 	}
 }
+
 func bedsValid26(field *message.Field, beds *BedCounts26) string {
 	if beds.StaffedM == "" && beds.StaffedF == "" && beds.VacantM == "" && beds.VacantF == "" && beds.Surge == "" {
 		return ""
@@ -1504,6 +1507,7 @@ func resourcesTableValue26(resources *ResourceCounts26) string {
 	}
 	return fmt.Sprintf("%3s %3s %3s %3s %3s", resources.Chairs, resources.VacantChairs, resources.FrontStaff, resources.SupportStaff, resources.Providers)
 }
+
 func resourcesValue26(resources *ResourceCounts26) string {
 	if resources.Chairs == "" && resources.VacantChairs == "" && resources.FrontStaff == "" && resources.SupportStaff == "" && resources.Providers == "" {
 		return ""
@@ -1513,6 +1517,7 @@ func resourcesValue26(resources *ResourceCounts26) string {
 		func(s string) bool { return s == "" },
 	), " ")
 }
+
 func resourcesApply26(resources *ResourceCounts26, value string) {
 	var f message.Field
 	values := strings.Fields(value)
@@ -1547,6 +1552,7 @@ func resourcesApply26(resources *ResourceCounts26, value string) {
 		resources.Providers = ""
 	}
 }
+
 func resourcesValid26(field *message.Field, resources *ResourceCounts26) string {
 	if resources.Chairs == "" && resources.VacantChairs == "" && resources.FrontStaff == "" && resources.SupportStaff == "" && resources.Providers == "" {
 		return ""
@@ -1569,4 +1575,12 @@ func resourcesValid26(field *message.Field, resources *ResourceCounts26) string 
 	return ""
 INVALID:
 	return fmt.Sprintf("The %q field does not contain a valid value.  It should contain five numbers separated by spaces.", field.Label)
+}
+
+func (f *AHFacStat26) Compare(actual message.Message) (int, int, []*message.CompareField) {
+	switch act := actual.(type) {
+	case *AHFacStat24:
+		actual = act.convertTo26()
+	}
+	return f.BaseMessage.Compare(actual)
 }

@@ -121,7 +121,7 @@ type JurisStat22 struct {
 }
 
 func create22() message.Message {
-	var f = make22()
+	f := make22()
 	f.MessageDate = time.Now().Format("01/02/2006")
 	f.Handling = "IMMEDIATE"
 	f.ToLocation = "County EOC"
@@ -131,10 +131,10 @@ func create22() message.Message {
 func make22() (f *JurisStat22) {
 	const fieldCount = 80
 	f = &JurisStat22{BaseMessage: message.BaseMessage{Type: &Type22}}
-	f.BaseMessage.FSubject = &f.Jurisdiction
-	f.BaseMessage.FBody = &f.CommunicationsComments
+	f.FSubject = &f.Jurisdiction
+	f.FBody = &f.CommunicationsComments
 	f.Fields = make([]*message.Field, 0, fieldCount)
-	f.BaseForm.AddHeaderFields(&f.BaseMessage, &basePDFRenderers)
+	f.AddHeaderFields(&f.BaseMessage, &basePDFRenderers)
 	f.Fields = append(f.Fields,
 		message.NewRestrictedField(&message.Field{
 			Label:    "Report Type",
@@ -748,7 +748,7 @@ func make22() (f *JurisStat22) {
 			EditHelp:    `These are comments on the current situation status with respect to animal issues.`,
 		}),
 	)
-	f.BaseForm.AddFooterFields(&f.BaseMessage, &basePDFRenderers)
+	f.AddFooterFields(&f.BaseMessage, &basePDFRenderers)
 	if len(f.Fields) > fieldCount {
 		panic("update JurisStat22 fieldCount")
 	}
@@ -766,7 +766,15 @@ func decode22(_ *envelope.Envelope, _ string, form *message.PIFOForm, _ int) mes
 	if form == nil || form.HTMLIdent != Type22.HTML || form.FormVersion != Type22.Version {
 		return nil
 	}
-	var df = make22()
+	df := make22()
 	message.DecodeForm(form, df)
 	return df
+}
+
+func (f *JurisStat22) Compare(actual message.Message) (int, int, []*message.CompareField) {
+	switch act := actual.(type) {
+	case *JurisStat21:
+		actual = act.convertTo22()
+	}
+	return f.BaseMessage.Compare(actual)
 }

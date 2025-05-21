@@ -102,7 +102,7 @@ type SheltStat23 struct {
 }
 
 func create23() message.Message {
-	var f = make23()
+	f := make23()
 	f.MessageDate = time.Now().Format("01/02/2006")
 	f.Handling = "PRIORITY"
 	return f
@@ -111,10 +111,10 @@ func create23() message.Message {
 func make23() (f *SheltStat23) {
 	const fieldCount = 63
 	f = &SheltStat23{BaseMessage: message.BaseMessage{Type: &Type23}}
-	f.BaseMessage.FSubject = &f.ShelterName
-	f.BaseMessage.FBody = &f.Comments
+	f.FSubject = &f.ShelterName
+	f.FBody = &f.Comments
 	f.Fields = make([]*message.Field, 0, fieldCount)
-	f.BaseForm.AddHeaderFields(&f.BaseMessage, &basePDFRenderers)
+	f.AddHeaderFields(&f.BaseMessage, &basePDFRenderers)
 	f.Fields = append(f.Fields,
 		message.NewRestrictedField(&message.Field{
 			Label:    "Report Type",
@@ -563,7 +563,7 @@ func make23() (f *SheltStat23) {
 			EditHelp: `This indicates whether the shelter should be removed from the receiver's list of shelters.`,
 		}),
 	)
-	f.BaseForm.AddFooterFields(&f.BaseMessage, &basePDFRenderers)
+	f.AddFooterFields(&f.BaseMessage, &basePDFRenderers)
 	if len(f.Fields) > fieldCount {
 		panic("update SheltStat23 fieldCount")
 	}
@@ -581,7 +581,7 @@ func decode23(_ *envelope.Envelope, _ string, form *message.PIFOForm, _ int) mes
 	if form == nil || form.HTMLIdent != Type23.HTML || form.FormVersion != Type23.Version {
 		return nil
 	}
-	var df = make23()
+	df := make23()
 	message.DecodeForm(form, df)
 	return df
 }
@@ -597,4 +597,14 @@ func formatFreq(freq, tone string) string {
 	default: // case freq != "" && tone != "":
 		return freq + ", Tone: " + tone
 	}
+}
+
+func (f *SheltStat23) Compare(actual message.Message) (int, int, []*message.CompareField) {
+	switch act := actual.(type) {
+	case *SheltStat21:
+		actual = act.convertTo23()
+	case *SheltStat22:
+		actual = act.convertTo23()
+	}
+	return f.BaseMessage.Compare(actual)
 }

@@ -74,22 +74,22 @@ func (f *ICS213v21) SetOperator(opcall, opname string, received bool) {
 func make21() (f *ICS213v21) {
 	const fieldCount = 34
 	f = &ICS213v21{BaseMessage: message.BaseMessage{Type: &Type21}}
-	f.BaseMessage.FOriginMsgID = &f.OriginMsgID
-	f.BaseMessage.FDestinationMsgID = &f.DestinationMsgID
-	f.BaseMessage.FMessageDate = &f.Date
-	f.BaseMessage.FMessageTime = &f.Time
-	f.BaseMessage.FHandling = &f.Handling
-	f.BaseMessage.FToICSPosition = &f.ToICSPosition
-	f.BaseMessage.FToLocation = &f.ToLocation
-	f.BaseMessage.FFromICSPosition = &f.FromICSPosition
-	f.BaseMessage.FFromLocation = &f.FromLocation
-	f.BaseMessage.FSubject = &f.Subject
-	f.BaseMessage.FReference = &f.Reference
-	f.BaseMessage.FBody = &f.Message
-	f.BaseMessage.FOpCall = &f.OpCall
-	f.BaseMessage.FOpName = &f.OpName
-	f.BaseMessage.FOpDate = &f.OpDate
-	f.BaseMessage.FOpTime = &f.OpTime
+	f.FOriginMsgID = &f.OriginMsgID
+	f.FDestinationMsgID = &f.DestinationMsgID
+	f.FMessageDate = &f.Date
+	f.FMessageTime = &f.Time
+	f.FHandling = &f.Handling
+	f.FToICSPosition = &f.ToICSPosition
+	f.FToLocation = &f.ToLocation
+	f.FFromICSPosition = &f.FromICSPosition
+	f.FFromLocation = &f.FromLocation
+	f.FSubject = &f.Subject
+	f.FReference = &f.Reference
+	f.FBody = &f.Message
+	f.FOpCall = &f.OpCall
+	f.FOpName = &f.OpName
+	f.FOpDate = &f.OpDate
+	f.FOpTime = &f.OpTime
 	f.Fields = make([]*message.Field, 0, fieldCount)
 	f.Fields = append(f.Fields,
 		message.NewMessageNumberField(&message.Field{
@@ -327,7 +327,7 @@ func decode21(_ *envelope.Envelope, _ string, form *message.PIFOForm, _ int) mes
 	if form == nil || form.HTMLIdent != Type21.HTML || form.FormVersion != Type21.Version {
 		return nil
 	}
-	var df = make21()
+	df := make21()
 	message.DecodeForm(form, df)
 	// If we got an OriginMsgID, or we are the receiver, move myMsgID to
 	// DestinationMsgID.

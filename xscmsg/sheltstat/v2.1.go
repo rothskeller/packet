@@ -71,10 +71,10 @@ type SheltStat21 struct {
 func make21() (f *SheltStat21) {
 	const fieldCount = 61
 	f = &SheltStat21{BaseMessage: message.BaseMessage{Type: &Type21}}
-	f.BaseMessage.FSubject = &f.ShelterName
-	f.BaseMessage.FBody = &f.Comments
+	f.FSubject = &f.ShelterName
+	f.FBody = &f.Comments
 	f.Fields = make([]*message.Field, 0, fieldCount)
-	f.BaseForm.AddHeaderFields(&f.BaseMessage, nil)
+	f.AddHeaderFields(&f.BaseMessage, nil)
 	f.Fields = append(f.Fields,
 		message.NewRestrictedField(&message.Field{
 			Label:    "Report Type",
@@ -333,7 +333,7 @@ func make21() (f *SheltStat21) {
 			PIFOTag: "71.",
 		}),
 	)
-	f.BaseForm.AddFooterFields(&f.BaseMessage, nil)
+	f.AddFooterFields(&f.BaseMessage, nil)
 	if len(f.Fields) > fieldCount {
 		panic("update SheltStat21 fieldCount")
 	}
@@ -351,7 +351,7 @@ func decode21(_ *envelope.Envelope, _ string, form *message.PIFOForm, _ int) mes
 	if form == nil || form.HTMLIdent != Type21.HTML || form.FormVersion != Type21.Version {
 		return nil
 	}
-	var df = make21()
+	df := make21()
 	message.DecodeForm(form, df)
 	return df
 }

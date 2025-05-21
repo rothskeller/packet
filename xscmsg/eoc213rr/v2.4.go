@@ -63,7 +63,7 @@ type EOC213RR24 struct {
 }
 
 func create24() message.Message {
-	var f = make24()
+	f := make24()
 	f.MessageDate = time.Now().Format("01/02/2006")
 	f.ToICSPosition = "Planning Section"
 	f.ToLocation = "County EOC"
@@ -74,16 +74,16 @@ func create24() message.Message {
 func make24() (f *EOC213RR24) {
 	const fieldCount = 51
 	f = &EOC213RR24{BaseMessage: message.BaseMessage{Type: &Type24}}
-	f.BaseMessage.FSubject = &f.IncidentName
-	f.BaseMessage.FBody = &f.Instructions
+	f.FSubject = &f.IncidentName
+	f.FBody = &f.Instructions
 	f.Fields = make([]*message.Field, 0, fieldCount)
-	var pdf = baseform.RoutingSlipPDFRenderers
+	pdf := baseform.RoutingSlipPDFRenderers
 	pdf.OriginMsgID = message.PDFMultiRenderer{
 		pdf.OriginMsgID,
 		&message.PDFTextRenderer{Page: 2, X: 486, Y: 20, R: 586, H: 12, Style: message.PDFTextStyle{HAlign: "right"}},
 		&message.PDFTextRenderer{Page: 3, X: 486, Y: 20, R: 586, H: 12, Style: message.PDFTextStyle{HAlign: "right"}},
 	}
-	f.BaseForm.AddHeaderFields(&f.BaseMessage, &pdf)
+	f.AddHeaderFields(&f.BaseMessage, &pdf)
 	f.Fields = append(f.Fields,
 		message.NewStaticPDFContentField(&message.Field{
 			PDFRenderer: &message.PDFStaticTextRenderer{
@@ -378,7 +378,7 @@ func make24() (f *EOC213RR24) {
 			EditHelp:    `This is any special requirements or instructions for the resource request.`,
 		}),
 	)
-	f.BaseForm.AddFooterFields(&f.BaseMessage, &pdf)
+	f.AddFooterFields(&f.BaseMessage, &pdf)
 	if len(f.Fields) > fieldCount {
 		panic("update EOC213RR24 fieldCount")
 	}
@@ -389,7 +389,15 @@ func decode24(_ *envelope.Envelope, _ string, form *message.PIFOForm, _ int) mes
 	if form == nil || form.HTMLIdent != Type24.HTML || form.FormVersion != Type24.Version {
 		return nil
 	}
-	var df = make24()
+	df := make24()
 	message.DecodeForm(form, df)
 	return df
+}
+
+func (f *EOC213RR24) Compare(actual message.Message) (int, int, []*message.CompareField) {
+	switch act := actual.(type) {
+	case *EOC213RR23:
+		actual = act.convertTo24()
+	}
+	return f.BaseMessage.Compare(actual)
 }

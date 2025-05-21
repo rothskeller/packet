@@ -93,10 +93,10 @@ type ResourceCounts24 struct {
 func make24() (f *AHFacStat24) {
 	const fieldCount = 129
 	f = &AHFacStat24{BaseMessage: message.BaseMessage{Type: &Type24}}
-	f.BaseMessage.FSubject = &f.FacilityName
-	f.BaseMessage.FBody = &f.Summary
+	f.FSubject = &f.FacilityName
+	f.FBody = &f.Summary
 	f.Fields = make([]*message.Field, 0, fieldCount)
-	f.BaseForm.AddHeaderFields(&f.BaseMessage, nil)
+	f.AddHeaderFields(&f.BaseMessage, nil)
 	f.Fields = append(f.Fields,
 		message.NewRestrictedField(&message.Field{
 			Label:    "Report Type",
@@ -319,7 +319,7 @@ func make24() (f *AHFacStat24) {
 			TableValue: message.TableOmit,
 		}),
 	)
-	var firstSkilledNursing = f.Fields[len(f.Fields)-1]
+	firstSkilledNursing := f.Fields[len(f.Fields)-1]
 	f.Fields = append(f.Fields,
 		message.NewCardinalNumberField(&message.Field{
 			Label:   "Skilled Nursing Beds: Staffed F",
@@ -370,7 +370,7 @@ func make24() (f *AHFacStat24) {
 			TableValue: message.TableOmit,
 		}),
 	)
-	var firstAssistedLiving = f.Fields[len(f.Fields)-1]
+	firstAssistedLiving := f.Fields[len(f.Fields)-1]
 	f.Fields = append(f.Fields,
 		message.NewCardinalNumberField(&message.Field{
 			Label:   "Assisted Living Beds: Staffed F",
@@ -421,7 +421,7 @@ func make24() (f *AHFacStat24) {
 			TableValue: message.TableOmit,
 		}),
 	)
-	var firstSubAcute = f.Fields[len(f.Fields)-1]
+	firstSubAcute := f.Fields[len(f.Fields)-1]
 	f.Fields = append(f.Fields,
 		message.NewCardinalNumberField(&message.Field{
 			Label:   "Sub-Acute Beds: Staffed F",
@@ -472,7 +472,7 @@ func make24() (f *AHFacStat24) {
 			TableValue: message.TableOmit,
 		}),
 	)
-	var firstAlzheimers = f.Fields[len(f.Fields)-1]
+	firstAlzheimers := f.Fields[len(f.Fields)-1]
 	f.Fields = append(f.Fields,
 		message.NewCardinalNumberField(&message.Field{
 			Label:   "Alzheimers Beds: Staffed F",
@@ -523,7 +523,7 @@ func make24() (f *AHFacStat24) {
 			TableValue: message.TableOmit,
 		}),
 	)
-	var firstPedSubAcute = f.Fields[len(f.Fields)-1]
+	firstPedSubAcute := f.Fields[len(f.Fields)-1]
 	f.Fields = append(f.Fields,
 		message.NewCardinalNumberField(&message.Field{
 			Label:   "Ped Sub-Acute Beds: Staffed F",
@@ -574,7 +574,7 @@ func make24() (f *AHFacStat24) {
 			TableValue: message.TableOmit,
 		}),
 	)
-	var firstPsychiatric = f.Fields[len(f.Fields)-1]
+	firstPsychiatric := f.Fields[len(f.Fields)-1]
 	f.Fields = append(f.Fields,
 		message.NewCardinalNumberField(&message.Field{
 			Label:   "Psychiatric Beds: Staffed F",
@@ -630,7 +630,7 @@ func make24() (f *AHFacStat24) {
 			TableValue: message.TableOmit,
 		}),
 	)
-	var firstOtherCare = f.Fields[len(f.Fields)-1]
+	firstOtherCare := f.Fields[len(f.Fields)-1]
 	f.Fields = append(f.Fields,
 		message.NewCardinalNumberField(&message.Field{
 			Label:   "Other Care Beds: Staffed F",
@@ -681,7 +681,7 @@ func make24() (f *AHFacStat24) {
 			TableValue: message.TableOmit,
 		}),
 	)
-	var firstDialysis = f.Fields[len(f.Fields)-1]
+	firstDialysis := f.Fields[len(f.Fields)-1]
 	f.Fields = append(f.Fields,
 		message.NewCardinalNumberField(&message.Field{
 			Label:   "Dialysis: Vacant Chairs",
@@ -732,7 +732,7 @@ func make24() (f *AHFacStat24) {
 			TableValue: message.TableOmit,
 		}),
 	)
-	var firstSurgical = f.Fields[len(f.Fields)-1]
+	firstSurgical := f.Fields[len(f.Fields)-1]
 	f.Fields = append(f.Fields,
 		message.NewCardinalNumberField(&message.Field{
 			Label:   "Surgical: Vacant Chairs",
@@ -783,7 +783,7 @@ func make24() (f *AHFacStat24) {
 			TableValue: message.TableOmit,
 		}),
 	)
-	var firstClinic = f.Fields[len(f.Fields)-1]
+	firstClinic := f.Fields[len(f.Fields)-1]
 	f.Fields = append(f.Fields,
 		message.NewCardinalNumberField(&message.Field{
 			Label:   "Clinic: Vacant Chairs",
@@ -834,7 +834,7 @@ func make24() (f *AHFacStat24) {
 			TableValue: message.TableOmit,
 		}),
 	)
-	var firstHomeHealth = f.Fields[len(f.Fields)-1]
+	firstHomeHealth := f.Fields[len(f.Fields)-1]
 	f.Fields = append(f.Fields,
 		message.NewCardinalNumberField(&message.Field{
 			Label:   "Home Health: Vacant Chairs",
@@ -885,7 +885,7 @@ func make24() (f *AHFacStat24) {
 			TableValue: message.TableOmit,
 		}),
 	)
-	var firstAdultDayCtr = f.Fields[len(f.Fields)-1]
+	firstAdultDayCtr := f.Fields[len(f.Fields)-1]
 	f.Fields = append(f.Fields,
 		message.NewCardinalNumberField(&message.Field{
 			Label:   "Adult Day Ctr: Vacant Chairs",
@@ -930,7 +930,7 @@ func make24() (f *AHFacStat24) {
 			},
 		}),
 	)
-	f.BaseForm.AddFooterFields(&f.BaseMessage, nil)
+	f.AddFooterFields(&f.BaseMessage, nil)
 	if len(f.Fields) > fieldCount {
 		panic("update AHFacStat24 fieldCount")
 	}
@@ -948,7 +948,7 @@ func decode24(_ *envelope.Envelope, _ string, form *message.PIFOForm, _ int) mes
 	if form == nil || form.HTMLIdent != Type24.HTML || form.FormVersion != Type24.Version {
 		return nil
 	}
-	var df = make24()
+	df := make24()
 	message.DecodeForm(form, df)
 	return df
 }

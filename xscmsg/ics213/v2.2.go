@@ -61,7 +61,7 @@ type ICS213v22 struct {
 }
 
 func create22() message.Message {
-	var f = make22()
+	f := make22()
 	f.Date = time.Now().Format("01/02/2006")
 	f.ReceivedSent = "sender"
 	f.TxMethod = "Other"
@@ -82,22 +82,22 @@ func (f *ICS213v22) SetOperator(opcall, opname string, received bool) {
 func make22() (f *ICS213v22) {
 	const fieldCount = 31
 	f = &ICS213v22{BaseMessage: message.BaseMessage{Type: &Type22}}
-	f.BaseMessage.FOriginMsgID = &f.OriginMsgID
-	f.BaseMessage.FDestinationMsgID = &f.DestinationMsgID
-	f.BaseMessage.FMessageDate = &f.Date
-	f.BaseMessage.FMessageTime = &f.Time
-	f.BaseMessage.FHandling = &f.Handling
-	f.BaseMessage.FToICSPosition = &f.ToICSPosition
-	f.BaseMessage.FToLocation = &f.ToLocation
-	f.BaseMessage.FFromICSPosition = &f.FromICSPosition
-	f.BaseMessage.FFromLocation = &f.FromLocation
-	f.BaseMessage.FSubject = &f.Subject
-	f.BaseMessage.FReference = &f.Reference
-	f.BaseMessage.FBody = &f.Message
-	f.BaseMessage.FOpCall = &f.OpCall
-	f.BaseMessage.FOpName = &f.OpName
-	f.BaseMessage.FOpDate = &f.OpDate
-	f.BaseMessage.FOpTime = &f.OpTime
+	f.FOriginMsgID = &f.OriginMsgID
+	f.FDestinationMsgID = &f.DestinationMsgID
+	f.FMessageDate = &f.Date
+	f.FMessageTime = &f.Time
+	f.FHandling = &f.Handling
+	f.FToICSPosition = &f.ToICSPosition
+	f.FToLocation = &f.ToLocation
+	f.FFromICSPosition = &f.FromICSPosition
+	f.FFromLocation = &f.FromLocation
+	f.FSubject = &f.Subject
+	f.FReference = &f.Reference
+	f.FBody = &f.Message
+	f.FOpCall = &f.OpCall
+	f.FOpName = &f.OpName
+	f.FOpDate = &f.OpDate
+	f.FOpTime = &f.OpTime
 	f.Fields = make([]*message.Field, 0, fieldCount)
 	f.Fields = append(f.Fields,
 		message.NewMessageNumberField(&message.Field{
@@ -417,7 +417,15 @@ func decode22(_ *envelope.Envelope, _ string, form *message.PIFOForm, _ int) mes
 	if form == nil || form.HTMLIdent != Type22.HTML || form.FormVersion != Type22.Version {
 		return nil
 	}
-	var df = make22()
+	df := make22()
 	message.DecodeForm(form, df)
 	return df
+}
+
+func (f *ICS213v22) Compare(actual message.Message) (int, int, []*message.CompareField) {
+	switch act := actual.(type) {
+	case *ICS213v21:
+		actual = act.convertTo22()
+	}
+	return f.BaseMessage.Compare(actual)
 }
