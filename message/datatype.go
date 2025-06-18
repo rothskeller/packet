@@ -24,7 +24,7 @@ var (
 	PIFOFrequencyRE       = regexp.MustCompile(`^[0-9]+(?:\.[0-9]+)?$`)
 	PIFOFrequencyOffsetRE = regexp.MustCompile(`^(?:[-+]?[0-9]*\.[0-9]+|[-+]?[0-9]+|[-+])$`)
 	messageNumberLooseRE  = regexp.MustCompile(`^([A-Z0-9]{3})-(\d+)([A-Z]?)$`)
-	messageNumberRE       = regexp.MustCompile(`^(?:[0-9][A-Z]{2}|[A-Z][A-Z0-9]{2})-(?:[1-9][0-9]{3,}|[0-9]{3})[A-Z]?$`)
+	messageNumberRE       = regexp.MustCompile(`^(?:[0-9][A-Z]{2}|[A-Z][A-Z0-9]{2})-(?:[1-9][0-9]{3,}|[0-9]{3})[A-Z]$`)
 	PIFOPhoneNumberRE     = regexp.MustCompile(`^[a-zA-Z ]*(?:[+][0-9]+ )?[0-9][0-9 -]*(?:[xX][0-9]+)?$`)
 	PIFORealNumberRE      = regexp.MustCompile(`^(?:[-+]?[0-9]*\.[0-9]+|[-+]?[0-9]+)$`)
 	tacticalCallSignRE    = regexp.MustCompile(`^[A-Z][A-Z0-9]{4,5}$`)
@@ -347,7 +347,7 @@ func NewMessageNumberField(f *Field) *Field {
 				return p
 			}
 			if *f.Value != "" && !messageNumberRE.MatchString(*f.Value) {
-				return fmt.Sprintf("The %q field does not contain a valid message number.", f.Label)
+				return fmt.Sprintf("The %q field does not contain a valid packet message number.", f.Label)
 			}
 			return ""
 		}
