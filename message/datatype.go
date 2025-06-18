@@ -339,14 +339,7 @@ func NewMessageNumberField(f *Field) *Field {
 		f.EditHint = "XXX-###P"
 	}
 	if f.EditApply == nil {
-		f.EditApply = func(f *Field, v string) {
-			v = strings.ToUpper(strings.TrimSpace(v))
-			if match := messageNumberLooseRE.FindStringSubmatch(v); match != nil {
-				num, _ := strconv.Atoi(match[2])
-				v = fmt.Sprintf("%s-%03d%s", match[1], num, match[3])
-			}
-			*f.Value = v
-		}
+		f.EditApply = MessageNumberEditApply
 	}
 	if f.EditValid == nil {
 		f.EditValid = func(f *Field) string {
@@ -360,6 +353,15 @@ func NewMessageNumberField(f *Field) *Field {
 		}
 	}
 	return AddFieldDefaults(f)
+}
+
+func MessageNumberEditApply(f *Field, v string) {
+	v = strings.ToUpper(strings.TrimSpace(v))
+	if match := messageNumberLooseRE.FindStringSubmatch(v); match != nil {
+		num, _ := strconv.Atoi(match[2])
+		v = fmt.Sprintf("%s-%03d%s", match[1], num, match[3])
+	}
+	*f.Value = v
 }
 
 // NewMultilineField adds defaults to a Field that are appropriate for a field
