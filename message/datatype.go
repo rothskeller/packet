@@ -43,7 +43,7 @@ func NewAddressListField(f *Field) *Field {
 				// calling String() on it.  This quotes or
 				// unquotes things, adds or removes angle
 				// brackets, etc.
-				var strs = make([]string, len(addrs))
+				strs := make([]string, len(addrs))
 				for i, a := range addrs {
 					strs[i] = a.String()
 				}
@@ -150,13 +150,17 @@ func NewDateTimeField(f *Field, date, tval *string) *Field {
 	if f.EditApply == nil {
 		f.EditApply = func(_ *Field, v string) {
 			words := strings.Fields(v)
+			f := NewDateField(false, &Field{Value: date})
 			if len(words) > 0 {
-				var f = NewDateField(false, &Field{Value: date})
 				f.EditApply(f, words[0])
+			} else {
+				f.EditApply(f, "")
 			}
+			f = NewTimeField(false, &Field{Value: tval})
 			if len(words) > 1 {
-				var f = NewTimeField(false, &Field{Value: tval})
 				f.EditApply(f, strings.Join(words[1:], " "))
+			} else {
+				f.EditApply(f, "")
 			}
 		}
 	}
@@ -165,7 +169,7 @@ func NewDateTimeField(f *Field, date, tval *string) *Field {
 			if p := f.PresenceValid(); p != "" {
 				return p
 			}
-			var dtval = SmartJoin(*date, *tval, " ")
+			dtval := SmartJoin(*date, *tval, " ")
 			if dtval == "" {
 				return ""
 			}
