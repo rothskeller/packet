@@ -28,11 +28,11 @@ type PlainText struct {
 
 // New creates a new plain text message.
 func New() message.Message {
-	var m = &PlainText{BaseMessage: message.BaseMessage{Type: &Type}}
-	m.BaseMessage.FOriginMsgID = &m.OriginMsgID
-	m.BaseMessage.FHandling = &m.Handling
-	m.BaseMessage.FSubject = &m.Subject
-	m.BaseMessage.FBody = &m.Body
+	m := &PlainText{BaseMessage: message.BaseMessage{Type: &Type}}
+	m.FOriginMsgID = &m.OriginMsgID
+	m.FHandling = &m.Handling
+	m.FSubject = &m.Subject
+	m.FBody = &m.Body
 	m.Fields = []*message.Field{
 		message.NewMessageNumberField(&message.Field{
 			Label:    "Origin Message Number",
@@ -72,8 +72,12 @@ func decode(env *envelope.Envelope, body string, form *message.PIFOForm, pass in
 	if pass != 2 || form != nil || env.Bulletin {
 		return nil
 	}
-	var f = New().(*PlainText)
-	f.OriginMsgID, _, f.Handling, _, f.Subject = message.DecodeSubject(env.SubjectLine)
+	f := New().(*PlainText)
+	var fauxFormType string
+	f.OriginMsgID, _, f.Handling, fauxFormType, f.Subject = message.DecodeSubject(env.SubjectLine)
+	if fauxFormType != "" {
+		f.Subject = fauxFormType + "_" + f.Subject
+	}
 	if h := message.DecodeHandlingMap[f.Handling]; h != "" {
 		f.Handling = h
 	}
