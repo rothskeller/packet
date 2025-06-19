@@ -49,10 +49,6 @@ func ReceiveMessage(raw, bbs, area, msgid, opcall, opname string) (
 		err = fmt.Errorf("parse retrieved message: %s", err)
 		return
 	}
-	if env.Autoresponse {
-		env = nil
-		return // autoresponses are ignored
-	}
 	msg = message.Decode(env, body)
 	if len(msg.Base().UnknownFields) != 0 {
 		err = Warning{fmt.Errorf("unknown fields in form: %s", strings.Join(msg.Base().UnknownFields, " "))}
@@ -79,16 +75,16 @@ func ReceiveMessage(raw, bbs, area, msgid, opcall, opname string) (
 		err = fmt.Errorf("save received %s: %s", lmi, err2)
 		return
 	}
-	if area != "" { // bulletin: no delivery receipt
+	if area != "" || env.Autoresponse { // bulletin, bounce: no delivery receipt
 		return
 	}
 	// Return delivery receipt.
-	var dr = delivrcpt.New()
+	dr := delivrcpt.New()
 	dr.LocalMessageID = lmi
 	dr.DeliveredTime = time.Now().Format("01/02/2006 15:04")
 	dr.MessageSubject = env.SubjectLine
 	dr.MessageTo = env.To
-	var denv = new(envelope.Envelope)
+	denv := new(envelope.Envelope)
 	denv.SubjectLine = dr.EncodeSubject()
 	denv.To = env.From
 	return lmi, env, msg, denv, dr, err
@@ -173,12 +169,12 @@ func makeFakeSentMessage(subject, to string, rcptenv *envelope.Envelope) (lmi st
 		return "", nil
 	}
 	// Create a fake sent message.
-	var env = new(envelope.Envelope)
+	env := new(envelope.Envelope)
 	env.Date = rcptenv.Date
 	env.From = rcptenv.To
 	env.SubjectLine = subject
 	env.To = to
-	var content = env.RenderSaved(`**** MESSAGE CONTENTS UNKNOWN ****
+	content := env.RenderSaved(`**** MESSAGE CONTENTS UNKNOWN ****
 
 A receipt was received for a message with this ID, but that message was sent
 in a different incident or by different software.
