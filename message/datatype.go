@@ -347,7 +347,7 @@ func NewMessageNumberField(f *Field) *Field {
 				return p
 			}
 			if *f.Value != "" && !messageNumberRE.MatchString(*f.Value) {
-				return fmt.Sprintf("The %q field does not contain a valid packet message number.", f.Label)
+				return fmt.Sprintf("The %q field does not contain a valid packet message number (XXX-###X).", f.Label)
 			}
 			return ""
 		}
@@ -382,7 +382,7 @@ func NewPhoneNumberField(f *Field) *Field {
 				return p
 			}
 			if *f.Value != "" && !PIFOPhoneNumberRE.MatchString(*f.Value) {
-				return fmt.Sprintf("The %q field does not contain a valid phone number.", f.Label)
+				return fmt.Sprintf("The %q field does not contain a valid phone number (###-###-####).", f.Label)
 			}
 			return ""
 		}
