@@ -17,7 +17,7 @@ type Address struct {
 }
 
 func (addr *Address) String() string {
-	var local, domain, _ = strings.Cut(addr.Address, "@")
+	local, domain, _ := strings.Cut(addr.Address, "@")
 	// The local part may need to be quoted.
 	for i, r := range local {
 		if isAText(r) {
@@ -36,7 +36,7 @@ func (addr *Address) String() string {
 		return local
 	}
 	// The name may also need to be quoted.
-	var name = addr.Name
+	name := addr.Name
 	for _, r := range name {
 		if isAText(r) || isWhitespace(r) {
 			continue
@@ -145,6 +145,9 @@ common.
 
 */
 
+// ParseAddressList parses a string containing a list of addresses, and
+// returns the parsed addresses.  The addresses may be either RFC-5322
+// compliant email addresses (non-obsolete syntax only) or packet addresses.
 func ParseAddressList(s string) (addrs []*Address, err error) {
 	_, s = parseWhitespace(s)
 	if s == "" {
@@ -171,6 +174,8 @@ func ParseAddressList(s string) (addrs []*Address, err error) {
 	return addrs, nil
 }
 
+// ParseAddress parses a string containing a single address, either RFC-5322
+// email address or packet address.
 func ParseAddress(s string) (*Address, error) {
 	addr, rest, ok := parseAddress(s)
 	if !ok || rest != "" {

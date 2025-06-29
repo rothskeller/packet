@@ -18,7 +18,11 @@ type Envelope struct {
 	ReceivedDate time.Time
 	// Autoresponse is a flag indicating that the received message was an
 	// autoresponse message.  This is a non-persistent field, set only on
-	// messages retrieved from JNOS (as opposed to local storage).
+	// messages retrieved from JNOS (as opposed to local storage).  It is set
+	// only when the JNOS connection is a high-speed one (i.e., telnet),
+	// because only high-speed connections use the "V" command to retrieve
+	// messages with full headers, and the full headers are necessary to
+	// detect autoresponse messages.
 	Autoresponse bool
 	// ReturnAddr is the return address for the message.  This is a
 	// non-persistent field, set only for messages retrieved from JNOS (as
@@ -38,8 +42,8 @@ type Envelope struct {
 	// distinguish).
 	To string
 	// Date is the date/time at which the message was sent, from the Date:
-	// header.  It is set only for messages that have gone over the air
-	// (received or transmitted).
+	// header.  It is set only for received or transmitted messages, not
+	// for draft or queued messages.
 	Date time.Time
 	// SubjectLine is the subject line of the message.
 	SubjectLine string

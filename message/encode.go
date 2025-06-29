@@ -8,9 +8,8 @@ package message
 import (
 	"fmt"
 	"io"
-	"strings"
-
 	"slices"
+	"strings"
 )
 
 // EncodeSubject encodes the message subject line.
@@ -80,12 +79,12 @@ func EncodeSubject(msgid, handling, formtag, subject string) string {
 	return fmt.Sprintf("%s_%s_%s_%s", msgid, handling, formtag, subject)
 }
 
-// NewPIFOEncoder creates a new PackItForms encoder that writes form data to the
-// supplied output stream.  html is the form HTML filename, which identifies the
-// form type.  version is the form version number.
+// NewPIFOEncoder creates a new PackItForms encoder that writes form data to
+// the supplied output stream.  html is the form HTML filename, which
+// identifies the form type.  version is the form version number.
 func NewPIFOEncoder(w io.Writer, html, version string) *PIFOEncoder {
 	e := PIFOEncoder{w: w}
-	_, e.err = fmt.Fprintf(w, "!SCCoPIFO!\n#T: %s\n#V: 3.13-%s\n", html, version)
+	_, e.err = fmt.Fprintf(w, "!SCCoPIFO!\n#T: %s\n#V: 3.17-%s\n", html, version)
 	return &e
 }
 

@@ -7,10 +7,10 @@ import (
 	"strings"
 )
 
-// A Field describes a single field within a message.  Generally, a message type
-// has one Field for each field in the PackItForms encoding of the message, plus
-// occasionally other Fields for special purposes (e.g. aggregating the
-// underlying fields for display or editing).
+// A Field describes a single field within a message.  Generally, a message
+// type has one Field for each field in the PackItForms encoding of the
+// message, plus occasionally other Fields for special purposes (e.g.
+// aggregating the underlying fields for display or editing).
 type Field struct {
 	// Label is the name of the field, as it is displayed to the user.  It
 	// should be short, definitely no more than 40 characters.
@@ -19,41 +19,43 @@ type Field struct {
 	// all fields have a stored value, so this pointer may be nil.
 	Value *string
 	// Choices is a set of recommended or allowed values for the field.
-	// (Whether other values are allowed is up to the validation functions.)
+	// (Whether other values are allowed is up to the validation
+	// functions.)
 	Choices ChoiceMapper
 	// Presence is a function that returns whether the field is allowed or
 	// required.  The function may optionally return a reason, which is
 	// interpolated into validation problem strings when needed.
 	Presence func() (Presence, string)
-	// PIFOTag is the tag for this field in a PackItForms encoding.  If this
-	// is empty, the field will not be rendered in PackItForms encoding nor
-	// populated from PackItForms decoding.
+	// PIFOTag is the tag for this field in a PackItForms encoding.  If
+	// this is empty, the field will not be rendered in PackItForms
+	// encoding nor populated from PackItForms decoding.
 	PIFOTag string
 	// PIFOValid checks the value of the field against the restrictions
 	// enforced by the PackItForms software.  It returns a problem
-	// description if the value is one that PackItForms would reject, and an
-	// empty string otherwise.
+	// description if the value is one that PackItForms would reject, and
+	// an empty string otherwise.
 	PIFOValid func(*Field) string
 	// Compare compares an expected value of this field against an actual
-	// value of this field, and returns a description of the comparison.  To
-	// disable comparison for a field, set this to CompareNone.
+	// value of this field, and returns a description of the comparison.
+	// To disable comparison for a field, set this to CompareNone.
 	Compare func(label, exp, act string) *CompareField
 	// PDFRenderer is an optional object that renders the value of this
 	// field into a PDF.
 	PDFRenderer PDFRenderer
-	// TableValue returns the value of this field when rendered in flat text
-	// table form.  To omit a field from the table rendering, set this to
-	// TableOmit.
+	// TableValue returns the value of this field when rendered in flat
+	// text table form.  To omit a field from the table rendering, set this
+	// to TableOmit.
 	TableValue func(*Field) string
 	// EditWidth is the width in characters of the input control for this
 	// field.  It should correspond to the number of characters that will
 	// fit in the PDF rendering of the field, if applicable.
 	EditWidth int
-	// Multiline indicates that this field can contain multiple lines, i.e.,
-	// can contain newline characters.
+	// Multiline indicates that this field can contain multiple lines,
+	// i.e., can contain newline characters.
 	Multiline bool
-	// EditHelp is the help text for the form field, describing its contents
-	// and its validity rules.  If this is empty, the field is not editable.
+	// EditHelp is the help text for the form field, describing its
+	// contents and its validity rules.  If this is empty, the field is not
+	// editable.
 	EditHelp string
 	// EditHint is a short string giving a model for the field value (e.g.,
 	// "MM/DD/YYYY" for a date field).  It is optional, and will only be
@@ -107,7 +109,7 @@ func (f *Field) PresenceValid() string {
 	if when != "" {
 		when = " when " + when
 	}
-	var value = f.EditValue(f)
+	value := f.EditValue(f)
 	switch presence {
 	case PresenceNotAllowed:
 		if value != "" {

@@ -20,20 +20,21 @@ type Message interface {
 	// EncodeBody encodes the message body, suitable for transmission or
 	// storage.
 	EncodeBody() string
-	// Validate checks the contents of the message for compliance with rules
-	// enforced by standard Santa Clara County packet software (Outpost and
-	// PackItForms).  It returns a list of strings describing problems that
-	// those programs would flag or block.
+	// Validate checks the contents of the message for compliance with
+	// rules enforced by standard Santa Clara County packet software
+	// (Outpost and PackItForms).  It returns a list of strings describing
+	// problems that those programs would flag or block.
 	PIFOValid() (problems []string)
 	// Compare compares two messages.  It returns a score indicating how
-	// closely they match, and the detailed comparisons of each field in the
-	// message.  The comparison is not symmetric:  the receiver of the call
-	// is the "expected" message and the argument is the "actual" message.
+	// closely they match, and the detailed comparisons of each field in
+	// the message.  The comparison is not symmetric:  the receiver of the
+	// call is the "expected" message and the argument is the "actual"
+	// message.
 	Compare(actual Message) (score, outOf int, fields []*CompareField)
 	// RenderPDF renders the message as a PDF file with the specified
 	// filename, overwriting any existing file with that name.  This method
-	// will return ErrNotSupported for message types that do not support PDF
-	// rendering.  Note that the program needs to be built with "-tags
+	// will return ErrNotSupported for message types that do not support
+	// PDF rendering.  Note that the program needs to be built with "-tags
 	// packetpdf" in order for any message types to support PDF rendering.
 	RenderPDF(env *envelope.Envelope, filename string) error
 	// SetOperator sets the operator only fields of the message, if it has
@@ -53,8 +54,8 @@ type BaseMessage struct {
 	// PIFOVersion is the PIFO version found when decoding the message.  It
 	// is set only for messages with PIFO encoding.
 	PIFOVersion string
-	// UnknownFields is a list of field tags that were not recognized during
-	// decoding.
+	// UnknownFields is a list of field tags that were not recognized
+	// during decoding.
 	UnknownFields []string
 	// Fields is an ordered list of fields in the message.  This is the
 	// core of the shared message functionality:  most operations are
@@ -82,10 +83,10 @@ type BaseMessage struct {
 	// get propagated to the message's subject line.  It is nil for message
 	// types that do not have any such field.
 	FSubject *string
-	// RestrictedSubject is a flag indicating that the FSubject field allows
-	// only certain restricted values.  (It will not be populated with the
-	// subject of a message being replied to, unless that message is of the
-	// same type.)
+	// RestrictedSubject is a flag indicating that the FSubject field
+	// allows only certain restricted values.  (It will not be populated
+	// with the subject of a message being replied to, unless that message
+	// is of the same type.)
 	RestrictedSubject bool
 	// FToICSPosition points to the value of the To ICS Position field.  It
 	// is nil for message types that do not have that field.
@@ -99,8 +100,8 @@ type BaseMessage struct {
 	// FFromLocation points to the value of the From Location field.  It
 	// is nil for message types that do not have that field.
 	FFromLocation *string
-	// FReference points to the value of the Reference field.  It is nil for
-	// message types that do not have that field.
+	// FReference points to the value of the Reference field.  It is nil
+	// for message types that do not have that field.
 	FReference *string
 	// FTacCall points to the value of the Tactical Call Sign field.  It is
 	// nil for message types that do not have that field.
@@ -120,9 +121,9 @@ type BaseMessage struct {
 	// FOpTime points to the value of the Operator Time field.  It is nil
 	// for message types that do not have that field.
 	FOpTime *string
-	// FBody points to the value of the most prominent, or first, multi-line
-	// text field of the message.  It is nil for message types that do not
-	// have any such field.
+	// FBody points to the value of the most prominent, or first,
+	// multi-line text field of the message.  It is nil for message types
+	// that do not have any such field.
 	FBody *string
 }
 

@@ -19,8 +19,9 @@ import (
 	"github.com/rothskeller/pdf/pdftext"
 )
 
-// ShowLayout is a global flag that can be set by callers.  When true, generated
-// PDFs have a pink background in every field, showing the exact field placement.
+// ShowLayout is a global flag that can be set by callers.  When true,
+// generated PDFs have a pink background in every field, showing the exact
+// field placement.
 var ShowLayout = false
 
 // Warning is a wrapper around an error that makes it semantically a warning
@@ -218,7 +219,7 @@ func (r *PDFMappedTextRenderer) RenderToPDF(f *Field, pdf *gofpdf.Fpdf, page int
 	if (r.Page == 0 && page != 1) || (r.Page != 0 && r.Page != page) {
 		return nil
 	}
-	var h = r.H
+	h := r.H
 	if h == 0 {
 		h = r.B - r.Y
 	}
@@ -250,7 +251,7 @@ type PDFRadioRenderer struct {
 }
 
 func (r *PDFRadioRenderer) RenderToPDF(f *Field, pdf *gofpdf.Fpdf, page int) error {
-	var radius = 3.0
+	radius := 3.0
 
 	if (r.Page == 0 && page != 1) || (r.Page != 0 && r.Page != page) {
 		return nil

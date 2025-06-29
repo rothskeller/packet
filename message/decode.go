@@ -21,8 +21,8 @@ var (
 // DecodeForm decodes the message.  It returns whether the message was
 // recognized and decoded.
 func DecodeForm(form *PIFOForm, msg Message) {
-	var seen = make(map[string]bool)
-	var bm = msg.(interface{ Base() *BaseMessage }).Base()
+	seen := make(map[string]bool)
+	bm := msg.Base()
 	bm.PIFOVersion = form.PIFOVersion
 	for _, f := range bm.Fields {
 		if f.PIFOTag == "" {
@@ -38,9 +38,9 @@ func DecodeForm(form *PIFOForm, msg Message) {
 	}
 }
 
-// DecodeSubject decodes an XSC-standard message subject line into its component
-// parts.  If the subject line does not follow the XSC standard, the function
-// returns "", "", "", "", line.
+// DecodeSubject decodes an XSC-standard message subject line into its
+// component parts.  If the subject line does not follow the XSC standard, the
+// function returns "", "", "", "", line.
 func DecodeSubject(line string) (msgid, severity, handling, formtag, subject string) {
 	var (
 		codes string
@@ -85,8 +85,8 @@ type PIFOForm struct {
 	TextAfter    string
 }
 
-// DecodePIFO decodes a message body and returns the decoded form contents.  If the
-// body does not contain a valid encoded form, Decode returns nil.
+// DecodePIFO decodes a message body and returns the decoded form contents.  If
+// the body does not contain a valid encoded form, DecodePIFO returns nil.
 func DecodePIFO(body string) (f *PIFOForm) {
 	if strings.HasPrefix(body, "!SCCoPIFO!\n") {
 		f = new(PIFOForm)

@@ -4,16 +4,15 @@ package message
 // various implementations of it.
 
 import (
-	"strings"
-
 	"slices"
+	"strings"
 )
 
 // A ChoiceMapper provides a set of choices for a Field and maps between
 // internal (PIFO) and human representations of them.
 type ChoiceMapper interface {
-	// IsHuman returns whether the supplied string is a human representation
-	// of one of the choices in the set.
+	// IsHuman returns whether the supplied string is a human
+	// representation of one of the choices in the set.
 	IsHuman(string) bool
 	// IsPIFO returns whether the supplied string is a PIFO representation
 	// of one of the choices in the set.
@@ -35,8 +34,8 @@ type ChoiceMapper interface {
 
 ////////////////////////////////////////////////////////////////////////////////
 
-// NoChoices is a zero implementation of ChoiceMapper for fields that don't have
-// choices.
+// NoChoices is a zero implementation of ChoiceMapper for fields that don't
+// have choices.
 type NoChoices struct{}
 
 func (NoChoices) IsHuman(s string) bool   { return false }
@@ -92,6 +91,7 @@ func (c ChoicePairs) IsHuman(s string) bool {
 	}
 	return false
 }
+
 func (c ChoicePairs) IsPIFO(s string) bool {
 	for i := 0; i < len(c); i += 2 {
 		if c[i] == s {
@@ -100,6 +100,7 @@ func (c ChoicePairs) IsPIFO(s string) bool {
 	}
 	return false
 }
+
 func (c ChoicePairs) ToHuman(s string) string {
 	for i := 0; i < len(c)-1; i += 2 {
 		if c[i] == s {
@@ -108,6 +109,7 @@ func (c ChoicePairs) ToHuman(s string) string {
 	}
 	return s
 }
+
 func (c ChoicePairs) ToPIFO(s string) string {
 	var match string
 	for i := 1; i < len(c); i += 2 {
@@ -123,6 +125,7 @@ func (c ChoicePairs) ToPIFO(s string) string {
 	}
 	return s
 }
+
 func (c ChoicePairs) ListHuman() (human []string) {
 	human = make([]string, len(c)/2)
 	for i := 1; i < len(c); i += 2 {
