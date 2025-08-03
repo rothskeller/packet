@@ -158,7 +158,7 @@ func makeF() *SituationReport {
 			EditHelp:    `This is the time of date when the situation report was prepared.  It is required.`,
 		}),
 		message.NewDateTimeField(&message.Field{
-			Label:    "Date/Time",
+			Label:    "Prepared Date/Time",
 			EditHelp: `This is the date and time when the situation report was prepared, in MM/DD/YYYY HH:MM format (24-hour clock).  It is required.`,
 		}, &f.PreparedDate, &f.PreparedTime),
 		message.NewTextField(&message.Field{
@@ -258,7 +258,7 @@ func makeF() *SituationReport {
 			EditHelp:    `This is the time of day when the government office is expected to open.`,
 		}),
 		message.NewDateTimeField(&message.Field{
-			Label:    "Date/Time",
+			Label:    "Expected to Open",
 			EditHelp: `This is the date and time when the government office is expected to open, in MM/DD/YYYY HH:MM format (24-hour clock).  It is required.`,
 		}, &f.ExpectedToOpenDate, &f.ExpectedToOpenTime),
 		message.NewDateField(true, &message.Field{
@@ -276,7 +276,7 @@ func makeF() *SituationReport {
 			EditHelp:    `This is the time of day when the government office is expected to close.`,
 		}),
 		message.NewDateTimeField(&message.Field{
-			Label:    "Date/Time",
+			Label:    "Expected to Close",
 			EditHelp: `This is the date and time when the government office is expected to close, in MM/DD/YYYY HH:MM format (24-hour clock).  It is required.`,
 		}, &f.ExpectedToCloseDate, &f.ExpectedToCloseTime),
 		message.NewTextField(&message.Field{
@@ -488,7 +488,7 @@ func makeF() *SituationReport {
 			EditHelp:    `These are comments on the current situation with respect to sewer infrastructure.`,
 		}),
 		message.NewRestrictedField(&message.Field{
-			Label:       "SAR Status",
+			Label:       "Search and Rescue Status",
 			Value:       &f.SARStatus,
 			PIFOTag:     "81a.",
 			Choices:     message.Choices{"Normal", "Problem", "Failure", "Unknown"},
@@ -496,7 +496,7 @@ func makeF() *SituationReport {
 			EditHelp:    `This is the current situation with respect to search and rescue.`,
 		}),
 		message.NewMultilineField(&message.Field{
-			Label:       "SAR Comments",
+			Label:       "Search and Rescue Comments",
 			Value:       &f.SARComments,
 			PIFOTag:     "81b.",
 			PDFRenderer: &message.PDFTextRenderer{X: 999, Y: 999, R: 999, B: 999, Style: message.PDFTextStyle{VAlign: "top"}},

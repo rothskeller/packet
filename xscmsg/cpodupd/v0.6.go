@@ -62,8 +62,8 @@ var basePDFRenderers = baseform.BaseFormPDF{
 	OpTime:          &message.PDFTextRenderer{X: 542, Y: 730, R: 574, B: 747, Style: message.PDFTextStyle{VAlign: "baseline"}},
 }
 
-// CPODSite holds a CPOD site information form.
-type CPODSite struct {
+// CPODUpdate holds a CPOD commodities update form.
+type CPODUpdate struct {
 	message.BaseMessage
 	baseform.BaseForm
 	Jurisdiction string
@@ -74,8 +74,8 @@ type CPODSite struct {
 	Commodities  [8]Commodity
 }
 
-// A Commodity is the description of a single commodity in a CPOD site
-// information form.
+// A Commodity is the description of a single commodity in a CPOD commodities
+// update form.
 type Commodity struct {
 	Type           string
 	StartingQty    string
@@ -92,9 +92,9 @@ func create() message.Message {
 	return f
 }
 
-func makeF() *CPODSite {
+func makeF() *CPODUpdate {
 	const fieldCount = 60
-	f := CPODSite{BaseMessage: message.BaseMessage{Type: &Type}}
+	f := CPODUpdate{BaseMessage: message.BaseMessage{Type: &Type}}
 	f.FSubject = &f.SiteName
 	f.Fields = make([]*message.Field, 0, fieldCount)
 	f.AddHeaderFields(&f.BaseMessage, &basePDFRenderers)
@@ -149,7 +149,7 @@ func makeF() *CPODSite {
 		}),
 	)
 	for i := range f.Commodities {
-		f.Fields = append(f.Fields, f.Commodities[i].Fields(i+1)...)
+		f.Fields = append(f.Fields, f.Commodities[i].Fields(&f, i+1)...)
 	}
 	f.AddFooterFields(&f.BaseMessage, &basePDFRenderers)
 	if len(f.Fields) > fieldCount {
@@ -159,7 +159,7 @@ func makeF() *CPODSite {
 }
 
 func decode(_ *envelope.Envelope, _ string, form *message.PIFOForm, _ int) message.Message {
-	var df *CPODSite
+	var df *CPODUpdate
 
 	if form == nil || form.HTMLIdent != Type.HTML || form.FormVersion != Type.Version {
 		return nil
@@ -169,7 +169,7 @@ func decode(_ *envelope.Envelope, _ string, form *message.PIFOForm, _ int) messa
 	return df
 }
 
-func (c *Commodity) Fields(index int) []*message.Field {
+func (c *Commodity) Fields(m *CPODUpdate, index int) []*message.Field {
 	var typePresence, qtyPresence func() (message.Presence, string)
 	if index == 1 {
 		typePresence = message.Required
@@ -180,16 +180,19 @@ func (c *Commodity) Fields(index int) []*message.Field {
 	}
 	return []*message.Field{
 		message.NewTextField(&message.Field{
-			Label:       "Type of Commodity",
+			Label:       fmt.Sprintf("Item %d: Type of Commodity", index),
 			Value:       &c.Type,
 			Presence:    typePresence,
 			PIFOTag:     fmt.Sprintf("%da.", 69+index),
 			PDFRenderer: &message.PDFTextRenderer{X: 999, Y: 999, R: 999, B: 999, Style: message.PDFTextStyle{VAlign: "top"}},
 			EditWidth:   999,
 			EditHelp:    `This is the type of a commodity distributed at the CPOD site.`,
+			EditSkip: func(f *message.Field) bool {
+				return index > 1 && m.Commodities[index-2].Type == ""
+			},
 		}),
 		message.NewCardinalNumberField(&message.Field{
-			Label:       "Starting Quantity",
+			Label:       fmt.Sprintf("Item %d: Starting Quantity", index),
 			Value:       &c.StartingQty,
 			Presence:    qtyPresence,
 			PIFOTag:     fmt.Sprintf("%db.", 69+index),
@@ -198,7 +201,7 @@ func (c *Commodity) Fields(index int) []*message.Field {
 			EditHelp:    `This is the quantity of the commodity that the CPOD site had when it opened.  It is required.`,
 		}),
 		message.NewCardinalNumberField(&message.Field{
-			Label:       "Qty Distributed",
+			Label:       fmt.Sprintf("Item %d: Qty Distributed", index),
 			Value:       &c.QtyDistributed,
 			Presence:    qtyPresence,
 			PIFOTag:     fmt.Sprintf("%dc.", 69+index),
@@ -207,7 +210,7 @@ func (c *Commodity) Fields(index int) []*message.Field {
 			EditHelp:    `This is the quantity of the commodity that the CPOD site has distributed to visitors.  It is required.`,
 		}),
 		message.NewCardinalNumberField(&message.Field{
-			Label:       "Qty Available",
+			Label:       fmt.Sprintf("Item %d: Qty Available", index),
 			Value:       &c.QtyAvailable,
 			Presence:    qtyPresence,
 			PIFOTag:     fmt.Sprintf("%dd.", 69+index),

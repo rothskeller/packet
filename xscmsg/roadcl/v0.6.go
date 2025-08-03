@@ -149,7 +149,7 @@ func makeF() *RoadClosure {
 			EditHelp:    `This is the time of day when the closure started or will start.`,
 		}),
 		message.NewDateTimeField(&message.Field{
-			Label:    "Date/Time",
+			Label:    "Closure Start",
 			EditHelp: `This is the date and time when the closure started or will start, in MM/DD/YYYY HH:MM format (24-hour clock).  It is required.`,
 		}, &f.ClosureStartDate, &f.ClosureStartTime),
 		message.NewDateField(true, &message.Field{
@@ -167,7 +167,7 @@ func makeF() *RoadClosure {
 			EditHelp:    `This is the time of day when the closure ended or will end.`,
 		}),
 		message.NewDateTimeField(&message.Field{
-			Label:    "Date/Time",
+			Label:    "Closure End",
 			EditHelp: `This is the date and time when the closure ended or will end, in MM/DD/YYYY HH:MM format (24-hour clock).  It is required.`,
 		}, &f.ClosureEndDate, &f.ClosureEndTime),
 	)

@@ -171,7 +171,7 @@ func makeF() *DamageAssessment {
 			EditHelp:    `This indicates that the property sustained flooding damage.`,
 		}),
 		message.NewRestrictedField(&message.Field{
-			Label:       "Damage Type: Roof / Windows / Other Exterior",
+			Label:       "Damage Type: Roof/Windows/Exterior",
 			Value:       &f.DamageExterior,
 			PIFOTag:     "27b.",
 			Choices:     message.Choices{"checked"},

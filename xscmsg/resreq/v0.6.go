@@ -23,7 +23,7 @@ var Type = message.Type{
 		"23q.", "23d.", "23i.", "24n.", "24q.", "24d.", "24i.", "25n.",
 		"25q.", "25d.", "25i.", "26n.", "26q.", "26d.", "26i.", "27n.",
 		"27q.", "27d.", "27i.", "28n.", "28q.", "28d.", "28i.", "30.",
-		"40.", "40s.", "41.", "42.", "43.", "50.", "51.", "52.", "51.",
+		"40.", "40s.", "41.", "42.", "43.", "50.", "51.", "52.", "53.",
 		"60.", "OpRelayRcvd", "OpRelaySent", "OpName", "OpCall",
 		"OpDate", "OpTime",
 	},
@@ -150,7 +150,7 @@ func makeF() *ResourceRequest {
 		}, &f.RequestDate, &f.RequestTime),
 	)
 	for i := range f.Resources {
-		f.Fields = append(f.Fields, f.Resources[i].Fields(i+1)...)
+		f.Fields = append(f.Fields, f.Resources[i].Fields(&f, i+1)...)
 	}
 	f.Fields = append(f.Fields,
 		message.NewRestrictedField(&message.Field{
@@ -247,7 +247,7 @@ func makeF() *ResourceRequest {
 					return message.PresenceNotAllowed, `"Related to County Incident" is not "Yes"`
 				}
 			},
-			PIFOTag:     "51.",
+			PIFOTag:     "53.",
 			PDFRenderer: &message.PDFTextRenderer{X: 999, Y: 999, R: 999, B: 999, Style: message.PDFTextStyle{VAlign: "top"}},
 			EditWidth:   999,
 			EditHelp:    `This is the name of the current county incident that this resource request relates to.  It is required if "Relates to County Incident" is "Yes", otherwise not allowed.`,
@@ -279,7 +279,7 @@ func decode(_ *envelope.Envelope, _ string, form *message.PIFOForm, _ int) messa
 	return df
 }
 
-func (r *Resource) Fields(index int) []*message.Field {
+func (r *Resource) Fields(m *ResourceRequest, index int) []*message.Field {
 	var namePresence, qtyPresence, descPresence func() (message.Presence, string)
 	if index == 1 {
 		namePresence = message.Required
@@ -292,16 +292,19 @@ func (r *Resource) Fields(index int) []*message.Field {
 	}
 	return []*message.Field{
 		message.NewTextField(&message.Field{
-			Label:       "Item Name",
+			Label:       fmt.Sprintf("Item %d: Item Name", index),
 			Value:       &r.ItemName,
 			Presence:    namePresence,
 			PIFOTag:     fmt.Sprintf("%dn.", 22+index),
 			PDFRenderer: &message.PDFTextRenderer{X: 999, Y: 999, R: 999, B: 999, Style: message.PDFTextStyle{VAlign: "top"}},
 			EditWidth:   999,
 			EditHelp:    `This is the name of the item being requested.`,
+			EditSkip: func(f *message.Field) bool {
+				return index > 1 && m.Resources[index-2].ItemName != ""
+			},
 		}),
 		message.NewCardinalNumberField(&message.Field{
-			Label:       "Quantity Requested",
+			Label:       fmt.Sprintf("Item %d: Quantity Requested", index),
 			Value:       &r.QtyRequested,
 			Presence:    qtyPresence,
 			PIFOTag:     fmt.Sprintf("%dq.", 22+index),
@@ -310,7 +313,7 @@ func (r *Resource) Fields(index int) []*message.Field {
 			EditHelp:    `This is the quantity (including units) of the item being requested.  It is required when there is an item name, otherwise not allowed.`,
 		}),
 		message.NewMultilineField(&message.Field{
-			Label:       "Description",
+			Label:       fmt.Sprintf("Item %d: Description", index),
 			Value:       &r.Description,
 			Presence:    descPresence,
 			PIFOTag:     fmt.Sprintf("%dd.", 22+index),
@@ -319,7 +322,7 @@ func (r *Resource) Fields(index int) []*message.Field {
 			EditHelp:    `This is a description of the item being requested.  It is allowed only when there is an item name.`,
 		}),
 		message.NewRestrictedField(&message.Field{
-			Label:       "Demobilization",
+			Label:       fmt.Sprintf("Item %d: Demobilization", index),
 			Value:       &r.Demobilization,
 			Presence:    qtyPresence,
 			PIFOTag:     fmt.Sprintf("%di.", 22+index),

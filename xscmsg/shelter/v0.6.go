@@ -349,7 +349,7 @@ func makeF() *Shelter {
 			EditHelp:    `This is the name of the primary contact for the shelter.  It is required.`,
 		}),
 		message.NewPhoneNumberField(&message.Field{
-			Label:       "Primary Contact Phone Number",
+			Label:       "Primary Contact Phone",
 			Value:       &f.PrimaryContactPhoneNumber,
 			Presence:    message.Required,
 			PIFOTag:     "42.",

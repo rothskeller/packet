@@ -136,7 +136,7 @@ func create() message.Message {
 }
 
 func makeF() *CPODSite {
-	const fieldCount = 98
+	const fieldCount = 100
 	f := CPODSite{BaseMessage: message.BaseMessage{Type: &Type}}
 	f.FSubject = &f.SiteName
 	f.FBody = &f.AdditionalInfo
@@ -392,6 +392,7 @@ func makeF() *CPODSite {
 			PIFOTag:     "50a.",
 			Choices:     message.Choices{"checked"},
 			PDFRenderer: &message.PDFTextRenderer{X: 999, Y: 999, R: 999, B: 999, Style: message.PDFTextStyle{VAlign: "top"}},
+			TableValue:  message.TableOmit,
 			EditHelp:    `This indicates whether the site has perimeter fencing.`,
 		}),
 		message.NewRestrictedField(&message.Field{
@@ -400,6 +401,7 @@ func makeF() *CPODSite {
 			PIFOTag:     "50b.",
 			Choices:     message.Choices{"checked"},
 			PDFRenderer: &message.PDFTextRenderer{X: 999, Y: 999, R: 999, B: 999, Style: message.PDFTextStyle{VAlign: "top"}},
+			TableValue:  message.TableOmit,
 			EditHelp:    `This indicates whether the site has fixed lighting throughout all outside areas.`,
 		}),
 		message.NewRestrictedField(&message.Field{
@@ -408,6 +410,7 @@ func makeF() *CPODSite {
 			PIFOTag:     "50c.",
 			Choices:     message.Choices{"checked"},
 			PDFRenderer: &message.PDFTextRenderer{X: 999, Y: 999, R: 999, B: 999, Style: message.PDFTextStyle{VAlign: "top"}},
+			TableValue:  message.TableOmit,
 			EditHelp:    `This indicates whether the site has fixed lighting throughout all inside areas.`,
 		}),
 		message.NewRestrictedField(&message.Field{
@@ -416,6 +419,7 @@ func makeF() *CPODSite {
 			PIFOTag:     "50d.",
 			Choices:     message.Choices{"checked"},
 			PDFRenderer: &message.PDFTextRenderer{X: 999, Y: 999, R: 999, B: 999, Style: message.PDFTextStyle{VAlign: "top"}},
+			TableValue:  message.TableOmit,
 			EditHelp:    `This indicates whether the site is monitored using closed-circuit TV cameras.`,
 		}),
 		message.NewRestrictedField(&message.Field{
@@ -424,6 +428,7 @@ func makeF() *CPODSite {
 			PIFOTag:     "50e.",
 			Choices:     message.Choices{"checked"},
 			PDFRenderer: &message.PDFTextRenderer{X: 999, Y: 999, R: 999, B: 999, Style: message.PDFTextStyle{VAlign: "top"}},
+			TableValue:  message.TableOmit,
 			EditHelp:    `This indicates whether the site has a public address system installed.`,
 		}),
 		message.NewRestrictedField(&message.Field{
@@ -432,6 +437,7 @@ func makeF() *CPODSite {
 			PIFOTag:     "50f.",
 			Choices:     message.Choices{"checked"},
 			PDFRenderer: &message.PDFTextRenderer{X: 999, Y: 999, R: 999, B: 999, Style: message.PDFTextStyle{VAlign: "top"}},
+			TableValue:  message.TableOmit,
 			EditHelp:    `This indicates whether the site has covered areas.`,
 		}),
 		message.NewRestrictedField(&message.Field{
@@ -440,7 +446,39 @@ func makeF() *CPODSite {
 			PIFOTag:     "50g.",
 			Choices:     message.Choices{"checked"},
 			PDFRenderer: &message.PDFTextRenderer{X: 999, Y: 999, R: 999, B: 999, Style: message.PDFTextStyle{VAlign: "top"}},
+			TableValue:  message.TableOmit,
 			EditHelp:    `This indicates whether there is fixed or non-fixed equipment located on the site that may be difficult to move.`,
+		}),
+		message.NewAggregatorField(&message.Field{
+			Label: "Safety",
+			TableValue: func(*message.Field) string {
+				var safety []string
+				if f.SafetyFencing != "" {
+					safety = append(safety, "has perimeter fencing")
+				}
+				if f.SafetyOutsideLighting != "" {
+					safety = append(safety, "has outside lighting")
+				}
+				if f.SafetyInsideLighting != "" {
+					safety = append(safety, "has inside lighting")
+				}
+				if f.SafetyCCTV != "" {
+					safety = append(safety, "monitored with CCTV")
+				}
+				if f.SafetyPA != "" {
+					safety = append(safety, "has PA system")
+				}
+				if f.SafetyCovered != "" {
+					safety = append(safety, "has covered areas")
+				}
+				if f.SafetyNoMove != "" {
+					safety = append(safety, "has fixed equipment")
+				}
+				if len(safety) != 0 {
+					safety[0] = strings.ToUpper(safety[0][:1]) + safety[0][1:]
+				}
+				return strings.Join(safety, ", ")
+			},
 		}),
 		message.NewMultilineField(&message.Field{
 			Label:       "Perimeter Fencing Details",
@@ -451,11 +489,12 @@ func makeF() *CPODSite {
 			EditHelp:    `This gives details of the perimeter fencing.`,
 		}),
 		message.NewRestrictedField(&message.Field{
-			Label:       "Accessibilty: Wheelchair access",
+			Label:       "Accessibility: Wheelchair access",
 			Value:       &f.AccessWheelchair,
 			PIFOTag:     "52a.",
 			Choices:     message.Choices{"checked"},
 			PDFRenderer: &message.PDFTextRenderer{X: 999, Y: 999, R: 999, B: 999, Style: message.PDFTextStyle{VAlign: "top"}},
+			TableValue:  message.TableOmit,
 			EditHelp:    `This indicates whether there are sidewalks leading to the site that have wheelchair access.`,
 		}),
 		message.NewRestrictedField(&message.Field{
@@ -464,6 +503,7 @@ func makeF() *CPODSite {
 			PIFOTag:     "52b.",
 			Choices:     message.Choices{"checked"},
 			PDFRenderer: &message.PDFTextRenderer{X: 999, Y: 999, R: 999, B: 999, Style: message.PDFTextStyle{VAlign: "top"}},
+			TableValue:  message.TableOmit,
 			EditHelp:    `This indicates whether there are uneven surfaces leading up to the site.`,
 		}),
 		message.NewRestrictedField(&message.Field{
@@ -472,7 +512,27 @@ func makeF() *CPODSite {
 			PIFOTag:     "52c.",
 			Choices:     message.Choices{"checked"},
 			PDFRenderer: &message.PDFTextRenderer{X: 999, Y: 999, R: 999, B: 999, Style: message.PDFTextStyle{VAlign: "top"}},
+			TableValue:  message.TableOmit,
 			EditHelp:    `This indicates whether there is a ramp from the staff parking location leading up to the POD location.`,
+		}),
+		message.NewAggregatorField(&message.Field{
+			Label: "Accessibility",
+			TableValue: func(*message.Field) string {
+				var access []string
+				if f.AccessWheelchair != "" {
+					access = append(access, "wheelchair access")
+				}
+				if f.AccessUneven != "" {
+					access = append(access, "uneven surfaces")
+				}
+				if f.AccessRamp != "" {
+					access = append(access, "ramp from staff parking")
+				}
+				if len(access) != 0 {
+					access[0] = strings.ToUpper(access[0][:1]) + access[0][1:]
+				}
+				return strings.Join(access, ", ")
+			},
 		}),
 		message.NewDateField(true, &message.Field{
 			Label:       "Date Opened",
@@ -516,7 +576,7 @@ func makeF() *CPODSite {
 		}, &f.DateClosed, &f.TimeClosed),
 	)
 	for i := range f.Commodities {
-		f.Fields = append(f.Fields, f.Commodities[i].Fields(i+1)...)
+		f.Fields = append(f.Fields, f.Commodities[i].Fields(&f, i+1)...)
 	}
 	f.AddFooterFields(&f.BaseMessage, &basePDFRenderers)
 	if len(f.Fields) > fieldCount {
@@ -536,7 +596,7 @@ func decode(_ *envelope.Envelope, _ string, form *message.PIFOForm, _ int) messa
 	return df
 }
 
-func (c *Commodity) Fields(index int) []*message.Field {
+func (c *Commodity) Fields(m *CPODSite, index int) []*message.Field {
 	var typePresence, qtyPresence func() (message.Presence, string)
 	if index == 1 {
 		typePresence = message.Required
@@ -546,17 +606,20 @@ func (c *Commodity) Fields(index int) []*message.Field {
 		qtyPresence = c.requiredIfTypeElseNotAllowed
 	}
 	return []*message.Field{
-		message.NewTextField(&message.Field{
-			Label:       "Type of Commodity",
+		message.NewMultilineField(&message.Field{
+			Label:       fmt.Sprintf("Item %d: Type of Commodity", index),
 			Value:       &c.Type,
 			Presence:    typePresence,
 			PIFOTag:     fmt.Sprintf("%da.", 69+index),
 			PDFRenderer: &message.PDFTextRenderer{X: 999, Y: 999, R: 999, B: 999, Style: message.PDFTextStyle{VAlign: "top"}},
 			EditWidth:   999,
 			EditHelp:    `This is the type of a commodity distributed at the CPOD site.`,
+			EditSkip: func(f *message.Field) bool {
+				return index > 1 && m.Commodities[index-2].Type == ""
+			},
 		}),
 		message.NewCardinalNumberField(&message.Field{
-			Label:       "Starting Quantity",
+			Label:       fmt.Sprintf("Item %d: Starting Quantity", index),
 			Value:       &c.StartingQty,
 			Presence:    qtyPresence,
 			PIFOTag:     fmt.Sprintf("%db.", 69+index),
@@ -565,7 +628,7 @@ func (c *Commodity) Fields(index int) []*message.Field {
 			EditHelp:    `This is the quantity of the commodity that the CPOD site had when it opened.  It is required.`,
 		}),
 		message.NewCardinalNumberField(&message.Field{
-			Label:       "Qty Distributed",
+			Label:       fmt.Sprintf("Item %d: Qty Distributed", index),
 			Value:       &c.QtyDistributed,
 			Presence:    qtyPresence,
 			PIFOTag:     fmt.Sprintf("%dc.", 69+index),
@@ -574,7 +637,7 @@ func (c *Commodity) Fields(index int) []*message.Field {
 			EditHelp:    `This is the quantity of the commodity that the CPOD site has distributed to visitors.  It is required.`,
 		}),
 		message.NewCardinalNumberField(&message.Field{
-			Label:       "Qty Available",
+			Label:       fmt.Sprintf("Item %d: Qty Available", index),
 			Value:       &c.QtyAvailable,
 			Presence:    qtyPresence,
 			PIFOTag:     fmt.Sprintf("%dd.", 69+index),
