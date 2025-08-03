@@ -13,7 +13,7 @@ import (
 var Type = message.Type{
 	Tag:     "NotRep",
 	HTML:    "form-notable-report.html",
-	Version: "0.5",
+	Version: "0.6",
 	Name:    "notable report form",
 	Article: "a",
 	FieldOrder: []string{

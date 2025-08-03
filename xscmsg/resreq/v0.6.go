@@ -14,7 +14,7 @@ import (
 var Type = message.Type{
 	Tag:     "ResReq",
 	HTML:    "form-resource-request.html",
-	Version: "0.5",
+	Version: "0.6",
 	Name:    "resource request form",
 	Article: "a",
 	FieldOrder: []string{

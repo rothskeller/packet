@@ -14,7 +14,7 @@ import (
 var Type = message.Type{
 	Tag:     "Shelter",
 	HTML:    "form-shelter.html",
-	Version: "0.5",
+	Version: "0.6",
 	Name:    "shelter form",
 	Article: "a",
 	FieldOrder: []string{

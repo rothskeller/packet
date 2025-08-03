@@ -14,7 +14,7 @@ import (
 var Type = message.Type{
 	Tag:     "CPODUpd",
 	HTML:    "form-cpod-commodities.html",
-	Version: "0.5",
+	Version: "0.6",
 	Name:    "CPOD commodities update form",
 	Article: "a",
 	FieldOrder: []string{

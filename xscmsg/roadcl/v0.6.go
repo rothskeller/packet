@@ -1,5 +1,5 @@
-// Package wssurvey defines the Windshield Survey Form message type.
-package wssurvey
+// Package roadcl defines the Road Closure Form message type.
+package roadcl
 
 import (
 	"time"
@@ -9,18 +9,18 @@ import (
 	"github.com/rothskeller/packet/xscmsg/baseform"
 )
 
-// Type is the type definition for a windshield survey form.
+// Type is the type definition for a road closure form.
 var Type = message.Type{
-	Tag:     "WSSurvey",
-	HTML:    "form-windshield-survey.html",
-	Version: "0.5",
-	Name:    "windshield survey form",
+	Tag:     "RoadCl",
+	HTML:    "form-road-closure.html",
+	Version: "0.6",
+	Name:    "road closure form",
 	Article: "a",
 	FieldOrder: []string{
 		"MsgNo", "1a.", "1b.", "5.", "7a.", "8a.", "7b.", "8b.", "7c.",
-		"8c.", "7d.", "8d.", "20.", "21.", "22.", "23.", "24.", "25.",
-		"26.", "27.", "OpRelayRcvd", "OpRelaySent", "OpName", "OpCall",
-		"OpDate", "OpTime",
+		"8c.", "7d.", "8d.", "20.", "21.", "22.", "23.", "24.", "30d.",
+		"30t.", "31d.", "31t.", "OpRelayRcvd", "OpRelaySent", "OpName",
+		"OpCall", "OpDate", "OpTime",
 	},
 }
 
@@ -57,32 +57,34 @@ var basePDFRenderers = baseform.BaseFormPDF{
 	OpTime:          &message.PDFTextRenderer{X: 542, Y: 730, R: 574, B: 747, Style: message.PDFTextStyle{VAlign: "baseline"}},
 }
 
-// WindshieldSurvey holds a shelter form.
-type WindshieldSurvey struct {
+// RoadClosure holds a road closure form.
+type RoadClosure struct {
 	message.BaseMessage
 	baseform.BaseForm
-	Jurisdiction        string
-	Team                string
-	Location            string
-	Item                string
-	BuildingType        string
-	NumberOfStories     string
-	DamageCategory      string
-	OtherDamageObserved string
+	Jurisdiction     string
+	Road             string
+	Location         string
+	Details          string
+	Status           string
+	ClosureStartDate string
+	ClosureStartTime string
+	ClosureEndDate   string
+	ClosureEndTime   string
 }
 
 func create() message.Message {
 	f := makeF()
 	f.MessageDate = time.Now().Format("01/02/2006")
 	f.Handling = "ROUTINE"
+	f.ToLocation = "County EOC"
 	return f
 }
 
-func makeF() *WindshieldSurvey {
-	const fieldCount = 30
-	f := WindshieldSurvey{BaseMessage: message.BaseMessage{Type: &Type}}
-	f.FSubject = &f.Location
-	f.FBody = &f.OtherDamageObserved
+func makeF() *RoadClosure {
+	const fieldCount = 33
+	f := RoadClosure{BaseMessage: message.BaseMessage{Type: &Type}}
+	f.FSubject = &f.Road
+	f.FBody = &f.Details
 	f.Fields = make([]*message.Field, 0, fieldCount)
 	f.AddHeaderFields(&f.BaseMessage, &basePDFRenderers)
 	f.Fields = append(f.Fields,
@@ -94,85 +96,90 @@ func makeF() *WindshieldSurvey {
 			PIFOTag:     "20.",
 			PDFRenderer: &message.PDFTextRenderer{X: 190, Y: 184, R: 373, B: 206, Style: message.PDFTextStyle{VAlign: "baseline"}},
 			EditWidth:   21,
-			EditHelp:    `This is the name of the jurisdiction where the windshield survey was performed.  It is required.`,
+			EditHelp:    `This is the name of the jurisdiction originating the road closure.  It is required.`,
 		}),
 		message.NewTextField(&message.Field{
-			Label:       "Team",
-			Value:       &f.Team,
+			Label:       "Road/Intersection",
+			Value:       &f.Road,
 			Presence:    message.Required,
 			PIFOTag:     "21.",
 			PDFRenderer: &message.PDFTextRenderer{X: 999, Y: 999, R: 999, B: 999, Style: message.PDFTextStyle{VAlign: "top"}},
 			EditWidth:   999,
-			EditHelp:    `This is the name of the team (or individual) who performed the windshield survey.  It is required.`,
+			EditHelp:    `This is the road or intersection with the closure.  It should be unique among all road closure reports from this jurisdiction.  It is required.`,
 		}),
-		message.NewTextField(&message.Field{
+		message.NewMultilineField(&message.Field{
 			Label:       "Location",
 			Value:       &f.Location,
 			Presence:    message.Required,
 			PIFOTag:     "22.",
 			PDFRenderer: &message.PDFTextRenderer{X: 999, Y: 999, R: 999, B: 999, Style: message.PDFTextStyle{VAlign: "top"}},
 			EditWidth:   999,
-			EditHelp:    `This is the location that was surveyed.  It should be unique among all windshield survey reports in the jurisdiction.  It is required.`,
-		}),
-		message.NewRestrictedField(&message.Field{
-			Label:       "Item",
-			Value:       &f.Item,
-			Presence:    message.Required,
-			PIFOTag:     "23.",
-			Choices:     message.Choices{"Building", "Road", "Other"},
-			PDFRenderer: &message.PDFTextRenderer{X: 999, Y: 999, R: 999, B: 999, Style: message.PDFTextStyle{VAlign: "top"}},
-			EditHelp:    `This indicates the type of property surveyed.  It is required.`,
-		}),
-		message.NewRestrictedField(&message.Field{
-			Label:   "Building Type",
-			Value:   &f.BuildingType,
-			PIFOTag: "24.",
-			Choices: message.ChoicePairs{
-				"Single", "Single Family Home",
-				"Townhouse", "Townhouse or Condo",
-				"Apartment", "Apartment",
-				"Mobile", "Mobile Home or Trailer",
-				"Business", "Business",
-				"Other", "Other",
-			},
-			PDFRenderer: &message.PDFTextRenderer{X: 999, Y: 999, R: 999, B: 999, Style: message.PDFTextStyle{VAlign: "top"}},
-			EditHelp:    `This indicates the type of building surveyed, if applicable.`,
-		}),
-		message.NewCardinalNumberField(&message.Field{
-			Label:       "Number of Stories",
-			Value:       &f.NumberOfStories,
-			PIFOTag:     "25.",
-			PDFRenderer: &message.PDFTextRenderer{X: 999, Y: 999, R: 999, B: 999, Style: message.PDFTextStyle{VAlign: "top"}},
-			EditWidth:   2,
-			EditHelp:    `This is the number of stories in the building surveyed, if applicable.`,
-		}),
-		message.NewRestrictedField(&message.Field{
-			Label:       "Damage Categorization",
-			Value:       &f.DamageCategory,
-			Presence:    message.Required,
-			PIFOTag:     "26.",
-			Choices:     message.Choices{"Affected", "Minor", "Major", "Destroyed"},
-			PDFRenderer: &message.PDFTextRenderer{X: 999, Y: 999, R: 999, B: 999, Style: message.PDFTextStyle{VAlign: "top"}},
-			EditHelp:    `This indicates the level of damage to the property surveyed.  It is required.`,
+			EditHelp:    `This is the detailed location of the closure.  It is required.`,
 		}),
 		message.NewMultilineField(&message.Field{
-			Label:       "Other Damage Observed",
-			Value:       &f.OtherDamageObserved,
-			PIFOTag:     "27.",
+			Label:       "Details",
+			Value:       &f.Details,
+			Presence:    message.Required,
+			PIFOTag:     "23.",
 			PDFRenderer: &message.PDFTextRenderer{X: 999, Y: 999, R: 999, B: 999, Style: message.PDFTextStyle{VAlign: "top"}},
 			EditWidth:   999,
-			EditHelp:    `This describes any other damage observed during the survey.`,
+			EditHelp:    `This field has details of the closure.  It is required.`,
 		}),
+		message.NewRestrictedField(&message.Field{
+			Label:       "Status",
+			Value:       &f.Status,
+			Presence:    message.Required,
+			PIFOTag:     "24.",
+			Choices:     message.Choices{"Planned Closure", "Closed", "Reopened"},
+			PDFRenderer: &message.PDFTextRenderer{X: 999, Y: 999, R: 999, B: 999, Style: message.PDFTextStyle{VAlign: "top"}},
+			EditHelp:    `This identifies the status of the closure.  It is required.`,
+		}),
+		message.NewDateField(true, &message.Field{
+			Label:       "Closure Start Date",
+			Value:       &f.ClosureStartDate,
+			PIFOTag:     "30d.",
+			PDFRenderer: &message.PDFTextRenderer{X: 999, Y: 999, R: 999, B: 999, Style: message.PDFTextStyle{VAlign: "top"}},
+			EditHelp:    `This is the date when the closure started or will start.`,
+		}),
+		message.NewTimeField(true, &message.Field{
+			Label:       "Closure Start Time",
+			Value:       &f.ClosureStartTime,
+			PIFOTag:     "30t.",
+			PDFRenderer: &message.PDFTextRenderer{X: 999, Y: 999, R: 999, B: 999, Style: message.PDFTextStyle{VAlign: "top"}},
+			EditHelp:    `This is the time of day when the closure started or will start.`,
+		}),
+		message.NewDateTimeField(&message.Field{
+			Label:    "Date/Time",
+			EditHelp: `This is the date and time when the closure started or will start, in MM/DD/YYYY HH:MM format (24-hour clock).  It is required.`,
+		}, &f.ClosureStartDate, &f.ClosureStartTime),
+		message.NewDateField(true, &message.Field{
+			Label:       "Closure End Date",
+			Value:       &f.ClosureEndDate,
+			PIFOTag:     "31d.",
+			PDFRenderer: &message.PDFTextRenderer{X: 999, Y: 999, R: 999, B: 999, Style: message.PDFTextStyle{VAlign: "top"}},
+			EditHelp:    `This is the date when the closure ended or will end.`,
+		}),
+		message.NewTimeField(true, &message.Field{
+			Label:       "Closure End Time",
+			Value:       &f.ClosureEndTime,
+			PIFOTag:     "31t.",
+			PDFRenderer: &message.PDFTextRenderer{X: 999, Y: 999, R: 999, B: 999, Style: message.PDFTextStyle{VAlign: "top"}},
+			EditHelp:    `This is the time of day when the closure ended or will end.`,
+		}),
+		message.NewDateTimeField(&message.Field{
+			Label:    "Date/Time",
+			EditHelp: `This is the date and time when the closure ended or will end, in MM/DD/YYYY HH:MM format (24-hour clock).  It is required.`,
+		}, &f.ClosureEndDate, &f.ClosureEndTime),
 	)
 	f.AddFooterFields(&f.BaseMessage, &basePDFRenderers)
 	if len(f.Fields) > fieldCount {
-		panic("update WindshieldSurvey fieldCount")
+		panic("update RoadClosure fieldCount")
 	}
 	return &f
 }
 
 func decode(_ *envelope.Envelope, _ string, form *message.PIFOForm, _ int) message.Message {
-	var df *WindshieldSurvey
+	var df *RoadClosure
 
 	if form == nil || form.HTMLIdent != Type.HTML || form.FormVersion != Type.Version {
 		return nil
