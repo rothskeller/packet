@@ -34,32 +34,29 @@ func init() {
 }
 
 var basePDFRenderers = baseform.BaseFormPDF{
-	OriginMsgID: &message.PDFMultiRenderer{
-		&message.PDFTextRenderer{X: 223, Y: 50, R: 348, B: 67, Style: message.PDFTextStyle{VAlign: "baseline"}},
-		&message.PDFTextRenderer{Page: 2, X: 420, Y: 36, R: 574, B: 48},
-	},
-	DestinationMsgID: &message.PDFTextRenderer{X: 452, Y: 50, R: 574, B: 67, Style: message.PDFTextStyle{VAlign: "baseline"}},
-	MessageDate:      &message.PDFTextRenderer{X: 69, Y: 87, R: 128, B: 104, Style: message.PDFTextStyle{VAlign: "baseline", FontSize: 9}},
-	MessageTime:      &message.PDFTextRenderer{X: 162, Y: 87, R: 203, B: 104, Style: message.PDFTextStyle{VAlign: "baseline", FontSize: 9}},
-	Handling: &message.PDFRadioRenderer{Radius: 5, Points: map[string][]float64{
-		"IMMEDIATE": {277, 96},
-		"PRIORITY":  {388, 96},
-		"ROUTINE":   {493, 96},
+	OriginMsgID:      &message.PDFTextRenderer{X: 228.96, Y: 62.04, W: 106.80, H: 16.08, Style: message.PDFTextStyle{VAlign: "baseline"}},
+	DestinationMsgID: &message.PDFTextRenderer{X: 438.60, Y: 62.04, W: 122.16, H: 16.08, Style: message.PDFTextStyle{VAlign: "baseline"}},
+	MessageDate:      &message.PDFTextRenderer{X: 72.12, Y: 114.24, W: 56.64, H: 17.88, Style: message.PDFTextStyle{VAlign: "baseline"}},
+	MessageTime:      &message.PDFTextRenderer{X: 171.48, Y: 114.24, W: 65.28, H: 17.88, Style: message.PDFTextStyle{VAlign: "baseline"}},
+	Handling: &message.PDFRadioRenderer{Radius: 3, Points: map[string][]float64{
+		"IMMEDIATE": {303.38, 122.97},
+		"PRIORITY":  {402.98, 122.97},
+		"ROUTINE":   {486.50, 122.97},
 	}},
-	ToICSPosition:   &message.PDFTextRenderer{X: 132, Y: 106, R: 292, B: 123, Style: message.PDFTextStyle{VAlign: "baseline"}},
-	ToLocation:      &message.PDFTextRenderer{X: 132, Y: 125, R: 292, B: 142, Style: message.PDFTextStyle{VAlign: "baseline"}},
-	ToName:          &message.PDFTextRenderer{X: 132, Y: 144, R: 292, B: 161, Style: message.PDFTextStyle{VAlign: "baseline"}},
-	ToContact:       &message.PDFTextRenderer{X: 132, Y: 163, R: 292, B: 181, Style: message.PDFTextStyle{VAlign: "baseline"}},
-	FromICSPosition: &message.PDFTextRenderer{X: 382, Y: 106, R: 572, B: 123, Style: message.PDFTextStyle{VAlign: "baseline"}},
-	FromLocation:    &message.PDFTextRenderer{X: 382, Y: 125, R: 572, B: 142, Style: message.PDFTextStyle{VAlign: "baseline"}},
-	FromName:        &message.PDFTextRenderer{X: 382, Y: 144, R: 572, B: 161, Style: message.PDFTextStyle{VAlign: "baseline"}},
-	FromContact:     &message.PDFTextRenderer{X: 382, Y: 163, R: 572, B: 181, Style: message.PDFTextStyle{VAlign: "baseline"}},
-	OpRelayRcvd:     &message.PDFTextRenderer{X: 109, Y: 711, R: 320, B: 728, Style: message.PDFTextStyle{VAlign: "baseline"}},
-	OpRelaySent:     &message.PDFTextRenderer{X: 356, Y: 711, R: 574, B: 728, Style: message.PDFTextStyle{VAlign: "baseline"}},
-	OpName:          &message.PDFTextRenderer{X: 76, Y: 730, R: 249, B: 747, Style: message.PDFTextStyle{VAlign: "baseline"}},
-	OpCall:          &message.PDFTextRenderer{X: 301, Y: 730, R: 366, B: 747, Style: message.PDFTextStyle{VAlign: "baseline"}},
-	OpDate:          &message.PDFTextRenderer{X: 401, Y: 730, R: 479, B: 747, Style: message.PDFTextStyle{VAlign: "baseline"}},
-	OpTime:          &message.PDFTextRenderer{X: 542, Y: 730, R: 574, B: 747, Style: message.PDFTextStyle{VAlign: "baseline"}},
+	ToICSPosition:   &message.PDFTextRenderer{X: 132.84, Y: 139.08, W: 162.48, H: 11.04, Style: message.PDFTextStyle{VAlign: "baseline"}},
+	ToLocation:      &message.PDFTextRenderer{X: 132.84, Y: 157.08, W: 162.48, H: 11.04, Style: message.PDFTextStyle{VAlign: "baseline"}},
+	ToName:          &message.PDFTextRenderer{X: 132.84, Y: 175.08, W: 162.48, H: 11.04, Style: message.PDFTextStyle{VAlign: "baseline"}},
+	ToContact:       &message.PDFTextRenderer{X: 132.84, Y: 193.08, W: 162.48, H: 15.12, Style: message.PDFTextStyle{VAlign: "baseline"}},
+	FromICSPosition: &message.PDFTextRenderer{X: 389.28, Y: 139.08, W: 170.16, H: 11.04, Style: message.PDFTextStyle{VAlign: "baseline"}},
+	FromLocation:    &message.PDFTextRenderer{X: 389.28, Y: 157.08, W: 170.16, H: 11.04, Style: message.PDFTextStyle{VAlign: "baseline"}},
+	FromName:        &message.PDFTextRenderer{X: 389.28, Y: 175.08, W: 170.16, H: 11.04, Style: message.PDFTextStyle{VAlign: "baseline"}},
+	FromContact:     &message.PDFTextRenderer{X: 389.28, Y: 193.08, W: 170.16, H: 15.12, Style: message.PDFTextStyle{VAlign: "baseline"}},
+	OpRelayRcvd:     &message.PDFTextRenderer{X: 111.00, Y: 685.20, W: 205.56, H: 12.36, Style: message.PDFTextStyle{VAlign: "baseline"}},
+	OpRelaySent:     &message.PDFTextRenderer{X: 357.12, Y: 685.20, W: 203.64, H: 12.36, Style: message.PDFTextStyle{VAlign: "baseline"}},
+	OpName:          &message.PDFTextRenderer{X: 77.04, Y: 704.16, W: 110.28, H: 12.36, Style: message.PDFTextStyle{VAlign: "baseline"}},
+	OpCall:          &message.PDFTextRenderer{X: 245.52, Y: 704.16, W: 49.80, H: 12.36, Style: message.PDFTextStyle{VAlign: "baseline"}},
+	OpDate:          &message.PDFTextRenderer{X: 336.96, Y: 704.16, W: 88.80, H: 12.36, Style: message.PDFTextStyle{VAlign: "baseline"}},
+	OpTime:          &message.PDFTextRenderer{X: 495.84, Y: 704.16, W: 64.92, H: 12.36, Style: message.PDFTextStyle{VAlign: "baseline"}},
 }
 
 // CPODUpdate holds a CPOD commodities update form.
@@ -105,7 +102,7 @@ func makeF() *CPODUpdate {
 			Choices:     message.Choices{"Campbell", "Cupertino", "Gilroy", "Los Altos", "Los Altos Hills", "Los Gatos", "Milpitas", "Monte Sereno", "Morgan Hill", "Mountain View", "Palo Alto", "San Jose", "Santa Clara (City)", "Saratoga", "Sunnyvale", "Santa Clara County", "County unincorporated"},
 			Presence:    message.Required,
 			PIFOTag:     "20.",
-			PDFRenderer: &message.PDFTextRenderer{X: 190, Y: 184, R: 373, B: 206, Style: message.PDFTextStyle{VAlign: "baseline"}},
+			PDFRenderer: &message.PDFTextRenderer{X: 116.64, Y: 233.16, W: 442.80, H: 11.76},
 			EditWidth:   21,
 			EditHelp:    `This is the name of the jurisdiction responsible for the CPOD.  It is required.`,
 		}),
@@ -114,7 +111,7 @@ func makeF() *CPODUpdate {
 			Value:       &f.PreparedDate,
 			Presence:    message.Required,
 			PIFOTag:     "21d.",
-			PDFRenderer: &message.PDFTextRenderer{X: 160, Y: 467, R: 388, B: 483, Style: message.PDFTextStyle{VAlign: "baseline"}},
+			PDFRenderer: &message.PDFTextRenderer{X: 116.64, Y: 251.76, W: 178.68, H: 11.52, Style: message.PDFTextStyle{VAlign: "baseline"}},
 			EditHelp:    `This is the date when the form was prepared.  It is required.`,
 		}),
 		message.NewTimeField(true, &message.Field{
@@ -122,7 +119,7 @@ func makeF() *CPODUpdate {
 			Value:       &f.PreparedTime,
 			Presence:    message.Required,
 			PIFOTag:     "21t.",
-			PDFRenderer: &message.PDFTextRenderer{X: 449, Y: 467, R: 572, B: 483, Style: message.PDFTextStyle{VAlign: "baseline"}},
+			PDFRenderer: &message.PDFTextRenderer{X: 383.04, Y: 251.76, W: 176.40, H: 11.52, Style: message.PDFTextStyle{VAlign: "baseline"}},
 			EditHelp:    `This is the time when the form was prepared.  It is required.`,
 		}),
 		message.NewDateTimeField(&message.Field{
@@ -134,18 +131,24 @@ func makeF() *CPODUpdate {
 			Value:       &f.SiteName,
 			Presence:    message.Required,
 			PIFOTag:     "30.",
-			PDFRenderer: &message.PDFTextRenderer{X: 190, Y: 184, R: 373, B: 206, Style: message.PDFTextStyle{VAlign: "baseline"}},
+			PDFRenderer: &message.PDFTextRenderer{X: 96.84, Y: 287.76, W: 462.60, H: 11.52},
 			EditWidth:   80,
 			EditHelp:    `This is the name of the CPOD site.  It is required.`,
 		}),
 		message.NewRestrictedField(&message.Field{
-			Label:       "Status",
-			Value:       &f.Status,
-			Presence:    message.Required,
-			PIFOTag:     "31.",
-			Choices:     message.Choices{"Activated", "Pending Activation", "Pending Demobilization", "Demobilization", "Not Activated"},
-			PDFRenderer: &message.PDFMappedTextRenderer{X: 180, Y: 671, B: 693, Map: map[string]string{"checked": "[with signature]"}},
-			EditHelp:    `This is the status of the CPOD.  It is required.`,
+			Label:    "Status",
+			Value:    &f.Status,
+			Presence: message.Required,
+			PIFOTag:  "31.",
+			Choices:  message.Choices{"Activated", "Pending Activation", "Pending Demobilization", "Demobilization", "Not Activated"},
+			PDFRenderer: &message.PDFRadioRenderer{Radius: 3, Points: map[string][]float64{
+				"Activated":              {155.66, 310.89},
+				"Pending Activation":     {155.66, 326.37},
+				"Pending Demobilization": {299.66, 310.89},
+				"Demobilization":         {299.66, 326.37},
+				"Not Activated":          {443.66, 310.89},
+			}},
+			EditHelp: `This is the status of the CPOD.  It is required.`,
 		}),
 	)
 	for i := range f.Commodities {
@@ -178,13 +181,14 @@ func (c *Commodity) Fields(m *CPODUpdate, index int) []*message.Field {
 		typePresence = message.Optional
 		qtyPresence = c.requiredIfTypeElseNotAllowed
 	}
+	var offset = 36.994 * float64(index-1)
 	return []*message.Field{
 		message.NewTextField(&message.Field{
 			Label:       fmt.Sprintf("Item %d: Type of Commodity", index),
 			Value:       &c.Type,
 			Presence:    typePresence,
 			PIFOTag:     fmt.Sprintf("%da.", 69+index),
-			PDFRenderer: &message.PDFTextRenderer{X: 999, Y: 999, R: 999, B: 999, Style: message.PDFTextStyle{VAlign: "top"}},
+			PDFRenderer: &message.PDFTextRenderer{X: 189.60, Y: 365.40 + offset, W: 369.84, H: 11.40, Style: message.PDFTextStyle{VAlign: "top"}},
 			EditWidth:   999,
 			EditHelp:    `This is the type of a commodity distributed at the CPOD site.`,
 			EditSkip: func(f *message.Field) bool {
@@ -196,7 +200,7 @@ func (c *Commodity) Fields(m *CPODUpdate, index int) []*message.Field {
 			Value:       &c.StartingQty,
 			Presence:    qtyPresence,
 			PIFOTag:     fmt.Sprintf("%db.", 69+index),
-			PDFRenderer: &message.PDFTextRenderer{X: 999, Y: 999, R: 999, B: 999, Style: message.PDFTextStyle{VAlign: "top"}},
+			PDFRenderer: &message.PDFTextRenderer{X: 178.80, Y: 383.40 + offset, W: 63.72, H: 11.52, Style: message.PDFTextStyle{VAlign: "baseline"}},
 			EditWidth:   4,
 			EditHelp:    `This is the quantity of the commodity that the CPOD site had when it opened.  It is required.`,
 		}),
@@ -205,7 +209,7 @@ func (c *Commodity) Fields(m *CPODUpdate, index int) []*message.Field {
 			Value:       &c.QtyDistributed,
 			Presence:    qtyPresence,
 			PIFOTag:     fmt.Sprintf("%dc.", 69+index),
-			PDFRenderer: &message.PDFTextRenderer{X: 999, Y: 999, R: 999, B: 999, Style: message.PDFTextStyle{VAlign: "top"}},
+			PDFRenderer: &message.PDFTextRenderer{X: 333.96, Y: 383.40 + offset, W: 72.12, H: 11.52, Style: message.PDFTextStyle{VAlign: "baseline"}},
 			EditWidth:   4,
 			EditHelp:    `This is the quantity of the commodity that the CPOD site has distributed to visitors.  It is required.`,
 		}),
@@ -214,7 +218,7 @@ func (c *Commodity) Fields(m *CPODUpdate, index int) []*message.Field {
 			Value:       &c.QtyAvailable,
 			Presence:    qtyPresence,
 			PIFOTag:     fmt.Sprintf("%dd.", 69+index),
-			PDFRenderer: &message.PDFTextRenderer{X: 999, Y: 999, R: 999, B: 999, Style: message.PDFTextStyle{VAlign: "top"}},
+			PDFRenderer: &message.PDFTextRenderer{X: 488.16, Y: 383.40 + offset, W: 71.28, H: 11.52, Style: message.PDFTextStyle{VAlign: "baseline"}},
 			EditWidth:   4,
 			EditHelp:    `This is the quantity of the commodity that the CPOD site has available for distribution.  It is required.`,
 		}),

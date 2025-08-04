@@ -1,4 +1,4 @@
-//go:build veocipdf
+//go:build packetpdf
 
 package dmgasmt
 
