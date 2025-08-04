@@ -13,8 +13,8 @@ import (
 	"strings"
 	"time"
 
-	"github.com/phpdave11/gofpdf"
-	"github.com/phpdave11/gofpdf/contrib/gofpdi"
+	"github.com/rothskeller/gofpdf"
+	"github.com/rothskeller/gofpdf/contrib/gofpdi"
 
 	"github.com/rothskeller/packet/envelope"
 	"github.com/rothskeller/packet/message"

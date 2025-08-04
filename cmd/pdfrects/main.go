@@ -16,10 +16,10 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/phpdave11/gofpdf"
-	"github.com/phpdave11/gofpdf/contrib/gofpdi"
+	"github.com/rothskeller/gofpdf"
+	"github.com/rothskeller/gofpdf/contrib/gofpdi"
 
-	fpdi "github.com/phpdave11/gofpdi"
+	fpdi "github.com/rothskeller/gofpdi"
 )
 
 func main() {
