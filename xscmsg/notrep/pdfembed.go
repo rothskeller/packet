@@ -6,7 +6,7 @@ import (
 	_ "embed" // .
 )
 
-//go:embed Notable_Report_v20250730.pdf
+//go:embed Notable_Report_v20250804.pdf
 var pdfBaseEmbed []byte
 
 func init() {

@@ -29,7 +29,7 @@ func init() {
 }
 
 var basePDFRenderers = baseform.BaseFormPDF{
-	OriginMsgID:      &message.PDFTextRenderer{X: 225.36, Y: 62.04, W: 112.80, H: 16.0, Style: message.PDFTextStyle{VAlign: "baseline"}},
+	OriginMsgID:      &message.PDFTextRenderer{X: 225.36, Y: 62.04, W: 112.80, H: 16.08, Style: message.PDFTextStyle{VAlign: "baseline"}},
 	DestinationMsgID: &message.PDFTextRenderer{X: 444.00, Y: 62.04, W: 116.76, H: 16.08, Style: message.PDFTextStyle{VAlign: "baseline"}},
 	MessageDate:      &message.PDFTextRenderer{X: 72.72, Y: 119.40, W: 47.04, H: 20, Style: message.PDFTextStyle{VAlign: "baseline", FontSize: 9}},
 	MessageTime:      &message.PDFTextRenderer{X: 189.84, Y: 119.40, W: 42.48, H: 20, Style: message.PDFTextStyle{VAlign: "baseline", FontSize: 9}},
@@ -39,7 +39,7 @@ var basePDFRenderers = baseform.BaseFormPDF{
 		"ROUTINE":   {485.70, 123.93},
 	}},
 	ToICSPosition:   &message.PDFTextRenderer{X: 132.84, Y: 147.72, W: 144.48, H: 19.92, Style: message.PDFTextStyle{VAlign: "baseline"}},
-	ToLocation:      &message.PDFTextRenderer{X: 132.84, Y: 174.12, W: 144.48, H: 19.802, Style: message.PDFTextStyle{VAlign: "baseline"}},
+	ToLocation:      &message.PDFTextRenderer{X: 132.84, Y: 174.12, W: 144.48, H: 19.80, Style: message.PDFTextStyle{VAlign: "baseline"}},
 	ToName:          &message.PDFTextRenderer{X: 132.84, Y: 200.52, W: 144.48, H: 19.92, Style: message.PDFTextStyle{VAlign: "baseline"}},
 	ToContact:       &message.PDFTextRenderer{X: 132.84, Y: 226.92, W: 144.48, H: 19.92, Style: message.PDFTextStyle{VAlign: "baseline"}},
 	FromICSPosition: &message.PDFTextRenderer{X: 375.84, Y: 147.72, W: 183.60, H: 19.92, Style: message.PDFTextStyle{VAlign: "baseline"}},
@@ -116,7 +116,7 @@ func makeF() *WindshieldSurvey {
 			Value:       &f.ItemBuilding,
 			PIFOTag:     "23a.",
 			Choices:     message.Choices{"checked"},
-			PDFRenderer: &message.PDFCheckRenderer{W: 10.15, H: 10.15, Points: map[string][]float64{"checked": {156.86, 330.57}}},
+			PDFRenderer: &message.PDFCheckRenderer{W: 10.15, H: 10.15, Points: map[string][]float64{"checked": {151.79, 325.49}}},
 			EditHelp:    `This indicates that the item surveyed was a building.  At least one item type is required.`,
 		}),
 		message.NewRestrictedField(&message.Field{
@@ -124,7 +124,7 @@ func makeF() *WindshieldSurvey {
 			Value:       &f.ItemRoad,
 			PIFOTag:     "23b.",
 			Choices:     message.Choices{"checked"},
-			PDFRenderer: &message.PDFCheckRenderer{W: 10.15, H: 10.15, Points: map[string][]float64{"checked": {264.86, 330.57}}},
+			PDFRenderer: &message.PDFCheckRenderer{W: 10.15, H: 10.15, Points: map[string][]float64{"checked": {259.79, 325.49}}},
 			EditHelp:    `This indicates that the item surveyed was a road.  At least one item type is required.`,
 		}),
 		message.NewRestrictedField(&message.Field{
@@ -162,10 +162,10 @@ func makeF() *WindshieldSurvey {
 			PIFOTag:  "26.",
 			Choices:  message.Choices{"Affected", "Minor", "Major", "Destroyed"},
 			PDFRenderer: &message.PDFRadioRenderer{Radius: 3, Points: map[string][]float64{
-				"Affected":  {192.86, 413.49},
-				"Minor":     {192.86, 428.97},
-				"Major":     {372.86, 413.49},
-				"Destroyed": {372.86, 428.97},
+				"Affected":  {192.86, 396.49},
+				"Minor":     {192.86, 411.97},
+				"Major":     {372.86, 396.49},
+				"Destroyed": {372.86, 411.97},
 			}},
 			EditHelp: `This indicates the level of damage to the property surveyed.  It is required.`,
 		}),
@@ -173,7 +173,7 @@ func makeF() *WindshieldSurvey {
 			Label:       "Other Damage Observed",
 			Value:       &f.OtherDamageObserved,
 			PIFOTag:     "27.",
-			PDFRenderer: &message.PDFTextRenderer{X: 44.64, Y: 453.36, W: 514.80, H: 89.16, Style: message.PDFTextStyle{VAlign: "top"}},
+			PDFRenderer: &message.PDFTextRenderer{X: 44.64, Y: 434.88, W: 514.80, H: 90.60, Style: message.PDFTextStyle{VAlign: "top"}},
 			EditWidth:   108,
 			EditHelp:    `This describes any other damage observed during the survey.`,
 		}),
