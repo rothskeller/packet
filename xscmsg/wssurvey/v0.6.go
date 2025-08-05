@@ -61,7 +61,8 @@ type WindshieldSurvey struct {
 	Jurisdiction        string
 	Team                string
 	Location            string
-	Item                string
+	ItemBuilding        string
+	ItemRoad            string
 	BuildingType        string
 	NumberOfStories     string
 	DamageCategory      string
@@ -111,21 +112,30 @@ func makeF() *WindshieldSurvey {
 			EditHelp:    `This is the location that was surveyed.  It should be unique among all windshield survey reports in the jurisdiction.  It is required.`,
 		}),
 		message.NewRestrictedField(&message.Field{
-			Label:    "Item",
-			Value:    &f.Item,
-			Presence: message.Required,
-			PIFOTag:  "23.",
-			Choices:  message.Choices{"Building", "Road", "Other"},
-			PDFRenderer: &message.PDFRadioRenderer{Radius: 3, Points: map[string][]float64{
-				"Building": {156.86, 330.57},
-				"Road":     {264.86, 330.57},
-				"Other":    {336.86, 330.57},
-			}},
-			EditHelp: `This indicates the type of property surveyed.  It is required.`,
+			Label:       "Item: Building",
+			Value:       &f.ItemBuilding,
+			PIFOTag:     "23a.",
+			Choices:     message.Choices{"checked"},
+			PDFRenderer: &message.PDFCheckRenderer{W: 10.15, H: 10.15, Points: map[string][]float64{"checked": {156.86, 330.57}}},
+			EditHelp:    `This indicates that the item surveyed was a building.  At least one item type is required.`,
 		}),
 		message.NewRestrictedField(&message.Field{
-			Label:   "Building Type",
-			Value:   &f.BuildingType,
+			Label:       "Item: Road",
+			Value:       &f.ItemRoad,
+			PIFOTag:     "23b.",
+			Choices:     message.Choices{"checked"},
+			PDFRenderer: &message.PDFCheckRenderer{W: 10.15, H: 10.15, Points: map[string][]float64{"checked": {264.86, 330.57}}},
+			EditHelp:    `This indicates that the item surveyed was a road.  At least one item type is required.`,
+		}),
+		message.NewRestrictedField(&message.Field{
+			Label: "Building Type",
+			Value: &f.BuildingType,
+			Presence: func() (message.Presence, string) {
+				if f.ItemBuilding != "" {
+					return message.PresenceRequired, `"Item: Building" is checked`
+				}
+				return message.PresenceNotAllowed, `"Item: Building" is not checked`
+			},
 			PIFOTag: "24.",
 			Choices: message.ChoicePairs{
 				"Single", "Single Family Home",
@@ -144,14 +154,6 @@ func makeF() *WindshieldSurvey {
 				"Other":     {336.86, 378.93},
 			}},
 			EditHelp: `This indicates the type of building surveyed, if applicable.`,
-		}),
-		message.NewCardinalNumberField(&message.Field{
-			Label:       "Number of Stories",
-			Value:       &f.NumberOfStories,
-			PIFOTag:     "25.",
-			PDFRenderer: &message.PDFTextRenderer{X: 156.86, Y: 390.84, W: 402.58, H: 11.16},
-			EditWidth:   2,
-			EditHelp:    `This is the number of stories in the building surveyed, if applicable.`,
 		}),
 		message.NewRestrictedField(&message.Field{
 			Label:    "Damage Categorization",
@@ -181,6 +183,13 @@ func makeF() *WindshieldSurvey {
 		panic("update WindshieldSurvey fieldCount")
 	}
 	return &f
+}
+
+func (f *WindshieldSurvey) atLeastOneItem() (message.Presence, string) {
+	if f.ItemRoad != "" {
+		return message.PresenceOptional, ""
+	}
+	return message.PresenceRequired, "no other item type is checked"
 }
 
 func decode(_ *envelope.Envelope, _ string, form *message.PIFOForm, _ int) message.Message {

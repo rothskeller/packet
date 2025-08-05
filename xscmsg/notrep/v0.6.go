@@ -299,7 +299,7 @@ func makeF() *NotableReport {
 			Value: &f.DateToExpire,
 			Presence: func() (message.Presence, string) {
 				if f.Expires == "Yes" {
-					return message.PresenceOptional, ""
+					return message.PresenceRequired, `"Event Expires" is "Yes"`
 				}
 				return message.PresenceNotAllowed, `"Event Expires" is not "Yes"`
 			},
