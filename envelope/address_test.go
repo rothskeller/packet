@@ -27,6 +27,13 @@ func TestParseAddressList(t *testing.T) {
 			},
 		},
 		{
+			name: "address with quoted full name",
+			arg:  `"Steve Roth" <steve@rothskeller.net>`,
+			wantAddrs: []*Address{
+				{Name: `"Steve Roth"`, Address: "steve@rothskeller.net"},
+			},
+		},
+		{
 			name: "bare word address",
 			arg:  "kc6rsc",
 			wantAddrs: []*Address{

@@ -347,6 +347,7 @@ func parseQuotedString(s string) (qs, rest string, ok bool) {
 		return "", "", false
 	}
 	qs, s = qs+s[:1], s[1:]
+	_, s = parseCommentsWhitespace(s)
 	return qs, s, true
 }
 
