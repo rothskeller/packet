@@ -4,8 +4,8 @@ go 1.21
 
 require (
 	github.com/davecgh/go-spew v1.1.1
-	github.com/rothskeller/gofpdf v1.4.10
-	github.com/rothskeller/gofpdi v1.0.22
+	github.com/rothskeller/gofpdf v1.4.11
+	github.com/rothskeller/gofpdi v1.0.23
 	github.com/rothskeller/pdf v1.3.2
 	go.bug.st/serial v1.6.0
 	golang.org/x/exp v0.0.0-20240808152545-0cdaa3abc0fa
