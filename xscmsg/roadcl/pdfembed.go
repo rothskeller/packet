@@ -6,7 +6,7 @@ import (
 	_ "embed" // .
 )
 
-//go:embed Road_Closure_v20250730.pdf
+//go:embed Road_Closure_v20250812.pdf
 var pdfBaseEmbed []byte
 
 func init() {

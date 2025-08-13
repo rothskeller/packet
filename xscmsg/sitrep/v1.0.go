@@ -13,7 +13,7 @@ import (
 var Type = message.Type{
 	Tag:     "SitRep",
 	HTML:    "form-situation-report.html",
-	Version: "0.6",
+	Version: "1.0",
 	Name:    "situation report form",
 	Article: "a",
 	FieldOrder: []string{

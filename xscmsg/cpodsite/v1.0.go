@@ -16,7 +16,7 @@ import (
 var Type = message.Type{
 	Tag:     "CPODSite",
 	HTML:    "form-cpod-site-info.html",
-	Version: "0.6",
+	Version: "1.0",
 	Name:    "CPOD site information form",
 	Article: "a",
 	FieldOrder: []string{

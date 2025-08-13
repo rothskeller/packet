@@ -13,7 +13,7 @@ import (
 var Type = message.Type{
 	Tag:     "WSSurvey",
 	HTML:    "form-windshield-survey.html",
-	Version: "0.6",
+	Version: "1.0",
 	Name:    "windshield survey form",
 	Article: "a",
 	FieldOrder: []string{

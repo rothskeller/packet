@@ -13,7 +13,7 @@ import (
 var Type = message.Type{
 	Tag:     "RoadCl",
 	HTML:    "form-road-closure.html",
-	Version: "0.6",
+	Version: "1.0",
 	Name:    "road closure form",
 	Article: "a",
 	FieldOrder: []string{

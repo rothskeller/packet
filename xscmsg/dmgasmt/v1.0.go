@@ -14,7 +14,7 @@ import (
 var Type = message.Type{
 	Tag:     "DmgAsmt",
 	HTML:    "form-damage-assessment.html",
-	Version: "0.6",
+	Version: "1.0",
 	Name:    "damage assessment form",
 	Article: "a",
 	FieldOrder: []string{

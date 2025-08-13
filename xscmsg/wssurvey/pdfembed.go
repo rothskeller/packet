@@ -6,7 +6,7 @@ import (
 	_ "embed" // .
 )
 
-//go:embed Windshield_Survey_v20250804.pdf
+//go:embed Windshield_Survey_v20250812.pdf
 var pdfBaseEmbed []byte
 
 func init() {
