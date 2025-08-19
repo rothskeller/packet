@@ -122,6 +122,7 @@ func makeF() *WindshieldSurvey {
 		message.NewRestrictedField(&message.Field{
 			Label:       "Item: Road",
 			Value:       &f.ItemRoad,
+			Presence:    f.atLeastOneItem,
 			PIFOTag:     "23b.",
 			Choices:     message.Choices{"checked"},
 			PDFRenderer: &message.PDFCheckRenderer{W: 10.15, H: 10.15, Points: map[string][]float64{"checked": {259.79, 325.49}}},

@@ -132,7 +132,6 @@ func makeF() *Shelter {
 		message.NewRestrictedField(&message.Field{
 			Label:       "Type: Congregate",
 			Value:       &f.TypeCongregate,
-			Presence:    f.atLeastOneType,
 			PIFOTag:     "23a.",
 			Choices:     message.Choices{"checked"},
 			PDFRenderer: &message.PDFCheckRenderer{W: 10.15, H: 10.15, Points: map[string][]float64{"checked": {119.03, 286.13}}},
@@ -169,6 +168,7 @@ func makeF() *Shelter {
 		message.NewRestrictedField(&message.Field{
 			Label:       "Type: Large Animals",
 			Value:       &f.TypeLargeAnimals,
+			Presence:    f.atLeastOneType,
 			PIFOTag:     "23e.",
 			Choices:     message.Choices{"checked"},
 			PDFRenderer: &message.PDFCheckRenderer{W: 10.15, H: 10.15, Points: map[string][]float64{"checked": {407.03, 286.13}}},
@@ -386,7 +386,7 @@ func makeF() *Shelter {
 }
 
 func (f *Shelter) atLeastOneType() (message.Presence, string) {
-	if f.TypeNonCongregate != "" || f.TypeTEP != "" || f.TypePetsAccepted != "" || f.TypeLargeAnimals != "" {
+	if f.TypeCongregate != "" || f.TypeNonCongregate != "" || f.TypeTEP != "" || f.TypePetsAccepted != "" {
 		return message.PresenceOptional, ""
 	}
 	return message.PresenceRequired, "no other shelter type is checked"
