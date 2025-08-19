@@ -311,7 +311,7 @@ func (r *Resource) Fields(m *ResourceRequest, index int) []*message.Field {
 			EditWidth:   52,
 			EditHelp:    `This is the name of the item being requested.`,
 			EditSkip: func(f *message.Field) bool {
-				return index > 1 && m.Resources[index-2].ItemName != ""
+				return index > 1 && m.Resources[index-2].ItemName == ""
 			},
 		}),
 		message.NewCardinalNumberField(&message.Field{
