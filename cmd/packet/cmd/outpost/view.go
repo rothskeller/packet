@@ -14,6 +14,7 @@ import (
 	"github.com/rothskeller/packet/cmd/packet/server"
 	"github.com/rothskeller/packet/form"
 	"github.com/rothskeller/packet/message"
+	"github.com/rothskeller/packet/message/subject"
 )
 
 var viewCmd = &cobra.Command{
@@ -52,7 +53,34 @@ opdt     Date and time that the message was received`,
 			slog.Error("can't read message file", "f", msgfile, "err", err)
 			return fmt.Errorf("%s: %s", msgfile, err)
 		}
+		// Since we read the message with no headers, it has no
+		// subject.  But we'd like to have one for PDF rendering, so
+		// we'll construct one.
+		if ft, ok := msg.Type().(form.FormType); ok {
+			var msgID, handling, summary string
+			body := msg.Body().(*form.FormBody)
+			for fd := range ft.AllFields() {
+				switch fd.Common {
+				case "originMessageID":
+					msgID = body.Field(fd.Tag)
+				case "handling":
+					if handling = body.Field(fd.Tag); handling != "" {
+						handling = handling[:1]
+					}
+				case "messageSummary":
+					summary = body.Field(fd.Tag)
+				}
+			}
+			summary = ft.SubjectTag + "_" + summary
+			subj, _ := subject.NewSCCoSubject(msgID, handling, summary)
+			msg = message.NewDraftMessage(msg.Type(), subj, msg.Payload(), false)
+		}
 		if len(args) == 5 {
+			// This is a received message.  Fill in the fields as
+			// given.  (We're still leaving the type as
+			// DraftMessage, though, because we don't have the
+			// details to put into a ReceivedMessage.)
+			// TODO: revisit
 			if ft, ok := msg.Type().(form.FormType); ok {
 				body := msg.Body().(*form.FormBody)
 				body.SetField("RECEIVED", "RECEIVED")
