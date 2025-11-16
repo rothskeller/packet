@@ -1,0 +1,781 @@
+addon    SCCoPIFO
+html     form-allied-health-facility-status.html
+version  2.6
+title    Allied Health Facility Status Form
+indef    an allied health facility status form
+create   AHFacStat
+pdfFile  Allied_Health_Facility_Status_DEOC-9_v20180200_with_XSC_RACES_Routing_Slip_v20190527.pdf
+
+field MsgNo originMessageID
+  label    "Origin Message Number"
+  type     messageID
+  presence required
+  help     "This is the message number assigned to the message by the origin station.  Valid message numbers have the form XXX-###P, where XXX is the three-character message number prefix assigned to the station, ### is a sequence number (any number of digits), and P is an optional suffix letter.  This field is required."
+  pdf      text L 223.72 R 357.76 B 710.12 T 726.28 BL 714.45
+  pdf      text P 2 L 468.00 R 589.12 B 742.10 T 780.01 A rb
+
+field DestMsgNo destinationMessageID
+  label    "Destination Message Number"
+  type     messageID
+  pdf      text L 454.60 R 573.76 B 710.12 T 726.28 BL 714.45
+
+field 1a. messageDate
+  label    "Message Date"
+  type     date
+  presence required
+  help     "This is the date the message was written, in MM/DD/YYYY format.  It is required."
+  pdf      text L  75.28 R 141.76 B 650.00 T 665.32 BL 653.83
+
+field 1b. messageTime
+  label    "Message Time"
+  type     time
+  presence required
+  help     "This is the time the message was written, in HH:MM format (24-hour clock).  It is required."
+  pdf      text L 211.48 R 245.32 B 650.00 T 665.32 BL 653.83
+
+field -
+  label    "Message Date/Time"
+  type     dateTime
+  children 1a. 1b.
+  presence required
+  help     "This is the date and time the message was written, in MM/DD/YYYY HH:MM format (24-hour clock).  It is required."
+
+field 5. handling
+  label    Handling
+  type     restricted
+  value    ROUTINE
+  choice   IMMEDIATE
+  choice   PRIORITY
+  choice   ROUTINE
+  presence required
+  help     "This is the message handling order, which specifies how fast it needs to be delivered.  Allowed values are \"ROUTINE\" (within 2 hours), \"PRIORITY\" (within 1 hour), and \"IMMEDIATE\".  This field is required."
+  pdf      if 5.=IMMEDIATE then circle X 313.56 Y 657.90 R 2.8
+  pdf      if 5.=PRIORITY then circle X 413.16 Y 657.90 R 2.8
+  pdf      if 5.=ROUTINE then circle X 496.80 Y 657.90 R 2.8
+
+field 7a. toICSPosition
+  label    "To ICS Position"
+  value    "Health Care Liaison"
+  choice   Health Care Liaison
+  choice   EMS Unit
+  choice   Public Health Unit
+  choice   Medical Health Branch
+  choice   Operations Section
+  presence required
+  width    30
+  help     "This is the ICS position to which the message is addressed.  It is required."
+  pdf      text L 132.16 R 303.28 B 629.72 T 645.04 BL 633.59
+
+field 7b. toLocation
+  label    "To Location"
+  value    PHDOC
+  choice   PHDOC
+  choice   County EOC
+  presence required
+  width    32
+  help     "This is the location of the recipient ICS position.  It is required."
+  pdf      text L 132.16 R 303.28 B 609.92 T 625.24 BL 613.77
+
+field 7c.
+  label    "To Name"
+  width    34
+  help     "This is the name of the person holding the recipient ICS position.  It is optional and rarely provided."
+  pdf      text L 132.16 R 303.28 B 590.12 T 605.44 BL 594.07
+
+field 7d.
+  label    "To Contact Info"
+  width    29
+  help     "This is contact information (phone number, email, etc.) for the receipient.  It is optional and rarely provided."
+  pdf      text L 132.16 R 303.76 B 570.32 T 585.64 BL 574.20
+
+field 8a. fromICSPosition
+  label    "From ICS Position"
+  presence required
+  width    30
+  help     "This is the ICS position of the message author.  It is required."
+  pdf      text L 405.40 R 571.96 B 629.72 T 645.04 BL 633.59
+
+field 8b. fromLocation
+  label    "From Location"
+  presence required
+  width    32
+  help     "This is the location of the message author.  It is required."
+  pdf      text L 405.40 R 571.96 B 609.92 T 625.24 BL 613.77
+
+field 8c.
+  label    "From Name"
+  width    34
+  help     "This is the name of the message author.  It is optional and rarely provided."
+  pdf      text L 405.40 R 571.96 B 590.12 T 605.44 BL 594.07
+
+field 8d.
+  label    "From Contact Info"
+  width    29
+  help     "This is contact information (phone number, email, etc.) for the message author.  It is optional and rarely provided."
+  pdf      text L 405.40 R 572.44 B 570.32 T 585.64 BL 574.20
+
+field -
+  type     static
+  value    "Allied Health Facility Status"
+  pdf      text L 118.36 R 303.76 B 550.88 T 565.36 BL 554.41
+
+field 19.
+  label    "Report Type"
+  type     restricted
+  choice   Update
+  choice   Complete
+  presence required
+  help     "This indicates whether the form should \"Update\" the previous status report for the facility, or whether it is a \"Complete\" replacement of the previous report.  This field is required."
+
+field 20. messageSummary
+  label    "Facility Name"
+  presence required
+  width    52
+  help     "This is the name of the facility whose status is being reported.  It is required."
+  pdf      text L 350.44 R 572.44 B 550.88 T 565.36 BL 554.41
+  pdf      text P 2 L  20.96 R 334.00 B 651.68 T 672.04
+
+field 21.
+  label    "Facility Type"
+  presence if 20.=Complete then required
+  width    21
+  help     "This is the type of the facility, such as Skilled Nursing, Home Health, Dialysis, Community Health Center, Surgical Center, or Hospice.  It is required when the \"Report Type\" is \"Complete\"."
+  pdf      text P 2 L 339.08 R 467.22 B 651.68 T 672.04
+
+field 22d.
+  label    Date
+  type     date
+  presence required
+  help     "This is the date of the status report, in MM/DD/YYYY format.  It is required."
+  pdf      text P 2 L 468.00 R 538.89 B 651.68 T 672.04
+
+field 22t.
+  label    Time
+  type     time
+  presence required
+  help     "This is the time of the status report, in HH:MM format (24-hour clock).  It is required."
+  pdf      text P 2 L 539.89 R 589.12 B 651.68 T 672.04
+
+field -
+  label    Date/Time
+  children 22d. 22t.
+  presence required
+  help     "This is the date and time of the status report, in MM/DD/YYYY HH:MM format (24-hour clock).  It is required."
+
+field 23.
+  label    "Contact Name"
+  presence if 20.=Complete then required
+  width    52
+  help     "This is the name of the person to be contacted with questions about this report.  It is required when the \"Report Type\" is \"Complete\"."
+  pdf      text P 2 L  20.96 R 334.00 B 618.44 T 638.80
+
+field 23p.
+  label    "Contact Phone"
+  type     phoneNumber
+  presence if 20.=Complete then required
+  width    19
+  help     "This is the phone number of the person to be contacted with questions about this report.  It is required when the \"Report Type\" is \"Complete\"."
+  pdf      text P 2 L 339.08 R 450.88 B 618.44 T 638.80
+
+field 23f.
+  label    "Contact Fax"
+  type     phoneNumber
+  width    22
+  help     "This is the fax number of the person to be contacted with questions about this report."
+  pdf      text P 2 L 455.96 R 589.12 B 618.44 T 638.80
+
+field 24.
+  label    "Other Contact"
+  width    53
+  help     "This is additional contact information for the person to be contacted with questions about this report."
+  pdf      text P 2 L  20.96 R 333.28 B 585.08 T 605.56
+
+field 25.
+  label    "Incident Name"
+  presence if 20.=Complete then required
+  width    42
+  help     "This is the assigned incident name of the incident for which this report is filed.  It is required when the \"Report Type\" is \"Complete\"."
+  pdf      text P 2 L 339.08 R 588.40 B 595.08 T 605.56
+
+field 25d.
+  label    "Incident Date"
+  type     date
+  presence if 20.=Complete then required
+  help     "This is the date of the incident for which this report is filed, in MM/DD/YYYY format.  It is required when the \"Report Type\" is \"Complete\"."
+  pdf      text P 2 L 339.08 R 588.40 B 585.08 T 595.08
+
+field 35.
+  label    "Facility Status"
+  type     restricted
+  choice   Fully Functional
+  choice   Limited Services
+  choice   Impaired/Closed
+  presence if 20.=Complete then required
+  help     "This indicates the status of the facility.  It is required when the \"Report Type\" is \"Complete\"."
+  pdf      if 35.="Fully Functional" then cross P 2 L 307.82 R 318.34 B 553.04 T 563.56
+  pdf      if 35.="Limited Services" then cross P 2 L 307.82 R 318.34 B 537.92 T 548.44
+  pdf      if 35.=Impaired/Closed then cross P 2 L 307.82 R 318.34 B 520.58 T 531.10
+
+field 27p.
+  label    "EOC Main Contact Number"
+  type     phoneNumber
+  presence if 20.=Complete then required
+  width    19
+  help     "This is the main phone number for the facility's Emergency Operations Center (EOC).  It is required when the \"Report Type\" is \"Complete\"."
+  pdf      text P 2 L 233.12 R 333.76 B 486.08 T 496.72 BL 488.96
+
+field 27f.
+  label    "EOC Main Contact Fax"
+  type     phoneNumber
+  width    20
+  help     "This is the max fax number for the facility's Emergency Operations Center (EOC)."
+  pdf      text P 2 L 233.12 R 333.76 B 471.44 T 481.12 BL 473.73
+
+field 28.
+  label    "Liaison Officer Name"
+  presence if 20.=Complete then required
+  width    17
+  help     "This is the name of the facility's liaison to the Public Health or Medical Health Branch.  It is required when the \"Report Type\" is \"Complete\"."
+  pdf      text P 2 L 233.36 R 333.52 B 449.00 T 466.48 BL 450.81
+
+field 28p.
+  label    "Liaison Contact Number"
+  type     phoneNumber
+  width    17
+  help     "This is the phone number of the facility's liaison to the Public Health or Medical Health Branch."
+  pdf      text P 2 L 233.12 R 333.76 B 433.40 T 444.04 BL 436.21
+
+field 29.
+  label    "Info Officer Name"
+  width    17
+  help     "This is the name of the facility's information officer."
+  pdf      text P 2 L 233.12 R 333.76 B 417.80 T 428.44 BL 420.60
+
+field 29p.
+  label    "Info Officer Contact Number"
+  type     phoneNumber
+  width    17
+  help     "This is the phone number of the facility's information officer."
+  pdf      text P 2 L 233.12 R 333.76 B 402.20 T 412.84 BL 405.01
+
+field 29e.
+  label    "Info Officer Contact Email"
+  width    17
+  help     "This is the email address of the facility's information officer."
+  compare  exact
+  pdf      text P 2 L 233.12 R 333.76 B 386.60 T 397.24 BL 389.47
+
+field 30.
+  label    "Not Active Contact Name"
+  presence if 20.=Complete then required
+  width    17
+  help     "This is the name of the person to be contacted with questions or requests when the facility's EOC is not activated.  It is required when the \"Report Type\" is \"Complete\"."
+  pdf      text P 2 L 233.60 R 333.28 B 358.28 T 381.64 BL 362.97
+
+field 30p.
+  label    "Facility Contact Phone"
+  type     phoneNumber
+  presence if 20.=Complete then required
+  width    17
+  help     "This is the phone number of the person to be contacted when the facility's EOC is not activated.  It is required when the \"Report Type\" is \"Complete\"."
+  pdf      text P 2 L 233.12 R 333.76 B 342.68 T 353.32 BL 345.62
+
+field 30e.
+  label    "Facility Contact Email"
+  presence if 20.=Complete then required
+  width    17
+  help     "This is the email address of the person to be contacted when the facility's EOC is not activated.  It is required when the \"Report Type\" is \"Complete\"."
+  pdf      text P 2 L 233.12 R 333.76 B 327.08 T 337.72 BL 330.02
+
+field 31a.
+  label    "Patients To Evacuate"
+  type     cardinalNumber
+  width    17
+  help     "This is the number of patients who need evacuation."
+  pdf      text P 2 L 233.24 R 333.64 B 294.92 T 306.52 BL 298.33
+
+field 31b.
+  label    "Patients Injured - Minor"
+  type     cardinalNumber
+  width    17
+  help     "This is the number of patients with minor injuries."
+  pdf      text P 2 L 233.12 R 333.76 B 279.32 T 289.96 BL 282.25
+
+field 31c.
+  label    "Patients Transferred"
+  type     cardinalNumber
+  width    17
+  help     "This is the number of patients who have been transferred out of the county."
+  pdf      text P 2 L 233.12 R 333.76 B 263.72 T 274.36 BL 266.61
+
+field 33.
+  label    "Other Patient Care Info"
+  width    27
+  help     "This field contains other patient care information as needed."
+  pdf      text P 2 L 187.64 R 333.76 B 248.12 T 258.76 BL 251.48
+
+field 26a.
+  label    "Attached Org Chart"
+  clabel   "Organization Chart"
+  type     restricted
+  choice   Yes
+  choice   No
+  help     "This indicates whether an NHICS/ICS organization chart is attached to the status report."
+  pdf      if 26a.=Yes then cross P 2 L 549.80 R 560.32 B 553.04 T 563.56
+
+field 26b.
+  label    "Attached Resource Requests"
+  clabel   "Resource Request Forms"
+  type     restricted
+  choice   Yes
+  choice   No
+  help     "This indicates whether DEOC-9A resource request forms are attached to the status report.  It is required when the \"Report Type\" is \"Complete\"."
+  pdf      if 26b.=Yes then cross P 2 L 549.80 R 560.32 B 537.92 T 548.44
+
+field 26c.
+  label    "Attached Status Report"
+  clabel   "Status Report Form"
+  type     restricted
+  choice   Yes
+  choice   No
+  help     "This indicates whether an NHICS/ICS standard status report form is attached to this status report."
+  pdf      if 26c.=Yes then cross P 2 L 549.80 R 560.32 B 520.58 T 531.10
+
+field 26d.
+  label    "Attached Incident Action Plan"
+  clabel   "Incident Action Plan"
+  type     restricted
+  choice   Yes
+  choice   No
+  help     "This indicates whether an NHICS/ICS incident action plan is attached to the status report."
+  pdf      if 26d.=Yes then cross P 2 L 549.80 R 560.32 B 502.28 T 512.80
+
+field 26e.
+  label    "Attached Phone Directory"
+  clabel   "Phone/Communications Directory"
+  type     restricted
+  choice   Yes
+  choice   No
+  help     "This indicates whether a phone/communications directory is attached to the status report."
+  pdf      if 26e.=Yes then cross P 2 L 549.80 R 560.32 B 486.20 T 496.72
+
+field -
+  label    Attachments
+  type     checkboxGroup
+  children 26a. 26b. 26c. 26d. 26e.
+
+field 34. defaultBody
+  label    "General Summary"
+  type     multiline
+  width    41
+  help     "This is a general summary of the situation and conditions at the facility."
+  pdf      text P 2 L 340.28 R 588.16 B 386.60 T 465.28 A lt
+
+field 40a.
+  label    "Skilled Nursing Beds: Staffed M"
+  type     cardinalNumber
+  help     "This is the number of staffed male skilled nursing beds at the facility."
+  pdf      text P 2 L 456.44 R 479.32 B 342.68 T 352.84 BL 345.62
+
+field 40b.
+  label    "Skilled Nursing Beds: Staffed F"
+  type     cardinalNumber
+  help     "This is the number of staffed female skilled nursing beds at the facility."
+  pdf      text P 2 L 485.12 R 504.04 B 342.68 T 352.84 BL 345.62
+
+field 40c.
+  label    "Skilled Nursing Beds: Vacant M"
+  type     cardinalNumber
+  help     "This is the number of vacant male skilled nursing beds at the facility."
+  pdf      text P 2 L 509.84 R 530.32 B 342.68 T 352.84 BL 345.62
+
+field 40d.
+  label    "Skilled Nursing Beds: Vacant F"
+  type     cardinalNumber
+  help     "This is the number of vacant female skilled nursing beds at the facility."
+  pdf      text P 2 L 536.12 R 555.04 B 342.68 T 352.84 BL 345.62
+
+field 40e.
+  label    "Skilled Nursing Beds: Surge"
+  type     cardinalNumber
+  help     "This is the number of surge capacity skilled nursing beds at the facility (over and above the vacant ones)."
+  pdf      text P 2 L 560.84 R 588.88 B 342.68 T 352.84 BL 345.62
+
+field 41a.
+  label    "Assisted Living Beds: Staffed M"
+  type     cardinalNumber
+  help     "This is the number of staffed male assisted living beds at the facility."
+  pdf      text P 2 L 456.44 R 479.32 B 327.08 T 337.24 BL 330.02
+
+field 41b.
+  label    "Assisted Living Beds: Staffed F"
+  type     cardinalNumber
+  help     "This is the number of staffed female assisted living beds at the facility."
+  pdf      text P 2 L 485.12 R 504.04 B 327.08 T 337.24 BL 330.02
+
+field 41c.
+  label    "Assisted Living Beds: Vacant M"
+  type     cardinalNumber
+  help     "This is the number of vacant male assisted living beds at the facility."
+  pdf      text P 2 L 509.84 R 530.32 B 327.08 T 337.24 BL 330.02
+
+field 41d.
+  label    "Assisted Living Beds: Vacant F"
+  type     cardinalNumber
+  help     "This is the number of vacant female assisted living beds at the facility."
+  pdf      text P 2 L 536.12 R 555.04 B 327.08 T 337.24 BL 330.02
+
+field 41e.
+  label    "Assisted Living Beds: Surge"
+  type     cardinalNumber
+  help     "This is the number of surge capacity assisted living beds at the facility (over and above the vacant ones)."
+  pdf      text P 2 L 560.84 R 588.88 B 327.08 T 337.24 BL 330.02
+
+field 42a.
+  label    "Sub-Acute Beds: Staffed M"
+  type     cardinalNumber
+  help     "This is the number of staffed male sub-acute beds at the facility."
+  pdf      text P 2 L 456.44 R 479.32 B 311.48 T 321.64 BL 315.41
+
+field 42b.
+  label    "Sub-Acute Beds: Staffed F"
+  type     cardinalNumber
+  help     "This is the number of staffed female sub-acute beds at the facility."
+  pdf      text P 2 L 485.12 R 504.04 B 311.48 T 321.64 BL 315.41
+
+field 42c.
+  label    "Sub-Acute Beds: Vacant M"
+  type     cardinalNumber
+  help     "This is the number of vacant male sub-acute beds at the facility."
+  pdf      text P 2 L 509.84 R 530.32 B 311.48 T 321.64 BL 315.41
+
+field 42d.
+  label    "Sub-Acute Beds: Vacant F"
+  type     cardinalNumber
+  help     "This is the number of vacant female sub-acute beds at the facility."
+  pdf      text P 2 L 536.12 R 555.04 B 311.48 T 321.64 BL 315.41
+
+field 42e.
+  label    "Sub-Acute Beds: Surge"
+  type     cardinalNumber
+  help     "This is the number of surge capacity sub-acute beds at the facility (over and above the vacant ones)."
+  pdf      text P 2 L 560.84 R 588.88 B 311.48 T 321.64 BL 315.41
+
+field 43a.
+  label    "Alzheimers Beds: Staffed M"
+  type     cardinalNumber
+  help     "This is the number of staffed male Alzheimers/dementia beds at the facility."
+  pdf      text P 2 L 456.56 R 479.20 B 294.92 T 305.92 BL 298.33
+
+field 43b.
+  label    "Alzheimers Beds: Staffed F"
+  type     cardinalNumber
+  help     "This is the number of staffed female Alzheimers/dementia beds at the facility."
+  pdf      text P 2 L 485.24 R 503.92 B 294.92 T 305.92 BL 298.33
+
+field 43c.
+  label    "Alzheimers Beds: Vacant M"
+  type     cardinalNumber
+  help     "This is the number of vacant male Alzheimers/dementia beds at the facility."
+  pdf      text P 2 L 509.96 R 530.20 B 294.92 T 305.92 BL 298.33
+
+field 43d.
+  label    "Alzheimers Beds: Vacant F"
+  type     cardinalNumber
+  help     "This is the number of vacant female Alzheimers/dementia beds at the facility."
+  pdf      text P 2 L 536.24 R 554.92 B 294.92 T 305.92 BL 298.33
+
+field 43e.
+  label    "Alzheimers Beds: Surge"
+  type     cardinalNumber
+  help     "This is the number of surge capacity Alzheimers/dementia beds at the facility (over and above the vacant ones)."
+  pdf      text P 2 L 560.96 R 588.76 B 294.92 T 305.92 BL 298.33
+
+field 44a.
+  label    "Ped Sub-Acute Beds: Staffed M"
+  type     cardinalNumber
+  help     "This is the number of staffed male pediatric sub-acute beds at the facility."
+  pdf      text P 2 L 456.44 R 479.32 B 279.32 T 289.48 BL 282.25
+
+field 44b.
+  label    "Ped Sub-Acute Beds: Staffed F"
+  type     cardinalNumber
+  help     "This is the number of staffed female pediatric sub-acute beds at the facility."
+  pdf      text P 2 L 485.12 R 504.04 B 279.32 T 289.48 BL 282.25
+
+field 44c.
+  label    "Ped Sub-Acute Beds: Vacant M"
+  type     cardinalNumber
+  help     "This is the number of vacant male pediatric sub-acute beds at the facility."
+  pdf      text P 2 L 509.84 R 530.32 B 279.32 T 289.48 BL 282.25
+
+field 44d.
+  label    "Ped Sub-Acute Beds: Vacant F"
+  type     cardinalNumber
+  help     "This is the number of vacant female pediatric sub-acute beds at the facility."
+  pdf      text P 2 L 536.12 R 555.04 B 279.32 T 289.48 BL 282.25
+
+field 44e.
+  label    "Ped Sub-Acute Beds: Surge"
+  type     cardinalNumber
+  help     "This is the number of surge capacity pediatric sub-acute beds at the facility (over and above the vacant ones)."
+  pdf      text P 2 L 560.84 R 588.88 B 279.32 T 289.48 BL 282.25
+
+field 45a.
+  label    "Psychiatric Beds: Staffed M"
+  type     cardinalNumber
+  help     "This is the number of staffed male psychiatric beds at the facility."
+  pdf      text P 2 L 456.44 R 479.32 B 263.72 T 273.88 BL 266.61
+
+field 45b.
+  label    "Psychiatric Beds: Staffed F"
+  type     cardinalNumber
+  help     "This is the number of staffed female psychiatric beds at the facility."
+  pdf      text P 2 L 485.12 R 504.04 B 263.72 T 273.88 BL 266.61
+
+field 45c.
+  label    "Psychiatric Beds: Vacant M"
+  type     cardinalNumber
+  help     "This is the number of vacant male psychiatric beds at the facility."
+  pdf      text P 2 L 509.84 R 530.32 B 263.72 T 273.88 BL 266.61
+
+field 45d.
+  label    "Psychiatric Beds: Vacant F"
+  type     cardinalNumber
+  help     "This is the number of vacant female psychiatric beds at the facility."
+  pdf      text P 2 L 536.12 R 555.04 B 263.72 T 273.88 BL 266.61
+
+field 45e.
+  label    "Psychiatric Beds: Surge"
+  type     cardinalNumber
+  help     "This is the number of surge capacity psychiatric beds at the facility (over and above the vacant ones)."
+  pdf      text P 2 L 560.84 R 588.88 B 263.72 T 273.88 BL 266.61
+
+field 46.
+  label    "Other Care Beds Type"
+  width    17
+  help     "This is the other type of beds available at the facility, if any."
+
+field 46a.
+  label    "Other Care Beds: Staffed M"
+  type     cardinalNumber
+  help     "This is the number of staffed male beds at the facility of the named other type."
+  pdf      text P 2 L 456.44 R 479.32 B 248.12 T 258.76 BL 251.48
+
+field 46b.
+  label    "Other Care Beds: Staffed F"
+  type     cardinalNumber
+  help     "This is the number of staffed female beds at the facility of the named other type."
+  pdf      text P 2 L 485.12 R 504.04 B 248.12 T 258.76 BL 251.48
+
+field 46c.
+  label    "Other Care Beds: Vacant M"
+  type     cardinalNumber
+  help     "This is the number of vacant male beds at the facility of the named other type."
+  pdf      text P 2 L 509.84 R 530.32 B 248.12 T 258.76 BL 251.48
+
+field 46d.
+  label    "Other Care Beds: Vacant F"
+  type     cardinalNumber
+  help     "This is the number of vacant female beds at the facility of the named other type."
+  pdf      text P 2 L 536.12 R 555.04 B 248.12 T 258.76 BL 251.48
+
+field 46e.
+  label    "Other Care Beds: Surge"
+  type     cardinalNumber
+  help     "This is the number of surge capacity beds at the facility of the named other type (over and above the vacant ones)."
+  pdf      text P 2 L 560.84 R 588.88 B 248.12 T 258.76 BL 251.48
+
+field 50a.
+  label    "Dialysis: Chairs"
+  type     cardinalNumber
+  help     "This is the number of dialysis chairs at the facility."
+  pdf      text P 2 L 456.56 R 479.20 B 195.44 T 206.44 BL 198.85
+
+field 50b.
+  label    "Dialysis: Vacant Chairs"
+  type     cardinalNumber
+  help     "This is the number of vacant dialysis chairs at the facility."
+  pdf      text P 2 L 485.24 R 503.92 B 195.44 T 206.44 BL 198.85
+
+field 50c.
+  label    "Dialysis: Front Staff"
+  type     cardinalNumber
+  help     "This is the number of dialysis front desk staff at the facility."
+  pdf      text P 2 L 509.96 R 530.20 B 195.44 T 206.44 BL 198.85
+
+field 50d.
+  label    "Dialysis: Support Staff"
+  type     cardinalNumber
+  help     "This is the number of dialysis support staff at the facility."
+  pdf      text P 2 L 536.24 R 554.92 B 195.44 T 206.44 BL 198.85
+
+field 50e.
+  label    "Dialysis: Providers"
+  type     cardinalNumber
+  help     "This is the number of dialysis provider staff at the facility."
+  pdf      text P 2 L 560.96 R 588.76 B 195.44 T 206.44 BL 198.85
+
+field 51a.
+  label    "Surgical: Chairs"
+  type     cardinalNumber
+  help     "This is the number of surgical rooms at the facility."
+  pdf      text P 2 L 456.44 R 479.32 B 179.84 T 190.00 BL 182.81
+
+field 51b.
+  label    "Surgical: Vacant Chairs"
+  type     cardinalNumber
+  help     "This is the number of vacant surgical rooms at the facility."
+  pdf      text P 2 L 485.12 R 504.04 B 179.84 T 190.00 BL 182.81
+
+field 51c.
+  label    "Surgical: Front Staff"
+  type     cardinalNumber
+  help     "This is the number of surgical front desk staff at the facility."
+  pdf      text P 2 L 509.84 R 530.32 B 179.84 T 190.00 BL 182.81
+
+field 51d.
+  label    "Surgical: Support Staff"
+  type     cardinalNumber
+  help     "This is the number of surgical support staff at the facility."
+  pdf      text P 2 L 536.12 R 555.04 B 179.84 T 190.00 BL 182.81
+
+field 51e.
+  label    "Surgical: Providers"
+  type     cardinalNumber
+  help     "This is the number of surgical provider staff at the facility."
+  pdf      text P 2 L 560.84 R 588.88 B 179.84 T 190.00 BL 182.81
+
+field 52a.
+  label    "Clinic: Chairs"
+  type     cardinalNumber
+  help     "This is the number of clinic rooms at the facility."
+  pdf      text P 2 L 456.44 R 479.32 B 164.24 T 174.40 BL 167.11
+
+field 52b.
+  label    "Clinic: Vacant Chairs"
+  type     cardinalNumber
+  help     "This is the number of vacant clinic rooms at the facility."
+  pdf      text P 2 L 485.12 R 504.04 B 164.24 T 174.40 BL 167.11
+
+field 52c.
+  label    "Clinic: Front Staff"
+  type     cardinalNumber
+  help     "This is the number of clinic front desk staff at the facility."
+  pdf      text P 2 L 509.84 R 530.32 B 164.24 T 174.40 BL 167.11
+
+field 52d.
+  label    "Clinic: Support Staff"
+  type     cardinalNumber
+  help     "This is the number of clinic support staff at the facility."
+  pdf      text P 2 L 536.12 R 555.04 B 164.24 T 174.40 BL 167.11
+
+field 52e.
+  label    "Clinic: Providers"
+  type     cardinalNumber
+  help     "This is the number of clinic provider staff at the facility."
+  pdf      text P 2 L 560.84 R 588.88 B 164.24 T 174.40 BL 167.11
+
+field 53a.
+  label    "Home Health: Chairs"
+  type     cardinalNumber
+  help     "This is the number of home health rooms at the facility."
+  pdf      text P 2 L 456.44 R 479.32 B 148.64 T 158.80 BL 151.53
+
+field 53b.
+  label    "Home Health: Vacant Chairs"
+  type     cardinalNumber
+  help     "This is the number of vacant home health rooms at the facility."
+  pdf      text P 2 L 485.12 R 504.04 B 148.64 T 158.80 BL 151.53
+
+field 53c.
+  label    "Home Health: Front Staff"
+  type     cardinalNumber
+  help     "This is the number of home health front desk staff at the facility."
+  pdf      text P 2 L 509.84 R 530.32 B 148.64 T 158.80 BL 151.53
+
+field 53d.
+  label    "Home Health: Support Staff"
+  type     cardinalNumber
+  help     "This is the number of home health support staff at the facility."
+  pdf      text P 2 L 536.12 R 555.04 B 148.64 T 158.80 BL 151.53
+
+field 53e.
+  label    "Home Health: Providers"
+  type     cardinalNumber
+  help     "This is the number of home health provider staff at the facility."
+  pdf      text P 2 L 560.84 R 588.88 B 148.64 T 158.80 BL 151.53
+
+field 54a.
+  label    "Adult Day Ctr: Chairs"
+  type     cardinalNumber
+  help     "This is the number of adult day center chairs at the facility."
+  pdf      text P 2 L 456.44 R 479.32 B 133.04 T 143.20 BL 135.97
+
+field 54b.
+  label    "Adult Day Ctr: Vacant Chairs"
+  type     cardinalNumber
+  help     "This is the number of vacant adult day center chairs at the facility."
+  pdf      text P 2 L 485.12 R 504.04 B 133.04 T 143.20 BL 135.97
+
+field 54c.
+  label    "Adult Day Ctr: Front Staff"
+  type     cardinalNumber
+  help     "This is the number of adult day center front desk staff at the facility."
+  pdf      text P 2 L 509.84 R 530.32 B 133.04 T 143.20 BL 135.97
+
+field 54d.
+  label    "Adult Day Ctr: Support Staff"
+  type     cardinalNumber
+  help     "This is the number of adult day center support staff at the facility."
+  pdf      text P 2 L 536.12 R 555.04 B 133.04 T 143.20 BL 135.97
+
+field 54e.
+  label    "Adult Day Ctr: Providers"
+  type     cardinalNumber
+  help     "This is the number of adult day center provider staff at the facility."
+  pdf      text P 2 L 560.84 R 588.88 B 133.04 T 143.20 BL 135.97
+
+field OpRelayRcvd
+  label    "Operator: Relay Received"
+  width    36
+  help     "This is the name of the station from which this message was directly received.  It is filled in for messages that go through a relay station."
+  pdf      text L 110.20 R 321.76 B 407.72 T 422.20 BL 411.28
+
+field OpRelaySent
+  label    "Operator: Relay Sent"
+  width    36
+  help     "This is the name of the station to which this message was directly sent.  It is filled in for messages that go through a relay station."
+  pdf      text L 356.20 R 573.76 B 407.72 T 422.20 BL 411.28
+
+field OpName operatorName
+  label    "Operator: Name"
+  presence required
+  pdf      text L  75.16 R 249.28 B 388.88 T 403.24 BL 392.49
+
+field OpCall operatorCall
+  label    "Operator: Call Sign"
+  presence required
+  pdf      text L 302.32 R 366.28 B 388.88 T 403.24 BL 392.49
+
+field -
+  label    Operator
+  type     join
+  children OpName OpCall
+
+field OpDate operatorDate
+  label    "Operator: Date"
+  type     date
+  presence required
+  pdf      text L 402.64 R 474.28 B 388.88 T 403.24 BL 392.49
+
+field OpTime operatorTime
+  label    "Operator: Time"
+  type     time
+  presence required
+  pdf      text L 538.96 R 573.28 B 388.88 T 403.24 BL 392.49
+
+field -
+  label    "Operator: Date/Time"
+  type     dateTime
+  children OpDate OpTime

@@ -1,157 +1,157 @@
-// Package message contains the interfaces and registry for packet message
-// types.  The definitions in this package can be used to register package
-// message types and to itemize the registered types.
 package message
 
 import (
-	"time"
+	"fmt"
+	"io"
+	"maps"
+	"net/textproto"
+	"slices"
+	"strings"
 
-	"github.com/rothskeller/packet/envelope"
+	"github.com/rothskeller/packet/message/address"
+	"github.com/rothskeller/packet/message/body"
+	"github.com/rothskeller/packet/message/cachetrack"
+	"github.com/rothskeller/packet/message/payload"
+	"github.com/rothskeller/packet/message/subject"
+	"k8s.io/apimachinery/pkg/util/sets"
 )
 
-// Message is the interface that all message types implement.  In addition to
-// implementing this interface, all message types must embed BaseMessage, which
-// provides shared functionality.
+// Message is the interface satisfied by all messages.
 type Message interface {
-	// Base returns the BaseMessage embedded in the message.
-	Base() *BaseMessage
-	// EncodeSubject encodes the message subject line.
-	EncodeSubject() string
-	// EncodeBody encodes the message body, suitable for transmission or
-	// storage.
-	EncodeBody() string
-	// Validate checks the contents of the message for compliance with
-	// rules enforced by standard Santa Clara County packet software
-	// (Outpost and PackItForms).  It returns a list of strings describing
-	// problems that those programs would flag or block.
-	PIFOValid() (problems []string)
-	// Compare compares two messages.  It returns a score indicating how
-	// closely they match, and the detailed comparisons of each field in
-	// the message.  The comparison is not symmetric:  the receiver of the
-	// call is the "expected" message and the argument is the "actual"
-	// message.
-	Compare(actual Message) (score, outOf int, fields []*CompareField)
-	// RenderPDF renders the message as a PDF file with the specified
-	// filename, overwriting any existing file with that name.  This method
-	// will return ErrNotSupported for message types that do not support
-	// PDF rendering.  Note that the program needs to be built with "-tags
-	// packetpdf" in order for any message types to support PDF rendering.
-	RenderPDF(env *envelope.Envelope, filename string) error
-	// SetOperator sets the operator only fields of the message, if it has
-	// them.
-	SetOperator(opcall, opname string, received bool)
-	// Editable returns whether the message type supports editing.
-	Editable() bool
+	cachetrack.CacheTracker
+	MType
+	// Type returns the message type for the message.
+	Type() MType
+	// SetType sets the message type for the message.
+	SetType(MType)
+	// RFC5322 returns the message encoded in RFC-5322 format for storage
+	// or email transmission.
+	RFC5322() string
+	// To returns the list of recipients for the message.  Use
+	// ParseAddressList to decode it (but note that To: lines in received
+	// messages might not be syntactically correct).
+	To() string
+	// Subject is the subject of the message.
+	Subject() subject.Subject
+	// Bulletin returns whether the message is a BBS bulletin (as opposed
+	// to a private message).
+	Bulletin() bool
+	// Draft returns whether the message is a draft.
+	Draft() bool
+	// Received returns whether the message has been received by the local
+	// system.  It returns false for a message that has been sent or is
+	// being prepared to be sent.
+	Received() bool
+	// Payload is the payload of the message.
+	Payload() payload.Payload
+	// Body is the body of the message.
+	Body() body.Body
 }
 
-// BaseMessage is the type underlying all packet messages, providing their
-// shared functionality.  Every message, regardless of type, embeds a
-// BaseMessage and provides access to it through the Base() method on the
-// message type.
-type BaseMessage struct {
-	// Type is the type definition for the message type.
-	Type *Type
-	// PIFOVersion is the PIFO version found when decoding the message.  It
-	// is set only for messages with PIFO encoding.
-	PIFOVersion string
-	// UnknownFields is a list of field tags that were not recognized
-	// during decoding.
-	UnknownFields []string
-	// Fields is an ordered list of fields in the message.  This is the
-	// core of the shared message functionality:  most operations are
-	// implemented by iterating through these fields.
-	Fields []*Field
+//-----------------------------------------------------------------------------
 
-	// Pointers to key fields.
-
-	// FOriginMsgID points to the value of the Origin Message ID field.  It
-	// is nil for message types that do not have that field.
-	FOriginMsgID *string
-	// FDestinationMsgID points to the value of the Destination Message ID
-	// field.  It is nil for message types that do not have that field.
-	FDestinationMsgID *string
-	// FMessageDate points to the value of the message date field.  It is
-	// nil for message types that do not have that field.
-	FMessageDate *string
-	// FMessageTime points to the value of the message time field.  It is
-	// nil for message types that do not have that field.
-	FMessageTime *string
-	// FHandling points to the value of the Handling field.  It
-	// is nil for message types that do not have that field.
-	FHandling *string
-	// FSubject points to the value of the field of the message that will
-	// get propagated to the message's subject line.  It is nil for message
-	// types that do not have any such field.
-	FSubject *string
-	// RestrictedSubject is a flag indicating that the FSubject field
-	// allows only certain restricted values.  (It will not be populated
-	// with the subject of a message being replied to, unless that message
-	// is of the same type.)
-	RestrictedSubject bool
-	// FToICSPosition points to the value of the To ICS Position field.  It
-	// is nil for message types that do not have that field.
-	FToICSPosition *string
-	// FToLocation points to the value of the To Location field.  It
-	// is nil for message types that do not have that field.
-	FToLocation *string
-	// FFromICSPosition points to the value of the From ICS Position field.
-	// It is nil for message types that do not have that field.
-	FFromICSPosition *string
-	// FFromLocation points to the value of the From Location field.  It
-	// is nil for message types that do not have that field.
-	FFromLocation *string
-	// FReference points to the value of the Reference field.  It is nil
-	// for message types that do not have that field.
-	FReference *string
-	// FTacCall points to the value of the Tactical Call Sign field.  It is
-	// nil for message types that do not have that field.
-	FTacCall *string
-	// FTacName points to the value of the Tactical Station Name field.  It
-	// is nil for message types that do not have that field.
-	FTacName *string
-	// FOpCall points to the value of the Operator Call Sign field.  It is
-	// nil for message types that do not have that field.
-	FOpCall *string
-	// FOpName points to the value of the Operator Name field.  It is nil
-	// for message types that do not have that field.
-	FOpName *string
-	// FOpDate points to the value of the Operator Date field.  It is nil
-	// for message types that do not have that field.
-	FOpDate *string
-	// FOpTime points to the value of the Operator Time field.  It is nil
-	// for message types that do not have that field.
-	FOpTime *string
-	// FBody points to the value of the most prominent, or first,
-	// multi-line text field of the message.  It is nil for message types
-	// that do not have any such field.
-	FBody *string
+// common is the common parts of the message that are the same for all four
+// implementations.
+type common struct {
+	subject subject.Subject
+	payload payload.Payload
+	to      string
+	cachetrack.Tracker
+	MType
 }
 
-// Base returns the BaseMessage structure for the message.
-func (bm *BaseMessage) Base() *BaseMessage { return bm }
-
-// SetOperator sets the operator only fields of the message, if it has them.
-func (bm *BaseMessage) SetOperator(opcall, opname string, received bool) {
-	if bm.FOpCall != nil {
-		*bm.FOpCall = opcall
+func (m *common) init() {
+	if m.subject.Dirty() {
+		m.Tracker.MarkDirty("envelope.common.subject")
 	}
-	if bm.FOpName != nil {
-		*bm.FOpName = opname
+	if m.payload.Dirty() {
+		m.Tracker.MarkDirty("envelope.common.Payload")
 	}
-	if bm.FOpDate != nil {
-		*bm.FOpDate = time.Now().Format("01/02/2006")
-	}
-	if bm.FOpTime != nil {
-		*bm.FOpTime = time.Now().Format("15:04")
-	}
+	m.subject.OnDirty(m.Tracker.MarkDirty)
+	m.payload.OnDirty(m.Tracker.MarkDirty)
 }
 
-// Editable returns whether the message type supports editing.
-func (bm *BaseMessage) Editable() bool {
-	for _, f := range bm.Fields {
-		if f.EditHelp != "" {
-			return true
+// Type returns the message type for the message.
+func (m *common) Type() MType { return m.MType }
+
+// SetType sets the message type for the message.
+func (m *common) SetType(t MType) { m.MType = t }
+
+// RFC5322 returns the message encoded in RFC-5322 format for storage or email
+// transmission.
+func (m *common) RFC5322() string { return m.rfc5322(nil) }
+
+func (m *common) rfc5322(headers textproto.MIMEHeader) string {
+	var (
+		sb     strings.Builder
+		hnames = sets.New(slices.Collect(maps.Keys(headers))...)
+	)
+	if hnames.Has("Received") {
+		fmt.Fprintf(&sb, "Received: %s\r\n", headers.Get("Received"))
+		hnames.Delete("Received")
+	}
+	if hnames.Has("From") {
+		fmt.Fprintf(&sb, "From: %s\r\n", strings.Join(headers["From"], ",\r\n\t"))
+		hnames.Delete("From")
+	}
+	if m.to != "" {
+		fmt.Fprintf(&sb, "To: %s\r\n", rfc5322AddressList(m.to))
+	}
+	if s := m.subject.EncodedSubject(); s != "" {
+		fmt.Fprintf(&sb, "Subject: %s\r\n", s)
+	}
+	if hnames.Has("Date") {
+		fmt.Fprintf(&sb, "Date: %s\r\n", headers.Get("Date"))
+		hnames.Delete("Date")
+	}
+	for key := range hnames {
+		fmt.Fprintf(&sb, "%s: %s\r\n", key, strings.Join(headers[key], ",\r\n\t"))
+	}
+	io.WriteString(&sb, "\r\n")
+	io.WriteString(&sb, m.payload.Encode())
+	return sb.String()
+}
+
+// Subject returns the Subject of the message.
+func (m *common) Subject() subject.Subject { return m.subject }
+
+// To returns the list of recipients for the message.  Use ParseAddressList to
+// decode it (but note that To: lines in received messages might not be
+// syntactically correct).
+func (m *common) To() string { return m.to }
+
+// Payload returns the payload of the message.
+func (m *common) Payload() payload.Payload { return m.payload }
+
+// Body returns the body of the message.
+func (m *common) Body() body.Body { return m.payload.Body() }
+
+// common embeds three different interfaces that satisfy CacheTracker, so we
+// need explicit methods to direct calls to those functions to the correct one.
+
+// Dirty returns whether the cache is dirty (i.m., invalid).
+func (m *common) Dirty() bool { return m.Tracker.Dirty() }
+
+// MarkClean marks the cache as clean.
+func (m *common) MarkClean() { m.Tracker.MarkClean() }
+
+// OnDirty registers a function to be called when the cache becomes dirty.
+func (m *common) OnDirty(fn func(string)) { m.Tracker.OnDirty(fn) }
+
+// MarkDirty marks the cache as dirty.
+func (m *common) MarkDirty(reason string) { m.Tracker.MarkDirty(reason) }
+
+// rfc5322AddressList parses the provided string as an address list and, if
+// successful, returns it reformatted into canonical format for inclusion in an
+// RFC-5322 header.  If the string cannot be parsed successfully, it is
+// returned unmodified.
+func rfc5322AddressList(s string) string {
+	if addrs, err := address.ParseList(s); err == nil {
+		list := make([]string, len(addrs))
+		for i, a := range addrs {
+			list[i] = a.String()
 		}
+		return strings.Join(list, ",\r\n\t")
 	}
-	return false
+	return s
 }

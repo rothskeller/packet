@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="Content-Type" content="text/html;charset=UTF-8">
+    <link rel="stylesheet" type="text/css" href="/manual-assets/pack-it-forms.css"/>
+    <style>
+      th {
+          padding-top:0.75em;
+          text-align:right;
+          vertical-align:top;
+      }
+      td {
+          border:0px;
+          padding-top:0.5em;
+      }
+      form input[type="submit"]  {
+          background-color: #a8e8a8;
+      }
+    </style>
+    <title>{{Subject}}</title>
+    <script type="text/javascript">
+      // Ping the server periodically, to retain the message while this page is open.
+      setInterval(function ping() {
+          var img = new Image();
+          // To discourage caching, use a new query string for each ping.
+          img.src = '/ping?i=' + Math.random();
+          img = undefined; // encourage garbage collection
+      }, 30000); // every 30 seconds
+      function updateCheckboxes() {
+          var bulletin = document.getElementById('Bulletin');
+          if (document.getElementById('To').value.split(/[,;]/).length > 1) {
+              bulletin.checked = false;
+              bulletin.disabled = true;
+          } else {
+              bulletin.disabled = false;
+          }
+      }
+      function onLoad() {
+          document.getElementById('Urgent').checked = {{Urgent}};
+          document.getElementById('To').focus();
+          if ({{readOnly}}) {
+              document.getElementById('Subject').readOnly = true;
+              document.getElementById('Message').readOnly = true;
+          }
+          updateCheckboxes();
+      }
+      function selectAll(element) {
+          if (!{{readOnly}}) {
+              element.select();
+              setTimeout(function() {
+                  element.scrollTop = 0;
+              }, 5);
+          }
+      }
+    </script>
+  </head>
+  <body style="padding-top:1em;" onload="onLoad();">
+    <form id="Form" method="POST" action="/manual-command">
+      <table>
+        <tr>
+          <th style="width:1px;"><label for="Urgent">Urgent:</label></th>
+          <td>
+            <input id="Urgent" name="urgent" type="checkbox" value="true" tabindex="1"/>
+            <label>&nbsp;&nbsp;
+              Bulletin:
+              <input id="Bulletin" name="bulletin" type="checkbox" value="true" tabindex="2"/>
+            </label>
+            <span style="float:right;">PIF: 2.0</span>
+          </td>
+        </tr><tr>
+          <th>To:</th>
+          <td>
+            <input id="To" name="to" type="text" required tabindex="3"
+                   onchange="updateCheckboxes()"
+                   oninput="updateCheckboxes()"
+                   placeholder="a comma-separated list"
+                   title="a comma-separated list"/>
+          </td>
+        </tr><tr>
+          <th>Subject:</th>
+          <td>
+            <textarea id="Subject" name="subject" rows="1" required tabindex="4"
+                      onfocus="this.setSelectionRange(this.value.length, this.value.length);"
+                      >{{Subject}}</textarea>
+          </td>
+        </tr><tr>
+          <th>Message:</th>
+          <td>
+            <textarea id="Message" name="message" rows="16" tabindex="5"
+                      onfocus="selectAll(this);">{{Message}}</textarea>
+          </td>
+        </tr><tr>
+          <td>
+          </td><td>
+            <input type="submit" value="Log and Send"/>
+          </td>
+        </tr>
+      </table>
+    </form>
+  </body>
+</html>

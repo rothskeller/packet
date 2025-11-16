@@ -1,0 +1,371 @@
+addon    SCCoPIFO
+html     form-shelter.html
+version  1.0
+title    Shelter Form
+indef    a shelter form
+create   Shelter
+pdfFile  Shelter_v20250730.pdf
+
+field MsgNo originMessageID
+  label    "Origin Message Number"
+  type     messageID
+  presence required
+  help     "This is the message number assigned to the message by the origin station.  Valid message numbers have the form XXX-###P, where XXX is the three-character message number prefix assigned to the station, ### is a sequence number (any number of digits), and P is an optional suffix letter.  This field is required."
+  pdf      text L 222.52 R 330.64 B 713.00 T 730.96 BL 718.28
+
+field DestMsgNo destinationMessageID
+  label    "Destination Message Number"
+  type     messageID
+  pdf      text L 430.48 R 569.32 B 713.00 T 730.96 BL 718.28
+
+field 1a. messageDate
+  label    "Message Date"
+  type     date
+  presence required
+  help     "This is the date the message was written, in MM/DD/YYYY format.  It is required."
+  pdf      text L  72.68 R 119.92 B 661.76 T 676.24 BL 665.28
+
+field 1b. messageTime
+  label    "Message Time"
+  type     time
+  presence required
+  help     "This is the time the message was written, in HH:MM format (24-hour clock).  It is required."
+  pdf      text L 185.20 R 229.48 B 661.76 T 676.24 BL 665.28
+
+field -
+  label    "Message Date/Time"
+  type     dateTime
+  children 1a. 1b.
+  presence required
+  help     "This is the date and time the message was written, in MM/DD/YYYY HH:MM format (24-hour clock).  It is required."
+
+field 5. handling
+  label    Handling
+  type     restricted
+  value    PRIORITY
+  choice   IMMEDIATE
+  choice   PRIORITY
+  choice   ROUTINE
+  presence required
+  help     "This is the message handling order, which specifies how fast it needs to be delivered.  Allowed values are \"ROUTINE\" (within 2 hours), \"PRIORITY\" (within 1 hour), and \"IMMEDIATE\".  This field is required."
+  pdf      if 5.=IMMEDIATE then circle X 297.24 Y 670.08 R 3.2
+  pdf      if 5.=PRIORITY then circle X 399.78 Y 668.46 R 3.3
+  pdf      if 5.=ROUTINE then circle X 485.82 Y 669.18 R 3.3
+
+field 7a. toICSPosition
+  label    "To ICS Position"
+  value    "Care & Shelter Unit"
+  choice   Care & Shelter Unit
+  choice   Mass Care & Emerg. Asst. Branch
+  choice   Operations
+  presence required
+  width    30
+  help     "This is the ICS position to which the message is addressed.  It is required."
+  pdf      text L 135.88 R 307.60 B 642.92 T 657.28 BL 646.54
+
+field 7b. toLocation
+  label    "To Location"
+  value    "County EOC"
+  presence required
+  width    32
+  help     "This is the location of the recipient ICS position.  It is required."
+  pdf      text L 135.88 R 307.12 B 623.96 T 638.44 BL 627.66
+
+field 7c.
+  label    "To Name"
+  width    34
+  help     "This is the name of the person holding the recipient ICS position.  It is optional and rarely provided."
+  pdf      text L 135.88 R 307.60 B 605.12 T 619.48 BL 608.68
+
+field 7d.
+  label    "To Contact Info"
+  width    29
+  help     "This is contact information (phone number, email, etc.) for the receipient.  It is optional and rarely provided."
+  pdf      text L 135.88 R 307.12 B 586.16 T 600.64 BL 589.69
+
+field 8a. fromICSPosition
+  label    "From ICS Position"
+  presence required
+  width    30
+  help     "This is the ICS position of the message author.  It is required."
+  pdf      text L 400.60 R 568.00 B 642.92 T 657.28 BL 646.54
+
+field 8b. fromLocation
+  label    "From Location"
+  presence required
+  width    32
+  help     "This is the location of the message author.  It is required."
+  pdf      text L 400.60 R 567.52 B 623.96 T 638.44 BL 627.66
+
+field 8c.
+  label    "From Name"
+  width    34
+  help     "This is the name of the message author.  It is optional and rarely provided."
+  pdf      text L 400.60 R 568.00 B 605.12 T 619.48 BL 608.68
+
+field 8d.
+  label    "From Contact Info"
+  width    29
+  help     "This is contact information (phone number, email, etc.) for the message author.  It is optional and rarely provided."
+  pdf      text L 400.60 R 567.52 B 586.16 T 600.64 BL 589.69
+
+field 20.
+  label    Jurisdiction
+  choice   Campbell
+  choice   Cupertino
+  choice   Gilroy
+  choice   Los Altos
+  choice   Los Altos Hills
+  choice   Los Gatos
+  choice   Milpitas
+  choice   Monte Sereno
+  choice   Morgan Hill
+  choice   Mountain View
+  choice   Palo Alto
+  choice   San Jose
+  choice   Santa Clara (City)
+  choice   Saratoga
+  choice   Sunnyvale
+  choice   Santa Clara County
+  choice   County unincorporated
+  presence required
+  help     "This is the name of the jurisdiction originating the shelter.  It is required."
+  pdf      text L 118.92 R 568.00 B 548.36 T 561.88 BL 551.52
+
+field 21. messageSummary
+  label    "Shelter Name"
+  presence required
+  width    94
+  help     "This is the name of the shelter being described.  It is required."
+  pdf      text L 118.92 R 568.00 B 529.88 T 543.40 BL 532.84
+
+field 22.
+  label    Location
+  presence required
+  width    94
+  help     "This is the location of the shelter.  It is required."
+  pdf      text L 118.92 R 568.00 B 511.40 T 524.92 BL 514.55
+
+field 23a.
+  label    "Type: Congregate"
+  clabel   Congregate
+  type     checkbox
+  help     "This indicates that the shelter is a congregate shelter."
+  pdf      cross L 119.16 R 129.72 B 496.92 T 507.00
+
+field 23b.
+  label    "Type: Non-Congregate"
+  clabel   Non-Congregate
+  type     checkbox
+  help     "This indicates that the shelter is a non-congregate shelter."
+  pdf      cross L 118.92 R 129.48 B 480.24 T 490.80
+
+field 23c.
+  label    "Type: Temporary Evacuation Point"
+  clabel   "Temporary Evacuation Point"
+  type     checkbox
+  help     "This indicates that the shelter is a temporary evacuation point."
+  pdf      cross L 226.92 R 237.36 B 495.72 T 506.16
+
+field 23d.
+  label    "Type: Pets Accepted"
+  clabel   "Pets Accepted"
+  type     checkbox
+  help     "This indicates that the shelter accepts pets."
+  pdf      cross L 226.92 R 237.36 B 480.00 T 490.44
+
+field 23e.
+  label    "Type: Large Animals"
+  clabel   "Large Animals"
+  type     checkbox
+  help     "This indicates that the shelter accepts large animals."
+  pdf      cross L 407.16 R 417.72 B 495.72 T 506.28
+
+field -
+  label    Type
+  type     checkboxGroup
+  children 23a. 23b. 23c. 23d. 23e.
+  presence required
+
+field 24.
+  label    "Shelter Status"
+  type     restricted
+  choice   Setup
+  choice   Open
+  choice   Full
+  choice   Closed
+  presence required
+  help     "This indicates the status of the shelter.  Setup means setup is in progress, not yet accepting guests.  This field is required."
+  pdf      if 24.=Setup then circle X 122.82 Y 469.50 R 3.9
+  pdf      if 24.=Full then circle X 338.82 Y 469.92 R 3.9
+  pdf      if 24.=Open then circle X 122.88 Y 455.76 R 3.8
+  pdf      if 24.=Closed then circle X 339.12 Y 456.24 R 3.8
+
+field 25a.
+  label    "Resources: Warming Center"
+  clabel   "Warming Center"
+  type     checkbox
+  help     "This indicate that the shelter is a warming center."
+  pdf      cross L 118.68 R 129.12 B 435.48 T 445.92
+
+field 25b.
+  label    "Resources: Cooling Center"
+  clabel   "Cooling Center"
+  type     checkbox
+  help     "This indicates that the shelter is a cooling center."
+  pdf      cross L 118.92 R 129.48 B 420.36 T 430.92
+
+field 25c.
+  label    "Resources: Food & Drink"
+  clabel   "Food & Drink"
+  type     checkbox
+  help     "This indicates that the shelter offers food and drink."
+  pdf      cross L 298.92 R 309.36 B 436.08 T 446.64
+
+field 25d.
+  label    "Resources: Charging Stations"
+  clabel   "Charging Stations"
+  type     checkbox
+  help     "This indicates that the shelter has charging stations."
+  pdf      cross L 298.92 R 309.36 B 420.72 T 431.28
+
+field -
+  label    Resources
+  type     checkboxGroup
+  children 25a. 25b. 25c. 25d.
+
+field 26. defaultBody
+  label    Notes
+  type     multiline
+  width    108
+  help     "This field contains notes about the shelter."
+  pdf      text L  79.24 R 568.00 B 351.20 T 414.40 BL 405.98
+
+field 27.
+  label    "ADA Compliant?"
+  type     restricted
+  choice   Yes
+  choice   No
+  help     "This indicates whether the shelter is ADA compliant."
+  pdf      if 27.=Yes then circle X 158.88 Y 340.26 R 3.2
+  pdf      if 27.=No then circle X 231.24 Y 339.96 R 3.2
+
+field 28.
+  label    "Pets Allowed?"
+  type     restricted
+  choice   Yes
+  choice   No
+  help     "This indicates whether the shelter allows pets."
+  pdf      if 28.=Yes then circle X 424.26 Y 339.66 R 3.3
+  pdf      if 28.=No then circle X 496.32 Y 339.96 R 3.2
+
+field 29.
+  label    "Maximum Capacity"
+  type     cardinalNumber
+  presence required
+  width    3
+  help     "This is the maximum capacity of the shelter.  It is required."
+  pdf      text L 140.32 R 215.08 B 314.24 T 327.76 BL 317.36
+
+field 30.
+  label    "Total Registered"
+  type     cardinalNumber
+  presence required
+  width    3
+  help     "This is the number of people currently registered in the shelter.  It is required."
+  pdf      text L 303.88 R 392.08 B 314.24 T 327.76 BL 317.36
+
+field 31.
+  label    "Cot Numbers"
+  type     cardinalNumber
+  presence required
+  width    3
+  help     "This is the number of cots in the shelter.  It is required."
+  pdf      text L 466.24 R 568.00 B 314.24 T 327.76 BL 317.36
+
+field 32.
+  label    "AFN Considerations"
+  type     multiline
+  width    108
+  help     "This field describes shelter considerations relating to access and functional needs."
+  pdf      text L  44.00 R 568.00 B 259.52 T 298.60 A lT
+
+field 40.
+  label    "Managed By"
+  type     restricted
+  mchoice  ARC American Red Cross
+  choice   Government
+  choice   Community
+  choice   Private
+  choice   Other
+  presence required
+  help     "This indicates what type of entity the shelter is managed by.  It is required."
+  pdf      if 40.=ARC then circle X 158.88 Y 222.84 R 3.2
+  pdf      if 40.=Government then circle X 302.22 Y 222.78 R 3.3
+  pdf      if 40.=Community then circle X 410.76 Y 222.90 R 3.2
+  pdf      if 40.=Private then circle X 158.88 Y 209.64 R 3.2
+  pdf      if 40.=Other then circle X 301.98 Y 209.70 R 3.3
+
+field 41.
+  label    "Primary Contact Name"
+  presence required
+  width    30
+  help     "This is the name of the primary contact for the shelter.  It is required."
+  pdf      text L 156.28 R 303.76 B 186.08 T 199.72 BL 189.03
+
+field 42.
+  label    "Primary Contact Phone"
+  type     phoneNumber
+  presence required
+  help     "This is the phone number of the primary contact for the shelter.  It is required."
+  pdf      text L 463.72 R 568.00 B 186.08 T 199.72 BL 189.03
+
+field 43.
+  label    "Primary Contact Email"
+  width    84
+  help     "This is the email address of the primary contact for the shelter."
+  pdf      text L 156.28 R 568.00 B 167.60 T 181.12 BL 170.71
+
+field OpRelayRcvd
+  label    "Operator: Relay Received"
+  width    36
+  help     "This is the name of the station from which this message was directly received.  It is filled in for messages that go through a relay station."
+  pdf      text L 114.88 R 320.08 B 123.92 T 138.28 BL 127.51
+
+field OpRelaySent
+  label    "Operator: Relay Sent"
+  width    36
+  help     "This is the name of the station to which this message was directly sent.  It is filled in for messages that go through a relay station."
+  pdf      text L 355.24 R 568.84 B 123.92 T 138.28 BL 127.51
+
+field OpName operatorName
+  label    "Operator: Name"
+  presence required
+  pdf      text L  79.48 R 248.56 B 104.96 T 119.44 BL 108.47
+
+field OpCall operatorCall
+  label    "Operator: Call Sign"
+  presence required
+  pdf      text L 300.88 R 365.56 B 104.96 T 119.44 BL 108.47
+
+field -
+  label    Operator
+  type     join
+  children OpName OpCall
+
+field OpDate operatorDate
+  label    "Operator: Date"
+  type     date
+  presence required
+  pdf      text L 401.32 R 473.56 B 104.96 T 119.44 BL 108.47
+
+field OpTime operatorTime
+  label    "Operator: Time"
+  type     time
+  presence required
+  pdf      text L 537.64 R 569.32 B 104.96 T 119.44 BL 108.47
+
+field -
+  label    "Operator: Date/Time"
+  type     dateTime
+  children OpDate OpTime

@@ -1,6 +1,0 @@
-*.log
-/wppsvr/config.yaml
-log
-run.lock
-wppsvr.db
-_pending

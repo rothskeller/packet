@@ -1,0 +1,233 @@
+addon    SCCoPIFO
+html     form-mhoc-beds-status.html
+version  2.1
+title    Hospital Bed Availability Report
+indef    a hospital bed availability report
+subject  HAvBed
+pdfFile  XSC_HAvBed_Report_v190606a_Fillable.pdf
+
+field MsgNo originMessageID
+  label    "Origin Message Number"
+  type     messageID
+  presence required
+  pdf      text L 218.20 R 348.28 B 716.12 T 730.96 BL 719.76
+
+field DestMsgNo destinationMessageID
+  label    "Destination Message Number"
+  type     messageID
+  pdf      text L 445.72 R 573.28 B 716.12 T 730.96 BL 719.76
+
+field 1a. messageDate
+  label    "Message Date"
+  type     date
+  presence required
+  pdf      text L  69.52 R 137.32 B 653.72 T 671.20 BL 658.81
+
+field 1b. messageTime
+  label    "Message Time"
+  type     time
+  presence required
+  pdf      text L 201.04 R 236.32 B 653.72 T 671.20 BL 658.81
+
+field -
+  label    "Message Date/Time"
+  type     dateTime
+  children 1a. 1b.
+  presence required
+
+field 5. handling
+  label    Handling
+  type     restricted
+  choice   IMMEDIATE
+  choice   PRIORITY
+  choice   ROUTINE
+  presence required
+  pdf      if 5.=IMMEDIATE then circle X 303.72 Y 662.70 R 2.8
+  pdf      if 5.=PRIORITY then circle X 405.84 Y 662.70 R 2.8
+  pdf      if 5.=ROUTINE then circle X 491.88 Y 662.70 R 2.8
+
+field 7a. toICSPosition
+  label    "To ICS Position"
+  presence required
+  pdf      text L 127.36 R 300.40 B 631.64 T 649.24 BL 636.77
+
+field 7b. toLocation
+  label    "To Location"
+  presence required
+  pdf      text L 127.36 R 300.40 B 609.08 T 627.16 BL 614.35
+
+field 7c.
+  label    "To Name"
+  pdf      text L 127.36 R 300.40 B 586.64 T 604.60 BL 591.80
+
+field 7d.
+  label    "To Contact Info"
+  pdf      text L 127.36 R 300.40 B 564.08 T 582.16 BL 569.42
+
+field 8a. fromICSPosition
+  label    "From ICS Position"
+  presence required
+  pdf      text L 392.92 R 572.44 B 631.64 T 649.24 BL 636.77
+
+field 8b. fromLocation
+  label    "From Location"
+  presence required
+  pdf      text L 392.92 R 572.44 B 609.08 T 627.16 BL 614.35
+
+field 8c.
+  label    "From Name"
+  pdf      text L 392.92 R 572.44 B 586.64 T 604.60 BL 591.80
+
+field 8d.
+  label    "From Contact Info"
+  pdf      text L 392.92 R 572.44 B 564.08 T 582.16 BL 569.42
+
+field 20. messageSummary
+  label    "Hospital Name"
+  type     restricted
+  choice   El Camino Hospital Los Gatos
+  choice   El Camino Hospital Mountain View
+  choice   Good Samaritan Hospital
+  choice   Kaiser San Jose Medical Center
+  choice   Kaiser Santa Clara Hospital
+  choice   Lucile Packard Children's Hospital
+  choice   O'Connor Hospital
+  choice   Palo Alto Veterans Hospital
+  choice   Regional San Jose Medical Center
+  choice   Saint Louise Regional Hospital
+  choice   Stanford Hospital
+  choice   Stanford School of Medicine
+  choice   Valley Medical Center
+  presence required
+  pdf      text L 169.76 R 572.44 B 523.64 T 541.60 BL 528.85
+
+field 22.
+  label    "Command Center Status"
+  type     restricted
+  choice   Available
+  choice   Drill or Exercise
+  choice   Full Activation
+  choice   Monitoring
+  choice   Not Activated
+  choice   Unavailable
+  choice   Limited Activation
+  presence required
+  pdf      if 22.=Available then circle X 244.68 Y 511.14 R 2.8
+  pdf      if 22.="Limited Activation" then circle X 389.64 Y 511.14 R 2.8
+  pdf      if 22.="Not Activated" then circle X 244.68 Y 495.66 R 2.8
+  pdf      if 22.="Full Activation" then circle X 389.64 Y 495.66 R 2.8
+  pdf      if 22.="Drill or Exercise" then circle X 244.68 Y 480.06 R 2.8
+  pdf      if 22.=Unavailable then circle X 389.64 Y 480.06 R 2.8
+  pdf      if 22.=Monitoring then circle X 244.68 Y 464.58 R 2.8
+
+field 41.
+  label    "Adult ICU"
+  type     cardinalNumber
+  presence required
+  pdf      text L 172.48 R 235.48 B 418.40 T 436.00 BL 423.50
+
+field 42.
+  label    Burn
+  type     cardinalNumber
+  presence required
+  pdf      text L 172.48 R 236.08 B 396.32 T 413.92 BL 401.27
+
+field 43.
+  label    Medical/Surgical
+  type     cardinalNumber
+  presence required
+  pdf      text L 172.48 R 235.48 B 374.12 T 391.84 BL 379.24
+
+field 44.
+  label    "Neg Flow Isolation"
+  type     cardinalNumber
+  presence required
+  pdf      text L 172.48 R 236.08 B 352.04 T 369.64 BL 356.98
+
+field 45.
+  label    "Operating Room"
+  type     cardinalNumber
+  presence required
+  pdf      text L 172.48 R 236.08 B 329.96 T 347.56 BL 334.87
+
+field 46.
+  label    "Pediatric ICU"
+  type     cardinalNumber
+  presence required
+  pdf      text L 172.48 R 235.48 B 307.88 T 325.48 BL 312.92
+
+field 47.
+  label    Pediatrics
+  type     cardinalNumber
+  presence required
+  pdf      text L 172.48 R 236.08 B 285.80 T 303.40 BL 290.81
+
+field 48.
+  label    Psychiatric
+  type     cardinalNumber
+  presence required
+  pdf      text L 172.48 R 236.08 B 263.72 T 281.32 BL 268.72
+
+field 49.
+  label    Decon
+  type     restricted
+  choice   Exceeded
+  choice   Full
+  choice   Inactive
+  choice   Open
+  presence required
+  pdf      if 49.=Exceeded then circle X 230.52 Y 250.62 R 2.8
+  pdf      if 49.=Full then circle X 325.56 Y 250.62 R 2.8
+  pdf      if 49.=Inactive then circle X 388.44 Y 250.62 R 2.8
+  pdf      if 49.=Open then circle X 479.76 Y 250.62 R 2.8
+
+field 50.
+  label    Vents
+  type     cardinalNumber
+  presence required
+  pdf      text L 172.48 R 236.08 B 219.44 T 237.04 BL 224.58
+
+field 51. defaultBody
+  label    Comment
+  type     multiline
+  pdf      text L  41.44 R 572.44 B 131.36 T 199.84 A lT
+
+field OpRelayRcvd
+  label    "Operator: Relay Received"
+  pdf      text L 110.20 R 321.76 B  77.60 T  91.96 BL 81.02
+
+field OpRelaySent
+  label    "Operator: Relay Sent"
+  pdf      text L 356.20 R 573.76 B  77.60 T  91.96 BL 81.02
+
+field OpName operatorName
+  label    "Operator: Name"
+  presence required
+  pdf      text L  75.04 R 249.76 B  58.64 T  73.12 BL 62.01
+
+field OpCall operatorCall
+  label    "Operator: Call Sign"
+  presence required
+  pdf      text L 302.08 R 366.76 B  58.64 T  73.12 BL 62.01
+
+field -
+  label    Operator
+  type     join
+  children OpName OpCall
+
+field OpDate operatorDate
+  label    "Operator: Date"
+  type     date
+  presence required
+  pdf      text L 402.52 R 474.76 B  58.64 T  73.12 BL 62.01
+
+field OpTime operatorTime
+  label    "Operator: Time"
+  type     time
+  presence required
+  pdf      text L 538.84 R 573.76 B  58.64 T  73.12 BL 62.01
+
+field -
+  label    "Operator: Date/Time"
+  type     dateTime
+  children OpDate OpTime

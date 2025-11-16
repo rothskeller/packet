@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<link rel=stylesheet type=text/css href={{assets}}/pack-it-forms.css>
+<style>
+  .annotation {
+    font-size: 80%;
+    font-weight: normal
+  }
+</style>
+<script type=text/javascript src={{assets}}/pack-it-forms.js></script>
+<title>Windshield Survey</title>
+<the-form>
+  <scco-header form-title="Windshield Survey" paper-version="PDF: 20250812"
+    to-ics-positions="Damage/Safety Assessment Group; Construction &amp; Eng. Branch; Operations"></scco-header>
+  <table class=veoci>
+    <caption>Overview
+    <tr>
+      <td class=label>Jurisdiction:
+      <td class=input><jurisdiction-box name="20." tabindex=20></jurisdiction-box>
+    <tr>
+      <td class=label>Team:
+      <td class=input><input type=text name=21. tabindex=20 required>
+    <tr>
+      <td class=label>Location:
+      <td class=input><input type=text name=22. tabindex=20 required>
+    <tr>
+      <td class=label>Item:
+      <td class=input>
+        <table class="boxgroup required-group">
+          <tr>
+            <td><input type=checkbox name=23a. tabindex=20 required>Building
+            <td><input type=checkbox name=23b. tabindex=20 required>Road
+        </table>
+    <tr hidden-until=23a.building>
+      <td class=label>Building Type:
+      <td class=input>
+        <table class="boxgroup required-group" required-if=23a. else-disallowed>
+          <tr>
+            <td><input type=radio name=24. value=Single tabindex=20>Single Family Home
+            <td><input type=radio name=24. value=Mobile tabindex=20>Mobile Home or Trailer
+          <tr>
+            <td><input type=radio name=24. value=Townhouse tabindex=20>Townhouse or Condo
+            <td><input type=radio name=24. value=Business tabindex=20>Business
+          <tr>
+            <td><input type=radio name=24. value=Apartment tabindex=20>Apartment
+            <td><input type=radio name=24. value=Other tabindex=20>Other <span class=annotation>(describe
+                below)</span>
+        </table>
+    <tr>
+      <td class=label>Damage Categorization:
+      <td class=input>
+        <table class="boxgroup required-group">
+          <tr>
+            <td><input type=radio name=26. value=Affected tabindex=20 required>Affected
+            <td><input type=radio name=26. value=Major tabindex=20 required>Major
+          <tr>
+            <td><input type=radio name=26. value=Minor tabindex=20 required>Minor
+            <td><input type=radio name=26. value=Destroyed tabindex=20 required>Destroyed
+        </table>
+    <tr>
+      <td class=label>Safety Hazards /<br>Other Damage Observed:
+      <td class=input><textarea name=27. tabindex=20></textarea>
+  </table>
+  <scco-footer></scco-footer>
+</the-form>

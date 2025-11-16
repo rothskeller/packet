@@ -1,0 +1,752 @@
+/* Copyright 2014 Keith Amidon
+   Copyright 2014 Peter Amidon
+
+   Licensed under the Apache License, Version 2.0 (the "License");
+   you may not use this file except in compliance with the License.
+   You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License. */
+
+/* General alignment, emphasis, and display */
+
+#scco-banner {
+    background-color: #bbeeff;
+}
+
+#form tr td:first-child { text-align: right; }
+body {
+    margin-top: 0;
+    padding-top: 4em;
+    background-color: #f8f8f8;
+    font-family: sans-serif;
+    font-size: 10pt;
+}
+
+h1 {
+    vertical-align: top;
+    margin-top: 0
+}
+footer {
+    font-weight: bold;
+    text-align: center;
+}
+table {
+    border-collapse: collapse;
+    width: 100%;
+    margin-left: auto;
+    margin-right: auto;
+}
+td {
+    vertical-align: top;
+    border: 1px solid #aaaaaa;
+    padding-left: 0.5em;
+    padding-right: 0.5em;
+    padding-top: 0.5ex;
+    padding-bottom: 0.5ex;
+}
+
+td.label{
+  width: 1px;
+  white-space: nowrap;
+}
+
+table.combobox {
+    border: none;
+    border-collapse:collapse;
+    cellpadding:0;
+    margin:0;
+    padding:0;
+    width:100%;
+}
+table.combobox td, table.combobox th {
+    border: none;
+    margin:0;
+    padding:0;
+    vertical-align:middle;
+}
+table.combobox input[type="text"] {
+    margin-right:2em;
+    overflow:hidden;
+}
+table.combobox .dropdown-toggle {
+    padding:0;
+    vertical-align:middle;
+    width:1.7em; /* just enough to contain the span and img */
+    /* Firefox version 95 can't correctly compute this width. */
+}
+table.combobox .dropdown-toggle>span {
+    border-color:#cccccc; /* match the adjacent text box */
+    border-style:solid;
+    border-width:1px 1px 1px 0;
+    margin:0 0 0 0.3em; /* overlap slightly with the text box */
+    padding:0.08em 0.3em 0.09em 0.4em;
+}
+table.combobox .dropdown-toggle>span>img {
+    /* square, like the source image. */
+    height:0.6em;
+    width:0.6em;
+}
+table.combobox .dropdown-menu {
+    position:relative;
+    margin:0;
+    padding:0;
+}
+table.combobox .dropdown-menu>div {
+    position:absolute;
+    top:-1px;
+    overflow:auto;
+    margin:0;
+    padding:0;
+    width:100%;
+    background-color:#fff;
+    border:1px solid #222;
+}
+table.combobox .dropdown-menu>div>a {
+    display:block;
+    font-family: consolas,monaco,profont,monospace;
+    font-size: 10pt;
+    font-weight: bold;
+    padding-left:0.2em;
+}
+
+table.same-line-label-layout {
+    border: none;
+    border-collapse: collapse;
+    margin: 0px;
+    padding: 0px;
+    width: 100%;
+}
+table.same-line-label-layout>tr>th, table.same-line-label-layout>tbody>tr>th {
+    border: none;
+    font-weight: bold;
+    margin: 0px;
+    padding-top: 0px;
+    padding-bottom: 0px;
+    vertical-align: top;
+    white-space: nowrap;
+    width: 1px;
+}
+table.same-line-label-layout>tr>td, table.same-line-label-layout>tbody>tr>td {
+    border: none;
+    margin: 0px;
+    padding-top: 0px;
+    padding-bottom: 0px;
+}
+table.same-line-label-layout>tr>th>label,  table.same-line-label-layout>tbody>tr>th>label,
+table.same-line-label-layout>tr>th>input,  table.same-line-label-layout>tbody>tr>th>input,
+table.same-line-label-layout>tr>th>select, table.same-line-label-layout>tbody>tr>th>select {
+    display: inline-block;
+}
+#the-form table.zebra-striped tr:nth-child(even) {
+    background-color: #ffffff;
+}
+table.section {
+    page-break-inside: avoid;
+}
+table.section>tr:first-child>td, table.section>tbody>tr:first-child>td {
+    border-top: 1px solid #aaaaaa;
+}
+label {
+    font-weight: bold;
+}
+fieldset > legend,
+fieldset > div.required-group > legend {
+    font-weight: bold;
+}
+.bold {
+    font-weight: bold;
+}
+
+label.intext {
+    margin-right: 0.5em;
+}
+
+form input {
+    display: inline-block;
+}
+form input[type="text"] {
+    /* A text input whose width is not specified is as wide as its container.
+       If there are other elements in the same line, the line will extend outside the container.
+       To keep things inside the container, we often put the input on a line by itself:
+     */
+    display: block;
+    /* To make a wide text input fit in the same line as other elements,
+       make the line a <tr> in a <table> (perhaps with class="same-line-label-layout").
+       Put the text input in its own <td>, and the other elements in other <td> or <th>.
+     */
+    font-weight: bold;
+    font-size: 10pt;
+    font-family: consolas,monaco,profont,monospace;
+    text-overflow: ellipsis;
+    width: 100%;
+}
+form select {
+    border: 1px solid #cccccc;
+    padding: 1px;
+    background: #ffffff;
+    font-weight: bold;
+    font-size: 10pt;
+    font-family: consolas,monaco,profont,monospace;
+}
+form textarea {
+    display: block;
+    font-weight: bold;
+    font-size: 10pt;
+    font-family: consolas,monaco,profont,monospace;
+    width: 100%;
+    resize: vertical;
+    white-space: pre-wrap;
+}
+form input:enabled,textarea:enabled {
+    background-color: #ffffff;
+    border: 1px solid #cccccc;
+}
+form input:disabled,textarea:disabled {
+    background-color: transparent;
+    border: 1px solid #cccccc;
+}
+form label.label-sameline input, form label.label-sameline select {
+    display: inline-block;
+    margin-left: 1em;
+}
+form td.label-sameline {
+    white-space: nowrap;
+}
+form td.label-sameline>label,
+form td.label-sameline>input,
+form td.label-sameline>select,
+form td.label-sameline>label>input,
+form td.label-sameline>label>select,
+form td.label-sameline>div.required-group,
+form td.label-sameline>div.required-group>label,
+form td.label-sameline>div.required-group>input,
+form td.label-sameline>div.required-group>select,
+form td.label-sameline>div.required-group>label>input,
+form td.label-sameline>div.required-group>label>select {
+    display: inline-block;
+}
+form fieldset label {
+    display: block;
+    font-weight: normal;
+}
+form fieldset {
+    border: none;
+    padding: 0;
+}
+form fieldset input,select {
+    display: inline-block;
+}
+form .horizontal label {
+    display: inline;
+}
+form .horizontal input {
+    display: inline;
+}
+
+#the-form fieldset table {
+    width: 100%;
+}
+
+#the-form fieldset table td, #the-form fieldset table th {
+    padding: 0.2ex 0.5em;
+    border: 0px;
+}
+
+fieldset.labeled-box {
+    border: 1px solid #aaaaaa;
+    margin-top: 2ex;
+    padding: 0.5ex 0.25em 0.5ex;
+}
+
+fieldset.labeled-box legend {
+    padding-left: 1em;
+    padding-right: 1em;
+    margin-left: 1em;
+}
+
+.block-caption {
+    background-color: #cccccc;
+    vertical-align: middle;
+    font-weight: bold;
+}
+.field-number {
+    vertical-align: super;
+    font-weight: normal;
+    font-size: 75%;
+    padding-left: 0.5em;
+}
+
+
+table ~ table :first-child:first-child > td {
+    border-top: none;
+}
+
+.rowspanned-header {
+    vertical-align: bottom;
+    font-weight: normal;
+}
+.sub-header {
+    font-weight: normal;
+    text-align: right;
+}
+
+#button-header {
+    position: fixed;
+    top: 0px;
+    left: 0px;
+    width: 100%;
+    height: 2.5em;
+    padding-left: 3px;
+    background-color: #aaaaaa;
+    border-bottom: 1px solid #888888;
+}
+
+input[type="button"] {
+    border-width: 3px;
+}
+
+input[type="button"]:focus {
+    outline: 2px solid #0261df;
+    border-radius: 2px;
+}
+
+.hidden {
+    display: none;
+}
+
+.version {
+    display: none;
+}
+
+#form-data {
+    position: fixed;
+    top: 0px;
+    left: 0px;
+    width: 95%;
+    margin-left: 2.5%;
+    margin-right: 2.5%;
+    margin-top: 4em;
+    font-family: consolas,monaco,profont,monospace;
+    white-space: pre;
+    border: 2px solid black;
+    height: calc(50% - 4em);
+    overflow: auto;
+    background-color: #eeeeee;
+}
+
+
+/* Veoci form layout model. */
+
+/* <table class="veoci"> is one section of a Veoci form. */
+.veoci {
+    page-break-inside: avoid;
+    border: 1px solid #aaa;
+    border-bottom: none;
+}
+.veoci + .veoci {
+    /* Avoid double border between sections. */
+    border-top: none;
+}
+/* <caption> contains the section heading. */
+.veoci caption {
+    background-color: #ccc;
+    font-weight: bold;
+    padding: 0.5ex 0.5em;
+    text-align: left;
+}
+.veoci td {
+    /* Cells within a section have only a bottom border. */
+    border: none;
+    border-bottom: 1px solid #aaa;
+}
+/* <td class="nest"> is for a cell that contains a nested table. */
+.veoci .nest {
+    padding: 0;
+}
+.nest tr:last-child > td {
+    border-bottom: none;
+}
+/* <td class="label"> is for a cell that contains a label.
+ * The column width is the minimum needed for all labels. */
+.veoci .label {
+    white-space: nowrap;
+    width: 1px;
+    vertical-align: middle;
+    font-weight: bold;
+}
+.veoci .label-top {
+    white-space: nowrap;
+    width: 1px;
+    font-weight: bold;
+}
+/* <td class="input" is for a cell that contains an input field. */
+.veoci .input + .label {
+    border-left: 1px solid #aaa;
+}
+.veoci input[type=text],
+.veoci textarea {
+    /* Reduce width by cell padding. */
+    width: calc(100% - 0.5em);
+}
+/* <table class="boxgroup"> contains a set of radio buttons and/or
+ * checkboxes. */
+.boxgroup {
+    width: auto;
+    margin: 0;
+}
+.boxgroup td {
+    border: none;
+    padding: 0 1em 0 0;
+}
+
+
+/* Border control */
+
+.noborder td {
+    border: none;
+}
+.noborder {
+    border: 1px solid #aaaaaa;
+}
+.border td {
+    border: 1px solid #aaaaaa;
+}
+td.border {
+    border: 1px solid #aaaaaa;
+}
+td.border-left {
+    border-left: 1px solid #aaaaaa;
+}
+td.border-right {
+    border-right: 1px solid #aaa;
+}
+
+.fullsize-textfields td:not(.noft) input, .fullsize-textfields td:not(.noft) textarea {
+    width:100%;
+}
+.fullsize-textfields td:not(.noft) {
+    padding-left: 0.5em;
+    padding-right: 0.5em;
+}
+
+/* Error logging/presentation */
+
+#err {
+    background-color: #eeeeee;
+    color: #888888;
+    display: none;
+}
+
+#err.occured {
+    display: block;
+    position: fixed;
+    top: 0px;
+    left: 0px;
+    width: 95%;
+    margin-left: 2%;
+    margin-right: 2%;
+    margin-top: 4em;
+    border: 2px solid black;
+    padding: 1ex 1em;
+    visibility: visible;
+    opacity: 1.0;
+    z-index: 9999;
+}
+
+#err h1 {
+    padding-top: 1ex;
+    padding-bottom: 0;
+    margin-bottom: 0;
+}
+
+#error-log {
+    font-family: consolas,monaco,profont,monospace;
+    margin: 3ex 0 0;
+    padding-top: 1ex;
+    font-size: 10pt;
+    border-top: 1px solid #888888;
+    white-space: pre;
+}
+
+#error-indicator {
+    background-color: #ffaaaa;
+    color: #444444;
+    font-weight: bold;
+    display: none;
+    padding: 0.25ex 1em;
+}
+
+#error-indicator.occured {
+    display: inline;
+}
+
+/* Form validation */
+
+form input:invalid, form textarea:invalid, form select:invalid, .invalid {
+    box-shadow: 0 0 6px 2px #c80000;
+    transition: box-shadow 0.5s;
+}
+form .required-group input[type="checkbox"]:invalid,
+form .required-group input[type="radio"]:invalid {
+    box-shadow: none;
+}
+
+form :valid {
+    transition: box-shadow 0.5s, background-color 0.5s;
+}
+
+form input:invalid, form textarea:invalid, form select:invalid, .invalid {
+    background-color: #fff8f8;
+    transition: background-color 0.5s;
+}
+
+form fieldset:invalid {
+    box-shadow: none;
+}
+
+#button-header.valid {
+    background-color: #a8e8a8;
+}
+
+#button-header.readonly,#button-header.readonly.valid {
+    background-color: #cfcfff;
+    height: 2.5em;
+}
+
+/* Style init-on-submit to indicate they are fixed */
+
+form input.init-on-submit {
+    background-color: transparent;
+    border-color: transparent;
+}
+form input[type="text"].call-sign, form .instead-of-input.call-sign {
+    width: 6em;
+    display: inline-block;
+}
+form input[type="text"].cardinal-number {
+    text-align: right;
+    width: 4em;
+    display: inline-block;
+}
+form input[type="text"].real-number,
+form input[type="text"].frequency,
+form input[type="text"].frequency-offset {
+    text-align: right;
+    width: 6em;
+    display: inline-block;
+}
+form .instead-of-input.cardinal-number,
+form .instead-of-input.real-number,
+form .instead-of-input.frequency,
+form .instead-of-input.frequency-offset {
+    text-align: right;
+    white-space: nowrap;
+}
+form input[type="text"].phone-number, form .instead-of-input.phone-number {
+    width: 11em;
+    display: inline-block;
+}
+form input[type="text"].date, form .instead-of-input.date {
+    width: 6em;
+    display: inline-block;
+}
+form input[type="text"].time, form .instead-of-input.time {
+    width: 6em;
+    display: inline-block;
+}
+form input[type="text"].message-number, form .instead-of-input.message-number {
+    width: 10em;
+    display: inline-block;
+}
+
+/* Prevent things from getting overly wide or narrow */
+#the-form, .any-form {
+    max-width: 9in;
+    min-width: 6in;
+}
+
+/* Readonly (display) form styling */
+
+#the-form :placeholder-shown[readonly],
+.any-form :placeholder-shown[readonly] {
+    visibility: hidden;
+}
+
+
+#the-form [readonly],
+.any-form [readonly] {
+    background-color: white;
+    border-color: transparent;
+    color: black;
+}
+
+#the-form select[disabled],
+.any-form select[disabled] {
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    text-indent: 1px;
+    text-overflow: '';
+    background-color: transparent;
+    border-color: transparent;
+    color: black;
+    border: 0px;
+    padding: 0px;
+}
+
+#the-form select[disabled]::-ms-expand,
+.any-form select[disabled]::-ms-expand {
+    display: none;
+}
+
+form .instead-of-input {
+    background-color: white;
+    font-weight: bold;
+    font-size: 10pt;
+    font-family: consolas,monaco,profont,monospace;
+    min-height: 3ex;
+    unicode-bidi: embed;
+    white-space: pre-wrap;
+    overflow-wrap: break-word;
+    word-wrap: break-word;/* an archaic synonym for overflow-wrap */
+    word-break: break-word;
+}
+.print-only, form .instead-of-input.print-only {
+    /* It's important that this "form .instead-of-input.print-only"
+       comes after the previous "form .instead-of-input.*" selectors.
+       They have equal specificity, and we want this one to win.
+   */
+    display: none;
+}
+
+/* Rotation for headers.  Inspiration: http://kizu.ru/en/fun/rotated-text/ */
+
+.rotated td:not(.not-rotated), .rotated th:not(.not-rotated) {
+    vertical-align: bottom;
+    text-align: center;
+}
+.rotated td:not(.not-rotated) > div, .rotated th:not(.not-rotated) > div {
+    display: inline-block;
+    width: 1.5em;
+}
+.rotated td:not(.not-rotated) > div > div, .rotated th:not(.not-rotated) > div > div {
+    font-size: 75%;
+    display: inline-block;
+    white-space: nowrap;
+    transform: translate(0, 100%) rotate(-90deg);
+    transform-origin: 0 0;
+    -webkit-transform: translate(0, 100%) rotate(-90deg);
+    -webkit-transform-origin: 0 0;
+}
+.rotated td:not(.not-rotated) > div > div::after, .rotated th:not(.not-rotated) > div > div::after {
+    content: "";
+    float: left;
+    margin-top: 100%;
+}
+
+td.rotated:not(.not-rotated), th.rotated:not(.not-rotated) {
+    vertical-align: bottom;
+    text-align: center;
+}
+td.rotated:not(.not-rotated) > div, th.rotated:not(.not-rotated) > div {
+    display: inline-block;
+    width: 1.5em;
+}
+td.rotated:not(.not-rotated) > div > div, th.rotated:not(.not-rotated) > div > div {
+    font-size: 75%;
+    display: inline-block;
+    white-space: nowrap;
+    transform: translate(0, 100%) rotate(-90deg);
+    transform-origin: 0 0;
+    -webkit-transform: translate(0, 100%) rotate(-90deg);
+    -webkit-transform-origin: 0 0;
+}
+td.rotated:not(.not-rotated) > div > div::after, th.rotated:not(.not-rotated) > div > div::after {
+    content: "";
+    float: left;
+    margin-top: 100%;
+}
+
+/* Print styling */
+
+@media print {
+  @page { margin: 0.5in 0.25in; }
+   body {
+       font-family: sans-serif;
+       margin: 0px;
+       border: 0px;
+       padding: 0px;
+       background-color: white;
+   }
+   #loading,#button-header,#form-data-form {
+       display: none;
+   }
+   .print-only, form .instead-of-input.print-only {
+       display: block;
+   }
+   span.print-only, form span.instead-of-input.print-only {
+       display: inline;
+   }
+   .print-none,
+   form input.print-none,
+   form input[type="text"].print-none,
+   form textarea.print-none,
+   form fieldset input.print-none,
+   form .horizontal input.print-none,
+   form label.label-sameline input.print-none,
+   form label.label-sameline select.print-none,
+   form td.label-sameline>input.print-none,
+   form td.label-sameline>label>input.print-none,
+   form td.label-sameline>div.required-group>input.print-none,
+   form td.label-sameline>div.required-group>label>input.print-none,
+   table.same-line-label-layout>tr>th>input.print-none,
+   table.same-line-label-layout>tbody>tr>th>input.print-none {
+       display: none;
+   }
+   table {
+      width: 100%;
+   }
+   #the-form, .any-form {
+       max-width: 11in; /* landscape mode */
+   }
+   form input[type="text"], form textarea, form select {
+       background-color: white;
+   }
+   form input:invalid, form textarea:invalid, form select:invalid, .invalid {
+       background-color: white;
+   }
+   textarea {
+       resize: none;
+       overflow: hidden !important;
+       -ms-overflow-style: none;
+       scrollbar-width: none;
+   }
+   ::-webkit-scrollbar {
+       display: none;
+       width: 0 !important;
+   }
+   ::-webkit-input-placeholder {
+       color: transparent;
+   }
+   :-moz-placeholder { /* Mozilla Firefox 4 to 18 */
+       color: transparent;
+   }
+   ::-moz-placeholder { /* Mozilla Firefox 19+ */
+       color: transparent;
+   }
+   :-ms-input-placeholder { /* Internet Explorer 10+ */
+       color: transparent;
+   }
+   ::-ms-input-placeholder { /* Microsoft Edge */
+       color: transparent;
+   }
+   ::placeholder { /* Most modern browsers */
+       color: transparent;
+   }
+}

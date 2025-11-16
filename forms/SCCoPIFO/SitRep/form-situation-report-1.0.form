@@ -1,0 +1,686 @@
+addon    SCCoPIFO
+html     form-situation-report.html
+version  1.0
+title    Situation Report Form
+indef    a situation report form
+create   SitRep sr
+pdfFile  Situation_Report_v20250730.pdf
+
+field MsgNo originMessageID
+  label    "Origin Message Number"
+  type     messageID
+  presence required
+  help     "This is the message number assigned to the message by the origin station.  Valid message numbers have the form XXX-###P, where XXX is the three-character message number prefix assigned to the station, ### is a sequence number (any number of digits), and P is an optional suffix letter.  This field is required."
+  pdf      text L 223.36 R 342.16 B 713.00 T 730.96 BL 718.34
+  pdf      text P 2 L 458.08 R 563.32 B 742.32 T 790.00 BL 745.50
+  pdf      text P 3 L 458.08 R 563.32 B 742.32 T 790.00 BL 745.54
+
+field DestMsgNo destinationMessageID
+  label    "Destination Message Number"
+  type     messageID
+  pdf      text L 442.00 R 564.76 B 713.00 T 730.96 BL 718.34
+
+field 1a. messageDate
+  label    "Message Date"
+  type     date
+  presence required
+  help     "This is the date the message was written, in MM/DD/YYYY format.  It is required."
+  pdf      text L  69.80 R 122.92 B 652.40 T 676.24 BL 660.47
+
+field 1b. messageTime
+  label    "Message Time"
+  type     time
+  presence required
+  help     "This is the time the message was written, in HH:MM format (24-hour clock).  It is required."
+  pdf      text L 188.92 R 235.48 B 652.40 T 676.24 BL 660.47
+
+field -
+  label    "Message Date/Time"
+  type     dateTime
+  children 1a. 1b.
+  presence required
+  help     "This is the date and time the message was written, in MM/DD/YYYY HH:MM format (24-hour clock).  It is required."
+
+field 5. handling
+  label    Handling
+  type     restricted
+  value    IMMEDIATE
+  choice   IMMEDIATE
+  choice   PRIORITY
+  choice   ROUTINE
+  presence required
+  help     "This is the message handling order, which specifies how fast it needs to be delivered.  Allowed values are \"ROUTINE\" (within 2 hours), \"PRIORITY\" (within 1 hour), and \"IMMEDIATE\".  This field is required."
+  pdf      if 5.=IMMEDIATE then circle X 298.86 Y 665.16 R 3.9
+  pdf      if 5.=PRIORITY then circle X 400.74 Y 664.92 R 3.9
+  pdf      if 5.=ROUTINE then circle X 486.12 Y 664.98 R 3.8
+
+field 7a. toICSPosition
+  label    "To ICS Position"
+  value    "Situational Analysis Unit"
+  choice   Situational Analysis Unit
+  choice   Common Operating Picture Spec.
+  choice   Planning
+  presence required
+  width    30
+  help     "This is the ICS position to which the message is addressed.  It is required."
+  pdf      text L 130.84 R 281.32 B 626.00 T 647.92 BL 633.24
+
+field 7b. toLocation
+  label    "To Location"
+  value    "County EOC"
+  presence required
+  width    32
+  help     "This is the location of the recipient ICS position.  It is required."
+  pdf      text L 130.84 R 281.32 B 599.60 T 621.52 BL 606.75
+
+field 7c.
+  label    "To Name"
+  width    34
+  help     "This is the name of the person holding the recipient ICS position.  It is optional and rarely provided."
+  pdf      text L 130.84 R 280.60 B 573.20 T 595.12 BL 580.31
+
+field 7d.
+  label    "To Contact Info"
+  width    29
+  help     "This is contact information (phone number, email, etc.) for the receipient.  It is optional and rarely provided."
+  pdf      text L 130.84 R 281.32 B 546.80 T 568.72 BL 553.97
+
+field 8a. fromICSPosition
+  label    "From ICS Position"
+  presence required
+  width    30
+  help     "This is the ICS position of the message author.  It is required."
+  pdf      text L 373.84 R 563.44 B 626.00 T 647.92 BL 633.24
+
+field 8b. fromLocation
+  label    "From Location"
+  presence required
+  width    32
+  help     "This is the location of the message author.  It is required."
+  pdf      text L 373.84 R 563.44 B 599.60 T 621.52 BL 606.75
+
+field 8c.
+  label    "From Name"
+  width    34
+  help     "This is the name of the message author.  It is optional and rarely provided."
+  pdf      text L 373.84 R 562.72 B 573.20 T 595.12 BL 580.31
+
+field 8d.
+  label    "From Contact Info"
+  width    29
+  help     "This is contact information (phone number, email, etc.) for the message author.  It is optional and rarely provided."
+  pdf      text L 373.84 R 563.44 B 546.80 T 568.72 BL 553.97
+
+field 20d.
+  label    "Prepared Date"
+  type     date
+  presence required
+  help     "This is the date when the situation report was prepared.  It is required."
+  pdf      text L 114.40 R 226.24 B 510.56 T 524.08 BL 514.01
+
+field 20t.
+  label    "Prepared Time"
+  type     time
+  presence required
+  help     "This is the time of date when the situation report was prepared.  It is required."
+  pdf      text L 305.92 R 563.44 B 510.56 T 524.08 BL 514.01
+
+field -
+  label    "Prepared Date/Time"
+  type     dateTime
+  children 20d. 20t.
+  presence required
+  help     "This is the date and time when the situation report was prepared, in MM/DD/YYYY HH:MM format (24-hour clock).  It is required."
+
+field 21. messageSummary
+  label    Jurisdiction
+  choice   Campbell
+  choice   Cupertino
+  choice   Gilroy
+  choice   Los Altos
+  choice   Los Altos Hills
+  choice   Los Gatos
+  choice   Milpitas
+  choice   Monte Sereno
+  choice   Morgan Hill
+  choice   Mountain View
+  choice   Palo Alto
+  choice   San Jose
+  choice   Santa Clara (City)
+  choice   Saratoga
+  choice   Sunnyvale
+  choice   Santa Clara County
+  choice   County unincorporated
+  presence required
+  help     "This is the name of the jurisdiction reporting the situation.  It is required."
+  pdf      text L 114.40 R 294.52 B 492.56 T 505.60 BL 495.45
+
+field 22.
+  label    "Incident Name"
+  presence required
+  width    38
+  help     "This is the name of the incident for which the situation is being reported.  It is required."
+  pdf      text L 376.36 R 563.44 B 492.56 T 505.60 BL 495.45
+
+field 23.
+  label    "Emergency Declaration"
+  type     restricted
+  choice   Unknown
+  choice   Yes
+  choice   No
+  help     "This indicates whether a declaration of emergency has been proclaimed."
+  pdf      if 23.=Unknown then circle X 192.90 Y 481.32 R 3.3
+  pdf      if 23.=Yes then circle X 300.60 Y 481.62 R 3.2
+  pdf      if 23.=No then circle X 408.90 Y 481.38 R 3.3
+
+field 24.
+  label    "EOC Activation"
+  type     restricted
+  choice   Normal
+  choice   Duty Officer
+  choice   Monitor
+  choice   Partial
+  choice   Full
+  help     "This indicates the jurisdiction EOC's activation level."
+  pdf      if 24.=Normal then circle X 157.20 Y 464.04 R 3.2
+  pdf      if 24.="Duty Officer" then circle X 264.54 Y 463.98 R 3.3
+  pdf      if 24.=Monitor then circle X 409.14 Y 463.74 R 3.3
+  pdf      if 24.=Partial then circle X 156.90 Y 448.92 R 3.3
+  pdf      if 24.=Full then circle X 264.54 Y 448.62 R 3.3
+
+field 25.
+  label    "Incident Description"
+  type     multiline
+  width    108
+  help     "This is a description of the incident."
+  pdf      text L  40.64 R 563.44 B 363.20 T 425.08 A lT
+
+field 26. defaultBody
+  label    "Additional Incident Information"
+  type     multiline
+  width    108
+  help     "This field provides additional information about the incident."
+  pdf      text L  40.64 R 563.44 B 308.48 T 347.68 A lT
+
+field 30.
+  label    "Prepared By"
+  width    39
+  help     "This is the name of the person who prepared the situation report."
+  pdf      text L 104.92 R 294.76 B 263.00 T 276.52 BL 265.91
+
+field 31.
+  label    "Prepared By Phone"
+  type     phoneNumber
+  help     "This is the phone number of the person who prepared the situation report."
+  pdf      text L 384.16 R 563.44 B 263.00 T 276.52 BL 265.91
+
+field 32.
+  label    "Prepared By Email"
+  width    94
+  help     "This is the email address of the person who prepared the situation report."
+  pdf      text L 104.92 R 563.44 B 245.00 T 258.52 BL 247.95
+
+field 50.
+  label    "Government Office Status"
+  type     restricted
+  choice   Unknown
+  choice   Open
+  choice   Closed
+  help     "This is the status of the jurisdiction government office(s)."
+  pdf      if 50.=Unknown then circle X 156.78 Y 207.84 R 3.3
+  pdf      if 50.=Open then circle X 265.26 Y 208.02 R 3.3
+  pdf      if 50.=Closed then circle X 372.54 Y 208.08 R 3.3
+
+field 51d.
+  label    "Expected to Open Date"
+  type     date
+  help     "This is the date when the government office is expected to open."
+  pdf      text L 153.08 R 207.40 B 180.80 T 197.56 BL 185.26
+
+field 51t.
+  label    Time
+  type     time
+  help     "This is the time of day when the government office is expected to open."
+  pdf      text L 240.52 R 294.76 B 180.92 T 197.56 BL 185.26
+
+field -
+  label    "Expected to Open"
+  type     dateTime
+  children 51d. 51t.
+  help     "This is the date and time when the government office is expected to open, in MM/DD/YYYY HH:MM format (24-hour clock).  It is required."
+
+field 52d.
+  label    "Expected to Close Date"
+  type     date
+  help     "This is the date when the government office is expected to close."
+  pdf      text L 412.40 R 456.16 B 180.80 T 197.56 BL 185.26
+
+field 52t.
+  label    Time
+  type     time
+  help     "This is the time of day when the government office is expected to close."
+  pdf      text L 490.12 R 563.44 B 180.92 T 197.56 BL 185.26
+
+field -
+  label    "Expected to Close"
+  type     dateTime
+  children 52d. 52t.
+  help     "This is the date and time when the government office is expected to close, in MM/DD/YYYY HH:MM format (24-hour clock).  It is required."
+
+field 60.
+  label    "Approved By"
+  width    38
+  help     "This is the name of the person who approved the situation report."
+  pdf      text L 107.92 R 294.76 B 135.32 T 148.84 BL 138.30
+
+field 61.
+  label    "Approved By Phone"
+  width    38
+  help     "This is the phone number of the person who approved the situation report."
+  pdf      text L 375.76 R 563.44 B 135.32 T 148.84 BL 138.30
+
+field 62.
+  label    "Approved By Position"
+  width    38
+  help     "This is the ICS position of the person who approved the situation report."
+  pdf      text L 107.92 R 294.76 B 117.32 T 130.84 BL 120.33
+
+field 63.
+  label    "Approved By Location"
+  width    38
+  help     "This is the location of the person who approved the situation report."
+  pdf      text L 375.76 R 563.44 B 117.32 T 130.84 BL 120.33
+
+field 70a.
+  label    "Communications Status"
+  type     restricted
+  choice   Normal
+  choice   Problem
+  choice   Failure
+  choice   Unknown
+  help     "This is the current situation with respect to communications."
+  pdf      if 70a.=Normal then circle P 2 X 215.46 Y 707.04 R 3.3
+  pdf      if 70a.=Problem then circle P 2 X 284.58 Y 707.10 R 3.3
+  pdf      if 70a.=Failure then circle P 2 X 356.82 Y 707.16 R 3.3
+  pdf      if 70a.=Unknown then circle P 2 X 420.66 Y 707.22 R 3.3
+
+field 70b.
+  label    "Communications Comments"
+  type     multiline
+  width    69
+  help     "These are comments on the current situation with respect to communications."
+  pdf      text P 2 L 223.24 R 563.32 B 674.12 T 697.00 BL 688.54
+
+field 71a.
+  label    "Debris Status"
+  type     restricted
+  choice   Normal
+  choice   Problem
+  choice   Failure
+  choice   Unknown
+  help     "This is the current situation with respect to debris."
+  pdf      if 71a.=Normal then circle P 2 X 215.34 Y 663.36 R 3.3
+  pdf      if 71a.=Problem then circle P 2 X 284.46 Y 663.48 R 3.3
+  pdf      if 71a.=Failure then circle P 2 X 356.76 Y 663.48 R 3.2
+  pdf      if 71a.=Unknown then circle P 2 X 420.54 Y 663.54 R 3.3
+
+field 71b.
+  label    "Debris Comments"
+  type     multiline
+  width    69
+  help     "These are comments on the current situation with respect to debris."
+  pdf      text P 2 L 223.24 R 563.32 B 630.68 T 653.56 BL 645.13
+
+field 72a.
+  label    "Flooding Status"
+  type     restricted
+  choice   Normal
+  choice   Problem
+  choice   Failure
+  choice   Unknown
+  help     "This is the current situation with respect to flooding."
+  pdf      if 72a.=Normal then circle P 2 X 215.34 Y 620.16 R 3.3
+  pdf      if 72a.=Problem then circle P 2 X 284.46 Y 620.28 R 3.3
+  pdf      if 72a.=Failure then circle P 2 X 356.76 Y 620.28 R 3.2
+  pdf      if 72a.=Unknown then circle P 2 X 420.54 Y 620.34 R 3.3
+
+field 72b.
+  label    "Flooding Comments"
+  type     multiline
+  width    69
+  help     "These are comments on the current situation with respect to flooding."
+  pdf      text P 2 L 223.24 R 563.32 B 587.36 T 610.24 BL 601.88
+
+field 73a.
+  label    "HazMat Status"
+  type     restricted
+  choice   Normal
+  choice   Problem
+  choice   Failure
+  choice   Unknown
+  help     "This is the current situation with respect to hazardous materials."
+  pdf      if 73a.=Normal then circle P 2 X 215.34 Y 577.44 R 3.3
+  pdf      if 73a.=Problem then circle P 2 X 284.46 Y 577.50 R 3.3
+  pdf      if 73a.=Failure then circle P 2 X 356.76 Y 577.56 R 3.2
+  pdf      if 73a.=Unknown then circle P 2 X 420.54 Y 577.62 R 3.3
+
+field 73b.
+  label    "HazMat Comments"
+  type     multiline
+  width    69
+  help     "These are comments on the current situation with respect to hazardous materials."
+  pdf      text P 2 L 223.24 R 563.32 B 543.92 T 566.80 BL 558.34
+
+field 74a.
+  label    "Emergency Services Status"
+  type     restricted
+  choice   Normal
+  choice   Problem
+  choice   Failure
+  choice   Unknown
+  help     "This is the current situation with respect to emergency services."
+  pdf      if 74a.=Normal then circle P 2 X 215.28 Y 533.64 R 3.2
+  pdf      if 74a.=Problem then circle P 2 X 284.46 Y 533.70 R 3.3
+  pdf      if 74a.=Failure then circle P 2 X 356.70 Y 533.76 R 3.3
+  pdf      if 74a.=Unknown then circle P 2 X 420.48 Y 533.76 R 3.2
+
+field 74b.
+  label    "Emergency Services Comments"
+  type     multiline
+  width    69
+  help     "These are comments on the current situation with respect to emergency services."
+  pdf      text P 2 L 223.24 R 563.32 B 500.60 T 523.48 BL 514.81
+
+field 75a.
+  label    "Casualties Status"
+  type     restricted
+  choice   Normal
+  choice   Problem
+  choice   Failure
+  choice   Unknown
+  help     "This is the current situation with respect to casualties."
+  pdf      if 75a.=Normal then circle P 2 X 214.92 Y 490.44 R 3.2
+  pdf      if 75a.=Problem then circle P 2 X 284.10 Y 490.56 R 3.3
+  pdf      if 75a.=Failure then circle P 2 X 356.40 Y 490.56 R 3.2
+  pdf      if 75a.=Unknown then circle P 2 X 420.12 Y 490.68 R 3.2
+
+field 75b.
+  label    "Casualties Comments"
+  type     multiline
+  width    69
+  help     "These are comments on the current situation with respect to casualties."
+  pdf      text P 2 L 223.24 R 563.32 B 457.16 T 480.04 BL 471.67
+
+field 76a.
+  label    "Utilities (Gas) Status"
+  type     restricted
+  choice   Normal
+  choice   Problem
+  choice   Failure
+  choice   Unknown
+  help     "This is the current situation with respect to gas utilities."
+  pdf      if 76a.=Normal then circle P 2 X 215.22 Y 447.30 R 3.3
+  pdf      if 76a.=Problem then circle P 2 X 284.40 Y 447.36 R 3.2
+  pdf      if 76a.=Failure then circle P 2 X 356.64 Y 447.42 R 3.2
+  pdf      if 76a.=Unknown then circle P 2 X 420.42 Y 447.42 R 3.3
+
+field 76b.
+  label    "Utilities (Gas) Comments"
+  type     multiline
+  width    69
+  help     "These are comments on the current situation with respect to gas utilities."
+  pdf      text P 2 L 223.72 R 562.60 B 413.72 T 436.60 BL 428.17
+
+field 77a.
+  label    "Utilities (Electric) Status"
+  type     restricted
+  choice   Normal
+  choice   Problem
+  choice   Failure
+  choice   Unknown
+  help     "This is the current situation with respect to electric utilities."
+  pdf      if 77a.=Normal then circle P 2 X 215.22 Y 403.86 R 3.3
+  pdf      if 77a.=Problem then circle P 2 X 284.34 Y 403.92 R 3.3
+  pdf      if 77a.=Failure then circle P 2 X 356.64 Y 403.92 R 3.2
+  pdf      if 77a.=Unknown then circle P 2 X 420.42 Y 403.98 R 3.3
+
+field 77b.
+  label    "Utilities (Electric) Comments"
+  type     multiline
+  width    69
+  help     "These are comments on the current situation with respect to electric utilities."
+  pdf      text P 2 L 223.24 R 563.32 B 370.40 T 393.28 BL 384.77
+
+field 78a.
+  label    "Infrastructure (Power) Status"
+  type     restricted
+  choice   Normal
+  choice   Problem
+  choice   Failure
+  choice   Unknown
+  help     "This is the current situation with respect to power infrastructure."
+  pdf      if 78a.=Normal then circle P 2 X 215.52 Y 360.66 R 3.2
+  pdf      if 78a.=Problem then circle P 2 X 284.64 Y 360.72 R 3.2
+  pdf      if 78a.=Failure then circle P 2 X 356.88 Y 360.78 R 3.2
+  pdf      if 78a.=Unknown then circle P 2 X 420.66 Y 360.84 R 3.3
+
+field 78b.
+  label    "Infrastructure (Power) Comments"
+  type     multiline
+  width    69
+  help     "These are comments on the current situation with respect to power infrastructure."
+  pdf      text P 2 L 223.72 R 562.60 B 326.96 T 349.84 BL 341.34
+
+field 79a.
+  label    "Infrastructure (Water) Status"
+  type     restricted
+  choice   Normal
+  choice   Problem
+  choice   Failure
+  choice   Unknown
+  help     "This is the current situation with respect to water infrastructure."
+  pdf      if 79a.=Normal then circle P 2 X 215.34 Y 316.92 R 3.3
+  pdf      if 79a.=Problem then circle P 2 X 284.46 Y 317.04 R 3.3
+  pdf      if 79a.=Failure then circle P 2 X 356.76 Y 317.04 R 3.2
+  pdf      if 79a.=Unknown then circle P 2 X 420.54 Y 317.10 R 3.3
+
+field 79b.
+  label    "Infrastructure (Water) Comments"
+  type     multiline
+  width    69
+  help     "These are comments on the current situation with respect to water infrastructure."
+  pdf      text P 2 L 223.24 R 563.32 B 283.52 T 306.40 BL 297.87
+
+field 80a.
+  label    "Infrastructure (Sewer) Status"
+  type     restricted
+  choice   Normal
+  choice   Problem
+  choice   Failure
+  choice   Unknown
+  help     "This is the current situation with respect to sewer infrastructure."
+  pdf      if 80a.=Normal then circle P 2 X 215.64 Y 273.36 R 3.2
+  pdf      if 80a.=Problem then circle P 2 X 284.82 Y 273.54 R 3.3
+  pdf      if 80a.=Failure then circle P 2 X 357.12 Y 273.54 R 3.2
+  pdf      if 80a.=Unknown then circle P 2 X 420.90 Y 273.54 R 3.3
+
+field 80b.
+  label    "Infrastructure (Sewer) Comments"
+  type     multiline
+  width    69
+  help     "These are comments on the current situation with respect to sewer infrastructure."
+  pdf      text P 2 L 223.36 R 562.24 B 240.20 T 263.08 BL 254.68
+
+field 81a.
+  label    "Search and Rescue Status"
+  type     restricted
+  choice   Normal
+  choice   Problem
+  choice   Failure
+  choice   Unknown
+  help     "This is the current situation with respect to search and rescue."
+  pdf      if 81a.=Normal then circle P 2 X 215.28 Y 230.58 R 3.2
+  pdf      if 81a.=Problem then circle P 2 X 284.46 Y 230.70 R 3.3
+  pdf      if 81a.=Failure then circle P 2 X 356.76 Y 230.70 R 3.2
+  pdf      if 81a.=Unknown then circle P 2 X 420.54 Y 230.76 R 3.3
+
+field 81b.
+  label    "Search and Rescue Comments"
+  type     multiline
+  width    69
+  help     "These are comments on the current situation with respect to search and rescue."
+  pdf      text P 2 L 223.24 R 563.32 B 196.76 T 219.64 BL 211.05
+
+field 82a.
+  label    "Transportation (Roads) Status"
+  type     restricted
+  choice   Normal
+  choice   Problem
+  choice   Failure
+  choice   Unknown
+  help     "This is the current situation with respect to roads."
+  pdf      if 82a.=Normal then circle P 2 X 215.58 Y 187.08 R 3.3
+  pdf      if 82a.=Problem then circle P 2 X 284.70 Y 187.20 R 3.3
+  pdf      if 82a.=Failure then circle P 2 X 357.00 Y 187.20 R 3.2
+  pdf      if 82a.=Unknown then circle P 2 X 420.78 Y 187.26 R 3.3
+
+field 82b.
+  label    "Transportation (Roads) Comments"
+  type     multiline
+  width    69
+  help     "These are comments on the current situation with respect to roads."
+  pdf      text P 2 L 223.72 R 562.60 B 153.44 T 176.32 BL 167.78
+
+field 83a.
+  label    "Transportation (Bridges) Status"
+  type     restricted
+  choice   Normal
+  choice   Problem
+  choice   Failure
+  choice   Unknown
+  help     "This is the current situation with respect to bridges."
+  pdf      if 83a.=Normal then circle P 2 X 215.58 Y 142.98 R 3.3
+  pdf      if 83a.=Problem then circle P 2 X 284.70 Y 143.04 R 3.3
+  pdf      if 83a.=Failure then circle P 2 X 357.00 Y 143.04 R 3.2
+  pdf      if 83a.=Unknown then circle P 2 X 420.78 Y 143.10 R 3.3
+
+field 83b.
+  label    "Transportation (Bridges) Comments"
+  type     multiline
+  width    69
+  help     "These are comments on the current situation with respect to bridges."
+  pdf      text P 2 L 223.24 R 563.32 B 110.00 T 132.88 BL 124.43
+
+field 84a.
+  label    "Civil Unrest Status"
+  type     restricted
+  choice   Normal
+  choice   Problem
+  choice   Failure
+  choice   Unknown
+  help     "This is the current situation with respect to civil unrest."
+  pdf      if 84a.=Normal then circle P 3 X 214.74 Y 734.52 R 3.9
+  pdf      if 84a.=Problem then circle P 3 X 284.88 Y 734.64 R 3.8
+  pdf      if 84a.=Failure then circle P 3 X 356.82 Y 734.64 R 3.9
+  pdf      if 84a.=Unknown then circle P 3 X 420.66 Y 734.70 R 3.9
+
+field 84b.
+  label    "Civil Unrest Comments"
+  type     multiline
+  width    69
+  help     "These are comments on the current situation with respect to civil unrest."
+  pdf      text P 3 L 223.24 R 563.32 B 701.12 T 724.00 BL 715.52
+
+field 85a.
+  label    "Animal Issues Status"
+  type     restricted
+  choice   Normal
+  choice   Problem
+  choice   Failure
+  choice   Unknown
+  help     "This is the current situation with respect to animal issues."
+  pdf      if 85a.=Normal then circle P 3 X 215.34 Y 691.38 R 3.3
+  pdf      if 85a.=Problem then circle P 3 X 285.48 Y 691.44 R 3.2
+  pdf      if 85a.=Failure then circle P 3 X 357.42 Y 691.50 R 3.3
+  pdf      if 85a.=Unknown then circle P 3 X 421.20 Y 691.50 R 3.2
+
+field 85b.
+  label    "Animal Issues Comments"
+  type     multiline
+  width    69
+  help     "These are comments on the current situation with respect to animal issues."
+  pdf      text P 3 L 223.24 R 563.32 B 657.68 T 680.56 BL 672.02
+
+field 90.
+  label    "Lifeline Status"
+  type     restricted
+  choice   Stable
+  choice   Stabilizing
+  choice   Unstable
+  choice   Unknown
+  presence required
+  help     "This is the status of the jurisdiction's response to this incident.  It is required."
+  pdf      if 90.=Stable then circle P 3 X 157.14 Y 620.64 R 3.9
+  pdf      if 90.=Stabilizing then circle P 3 X 220.56 Y 620.88 R 3.8
+  pdf      if 90.=Unstable then circle P 3 X 302.94 Y 620.82 R 3.9
+  pdf      if 90.=Unknown then circle P 3 X 381.96 Y 620.88 R 3.8
+
+field 91.
+  label    "Lifeline Update"
+  type     multiline
+  presence required
+  width    108
+  help     "This provides details of the jurisdiction's response and recovery to the incident.  It is required."
+  pdf      text P 3 L 111.64 R 563.32 B 520.16 T 610.24 BL 601.67
+
+field 92.
+  label    "Unmet Needs"
+  type     multiline
+  presence required
+  width    108
+  help     "This lists shortcomings from the jurisdiction's response and recovery.  It is required."
+  pdf      text P 3 L 111.64 R 563.32 B 411.80 T 515.20 BL 506.66
+
+field OpRelayRcvd
+  label    "Operator: Relay Received"
+  width    36
+  help     "This is the name of the station from which this message was directly received.  It is filled in for messages that go through a relay station."
+  pdf      text P 3 L 109.00 R 319.48 B 360.20 T 374.56 BL 363.62
+
+field OpRelaySent
+  label    "Operator: Relay Sent"
+  width    36
+  help     "This is the name of the station to which this message was directly sent.  It is filled in for messages that go through a relay station."
+  pdf      text P 3 L 354.04 R 564.76 B 360.20 T 374.56 BL 363.62
+
+field OpName operatorName
+  label    "Operator: Name"
+  presence required
+  pdf      text P 3 L  75.04 R 247.72 B 341.24 T 355.72 BL 344.64
+
+field OpCall operatorCall
+  label    "Operator: Call Sign"
+  presence required
+  pdf      text P 3 L 300.04 R 364.24 B 341.24 T 355.72 BL 344.64
+
+field -
+  label    Operator
+  type     join
+  children OpName OpCall
+
+field OpDate operatorDate
+  label    "Operator: Date"
+  type     date
+  presence required
+  pdf      text P 3 L 397.00 R 471.88 B 341.24 T 355.72 BL 344.64
+
+field OpTime operatorTime
+  label    "Operator: Time"
+  type     time
+  presence required
+  pdf      text P 3 L 530.80 R 564.76 B 341.24 T 355.72 BL 344.64
+
+field -
+  label    "Operator: Date/Time"
+  type     dateTime
+  children OpDate OpTime

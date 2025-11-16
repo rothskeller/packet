@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<link rel=stylesheet type=text/css href={{assets}}/pack-it-forms.css>
+<style>
+  .annotation {
+    font-size: 80%;
+    font-weight: normal
+  }
+</style>
+<script type=text/javascript src={{assets}}/pack-it-forms.js></script>
+<title>CPOD Site Information Form</title>
+<the-form>
+  <scco-header form-title="CPOD Site Information Form" paper-version="PDF: 20250812"
+    to-ics-positions="CPOD Unit; Mass Care &amp; Emerg. Asst. Branch; Operations"></scco-header>
+  <table class=veoci>
+    <caption>General Site Information
+    <tr>
+      <td class=label>Jurisdiction:
+      <td class="input nest">
+        <table>
+          <tr>
+            <td class=input><jurisdiction-box name="20." tabindex=20></jurisdiction-box>
+            <td class=label>Prepared Date:
+            <td class=input><input type=text name=21d. class=date tabindex=20 required>
+            <td class=label>Prepared Time:
+            <td class=input><input type=text name=21t. class=time tabindex=20 required>
+        </table>
+    <tr>
+      <td class=label>Site Name:
+      <td class=input><input type=text name=22. tabindex=20 required>
+    <tr>
+      <td class=label>CPOD Type:
+      <td class=input>
+        <table class="boxgroup required-group">
+          <tr>
+            <td><input name=23. type=radio value="Type I" tabindex=20 required>Type I
+            <td><input name=23. type=radio value="Type III" tabindex=20 required>Type III
+            <td><input name=23. type=radio value="Non-CPOD Distribution Point" tabindex=20 required>Non-CPOD
+              Distribution Point
+          <tr>
+            <td><input name=23. type=radio value="Type II" tabindex=20 required>Type II
+            <td><input name=23. type=radio value=LSA tabindex=20 required>LSA (Logistics Staging Area)
+            <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(smaller than a Type III CPOD)
+          <tr>
+        </table>
+    <tr>
+      <td class=label>Status:
+      <td class=input>
+        <table class="boxgroup required-group">
+          <tr>
+            <td><input name=24. type=radio value=Activated tabindex=20 required>Activated
+            <td><input name=24. type=radio value="Pending Demobilization" tabindex=20 required>Pending
+              Demobilization
+            <td><input name=24. type=radio value="Not Activated" tabindex=20 required>Not Activated
+          <tr>
+            <td><input name=24. type=radio value="Pending Activation" tabindex=20 required>Pending Activation
+            <td><input name=24. type=radio value=Demobilization tabindex=20 required>Demobilization
+          <tr>
+        </table>
+    <tr>
+      <td class=label>Address:
+      <td class="input nest">
+        <table>
+          <tr>
+            <td class=input><input type=text name=25a. tabindex=20 required>
+            <td class=label>City:
+            <td class=input>
+              <combo-box name=25c. tabindex=20 placeholder="Select one..." required
+                options="Campbell; Cupertino; Gilroy; Los Altos; Los Altos Hills; Los Gatos; Milpitas; Monte Sereno; Morgan Hill; Mountain View; Palo Alto; San Jose; Santa Clara; Saratoga; Sunnyvale">
+              </combo-box>
+            <td class=label>ZIP code:</td>
+            <td class=input><input type=text name=25z. tabindex=20 style="max-width:5em" pattern="\d{5}(?:-\d{4})?">
+        </table>
+    <tr>
+      <td colspan=2 class=nest>
+        <table>
+          <tr>
+            <td class=label>Police Jurisdiction and Division/Region:
+            <td class=input><input type=text name=26. tabindex=20>
+          <tr>
+            <td class=label>Fire Department Jurisdiction and Division/Region:
+            <td class=input><input type=text name=27. tabindex=20>
+        </table>
+    <tr>
+      <td class=label>Additional<br>Information:
+      <td class=input><textarea name=28. rows=2 tabindex=20></textarea>
+  </table>
+  <table class=veoci>
+    <caption>Contact Information
+    <tr>
+      <td class=label>Partner Point of Contact:
+      <td class="input nest">
+        <table>
+          <tr>
+            <td class=input><input type=text name=30. tabindex=30>
+            <td class=label>Site Point of Contact:
+            <td class=input><input type=text name=31. tabindex=30>
+        </table>
+  </table>
+  <table class=veoci>
+    <caption>Site Details
+    <tr>
+      <td class=label>Dimensions of Site in Feet:
+      <td class="input nest">
+        <table>
+          <tr>
+            <td class=input><input type=text name=40. tabindex=40>
+            <td class=label>Size of Site in Acres:
+            <td class=input><input type=text name=41. tabindex=40>
+        </table>
+    <tr>
+      <td class=label-top>Road/Walkway type:
+      <td class=input>
+        <table class=boxgroup>
+          <tr>
+            <td><input name=42a. type=checkbox tabindex=40>Concrete
+            <td><input name=42b. type=checkbox tabindex=40>Gravel Hard-Stand
+            <td><input name=42c. type=checkbox tabindex=40>Paved
+            <td><input name=42d. type=checkbox tabindex=40>Other
+        </table>
+    <tr>
+      <td class=label>Accessible at All Times:
+      <td class=input>
+        <table class=boxgroup>
+          <tr>
+            <td><input name=43. type=radio value=Yes tabindex=40>Yes
+            <td><input name=43. type=radio value=No tabindex=40>No
+        </table>
+    <tr>
+      <td class=label>Access Controlled by Gate:
+      <td class="input nest">
+        <table>
+          <tr>
+            <td class=input>
+              <table class=boxgroup>
+                <tr>
+                  <td><input name=44. type=radio value=Yes tabindex=40>Yes
+                  <td><input name=44. type=radio value=No tabindex=40>No
+              </table>
+            <td class=label>Site Contact if Gate is Closed:
+            <td class=input><input type=text name=45. tabindex=40>
+        </table>
+    <tr>
+      <td class=label>Location of Driveway(s):
+      <td class=input><input type=text name=46. tabindex=40>
+    <tr>
+      <td class=nest colspan=2>
+        <table>
+          <tr>
+            <td class=label>Spike Strips at any of the driveways:
+            <td class=input>
+              <table class=boxgroup>
+                <tr>
+                  <td><input name=47. type=radio value=Yes tabindex=40>Yes
+                  <td><input name=47. type=radio value=No tabindex=40>No
+              </table>
+        </table>
+  </table>
+  <table class=veoci>
+    <caption>Site Safety
+    <tr>
+      <td class=input colspan=2>
+        <div class=label>Site Safety Details:</div>
+        <table class=boxgroup style="margin-left:36pt">
+          <tr>
+            <td><input name=50a. type=checkbox tabindex=50>Has perimeter fencing
+            <td><input name=50e. type=checkbox tabindex=54>Has public address system installed
+          <tr>
+            <td><input name=50b. type=checkbox tabindex=51>Has fixed lighting throughout the site
+              (outside)
+            <td><input name=50f. type=checkbox tabindex=55>Has covered areas
+          <tr>
+            <td><input name=50c. type=checkbox tabindex=52>Has fixed lighting throughout the site
+              (inside)
+            <td><input name=50g. type=checkbox tabindex=56>Has fixed or non-fixed equipment located on
+          <tr>
+            <td><input name=50d. type=checkbox tabindex=53>Site monitored using closed-circuit TV cameras
+            <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;the site that may be difficult to move
+        </table>
+    <tr>
+      <td class=label>Perimeter Fencing Details:
+      <td class=input><textarea name=51. rows=2 tabindex=56></textarea>
+    <tr>
+      <td class=input colspan=2>
+        <div class=label>Site Accessibility:</div>
+        <div style="margin-left:36pt">
+          <input name=52a. type=checkbox tabindex=56>There are sidewalks leading to the site that have
+          wheelchair access
+          <br>
+          <input name=52b. type=checkbox tabindex=56>There are uneven surfaces leading up to the site
+          <br>
+          <input name=52c. type=checkbox tabindex=56>There is a ramp from the staff parking location leading
+          up to the POD location
+        </div>
+  </table>
+  <table class=veoci>
+    <caption>Time Open / Time Closed
+    <tr>
+      <td class=label>Date Opened:
+      <td class=input><input type=text name=60d. class=date tabindex=60>
+      <td class=label>Time Opened:
+      <td class=input><input type=text name=60t. class=time tabindex=60 required-if=60d. else-disallowed>
+    <tr>
+      <td class=label>Date Closed:
+      <td class=input><input type=text name=61d. class=date tabindex=60>
+      <td class=label>Time Closed:
+      <td class=input><input type=text name=61t.time-closed class=time tabindex=60 required-if=61d. else-disallowed>
+  </table>
+  <table class=veoci>
+    <caption>Commodities
+    <tr>
+      <td class="label border-right" rowspan=2>Item 1
+      <td class=label>Type of Commodity:
+      <td class=input colspan=5><input type=text name=70a. tabindex=70 required>
+    <tr>
+      <td class=label>Starting Quantity:
+      <td class=input><input type=text name=70b. class=cardinal-number tabindex=70 required>
+      <td class=label>Qty Distributed:
+      <td class=input><input type=text name=70c. class=cardinal-number tabindex=70 required>
+      <td class=label>Qty Available:
+      <td class=input><input type=text name=70d. class=cardinal-number tabindex=70 required>
+    <tr hidden-until=70a.>
+      <td class="label border-right" rowspan=2>Item 2
+      <td class=label>Type of Commodity:
+      <td class=input colspan=5><input type=text name=71a. tabindex=70>
+    <tr hidden-until=70a.>
+      <td class=label>Starting Quantity:
+      <td class=input><input type=text name=71b. class=cardinal-number tabindex=70 required-if=71a. else-disallowed>
+      <td class=label>Qty Distributed:
+      <td class=input><input type=text name=71c. class=cardinal-number tabindex=70 required-if=71a. else-disallowed>
+      <td class=label>Qty Available:
+      <td class=input><input type=text name=71d. class=cardinal-number tabindex=70 required-if=71a. else-disallowed>
+    <tr hidden-until=71a.>
+      <td class="label border-right" rowspan=2>Item 3
+      <td class=label>Type of Commodity:
+      <td class=input colspan=5><input type=text name=72a. tabindex=70>
+    <tr hidden-until=71a.>
+      <td class=label>Starting Quantity:
+      <td class=input><input type=text name=72b. class=cardinal-number tabindex=70 required-if=72a. else-disallowed>
+      <td class=label>Qty Distributed:
+      <td class=input><input type=text name=72c. class=cardinal-number tabindex=70 required-if=72a. else-disallowed>
+      <td class=label>Qty Available:
+      <td class=input><input type=text name=72d. class=cardinal-number tabindex=70 required-if=72a. else-disallowed>
+    <tr hidden-until=72a.>
+      <td class="label border-right" rowspan=2>Item 4
+      <td class=label>Type of Commodity:
+      <td class=input colspan=5><input type=text name=73a. tabindex=70>
+    <tr hidden-until=72a.>
+      <td class=label>Starting Quantity:
+      <td class=input><input type=text name=73b. class=cardinal-number tabindex=70 required-if=73a. else-disallowed>
+      <td class=label>Qty Distributed:
+      <td class=input><input type=text name=73c. class=cardinal-number tabindex=70 required-if=73a. else-disallowed>
+      <td class=label>Qty Available:
+      <td class=input><input type=text name=73d. class=cardinal-number tabindex=70 required-if=73a. else-disallowed>
+    <tr hidden-until=73a.>
+      <td class="label border-right" rowspan=2>Item 5
+      <td class=label>Type of Commodity:
+      <td class=input colspan=5><input type=text name=74a. tabindex=70>
+    <tr hidden-until=73a.>
+      <td class=label>Starting Quantity:
+      <td class=input><input type=text name=74b. class=cardinal-number tabindex=70 required-if=74a. else-disallowed>
+      <td class=label>Qty Distributed:
+      <td class=input><input type=text name=74c. class=cardinal-number tabindex=70 required-if=74a. else-disallowed>
+      <td class=label>Qty Available:
+      <td class=input><input type=text name=74d. class=cardinal-number tabindex=70 required-if=74a. else-disallowed>
+    <tr hidden-until=74a.>
+      <td class="label border-right" rowspan=2>Item 6
+      <td class=label>Type of Commodity:
+      <td class=input colspan=5><input type=text name=75a. tabindex=70>
+    <tr hidden-until=74a.>
+      <td class=label>Starting Quantity:
+      <td class=input><input type=text name=75b. class=cardinal-number tabindex=70 required-if=75a. else-disallowed>
+      <td class=label>Qty Distributed:
+      <td class=input><input type=text name=75c. class=cardinal-number tabindex=70 required-if=75a. else-disallowed>
+      <td class=label>Qty Available:
+      <td class=input><input type=text name=75d. class=cardinal-number tabindex=70 required-if=75a. else-disallowed>
+    <tr hidden-until=75a.>
+      <td class="label border-right" rowspan=2>Item 7
+      <td class=label>Type of Commodity:
+      <td class=input colspan=5><input type=text name=76a. tabindex=70>
+    <tr hidden-until=75a.>
+      <td class=label>Starting Quantity:
+      <td class=input><input type=text name=76b. class=cardinal-number tabindex=70 required-if=76a. else-disallowed>
+      <td class=label>Qty Distributed:
+      <td class=input><input type=text name=76c. class=cardinal-number tabindex=70 required-if=76a. else-disallowed>
+      <td class=label>Qty Available:
+      <td class=input><input type=text name=76d. class=cardinal-number tabindex=70 required-if=76a. else-disallowed>
+    <tr hidden-until=76a.>
+      <td class="label border-right" rowspan=2>Item 8
+      <td class=label>Type of Commodity:
+      <td class=input colspan=5><input type=text name=77a. tabindex=70>
+    <tr hidden-until=76a.>
+      <td class=label>Starting Quantity:
+      <td class=input><input type=text name=77b. class=cardinal-number tabindex=70 required-if=77a. else-disallowed>
+      <td class=label>Qty Distributed:
+      <td class=input><input type=text name=77c. class=cardinal-number tabindex=70 required-if=77a. else-disallowed>
+      <td class=label>Qty Available:
+      <td class=input><input type=text name=77d. class=cardinal-number tabindex=70 required-if=77a. else-disallowed>
+  </table>
+  <scco-footer></scco-footer>
+</the-form>

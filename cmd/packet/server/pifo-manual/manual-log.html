@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="Content-Type" content="text/html;charset=UTF-8">
+    <link rel="stylesheet" type="text/css" href="resources/css/pack-it-forms.css"/>
+    <style>
+      .message-data {
+          font-family: consolas,monaco,profont,monospace;
+      }
+      table {
+          background-color: #ffffff;
+          border-left: 2px solid;
+          border-right: 2px solid;
+      }
+      table tr.first-row>td,
+      table tr>td.first-row {
+          border-bottom: 2px solid;
+      }
+      table tr.last-row>td {
+          border-top: 2px solid;
+      }
+      .caption,
+      table.same-line-label-layout>tr>td.caption,
+      table.same-line-label-layout>tbody>tr>td.caption {
+          font-size: 80%;
+          padding-bottom: 1em;
+      }
+      tr.captions>td {
+          text-align: center;
+      }
+      form button,
+      form input[type="submit"] {
+          background-color: #a8e8a8;
+          border: 2px solid;
+          display: inline-block;
+          font-weight: bold;
+          white-space: nowrap;
+      }
+      form input[type="text"].message-number {
+          width: 6em; /* same as .call-sign */
+      }
+      form tr.message-blank td:nth-child(odd),
+      form tr.message-data td:nth-child(odd),
+      form tr.message-edit td:nth-child(odd) {
+          border-right: 2px solid;
+      }
+      form tr.message-blank td,
+      form tr.message-edit td {
+          padding: 0;
+          vertical-align: middle;
+      }
+      form tr.message-blank input[type="text"],
+      form tr.message-edit input[type="text"] {
+          border: none;
+      }
+      form tr.message-blank input[type="text"].time,
+      form tr.message-edit input[type="text"].time {
+          width: 9ex; /* shorter than forms pack-it-forms.css */
+      }
+      form tr.message-blank button,
+      form tr.message-edit button {
+          display: inline-block;
+      }
+      /* EOT fonts are used by Internet Explorer. Other browsers use TTF fonts. */
+      @font-face {
+          font-family: 'Pacifico'; /* https://www.fontsquirrel.com/fonts/pacifico */
+          src: url('/bin/pacifico-webfont.eot');
+          src: url('/bin/pacifico-webfont.eot?#iefix') format('embedded-opentype'),
+               url('/bin/pacifico-webfont.ttf') format('truetype');
+          font-weight: normal;
+          font-style: normal;
+      }
+    </style>
+    <title>ICS-309</title>
+    <script type="text/javascript">
+      function insertMessage(index) {
+          document.getElementById("insert-index").value = index + '';
+          document.getElementById("insert-form").submit();
+      }
+      function deleteMessage(index) {
+          document.getElementById("delete-index").value = index + '';
+          document.getElementById("delete-form").submit();
+      }
+      function eraseAll() {
+          document.getElementById("erase-all-form").submit();
+      }
+      /** Submit the-form, regardless of whether it's valid. */
+      function submitDamnit(value) {
+          document.getElementById("submitValue").value = value;
+          var form = document.getElementById("the-form");
+          form.noValidate = true;
+          form.submit();
+      }
+      function onLoad() {
+          if (/\?goBack/.exec(window.location)) {
+              history.back();
+          }
+          setTimeout(function afterLoad() {
+              var inputTypes = {
+                  date: {
+                      pattern: "(0?[1-9]|1[012])/(0?[1-9]|[12][0-9]|3[01])/[12][0-9][0-9][0-9]",
+                      placeholder: "m/d/yyyy"
+                  },
+                  time: {
+                      pattern: '([01][0-9]|2[0-3]):?[0-5][0-9]|2400|24:00|"',
+                      /* When a message is sent to multiple destinations,
+                       the log entries for the second and subsequent
+                       destinations have a ditto '"' in the time field.
+                      */
+                      placeholder: "hh:mm"
+                  }
+              };
+              for (clazz in inputTypes) {
+                  var type = inputTypes[clazz];
+                  Array.prototype.forEach.call(
+                      document.querySelectorAll('input[type="text"].' + clazz),
+                      function(input) {
+                          input.pattern = type.pattern;
+                          input.placeholder = type.placeholder;
+                          input.title = type.placeholder;
+                      });
+              }
+              {{afterLoad}}
+          }, 10);
+      }
+      window.onload = onLoad;
+    </script>
+  </head>
+  <body style="background-color:#ffffff;padding-top:1em;">
+    <form id="delete-form" method="POST" style="display:none;">
+      <input type="text" id="delete-index" name="deleteIndex" value=""/>
+    </form>
+    <form id="insert-form" method="POST" style="display:none;">
+      <input type="text" id="insert-index" name="insertIndex" value=""/>
+    </form>
+    <form id="erase-all-form" method="POST" style="display:none;">
+      <input type="text" name="submitValue" value="EraseAll"/>
+    </form>
+    <form id="the-form" method="POST"><!-- action="/manual-edit-log" -->
+      <table style="border-top:2px solid;">
+        <tr>
+          <td class="label">
+            <span style="font-size:125%;font-weight:bold;">COMM Log</span>
+            <br/>ICS 309-SCCo
+            <br/>ARES/RACES
+          </td><td>
+            <table class="same-line-label-layout">
+              <tr>
+                <td class="caption">
+                  1. Incident Name and Activation Number
+                </td>
+              </tr><tr>
+                <td>{{incidentName}}</td>
+              </tr><tr>
+                <td>{{activationNumber}}</td>
+              </tr>
+            </table>
+          </td><td>
+            <table class="same-line-label-layout">
+              <tr>
+                <td colspan="4" class="caption">
+                  2. Operational Period (Date/Time)
+                </td>
+              </tr><tr>
+                <td></td>
+                <td>{{fromDate}}</td>
+                <td></td>
+                <td>{{toDate}}</td>
+              </tr><tr>
+                <td class="label">From:</td>
+                <td>{{fromTime}}</td>
+                <td class="label">To:</td>
+                <td>{{toTime}}</td>
+              </tr>
+            </table>
+          </td>
+        </tr>
+      </table>
+      <table id="form-row-1">
+        <tr>
+          <td style="width:50%;">
+            <table class="same-line-label-layout">
+              <tr>
+                <td class="caption">
+                  3. Radio Net Name (for NCOs) or Position/Tactical Call
+                </td>
+              </tr><tr>
+                <td>{{netName}}</td>
+              </tr>
+            </table>
+          </td><td>
+            <table class="same-line-label-layout">
+              <tr>
+                <td class="caption">
+                  4. Radio Operator (Name, Call Sign)
+                </td>
+              </tr><tr>
+                <td>{{radioOperator}}</td>
+              </tr>
+            </table>
+          </td>
+        </tr>
+      </table>
+      <table style="border-bottom:2px solid;">
+        <tr style="background-color:#bbbbbb;border-top:2px solid;border-bottom:2px solid;">
+          <td style="border-right:none;width:1px;">5.</td>
+          <td colspan="7" style="border-left:none;font-weight:bold;text-align:center;">COMMUNICATIONS LOG</td>
+        </tr><tr class="captions">
+          <td rowspan="2" class="first-row"
+              style="border-right:2px solid;font-size:80%;vertical-align:bottom;">
+            Time<br/>(24:00)
+          </td><td colspan="2" style="border-right:2px solid;">
+            FROM
+          </td><td colspan="2" style="border-right:2px solid;">
+            TO
+          </td><td colspan="3" rowspan="2" class="first-row"
+                   style="text-align:left;vertical-align:middle;">
+            Message
+          </td>
+        </tr><tr class="captions first-row" style="font-size:80%;">
+          <td>
+            Call Sign/ID
+          </td><td style="border-right:2px solid;">
+            Msg #
+          </td><td>
+            Call Sign/ID
+          </td><td style="border-right:2px solid;">
+            Msg #
+          </td>
+{{messages}}
+        </tr><tr class="last-row">
+          <td colspan="3">
+            <div class="caption">6. Prepared By (Name, Call Sign)</div>
+            {{preparedBy}}
+          </td>
+          <td colspan="2" style="border-right:2px solid;">
+            <div class="caption" style="padding-bottom:0px;">6A. {{signatureCaption}}</div>
+            {{signature}}
+          </td>
+          <td colspan="3">
+            <div class="caption">7. Date &amp; Time Prepared</div>
+            {{datePrepared}}&nbsp;&nbsp;{{timePrepared}}
+          </td>
+        </tr>
+      </table>
+      <table class="same-line-label-layout" style="margin-top:1em;">
+        <tr>
+          <td>ICS 309-SCCo ARES/RACES (Rev. 2021-Apr-08)</td>
+{{submitButtons}}
+        </tr><tr>
+          <td>PIF: 1.1</td>
+        </tr>
+      </table>
+    </form>
+  </body>
+</html>

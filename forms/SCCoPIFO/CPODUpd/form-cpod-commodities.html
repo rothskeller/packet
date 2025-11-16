@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<link rel=stylesheet type=text/css href={{assets}}/pack-it-forms.css>
+<script type=text/javascript src={{assets}}/pack-it-forms.js></script>
+<title>CPOD Commodities Update Form</title>
+<the-form>
+  <scco-header form-title="CPOD Commodities Update Form" paper-version="PDF: 20250730"
+    to-ics-positions="CPOD Unit; Mass Care &amp; Emerg. Asst. Branch; Operations"></scco-header>
+  <table class=veoci>
+    <caption>Overview
+    <tr>
+      <td class=label>Jurisdiction:
+      <td class="input nest">
+        <table>
+          <tr>
+            <td class=input><jurisdiction-box name="20." tabindex=20></jurisdiction-box>
+            <td class=label>Prepared Date:
+            <td class=input><input type=text name=21d. class=date tabindex=20 required>
+            <td class=label>Prepared Time:
+            <td class=input><input type=text name=21t. class=time tabindex=20 required>
+        </table>
+  </table>
+  <table class=veoci>
+    <caption>General Site Information
+    <tr>
+      <td class=label>Site Name:
+      <td class=input><input type=text name=30. tabindex=30 required>
+    <tr>
+      <td class=label>Status Update:
+      <td class=input>
+        <table class=boxgroup>
+          <tr>
+            <td><input name=31. type=radio value=Activated tabindex=30>Activated
+            <td><input name=31. type=radio value="Pending Demobilization" tabindex=30>Pending Demobilization
+            <td><input name=31. type=radio value="Not Activated" tabindex=30>Not Activated
+          <tr>
+            <td><input name=31. type=radio value="Pending Activation" tabindex=30>Pending Activation
+            <td><input name=31. type=radio value=Demobilization tabindex=30>Demobilization
+        </table>
+  </table>
+  <table class=veoci>
+    <caption>Commodities
+    <tr>
+      <td class="label border-right" rowspan=2>Item 1
+      <td class=label>Type of Commodity:
+      <td class=input colspan=5><input type=text name=70a. tabindex=70 required>
+    <tr>
+      <td class=label>Starting Quantity:
+      <td class=input><input type=text name=70b. class=cardinal-number tabindex=70 required>
+      <td class=label>Qty Distributed:
+      <td class=input><input type=text name=70c. class=cardinal-number tabindex=70 required>
+      <td class=label>Qty Available:
+      <td class=input><input type=text name=70d. class=cardinal-number tabindex=70 required>
+    <tr hidden-until=70a.>
+      <td class="label border-right" rowspan=2>Item 2
+      <td class=label>Type of Commodity:
+      <td class=input colspan=5><input type=text name=71a. tabindex=70>
+    <tr hidden-until=70a.>
+      <td class=label>Starting Quantity:
+      <td class=input><input type=text name=71b. class=cardinal-number tabindex=70 required-if=71a. else-disallowed>
+      <td class=label>Qty Distributed:
+      <td class=input><input type=text name=71c. class=cardinal-number tabindex=70 required-if=71a. else-disallowed>
+      <td class=label>Qty Available:
+      <td class=input><input type=text name=71d. class=cardinal-number tabindex=70 required-if=71a. else-disallowed>
+    <tr hidden-until=71a.>
+      <td class="label border-right" rowspan=2>Item 3
+      <td class=label>Type of Commodity:
+      <td class=input colspan=5><input type=text name=72a. tabindex=70>
+    <tr hidden-until=71a.>
+      <td class=label>Starting Quantity:
+      <td class=input><input type=text name=72b. class=cardinal-number tabindex=70 required-if=72a. else-disallowed>
+      <td class=label>Qty Distributed:
+      <td class=input><input type=text name=72c. class=cardinal-number tabindex=70 required-if=72a. else-disallowed>
+      <td class=label>Qty Available:
+      <td class=input><input type=text name=72d. class=cardinal-number tabindex=70 required-if=72a. else-disallowed>
+    <tr hidden-until=72a.>
+      <td class="label border-right" rowspan=2>Item 4
+      <td class=label>Type of Commodity:
+      <td class=input colspan=5><input type=text name=73a. tabindex=70>
+    <tr hidden-until=72a.>
+      <td class=label>Starting Quantity:
+      <td class=input><input type=text name=73b. class=cardinal-number tabindex=70 required-if=73a. else-disallowed>
+      <td class=label>Qty Distributed:
+      <td class=input><input type=text name=73c. class=cardinal-number tabindex=70 required-if=73a. else-disallowed>
+      <td class=label>Qty Available:
+      <td class=input><input type=text name=73d. class=cardinal-number tabindex=70 required-if=73a. else-disallowed>
+    <tr hidden-until=73a.>
+      <td class="label border-right" rowspan=2>Item 5
+      <td class=label>Type of Commodity:
+      <td class=input colspan=5><input type=text name=74a. tabindex=70>
+    <tr hidden-until=73a.>
+      <td class=label>Starting Quantity:
+      <td class=input><input type=text name=74b. class=cardinal-number tabindex=70 required-if=74a. else-disallowed>
+      <td class=label>Qty Distributed:
+      <td class=input><input type=text name=74c. class=cardinal-number tabindex=70 required-if=74a. else-disallowed>
+      <td class=label>Qty Available:
+      <td class=input><input type=text name=74d. class=cardinal-number tabindex=70 required-if=74a. else-disallowed>
+    <tr hidden-until=74a.>
+      <td class="label border-right" rowspan=2>Item 6
+      <td class=label>Type of Commodity:
+      <td class=input colspan=5><input type=text name=75a. tabindex=70>
+    <tr hidden-until=74a.>
+      <td class=label>Starting Quantity:
+      <td class=input><input type=text name=75b. class=cardinal-number tabindex=70 required-if=75a. else-disallowed>
+      <td class=label>Qty Distributed:
+      <td class=input><input type=text name=75c. class=cardinal-number tabindex=70 required-if=75a. else-disallowed>
+      <td class=label>Qty Available:
+      <td class=input><input type=text name=75d. class=cardinal-number tabindex=70 required-if=75a. else-disallowed>
+    <tr hidden-until=75a.>
+      <td class="label border-right" rowspan=2>Item 7
+      <td class=label>Type of Commodity:
+      <td class=input colspan=5><input type=text name=76a. tabindex=70>
+    <tr hidden-until=75a.>
+      <td class=label>Starting Quantity:
+      <td class=input><input type=text name=76b. class=cardinal-number tabindex=70 required-if=76a. else-disallowed>
+      <td class=label>Qty Distributed:
+      <td class=input><input type=text name=76c. class=cardinal-number tabindex=70 required-if=76a. else-disallowed>
+      <td class=label>Qty Available:
+      <td class=input><input type=text name=76d. class=cardinal-number tabindex=70 required-if=76a. else-disallowed>
+    <tr hidden-until=76a.>
+      <td class="label border-right" rowspan=2>Item 8
+      <td class=label>Type of Commodity:
+      <td class=input colspan=5><input type=text name=77a. tabindex=70>
+    <tr hidden-until=76a.>
+      <td class=label>Starting Quantity:
+      <td class=input><input type=text name=77b. class=cardinal-number tabindex=70 required-if=77a. else-disallowed>
+      <td class=label>Qty Distributed:
+      <td class=input><input type=text name=77c. class=cardinal-number tabindex=70 required-if=77a. else-disallowed>
+      <td class=label>Qty Available:
+      <td class=input><input type=text name=77d. class=cardinal-number tabindex=70 required-if=77a. else-disallowed>
+  </table>
+  <scco-footer></scco-footer>
+</the-form>

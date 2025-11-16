@@ -1,0 +1,565 @@
+addon    SCCoPIFO
+html     form-medical-facility-status-v2.html
+version  3.1
+title    Medical Facility Status Form
+indef    a medical facility status form
+subject  MedFacStat
+pdfFile  XSC_MedFacStat_v190531b_Fillable.pdf
+
+field MsgNo originMessageID
+  label    "Origin Message Number"
+  type     messageID
+  presence required
+  pdf      text L 217.72 R 348.76 B 716.12 T 730.96 BL 719.73
+  pdf      text P 2 L 467.08 R 609.88 B 743.65 T 790.00 BL 745.65
+
+field DestMsgNo destinationMessageID
+  label    "Destination Message Number"
+  type     messageID
+  pdf      text L 445.60 R 573.76 B 716.12 T 730.96 BL 719.73
+
+field 1a. messageDate
+  label    "Message Date"
+  type     date
+  presence required
+  pdf      text L  70.60 R 136.72 B 672.92 T 690.52 BL 678.02
+
+field 1b. messageTime
+  label    "Message Time"
+  type     time
+  presence required
+  pdf      text L 201.28 R 235.72 B 672.92 T 690.52 BL 678.02
+
+field -
+  label    "Message Date/Time"
+  type     dateTime
+  children 1a. 1b.
+  presence required
+
+field 5. handling
+  label    Handling
+  type     restricted
+  choice   IMMEDIATE
+  choice   PRIORITY
+  choice   ROUTINE
+  presence required
+  pdf      if 5.=IMMEDIATE then circle X 303.72 Y 682.02 R 2.8
+  pdf      if 5.=PRIORITY then circle X 405.84 Y 682.02 R 2.8
+  pdf      if 5.=ROUTINE then circle X 491.88 Y 682.02 R 2.8
+
+field 7a. toICSPosition
+  label    "To ICS Position"
+  presence required
+  pdf      text L 127.00 R 300.04 B 650.84 T 668.44 BL 655.81
+
+field 7b. toLocation
+  label    "To Location"
+  presence required
+  pdf      text L 127.00 R 300.04 B 628.40 T 646.36 BL 633.67
+
+field 7c.
+  label    "To Name"
+  pdf      text L 127.00 R 300.04 B 605.84 T 623.92 BL 611.17
+
+field 7d.
+  label    "To Contact Info"
+  pdf      text L 127.00 R 300.04 B 583.40 T 601.36 BL 588.56
+
+field 8a. fromICSPosition
+  label    "From ICS Position"
+  presence required
+  pdf      text L 392.56 R 572.44 B 650.84 T 668.44 BL 655.81
+
+field 8b. fromLocation
+  label    "From Location"
+  presence required
+  pdf      text L 392.56 R 572.44 B 628.40 T 646.36 BL 633.67
+
+field 8c.
+  label    "From Name"
+  pdf      text L 392.56 R 572.44 B 605.84 T 623.92 BL 611.17
+
+field 8d.
+  label    "From Contact Info"
+  pdf      text L 392.56 R 572.44 B 583.40 T 601.36 BL 588.56
+
+field 19.
+  label    "Report Type"
+  type     restricted
+  choice   Update
+  choice   Complete
+  presence required
+  pdf      if 19.=Update then circle X 119.76 Y 572.94 R 2.8
+  pdf      if 19.=Complete. then circle X 175.92 Y 572.94 R 2.8
+
+field 20. messageSummary
+  label    "Hospital Name"
+  type     restricted
+  choice   El Camino Hospital Los Gatos
+  choice   El Camino Hospital Mountain View
+  choice   Good Samaritan Hospital
+  choice   Kaiser San Jose Medical Center
+  choice   Kaiser Santa Clara Hospital
+  choice   Lucile Packard Children's Hospital
+  choice   O'Connor Hospital
+  choice   Palo Alto Veterans Hospital
+  choice   Regional San Jose Medical Center
+  choice   Saint Louise Regional Hospital
+  choice   Stanford Hospital
+  choice   Stanford School of Medicine
+  choice   Valley Medical Center
+  presence required
+  pdf      text L 317.80 R 572.44 B 554.60 T 578.44 BL 562.79
+
+field 12.1.
+  label    Diversion
+  type     restricted
+  choice   Unknown
+  choice   Open
+  choice   Diverting Ambulances
+  choice   Internal Disaster
+  choice   Specialty Bypass
+  presence if 19.=Complete then required
+  pdf      if 12.1.=Unknown then circle X 190.92 Y 526.02 R 2.8
+  pdf      if 12.1.=Open then circle X 307.92 Y 526.02 R 2.8
+  pdf      if 12.1.="Diverting Ambulances" then circle X 433.92 Y 526.02 R 2.8
+  pdf      if 12.1.="Internal Disaster" then circle X 190.92 Y 510.54 R 2.8
+  pdf      if 12.1.="Specialty Bypass" then circle X 433.92 Y 510.54 R 2.8
+
+field 12.1c. defaultBody
+  label    "Diversion: Comment"
+  pdf      text L 187.24 R 572.44 B 488.12 T 499.96 BL 491.47
+
+field 12.2.
+  label    Decon
+  type     restricted
+  choice   Unknown
+  choice   Not Available
+  choice   Active
+  choice   Available
+  presence if 19.=Complete then required
+  pdf      if 12.2.=Unknown then circle X 190.92 Y 477.66 R 2.8
+  pdf      if 12.2.="Not Available" then circle X 307.92 Y 477.66 R 2.8
+  pdf      if 12.2.=Active then circle X 433.92 Y 477.66 R 2.8
+  pdf      if 12.2.=Available then circle X 190.92 Y 462.06 R 2.8
+
+field 12.2c.
+  label    "Decon: Comment"
+  pdf      text L 187.24 R 572.44 B 438.92 T 451.60 BL 443.02
+
+field 12.3.
+  label    "Command Center"
+  type     restricted
+  choice   Unknown
+  choice   Inactive
+  choice   Activated
+  presence if 19.=Complete then required
+  pdf      if 12.3.=Unknown then circle X 190.92 Y 428.46 R 2.8
+  pdf      if 12.3.=Inactive then circle X 307.92 Y 428.46 R 2.8
+  pdf      if 12.3.=Activated then circle X 433.92 Y 428.46 R 2.8
+
+field 12.3c.
+  label    "Command Center: Comment"
+  pdf      text L 187.24 R 572.44 B 403.16 T 415.12 BL 406.65
+
+field 12.4.
+  label    Morgue
+  type     restricted
+  choice   Unknown
+  choice   Open
+  choice   Full
+  presence if 19.=Complete then required
+  pdf      if 12.4.=Unknown then circle X 190.92 Y 392.70 R 2.8
+  pdf      if 12.4.=Open then circle X 307.92 Y 392.70 R 2.8
+  pdf      if 12.4.=Full then circle X 433.92 Y 392.70 R 2.8
+
+field 12.4c.
+  label    "Morgue: Comment"
+  pdf      text L 187.24 R 572.44 B 365.24 T 377.08 BL 368.57
+
+field 12.5.
+  label    Power
+  type     restricted
+  choice   Unknown
+  choice   Normal
+  choice   Generator
+  choice   None
+  presence if 19.=Complete then required
+  pdf      if 12.5.=Unknown then circle X 190.92 Y 354.66 R 2.8
+  pdf      if 12.5.=Normal then circle X 307.92 Y 354.66 R 2.8
+  pdf      if 12.5.=Generator then circle X 433.92 Y 354.66 R 2.8
+  pdf      if 12.5.=None then circle X 190.92 Y 339.18 R 2.8
+
+field 12.5f.
+  label    "Hours of Fuel Remaining"
+  type     realNumber
+  pdf      text L 253.96 R 283.96 B 318.92 T 328.60 BL 320.11
+
+field 12.5c.
+  label    "Power: Comment"
+  pdf      text L 187.24 R 572.44 B 302.84 T 314.68 BL 306.23
+
+field 12.6.
+  label    Building
+  type     restricted
+  choice   Unknown
+  choice   Restricted Use
+  choice   Unsafe to Occupy
+  choice   Not Inspected
+  choice   Safe to Occupy
+  choice   Normal
+  choice   Compromised
+  choice   Evacuating
+  choice   Closed
+  presence if 19.=Complete then required
+  pdf      if 12.6.=Unknown then circle X 190.92 Y 292.38 R 2.8
+  pdf      if 12.6.="Restricted Use" then circle X 307.92 Y 292.38 R 2.8
+  pdf      if 12.6.="Unsafe to Occupy" then circle X 433.92 Y 292.38 R 2.8
+  pdf      if 12.6.="Not Inspected" then circle X 190.92 Y 276.78 R 2.8
+  pdf      if 12.6.="Safe to Occupy" then circle X 307.92 Y 276.78 R 2.8
+  pdf      if 12.6.=Normal then circle X 433.92 Y 276.78 R 2.8
+  pdf      if 12.6.=Compromised then circle X 190.92 Y 261.30 R 2.8
+  pdf      if 12.6.=Evacuating then circle X 307.92 Y 261.30 R 2.8
+  pdf      if 12.6.=Closed then circle X 433.92 Y 261.30 R 2.8
+
+field 12.6c.
+  label    "Building: Comment"
+  pdf      text L 187.24 R 572.44 B 239.00 T 250.72 BL 242.11
+
+field 12.7.
+  label    Security
+  type     restricted
+  choice   Unknown
+  choice   Normal
+  choice   Elevated
+  choice   Restricted Access
+  choice   Lockdown
+  presence if 19.=Complete then required
+  pdf      if 12.7.=Unknown then circle X 190.92 Y 228.54 R 2.8
+  pdf      if 12.7.=Normal then circle X 307.92 Y 228.54 R 2.8
+  pdf      if 12.7.=Elevated then circle X 433.92 Y 228.54 R 2.8
+  pdf      if 12.7.="Restricted Access" then circle X 190.92 Y 212.94 R 2.8
+  pdf      if 12.7.=Lockdown then circle X 433.92 Y 212.94 R 2.8
+
+field 12.7c.
+  label    "Security: Comment"
+  pdf      text L 187.24 R 572.44 B 190.64 T 202.48 BL 193.98
+
+field 12.8.
+  label    Staffing
+  type     restricted
+  choice   Unknown
+  choice   Adequate
+  choice   Insufficient
+  presence if 19.=Complete then required
+  pdf      if 12.8.=Unknown then circle X 190.92 Y 180.06 R 2.8
+  pdf      if 12.8.=Adequate then circle X 307.92 Y 180.06 R 2.8
+  pdf      if 12.8.=Insufficient then circle X 433.92 Y 180.06 R 2.8
+
+field 12.8c.
+  label    "Staffing: Comment"
+  pdf      text L 187.24 R 572.44 B 153.92 T 165.88 BL 157.19
+
+field 12.9.
+  label    "Medical Facility Supplies"
+  type     restricted
+  choice   Unknown
+  choice   Adequate
+  choice   Insufficient
+  presence if 19.=Complete then required
+  pdf      if 12.9.=Unknown then circle X 190.92 Y 143.46 R 2.8
+  pdf      if 12.9.=Adequate then circle X 307.92 Y 143.46 R 2.8
+  pdf      if 12.9.=Insufficient then circle X 433.92 Y 143.46 R 2.8
+
+field 12.9c.
+  label    "Medical Supplies: Comment"
+  pdf      text L 187.24 R 572.44 B 116.00 T 127.84 BL 119.32
+
+field 12.10.
+  label    "Clinical Supplies"
+  type     restricted
+  choice   Unknown
+  choice   Adequate
+  choice   Insufficient
+  presence if 19.=Complete then required
+  pdf      if 12.10.=Unknown then circle X 190.92 Y 105.42 R 2.8
+  pdf      if 12.10.=Adequate then circle X 307.92 Y 105.42 R 2.8
+  pdf      if 12.10.=Insufficient then circle X 433.92 Y 105.42 R 2.8
+
+field 12.10c.
+  label    "Clinical Supplies: Comment"
+  pdf      text L 187.24 R 572.44 B  77.96 T  89.80 BL 81.20
+
+field 14.1.
+  label    "Ambulatory Patients to Evacuate"
+  type     cardinalNumber
+  pdf      text P 2 L 222.80 R 572.44 B 707.96 T 721.48 BL 711.05
+
+field 14.2.
+  label    "Non-Ambulatory Patients to Evacuate"
+  type     cardinalNumber
+  pdf      text P 2 L 222.80 R 572.44 B 689.96 T 703.48 BL 692.93
+
+field 14.3.
+  label    "Patients Treated and Released"
+  type     cardinalNumber
+  pdf      text P 2 L 222.80 R 572.44 B 671.96 T 685.48 BL 674.86
+
+field 14.4.
+  label    "Patients Admitted (Last 12 Hours)"
+  type     cardinalNumber
+  pdf      text P 2 L 222.80 R 572.44 B 653.96 T 667.48 BL 656.90
+
+field 14.5.
+  label    "Patients Not Yet Seen"
+  type     cardinalNumber
+  pdf      text P 2 L 222.80 R 572.44 B 635.96 T 649.48 BL 639.00
+
+field 15.1.
+  label    "Cardiology: Available Now"
+  type     restricted
+  mchoice  Y Yes
+  mchoice  N No
+  presence if 19.=Complete then required
+  pdf      if 15.1.=Y then circle P 2 X 202.56 Y 573.90 R 2.8
+  pdf      if 15.1.=N then circle P 2 X 238.56 Y 573.90 R 2.8
+
+field 15.1c.
+  label    "Cardiology: Reason Closed"
+  presence if 15.1.=N then optional else blocked
+  pdf      text P 2 L 277.52 R 478.72 B 564.20 T 583.12
+
+field 15.1d.
+  label    "Cardiology: Expected Reopening"
+  type     date
+  presence if 15.1.=N then optional else blocked
+  pdf      text P 2 L 484.76 R 572.08 B 564.20 T 583.12
+
+field 15.3.
+  label    "Dialysis: Available Now"
+  type     restricted
+  mchoice  Y Yes
+  mchoice  N No
+  presence if 19.=Complete then required
+  pdf      if 15.3.=Y then circle P 2 X 202.56 Y 550.74 R 2.8
+  pdf      if 15.3.=N then circle P 2 X 238.56 Y 550.74 R 2.8
+
+field 15.3c.
+  label    "Dialysis: Reason Closed"
+  presence if 15.3.=N then optional else blocked
+  pdf      text P 2 L 276.80 R 479.32 B 541.28 T 559.72
+
+field 15.3d.
+  label    "Dialysis: Expected Reopening"
+  type     date
+  presence if 15.3.=N then optional else blocked
+  pdf      text P 2 L 483.80 R 572.44 B 541.28 T 559.72
+
+field 15.4.
+  label    "Emergency Dept: Available Now"
+  type     restricted
+  mchoice  Y Yes
+  mchoice  N No
+  presence if 19.=Complete then required
+  pdf      if 15.4.=Y then circle P 2 X 202.56 Y 528.06 R 2.8
+  pdf      if 15.4.=N then circle P 2 X 238.56 Y 528.06 R 2.8
+
+field 15.4c.
+  label    "Emergency Dept: Reason Closed"
+  presence if 15.4.=N then optional else blocked
+  pdf      text P 2 L 276.80 R 479.32 B 518.72 T 536.80
+
+field 15.4d.
+  label    "Emergency Dept: Expected Reopening"
+  type     date
+  presence if 15.4.=N then optional else blocked
+  pdf      text P 2 L 483.80 R 572.44 B 518.72 T 536.80
+
+field 15.5.
+  label    "Neurology: Available Now"
+  type     restricted
+  mchoice  Y Yes
+  mchoice  N No
+  presence if 19.=Complete then required
+  pdf      if 15.5.=Y then circle P 2 X 202.56 Y 505.50 R 2.8
+  pdf      if 15.5.=N then circle P 2 X 238.56 Y 505.50 R 2.8
+
+field 15.5c.
+  label    "Neurology: Reason Closed"
+  presence if 15.5.=N then optional else blocked
+  pdf      text P 2 L 276.80 R 479.32 B 496.28 T 514.24
+
+field 15.5d.
+  label    "Neurology: Expected Reopening"
+  type     date
+  presence if 15.5.=N then optional else blocked
+  pdf      text P 2 L 483.80 R 572.44 B 496.28 T 514.24
+
+field 15.7.
+  label    "Obstetrics: Available Now"
+  type     restricted
+  mchoice  Y Yes
+  mchoice  N No
+  presence if 19.=Complete then required
+  pdf      if 15.7.=Y then circle P 2 X 202.56 Y 483.06 R 2.8
+  pdf      if 15.7.=N then circle P 2 X 238.56 Y 483.06 R 2.8
+
+field 15.7c.
+  label    "Obstetrics: Reason Closed"
+  presence if 15.7.=N then optional else blocked
+  pdf      text P 2 L 276.80 R 479.32 B 473.72 T 491.80
+
+field 15.7d.
+  label    "Obstetrics: Expected Reopening"
+  type     date
+  presence if 15.7.=N then optional else blocked
+  pdf      text P 2 L 483.80 R 572.44 B 473.72 T 491.80
+
+field 15.8.
+  label    "Obstetrics: L&D: Available Now"
+  type     restricted
+  mchoice  Y Yes
+  mchoice  N No
+  presence if 19.=Complete then required
+  pdf      if 15.8.=Y then circle P 2 X 202.56 Y 460.50 R 2.8
+  pdf      if 15.8.=N then circle P 2 X 238.56 Y 460.50 R 2.8
+
+field 15.8c.
+  label    "Obstetrics: L&D: Reason Closed"
+  presence if 15.8.=N then optional else blocked
+  pdf      text P 2 L 276.80 R 479.32 B 451.28 T 469.24
+
+field 15.8d.
+  label    "Obstetrics: L&D: Expected Reopening"
+  type     date
+  presence if 15.8.=N then optional else blocked
+  pdf      text P 2 L 483.80 R 572.44 B 451.28 T 469.24
+
+field 15.9.
+  label    "Ophthalmology: Available Now"
+  type     restricted
+  mchoice  Y Yes
+  mchoice  N No
+  presence if 19.=Complete then required
+  pdf      if 15.9.=Y then circle P 2 X 202.56 Y 438.06 R 2.8
+  pdf      if 15.9.=N then circle P 2 X 238.56 Y 438.06 R 2.8
+
+field 15.9c.
+  label    "Ophthalmology: Reason Closed"
+  presence if 15.9.=N then optional else blocked
+  pdf      text P 2 L 276.80 R 479.32 B 428.72 T 446.80
+
+field 15.9d.
+  label    "Ophthalmology: Expected Reopening"
+  type     date
+  presence if 15.9.=N then optional else blocked
+  pdf      text P 2 L 483.80 R 572.44 B 428.72 T 446.80
+
+field 15.10.
+  label    "Orthopedics: Available Now"
+  type     restricted
+  mchoice  Y Yes
+  mchoice  N No
+  presence if 19.=Complete then required
+  pdf      if 15.10.=Y then circle P 2 X 202.56 Y 415.50 R 2.8
+  pdf      if 15.10.=N then circle P 2 X 238.56 Y 415.50 R 2.8
+
+field 15.10c.
+  label    "Orthopedics: Reason Closed"
+  presence if 15.10.=N then optional else blocked
+  pdf      text P 2 L 276.80 R 479.32 B 406.28 T 424.24
+
+field 15.10d.
+  label    "Orthopedics: Expected Reopening"
+  type     date
+  presence if 15.10.=N then optional else blocked
+  pdf      text P 2 L 483.80 R 572.44 B 406.28 T 424.24
+
+field 15.11.
+  label    "Pediatrics: Available Now"
+  type     restricted
+  mchoice  Y Yes
+  mchoice  N No
+  presence if 19.=Complete then required
+  pdf      if 15.11.=Y then circle P 2 X 202.56 Y 393.06 R 2.8
+  pdf      if 15.11.=N then circle P 2 X 238.56 Y 393.06 R 2.8
+
+field 15.11c.
+  label    "Pediatrics: Reason Closed"
+  presence if 15.11.=N then optional else blocked
+  pdf      text P 2 L 276.80 R 479.32 B 383.72 T 401.80
+
+field 15.11d.
+  label    "Pediatrics: Expected Reopening"
+  type     date
+  presence if 15.11.=N then optional else blocked
+  pdf      text P 2 L 483.80 R 572.44 B 383.72 T 401.80
+
+field 15.12.
+  label    "Surgery: Available Now"
+  type     restricted
+  mchoice  Y Yes
+  mchoice  N No
+  presence if 19.=Complete then required
+  pdf      if 15.12.=Y then circle P 2 X 202.56 Y 370.50 R 2.8
+  pdf      if 15.12.=N then circle P 2 X 238.56 Y 370.50 R 2.8
+
+field 15.12c.
+  label    "Surgery: Reason Closed"
+  presence if 15.12.=N then optional else blocked
+  pdf      text P 2 L 276.80 R 479.32 B 361.28 T 379.24
+
+field 15.12d.
+  label    "Surgery: Expected Reopening"
+  type     date
+  presence if 15.12.=N then optional else blocked
+  pdf      text P 2 L 483.80 R 572.44 B 361.28 T 379.24
+
+field 16.
+  label    Evacuating
+  type     restricted
+  mchoice  Y Yes
+  mchoice  N No
+  presence if 19.=Complete then required
+  pdf      if 16.=N then circle P 2 X 201.84 Y 324.54 R 2.8
+  pdf      if 16.=Y then circle P 2 X 236.88 Y 324.54 R 2.8
+
+field OpRelayRcvd
+  label    "Operator: Relay Received"
+  pdf      text P 2 L 110.32 R 321.28 B 261.44 T 275.80 BL 264.98
+
+field OpRelaySent
+  label    "Operator: Relay Sent"
+  pdf      text P 2 L 356.32 R 573.28 B 261.44 T 275.80 BL 264.98
+
+field OpName operatorName
+  label    "Operator: Name"
+  presence required
+  pdf      text P 2 L  75.04 R 249.76 B 242.48 T 256.96 BL 245.91
+
+field OpCall operatorCall
+  label    "Operator: Call Sign"
+  presence required
+  pdf      text P 2 L 302.08 R 366.76 B 242.48 T 256.96 BL 245.91
+
+field -
+  label    Operator
+  type     join
+  children OpName OpCall
+
+field OpDate operatorDate
+  label    "Operator: Date"
+  type     date
+  presence required
+  pdf      text P 2 L 402.52 R 474.76 B 242.48 T 256.96 BL 245.91
+
+field OpTime operatorTime
+  label    "Operator: Time"
+  type     time
+  presence required
+  pdf      text P 2 L 538.84 R 573.76 B 242.48 T 256.96 BL 245.91
+
+field -
+  label    "Operator: Date/Time"
+  type     dateTime
+  children OpDate OpTime

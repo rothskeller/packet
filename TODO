@@ -1,3 +1,11 @@
-PDF generation in background.
-Problems with initial sync with TNC
-Excess text in PDF field gets cut off, with no obvious indication.
+High want before first release:
+  Manual mode
+  Copy names / footer on printouts (and remove bad page numbering)
+  PDF metadata (fix incorrect offset to /Info)
+  Automatic forms updates
+  Separate check-in/check-out messages
+
+When possible:
+  Packet shell functionality
+  Packet GUI functionality
+  Update wppsvr, packet-ex

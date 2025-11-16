@@ -1,23 +1,22 @@
 module github.com/rothskeller/packet
 
-go 1.21
+go 1.25
 
 require (
-	github.com/davecgh/go-spew v1.1.1
-	github.com/phpdave11/gofpdf v1.4.2
-	github.com/phpdave11/gofpdi v1.0.13
-	github.com/rothskeller/pdf v1.3.0
-	go.bug.st/serial v1.6.0
-	golang.org/x/exp v0.0.0-20240808152545-0cdaa3abc0fa
-	golang.org/x/net v0.12.0
+	github.com/fsnotify/fsnotify v1.9.0
+	github.com/gotopkg/mslnk v0.0.0-20200220201931-035af8d22c8a
+	github.com/phpdave11/gofpdf v1.4.3
+	github.com/rothskeller/pdf/v2 v2.1.2
+	github.com/spf13/cobra v1.10.1
+	golang.org/x/net v0.43.0
+	golang.org/x/sys v0.38.0
+	k8s.io/apimachinery v0.33.2
 )
-
-require github.com/pkg/errors v0.9.1 // indirect
 
 require (
-	github.com/creack/goselect v0.1.2 // indirect
-	github.com/go-pdf/fpdf v0.9.0
-	golang.org/x/sys v0.10.0 // indirect
+	github.com/inconshreveable/mousetrap v1.1.0 // indirect
+	github.com/spf13/pflag v1.0.9 // indirect
+	golang.org/x/text v0.29.0 // indirect
 )
 
-replace github.com/rothskeller/pdf => ../../pdf
+replace github.com/rothskeller/pdf/v2 => /Users/stever/src/pdf

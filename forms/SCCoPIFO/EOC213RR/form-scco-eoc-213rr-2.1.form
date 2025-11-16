@@ -1,0 +1,290 @@
+addon    SCCoPIFO
+html     form-scco-eoc-213rr.html
+version  2.1
+title    EOC-213RR Resource Request Form
+indef    an EOC-213RR resource request form
+subject  EOC213RR
+pdfFile  XSC_EOC-213RR_v20170803_with_XSC_RACES_Routing_Slip_v20190527.pdf
+
+field -
+  type     static
+  value    "EOC-213RR Resource Request"
+  pdf      text L 118.36 R 303.76 B 550.88 T 565.36 BL 554.41
+
+field MsgNo originMessageID
+  label    "Origin Message Number"
+  type     messageID
+  presence required
+  pdf      text L 223.72 R 357.76 B 710.12 T 726.28 BL 714.45
+  pdf      text P 2 L 458.00 R 588.28 B 709.04 T 772.12 A rb
+  pdf      if RECEIVED then text P 3 L 458.00 R 588.28 B 713.04 T 772.12 A rb
+
+field DestMsgNo destinationMessageID
+  label    "Destination Message Number"
+  type     messageID
+  pdf      text L 454.60 R 573.76 B 710.12 T 726.28 BL 714.45
+
+field 1a. messageDate
+  label    "Message Date"
+  type     date
+  presence required
+  pdf      text L  75.28 R 141.76 B 650.00 T 665.32 BL 653.83
+
+field 1b. messageTime
+  label    "Message Time"
+  type     time
+  presence required
+  pdf      text L 211.48 R 245.32 B 650.00 T 665.32 BL 653.83
+
+field -
+  label    "Message Date/Time"
+  type     dateTime
+  children 1a. 1b.
+  presence required
+
+field 5. handling
+  label    Handling
+  type     restricted
+  choice   IMMEDIATE
+  choice   PRIORITY
+  choice   ROUTINE
+  presence required
+  pdf      if 5.=IMMEDIATE then circle X 313.56 Y 657.90 R 2.8
+  pdf      if 5.=PRIORITY then circle X 413.16 Y 657.90 R 2.8
+  pdf      if 5.=ROUTINE then circle X 496.80 Y 657.90 R 2.8
+
+field 7a. toICSPosition
+  label    "To ICS Position"
+  presence required
+  pdf      text L 132.16 R 303.76 B 629.84 T 645.04 BL 633.59
+
+field 7b. toLocation
+  label    "To Location"
+  presence required
+  pdf      text L 132.16 R 303.76 B 610.04 T 625.24 BL 613.77
+
+field 7c.
+  label    "To Name"
+  pdf      text L 132.16 R 303.76 B 590.24 T 605.44 BL 594.07
+
+field 7d.
+  label    "To Contact Info"
+  pdf      text L 132.16 R 303.76 B 570.32 T 585.64 BL 574.20
+
+field 8a. fromICSPosition
+  label    "From ICS Position"
+  presence required
+  pdf      text L 405.40 R 572.44 B 629.84 T 645.04 BL 633.59
+
+field 8b. fromLocation
+  label    "From Location"
+  presence required
+  pdf      text L 405.40 R 572.44 B 610.04 T 625.24 BL 613.77
+
+field 8c.
+  label    "From Name"
+  pdf      text L 405.40 R 572.44 B 590.24 T 605.44 BL 594.07
+
+field 8d.
+  label    "From Contact Info"
+  pdf      text L 405.40 R 572.44 B 570.32 T 585.64 BL 574.20
+
+field 21. messageSummary
+  label    "Incident Name"
+  presence required
+  pdf      text L 350.44 R 572.44 B 550.88 T 565.36 BL 554.41
+  pdf      text P 2 L  23.72 R 247.72 B 632.72 T 660.88
+
+field 22.
+  label    "Date Initiated"
+  type     date
+  presence required
+  pdf      text P 2 L 251.96 R 355.72 B 632.72 T 660.88
+
+field 23.
+  label    "Time Initiated"
+  type     time
+  presence required
+  pdf      text P 2 L 359.96 R 445.12 B 632.72 T 660.88
+
+field -
+  label    "Date/Time Initiated"
+  type     dateTime
+  children 22. 23.
+  presence required
+
+field 24.
+  label    "Tracking Number"
+
+field 25.
+  label    "Requested By"
+  type     multiline
+  presence required
+  pdf      text P 2 L  23.72 R 247.72 B 492.44 T 613.76 A lt
+
+field 26.
+  label    "Prepared By"
+  type     multiline
+  pdf      text P 2 L  23.72 R 247.72 B 434.48 T 474.68 A lt
+
+field 27.
+  label    "Approved By"
+  type     multiline
+  pdf      text P 2 L  23.72 R 247.72 B 386.84 T 416.84 A lt
+
+field 28.
+  label    Qty/Unit
+  type     multiline
+  presence required
+  compare  exact
+  pdf      text P 2 L  69.80 R 126.16 B 247.52 T 332.32 A lT
+
+field 29.
+  label    "Resource Description"
+  type     multiline
+  presence required
+  pdf      text P 2 L 130.40 R 333.16 B 247.52 T 332.32 A lT
+
+field 30.
+  label    "Resource Arrival"
+  type     multiline
+  presence required
+  pdf      text P 2 L 337.40 R 446.20 B 247.52 T 332.32 A lT
+
+field 31.
+  label    Priority
+  type     restricted
+  choice   Now
+  choice   High
+  choice   Medium
+  choice   Low
+  presence required
+  pdf      if 31.=Now then circle P 2 X 508.38 Y 328.38 R 1.6
+  pdf      if 31.=High then circle P 2 X 508.38 Y 311.76 R 1.6
+  pdf      if 31.=Medium then circle P 2 X 508.38 Y 286.26 R 1.6
+  pdf      if 31.=Low then circle P 2 X 508.38 Y 260.58 R 1.6
+
+field 32.
+  label    "Estimated Cost"
+  type     multiline
+  pdf      text P 2 L 521.00 R 588.28 B 247.52 T 332.32 A lT
+
+field 33.
+  label    "Deliver To"
+  type     multiline
+  presence required
+  pdf      text P 2 L  69.80 R 333.16 B 206.84 T 234.64 A lT
+
+field 34.
+  label    "Deliver To Location"
+  type     multiline
+  presence required
+  pdf      text P 2 L 337.40 R 588.28 B 206.84 T 234.88 A lT
+
+field 35.
+  label    Substitutes/Sources
+  type     multiline
+  pdf      text P 2 L  69.80 R 588.28 B 166.28 T 191.96 A lt
+
+field 36a.
+  label    "Supplemental: Equipment Operator"
+  clabel   "Equipment Operator"
+  type     checkbox
+  pdf      if 36a.=checked then circle P 2 X  78.78 Y 131.34 R 1.6
+
+field 36b.
+  label    "Supplemental: Lodging"
+  clabel   Lodging
+  type     checkbox
+  pdf      if 36b.=checked then circle P 2 X 222.54 Y 131.16 R 1.6
+
+field 36c.
+  label    "Supplemental: Fuel"
+  clabel   Fuel
+  type     checkbox
+  pdf      if 36c.=checked then circle P 2 X  78.90 Y 114.18 R 1.6
+
+field 36e.
+  label    "Supplemental: Power"
+  clabel   Power
+  type     checkbox
+  pdf      if 36e.=checked then circle P 2 X 222.42 Y 114.24 R 1.6
+
+field 36f.
+  label    "Supplemental: Meals"
+  clabel   Meals
+  type     checkbox
+  pdf      if 36f.=checked then circle P 2 X  78.78 Y  85.44 R 1.6
+
+field 36g.
+  label    "Supplemental: Maintenance"
+  clabel   Maintenance
+  type     checkbox
+  pdf      if 36g.=checked then circle P 2 X 222.54 Y  97.26 R 1.6
+
+field 36h.
+  label    "Supplemental: Water"
+  clabel   Water
+  type     checkbox
+  pdf      if 36h.=checked then circle P 2 X  78.72 Y  67.98 R 1.5
+
+field 36i.
+  label    "Supplemental: Other"
+  clabel   Other
+  type     checkbox
+  pdf      if 36i.=checked then circle P 2 X 222.66 Y  78.90 R 1.6
+
+field -
+  label    "Supplemental Requirements"
+  type     checkboxGroup
+  children 36a. 36b. 36c. 36e. 36f. 36g. 36h. 36i.
+
+field 36d.
+  label    "Supplemental: Fuel Type"
+  presence if 36c. then required else blocked
+  pdf      text P 2 L 132.56 R 216.28 B  97.20 T 125.08 BL  98.81
+
+field 37. defaultBody
+  label    "Special Instructions"
+  type     multiline
+  pdf      text P 2 L 337.40 R 588.28 B  49.16 T 148.16 A lt
+
+field OpRelayRcvd
+  label    "Operator: Relay Received"
+  pdf      text L 110.20 R 321.76 B 407.72 T 422.20 BL 411.28
+
+field OpRelaySent
+  label    "Operator: Relay Sent"
+  pdf      text L 356.20 R 573.76 B 407.72 T 422.20 BL 411.28
+
+field OpName operatorName
+  label    "Operator: Name"
+  presence required
+  pdf      text L  75.04 R 249.76 B 389.00 T 403.24 BL 392.49
+
+field OpCall operatorCall
+  label    "Operator: Call Sign"
+  presence required
+  pdf      text L 302.08 R 366.76 B 389.00 T 403.24 BL 392.49
+
+field -
+  label    Operator
+  type     join
+  children OpName OpCall
+
+field OpDate operatorDate
+  label    "Operator: Date"
+  type     date
+  presence required
+  pdf      text L 402.52 R 474.76 B 389.00 T 403.24 BL 392.49
+
+field OpTime operatorTime
+  label    "Operator: Time"
+  type     time
+  presence required
+  pdf      text L 538.84 R 573.76 B 389.00 T 403.24 BL 392.49
+
+field -
+  label    "Operator: Date/Time"
+  type     dateTime
+  children OpDate OpTime

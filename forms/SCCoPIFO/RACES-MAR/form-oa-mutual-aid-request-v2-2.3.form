@@ -1,0 +1,582 @@
+addon    SCCoPIFO
+html     form-oa-mutual-aid-request-v2.html
+version  2.3
+title    RACES Mutual Aid Request Form
+indef    a RACES mutual aid request form
+subject  RACES-MAR
+pdfFile  XSC_RACES_MA_Req_v20240711_V1_Test76.pdf
+
+field MsgNo originMessageID
+  label    "Origin Message Number"
+  type     messageID
+  presence required
+  pdf      text L 221.96 R 348.52 B 725.96 T 740.68 BL 729.54
+  pdf      if RECEIVED then text P 2 L 420.28 R 573.40 B 744.68 T 790.00 BL 745.35
+
+field DestMsgNo destinationMessageID
+  label    "Destination Message Number"
+  type     messageID
+  pdf      text L 451.64 R 575.44 B 725.96 T 740.68 BL 729.54
+
+field 1a. messageDate
+  label    "Message Date"
+  type     date
+  presence required
+  pdf      text L  68.24 R 127.12 B 689.12 T 703.84 BL 692.83
+
+field 1b. messageTime
+  label    "Message Time"
+  type     time
+  presence required
+  pdf      text L 162.32 R 204.28 B 689.24 T 703.84 BL 692.83
+
+field -
+  label    "Message Date/Time"
+  type     dateTime
+  children 1a. 1b.
+  presence required
+
+field 5. handling
+  label    Handling
+  type     restricted
+  choice   IMMEDIATE
+  choice   PRIORITY
+  choice   ROUTINE
+  presence required
+  pdf      if 5.=IMMEDIATE then circle X 273.84 Y 696.42 R 2.7
+  pdf      if 5.=PRIORITY then circle X 386.46 Y 696.78 R 3.0
+  pdf      if 5.=ROUTINE then circle X 492.42 Y 696.30 R 3.0
+
+field 7a. toICSPosition
+  label    "To ICS Position"
+  presence required
+  pdf      text L 132.08 R 293.92 B 669.92 T 684.64 BL 673.52
+
+field 7b. toLocation
+  label    "To Location"
+  presence required
+  pdf      text L 132.08 R 293.92 B 650.72 T 665.44 BL 654.26
+
+field 7c.
+  label    "To Name"
+  pdf      text L 132.08 R 293.92 B 631.52 T 646.24 BL 635.20
+
+field 7d.
+  label    "To Contact Info"
+  pdf      text L 132.08 R 293.92 B 612.32 T 627.04 BL 615.96
+
+field 8a. fromICSPosition
+  label    "From ICS Position"
+  presence required
+  pdf      text L 383.20 R 574.12 B 669.92 T 684.64 BL 673.52
+
+field 8b. fromLocation
+  label    "From Location"
+  presence required
+  pdf      text L 383.20 R 574.12 B 650.72 T 665.44 BL 654.26
+
+field 8c.
+  label    "From Name"
+  pdf      text L 383.20 R 574.12 B 631.52 T 646.24 BL 635.20
+
+field 8d.
+  label    "From Contact Info"
+  pdf      text L 383.20 R 574.12 B 612.32 T 627.04 BL 615.96
+
+field 15. messageSummary
+  label    "Agency Name"
+  presence required
+  pdf      text L 188.84 R 375.40 B 587.36 T 607.84 BL 600.31
+  pdf      if RECEIVED then text P 2 L 169.72 R 375.40 B 677.84 T 698.20 BL 690.81
+
+field 16a.
+  label    "Event Name"
+  presence required
+  pdf      text L 189.44 R 420.28 B 568.16 T 582.88 BL 575.20
+
+field 16b.
+  label    "Event Number"
+  pdf      text L 484.64 R 573.64 B 568.16 T 582.88 BL 575.20
+
+field -
+  label    "Event Name/Number"
+  type     join
+  children 16a. 16b.
+
+field 17. defaultBody
+  label    Assignment
+  type     multiline
+  presence required
+  pdf      text L 133.28 R 573.04 B 461.96 T 563.68 A lt
+  pdf      if RECEIVED then text P 2 L 107.00 R 572.44 B 469.16 T 565.00 A lt
+
+field 18.1a.
+  label    "Resource 1 Quantity"
+  type     cardinalNumber
+  presence required
+  pdf      text L 132.08 R 158.92 B 430.04 T 444.76
+  pdf      if RECEIVED then text P 2 L 137.72 R 163.84 B 338.84 T 350.56
+
+field 18.1e.
+  label    "Resource 1 Role"
+  type     restricted
+  choice   Field Communicator
+  choice   Net Control Operator
+  choice   Packet Operator
+  choice   Shadow Communicator
+  presence required
+  pdf      text L 163.40 R 267.16 B 430.04 T 444.76
+  pdf      if RECEIVED then text P 2 L 169.40 R 280.84 B 338.84 T 350.56
+
+field 18.1f.
+  label    "Resource 1 Position"
+  pdf      text L 271.64 R 404.56 B 430.04 T 444.76
+  pdf      if RECEIVED then text P 2 L 286.40 R 397.84 B 338.84 T 350.56
+
+field 18.1b.
+  label    "Resource 1 Role/Position"
+
+field 18.1c.
+  label    "Resource 1 Preferred Type"
+  type     restricted
+  cchoice  if 18.1e.="Field Communicator" then 1 F1
+  cchoice  if 18.1e.="Field Communicator" then 2 F2
+  cchoice  if 18.1e.="Field Communicator" then 3 F3
+  cchoice  if 18.1e.="Net Control Operator" then 1 N1
+  cchoice  if 18.1e.="Net Control Operator" then 2 N2
+  cchoice  if 18.1e.="Net Control Operator" then 3 N3
+  cchoice  if 18.1e.="Packet Operator" then 1 P1
+  cchoice  if 18.1e.="Packet Operator" then 2 P2
+  cchoice  if 18.1e.="Packet Operator" then 3 P3
+  cchoice  if 18.1e.="Shadow Communicator" then 1 S1
+  cchoice  if 18.1e.="Shadow Communicator" then 2 S2
+  cchoice  if 18.1e.="Shadow Communicator" then 3 S3
+  mchoice  4 Type IV
+  mchoice  5 Type V
+  presence required
+  pdf      text L 424.40 R 496.36 B 430.04 T 444.76
+  pdf      if RECEIVED then text P 2 L 421.40 R 492.28 B 338.84 T 350.56
+
+field 18.1d.
+  label    "Resource 1 Minimum Type"
+  type     restricted
+  cchoice  if 18.1e.="Field Communicator" then 1 F1
+  cchoice  if 18.1e.="Field Communicator" then 2 F2
+  cchoice  if 18.1e.="Field Communicator" then 3 F3
+  cchoice  if 18.1e.="Net Control Operator" then 1 N1
+  cchoice  if 18.1e.="Net Control Operator" then 2 N2
+  cchoice  if 18.1e.="Net Control Operator" then 3 N3
+  cchoice  if 18.1e.="Packet Operator" then 1 P1
+  cchoice  if 18.1e.="Packet Operator" then 2 P2
+  cchoice  if 18.1e.="Packet Operator" then 3 P3
+  cchoice  if 18.1e.="Shadow Communicator" then 1 S1
+  cchoice  if 18.1e.="Shadow Communicator" then 2 S2
+  cchoice  if 18.1e.="Shadow Communicator" then 3 S3
+  mchoice  4 Type IV
+  mchoice  5 Type V
+  presence required
+  pdf      text L 500.96 R 574.12 B 430.04 T 444.76
+  pdf      if RECEIVED then text P 2 L 497.36 R 573.52 B 338.96 T 350.56
+
+field 18.2a.
+  label    "Resource 2 Quantity"
+  type     cardinalNumber
+  pdf      text L 132.08 R 158.92 B 410.96 T 425.56
+  pdf      if RECEIVED then text P 2 L 137.72 R 163.84 B 322.64 T 334.36
+
+field 18.2e.
+  label    "Resource 2 Role"
+  type     restricted
+  choice   Field Communicator
+  choice   Net Control Operator
+  choice   Packet Operator
+  choice   Shadow Communicator
+  presence if 18.2a. then required else blocked
+  pdf      text L 163.40 R 267.16 B 410.96 T 425.56
+  pdf      if RECEIVED then text P 2 L 169.40 R 280.84 B 322.64 T 334.36
+
+field 18.2f.
+  label    "Resource 2 Position"
+  pdf      text L 271.64 R 404.56 B 410.96 T 425.56
+  pdf      if RECEIVED then text P 2 L 286.64 R 398.08 B 322.40 T 334.36
+
+field 18.2b.
+  label    "Resource 2 Role/Position"
+
+field 18.2c.
+  label    "Resource 2 Preferred Type"
+  type     restricted
+  cchoice  if 18.2e.="Field Communicator" then 1 F1
+  cchoice  if 18.2e.="Field Communicator" then 2 F2
+  cchoice  if 18.2e.="Field Communicator" then 3 F3
+  cchoice  if 18.2e.="Net Control Operator" then 1 N1
+  cchoice  if 18.2e.="Net Control Operator" then 2 N2
+  cchoice  if 18.2e.="Net Control Operator" then 3 N3
+  cchoice  if 18.2e.="Packet Operator" then 1 P1
+  cchoice  if 18.2e.="Packet Operator" then 2 P2
+  cchoice  if 18.2e.="Packet Operator" then 3 P3
+  cchoice  if 18.2e.="Shadow Communicator" then 1 S1
+  cchoice  if 18.2e.="Shadow Communicator" then 2 S2
+  cchoice  if 18.2e.="Shadow Communicator" then 3 S3
+  mchoice  4 Type IV
+  mchoice  5 Type V
+  presence required
+  pdf      text L 424.40 R 496.36 B 410.96 T 425.56
+  pdf      if RECEIVED then text P 2 L 421.40 R 492.28 B 322.64 T 334.36
+
+field 18.2d.
+  label    "Resource 2 Minimum Type"
+  type     restricted
+  cchoice  if 18.2e.="Field Communicator" then 1 F1
+  cchoice  if 18.2e.="Field Communicator" then 2 F2
+  cchoice  if 18.2e.="Field Communicator" then 3 F3
+  cchoice  if 18.2e.="Net Control Operator" then 1 N1
+  cchoice  if 18.2e.="Net Control Operator" then 2 N2
+  cchoice  if 18.2e.="Net Control Operator" then 3 N3
+  cchoice  if 18.2e.="Packet Operator" then 1 P1
+  cchoice  if 18.2e.="Packet Operator" then 2 P2
+  cchoice  if 18.2e.="Packet Operator" then 3 P3
+  cchoice  if 18.2e.="Shadow Communicator" then 1 S1
+  cchoice  if 18.2e.="Shadow Communicator" then 2 S2
+  cchoice  if 18.2e.="Shadow Communicator" then 3 S3
+  mchoice  4 Type IV
+  mchoice  5 Type V
+  presence required
+  pdf      text L 500.96 R 574.12 B 410.96 T 425.56
+  pdf      if RECEIVED then text P 2 L 497.84 R 573.04 B 322.64 T 334.36
+
+field 18.3a.
+  label    "Resource 3 Quantity"
+  type     cardinalNumber
+  pdf      text L 132.08 R 158.92 B 391.64 T 406.36
+  pdf      if RECEIVED then text P 2 L 137.72 R 163.84 B 306.44 T 318.16
+
+field 18.3e.
+  label    "Resource 3 Role"
+  type     restricted
+  choice   Field Communicator
+  choice   Net Control Operator
+  choice   Packet Operator
+  choice   Shadow Communicator
+  presence if 18.3a. then required else blocked
+  pdf      text L 163.40 R 267.16 B 391.64 T 406.36
+  pdf      if RECEIVED then text P 2 L 169.40 R 280.84 B 306.44 T 318.16
+
+field 18.3f.
+  label    "Resource 3 Position"
+  presence if 18.3a. then optional else blocked
+  pdf      text L 271.64 R 404.56 B 391.64 T 406.36
+  pdf      if RECEIVED then text P 2 L 286.52 R 397.96 B 306.32 T 318.16
+
+field 18.3b.
+  label    "Resource 3 Role/Position"
+
+field 18.3c.
+  label    "Resource 3 Preferred Type"
+  type     restricted
+  cchoice  if 18.3e.="Field Communicator" then 1 F1
+  cchoice  if 18.3e.="Field Communicator" then 2 F2
+  cchoice  if 18.3e.="Field Communicator" then 3 F3
+  cchoice  if 18.3e.="Net Control Operator" then 1 N1
+  cchoice  if 18.3e.="Net Control Operator" then 2 N2
+  cchoice  if 18.3e.="Net Control Operator" then 3 N3
+  cchoice  if 18.3e.="Packet Operator" then 1 P1
+  cchoice  if 18.3e.="Packet Operator" then 2 P2
+  cchoice  if 18.3e.="Packet Operator" then 3 P3
+  cchoice  if 18.3e.="Shadow Communicator" then 1 S1
+  cchoice  if 18.3e.="Shadow Communicator" then 2 S2
+  cchoice  if 18.3e.="Shadow Communicator" then 3 S3
+  mchoice  4 Type IV
+  mchoice  5 Type V
+  presence if 18.3a. then required else blocked
+  pdf      text L 424.40 R 496.36 B 391.64 T 406.36
+  pdf      if RECEIVED then text P 2 L 421.40 R 492.28 B 306.44 T 318.16
+
+field 18.3d.
+  label    "Resource 3 Minimum Type"
+  type     restricted
+  cchoice  if 18.3e.="Field Communicator" then 1 F1
+  cchoice  if 18.3e.="Field Communicator" then 2 F2
+  cchoice  if 18.3e.="Field Communicator" then 3 F3
+  cchoice  if 18.3e.="Net Control Operator" then 1 N1
+  cchoice  if 18.3e.="Net Control Operator" then 2 N2
+  cchoice  if 18.3e.="Net Control Operator" then 3 N3
+  cchoice  if 18.3e.="Packet Operator" then 1 P1
+  cchoice  if 18.3e.="Packet Operator" then 2 P2
+  cchoice  if 18.3e.="Packet Operator" then 3 P3
+  cchoice  if 18.3e.="Shadow Communicator" then 1 S1
+  cchoice  if 18.3e.="Shadow Communicator" then 2 S2
+  cchoice  if 18.3e.="Shadow Communicator" then 3 S3
+  mchoice  4 Type IV
+  mchoice  5 Type V
+  presence if 18.3a. then required else blocked
+  pdf      text L 500.96 R 574.12 B 391.64 T 406.36
+  pdf      if RECEIVED then text P 2 L 497.84 R 573.04 B 306.44 T 318.16
+
+field 18.4a.
+  label    "Resource 4 Quantity"
+  type     cardinalNumber
+  pdf      text L 132.08 R 158.92 B 374.24 T 387.16
+  pdf      if RECEIVED then text P 2 L 137.72 R 163.84 B 290.24 T 301.96
+
+field 18.4e.
+  label    "Resource 4 Role"
+  type     restricted
+  choice   Field Communicator
+  choice   Net Control Operator
+  choice   Packet Operator
+  choice   Shadow Communicator
+  presence if 18.4a. then required else blocked
+  pdf      text L 163.40 R 267.16 B 372.44 T 387.16
+  pdf      if RECEIVED then text P 2 L 169.40 R 280.84 B 290.24 T 301.96
+
+field 18.4f.
+  label    "Resource 4 Position"
+  presence if 18.4a. then optional else blocked
+  pdf      text L 271.64 R 404.56 B 372.44 T 387.16
+  pdf      if RECEIVED then text P 2 L 285.80 R 400.00 B 290.36 T 301.96
+
+field 18.4b.
+  label    "Resource 4 Role/Position"
+
+field 18.4c.
+  label    "Resource 4 Preferred Type"
+  type     restricted
+  cchoice  if 18.4e.="Field Communicator" then 1 F1
+  cchoice  if 18.4e.="Field Communicator" then 2 F2
+  cchoice  if 18.4e.="Field Communicator" then 3 F3
+  cchoice  if 18.4e.="Net Control Operator" then 1 N1
+  cchoice  if 18.4e.="Net Control Operator" then 2 N2
+  cchoice  if 18.4e.="Net Control Operator" then 3 N3
+  cchoice  if 18.4e.="Packet Operator" then 1 P1
+  cchoice  if 18.4e.="Packet Operator" then 2 P2
+  cchoice  if 18.4e.="Packet Operator" then 3 P3
+  cchoice  if 18.4e.="Shadow Communicator" then 1 S1
+  cchoice  if 18.4e.="Shadow Communicator" then 2 S2
+  cchoice  if 18.4e.="Shadow Communicator" then 3 S3
+  mchoice  4 Type IV
+  mchoice  5 Type V
+  presence if 18.4a. then required else blocked
+  pdf      text L 424.40 R 496.36 B 372.44 T 387.16
+  pdf      if RECEIVED then text P 2 L 421.40 R 492.28 B 290.24 T 301.96
+
+field 18.4d.
+  label    "Resource 4 Minimum Type"
+  type     restricted
+  cchoice  if 18.4e.="Field Communicator" then 1 F1
+  cchoice  if 18.4e.="Field Communicator" then 2 F2
+  cchoice  if 18.4e.="Field Communicator" then 3 F3
+  cchoice  if 18.4e.="Net Control Operator" then 1 N1
+  cchoice  if 18.4e.="Net Control Operator" then 2 N2
+  cchoice  if 18.4e.="Net Control Operator" then 3 N3
+  cchoice  if 18.4e.="Packet Operator" then 1 P1
+  cchoice  if 18.4e.="Packet Operator" then 2 P2
+  cchoice  if 18.4e.="Packet Operator" then 3 P3
+  cchoice  if 18.4e.="Shadow Communicator" then 1 S1
+  cchoice  if 18.4e.="Shadow Communicator" then 2 S2
+  cchoice  if 18.4e.="Shadow Communicator" then 3 S3
+  mchoice  4 Type IV
+  mchoice  5 Type V
+  presence if 18.4a. then required else blocked
+  pdf      text L 500.96 R 574.12 B 372.44 T 387.16
+  pdf      if RECEIVED then text P 2 L 497.84 R 573.04 B 290.24 T 301.96
+
+field 18.5a.
+  label    "Resource 5 Quantity"
+  type     cardinalNumber
+  pdf      text L 132.08 R 158.92 B 353.36 T 367.96
+  pdf      if RECEIVED then text P 2 L 137.12 R 164.32 B 275.00 T 285.76
+
+field 18.5e.
+  label    "Resource 5 Role"
+  type     restricted
+  choice   Field Communicator
+  choice   Net Control Operator
+  choice   Packet Operator
+  choice   Shadow Communicator
+  presence if 18.5a. then required else blocked
+  pdf      text L 163.40 R 267.16 B 353.36 T 367.96
+  pdf      if RECEIVED then text P 2 L 168.80 R 281.32 B 275.00 T 285.76
+
+field 18.5f.
+  label    "Resource 5 Position"
+  presence if 18.5a. then optional else blocked
+  pdf      text L 271.64 R 404.56 B 353.36 T 367.96
+  pdf      if RECEIVED then text P 2 L 285.80 R 400.00 B 275.00 T 285.76
+
+field 18.5b.
+  label    "Resource 5 Role/Position"
+
+field 18.5c.
+  label    "Resource 5 Preferred Type"
+  type     restricted
+  cchoice  if 18.5e.="Field Communicator" then 1 F1
+  cchoice  if 18.5e.="Field Communicator" then 2 F2
+  cchoice  if 18.5e.="Field Communicator" then 3 F3
+  cchoice  if 18.5e.="Net Control Operator" then 1 N1
+  cchoice  if 18.5e.="Net Control Operator" then 2 N2
+  cchoice  if 18.5e.="Net Control Operator" then 3 N3
+  cchoice  if 18.5e.="Packet Operator" then 1 P1
+  cchoice  if 18.5e.="Packet Operator" then 2 P2
+  cchoice  if 18.5e.="Packet Operator" then 3 P3
+  cchoice  if 18.5e.="Shadow Communicator" then 1 S1
+  cchoice  if 18.5e.="Shadow Communicator" then 2 S2
+  cchoice  if 18.5e.="Shadow Communicator" then 3 S3
+  mchoice  4 Type IV
+  mchoice  5 Type V
+  presence if 18.5a. then required else blocked
+  pdf      text L 424.40 R 496.36 B 353.36 T 367.96
+  pdf      if RECEIVED then text P 2 L 420.80 R 492.76 B 275.00 T 285.76
+
+field 18.5d.
+  label    "Resource 5 Minimum Type"
+  type     restricted
+  cchoice  if 18.5e.="Field Communicator" then 1 F1
+  cchoice  if 18.5e.="Field Communicator" then 2 F2
+  cchoice  if 18.5e.="Field Communicator" then 3 F3
+  cchoice  if 18.5e.="Net Control Operator" then 1 N1
+  cchoice  if 18.5e.="Net Control Operator" then 2 N2
+  cchoice  if 18.5e.="Net Control Operator" then 3 N3
+  cchoice  if 18.5e.="Packet Operator" then 1 P1
+  cchoice  if 18.5e.="Packet Operator" then 2 P2
+  cchoice  if 18.5e.="Packet Operator" then 3 P3
+  cchoice  if 18.5e.="Shadow Communicator" then 1 S1
+  cchoice  if 18.5e.="Shadow Communicator" then 2 S2
+  cchoice  if 18.5e.="Shadow Communicator" then 3 S3
+  mchoice  4 Type IV
+  mchoice  5 Type V
+  presence if 18.5a. then required else blocked
+  pdf      text L 500.96 R 574.12 B 353.36 T 367.96
+  pdf      if RECEIVED then text P 2 L 497.36 R 573.52 B 275.00 T 285.76
+
+field 19a.
+  label    "Requested Arrival Dates"
+  presence required
+  pdf      text L 160.48 R 388.12 B 309.92 T 323.92 BL 316.40
+  pdf      if RECEIVED then text P 2 L 171.88 R 392.56 B 449.48 T 464.68 BL 457.94
+
+field 19b.
+  label    "Requested Arrival Times"
+  presence required
+  pdf      text L 449.08 R 574.12 B 309.92 T 323.92 BL 316.40
+  pdf      if RECEIVED then text P 2 L 432.04 R 573.52 B 449.48 T 464.68 BL 457.94
+
+field 20a.
+  label    "Needed Until Dates"
+  presence required
+  pdf      text L 163.36 R 227.08 B 291.44 T 305.44 BL 297.78
+  pdf      if RECEIVED then text P 2 L 212.20 R 290.04 B 429.68 T 444.88 BL 437.59
+
+field 20b.
+  label    "Needed Until Times"
+  presence required
+  pdf      text L 311.56 R 348.52 B 291.44 T 305.44 BL 297.78
+  pdf      if RECEIVED then text P 2 L 295.20 R 344.32 B 429.68 T 444.88 BL 437.59
+
+field 21.
+  label    "Reporting Location"
+  type     multiline
+  presence required
+  pdf      text L 132.08 R 574.12 B 264.08 T 286.96 A lt
+  pdf      if RECEIVED then text P 2 L 137.12 R 573.52 B 409.88 T 425.08 BL 416.75
+
+field 22.
+  label    "Contact on Arrival"
+  type     multiline
+  presence required
+  pdf      text L 132.08 R 574.12 B 236.84 T 259.60 A lt
+  pdf      if RECEIVED then text P 2 L 137.12 R 573.52 B 390.08 T 405.28 BL 396.96
+
+field 23.
+  label    "Travel Info"
+  type     multiline
+  presence required
+  pdf      text L 132.08 R 574.12 B 209.48 T 232.36 A lt
+  pdf      if RECEIVED then text P 2 L 137.12 R 573.52 B 370.28 T 385.48 BL 377.00
+
+field 24a.
+  label    "Requested By Name"
+  presence required
+  pdf      text L 165.40 R 388.12 B 190.28 T 205.00 BL 197.58
+
+field 24b.
+  label    "Requested By Title"
+  presence required
+  pdf      text L 419.56 R 574.12 B 190.28 T 205.00 BL 197.58
+
+field 24c.
+  label    "Requested By Contact"
+  pdf      text L 283.00 R 574.12 B 165.08 T 185.80 BL 178.26
+
+field 25a.
+  label    "Approved By Name"
+  presence required
+  pdf      text L 165.40 R 388.12 B 145.76 T 160.60 BL 153.05
+
+field 25b.
+  label    "Approved By Title"
+  presence required
+  pdf      text L 419.56 R 574.12 B 145.76 T 160.60 BL 153.05
+
+field 25c.
+  label    "Approved By Contact"
+  presence required
+  pdf      text L 237.16 R 574.12 B 124.16 T 141.28 BL 133.85
+
+field 26a.
+  label    "Approved By Date"
+  type     date
+  presence required
+  pdf      text L 408.28 R 479.32 B 100.28 T 119.68 BL 112.15
+
+field 26b.
+  label    "Approved By Time"
+  type     time
+  presence required
+  pdf      text L 537.28 R 574.12 B 100.28 T 119.68 BL 112.15
+
+field -
+  label    "Approved Date/Time"
+  type     dateTime
+  children 26a. 26b.
+  presence required
+
+field OpRelayRcvd
+  label    "Operator: Relay Received"
+  pdf      text L 109.36 R 320.92 B  65.00 T  79.36 BL  68.59
+
+field OpRelaySent
+  label    "Operator: Relay Sent"
+  pdf      text L 355.48 R 575.44 B  65.00 T  79.36 BL  68.59
+
+field OpName operatorName
+  label    "Operator: Name"
+  presence required
+  pdf      text L  75.04 R 248.92 B  46.04 T  60.52 BL  49.60
+
+field OpCall operatorCall
+  label    "Operator: Call Sign"
+  presence required
+  pdf      text L 301.24 R 365.92 B  46.04 T  60.52 BL  49.60
+
+field -
+  label    Operator
+  type     join
+  children OpName OpCall
+
+field OpDate operatorDate
+  label    "Operator: Date"
+  type     date
+  presence required
+  pdf      text L 401.68 R 479.32 B  46.04 T  60.52 BL  49.60
+
+field OpTime operatorTime
+  label    "Operator: Time"
+  type     time
+  presence required
+  pdf      text L 543.40 R 575.44 B  46.04 T  60.52 BL  49.60
+
+field -
+  label    "Operator: Date/Time"
+  type     dateTime
+  children OpDate OpTime

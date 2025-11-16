@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<link rel="stylesheet" type="text/css" href="{{assets}}/pack-it-forms.css" />
+<style>
+  table.section td:nth-child(1) {
+    width: 1px;
+    white-space: nowrap;
+  }
+</style>
+<script type="text/javascript" src="{{assets}}/pack-it-forms.js"></script>
+<title>HAvBed Report</title>
+<the-form>
+  <scco-header form-title="SCCo Medical Health Branch -- HAvBed Poll" paper-version="ReddiNet: 20250731.1"
+    to-ics-positions="EMS Unit; Medical Health Branch; Operations Section"
+    to-locations="PHDOC; County EOC"></scco-header>
+  <table class="section">
+    <tr class="block-caption">
+      <td colspan="2">Hospital</td>
+    </tr>
+    <tr>
+      <td>Hospital Name:</td>
+      <td><select-hospital></select-hospital>
+    </tr>
+    <tr>
+      <td>Command Center Status:</td>
+      <td>
+        <select name="22." required tabindex="22">
+          <option value="" selected disabled hidden style="display:none;"></option>
+          <option value="Available" data-background-color="green">Available</option>
+          <option value="Drill or Exercise" data-background-color="purple">Drill or Exercise</option>
+          <option value="Full Activation" data-background-color="red">Full Activation</option>
+          <option value="Monitoring" data-background-color="orange">Monitoring</option>
+          <option value="Not Activated" data-background-color="green">Not Activated</option>
+          <option value="Unavailable" data-background-color="red">Unavailable</option>
+          <option value="Limited Activation" data-background-color="red">Limited Activation</option>
+        </select>
+      </td>
+    </tr>
+    <tr class="block-caption">
+      <td>Category</td>
+      <td>Available Currently<br>Staffed Beds</td>
+    </tr>
+    <tr>
+      <td>ICU:</td>
+      <td><input name="41." type="text" class="cardinal-number" required tabindex="41" /></td>
+    </tr>
+    <tr>
+      <td>Tele:</td>
+      <td><input name="52." type="text" class="cardinal-number" required tabindex="42" /></td>
+    </tr>
+    <tr>
+      <td>Med/Surg:</td>
+      <td><input name="43." type="text" class="cardinal-number" required tabindex="43" /></td>
+    </tr>
+    <tr>
+      <td>PICU:</td>
+      <td><input name="46." type="text" class="cardinal-number" required tabindex="44" /></td>
+    </tr>
+    <tr>
+      <td>NICU:</td>
+      <td><input name="53." type="text" class="cardinal-number" required tabindex="45" /></td>
+    </tr>
+    <tr>
+      <td>Peds Tele:</td>
+      <td><input name="54." type="text" class="cardinal-number" required tabindex="46" /></td>
+    </tr>
+    <tr>
+      <td>Pediatrics:</td>
+      <td><input name="47." type="text" class="cardinal-number" required tabindex="47" /></td>
+    </tr>
+    <tr>
+      <td>Burn:</td>
+      <td><input name="42." type="text" class="cardinal-number" required tabindex="48" /></td>
+    </tr>
+    <tr>
+      <td>OB/GYN:</td>
+      <td><input name="55." type="text" class="cardinal-number" required tabindex="49" /></td>
+    </tr>
+    <tr>
+      <td>Psych:</td>
+      <td><input name="48." type="text" class="cardinal-number" required tabindex="50" /></td>
+    </tr>
+    <tr>
+      <td style="text-align:right">TOTAL:</td>
+      <td><input name="56." type="text" class="cardinal-number" required tabindex="51" /></td>
+    </tr>
+    <tr>
+      <td>OR:</td>
+      <td><input name="45." type="text" class="cardinal-number" required tabindex="52" /></td>
+    </tr>
+    <tr>
+      <td>Isolation:</td>
+      <td><input name="44." type="text" class="cardinal-number" required tabindex="53" /></td>
+    </tr>
+    <tr>
+      <td>Vent:</td>
+      <td><input name="50." type="text" class="cardinal-number" required tabindex="54" /></td>
+    </tr>
+  </table>
+  <br />
+  <scco-footer></scco-footer>
+</the-form>

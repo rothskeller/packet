@@ -1,0 +1,126 @@
+// Package formdefs locates and reads all form definitions.
+package formdefs
+
+import (
+	"fmt"
+	"io/fs"
+	"log/slog"
+	"os"
+	"path/filepath"
+	"strings"
+	"sync"
+
+	"github.com/rothskeller/packet/errors"
+	"github.com/rothskeller/packet/form"
+	"github.com/rothskeller/packet/form/formdef"
+	"github.com/rothskeller/packet/forms"
+	"github.com/rothskeller/packet/message"
+)
+
+type FormsFSI interface {
+	fs.FS
+	fs.ReadDirFS
+	fs.ReadFileFS
+}
+
+var (
+	ErrNoAppDir  = errors.New("The program could not locate the directory where forms should be installed.  It will use embedded forms, which may not be current.")
+	ErrNoForms   = errors.New("No forms were found in the forms directory, so no form message types are defined.")
+	ErrNoVersion = errors.New("The program could not determine its own version number.  It will use embedded forms, which may not be current.")
+)
+
+var once sync.Once
+var FormsFS FormsFSI
+
+// RegisterForms locates all form definitions, performs any necessary updates,
+// and registers message types for all known forms.  The returned error gives
+// any problems; they are always non-fatal.
+func RegisterForms() (err error) {
+	once.Do(func() { err = registerForms() })
+	return err
+}
+func registerForms() (err error) {
+	FormsFS, err = getFormsFileSystem()
+	err = errors.Join(err, registerFSForms())
+	return err
+}
+
+func getFormsFileSystem() (formsFS FormsFSI, err error) {
+	var (
+		dir  string
+		ents []fs.DirEntry
+	)
+	// Figure out where the forms should go.
+	if dir = FormsDir(); dir == "" {
+		// Couldn't determine local cache location, so use embedded
+		// forms.
+		slog.Warn("couldn't determine FormsDir")
+		return forms.EmbeddedForms, ErrNoAppDir
+	}
+	// Make sure that place exists.
+	if _, err := os.Stat(dir); os.IsNotExist(err) {
+		// The local cache directory doesn't exist.  Try to create it.
+		// If we can't, use the embedded forms.
+		if err = os.MkdirAll(dir, 0777); err != nil {
+			slog.Warn("os.MkdirAll", "d", dir, "err", err)
+			return forms.EmbeddedForms, errors.NewF("The program could not create the forms directory (%s).  It will use embedded forms, which may not be current.", err)
+		} else {
+			slog.Info("created Forms directory", "d", dir)
+		}
+	} else if err != nil {
+		slog.Warn("os.Stat", "d", dir, "err", err)
+		return forms.EmbeddedForms, errors.NewF("The program could not access the forms directory (%s).  It will use embedded forms, which may not be current.", err)
+	}
+	// Make sure that every bundle in the embedded forms exists in the
+	// forms directory.
+	ents, _ = forms.EmbeddedForms.ReadDir(".")
+	for _, bundle := range ents {
+		target := filepath.Join(dir, bundle.Name())
+		if _, err := os.Stat(target); os.IsNotExist(err) {
+			sub, _ := fs.Sub(forms.EmbeddedForms, bundle.Name())
+			if err = os.CopyFS(target, sub); err != nil {
+				slog.Warn("os.CopyFS", "bundle", bundle.Name(), "dest", target, "err", err)
+				return forms.EmbeddedForms, fmt.Errorf("The program could not install the embedded %s forms in %s.  (Error: %s.)  It will use the embedded forms, which may not be current.", bundle.Name(), dir, err)
+			} else {
+				slog.Info("installed embedded forms", "bundle", bundle.Name())
+			}
+		} else {
+			slog.Debug("bundle exists, not copying", "bundle", bundle.Name())
+		}
+	}
+	err = maybeUpdateForms(dir)
+	return os.DirFS(dir).(FormsFSI), err
+}
+
+// maybeUpdateForms fetches new versions of the form bundles from the Internet
+// if appropriate and possible.
+func maybeUpdateForms(dir string) (err error) {
+	// TODO: not implemented yet
+	return nil
+}
+
+func registerFSForms() (err error) {
+	var forms []string
+
+	fs.WalkDir(FormsFS, ".", func(path string, d fs.DirEntry, werr error) error {
+		err = errors.Join(err, werr)
+		if strings.HasSuffix(path, ".form") && !d.IsDir() {
+			forms = append(forms, path)
+		}
+		return nil
+	})
+	if len(forms) == 0 {
+		slog.Warn("no forms found")
+		return ErrNoForms
+	}
+	for _, ff := range forms {
+		if def, derr := formdef.ReadFS(FormsFS, ff); derr != nil {
+			slog.Warn("form definition error", "f", ff, "err", derr)
+			err = errors.Join(err, derr)
+		} else {
+			message.RegisterType(form.FormType{FormDef: def})
+			slog.Debug("registered form type", "addon", def.AddonName, "htmlName", def.HTMLName, "version", def.Version)
+		}
+	}
+	return err
+}

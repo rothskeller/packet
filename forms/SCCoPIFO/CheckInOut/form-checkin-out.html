@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<title>Check-In/Out</title>
+<link rel="stylesheet" type="text/css" href="{{assets}}/pack-it-forms.css" />
+<script type="text/javascript" src="{{assets}}/pack-it-forms.js"></script>
+<the-form>
+  <table class="noborder" style="border:none;page-break-inside:avoid;">
+    <tr>
+      <td class="label">
+        Message number:
+      </td>
+      <td>
+        <input name="MsgNo" type="text" class="message-number" required tabindex="1" />
+      </td>
+    </tr>
+    <tr>
+      <td>
+      </td>
+      <td>
+        <table class="same-line-label-layout">
+          <tr>
+            <td class="label-sameline" style="padding-left:0;width:1px;">
+              <div class="required-group" style="padding-right:0.5em;">
+                <label style="font-weight:normal;">
+                  <input name="in_out" type="radio" value="In" required tabindex="2">Check In
+                </label>
+                <label style="font-weight:normal;margin-left:1em;">
+                  <input name="in_out" type="radio" value="Out" required tabindex="2">Check Out
+                </label>
+              </div>
+            </td>
+          </tr>
+        </table>
+      </td>
+    </tr>
+    <tr>
+      <td class="label">Your Call Sign:</td>
+      <td>
+        <table class="same-line-label-layout">
+          <tr>
+            <td style="padding-left:0px;width:1px;">
+              <input name="operator_call_sign" type="text" class="call-sign" required tabindex="3" />
+            </td>
+            <td class="label-sameline" style="width:1px;">Name:</td>
+            <td>
+              <input name="operator_name" type="text" required tabindex="4" />
+            </td>
+          </tr>
+        </table>
+      </td>
+    </tr>
+    <tr>
+      <td class="label">
+        <label style="font-weight:normal;">
+          <input name="use_tactical" type="checkbox" value="TACTICAL" tabindex="5" onchange="onTacticalChange(this);" />
+          Use Tactical Call:
+        </label>
+      </td>
+      <td>
+        <table id="tactical" class="same-line-label-layout" hidden-until=use_tactical>
+          <tr>
+            <td style="padding-left:0px;width:1px;">
+              <input name="tactical_call_sign" type="text" class="call-sign" tabindex="6" required-if=use_tactical
+                else-disallowed />
+            </td>
+            <td class="label-sameline" style="width:1px;">Name:</td>
+            <td>
+              <input name="tactical_name" type="text" tabindex="7" required-if=use_tactical else-disallowed />
+            </td>
+          </tr>
+        </table>
+      </td>
+    </tr>
+  </table>
+</the-form>

@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<link rel=stylesheet type="text/css" href="{{assets}}/pack-it-forms.css">
+<style>
+  .annotation {
+    font-size: 80%;
+    font-weight: normal
+  }
+</style>
+<script type="text/javascript" src="{{assets}}/pack-it-forms.js"></script>
+<title>Notable Report</title>
+<the-form>
+  <scco-header form-title="Notable Report" paper-version="PDF: 20250812"
+    to-ics-positions="Situational Analysis Unit; Common Operating Picture Spec.; Planning"></scco-header>
+  <table class=veoci>
+    <tr>
+      <td class=label>Jurisdiction:
+      <td class="input nest">
+        <table>
+          <tr>
+            <td class=input><jurisdiction-box name="20." tabindex=20></jurisdiction-box>
+            <td class=label>Originator:
+            <td class=input><input type=text name=21. tabindex=20 required>
+        </table>
+  </table>
+  <table class=veoci>
+    <tr>
+      <td class=label>Severity: <span class=annotation>(Pick One)</span>
+      <td class=input>
+        <table class="boxgroup required-group">
+          <tr>
+            <td><input name=22. type=radio value=High tabindex=20 required>High
+            <td><input name=22. type=radio value=Medium tabindex=20 required>Medium
+            <td><input name=22. type=radio value=Low tabindex=20 required>Low
+        </table>
+    <tr>
+      <td class=label>Escalate to County Op Area?
+      <td class=input>
+        <table class="boxgroup required-group">
+          <tr>
+            <td><input name=23. type=radio value=Yes tabindex=20 required>Yes
+            <td><input name=23. type=radio value=No tabindex=20 required>No
+        </table>
+    <tr hidden-until="23.=Yes">
+      <td class=label>Is this event Incident Specific?
+      <td class=input>
+        <table class="boxgroup required-group" required-if="23.=Yes" else-disallowed>
+          <tr>
+            <td><input name=24. type=radio value=Yes tabindex=20>Yes
+            <td><input name=24. type=radio value=No tabindex=20>No
+        </table>
+    <tr hidden-until="24.=Yes">
+      <td class=label>Name of Op Area Incident
+      <td class=input><input type=text id=incident-name name=25. tabindex=20 required-if="24.=Yes" else-disallowed>
+  </table>
+  <table class=veoci>
+    <caption>Event Details
+    <tr>
+      <td class=label>Title:
+      <td class=input><input type=text name=30. tabindex=30 required>
+    <tr>
+      <td class=label>Date:
+      <td class="input nest">
+        <table>
+          <tr>
+            <td class=input><input name=31d. type=text class=date tabindex=30 required>
+            <td class=label>Time:
+            <td class=input><input name=31t. type=text class=time tabindex=30 required>
+        </table>
+    <tr>
+      <td class=input colspan=2>
+        <div class=label>Event Type:</div>
+        <table class="boxgroup required-group">
+          <tr>
+            <td><input name=32. type=radio value=1 tabindex=30 required>1: Transportation
+            <td><input name=32. type=radio value=8 tabindex=30 required>8: Public Health and Medical
+            <td><input name=32. type=radio value=15 tabindex=30 required>15: Public Information
+          <tr>
+            <td><input name=32. type=radio value=2 tabindex=30 required>2: Communications
+            <td><input name=32. type=radio value=9 tabindex=30 required>9: Search and Rescue
+            <td><input name=32. type=radio value=16 tabindex=30 required>16: Animal Services
+          <tr>
+            <td><input name=32. type=radio value=3 tabindex=30 required>3: Construction and Engineering
+            <td><input name=32. type=radio value=10 tabindex=30 required>10: Hazardous Materials Response
+            <td><input name=32. type=radio value=17 tabindex=30 required>17: Volunteer Management
+          <tr>
+            <td><input name=32. type=radio value=4 tabindex=30 required>4: Fire and Rescue
+            <td><input name=32. type=radio value=11 tabindex=30 required>11: Food and Agriculture
+            <td><input name=32. type=radio value=18 tabindex=30 required>18: Cybersecurity
+          <tr>
+            <td><input name=32. type=radio value=5 tabindex=30 required>5: Management
+            <td><input name=32. type=radio value=12 tabindex=30 required>12: Utilities
+            <td><input name=32. type=radio value=19 tabindex=30 required>19: Donations Management
+          <tr>
+            <td><input name=32. type=radio value=6 tabindex=30 required>6: Care and Shelter
+            <td><input name=32. type=radio value=13 tabindex=30 required>13: Law Enforcement
+            <td><input name=32. type=radio value=20 tabindex=30 required>20: Continuity of
+          <tr>
+            <td><input name=32. type=radio value=7 tabindex=30 required>7: Resources
+            <td><input name=32. type=radio value=14 tabindex=30 required>14: Recovery
+            <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Operations/Government
+        </table>
+    <tr>
+      <td class=label>Details:
+      <td class=input><textarea name=33. rows=2 tabindex=30 required></textarea>
+  </table>
+  <table class=veoci>
+    <caption>Contact Information
+    <tr>
+      <td class=label>Point of Contact Name:
+      <td class="input nest">
+        <table>
+          <tr>
+            <td class=input><input type=text name=40. tabindex=40>
+            <td class=label>Contact Phone Number:
+            <td class=input><input type=text name=41. class=phone-number tabindex=40>
+        </table>
+    <tr>
+      <td class=label>Contact Email:
+      <td class=input><input type=text name=42. tabindex=40>
+  </table>
+  <table class=veoci>
+    <caption>Event Expiration
+    <tr>
+      <td class=label>Do you want this event to expire?
+      <td class="input nest">
+        <table>
+          <tr>
+            <td class=input>
+              <table class="boxgroup required-group">
+                <tr>
+                  <td><input name=50. type=radio value=Yes tabindex=50 required>Yes
+                  <td><input name=50. type=radio value=No tabindex=50 required>No
+              </table>
+            <td class=label hidden-until="50.=Yes">Date to Expire:
+            <td class=input hidden-until="50.=Yes"><input type=text name=51. class=date tabindex=50
+                required-if="50.=Yes" else-disallowed>
+        </table>
+  </table>
+  <scco-footer></scco-footer>
+</the-form>

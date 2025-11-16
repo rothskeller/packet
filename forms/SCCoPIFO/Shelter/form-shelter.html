@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<link rel=stylesheet type=text/css href={{assets}}/pack-it-forms.css>
+<style>
+  .annotation {
+    font-size: 80%;
+    font-weight: normal
+  }
+</style>
+<script type=text/javascript src={{assets}}/pack-it-forms.js></script>
+<title>Shelter Form</title>
+<the-form>
+  <scco-header form-title="Shelter Form" paper-version="PDF: 20250812"
+    to-ics-positions="Care &amp; Shelter Unit; Mass Care &amp; Emerg. Asst. Branch; Operations"></scco-header>
+  <table class=veoci>
+    <caption>General Site Information
+    <tr>
+      <td class=label>Jurisdiction:
+      <td class=input><jurisdiction-box name="20." tabindex=20></jurisdiction-box>
+    <tr>
+      <td class=label>Shelter Name:
+      <td class=input><input type=text name=21. tabindex=20 required>
+    <tr>
+      <td class=label>Location:
+      <td class=input><input type=text name=22. tabindex=20 required>
+    <tr>
+      <td class=label-top>Type:<br><span class=annotation>(multi-select)</span>
+      <td class=input>
+        <table class="boxgroup required-group">
+          <tr>
+            <td><input type=checkbox name=23a. tabindex=20 required>Congregate
+            <td><input type=checkbox name=23c. tabindex=20 required>Temporary Evacuation Point
+            <td><input type=checkbox name=23e. tabindex=20 required>Large Animals
+          <tr>
+            <td><input type=checkbox name=23b. tabindex=20 required>Non-Congregate
+            <td><input type=checkbox name=23d. tabindex=20 required>Pets Accepted
+        </table>
+    <tr>
+      <td class=label>Shelter Status:
+      <td class=input>
+        <table class="boxgroup required-group">
+          <tr>
+            <td><input type=radio name=24. value=Setup tabindex=20 required>Setup in progress, not accepting
+              guests
+            <td><input type=radio name=24. value=Full tabindex=20 required>Full, not accepting guests
+          <tr>
+            <td><input type=radio name=24. value=Open tabindex=20 required>Open, accepting guests
+            <td><input type=radio name=24. value=Closed tabindex=20 required>Closed
+        </table>
+    <tr>
+      <td class=label-top>Resources:<br><span class=annotation>(multi-select)</span>
+      <td class=input>
+        <table class=boxgroup>
+          <tr>
+            <td><input type=checkbox name=25a. tabindex=20>Warming Center
+            <td><input type=checkbox name=25c. tabindex=20>Food &amp; Drink
+          <tr>
+            <td><input type=checkbox name=25b. tabindex=20>Cooling Center
+            <td><input type=checkbox name=25d. tabindex=20>Charging Stations
+        </table>
+    <tr>
+      <td class=label>Notes:
+      <td class=input><textarea name=26. tabindex=20></textarea>
+    <tr>
+      <td class=label>ADA Compliant:
+      <td class="input nest">
+        <table>
+          <tr>
+            <td class=input>
+              <table class=boxgroup>
+                <tr>
+                  <td><input type=radio name=27. value=Yes tabindex=20>Yes
+                  <td><input type=radio name=27. value=No tabindex=20>No
+              </table>
+            <td class=label>Pets Allowed?
+            <td class=input>
+              <table class=boxgroup>
+                <tr>
+                  <td><input type=radio name=28. value=Yes tabindex=20>Yes
+                  <td><input type=radio name=28. value=No tabindex=20>No
+              </table>
+        </table>
+    <tr>
+      <td class=label>Maximum Capacity:
+      <td class="input nest">
+        <table>
+          <tr>
+            <td class=input><input type=text name=29. class=cardinal-number tabindex=20 required>
+            <td class=label>Total Registered:
+            <td class=input><input type=text name=30. class=cardinal-number tabindex=20 required>
+            <td class=label>Cot Numbers:
+            <td class=input><input type=text name=31. class=cardinal-number tabindex=20 required>
+        </table>
+    <tr>
+      <td class=label>AFN Considerations:
+      <td class=input><textarea name=32. tabindex=20></textarea>
+  </table>
+  <table class=veoci>
+    <caption>Contact Information
+    <tr>
+      <td class=label>Managed By:
+      <td class=input>
+        <table class="boxgroup required-group">
+          <tr>
+            <td><input type=radio name=40. value=ARC tabindex=40 required>American Red Cross
+            <td><input type=radio name=40. value=Government tabindex=40 required>Government
+            <td><input type=radio name=40. value=Community tabindex=40 required>Community
+          <tr>
+            <td><input type=radio name=40. value=Private tabindex=40 required>Private
+            <td><input type=radio name=40. value=Other tabindex=40 required>Other
+        </table>
+    <tr>
+      <td class=label>Primary Contact Name:
+      <td class="input nest">
+        <table>
+          <tr>
+            <td class=input><input type=text name=41. tabindex=40 required>
+            <td class=label>Primary Contact Phone Number:
+            <td class=input><input type=text name=42. class=phone-number tabindex=40 required>
+        </table>
+    <tr>
+      <td class=label>Primary Contact Email:
+      <td class=input><input type=text name=43. tabindex=40>
+  </table>
+  <scco-footer></scco-footer>
+</the-form>

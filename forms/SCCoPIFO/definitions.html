@@ -1,0 +1,228 @@
+<def:the-form addon-name="Outpost ADDON name for the form set" form-html="HTML filename identifying the form type"
+  form-version="Form version number" submit-label="Label for the submit button"
+  pdf-url="URL of the PDF file for the Show PDF button">
+  <form id=the-form method=POST action={{submit-url}}>
+    <input type=hidden name="addon-name" value={{addon-name}}>
+    <input type=hidden name="form-html" value={{form-html}}>
+    <input type=hidden name="form-version" value={{form-version}}>
+    <if:outpost-index><input type=hidden name="outpost-index" value={{outpost-index}}></if:outpost-index>
+    <slot></slot>
+  </form>
+  <table id=button-header class=same-line-label-layout>
+    <tr>
+      <td style="vertical-align:middle;white-space:nowrap;">
+        <input type=button id=submit tabindex=600 disabled value="Submit Form" value={{submit-label}}
+          style="font-weight:bold">
+        &nbsp;&nbsp;
+        <input type=button id=reset tabindex=602 value="Reset Form">
+        <if:pdf-url>
+          <input type=button id=show-PDF tabindex=603 value="Show PDF" onclick="window.open('{{pdf-url}}', '_blank')">
+        </if:pdf-url>
+        <span id=invalid-example>
+          <input type=text class=invalid disabled style="margin-left:1em;width:2em;border:1px solid #cccccc;" />
+          &nbsp;&nbsp;= required
+        </span>
+  </table>
+</def:the-form>
+
+<def:combo-box name="Input control name attribute" options="List of dropdown values, separated by semicolons"
+  tabindex="Input control tabindex attribute" required="Input is required"
+  placeholder="String to display in input field before a value is entered" width="Control width (CSS units)"
+  class="Control class name">
+  <input type=text {{name}} list="{{name}}--list" {{tabindex}} {{placeholder}} {{required}} {{class}}>
+  <datalist id="{{name}}--list">
+    <for:options>
+      <option value="{{.}}"></option>
+    </for:options>
+  </datalist>
+</def:combo-box>
+
+<def:scco-header form-title="Title to put in the top banner.  Required."
+  form-version="Form version number to put in the top banner.  Required."
+  paper-version="Paper form version number or date to put in the top banner."
+  to-ics-positions="Semicolon-separated list of possibilities for To ICS Position"
+  to-locations="Semicolon-separated list of possibilities for To Location">
+  <table id="scco-banner" class="block-caption noborder">
+    <tr>
+      <td style="border:none;padding:4pt 4pt;">
+        <span style="font-size:150%;">{{form-title}}</span>
+        <br>
+      <td style="border:none;padding:2pt 4pt;text-align:right;vertical-align:bottom;">
+        <span style="font-weight:normal;">PIF: {{form-version}}<br>{{paper-version}}</span>
+  </table>
+  <table>
+    <tr>
+      <td style="white-space:nowrap;width:1px;">
+        <b>Message Numbers:</b>
+      <td>
+        <b>Origin:</b>
+        <input type=text name=MsgNo class="message-number no-msg-init" tabindex=1 required>
+      <td>
+        <b>Destination:</b>
+        <input type=text name=DestMsgNo class=message-number disabled tabindex=2>
+  </table>
+  <table>
+    <tr>
+      <td>
+        <b>Date:</b>
+        <input type=text name="1a." class=date required tabindex=3>
+      <td>
+        <b>Time:</b>
+        <input type=text name="1b." class=time required tabindex=4>
+      <td class="label-sameline">
+        <b>Handling:</b>
+        <div class=required-group style="margin-left:0.5em;padding-left:0;padding-right:0.5em;">
+          <label>
+            <input type=radio name="5." tabindex=5 required value=IMMEDIATE>Immediate
+            <span style="font-weight:normal;">(ASAP)</span>
+          </label>
+          <label style="margin-left:1em;margin-right:1em;">
+            <input type=radio name="5." tabindex=6 required value=PRIORITY>Priority
+            <span style="font-weight:normal;">(&lt;1 hr)</span>
+          </label>
+          <label>
+            <input type=radio name="5." tabindex=7 required value=ROUTINE>Routine
+            <span style="font-weight:normal;">(&lt;2 hrs)</span>
+          </label>
+        </div>
+  </table>
+  <table id="form-row-3">
+    <tr>
+      <td rowspan=4 class=block-caption style="width:1px;">
+        T<br />O
+      <td>
+        <table class=same-line-label-layout>
+          <tr>
+            <th>ICS Position:
+            <td style="padding-right:0;">
+              <if:to-ics-positions>
+                <combo-box name="7a." tabindex=8 required options={{to-ics-positions}}></combo-box>
+              </if:to-ics-positions>
+              <ifnot:to-ics-positions>
+                <input type=text name="7a." tabindex=8 required>
+              </ifnot:to-ics-positions>
+        </table>
+      <td rowspan=4 class=block-caption style="width:1px;">
+        F<br />R<br />O<br />M
+      <td>
+        <table class=same-line-label-layout>
+          <tr>
+            <th>ICS Position:
+            <td><input type=text name="8a." required tabindex=12>
+        </table>
+    <tr>
+      <td>
+        <table class=same-line-label-layout>
+          <tr>
+            <th>Location:
+            <td style="padding-right:0;">
+              <if:to-ics-locations>
+                <combo-box name="7b." tabindex=9 required options={{to-ics-locations}}></combo-box>
+              </if:to-ics-locations>
+              <ifnot:to-ics-locations>
+                <input type=text name="7b." tabindex=9 required>
+              </ifnot:to-ics-locations>
+        </table>
+      <td>
+        <table class=same-line-label-layout>
+          <tr>
+            <th>Location:
+            <td><input type=text name="8b." required tabindex=13>
+        </table>
+    <tr>
+      <td>
+        <table class=same-line-label-layout>
+          <tr>
+            <th>Name:
+            <td><input type=text name="7c." tabindex=10>
+        </table>
+      <td>
+        <table class=same-line-label-layout>
+          <tr>
+            <th>Name:
+            <td><input type=text name="8c." tabindex=14>
+        </table>
+      </td>
+    <tr>
+      <td>
+        <table class=same-line-label-layout>
+          <tr>
+            <th>Contact Info:
+            <td><input type=text name="7d." tabindex=11>
+        </table>
+      <td>
+        <table class=same-line-label-layout>
+          <tr>
+            <th>Contact Info:
+            <td><input type=text name="8d." tabindex=15>
+        </table>
+  </table>
+</def:scco-header>
+
+<def:scco-footer>
+  <div style="page-break-inside:avoid;">
+    <table class=border style="border:1px solid #aaaaaa;">
+      <tr class=block-caption>
+        <td colspan=3>Radio Operator Only:
+      <tr>
+        <td class=block-caption style="width:1px;">Relay:
+        <td style="width:50%">
+          <table class=same-line-label-layout>
+            <tr>
+              <th>Rcvd:
+              <td><input type=text name=OpRelayRcvd tabindex=500>
+          </table>
+        <td style="width:50%">
+          <table class=same-line-label-layout>
+            <tr>
+              <th>Sent:
+              <td><input type=text name=OpRelaySent tabindex=501>
+          </table>
+    </table>
+    <table>
+      <tr>
+        <td style="padding-right:0;">
+          <table class=same-line-label-layout>
+            <tr>
+              <th>Name:
+              <td><input type=text name=OpName class="no-msg-init include-in-submit" tabindex=502
+                  style="margin-right:0;">
+          </table>
+        <td>
+          <b>Call Sign:</b>
+          <input type=text name=OpCall class="no-msg-init include-in-submit call-sign" tabindex=503 required>
+        <td>
+          <b>Date:</b>
+          <input type=text name=OpDate class="date no-msg-init init-on-submit" tabindex=504 disabled>
+        <td>
+          <b>Time:</b>
+          <input type=text name=OpTime class="time no-msg-init init-on-submit" tabindex=505 disabled>
+    </table>
+  </div>
+</def:scco-footer>
+
+<def:jurisdiction-box name="Input control name for the jurisdiction field.  Required."
+  tabindex="Input control tab index">
+  <combo-box {{name}} {{tabindex}} placeholder="Select one..." required
+    options="Campbell; Cupertino; Gilroy; Los Altos; Los Altos Hills; Los Gatos; Milpitas; Monte Sereno; Morgan Hill; Mountain View; Palo Alto; San Jose; Santa Clara (City); Saratoga; Sunnyvale; Santa Clara County; County unincorporated">
+  </combo-box>
+</def:jurisdiction-box>
+
+<def:select-hospital>
+  <select name=20 style="width:auto;" required tabindex=20>
+    <option value="" disabled selected>Select a Hospital ...</option>
+    <option value="El Camino Hospital Los Gatos">El Camino Hospital Los Gatos</option>
+    <option value="El Camino Hospital Mountain View">El Camino Hospital Mountain View</option>
+    <option value="Good Samaritan Hospital">Good Samaritan Hospital</option>
+    <option value="Kaiser San Jose Medical Center">Kaiser San Jose Medical Center</option>
+    <option value="Kaiser Santa Clara Hospital">Kaiser Santa Clara Hospital</option>
+    <option value="Lucile Packard Children's Hospital">Lucile Packard Children's Hospital</option>
+    <option value="O'Connor Hospital">O'Connor Hospital</option>
+    <option value="Palo Alto Veterans Hospital">Palo Alto Veterans Hospital</option>
+    <option value="Regional San Jose Medical Center">Regional San Jose Medical Center</option>
+    <option value="Saint Louise Regional Hospital">Saint Louise Regional Hospital</option>
+    <option value="Stanford Hospital">Stanford Hospital</option>
+    <option value="Stanford School of Medicine">Stanford School of Medicine</option>
+    <option value="Valley Medical Center">Valley Medical Center</option>
+  </select>
+</def:select-hospital>

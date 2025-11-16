@@ -1,0 +1,31 @@
+!SCCoPIFO!
+#T: form-ics213.html
+#V: 3.20-2.2
+MsgNo: [RSC-170P]
+1a.: [11/07/2025]
+1b.: [12:34]
+5.: [IMMEDIATE]
+6a.: [No]
+6b.: [Yes]
+6d.: [ASAP]
+7.: [To Position]
+8.: [From Position]
+9a.: [To Location]
+9b.: [From Location]
+ToName: [To Name]
+FmName: [From Name]
+ToTel: [To Tel]
+FmTel: [From Tel]
+10.: [Subject]
+11.: [Reference]
+12.: [Message]
+OpRelayRcvd: [Relay Rcvd]
+OpRelaySent: [Relay Sent]
+OpCall: [KC6RSC]
+OpName: [Steve Roth]
+Method: [Other]
+Other: [Packet]
+OpDate: [11/07/2025]
+OpTime: [15:33]
+!/ADDON!
+

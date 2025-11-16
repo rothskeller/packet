@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<link rel=stylesheet type=text/css href={{assets}}/pack-it-forms.css>
+<style>
+  .annotation {
+    font-size: 80%;
+    font-weight: normal
+  }
+</style>
+<script type=text/javascript src={{assets}}/pack-it-forms.js></script>
+<title>Resource Request</title>
+<the-form>
+  <scco-header form-title="Resource Request" paper-version="PDF: 20250811"
+    to-ics-positions="Resource Status &amp; Tracking Unit; Supply Branch; Logistics"></scco-header>
+  <table class=veoci>
+    <caption>Resource Order
+    <tr>
+      <td class=label>Title:
+      <td class=input><input type=text name=20. tabindex=20 required>
+    <tr>
+      <td class=label>Jurisdiction:
+      <td class="input nest">
+        <table>
+          <tr>
+            <td class=input><jurisdiction-box name="21." tabindex=20></jurisdiction-box>
+            <td class=label>Date:
+            <td class=input><input name=22d. type=text class=date tabindex=20 required>
+            <td class=label>Time:
+            <td class=input><input name=22t. type=text class=time tabindex=20 required>
+        </table>
+    <tr>
+      <td class="label border-right">Item 1
+      <td class="input nest">
+        <table>
+          <tr>
+            <td class=label>Item Name:
+            <td class="input nest">
+              <table>
+                <tr>
+                  <td class=input><input type=text name=23n. tabindex=20 required>
+                  <td class=label>Quantity Requested:
+                  <td class=input><input type=text name=23q. class=nonzero-cardinal-number tabindex=20 required>
+              </table>
+          <tr>
+            <td class=label>Description:
+            <td class=input><textarea name=23d. tabindex=20></textarea>
+          <tr>
+            <td colspan=2 class=nest>
+              <table>
+                <tr>
+                  <td class=label>Includes Items for Demobilization?
+                  <td class=input>
+                    <table class="boxgroup required-group">
+                      <tr>
+                        <td><input type=radio name=23i. value=Yes tabindex=20 required>Yes
+                        <td><input type=radio name=23i. value=No tabindex=20 required>No
+                    </table>
+              </table>
+        </table>
+    <tr hidden-until=23n.>
+      <td class="label border-right">Item 2
+      <td class="input nest">
+        <table>
+          <tr>
+            <td class=label>Item Name:
+            <td class="input nest">
+              <table>
+                <tr>
+                  <td class=input><input type=text name=24n. tabindex=20>
+                  <td class=label hidden-until=24n.>Quantity Requested:
+                  <td class=input hidden-until=24n.><input type=text name=24q. class=nonzero-cardinal-number tabindex=20
+                      required-if=24n. else-disallowed>
+              </table>
+          <tr hidden-until=24n.>
+            <td class=label>Description:
+            <td class=input><textarea name=24d. tabindex=20 allowed-if=24n.></textarea>
+          <tr hidden-until=24n.>
+            <td colspan=2 class=nest>
+              <table>
+                <tr>
+                  <td class=label>Includes Items for Demobilization?
+                  <td class=input>
+                    <table class="boxgroup required-group" required-if=24n. else-disallowed>
+                      <tr>
+                        <td><input type=radio name=24i. value=Yes tabindex=20>Yes
+                        <td><input type=radio name=24i. value=No tabindex=20>No
+                    </table>
+              </table>
+        </table>
+    <tr hidden-until=24n.>
+      <td class="label border-right">Item 3
+      <td class="input nest">
+        <table>
+          <tr>
+            <td class=label>Item Name:
+            <td class="input nest">
+              <table>
+                <tr>
+                  <td class=input><input type=text name=25n. tabindex=20>
+                  <td class=label hidden-until=25n.>Quantity Requested:
+                  <td class=input hidden-until=25n.><input type=text name=25q. class=nonzero-cardinal-number tabindex=20
+                      required-if=25n. else-disallowed>
+              </table>
+          <tr hidden-until=25n.>
+            <td class=label>Description:
+            <td class=input><textarea name=25d. tabindex=20 allowed-if=25n.></textarea>
+          <tr hidden-until=25n.>
+            <td colspan=2 class=nest>
+              <table>
+                <tr>
+                  <td class=label>Includes Items for Demobilization?
+                  <td class=input>
+                    <table class="boxgroup required-group" required-if=25n. else-disallowed>
+                      <tr>
+                        <td><input type=radio name=25i. value=Yes tabindex=20>Yes
+                        <td><input type=radio name=25i. value=No tabindex=20>No
+                    </table>
+              </table>
+        </table>
+    <tr hidden-until=25n.>
+      <td class="label border-right">Item 4
+      <td class="input nest">
+        <table>
+          <tr>
+            <td class=label>Item Name:
+            <td class="input nest">
+              <table>
+                <tr>
+                  <td class=input><input type=text name=26n. tabindex=20>
+                  <td class=label hidden-until=26n.>Quantity Requested:
+                  <td class=input hidden-until=26n.><input type=text name=26q. class=nonzero-cardinal-number tabindex=20
+                      required-if=26n. else-disallowed>
+              </table>
+          <tr hidden-until=26n.>
+            <td class=label>Description:
+            <td class=input><textarea name=26d. tabindex=20 allowed-if=26n.></textarea>
+          <tr hidden-until=26n.>
+            <td colspan=2 class=nest>
+              <table>
+                <tr>
+                  <td class=label>Includes Items for Demobilization?
+                  <td class=input>
+                    <table class="boxgroup required-group" required-if=26n. else-disallowed>
+                      <tr>
+                        <td><input type=radio name=26i. value=Yes tabindex=20>Yes
+                        <td><input type=radio name=26i. value=No tabindex=20>No
+                    </table>
+              </table>
+        </table>
+    <tr hidden-until=26n.>
+      <td class="label border-right">Item 5
+      <td class="input nest">
+        <table>
+          <tr>
+            <td class=label>Item Name:
+            <td class="input nest">
+              <table>
+                <tr>
+                  <td class=input><input type=text name=27n. tabindex=20>
+                  <td class=label hidden-until=27n.>Quantity Requested:
+                  <td class=input hidden-until=27n.><input type=text name=27q. class=nonzero-cardinal-number tabindex=20
+                      required-if=27n. else-disallowed>
+              </table>
+          <tr hidden-until=27n.>
+            <td class=label>Description:
+            <td class=input><textarea name=27d. tabindex=20 allowed-if=27n.></textarea>
+          <tr hidden-until=27n.>
+            <td colspan=2 class=nest>
+              <table>
+                <tr>
+                  <td class=label>Includes Items for Demobilization?
+                  <td class=input>
+                    <table class="boxgroup required-group" required-if=27n. else-disallowed>
+                      <tr>
+                        <td><input type=radio name=27i. value=Yes tabindex=20>Yes
+                        <td><input type=radio name=27i. value=No tabindex=20>No
+                    </table>
+              </table>
+        </table>
+    <tr hidden-until=27n.>
+      <td class="label border-right">Item 6
+      <td class="input nest">
+        <table>
+          <tr>
+            <td class=label>Item Name:
+            <td class="input nest">
+              <table>
+                <tr>
+                  <td class=input><input type=text name=28n. tabindex=20>
+                  <td class=label hidden-until=28n.>Quantity Requested:
+                  <td class=input hidden-until=28n.><input type=text name=28q. class=nonzero-cardinal-number tabindex=20
+                      required-if=28n. else-disallowed>
+              </table>
+          <tr hidden-until=28n.>
+            <td class=label>Description:
+            <td class=input><textarea name=28d. tabindex=20 allowed-if=28n.></textarea>
+          <tr hidden-until=28n.>
+            <td colspan=2 class=nest>
+              <table>
+                <tr>
+                  <td class=label>Includes Items for Demobilization?
+                  <td class=input>
+                    <table class="boxgroup required-group" required-if=28n. else-disallowed>
+                      <tr>
+                        <td><input type=radio name=28i. value=Yes tabindex=20>Yes
+                        <td><input type=radio name=28i. value=No tabindex=20>No
+                    </table>
+              </table>
+        </table>
+  </table>
+  <table class=veoci>
+    <caption>Priority
+    <tr>
+      <td class=label-top>Priority:<br><span class=annotation>(Pick One)</span>
+      <td class=input>
+        <table class="boxgroup required-group">
+          <tr>
+            <td><input name=30. type=radio value=Urgent tabindex=30>Urgent (as soon as possible)
+            <td><input name=30. type=radio value=Medium tabindex=30>Medium (1–2 days)
+          <tr>
+            <td><input name=30. type=radio value=High tabindex=30>High (within 24 hours)
+            <td><input name=30. type=radio value=Low tabindex=30>Low (2–3 days)
+        </table>
+  </table>
+  <table class=veoci>
+    <caption>Requested By Details
+    <tr>
+      <td class=label>Requested By Name:
+      <td class="input nest">
+        <table>
+          <tr>
+            <td class=input><input type=text name=40. tabindex=40 required>
+            <td class=input><input type=checkbox name=40s. tabindex=40> with signature
+        </table>
+    <tr>
+      <td class=label>Requested By Phone:
+      <td class="input nest">
+        <table>
+          <tr>
+            <td class=input><input type=text name=41. class=phone-number tabindex=40 required>
+            <td class=label>Requested By Email:
+            <td class=input><input type=text name=42. tabindex=40 required>
+        </table>
+    <tr>
+    <tr>
+      <td class=label>Requested By Position:
+      <td class=input><input type=text name=43. tabindex=40 required>
+  </table>
+  <table class=veoci>
+    <caption>Incident Details
+    <tr>
+      <td class=label>Is this request related to a current JURISDICTION activation?
+      <td class=input>
+        <table class="boxgroup required-group">
+          <tr>
+            <td><input name=50. type=radio value=Yes tabindex=50 required>Yes
+            <td><input name=50. type=radio value=No tabindex=50 required>No
+        </table>
+    <tr hidden-until="50.=Yes">
+      <td class=label>Name of Jurisdiction's incident:
+      <td class=input><input type=text name=51. tabindex=50 required-if="50.=Yes" else-disallowed>
+    <tr>
+      <td class=label>Is this request related to a current COUNTY activation?
+      <td class=input>
+        <table class="boxgroup required-group">
+          <tr>
+            <td><input name=52. type=radio value=Yes tabindex=50 required>Yes
+            <td><input name=52. type=radio value=No tabindex=50 required>No
+        </table>
+    <tr hidden-until="52.=Yes">
+      <td class=label>Name of County's incident:
+      <td class=input><input type=text name=53. tabindex=50 required-if="52.=Yes" else-disallowed>
+  </table>
+  <table class=veoci>
+    <caption>Comments
+    <tr>
+      <td class=input><textarea name=60. tabindex=60></textarea>
+  </table>
+  <scco-footer></scco-footer>
+</the-form>
