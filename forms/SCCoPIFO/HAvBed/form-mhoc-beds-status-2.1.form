@@ -231,3 +231,7 @@ field -
   label    "Operator: Date/Time"
   type     dateTime
   children OpDate OpTime
+
+field -
+  pdf      box L 36 W 91.47 T 46.51 H 10.27 F FFFFFF
+  pdf      box L 526.68 W 60.58 T 46.51 H 10.27 F FFFFFF

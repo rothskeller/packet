@@ -17,6 +17,8 @@ import (
 	"github.com/rothskeller/pdf/v2"
 )
 
+var markupColor = []byte{0, 0, 153, 255}
+
 func Read(filename string) (form *FormDef, err error) {
 	if filepath.IsAbs(filename) {
 		if filename, err = filepath.Localize(filename[1:]); err != nil {
@@ -271,6 +273,8 @@ func parsePDFRender(fd *FieldDef, words []string) (err error) {
 		return err
 	}
 	switch words[0] {
+	case "box":
+		pr.Renderer, err = parseBoxParams(attrs)
 	case "circle":
 		pr.Renderer, err = parseCircleParams(attrs)
 	case "cross":
@@ -301,13 +305,49 @@ func parsePDFAttrs(words []string) (attrs map[string]string, err error) {
 	return attrs, nil
 }
 
+func parseBoxParams(attrs map[string]string) (r BoxRenderer, err error) {
+	var box pdf.Box
+
+	if box.Page, err = getPageAttr(attrs); err != nil {
+		return r, err
+	}
+	if box.Rectangle, err = getRectangleAttrs(attrs); err != nil {
+		return r, err
+	}
+	if box.Fill, err = getColorAttr(attrs, "F", nil); err != nil {
+		return r, err
+	}
+	if box.Stroke, err = getColorAttr(attrs, "S", nil); err != nil {
+		return r, err
+	}
+	if box.Fill == nil && box.Stroke == nil {
+		return r, errors.New("box must have F or S")
+	}
+	if s, ok := attrs["SW"]; ok {
+		if box.Stroke == nil {
+			return r, errors.New("box SW invalid without S")
+		}
+		if v, err := strconv.ParseFloat(s, 64); err != nil || v < 0 {
+			return r, errors.New("invalid SW value")
+		} else {
+			delete(attrs, "SW")
+			box.StrokeWidth = v
+		}
+	}
+	if len(attrs) != 0 {
+		return r, errors.New("excess attributes")
+	}
+	r.Box = &box
+	return r, nil
+}
+
 func parseCircleParams(attrs map[string]string) (r CircleRenderer, err error) {
 	var circle pdf.Circle
 
 	if circle.Page, err = getPageAttr(attrs); err != nil {
 		return r, err
 	}
-	if circle.Fill, err = getColorAttr(attrs); err != nil {
+	if circle.Fill, err = getColorAttr(attrs, "C", markupColor); err != nil {
 		return r, err
 	}
 	if s, ok := attrs["X"]; ok {
@@ -345,7 +385,6 @@ func parseCircleParams(attrs map[string]string) (r CircleRenderer, err error) {
 	}
 	r.Circle = &circle
 	return r, nil
-
 }
 
 func parseCrossParams(attrs map[string]string) (r CrossRenderer, err error) {
@@ -358,7 +397,7 @@ func parseCrossParams(attrs map[string]string) (r CrossRenderer, err error) {
 	if cross.Page, err = getPageAttr(attrs); err != nil {
 		return r, err
 	}
-	if cross.Stroke, err = getColorAttr(attrs); err != nil {
+	if cross.Stroke, err = getColorAttr(attrs, "C", markupColor); err != nil {
 		return r, err
 	}
 	if len(attrs) != 0 {
@@ -377,7 +416,7 @@ func parseTextParams(attrs map[string]string) (r TextRenderer, err error) {
 	if text.Page, err = getPageAttr(attrs); err != nil {
 		return r, err
 	}
-	if text.Color, err = getColorAttr(attrs); err != nil {
+	if text.Color, err = getColorAttr(attrs, "C", markupColor); err != nil {
 		return r, err
 	}
 	text.Color = text.Color[:3] // remove alpha
@@ -628,18 +667,18 @@ func getPageAttr(attrs map[string]string) (page int, err error) {
 	return 1, nil
 }
 
-func getColorAttr(attrs map[string]string) (color []byte, err error) {
-	if s, ok := attrs["C"]; ok {
+func getColorAttr(attrs map[string]string, key string, def []byte) (color []byte, err error) {
+	if s, ok := attrs[key]; ok {
 		if len(s) != 6 && len(s) != 8 {
-			return nil, errors.New("invalid C")
+			return nil, errors.New("invalid " + key)
 		} else if color, err = hex.DecodeString(s); err != nil {
-			return nil, errors.New("invalid C")
+			return nil, errors.New("invalid " + key)
 		} else {
-			delete(attrs, "C")
+			delete(attrs, key)
 			return color, nil
 		}
 	}
-	return []byte{0, 0, 153, 255}, nil
+	return def, nil
 }
 
 // tokenizeLine returns the set of unquoted-whitespace-delimited tokens on the

@@ -168,6 +168,14 @@ type PDFCondition struct {
 	Set bool
 }
 
+// A BoxRenderer draws a filled rectangle (mainly used to overwrite static page
+// numbering so we can replace it with our own).
+type BoxRenderer struct{ *pdf.Box }
+
+func (r BoxRenderer) Draw(p *pdf.PDF, _ string) error {
+	return r.Box.Draw(p)
+}
+
 // A CircleRenderer draws a filled circle (i.e., fills in a radio button).
 type CircleRenderer struct{ *pdf.Circle }
 

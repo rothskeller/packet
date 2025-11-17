@@ -132,6 +132,27 @@ func emitPDFRenderer(fh *os.File, pr PDFFieldRenderer) {
 		}
 	}
 	switch r := pr.Renderer.(type) {
+	case BoxRenderer:
+		fmt.Fprint(fh, "box ")
+		if r.Page != 1 {
+			fmt.Fprintf(fh, "P %d ", r.Page)
+		}
+		fmt.Fprintf(fh, "L %6.2f R %6.2f B %6.2f T %6.2f", r.Rectangle.LLX, r.Rectangle.URX, r.Rectangle.LLY, r.Rectangle.URY)
+		if r.Fill != nil {
+			fmt.Fprintf(fh, " F %02X%02X%02X", r.Fill[0], r.Fill[1], r.Fill[2])
+			if r.Fill[3] != 255 {
+				fmt.Fprintf(fh, "%02X", r.Fill[3])
+			}
+		}
+		if r.Stroke != nil {
+			fmt.Fprintf(fh, " S %02X%02X%02X", r.Stroke[0], r.Stroke[1], r.Stroke[2])
+			if r.Stroke[3] != 255 {
+				fmt.Fprintf(fh, "%02X", r.Stroke[3])
+			}
+		}
+		if r.StrokeWidth != 0 && r.StrokeWidth != 1 {
+			fmt.Fprintf(fh, " SW %4.2f", r.StrokeWidth)
+		}
 	case CircleRenderer:
 		fmt.Fprint(fh, "circle ")
 		if r.Page != 1 {
