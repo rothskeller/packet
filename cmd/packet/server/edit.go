@@ -200,6 +200,7 @@ func submitCheckInOut(_ http.ResponseWriter, r *http.Request) message.Message {
 		subj    subject.Subject
 		bod     body.Body
 		pload   payload.Payload
+		mtype   cicoMType
 	)
 	if tacCall != "" {
 		subj, _ = subject.NewSCCoSubject(msgno, "ROUTINE", fmt.Sprintf("Check-%s %s, %s", inOut, tacCall, tacName))
@@ -209,5 +210,10 @@ func submitCheckInOut(_ http.ResponseWriter, r *http.Request) message.Message {
 		bod = body.NewPlainBody(fmt.Sprintf("Check-%s %s, %s\n", inOut, opCall, opName))
 	}
 	pload = payload.NewOutpostPayload(bod)
-	return message.NewDraftMessage(message.PlainMessage, subj, pload, false)
+	mtype.BaseMType = message.NewBaseMType(fmt.Sprintf("a check-%s message", strings.ToLower(inOut)), "")
+	return message.NewDraftMessage(mtype, subj, pload, false)
 }
+
+type cicoMType struct{ *message.BaseMType }
+
+func (cicoMType) Recognize(message.Message) {}
