@@ -11,6 +11,7 @@ import (
 	"github.com/rothskeller/packet/form/formdef"
 	"github.com/rothskeller/packet/message"
 	"github.com/rothskeller/packet/message/field"
+	"github.com/rothskeller/packet/message/subject"
 	"github.com/rothskeller/pdf/v2"
 )
 
@@ -49,11 +50,11 @@ func (ft FormType) RenderPDF(m message.Message, filename, copyname string) (err 
 		imp      *pdf.Importer
 		warnings error
 		maxPage  int
+		msgID    string
 		body     = m.Body().(*FormBody)
 	)
 	if ft.PDFFile == "" {
-		bm := new(message.BaseMType)
-		return bm.RenderPDF(m, filename, copyname)
+		return message.RenderPlainPDF(m, filename, copyname)
 	}
 	if outFH, err = os.Create(filename); err != nil {
 		return err
@@ -113,6 +114,10 @@ func (ft FormType) RenderPDF(m message.Message, filename, copyname string) (err 
 	}
 	// Loop through the fields in the definition.
 	for fd := range ft.AllFields() {
+		// Save the message ID if we see it.
+		if fd.Common == "originMessageID" {
+			msgID = body.Field(fd.Tag)
+		}
 		// Loop through the PDF renderers in the field.
 	RENDERER2:
 		for _, pr := range fd.PDF {
@@ -143,6 +148,16 @@ func (ft FormType) RenderPDF(m message.Message, filename, copyname string) (err 
 				return err
 			}
 		}
+	}
+	// If we didn't find a message ID in the body, check the subject line.
+	if msgID == "" {
+		if s, ok := m.Subject().(*subject.SCCoSubject); ok {
+			msgID = s.SubjectMessageID()
+		}
+	}
+	// Write the page footers.
+	if err = message.RenderPDFFooters(out, msgID, copyname); err != nil {
+		return err
 	}
 	// Write the new PDF.
 	if err = out.Write(); err != nil {
