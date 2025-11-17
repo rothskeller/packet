@@ -124,8 +124,11 @@ func submitCommon(w http.ResponseWriter, r *http.Request) message.Message {
 		err       error
 	)
 	addonName, htmlName, version = r.FormValue("addon-name"), r.FormValue("form-html"), r.FormValue("form-version")
-	if mtype = formdefs.Find(func(d *formdef.FormDef) bool {
-		return d.AddonName == addonName && d.HTMLName == htmlName && d.Version == version && len(d.CreateTags) != 0
+	if mtype = message.FindType(func(mt message.MType) bool {
+		if mt, ok := mt.(form.FormType); ok {
+			return mt.AddonName == addonName && mt.HTMLName == htmlName && mt.Version == version && len(mt.CreateTags) != 0
+		}
+		return false
 	}); mtype == nil {
 		slog.Error("form not found", "addon", addonName, "html", htmlName, "ver", version)
 		ErrorPage(w, http.StatusInternalServerError, fmt.Errorf("no such form %s/%s/%s", addonName, htmlName, version), nil)

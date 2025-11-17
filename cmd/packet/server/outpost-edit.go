@@ -18,7 +18,6 @@ import (
 
 	"github.com/rothskeller/packet/form"
 	"github.com/rothskeller/packet/form/formdef"
-	"github.com/rothskeller/packet/form/formdefs"
 	"github.com/rothskeller/packet/message"
 	"github.com/rothskeller/packet/message/payload"
 	"github.com/rothskeller/packet/message/subject"
@@ -48,8 +47,11 @@ func (s *Server) outpostNewRequest(w http.ResponseWriter, r *http.Request) {
 	)
 	// Find the definition of the form.
 	addon, msgtype = r.FormValue("addon"), r.FormValue("msgtype")
-	if mtype := formdefs.Find(func(d *formdef.FormDef) bool {
-		return d.AddonName == addon && d.HTMLName == msgtype && len(d.CreateTags) != 0
+	if mtype := message.FindType(func(mt message.MType) bool {
+		if mt, ok := mt.(form.FormType); ok {
+			return mt.AddonName == addon && mt.HTMLName == msgtype && len(mt.CreateTags) != 0
+		}
+		return false
 	}); mtype == nil {
 		slog.Error("no form definition", "addon", addon, "html", msgtype)
 		ErrorPage(w, http.StatusInternalServerError, fmt.Errorf("no editable form definition found for %s/%s", addon, msgtype), nil)

@@ -12,8 +12,7 @@ import (
 
 	"github.com/rothskeller/packet/cmd/packet/osdep"
 	"github.com/rothskeller/packet/cmd/packet/server"
-	"github.com/rothskeller/packet/form/formdef"
-	"github.com/rothskeller/packet/form/formdefs"
+	"github.com/rothskeller/packet/form"
 	"github.com/rothskeller/packet/message"
 )
 
@@ -94,8 +93,11 @@ tacname  Tactical station name if any.`,
 			// Store tactical name.
 			values.Set("tacName", decodeArg(args[6]))
 		}
-		if mtype = formdefs.Find(func(d *formdef.FormDef) bool {
-			return d.AddonName == addon && d.HTMLName == msgtype && len(d.CreateTags) != 0
+		if mtype = message.FindType(func(mt message.MType) bool {
+			if mt, ok := mt.(form.FormType); ok {
+				return mt.AddonName == addon && mt.HTMLName == msgtype && len(mt.CreateTags) != 0
+			}
+			return false
 		}); mtype == nil {
 			slog.Error("unknown form", "addon", addon, "msgtype", msgtype)
 			return errors.Join(fmt.Errorf("unknown form %s/%s", values.Get("addon"), values.Get("msgtype")), err)

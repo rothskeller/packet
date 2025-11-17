@@ -96,6 +96,17 @@ func AllTypes() iter.Seq[MType] {
 	}
 }
 
+// FindType returns a registered message type that satisfies the supplied
+// predicate, or nil if none does.
+func FindType(pred func(MType) bool) MType {
+	for mt := range AllTypes() {
+		if pred(mt) {
+			return mt
+		}
+	}
+	return nil
+}
+
 //-----------------------------------------------------------------------------
 
 // BaseMType is the common core implementation for all message types.
