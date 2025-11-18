@@ -622,14 +622,14 @@ func getRectangleAttrs(attrs map[string]string) (rect pdf.Rectangle, err error) 
 	}
 	if !hx {
 		if hw && hr {
-			x, hx = r-w, true
+			x, hx, hw = r-w, true, false
 		} else {
 			return rect, errors.New("incomplete rect (X)")
 		}
 	}
 	if !hy {
 		if hh && ht {
-			y, hy = t-h, true
+			y, hy, hh = t-h, true, false
 		} else {
 			return rect, errors.New("incomplete rect (Y)")
 		}
