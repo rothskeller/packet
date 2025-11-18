@@ -77,6 +77,7 @@ software for forms messages.`,
 		if err = formdefs.RegisterForms(); err != nil && formdefs.FormsFS == forms.EmbeddedForms {
 			return err
 		}
+		formdefs.CheckForUpdates(true, false)
 		if len(args) != 0 {
 			odd = args[0]
 		}

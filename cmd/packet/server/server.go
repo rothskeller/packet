@@ -18,6 +18,7 @@ import (
 
 	"github.com/fsnotify/fsnotify"
 	"github.com/rothskeller/packet/cmd/packet/osdep"
+	"github.com/rothskeller/packet/form/formdefs"
 )
 
 const (
@@ -95,7 +96,12 @@ func GetAddress(start bool) (address string, err error) {
 	START:
 		// We weren't able to contact a running server.
 		if start {
-			// We should try to start one.
+			// We should try to start one.  But first, just before
+			// starting the server is the proper time to check for
+			// forms updates.  Errors will get logged but need not
+			// be returned.
+			_ = formdefs.CheckForUpdates(false, true)
+			// Now that that's done, start the server.
 			cmd = exec.Command(os.Args[0], "server", "start")
 			cmd.SysProcAttr = osdep.DetachChild
 			if err = cmd.Start(); err != nil {

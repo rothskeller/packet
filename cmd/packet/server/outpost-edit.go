@@ -45,6 +45,9 @@ func (s *Server) outpostNewRequest(w http.ResponseWriter, r *http.Request) {
 		msgtype string
 		fields  = make(map[string]string)
 	)
+	if maybeShowREADME(w, r) {
+		return
+	}
 	// Find the definition of the form.
 	addon, msgtype = r.FormValue("addon"), r.FormValue("msgtype")
 	if mtype := message.FindType(func(mt message.MType) bool {
@@ -104,6 +107,9 @@ func (s *Server) outpostEditRequest(w http.ResponseWriter, r *http.Request) {
 		err    error
 		fields = make(map[string]string)
 	)
+	if maybeShowREADME(w, r) {
+		return
+	}
 	// Get the Outpost message index.
 	if _, err = strconv.Atoi(r.FormValue("index")); err != nil {
 		slog.Error("missing/invalid index")

@@ -88,15 +88,7 @@ func getFormsFileSystem() (formsFS FormsFSI, err error) {
 			slog.Debug("bundle exists, not copying", "bundle", bundle.Name())
 		}
 	}
-	err = maybeUpdateForms(dir)
 	return os.DirFS(dir).(FormsFSI), err
-}
-
-// maybeUpdateForms fetches new versions of the form bundles from the Internet
-// if appropriate and possible.
-func maybeUpdateForms(dir string) (err error) {
-	// TODO: not implemented yet
-	return nil
 }
 
 func registerFSForms() (err error) {
@@ -119,7 +111,7 @@ func registerFSForms() (err error) {
 			err = errors.Join(err, derr)
 		} else {
 			message.RegisterType(form.FormType{FormDef: def})
-			slog.Debug("registered form type", "addon", def.AddonName, "htmlName", def.HTMLName, "version", def.Version)
+			// slog.Debug("registered form type", "addon", def.AddonName, "htmlName", def.HTMLName, "version", def.Version)
 		}
 	}
 	return err
