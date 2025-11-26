@@ -19,6 +19,7 @@ import (
 var (
 	addonRE    = regexp.MustCompile(`^[A-Z][A-Za-z0-9_]*$`)
 	callSignRE = regexp.MustCompile(`(?i)^(?:A[A-L][0-9][A-Z]{1,3}|[KNW][A-Z][0-9][A-Z]{1,3}|[KNW][0-9][A-Z]{2,3})$`)
+	tacCallRE  = regexp.MustCompile(`(?i)^[A-Z][A-Z0-9]{3,5}$`)
 	msgIDRE    = regexp.MustCompile(`^[A-Za-z0-9][-A-Za-z0-9_]*$`)
 	msgTypeRE  = regexp.MustCompile(`^form-[-a-z0-9]+\.html$`)
 )
@@ -84,7 +85,7 @@ tacname  Tactical station name if any.`,
 		values.Set("opName", decodeArg(args[4]))
 		if len(args) == 7 && (args[5] != "" || args[6] != "") {
 			// Check tactical call syntax.
-			if tacCall := decodeArg(args[5]); !callSignRE.MatchString(tacCall) {
+			if tacCall := decodeArg(args[5]); !tacCallRE.MatchString(tacCall) {
 				slog.Error("invalid taccall", "taccall", tacCall)
 				return fmt.Errorf("invalid tactical call sign %q", tacCall)
 			} else {

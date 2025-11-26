@@ -92,14 +92,14 @@ func (ft FormType) RenderPDF(m message.Message, filename, copyname string) (err 
 				if (cond.Set && value == "") || (!cond.Set && value != cond.Value) {
 					continue RENDERER1
 				}
-				switch shape := pr.Renderer.(type) {
-				case formdef.CircleRenderer:
-					maxPage = max(maxPage, shape.Page)
-				case formdef.CrossRenderer:
-					maxPage = max(maxPage, shape.Page)
-				case formdef.TextRenderer:
-					maxPage = max(maxPage, shape.Page)
-				}
+			}
+			switch shape := pr.Renderer.(type) {
+			case formdef.CircleRenderer:
+				maxPage = max(maxPage, shape.Page)
+			case formdef.CrossRenderer:
+				maxPage = max(maxPage, shape.Page)
+			case formdef.TextRenderer:
+				maxPage = max(maxPage, shape.Page)
 			}
 		}
 	}

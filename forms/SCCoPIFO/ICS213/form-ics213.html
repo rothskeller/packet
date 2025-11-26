@@ -163,16 +163,14 @@
             </th>
             <td class="horizontal" style="width:16em;padding-right:0px;">
               <label>
-                <input name="6b." type="radio" value="Yes" tabindex="13"
-                  onchange="if (this.checked) set_properties({'6d.': {disabled: false, tabIndex: '15'}});" />
+                <input name="6b." type="radio" value="Yes" tabindex="13">
                 Yes, by
               </label>
-              <input name="6d." type="text" disabled="disabled" tabindex="-1" style="margin-right:0px;" />
+              <input name="6d." type="text" style="margin-right:0px;" tabindex="13" allowed-if="6b.=Yes" />
             </td>
             <td>
               <label>
-                <input name="6b." type="radio" value="No" tabindex="14"
-                  onchange="if (this.checked) set_properties({'6d.': {disabled: true, value: ''}});" />
+                <input name="6b." type="radio" value="No" tabindex="14">
                 No
               </label>
             </td>

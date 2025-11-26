@@ -29,7 +29,12 @@ func FillForm(doc *html.Node, values url.Values) {
 		case "hidden":
 			// nothing
 		case "checkbox", "radio":
-			sbchecked := slices.Contains(values[name], getAttr(doc, "value"))
+			var sbchecked bool
+			if hasAttr(doc, "value") {
+				sbchecked = slices.Contains(values[name], getAttr(doc, "value"))
+			} else {
+				_, sbchecked = values[name]
+			}
 			if hasAttr(doc, "checked") {
 				if !sbchecked {
 					removeAttr(doc, "checked")
