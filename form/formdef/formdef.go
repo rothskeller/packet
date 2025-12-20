@@ -7,7 +7,6 @@ import (
 	"iter"
 
 	"github.com/rothskeller/pdf/v2"
-	"k8s.io/apimachinery/pkg/util/sets"
 )
 
 // A FormDef defines a PackItForms form.  It is version-specific; each version
@@ -84,7 +83,8 @@ type FieldDef struct {
 	Tag string
 	// Common is the tag string that identifies the field as one of the
 	// common fields.  It allows software to address those fields even when
-	// their PackItForms tags vary.
+	// their PackItForms tags vary.  It should be one of the constants
+	// defined in field.CommonTags.
 	Common string
 	// Type identifies the type of field, which usually means identifying
 	// the type of the information stored in the field.
@@ -203,26 +203,3 @@ func (r TextRenderer) Draw(p *pdf.PDF, v string) (err error) {
 	}
 	return t.Draw(p)
 }
-
-// CommonTags contains the allowed values for Field.Common.
-var CommonTags = sets.New(
-	"defaultBody",
-	"destinationMessageID",
-	"formDate",
-	"fromICSPosition",
-	"fromLocation",
-	"handling",
-	"messageDate",
-	"messageSummary",
-	"messageTime",
-	"operatorCall",
-	"operatorDate",
-	"operatorName",
-	"operatorTime",
-	"originMessageID",
-	"reference",
-	"tacticalCall",
-	"tacticalName",
-	"toICSPosition",
-	"toLocation",
-)

@@ -14,6 +14,7 @@ import (
 	"strings"
 	"unicode"
 
+	"github.com/rothskeller/packet/message/field"
 	"github.com/rothskeller/pdf/v2"
 )
 
@@ -120,7 +121,7 @@ TOPLEVEL:
 		form.Fields = append(form.Fields, fd)
 		switch len(fields) {
 		case 3:
-			if CommonTags.Has(fields[2]) {
+			if field.CommonTags.Has(fields[2]) {
 				fd.Common = fields[2]
 			} else {
 				return nil, fmt.Errorf("%s:%d: second tag %q is not one of the common tags", filename, linenum, fields[2])
