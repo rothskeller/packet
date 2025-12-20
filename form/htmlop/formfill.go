@@ -26,7 +26,7 @@ func FillForm(doc *html.Node, values url.Values) {
 	switch doc.DataAtom {
 	case atom.Input:
 		switch getAttr(doc, "type") {
-		case "hidden":
+		case "hidden", "submit":
 			// nothing
 		case "checkbox", "radio":
 			var sbchecked bool
