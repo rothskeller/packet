@@ -35,6 +35,11 @@ field -
   type     join
   children operator_name operator_call_sign
 
+field use_tactical useTactical
+  label    "Use Tactical Identification"
+  type     checkbox
+  help     "This is checked when operating as a tactical station."
+
 field tactical_call_sign tacticalCall
   label    "Tactical Call Sign"
   type     tacticalCallSign
