@@ -50,11 +50,11 @@ func (m *JustReceivedMessage) IsMultipart() bool { return m.isMultipart }
 
 // NewJustReceivedMessage creates a new JustReceivedMessage by decoding the
 // provided retrieved message (i.m., the output of a JNOS "R" or "V" command).
-// rxBBS specifies the BBS from which the message was retrieved, and is
-// required.  rxArea specifies the bulletin area from which the message was
-// retrieved, and will be an empty string for non-bulletin messages.  The
-// function returns an error if the message cannot be parsed.
-func NewJustReceivedMessage(retrieved, rxBBS, rxArea string) (m *JustReceivedMessage, err error) {
+// rxBBS specifies the BBS from which the message was retrieved, if known.
+// rxArea specifies the bulletin area from which the message was retrieved, and
+// will be an empty string for non-bulletin messages.  The function returns an
+// error if the message cannot be parsed.
+func NewJustReceivedMessage(retrieved, rxBBS, rxArea string, rxTime time.Time) (m *JustReceivedMessage, err error) {
 	var (
 		efrom      string
 		hadMessage bool
@@ -68,7 +68,7 @@ func NewJustReceivedMessage(retrieved, rxBBS, rxArea string) (m *JustReceivedMes
 		common: new(common),
 		rxBBS:  rxBBS,
 		rxArea: rxArea,
-		rxDate: time.Now(),
+		rxDate: rxTime,
 	}}
 	// If there is an envelope From line, remove it from the raw message.
 	if strings.HasPrefix(retrieved, "From ") {
