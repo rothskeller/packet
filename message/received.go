@@ -12,7 +12,7 @@ import (
 
 // receivedRE is the regular expression for the "Received: " line that this
 // package generates when saving a received message.
-var receivedRE = regexp.MustCompile(`^FROM (\S+)\.ampr\.org BY pktmsg.local(?: FOR (\S+))?; (\w\w\w, \d\d \w\w\w \d\d\d\d \d\d:\d\d:\d\d [-+]\d\d\d\d)$`)
+var receivedRE = regexp.MustCompile(`^FROM (\S*)\.ampr\.org BY pktmsg.local(?: FOR (\S+))?; (\w\w\w, \d\d \w\w\w \d\d\d\d \d\d:\d\d:\d\d [-+]\d\d\d\d)$`)
 
 // A ReceivedMessage is for a message that the local system received from a
 // BBS at some point in the past, was stored locally on disk, and has been read
@@ -28,7 +28,8 @@ type ReceivedMessage struct {
 
 var _ Message = (*ReceivedMessage)(nil)
 
-// RxBBS returns the name of the BBS from which the message was retrieved.
+// RxBBS returns the name of the BBS from which the message was retrieved, if
+// known.  (It may not be known for a manually received message.)
 func (m *ReceivedMessage) RxBBS() string { return m.rxBBS }
 
 // RxArea returns the name of the bulletin area from which the (bulletin)
