@@ -95,3 +95,13 @@ func Cleanup(id string, packet bool) (strict string, err error) {
 		return strict, nil
 	}
 }
+
+// Increment increments the sequence number in a message ID.  If the message
+// ID can't be decoded (permissively), it returns an error.
+func Increment(id string) (string, error) {
+	if pfx, seq, sfx, err := Decode(id, true, false); err != nil {
+		return "", err
+	} else {
+		return Encode(pfx, seq+1, sfx)
+	}
+}
