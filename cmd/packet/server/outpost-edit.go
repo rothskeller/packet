@@ -86,6 +86,10 @@ func (s *Server) outpostNewRequest(w http.ResponseWriter, r *http.Request) {
 			if v := r.FormValue("tacName"); v != "" {
 				fields[f.Tag] = v
 			}
+		case "useTactical":
+			if r.FormValue("tacCall") != "" {
+				fields[f.Tag] = "checked"
+			}
 		}
 	}
 	s.editCommon(w, fields, def, "")

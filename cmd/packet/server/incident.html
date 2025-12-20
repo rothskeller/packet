@@ -1,0 +1,1329 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>Packet Messaging</title>
+  <style>
+    :root {
+      --border-width: 1px;
+    }
+
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+    }
+
+    :root,
+    button,
+    input,
+    select,
+    textarea {
+      font-family: sans-serif;
+      font-size: 1em;
+    }
+
+    button,
+    input,
+    select,
+    textarea {
+      border: var(--border-width) solid #ccc;
+    }
+
+    input:invalid,
+    select:invalid,
+    textarea:invalid,
+    .invalid {
+      box-shadow: 0 0 6px 2px #c80000;
+      transition: box-shadow 0.5s;
+    }
+
+    [hidden] {
+      display: none !important;
+    }
+
+    body {
+      margin: 0;
+      display: grid;
+      grid: max-content max-content max-content max-content 1fr / auto;
+      height: 100vh;
+    }
+
+    #topbar {
+      height: 3.5rem;
+      padding-inline: 0.75rem;
+      background-color: #a8e8a8;
+      border-bottom: var(--border-width) solid #888;
+      display: grid;
+      grid: auto / max-content 1fr;
+      justify-items: center;
+      align-items: center;
+    }
+
+    #topleft {
+      display: flex;
+      align-items: center;
+      gap: 1.5rem;
+    }
+
+    #logo {
+      height: 3rem;
+    }
+
+    #slug {
+      margin-inline: -0.75rem 1.5rem;
+      font-weight: bold;
+      font-size: 1.25rem;
+      line-height: 1.4rem;
+      max-height: 2.8rem;
+      overflow: hidden;
+    }
+
+    #version {
+      font-weight: normal;
+      font-size: 0.875rem;
+      color: #444;
+    }
+
+    #incname {
+      font-weight: bold;
+      font-size: 1.125rem;
+    }
+
+    #topbar button {
+      font-size: 1.25rem;
+      padding: 0.25rem 0.75rem;
+      border: 2px solid #000;
+      border-radius: 0.5rem;
+      background-color: #efefef;
+    }
+
+    #topbar button:hover {
+      background-color: #dfdfdf;
+    }
+
+    #topbar button:focus {
+      outline: 4px solid #005fcc;
+      outline-offset: -2px;
+    }
+
+    @media (width < 54em) {
+      #topleft {
+        gap: 0.75rem;
+      }
+
+      #slug {
+        margin-inline: 0 0.75rem;
+      }
+
+      #topbar button {
+        font-size: 1rem;
+      }
+    }
+  </style>
+  <script> // MenuItem
+    // A <menu-item> is a single element in a menu (<menu-bar>, <sub-menu>, or
+    // <context-menu>).
+    //
+    // Attributes:
+    //   checkable: Boolean attribute indicating that the menu item is a toggle.
+    //     If any item in a menu has this attribute, space is reserved on the
+    //     left side of all items in the menu where a check mark can be shown.
+    //   checked: Boolean attribute indicating that the menu item should be
+    //     initially checked.  Adding or removing this attribute after element
+    //     creation has no effect, and testing its presence will not detect
+    //     whether the item is currently checked.
+    //   shortcut: indicates the keyboard shortcut to activate this menu item,
+    //     if any.  Displayed on the right side of the menu item.  It can be
+    //     either a character, for a plain character shortcut key (case
+    //     insensitive), or '^' followed by a letter for a control character.
+    //
+    // Children:
+    //   A text node with the label of the menu item.
+    //   Optionally, a <sub-menu> element with a submenu triggered by this
+    //   menu item (supported only for items in the top menu bar).
+    //
+    // Events Dispatched:
+    //   'item-click':  when the item is activated.  For toggle items,
+    //     evt.detail indicates whether the item is now checked.
+    //   'visibility-change':  when the item's visibility changes.
+    //
+    // Methods:
+    //   adjustSubmenuPosition: sets the left offset of the submenu, if any, to
+    //     match the left offset of the item.
+    //   checkable:  returns whether the item supports being checked.
+    //   checked:  returns whether the item is checked.
+    //   click: act as if the item has been clicked.
+    //   focus:  gives keyboard focus to the item.
+    //   isSubmenuOpen:  returns whether the contained <sub-menu> is open, if
+    //     there is one; otherwise returns false.
+    //   openSubmenu:  opens the contained <sub-menu> if any; otherwise acts
+    //     like focus().
+    //   setChecked(bool):  sets the checked state of the item as specified.
+    //   show(bool):  sets the visible state of the item as specified.
+    //   shown:  returns whether the item is visible.
+    class MenuItem extends HTMLElement {
+      constructor() {
+        super()
+        this._button = null
+        this._submenu = null
+      }
+      connectedCallback() {
+        this.classList.toggle('checked', this.hasAttribute('checked'))
+        this._button = document.createElement('button')
+        this._button.setAttribute('tabindex', '-1')
+        if (this.hasAttribute('shortcut')) {
+          const tspan = document.createElement('span')
+          while (this.firstChild) tspan.appendChild(this.firstChild)
+          this._button.appendChild(tspan)
+          const sspan = document.createElement('span')
+          sspan.textContent = this.getAttribute('shortcut')
+          this._button.classList = 'with-shortcut'
+          this._button.appendChild(sspan)
+          if ((this._shortcutKey = this.getAttribute('shortcut').toLowerCase()).startsWith('^')) {
+            this._shortcutKey = this._shortcutKey.substring(1)
+            this._shortcutCtrl = true
+          } else this._shortcutCtrl = false
+          window.addEventListener('keydown', this._checkShortcut.bind(this))
+        } else {
+          while (this.firstChild) this._button.appendChild(this.firstChild)
+        }
+        this._button.addEventListener('click', this._onClick.bind(this))
+        this.appendChild(this._button)
+        this._submenu = this.querySelector('sub-menu')
+        if (this._submenu) this._submenu.addEventListener('submenu-open', this._onSubmenuOpen.bind(this))
+      }
+      adjustSubmenuPosition() {
+        if (!this._submenu) return
+        this._submenu.style.left = `${this._button.getBoundingClientRect().left}px`
+      }
+      checkable() {return this.hasAttribute('checkable')}
+      checked() {return this.classList.contains('checked')}
+      click() {
+        if (this._submenu) {
+          this._submenu.open()
+          return
+        }
+        if (this.hasAttribute('checkable')) this.classList.toggle('checked')
+        this.dispatchEvent(new CustomEvent('item-click', {
+          bubbles: true,
+          detail: {checked: this.classList.contains('checked')},
+        }))
+      }
+      focus() {this._button.focus()}
+      isSubmenuOpen() {return this._submenu && this._submenu.isOpen()}
+      openSubmenu() {
+        if (this._submenu) this._submenu.open()
+        else this.focus()
+      }
+      setChecked(checked) {this.classList.toggle('checked', checked)}
+      show(shouldShow) {
+        if (shouldShow === this.shown()) return
+        if (shouldShow) this.removeAttribute('hidden')
+        else this.setAttribute('hidden', '')
+        this.dispatchEvent(new CustomEvent('visibility-change'))
+      }
+      shown() {return !this.hasAttribute('hidden')}
+      _checkShortcut(evt) {
+        if (this.hasAttribute('hidden')) return
+        if (evt.altKey || evt.metaKey) return
+        if (evt.ctrlKey !== this._shortcutCtrl) return
+        if (evt.key.toLowerCase() !== this._shortcutKey) return
+        this._onClick(evt)
+      }
+      _onClick(evt) {
+        evt.preventDefault()
+        evt.stopImmediatePropagation()
+        this.click()
+      }
+      _onSubmenuOpen(evt) {this.classList.toggle('open', evt.detail)}
+    }
+  </script>
+  <style>
+    menu-item button {
+      appearance: none;
+      border: none;
+      background-color: #dff6df;
+      font-size: 1rem;
+      padding: 0.5rem 0.75rem;
+    }
+
+    menu-item button.with-shortcut {
+      display: flex;
+      justify-content: space-between;
+      gap: 2rem;
+    }
+
+    sub-menu menu-item button,
+    context-menu menu-item button {
+      width: 100%;
+      text-align: left;
+    }
+
+    sub-menu.checkable button,
+    context-menu.checkable button {
+      position: relative;
+      padding-left: 1.75rem;
+    }
+
+    menu-item.checked button::before {
+      position: absolute;
+      top: 0.3rem;
+      left: 0.5rem;
+      content: "✓";
+      font-size: 1.25rem;
+    }
+
+    menu-item button:hover,
+    menu-item button:focus-visible,
+    menu-item.open>button {
+      background-color: #a8e8a8;
+      outline: none;
+    }
+  </style>
+  <script> // SubMenu
+    // A <sub-menu> is a container for <menu-item>s that appear underneath a
+    // <menu-item> in the <menu-bar>.
+    //
+    // Children:
+    //   A set of <menu-item> elements, possibly with interspersed <hr>
+    //   elements.
+    //
+    // Events Dispatched:
+    //   'menu-move': sent when an adjacent submenu should be opened.
+    //     evt.detail incidates which one (-1 = left, +1 = right).
+    //   'submenu-open': sent when the submenu opens or closes, with evt.detail
+    //     indicating which (boolean, true=open).
+    //
+    // Methods:
+    //   close:  close the submenu.
+    //   focus:  take keyboard focus.
+    //   isOpen:  returns whether the submenu is open.
+    //   open:  opens the submenu.
+    class SubMenu extends HTMLElement {
+      constructor() {
+        super()
+        this._items = null
+      }
+      connectedCallback() {
+        this._items = Array.from(this.querySelectorAll('menu-item'))
+        this._items.forEach(item => {
+          item.addEventListener('item-click', this._onItemClick.bind(this))
+          item.addEventListener('visibility-change', this._onVisibilityChange.bind(this))
+        })
+        this.classList.toggle('checkable', this._items.some(item => item.checkable()))
+        this._items = this._items.filter(item => item.shown())
+        this.setAttribute('popover', 'auto')
+        this.addEventListener('keydown', this._onKeyDown.bind(this))
+        this.addEventListener('toggle', this._onToggle.bind(this))
+      }
+      close() {this.togglePopover(false)}
+      focus() {this._items[0].focus()}
+      isOpen() {return this.matches(':popover-open')}
+      open() {
+        this.togglePopover({force: true, source: this.parentElement})
+        this.focus()
+      }
+      _onItemClick() {this.close()}
+      _onKeyDown(evt) {
+        const item = evt.target.closest('menu-item')
+        let idx = this._items.findIndex(i => i === item)
+        switch (evt.key) {
+          case 'ArrowUp': idx--; break;
+          case 'ArrowDown': idx++; break;
+          case 'Home': idx = 0; break;
+          case 'End': idx = this._items.length - 1; break;
+          case 'ArrowLeft':
+            this.dispatchEvent(new CustomEvent('menu-move', {bubbles: true, detail: -1}))
+            break
+          case 'ArrowRight':
+            this.dispatchEvent(new CustomEvent('menu-move', {bubbles: true, detail: +1}))
+            break
+          default:
+            return
+        }
+        evt.stopPropagation()
+        evt.preventDefault()
+        if (idx < 0 || idx >= this._items.length) return
+        if (this._items[idx] === item) return
+        this._items[idx].focus()
+      }
+      _onToggle(evt) {
+        this.dispatchEvent(new CustomEvent('submenu-open', {detail: evt.newState === 'open'}))
+      }
+      _onVisibilityChange() {
+        this._items = Array.from(this.querySelectorAll('menu-item')).filter(item => item.shown())
+      }
+    }
+  </script>
+  <style>
+    sub-menu:popover-open {
+      inset: unset;
+      position: absolute;
+      top: calc(5.5rem + 2 * var(--border-width));
+      border: var(--border-width) solid #888;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+    }
+
+    sub-menu hr {
+      width: 100%;
+      margin: 0;
+    }
+  </style>
+  <script> // MenuBar
+    // The <menu-bar> is the application's top menu bar.
+    //
+    // Children:
+    //   A set of <menu-item> elements.
+    //
+    // Methods:
+    //   adjustSubmenuPositions: calls adjustSubmenuPosition on all submenus.
+    class MenuBar extends HTMLElement {
+      constructor() {
+        super()
+        this._items = null
+      }
+      connectedCallback() {
+        this._items = Array.from(this.children).filter(elm => elm.matches('menu-item'))
+        this._items.forEach(item => {
+          item.addEventListener('visibility-change', this.adjustSubmenuPositions.bind(this))
+          item.addEventListener('menu-move', this._onMenuMove.bind(this))
+        })
+        this.adjustSubmenuPositions()
+        this.addEventListener('keydown', this._onKeyDown.bind(this))
+      }
+      adjustSubmenuPositions() {
+        this._items.forEach(item => item.adjustSubmenuPosition())
+      }
+      _onKeyDown(evt) {
+        const items = Array.from(this.children).filter(elm => elm.matches('menu-item') && elm.shown())
+        const item = evt.target.closest('menu-item')
+        let idx = items.findIndex(i => i === item)
+        switch (evt.key) {
+          case 'ArrowLeft': idx--; break;
+          case 'ArrowRight': idx++; break;
+          case 'Home': idx = 0; break;
+          case 'End': idx = items.length - 1; break;
+          case 'ArrowDown':
+            item.openSubmenu()
+            break
+          default:
+            return
+        }
+        evt.stopPropagation()
+        evt.preventDefault()
+        if (idx < 0 || idx >= this._items.length) return
+        if (items[idx] === item) return
+        items[idx].focus()
+      }
+      _onMenuMove(evt) {
+        const items = Array.from(this.children).filter(elm => elm.matches('menu-item') && elm.shown())
+        const item = evt.target.closest('menu-item')
+        let idx = items.findIndex(i => i === item)
+        const open = evt.target.isOpen()
+        idx += evt.detail // -1 for left, +1 for right
+        if (idx >= 0 && idx < items.length)
+          if (open) items[idx].openSubmenu()
+          else items[idx].focus()
+      }
+    }
+  </script>
+  <style>
+    menu-bar {
+      margin: 0 0 var(--border-width);
+      background-color: #dff6df;
+      border-bottom: var(--border-width) solid #888;
+      display: flex;
+    }
+  </style>
+  <script> // ContextMenu
+    // The <context-menu> is a container for <menu-item>s that appear where
+    // the user right-clicks on a log entry.
+    //
+    // Children:
+    //   A set of <menu-item> elements, possibly with interspersed <hr>
+    //   elements.
+    //
+    // Methods:
+    //   open(evt):  opens the submenu, placed at the location of the supplied
+    //     MouseEvent.
+    class ContextMenu extends HTMLElement {
+      constructor() {
+        super()
+        this._items = null
+      }
+      connectedCallback() {
+        this._items = Array.from(this.querySelectorAll('menu-item'))
+        this._items.forEach(item => {
+          item.addEventListener('item-click', this._onItemClick.bind(this))
+          item.addEventListener('visibility-change', this._onVisibilityChange.bind(this))
+        })
+        this.classList.toggle('checkable', this._items.some(item => item.checkable()))
+        this._items = this._items.filter(item => item.shown())
+        this.setAttribute('popover', 'auto')
+        this.addEventListener('keydown', this._onKeyDown.bind(this))
+        this.addEventListener('toggle', evt => {console.log(evt)})
+      }
+      open(evt) {
+        this.style.left = `${evt.pageX - 5}px`
+        this.style.top = `${evt.pageY - 5}px`
+        this.togglePopover(true)
+        this._items[0].focus()
+      }
+      _onItemClick() {this.togglePopover(false)}
+      _onKeyDown(evt) {
+        const item = evt.target.closest('menu-item')
+        let idx = this._items.findIndex(i => i === item)
+        switch (evt.key) {
+          case 'ArrowUp': idx--; break;
+          case 'ArrowDown': idx++; break;
+          case 'Home': idx = 0; break;
+          case 'End': idx = this._items.length - 1; break;
+          default:
+            return
+        }
+        evt.stopPropagation()
+        evt.preventDefault()
+        if (idx < 0 || idx >= this._items.length) return
+        if (this._items[idx] === item) return
+        this._items[idx].focus()
+      }
+      _onVisibilityChange() {
+        this._items = Array.from(this.querySelectorAll('menu-item')).filter(item => item.shown())
+      }
+    }
+  </script>
+  <style>
+    context-menu:popover-open {
+      inset: unset;
+      position: absolute;
+      border: var(--border-width) solid #888;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+    }
+
+    context-menu hr {
+      width: 100%;
+      margin: 0;
+    }
+  </style>
+  <script> // LogEntry
+    const myIdent = 'XND023'  // temporary for testing
+    // A <log-entry> represents a single line in the message log.  It is not
+    // the same as a message:  a message can have more than one line if it has
+    // multiple recipients, and log entries can exist without an underlying
+    // message.  (There are no <log-entry> elements in the HTML of the page;
+    // they are all created by Javascript.)
+    //
+    // A log entry can be displayed in two formats: compact and full.  The
+    // element renders both and lets the choice between them be made by
+    // classes on the containing <log-grid>.
+    //
+    // Events Dispatched:
+    //   'default-action': sent when the default action is invoked on the log
+    //     entry (Enter or double-click).
+    //   'entry-selected': sent when a log entry is selected.
+    //
+    // Methods:
+    //   deselect: called to tell a log entry that it has been deselected.
+    //   select: makes this log entry the current selection.
+    //   updateData(data): updates the data for this log entry.  See below for
+    //     data format.
+    //
+    // Properties:
+    //   The <log-entry> exposes the 'f', 'idx', 'seq', and 'st' properties of
+    //   the log entry it's displaying.  These should not be mutated.  See
+    //   below for their meanings.
+    //
+    // Log Entry Data:
+    //   The data for each log entry is passed to the page as a JSON object
+    //   with the following keys.  Note that the text below describes the
+    //   values of each field as assigned by the packet software, but those
+    //   fields marked with [*] are manually editable and may have other
+    //   contents.
+
+    //   idx: a unique index (>=0) for the log entry.
+    //   seq: the sequence number of the incident update when the log entry was
+    //     last changed.
+    //   st: the status of the message, one of:
+    //     D: draft: an outgoing message that is not yet ready to send
+    //     H: hand-entered: a log entry not associated with a message
+    //     Q: queued: an outgoing message that is ready to send but not yet sent
+    //     R: received: a received message
+    //     S: sent: a sent message
+    //     X: deleted: a log entry that has been deleted.
+    //   f: flags associated with the message, any combination of:
+    //     B: bulletin: message is a bulletin
+    //     F: followup: message needs follow-up
+    //     I: immediate: message has immediate handling order
+    //     P: priority: message has priority handling order
+    //     R: receipt: message is a receipt
+    //     V: voice: log entry is for a voice message
+    //     -: a receipt is needed for this log entry (and has not been received)
+    //     +: a receipt has been received for this log entry
+    //   t: the log entry timestamp in YYYY-MM-DDTHH:MM:SS.sss-07:00 format. [*]
+    //   fc: the call sign of the station that sent the message.  Will be empty
+    //     for an outgoing message.  Will be the bulletin area name for a
+    //     received bulletin. [*]
+    //   fi: the message ID assigned to the message by the sending station. [*]
+    //   li: the message ID assigned to the message by the local station.  For
+    //     receipts, the message ID assigned to the message being receipted.
+    //   tc: the call sign of a station to which the message was sent.  Will be
+    //     empty for a received message. [*]
+    //   ti: the message ID assigned to the message by the receiving station
+    //     identified in 'tc' (or by us, for a received message). [*]
+    //   s:  the subject line of the message. [*]
+    class LogEntry extends HTMLElement {
+      constructor() {
+        super()
+        this.idx = 0
+        this.seq = 0
+        this.st = ' '
+        this.f = ''
+      }
+      connectedCallback() {
+        this.setAttribute('tabindex', '-1')
+        for (let n of ['time', 'fromCall', 'fromID', 'from', 'fromArr', 'localID', 'toArr', 'to', 'toCall', 'toID', 'sFull', 'sTrim', 'fu']) {
+          const div = document.createElement('div')
+          div.classList = n
+          this.appendChild(div)
+          this[`_${n}Cell`] = div
+        }
+        this.addEventListener('dblclick', this._onDblClick.bind(this))
+        this.addEventListener('focus', this._onFocus.bind(this))
+        this.addEventListener('keydown', this._onKeyDown.bind(this))
+      }
+      deselect() {this.classList.remove('selected')}
+      select() {
+        this.focus()
+        this._onFocus()
+      }
+      updateData(data) {
+        this.idx = data.idx
+        this.seq = data.seq
+        this.st = data.st
+        this.f = data.f
+        if (this.st === 'X') return (this.style.display = 'none')
+        let inbound, outbound
+        switch (data.st) {
+          case 'D', 'Q', 'S': outbound = true; break;
+          case 'R': inbound = true; break;
+          case 'H':
+            if (data.tc === myIdent || (data.ti && !data.tc)) inbound = true
+            else if (data.fc === myIdent || (data.fi && !data.fc)) outbound = true
+            break
+        }
+        this.classList.toggle('bulletin', data.f.includes('B'))
+        this.classList.toggle('immediate', data.f.includes('I'))
+        this.classList.toggle('priority', data.f.includes('P'))
+        this.classList.toggle('receipt', data.f.includes('R'))
+        this._timeCell.classList.toggle('draft', data.st === 'D')
+        this._timeCell.classList.toggle('ready', data.st === 'Q')
+        this._timeCell.textContent = data.st === 'D' ? 'DRAFT' : data.st === 'Q' ? 'READY' : data.t.substring(11, 16)
+        this._fromCallCell.textContent = data.fc
+        this._fromIDCell.textContent = data.fi
+        this._fromCell.textContent = outbound ? '' : (data.fi || data.fc)
+        this._fromArrCell.textContent = this._fromCell.textContent ? '→' : ''
+        this._localIDCell.textContent = data.li
+        this._toCell.textContent = inbound ? '' : (data.ti || data.tc)
+        this._toArrCell.textContent = this._toCell.textContent ? '→' : ''
+        this._toCell.classList.toggle('needs-receipt', data.f.includes('-'))
+        this._toCallCell.textContent = data.tc
+        this._toIDCell.textContent = data.ti
+        this._toIDCell.classList.toggle('needs-receipt', data.f.includes('-'))
+        this._sFullCell.textContent = data.s
+        this._sFullCell.classList.toggle('voice', data.f.includes('V'))
+        this._sTrimCell.textContent = (data.fi && data.s.startsWith(data.fi + '_')) ? data.s.substring(data.fi.length + 1) : (data.ti && data.s.startsWith(data.ti + '_')) ? data.s.substring(data.ti.length + 1) : data.s
+        this._sTrimCell.classList.toggle('voice', data.f.includes('V'))
+        this._fuCell.textContent = data.f.includes('F') ? '★' : ''
+        this._fuCell.title = data.f.includes('F') ? 'Needs Followup' : null
+      }
+      _onDblClick() {
+        this.dispatchEvent(new CustomEvent('default-action', {bubbles: true}))
+      }
+      _onFocus() {
+        this.classList.add('selected')
+        this.dispatchEvent(new CustomEvent('entry-selected', {bubbles: true}))
+      }
+      _onKeyDown(evt) {
+        if (evt.key === 'Enter') {
+          this.dispatchEvent(new CustomEvent('default-action', {bubbles: true}))
+          evt.preventDefault()
+          evt.stopPropagation()
+        }
+      }
+    }
+  </script>
+  <style>
+    log-entry {
+      display: grid;
+      grid: subgrid/subgrid;
+      grid-column: span var(--columns);
+    }
+
+    log-entry.selected {
+      background-color: #f0f0f4;
+    }
+
+    log-grid:not(.show-receipts) log-entry.receipt {
+      display: none;
+    }
+
+    log-grid>*>* {
+      border: var(--border-width) solid #aaa;
+      margin-top: calc(-1 * var(--border-width));
+      margin-left: calc(-1 * var(--border-width));
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      padding: 0.1rem 0.25rem;
+    }
+
+    log-grid.compact .fromCall,
+    log-grid.compact .fromID,
+    log-grid.full .from,
+    log-grid.full .fromArr,
+    log-grid.full .localID,
+    log-grid.full .toArr,
+    log-grid.full .to,
+    log-grid.compact .toCall,
+    log-grid.compact .toID,
+    log-grid.compact .sFull,
+    log-grid.full .sTrim {
+      display: none;
+    }
+
+    log-grid.full .fromCall,
+    log-grid.full .toCall {
+      border-right-color: #ddd;
+    }
+
+    log-grid.full .fromID,
+    log-grid.full .toID {
+      border-left-color: #ddd;
+    }
+
+    log-grid.compact .from,
+    log-grid .sTrim,
+    log-grid .sFull {
+      border-right: none;
+    }
+
+    log-grid.compact .fromArr,
+    log-grid.compact .localID,
+    log-grid.compact .toArr {
+      border-inline: none;
+    }
+
+    log-grid.compact .to,
+    log-grid .fu {
+      border-left: none;
+    }
+
+    log-grid .fu:empty {
+      padding-inline: 0;
+    }
+
+    log-grid .fu:not(:empty) {
+      padding-left: 0.5rem;
+      color: #d73b30;
+      cursor: default;
+    }
+
+    .bulletin {
+      color: blue;
+    }
+
+    .draft {
+      background-color: #ff8080;
+      font-size: 0.875rem;
+    }
+
+    .immediate {
+      color: #b50000;
+    }
+
+    .to.needs-receipt::after,
+    .toID.needs-receipt:not(:empty)::after {
+      content: "NR";
+      font-size: 0.875rem;
+      background-color: #ff8080;
+      padding-inline: 2px;
+      margin-left: 0.25rem;
+      cursor: default;
+    }
+
+    .toID.needs-receipt:empty::after {
+      content: "NO RCPT";
+      font-size: 0.875rem;
+      background-color: #ff8080;
+      padding-inline: 2px;
+      cursor: default;
+    }
+
+    .priority {
+      color: #805300;
+    }
+
+    .ready {
+      background-color: #a8e8a8;
+      font-size: 0.875rem;
+    }
+
+    .receipt {
+      color: #888;
+    }
+
+    .voice::before {
+      content: "VOICE";
+      font-size: 0.875rem;
+      background-color: #a8e8a8;
+      padding-inline: 2px;
+      margin-right: 0.25rem;
+    }
+  </style>
+  <script> // LogGrid
+    // The <log-grid> is the grid containing all log entries.
+    //
+    // Methods:
+    //   showReceipts(bool): sets the visibility of receipt messages.
+    //   updateEntries(dataArray): updates the data for entries in the grid.
+    //     The argument is an array of entry data objects.  Entries not already
+    //     existing in the grid are added to the end of it.  Entries whose
+    //     'st' is changed to 'X' are removed from the grid.
+    class LogGrid extends HTMLElement {
+      constructor() {
+        super()
+        this._entries = []
+        this.selected = null
+      }
+      connectedCallback() {
+        this.appendChild(document.getElementById('log-grid-header').content)
+        this.addEventListener('keydown', this._onKeyDown.bind(this))
+        window.addEventListener('new-data', this._onNewData.bind(this))
+      }
+      showReceipts(show) {
+        this.classList.toggle('show-receipts', show)
+        this._setEntries()
+      }
+      _onEntrySelected(evt) {
+        if (this.selected === evt.target) return
+        if (this.selected) this.selected.deselect()
+        this.selected = evt.target
+      }
+      _onKeyDown(evt) {
+        const entry = evt.target.closest('log-entry')
+        const idx = this._entries.findIndex(e => e === entry)
+        switch (evt.key) {
+          case 'ArrowUp': idx--; break;
+          case 'ArrowDown': idx++; break;
+          case 'Home': idx = 0; break;
+          case 'End': idx = this._entries.length - 1; break;
+          default:
+            return
+        }
+        evt.preventDefault()
+        evt.stopPropagation()
+        if (idx < 0 || idx >= this._entries.length) return
+        if (this._entries[idx] === entry) return
+        this._entries[idx].select()
+      }
+      _onNewData(evt) {
+        evt.detail.forEach(data => {this._updateEntry(data)})
+        this._setEntries()
+      }
+      _setEntries() {
+        this._entries = []
+        const showReceipts = this.classList.contains('show-receipts')
+        Array.from(this.children).forEach(e => {
+          if (!e.st || e.st === 'X') return
+          if (!showReceipts && e.f.includes('R')) return
+          this._entries.push(e)
+        })
+      }
+      _updateEntry(data) {
+        let entry = Array.from(this.children).find(e => e.idx === data.idx)
+        if (!entry) {
+          entry = new LogEntry()
+          entry.addEventListener('entry-selected', this._onEntrySelected.bind(this))
+          this.appendChild(entry)
+        }
+        entry.updateData(data)
+      }
+    }
+  </script>
+  <style>
+    log-grid.full {
+      --columns: 7;
+    }
+
+    log-grid.compact {
+      --columns: 8;
+    }
+
+    log-grid {
+      display: grid;
+      grid: auto-flow / repeat(calc(var(--columns) - 2), max-content) 1fr max-content;
+      margin: calc(-1 * var(--border-width)) 0 0 var(--border-width);
+    }
+
+    #full-header,
+    #compact-header {
+      display: grid;
+      grid: subgrid/subgrid;
+      grid-column: span var(--columns);
+      font-weight: bold;
+      text-align: center;
+      z-index: 1;
+    }
+
+    #full-header>*,
+    #compact-header>* {
+      border-color: black;
+    }
+
+    log-grid.compact #full-header,
+    log-grid.full #compact-header {
+      display: none;
+    }
+
+    log-grid.full #full-header {
+      grid-row: span 2;
+    }
+  </style>
+  <script> // dialog handlers
+    function setupManualReceiveDialog() {
+      function uploadMessage(file) {
+        const reader = new FileReader()
+        reader.onload = evt => {document.getElementById('mrmsg').value = evt.target.result}
+        reader.readAsText(file)
+      }
+      document.getElementById('mrupload').addEventListener('click', evt => {
+        evt.preventDefault()
+        document.getElementById('mrfile').click()
+      })
+      document.getElementById('mrmsg').addEventListener('drop', evt => {
+        uploadMessage(evt.dataTransfer.files[0])
+        evt.preventDefault()
+        evt.stopPropagation()
+      })
+      document.getElementById('mrfile').addEventListener('change', evt => {
+        if (evt.target.value) uploadMessage(evt.target.files[0])
+      })
+      document.getElementById('mrcan').addEventListener('click', () => {
+        document.getElementById('mrdlg').close()
+      })
+      document.getElementById('mrform').addEventListener('submit', async evt => {
+        evt.preventDefault()
+        const data = new FormData(evt.target)
+        const resp = await fetch('/manual-receive', {method: 'POST', body: data})
+        if (resp.ok) {
+          document.getElementById('mrdlg').close()
+          return
+        }
+        const err = (await resp.text()) || resp.statusText
+        document.getElementById('mrerr').textContent = err
+      })
+    }
+  </script>
+  <style>
+    #mrdlg {
+      max-width: 40rem;
+      margin: 4rem auto;
+      padding: 0 0.75rem 0.75rem;
+      z-index: 2;
+    }
+
+    #mrform {
+      display: flex;
+      flex-direction: column;
+    }
+
+    #mrform h1 {
+      background-color: #a8e8a8;
+      margin: 0 -0.75rem;
+      padding: 0.5rem 0.75rem;
+      font-size: 1.5rem;
+    }
+
+    #mrdtrow {
+      margin-top: 0.75rem;
+    }
+
+    #mrdate {
+      margin-left: 1rem;
+      width: 8rem;
+    }
+
+    #mrtime {
+      width: 4rem;
+    }
+
+    #mrerr:not(:empty) {
+      margin-top: 1.5rem;
+      color: red;
+    }
+
+    #mrsubrow {
+      margin-top: 1.5rem;
+      display: flex;
+      justify-content: space-between;
+    }
+
+    #mrbuttons {
+      display: flex;
+      gap: 0.75rem;
+    }
+
+    #mrcan,
+    #mrsub {
+      border-radius: 0.25rem;
+    }
+
+    #mrsub {
+      background-color: #a8e8a8;
+    }
+  </style>
+  <script> // Top-level event handlers
+    window.addEventListener('click', evt => {
+      if (evt.button !== 2) return
+      const entry = evt.target.closest('log-entry')
+      if (!entry) return
+      document.querySelector('context-menu').open(evt)
+      evt.preventDefault()
+    })
+    window.addEventListener('contextmenu', evt => {
+      const entry = evt.target.closest('log-entry')
+      if (!entry) return
+      setTimeout(() => {
+        document.querySelector('context-menu').open(evt)
+      }, 10)
+      evt.preventDefault()
+      evt.stopImmediatePropagation()
+    })
+    window.addEventListener('default-action', () => {
+      const view = document.getElementById('m-msg-view')
+      if (view.shown()) view.click()
+      else document.getElementById('m-msg-edit').click()
+    })
+    function setupMenuHandlers() { // called by window.onload
+      const manualMode = false
+      const setupMenuItem1 = function (id, settings) {
+        const item = document.getElementById(id)
+        if (!item) return
+        if (settings.shown || settings.checked) {
+          grid.addEventListener('entry-selected', evt => {
+            if (settings.shown) item.show(settings.shown(evt.target))
+            if (settings.checked) item.setChecked(settings.checked(evt.target))
+          })
+        }
+        if (settings.clicked) item.addEventListener('item-click', () => {
+          settings.clicked(grid.selected, item)
+        })
+      }
+      const setupMenuItem = function (settings) {
+        setupMenuItem1(settings.id, settings)
+        if (settings.cid) setupMenuItem1(settings.cid, settings)
+      }
+      // Incident: New
+      // TODO: 
+      // Incident: Open
+      // TODO: 
+      // Incident: Settings
+      // TODO: 
+      // Incident: ICS-309
+      // TODO: 
+      // Incident: Archive
+      // TODO: 
+      // Message: New
+      setupMenuItem({
+        id: 'm-msg-new',
+        // TODO: 
+      })
+      // Message: Manual Receive
+      setupMenuItem({
+        id: 'm-msg-man-rcv',
+        shown: () => manualMode,
+        clicked: () => {
+          document.getElementById('mrmsg').textContent = ''
+          const now = new Date()
+          document.getElementById('mrdate').value = ('0' + (now.getMonth() + 1)).slice(-2) + '/' + ('0' + now.getDate()).slice(-2) + '/' + now.getFullYear()
+          document.getElementById('mrtime').value = ('0' + now.getHours()).slice(-2) + ':' + ('0' + now.getMinutes()).slice(-2)
+          document.getElementById('mrdlg').showModal()
+        },
+      })
+      // Message: View
+      setupMenuItem({
+        id: 'm-msg-view', cid: 'cm-msg-view',
+        shown: sel => sel.st === 'R' || sel.st === 'S',
+        // TODO: 
+      })
+      // Message: Manual Send
+      setupMenuItem({
+        id: 'm-msg-man-send', cid: 'cm-msg-man-send',
+        shown: sel => manualMode && (sel.st === 'D' || sel.st === 'Q'),
+        // TODO: 
+      })
+      // Message: Create Receipt
+      setupMenuItem({
+        id: 'm-msg-man-rcpt', cid: 'cm-msg-man-rcpt',
+        shown: sel => manualMode && sel.st === 'R',
+        // TODO: 
+      })
+      // Message: Print
+      setupMenuItem({
+        id: 'm-msg-print', cid: 'cm-msg-print',
+        shown: sel => sel.st !== 'M',
+        clicked: () => {console.log('print')}
+        // TODO: 
+      })
+      // Message: Edit
+      setupMenuItem({
+        id: 'm-msg-edit', cid: 'cm-msg-edit',
+        shown: sel => sel.st === 'D' || sel.st === 'Q',
+        // TODO: 
+      })
+      // Message; Edit Log Entry
+      setupMenuItem({
+        id: 'm-msg-edit-log', cid: 'cm-msg-edit-log',
+        shown: () => true,
+        // TODO: 
+      })
+      // Message: Delete
+      setupMenuItem({
+        id: 'm-msg-delete', cid: 'cm-msg-delete',
+        shown: sel => sel.st === 'D' || sel.st === 'Q' || sel.st === 'M',
+        // TODO: 
+      })
+      // Message: Ready to Send
+      setupMenuItem({
+        id: 'm-msg-ready', cid: 'cm-msg-ready',
+        shown: sel => sel.st === 'D' || sel.st === 'Q',
+        checked: sel => sel.st === 'Q',
+        // TODO: 
+      })
+      // Message: Needs Followup
+      setupMenuItem({
+        id: 'm-msg-followup', cid: 'cm-msg-followup',
+        shown: () => true,
+        checked: sel => sel.f.includes('F'),
+        // TODO: 
+      })
+      // Message: Needs Receipt
+      setupMenuItem({
+        id: 'm-msg-need-rcpt', cid: 'cm-msg-need-rcpt',
+        shown: sel => sel.st === 'S' && !sel.f.includes('+'),
+        checked: sel => sel.f.includes('-'),
+        // TODO: 
+      })
+      // View: Compact View
+      setupMenuItem({
+        id: 'm-view-compact',
+        clicked: (sel, item) => {
+          grid.classList.toggle('full', !item.checked())
+          grid.classList.toggle('compact', item.checked())
+        }
+      })
+      // TODO: 
+      // View: Show Receipts
+      setupMenuItem({
+        id: 'm-view-receipts',
+        clicked: (sel, item) => {grid.showReceipts(item.checked())}
+      })
+      // TODO: 
+      // View: Large Font
+      setupMenuItem({
+        id: 'm-view-large',
+        clicked: (sel, item) => {
+          document.documentElement.style.fontSize = item.checked() ? '1.25em' : null
+          document.querySelector('menu-bar').adjustSubmenuPositions()
+        }
+      })
+      // TODO: 
+      // Connect: Send/Receive All
+      // TODO: 
+      // Connect: Immediates Only
+      // TODO: 
+      // Connect: Abort Connection
+      // TODO: 
+      // Help: Software Manual
+      // TODO: 
+      // Help: Github Repository
+      // TODO: 
+      // Help: About SCCo Packet
+      // TODO: 
+    }
+  </script>
+  <script> // data retrieval
+    let currentSeq = 0
+    async function fetchData() {
+      while (true) {
+        try {
+          const params = new URLSearchParams({dir: '{{DIR}}', seq: currentSeq})
+          const url = '/incident/log?' + params.toString()
+          const resp = await fetch(url)
+          if (!resp.ok) throw new Error(resp.statusText)
+          const data = await resp.json()
+          data.forEach(e => {if (e.seq > currentSeq) currentSeq = e.seq})
+          window.dispatchEvent(new CustomEvent('new-data', {detail: data}))
+        } catch (e) {
+          console.error(e)
+          await new Promise(resolve => setTimeout(resolve, 5000));
+        }
+      }
+    }
+  </script>
+  <script> // window.onload
+    window.addEventListener('load', () => {
+      grid = document.querySelector('log-grid')
+      setupMenuHandlers()
+      setupManualReceiveDialog()
+      fetchData()
+    })
+  </script>
+</head>
+
+<body>
+  <div id=topbar>
+    <div id=topleft>
+      <img id=logo src="https://www.scc-ares-races.org/-67DB4F6F-/county-seal.svg">
+      <div id=slug>SCCo&nbsp;Packet<br>Messenger <span id=version>v{{VERSION}}</span></div>
+    </div>
+    <div>
+      <div id=incname>{{INCNAME}}</div>
+      <div id=ident>{{IDENT}}</div>
+    </div>
+  </div>
+  <menu-bar>
+    <menu-item>Incident
+      <sub-menu>
+        <menu-item id=m-inc-new>New Incident</menu-item>
+        <menu-item id=m-inc-open>Open Other Incident</menu-item>
+        <hr>
+        <menu-item id=m-inc-settings>Incident Settings</menu-item>
+        <hr>
+        <menu-item id=m-inc-ics-309>Export ICS-309</menu-item>
+        <menu-item id=m-inc-archive>Export Archive</menu-item>
+      </sub-menu>
+    </menu-item>
+    <menu-item>Message
+      <sub-menu>
+        <menu-item id=m-msg-new shortcut=N>New</menu-item>
+        <menu-item id=m-msg-man-rcv shortcut=R>Manual Receive</menu-item>
+        <hr>
+        <menu-item id=m-msg-view shortcut=⏎ hidden>View</menu-item>
+        <menu-item id=m-msg-man-send shortcut=S hidden>Manual Send</menu-item>
+        <menu-item id=m-msg-man-rcpt hidden>Create Receipt</menu-item>
+        <menu-item id=m-msg-print shortcut=P hidden>Print</menu-item>
+        <menu-item id=m-msg-edit shortcut=⏎ hidden>Edit</menu-item>
+        <menu-item id=m-msg-edit-log hidden>Edit Log Entry</menu-item>
+        <menu-item id=m-msg-delete hidden>Delete</menu-item>
+        <hr>
+        <menu-item id=m-msg-ready checkable hidden>Ready to Send</menu-item>
+        <menu-item id=m-msg-followup checkable hidden>Needs Followup</menu-item>
+        <menu-item id=m-msg-need-rcpt checkable hidden>Needs Receipt</menu-item>
+      </sub-menu>
+    </menu-item>
+    <menu-item>View
+      <sub-menu>
+        <menu-item id=m-view-compact checkable checked>Compact View</menu-item>
+        <menu-item id=m-view-receipts checkable>Show Receipts</menu-item>
+        <menu-item id=m-view-large checkable>Large Font</menu-item>
+      </sub-menu>
+    </menu-item>
+    <menu-item id=m-conn>Connect
+      <sub-menu>
+        <menu-item id=m-conn-sr shortcut=C>Send/Receive All</menu-item>
+        <menu-item id=m-conn-immed>Immediates Only</menu-item>
+        <menu-item id=m-conn-abort shortcut=^C hidden>Abort Connection</menu-item>
+      </sub-menu>
+    </menu-item>
+    <menu-item>Help
+      <sub-menu>
+        <menu-item>Software Manual</menu-item>
+        <menu-item>Github Repository</menu-item>
+        <menu-item>About SCCo Packet</menu-item>
+      </sub-menu>
+    </menu-item>
+  </menu-bar>
+  <context-menu id=cm-msg>
+    <menu-item id=cm-msg-view shortcut=⏎>View</menu-item>
+    <menu-item id=cm-msg-man-send shortcut=S>Manual Send</menu-item>
+    <menu-item id=cm-msg-man-rcpt>Create Receipt</menu-item>
+    <menu-item id=cm-msg-print shortcut=P>Print</menu-item>
+    <menu-item id=cm-msg-edit shortcut=⏎>Edit</menu-item>
+    <menu-item id=cm-msg-edit-log>Edit Log Entry</menu-item>
+    <menu-item id=cm-msg-delete>Delete</menu-item>
+    <hr>
+    <menu-item id=cm-msg-ready checkable>Ready to Send</menu-item>
+    <menu-item id=cm-msg-followup checkable>Needs Followup</menu-item>
+    <menu-item id=cm-msg-need-rcpt checkable>Needs Receipt</menu-item>
+  </context-menu>
+  <log-grid class=compact></log-grid>
+  <template id=log-grid-header>
+    <div id=full-header>
+      <div style="grid-row:span 2">
+        <div style="display:flex;height:100%;align-items:center">TIME<br>(24:00)</div>
+      </div>
+      <div style="grid-column:span 2">FROM</div>
+      <div style="grid-column:span 2">TO</div>
+      <div style="grid-row:span 2;grid-column:span 2">
+        <div style="display:flex;height:100%;align-items:center">Message</div>
+      </div>
+      <div>Call Sign/ID</div>
+      <div style="border-left-color:#ddd">Msg #</div>
+      <div>Call Sign/ID</div>
+      <div style="border-left-color:#ddd">Msg #</div>
+    </div>
+    <div id=compact-header>
+      <div>TIME</div>
+      <div style="grid-column: span 2">FROM</div>
+      <div>MSG ID</div>
+      <div style="grid-column: span 2">TO</div>
+      <div style="text-align:left;grid-column:span 2">MESSAGE</div>
+    </div>
+  </template>
+  <dialog id=mrdlg>
+    <form id=mrform>
+      <input type=hidden name=dir value="{{DIR}}">
+      <h1>Manual Receive Message</h1>
+      <p>
+        Paste the received message, including the From, Subject, and other headers.
+        <br>
+        You can also drag and drop the message, or
+        <a id=mrupload href="#">upload a file</a> containing it.
+      </p>
+      <textarea id=mrmsg name=mrmsg rows=10 required
+        placeholder="From: ...&#10;Date: ...&#10;Subject: ...&#10;&#10;!SCCoPIFO!&#10;...&#10;!/ADDON!"></textarea>
+      <input type="file" id="mrfile" style="display:none;">
+      <div id=mrdtrow>
+        <label for=mrdate>When was this message received?</label>
+        <input id=mrdate name=mrdate placeholder=MM/DD/YYYY aria-label="Message Received Date" required
+          pattern="(0[1-9]|1[012])/(0[1-9]|[12][0-9]|3[01])/20[0-9][0-9]">
+        <input id=mrtime name=mrtime placeholder=HH:MM aria-label="Message Received Time" required
+          pattern="([01][0-9]|2[0-3]):?[0-5][0-9]|2400|24:00">
+      </div>
+      <div id=mrerr></div>
+      <div id=mrsubrow>
+        <label><input id=mrdr name=mrdr type=checkbox checked={{GENDRS}}> Generate delivery receipt</label>
+        <div id=mrbuttons>
+          <button id=mrcan type=button>Cancel</button>
+          <input id=mrsub type=submit value="Log and View">
+        </div>
+      </div>
+    </form>
+  </dialog>
+  <script>
+    customElements.define('menu-item', MenuItem)
+    customElements.define('sub-menu', SubMenu)
+    customElements.define('menu-bar', MenuBar)
+    customElements.define('context-menu', ContextMenu)
+    customElements.define('log-entry', LogEntry)
+    customElements.define('log-grid', LogGrid)
+  </script>
+</body>
+
+</html>

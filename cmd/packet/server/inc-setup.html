@@ -1,0 +1,945 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>Incident Setup</title>
+  <script>
+    let form, conntypeRow, manualRow, serialTNCRow, telnetRow, helpLabel, helpText
+    function setValue(elm, val) {
+      elm.value = val
+      elm.dispatchEvent(new CustomEvent('i-change'))
+    }
+    function setupAutoValue(src, tgt, fn) {
+      function autoValue() {
+        if (tgt.value && !tgt.hasAttribute('x-auto')) return
+        const shouldbe = fn(src.value)
+        setValue(tgt, shouldbe)
+        if (shouldbe)
+          tgt.setAttribute('x-auto', '')
+        else
+          tgt.removeAttribute('x-auto')
+      }
+      src.addEventListener('input', autoValue)
+      src.addEventListener('change', autoValue)
+      src.addEventListener('i-change', autoValue)
+      tgt.addEventListener('input', () => {tgt.removeAttribute('x-auto')})
+      autoValue()
+    }
+    function setupHelpText() {
+      document.querySelectorAll('help').forEach(elm => {
+        const id = elm.getAttribute('for')
+        if (!id) return
+        elm.id = `help-${id}`
+        if (form[id].forEach)
+          form[id].forEach(item => {item.setAttribute('aria-describedby', `help-${id}`)})
+        else
+          form[id].setAttribute('aria-describedby', `help-${id}`)
+      })
+    }
+    function showHelp(elm) {
+      document.body.classList.toggle('help-top', elm.getBoundingClientRect().top > window.innerHeight / 2)
+      if (elm.hasAttribute('aria-label'))
+        helpLabel.textContent = elm.getAttribute('aria-label')
+      else if (lb = document.querySelector(`label[for="${elm.id}"]`))
+        helpLabel.textContent = lb.textContent.replace(/:$/, '')
+      else if (lb = elm.closest('label'))
+        helpLabel.textContent = lb.textContent
+      else
+        helpLabel.textContent = ''
+      if (elm.hasAttribute('aria-describedby'))
+        helpText.textContent = document.getElementById(elm.getAttribute('aria-describedby')).textContent
+      else if (elm.tagName === 'INPUT' || elm.tagName === 'SELECT' || elm.tagName === 'TEXTAREA')
+        helpText.textContent = '(No help available for this field.)'
+      else
+        helpText.textContent = 'Select a field to get information about that field.'
+    }
+    function conditionSatisfied(conditional) {
+      let invert = false
+      if (conditional.startsWith('!')) {
+        invert = true
+        conditional = conditional.substring(1)
+      }
+      const s = form[conditional]
+      let cond
+      if (s.type === 'checkbox' || s.type === 'radio') cond = s.checked
+      else if (s.tagName === 'OPTION') cond = s.selected
+      else cond = !!s.value
+      if (invert) cond = !cond
+      return cond
+    }
+    function setRequiredIf() {
+      document.querySelectorAll('[required-if]').forEach(elm => {
+        if (conditionSatisfied(elm.getAttribute('required-if'))) {
+          elm.disabled = false
+          elm.required = true
+        } else {
+          elm.required = false
+          if (elm.hasAttribute('else-disallowed')) {
+            elm.disabled = true
+            if (elm.type === 'checkbox' || elm.type === 'radio') elm.checked = false
+            else setValue(elm, '')
+          }
+        }
+      })
+      document.querySelectorAll('[allowed-if]').forEach(elm => {
+        if (conditionSatisfied(elm.getAttribute('allowed-if'))) {
+          elm.disabled = false
+        } else {
+          elm.disabled = true
+          if (elm.type === 'checkbox' || elm.type === 'radio') elm.checked = false
+          else setValue(elm, '')
+        }
+      })
+    }
+    function showConnTypeSettings() {
+      const conntype = form.conntype.value
+      switch (conntype) {
+        case 'manual':
+          conntypeRow.insertAdjacentElement('afterend', manualRow)
+          manualRow.removeAttribute('hidden')
+          serialTNCRow.remove()
+          telnetRow.remove()
+          break
+        case 'serial+tnc':
+          manualRow.remove()
+          conntypeRow.insertAdjacentElement('afterend', serialTNCRow)
+          serialTNCRow.removeAttribute('hidden')
+          telnetRow.remove()
+          break
+        case 'telnet':
+          manualRow.remove()
+          serialTNCRow.remove()
+          conntypeRow.insertAdjacentElement('afterend', telnetRow)
+          telnetRow.removeAttribute('hidden')
+          break
+      }
+    }
+    function propagateCallSign() {
+      const oc = form.opcall
+      const tc = form.taccall
+      let prefix
+      if (tc.value.length >= 3) {
+        if (tc.value.endsWith('DOC') || tc.value.endsWith('EOC')) prefix = tc.value.substring(0, 3)
+        else if (/\d\d\d$/.test(tc.value)) prefix = tc.value.substring(0, 1) + tc.value.substring(tc.value.length - 2)
+        else prefix = tc.value.substring(tc.value.length - 3)
+      } else if (oc.value.length >= 3) {
+        prefix = oc.value.substring(oc.value.length - 3)
+      }
+      return prefix ? prefix + '-100P' : ''
+    }
+    function setPasswordFields() {
+      if (!form.usesaved || !form.usesaved.dataset.saved) return
+      const user = form.taccall.value || form.opcall.value
+      if (form.usesaved.dataset.saved.split(',').includes(user)) {
+        document.getElementById('usesaved').removeAttribute('hidden')
+        form.usesaved.checked = true
+      } else {
+        document.getElementById('usesaved').setAttribute('hidden', '')
+        form.usesaved.checked = false
+      }
+    }
+    function addEmptyArea() {
+      let seq = 0
+      while (form[`area${seq}`]) seq++
+      if (seq > 0 && !form[`area${seq - 1}`].value) return
+      const clone = document.getElementById('bulletin-row').content.cloneNode(true)
+      clone.querySelector('[name="area#"]').name = `area${seq}`
+      clone.querySelector('[name="hr#"]').setAttribute('allowed-if', `area${seq}`)
+      clone.querySelector('[name="min#"]').setAttribute('allowed-if', `area${seq}`)
+      clone.querySelector('[name="now#"]').setAttribute('allowed-if', `area${seq}`)
+      clone.querySelector('[name="hr#"]').name = `hr${seq}`
+      clone.querySelector('[name="min#"]').name = `min${seq}`
+      clone.querySelector('[name="now#"]').name = `now${seq}`
+      document.getElementById('bulletin-rows').insertAdjacentElement('beforeend', clone.firstElementChild)
+    }
+    function setupBulletinAreas() {
+      const rows = document.getElementById('bulletin-rows')
+      if (rows.dataset.areas) {
+        rows.dataset.areas.split(';').forEach((triplet, seq) => {
+          const parts = triplet.split(','), area = parts[0], hr = parts[1], min = parts[2]
+          addEmptyArea()
+          setValue(form[`area${seq}`], area)
+          setValue(form[`hr${seq}`], hr)
+          setValue(form[`min${seq}`], min)
+        })
+      }
+      addEmptyArea()
+    }
+    function checkFormValidity() {
+      const valid = form.checkValidity()
+      document.getElementById('save').disabled = !valid
+      document.getElementById('buttonbar').classList.toggle('formValid', valid)
+    }
+    window.addEventListener('input', evt => {
+      if (evt.target.classList.contains('all-caps')) {
+        let value = evt.target.value.toUpperCase()
+        if (value !== evt.target.value) setValue(evt.target, value)
+      }
+      if (evt.target.classList.contains('date')) {
+        let value = evt.target.value
+        if (/^[2-9]/.test(value)) value = '0' + value
+        if (/^[01]\//.test(value)) value = '0' + value
+        if (/^\d\d\d/.test(value)) value = value.substring(0, 2) + '/' + value.substring(2)
+        if (/^\d\d\/[4-9]/.test(value)) value = value.substring(0, 3) + '0' + value.substring(3)
+        if (/^\d\d\/[0-3]\//.test(value)) value = value.substring(0, 3) + '0' + value.substring(3)
+        if (/^\d\d\/\d\d\d/.test(value)) value = value.substring(0, 5) + '/' + value.substring(5)
+        if (value !== evt.target.value) setValue(evt.target, value)
+      }
+      if (evt.target.classList.contains('time')) {
+        let value = evt.target.value
+        if (/^[3-9]/.test(value)) value = '0' + value
+        if (/^[012]:/.test(value)) value = '0' + value
+        if (/^\d\d\d/.test(value)) value = value.substring(0, 2) + ':' + value.substring(2)
+        if (value !== evt.target.value) setValue(evt.target, value)
+      }
+      if (evt.target.classList.contains('cardinal')) {
+        let value = evt.target.value.replace(/[^0-9]/g, '')
+        if (value !== evt.target.value) setValue(evt.target, value)
+      }
+      if (evt.target.name === 'opcall' || evt.target.name === 'taccall') propagateCallSign()
+      if (evt.target.name === 'rxmsgid')
+        evt.target.removeAttribute('x-auto')
+      setRequiredIf()
+      checkFormValidity()
+    })
+    window.addEventListener('change', evt => {
+      if (evt.target.classList.contains('date')) {
+        if (/^\d\d\/\d\d\/\d\d$/.test(evt.target.value))
+          setValue(evt.target, evt.target.value.substring(0, 6) + '20' + evt.target.value.substring(6))
+      }
+      if (evt.target.classList.contains('msgid')) {
+        let m
+        if ((m = /^(...-)(\d)([A-Z]?)$/.exec(evt.target.value)) !== null) {
+          setValue(evt.target, m[1] + '00' + m[2] + m[3])
+        } else if ((m = /^(...-)(\d\d)([A-Z]?)$/.exec(evt.target.value)) !== null) {
+          setValue(evt.target, m[1] + '0' + m[2] + m[3])
+        }
+      }
+      if (evt.target.name === 'conntype') {
+        showConnTypeSettings()
+      }
+      if (evt.target.name === 'bbscall' && evt.target.dataset.addrs) {
+        evt.target.dataset.addrs.split(';').forEach(triplet => {
+          const [bbs, host, port] = triplet.split(',')
+          if (bbs === evt.target.value) {
+            setValue(form.tcpaddr, host)
+            setValue(form.tcpport, port)
+          }
+        })
+      }
+      if (evt.target.name === 'usesaved' && !evt.target.checked)
+        form.bbspwd.focus()
+      if (evt.target.name.startsWith('area') && evt.target.value) {
+        addEmptyArea()
+        h = form['hr' + evt.target.name.substring(4)]
+        m = form['min' + evt.target.name.substring(4)]
+        if (!h.value && !m.value) {
+          setValue(h, evt.target.value === 'XSCPERM' ? 24 : 1)
+          setValue(m, 0)
+        }
+      }
+      if ((evt.target.name === 'opcall' && !form.taccall.value) || evt.target.name === 'taccall' || evt.target.name === 'conntype')
+        setPasswordFields()
+      setRequiredIf()
+      checkFormValidity()
+    })
+    window.addEventListener('keydown', evt => {
+      if (evt.key === 'F1' || evt.key === 'Help')
+        document.getElementById('help').togglePopover()
+    })
+    window.addEventListener('focusin', evt => {showHelp(evt.target)})
+    window.addEventListener('focusout', evt => {
+      if (!evt.relatedTarget) showHelp(document.body)
+    })
+    window.addEventListener('load', evt => {
+      form = document.forms[0]
+      conntypeRow = document.getElementById('conntype')
+      manualRow = document.getElementById('manual')
+      serialTNCRow = document.getElementById('serial+tnc')
+      telnetRow = document.getElementById('telnet')
+      helpLabel = document.getElementById('help-label')
+      helpText = document.getElementById('help-text')
+      document.querySelectorAll('input.date').forEach(elm => {
+        elm.pattern = '(?:0[1-9]|1[0-2])/(?:0[1-9]|[12][0-9]|3[01])/20\\d\\d'
+      })
+      document.querySelectorAll('input.time').forEach(elm => {
+        elm.pattern = '(?:(?:[01][0-9]|2[0-3]):[0-5][0-9])|24:00'
+      })
+      document.querySelectorAll('input.msgid').forEach(elm => {
+        elm.pattern = '(?:[A-Z][A-Z0-9][A-Z0-9]|[0-9][A-Z][A-Z])-\\d{3,}[A-Z]?'
+      })
+      document.querySelectorAll('input.fcccall').forEach(elm => {
+        elm.pattern = '[KNW]\\d[A-Z]{2,3}|A[A-K]\\d[A-Z]{1,3}|[KNW][A-Z]\\d[A-Z]{1,3}'
+      })
+      setupAutoValue(form.opstartdate, form.openddate, v => v)
+      setupAutoValue(form.opcall, form.rxmsgid, propagateCallSign)
+      setupAutoValue(form.taccall, form.rxmsgid, propagateCallSign)
+      setupAutoValue(form.rxmsgid, form.txmsgid, v => v)
+      setupHelpText()
+      if (af = document.querySelector('[autofocus]')) showHelp(af)
+      showConnTypeSettings()
+      setRequiredIf()
+      setupBulletinAreas()
+      checkFormValidity()
+    })
+  </script>
+  <style>
+    :root {
+      --border-width: 1px;
+    }
+
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+    }
+
+    :root,
+    input:not([type=submit]),
+    select,
+    textarea {
+      font-family: sans-serif;
+      font-size: 1em;
+    }
+
+    input:not([type=submit]),
+    select,
+    textarea {
+      border: var(--border-width) solid #ccc;
+    }
+
+    input[type=submit],
+    button {
+      font-family: sans-serif;
+      font-size: 1em;
+      border-width: 3px;
+    }
+
+    input:invalid,
+    select:invalid,
+    textarea:invalid,
+    .invalid {
+      box-shadow: 0 0 6px 2px #c80000;
+      transition: box-shadow 0.5s;
+    }
+
+    input:disabled::placeholder {
+      visibility: hidden;
+    }
+
+    body {
+      margin: 0 0.75rem 0.25rem;
+      padding-top: 4rem;
+      display: grid;
+      grid: 1fr max-content / auto;
+      height: 100vh;
+      gap: 0.75rem;
+    }
+
+    [hidden] {
+      display: none !important;
+    }
+
+    #buttonbar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 2.5rem;
+      padding-inline: 0.75rem;
+      background-color: #aaa;
+      border-bottom: var(--border-width) solid #888;
+      display: flex;
+      align-items: center;
+      gap: 1.5rem;
+    }
+
+    #buttonbar.formValid {
+      background-color: #a8e8a8;
+    }
+
+    #buttonbar.formValid #invalid-example {
+      display: none;
+    }
+
+    form {
+      display: flex;
+      flex-direction: column;
+      min-width: 6in;
+      max-width: 9in;
+      overflow-y: auto;
+      padding: var(--border-width) 0 1.5rem;
+    }
+
+    .form-grid {
+      display: grid;
+      align-items: baseline;
+    }
+
+    .form-grid.borders-inside {
+      margin-left: var(--border-width);
+    }
+
+    .form-grid .border {
+      margin-top: calc(-1 * var(--border-width));
+      margin-left: calc(-1 * var(--border-width));
+      border-width: var(--border-width);
+      border-color: #aaa;
+    }
+
+    .border.tblr {
+      border-style: solid;
+    }
+
+    .subgrid2 {
+      grid: subgrid/subgrid;
+    }
+
+    .form-grid> :not(.container) {
+      padding: 0.25rem 0.5rem;
+    }
+
+    label {
+      font-weight: bold;
+    }
+
+    input.full-width {
+      width: 100%;
+    }
+
+    .title {
+      background-color: #bef;
+      font-size: 150%;
+      font-weight: bold;
+      padding: 0.25rem 0.5rem;
+    }
+
+    .heading {
+      background-color: #ccc;
+      font-weight: bold;
+      padding: 0.25rem 0.5rem;
+    }
+
+    .vertical {
+      height: 100%;
+      line-height: 0.9;
+      text-align: center;
+      align-self: center;
+      align-content: center;
+    }
+
+    .radio-group label {
+      font-weight: normal;
+    }
+
+    .radio-group label+label {
+      margin-left: 2rem;
+    }
+
+    .cspan2 {
+      grid-column: span 2;
+    }
+
+    .cspan3 {
+      grid-column: span 3;
+    }
+
+    .cspan4 {
+      grid-column: span 4;
+    }
+
+    .cspan5 {
+      grid-column: span 5;
+    }
+
+    .rspan2 {
+      grid-row: span 2;
+    }
+
+    .rspan3 {
+      grid-row: span 3;
+    }
+
+    help {
+      display: none;
+    }
+
+    #help {
+      padding-bottom: 0.75rem;
+    }
+
+    #help-title {
+      background-color: #ffe800;
+      margin: -0.25rem -0.75rem 0.75rem;
+      padding: 0.25rem 0.75rem;
+      border-bottom: var(--border-width) solid #ccc;
+      font-weight: bold;
+    }
+
+    #help-label:not(:empty) {
+      font-weight: bold;
+      margin-bottom: 0.75rem;
+    }
+
+    #help-text {
+      max-width: 9in;
+    }
+
+    @media (min-width: 81em) {
+      body {
+        grid: auto / max-content 1fr;
+        height: auto;
+        gap: 1.5rem;
+      }
+
+      #help {
+        border: medium solid #ccc;
+        padding: 0.25rem 0.75rem;
+        align-self: start;
+        justify-self: start;
+      }
+
+      #help-text {
+        max-width: 40rem;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <form method=POST>
+    <div class="form-grid borders-inside"
+      style="grid: 'title title' 'A A' 'B B' 'C C' 'D H' 'E H' 'F H' 'G H'/max-content 1fr">
+      <div class="border tblr title" style="grid-area: title">Incident Settings</div>
+      <div class="form-grid container subgrid2 border tblr" style="grid-area: A">
+        <label for=dir>Incident Directory:</label>
+        <div><input id=dir name=dir class=full-width readonly style="border-color:transparent"></div>
+        <help for=dir>
+          This is the directory containing the incident messages and related files.
+        </help>
+      </div>
+      <div class="form-grid container subgrid2 border tblr" style="grid-area: B">
+        <label for=incname>Incident Name:</label>
+        <div><input id=incname name=incname class=full-width autofocus></div>
+        <help for=incname>
+          This is the name of the incident or event for which you were activated.
+          You can generally find this on the ICS-205 given out at the assignment briefing.
+        </help>
+      </div>
+      <div class="form-grid container subgrid2 border tblr" style="grid-area: C">
+        <label for=actnum>Activation Number:</label>
+        <div><input id=actnum name=actnum class="full-width all-caps"></div>
+        <help for=actnum>
+          This is the activation number assigned by the agency that activated you, if any.
+          You can generally find this on the ICS-205 given out at the assignment briefing.
+        </help>
+      </div>
+      <div class="form-grid container subgrid2 border tblr" style="grid-area: D">
+        <label>Operational Period:</label>
+      </div>
+      <div class="form-grid container subgrid2 border tblr" style="grid-area: E">
+        <label>Operator:</label>
+      </div>
+      <div class="form-grid container subgrid2 border tblr" style="grid-area: F">
+        <label>Tactical Station:</label>
+      </div>
+      <div class="form-grid container subgrid2 border tblr" style="grid-area: G">
+        <label>Starting Message ID:</label>
+      </div>
+      <div class="form-grid container" style="grid-area: H; grid-template: subgrid/repeat(3, max-content) 1fr">
+        <div class="form-grid container subgrid2 border tblr cspan2">
+          <label for=opstart>Start:</label>
+          <div>
+            <input id=opstart name=opstartdate class=date style="width:6rem" placeholder="−−/−−/−−−−"
+              aria-label="Operational Period Start Date">
+            <help for=opstartdate>
+              This is the date when the operational period begins, in MM/DD/YYYY format.
+              (It is not necessarily the same as your shift start date.)
+              You can generally find this on the ICS-205 given out at the assignment briefing.
+            </help>
+            <input name=opstarttime class=time style="width:4rem" placeholder="−−:−−" required-if=opstartdate
+              else-disallowed aria-label="Operational Period Start Time">
+            <help for=opstarttime>
+              This is the time when the operational period begins, in HH:MM format (24-hour clock, local time).
+              (It is not necessarily the same as your shift start time.)
+              You can generally find this on the ICS-205 given out at the assignment briefing.
+            </help>
+          </div>
+        </div>
+        <div class="form-grid container subgrid2 border tblr cspan2">
+          <label for=opend>End:</label>
+          <div>
+            <input id=opend name=openddate class=date style="width:6rem" placeholder="−−/−−/−−−−"
+              required-if=opstartdate else-disallowed aria-label="Operational Period End Date">
+            <help for=openddate>
+              This is the date when the operational period ends, in MM/DD/YYYY format.
+              (It is not necessarily the same as your shift end date.)
+              You can generally find this on the ICS-205 given out at the assignment briefing.
+            </help>
+            <input name=opendtime class=time style="width:4rem" placeholder="−−:−−" required-if=opstartdate
+              else-disallowed aria-label="Operational Period End Time">
+            <help for=opendtime>
+              This is the time when the operational period ends, in HH:MM format (24-hour clock, local time).
+              (It is not necessarily the same as your shift end time.)
+              You can generally find this on the ICS-205 given out at the assignment briefing.
+            </help>
+          </div>
+        </div>
+        <div class="form-grid container subgrid2 border tblr cspan2">
+          <label for=opcall>Call Sign:</label>
+          <div><input id=opcall name=opcall class="fcccall all-caps" style="width:6rem" required
+              aria-label="Operator Call Sign"></div>
+          <help for=opcall>This is your personal FCC call sign.</help>
+        </div>
+        <div class="form-grid container subgrid2 border tblr cspan2">
+          <label for=opname>Name:</label>
+          <div><input name=opname class=full-width required aria-label="Operator Name"></div>
+          <help for=opname>This is your full name.</help>
+        </div>
+        <div class="form-grid container subgrid2 border tblr cspan2">
+          <label for=taccall>Call Sign:</label>
+          <div>
+            <input id=taccall name=taccall class=all-caps style="width:6rem" pattern="[A-Z][A-Z0-9]{3,5}"
+              aria-label="Tactical Call Sign">
+          </div>
+          <help for=taccall>
+            This is the call sign assigned to the tactical station that you are operating.
+            It should be given to you at your assignment briefing or posted at the station.
+          </help>
+        </div>
+        <div class="form-grid container subgrid2 border tblr cspan2">
+          <label for=tacname>Name:</label>
+          <div>
+            <input id=tacname name=tacname class=full-width required-if=taccall else-disallowed
+              aria-label="Tactical Station Name">
+          </div>
+          <help for=tacname>
+            This is the name of the tactical station you are operating.
+            It should be given to your at your assignment briefing or posted at the station.
+          </help>
+        </div>
+        <div class="form-grid container subgrid2 border tblr cspan2">
+          <label for=rxmsgid>Receive:</label>
+          <div>
+            <input id=rxmsgid name=rxmsgid class="msgid all-caps" required style="width:6rem" placeholder="XXX-###P"
+              aria-label="Starting Message ID for Receive">
+          </div>
+          <help for=rxmsgid>
+            This is the message ID to assign to the first message you receive.
+            It should have the form XXX-###P, where XXX is a three-letter prefix identifying your station,
+            ### is a sequence number, and P is an optional suffix letter (usually "P" for packet).
+            Subsequent received messages will use the same prefix and suffix and successively higher sequence numbers.
+          </help>
+        </div>
+        <div class="form-grid container subgrid2 border tblr cspan2">
+          <label for=txmsgid>Send:</label>
+          <div>
+            <input id=txmsgid name=txmsgid class="msgid all-caps" required placeholder="XXX-###P"
+              style="width:6rem;justify-self:start" aria-label="Starting Message ID for Send">
+          </div>
+          <help for=txmsgid>
+            This is the message ID to assign to the first message you send.
+            It should have the form XXX-###P, where XXX is a three-letter prefix identifying your station,
+            ### is a sequence number, and P is an optional suffix letter (usually "P" for packet).
+            Subsequent sent messages will use the same prefix and suffix and successively higher sequence numbers.
+            This is usually the same as the Starting Message ID for Receive,
+            in which case sending and receiving message IDs will be interleaved.
+          </help>
+        </div>
+      </div>
+    </div>
+    <div class="form-grid borders-inside" style="grid: auto-flow/max-content max-content 1fr max-content max-content">
+      <div class="border tblr heading cspan5">BBS Communications</div>
+      <div id=conntype class="form-grid container subgrid2 border tblr cspan5">
+        <div><label>Connection Method:</label></div>
+        <div class="radio-group cspan4">
+          <label><input type=radio name=conntype value=manual> Manual</label>
+          <label><input type=radio name=conntype value=serial+tnc> Serial+TNC</label>
+          <label><input type=radio name=conntype value=telnet> Telnet</label>
+          <help for=conntype>
+            This selects how the packet software will connect to the BBS.
+            "Manual" means the packet software makes no BBS connections; you handle them manually (usually through a
+            terminal emulator talking to a TNC).
+            "Serial+TNC" means the packet software will talk to a TNC through a serial port, and use it to connect to
+            the BBS over the air.
+            "Telnet" means the packet software will connect to the BBS over the Internet using the Telnet protocol.
+          </help>
+        </div>
+      </div>
+      <div id=manual class="form-grid container subgrid2 border tblr cspan5">
+        <div><label>Manual Settings:</label></div>
+        <div class="radio-group cspan4">
+          <label>
+            <input type=checkbox name=sendrcpts>
+            Generate delivery receipts automatically
+          </label>
+          <help for=sendrcpts>
+            If checked, the packet software will generate a delivery receipt for every incoming message,
+            and leave it in "ready" state for you to send manually at your convenience.
+            If not checked, the packet software will not generate delivery receipts except when asked.
+            This setting applies only to manual BBS communications.
+            Delivery receipts are always generated and sent automatically in non-manual BBS communications.
+          </help>
+        </div>
+      </div>
+      <div id=serial+tnc class="form-grid container cspan5" style="grid-template: repeat(3, auto)/subgrid" hidden>
+        <div class="form-grid container subgrid2 border tblr rspan3">
+          <div><label>Serial+TNC Settings:</label></div>
+        </div>
+        <div class="form-grid container subgrid2 border tblr cspan4">
+          <div><label for=tnctype>TNC Type:</label></div>
+          <div class=cspan3>
+            <select id=tnctype name=tnctype>
+              <option value=KPC3+>Kantronics KPC-3 Plus</option>
+            </select>
+          </div>
+          <help for=tnctype>
+            This setting specifies which type of TNC is in use, so that the packet software knows what command set to
+            use.
+          </help>
+        </div>
+        <div class="form-grid container subgrid2 border tblr cspan4">
+          <div><label for=serport>Serial Port:</label></div>
+          <div class=cspan3><input id=serport name=serport class=full-width list=serports required></div>
+          <help for=serport>
+            This identifies the serial port that the TNC is connected to.
+            On Windows, this will be "COM#", where # is some number (most commonly 3).
+            On Mac OS and Linux, this will be /dev/ttyXXX, identifying a character device file for the port.
+            The packet software expects that the TNC is using 9600 baud, 8 data bits, no parity bit, 1 stop bit, and
+            RTS/CTS flow control.
+            (These are the default settings for most TNCs.)
+          </help>
+          <if:serports>
+            <datalist id=serports>
+              <for:serports>
+                <option value={{.}}></option>
+              </for:serports>
+            </datalist>
+          </if:serports>
+        </div>
+        <div class="form-grid container subgrid2 border tblr cspan4">
+          <div><label for=bbsaddr>BBS Address:</label></div>
+          <div class=cspan3>
+            <input id=bbsaddr name=bbsaddr class=all-caps required list=xscbbs1 placeholder="e.g. W?XSC-1"
+              style="width:8rem"
+              pattern="(?:[KNW]\d[A-Z]{2,3}|A[A-K]\d[A-Z]{1,3}|[KNW][A-Z]\d[A-Z]{1,3})-(?:[0-9]|1[0-5])">
+          </div>
+          <help for=bbsaddr>
+            This is the AX.25 address of the BBS to connect to.
+            It will be the BBS call sign followed by a dash and a number from 0 to 15 (usually 1).
+          </help>
+          <datalist id=xscbbs1>
+            <option value="W1XSC-1"></option>
+            <option value="W2XSC-1"></option>
+            <option value="W3XSC-1"></option>
+            <option value="W4XSC-1"></option>
+          </datalist>
+        </div>
+      </div>
+      <div id=telnet class="form-grid container cspan5" style="grid-template: repeat(3, auto)/subgrid" hidden>
+        <div class="form-grid container subgrid2 border tblr rspan3">
+          <div><label>Telnet Settings:</label></div>
+        </div>
+        <div class="form-grid container subgrid2 border tblr cspan4">
+          <div><label for=bbscall>BBS Call Sign:</label></div>
+          <div class=cspan3><input id=bbscall name=bbscall class="fcccall all-caps" required list=xscbbs
+              placeholder="e.g. W1XSC" style="width:8rem" data-addrs={{tcpaddrs}}>
+          </div>
+          <help for=bbscall>
+            This is the call sign of the BBS to connect to.
+          </help>
+          <datalist id=xscbbs>
+            <option value="W1XSC"></option>
+            <option value="W2XSC"></option>
+            <option value="W3XSC"></option>
+            <option value="W4XSC"></option>
+          </datalist>
+        </div>
+        <div class="form-grid container subgrid2 border tblr cspan2">
+          <div><label for=tcpaddr>BBS Address:</label></div>
+          <div><input id=tcpaddr name=tcpaddr class=full-width required placeholder="Hostname or IP address"></div>
+          <help for=tcpaddr>
+            This is the hostname or IP address of the BBS.
+          </help>
+        </div>
+        <div class="form-grid container subgrid2 border tblr cspan2">
+          <div><label for=tcpport>Port:</label></div>
+          <div>
+            <input id=tcpport name=tcpport class=cardinal required style="width:4rem"
+              pattern="[1-9]\d{0,3}|[1-5]\d{4}|6[0-4]\d{3}|65[0-4]\d\d|655[0-2]\d|6553[0-5]">
+          </div>
+          <help for=tcpport>
+            This is the TCP port number to connect to on the BBS.
+            It is a number between 1 and 65534.
+          </help>
+        </div>
+        <div class="form-grid container subgrid2 border tblr cspan4">
+          <div><label for=bbspwd>BBS Password:</label></div>
+          <div class=cspan3>
+            <div style="display:flex;gap:1rem">
+              <label id=usesaved style="display:flex;gap:0.25rem;font-weight:normal;align-items:baseline"
+                hidden={{nosaved}}>
+                <input type=checkbox name=usesaved data-saved={{havesaved}}><span>Use&nbsp;saved</span>
+              </label>
+              <help for=usesaved>
+                If checked, the packet software will connect to the BBS using the password it has saved for the
+                Tactical
+                Call Sign or Operator Call Sign listed above.
+                To use a different password, uncheck this box and enter the new password.
+              </help>
+              <input type=password id=bbspwd name=bbspwd class=full-width required-if="!usesaved" else-disallowed>
+              <help for=bbspwd>
+                This is the password to use when connecting to the BBS for the Tactical Call Sign or Operator Call
+                Sign
+                listed above.
+              </help>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="form-grid borders-inside" style="grid: auto-flow/1fr">
+      <div class="border tblr heading">Bulletin Retrieval</div>
+      <div class="border tblr">
+        <div id=bulletin-rows style="display:grid;grid:auto-flow/repeat(3,max-content);gap:0.25rem 1rem"
+          data-areas={{areas}}>
+          <label>Area</label>
+          <label>Check Every</label>
+          <label>Check Now</label>
+          <template id=bulletin-row>
+            <div style="display:contents">
+              <input name="area#" class=all-caps list=areas style="width:8rem" aria-label="Area"
+                aria-describedby=help-area>
+              <div>
+                <input name="hr#" class=cardinal style="width:3rem" allowed-if="area#" aria-label="Check Every (hours)"
+                  aria-describedby=help-hrmin>
+                hr.
+                <input name="min#" class=cardinal style="width:3rem" allowed-if="area#"
+                  aria-label="Check Every (minutes)" aria-describedby=help-hrmin>
+                min.
+              </div>
+              <input name="now#" type=checkbox allowed-if="area#" aria-label="Check Now" aria-describedby=help-now>
+            </div>
+          </template>
+          <help id=help-area>
+            This is the name of the notice or bulletin area to check.
+            It is either an SCCo notice area (XSCPERM, XSCEVENT, XSCTEST) or a BBS bulletin area (topic@distribution).
+            The most common BBS bulletin areas used by us are xxx@XSC, where xxx is a three-letter city prefix.
+          </help>
+          <help id=help-hrmin>
+            This identifies how frequently the packet software should check for new notices or bulletins in this area.
+            To check during every BBS connection, set this to 1 minute.
+            To stop checking, set this to zero, or remove the area name.
+          </help>
+          <help id=help-now>
+            If this box is checked, the area will be checked for new notices or bulletins on the next BBS connection,
+            and will then resume the defined schedule after that.
+          </help>
+          <datalist id=areas>
+            <option value="XSCPERM"></option>
+            <option value="XSCEVENT"></option>
+            <option value="XSCTEST"></option>
+            <option value="CBL@XSC"></option>
+            <option value="CUP@XSC"></option>
+            <option value="GIL@XSC"></option>
+            <option value="LAH@XSC"></option>
+            <option value="LGT@XSC"></option>
+            <option value="LMP@XSC"></option>
+            <option value="LOS@XSC"></option>
+            <option value="MLP@XSC"></option>
+            <option value="MRG@XSC"></option>
+            <option value="MTV@XSC"></option>
+            <option value="NAM@XSC"></option>
+            <option value="PAF@XSC"></option>
+            <option value="SAR@XSC"></option>
+            <option value="SJC@XSC"></option>
+            <option value="SNC@XSC"></option>
+            <option value="SNY@XSC"></option>
+            <option value="STU@XSC"></option>
+            <option value="XND@XSC"></option>
+          </datalist>
+        </div>
+      </div>
+    </div>
+    <div class="form-grid borders-inside"
+      style="grid: 'A A A A A A' 'I I I I I I' 'B C C D E E' 'B F F D G G' 'H H H H H H'/max-content max-content 1fr max-content max-content 1fr">
+      <div class="border tblr heading" style="grid-area: A">Defaults for New Messages</div>
+      <div class="form-grid container subgrid2 border tblr" style="grid-area: I">
+        <label for=toaddr class=cspan2>Send To Address:</label>
+        <div class=cspan4><input id=toaddr name=toaddr class=full-width></div>
+        <help for=toaddr>
+          Specifies an address (or comma-separated list of addresses) to put into the To: line of all new outbound
+          messages (except replies and receipts).
+          Use this when all of your traffic is sent to the same station.
+        </help>
+      </div>
+      <div class="border tblr heading vertical" style="grid-area: B">
+        <div>T<br>O</div>
+      </div>
+      <div class="form-grid container subgrid2 border tblr" style="grid-area: C">
+        <div><label for=topos>ICS Position:</label></div>
+        <div><input id=topos name=topos class=full-width aria-label="To ICS Position"></div>
+        <help for=topos>
+          Specifies default content for the To ICS Position field in newly created forms.
+        </help>
+      </div>
+      <div class="form-grid container subgrid2 border tblr" style="grid-area: F">
+        <div><label for=toloc>Location:</label></div>
+        <div><input id=toloc name=toloc class=full-width aria-label="To Location"></div>
+        <help for=toloc>
+          Specifies default content for the To Location field in newly created forms.
+        </help>
+      </div>
+      <div class="border tblr heading vertical" style="grid-area: D">
+        <div>F<br>R<br>O<br>M</div>
+      </div>
+      <div class="form-grid container subgrid2 border tblr" style="grid-area: E">
+        <div><label for=frompos>ICS Position:</label></div>
+        <div><input id=frompos name=frompos class=full-width aria-label="From ICS Position"></div>
+        <help for=frompos>
+          Specifies default content for the From ICS Position field in newly created forms.
+        </help>
+      </div>
+      <div class="form-grid container subgrid2 border tblr" style="grid-area: G">
+        <div><label for=fromloc>Location:</label></div>
+        <div><input id=fromloc name=fromloc class=full-width aria-label="From Location"></div>
+        <help for=fromloc>
+          Specifies default content for the From Location field in newly created forms.
+        </help>
+      </div>
+      <div class="form-grid container subgrid2 border tblr" style="grid-area: H">
+        <label for=defbody class=cspan2>Main Body Text:</label>
+        <div class="form-grid subgrid2 full-width cspan4">
+          <textarea id=defbody name=defbody class="cspan4 full-width" rows=1
+            placeholder="e.g., **** This is drill traffic ****"></textarea>
+        </div>
+        <help for=defbody>
+          This is default text to be put into the most prominent multi-line text field of newly created forms.
+          It is most often used to add "**** This is drill traffic ****" or a similar note to all messages during a
+          drill.
+        </help>
+      </div>
+    </div>
+    <div id=buttonbar>
+      <input type=submit id=save name=save value=Save style="font-weight:bold" aria-label=Save>
+      <help for=save>
+        This button will save the updated incident settings and return you to the incident message list.
+      </help>
+      <button type=button name=cancel onclick="history.back()" aria-label=Cancel>Cancel</button>
+      <help for=cancel>
+        This button will discard your changes to the incident settings and return you to the incident message list.
+      </help>
+      <span id=invalid-example>
+        <input class=invalid disabled
+          style="margin-left:2rem;width:2rem;background-color:#fff">&nbsp;&nbsp;=&nbsp;required
+      </span>
+    </div>
+  </form>
+  <div id=help>
+    <div id=help-title>Field Help</div>
+    <div id=help-label></div>
+    <div id=help-text></div>
+  </div>
+</body>
+
+</html>

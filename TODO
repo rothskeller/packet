@@ -1,8 +1,3 @@
-Bugs to fix:
-  Start date rewriting in incident config not carried over to end date
-  Empty help text for initially focused field
-  Still need to improve PDF field rendering where field appearance overlaps PDF
-
 High want before first release:
   Manual mode
 
