@@ -19,6 +19,9 @@ var (
 	// AddressFile is the pathname of the file containing the address of the
 	// running server for the current user.
 	AddressFile string
+	// DefaultsFile is the pathname of the file containing the incident
+	// configuration defaults.
+	DefaultsFile string
 	// LogsDir is the pathname of the directory containing the packet server
 	// log files for the current user.
 	LogsDir string
@@ -32,6 +35,7 @@ func init() {
 		os.Exit(1)
 	}
 	AddressFile = home + "/.local/state/packet/server.url"
+	DefaultsFile = home + "/.config/packet/packet.json"
 	LogsDir = home + "/.local/state/packet/log"
 }
 

@@ -5,6 +5,7 @@ package osdep
 import (
 	"os"
 	"os/exec"
+	"path/filepath"
 	"syscall"
 
 	"golang.org/x/sys/windows"
@@ -22,12 +23,18 @@ var (
 	// AddressFile is the pathname of the file containing the address of the
 	// running server for the current user.
 	AddressFile string
+	// DefaultsFile is the pathname of the file containing the incident
+	// configuration defaults.
+	DefaultsFile string
 	// LogsDir is the pathname of the directory containing the packet server
 	// log files for the current user.
 	LogsDir string
 )
 
 func init() {
+	if ad := os.Getenv("APPDATA"); ad != "" {
+		DefaultsFile = filepath.Join(ad, "packet.json")
+	}
 	AddressFile = `C:\PackItForms\server.url`
 	LogsDir = `C:\PackItForms\Log`
 }
