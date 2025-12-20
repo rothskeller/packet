@@ -144,12 +144,11 @@ func (state *expandState) expandAttributes(node *html.Node, emptyBools bool) {
 			node.Attr[i].Key = match[1]
 		}
 		// Replace variable references in the value.
-		// handle conditionals.
 		if variableRE.MatchString(node.Attr[i].Val) {
 			if node.Attr[i].Val = state.expandVariables(node.Attr[i].Val); node.Attr[i].Val == "" {
 				node.Attr[i].Key = "" // removes attribute later
 			} else {
-				for prev := 0; prev < i; prev++ {
+				for prev := range i {
 					if node.Attr[prev].Key == node.Attr[i].Key {
 						node.Attr[prev].Key = ""
 					}
