@@ -282,7 +282,7 @@ func (s *Server) handleRequest(w http.ResponseWriter, r *http.Request) {
 	// Reset the idle timer on any request.
 	s.idleTimer.Reset(serverTimeout)
 	// Log the request.
-	r.ParseForm()
+	r.FormValue("x") // force the form to be parsed
 	for k, vs := range r.Form {
 		for _, v := range vs {
 			attrs = append(attrs, slog.String(k, v))
