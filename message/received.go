@@ -67,7 +67,7 @@ func (m *ReceivedMessage) RFC5322() string {
 	hdr := make(textproto.MIMEHeader)
 
 	if m.rxArea != "" {
-		hdr.Set("Received", fmt.Sprintf("FROM %s.ampr.org BY pktmsg.local FOR %s;\r\n\t%s",
+		hdr.Set("Received", fmt.Sprintf("FROM %s.ampr.org BY pktmsg.local FOR %s;\n\t%s",
 			m.rxBBS, m.rxArea, m.rxDate.Format(time.RFC1123Z)))
 	} else {
 		hdr.Set("Received", fmt.Sprintf("FROM %s.ampr.org BY pktmsg.local; %s",

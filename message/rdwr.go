@@ -9,6 +9,7 @@ import (
 	"net/mail"
 	"os"
 	"regexp"
+	"runtime"
 	"strings"
 
 	"github.com/rothskeller/packet/message/payload"
@@ -50,10 +51,11 @@ func read(filename string, noHeaderOK bool) (m Message, err error) {
 	if by, err = os.ReadFile(filename); err != nil {
 		return nil, err
 	}
+	by = bytes.ReplaceAll(by, crlf, lf)
 	if noHeaderOK && !hasHeadersRE.Match(by) {
-		nby := make([]byte, len(by)+8)
-		copy(nby, []byte("X: X\r\n\r\n"))
-		copy(nby[8:], by)
+		nby := make([]byte, len(by)+6)
+		copy(nby, []byte("X: X\n\n"))
+		copy(nby[6:], by)
 		by = nby
 	}
 	if msg, err = mail.ReadMessage(bytes.NewReader(by)); err != nil {
@@ -73,7 +75,6 @@ func read(filename string, noHeaderOK bool) (m Message, err error) {
 	if by, err = io.ReadAll(msg.Body); err != nil {
 		return nil, fmt.Errorf("%s: body: %w", filename, err)
 	}
-	by = bytes.ReplaceAll(by, crlf, lf)
 	if c.payload, err = payload.Decode(msg.Header, string(by)); c.payload == nil {
 		return nil, fmt.Errorf("%s: %w", filename, err)
 	} else {
@@ -105,6 +106,9 @@ func read(filename string, noHeaderOK bool) (m Message, err error) {
 
 // Write writes a message in RFC-5322 format to the specified file.
 func Write(m Message, filename string) (err error) {
-	encoded := m.RFC5322()
-	return os.WriteFile(filename, []byte(encoded), 0666)
+	encoded := []byte(m.RFC5322())
+	if runtime.GOOS == "windows" {
+		encoded = bytes.ReplaceAll(encoded, lf, crlf)
+	}
+	return os.WriteFile(filename, encoded, 0666)
 }

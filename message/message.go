@@ -87,27 +87,27 @@ func (m *common) rfc5322(headers textproto.MIMEHeader) string {
 		hnames = sets.New(slices.Collect(maps.Keys(headers))...)
 	)
 	if hnames.Has("Received") {
-		fmt.Fprintf(&sb, "Received: %s\r\n", headers.Get("Received"))
+		fmt.Fprintf(&sb, "Received: %s\n", headers.Get("Received"))
 		hnames.Delete("Received")
 	}
 	if hnames.Has("From") {
-		fmt.Fprintf(&sb, "From: %s\r\n", strings.Join(headers["From"], ",\r\n\t"))
+		fmt.Fprintf(&sb, "From: %s\n", strings.Join(headers["From"], ",\n\t"))
 		hnames.Delete("From")
 	}
 	if m.to != "" {
-		fmt.Fprintf(&sb, "To: %s\r\n", rfc5322AddressList(m.to))
+		fmt.Fprintf(&sb, "To: %s\n", rfc5322AddressList(m.to))
 	}
 	if s := m.subject.EncodedSubject(); s != "" {
-		fmt.Fprintf(&sb, "Subject: %s\r\n", s)
+		fmt.Fprintf(&sb, "Subject: %s\n", s)
 	}
 	if hnames.Has("Date") {
-		fmt.Fprintf(&sb, "Date: %s\r\n", headers.Get("Date"))
+		fmt.Fprintf(&sb, "Date: %s\n", headers.Get("Date"))
 		hnames.Delete("Date")
 	}
 	for key := range hnames {
-		fmt.Fprintf(&sb, "%s: %s\r\n", key, strings.Join(headers[key], ",\r\n\t"))
+		fmt.Fprintf(&sb, "%s: %s\n", key, strings.Join(headers[key], ",\n\t"))
 	}
-	io.WriteString(&sb, "\r\n")
+	io.WriteString(&sb, "\n")
 	io.WriteString(&sb, m.payload.Encode())
 	return sb.String()
 }
