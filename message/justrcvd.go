@@ -159,7 +159,18 @@ func NewJustReceivedMessage(retrieved, rxBBS, rxArea string) (m *JustReceivedMes
 			"body.FormBody.Field.OpName",
 			"body.FormBody.Field.OpCall",
 			"body.FormBody.Field.OpDate",
-			"body.FormBody.Field.OpTime":
+			"body.FormBody.Field.OpTime",
+			"body.FormBody.Field.RecSent",
+			"body.FormBody.Field.Method",
+			"body.FormBody.Field.Other",
+			"body.FormBody.Common.destinationMessageID",
+			"body.FormBody.Common.operatorName",
+			"body.FormBody.Common.operatorCall",
+			"body.FormBody.Common.operatorDate",
+			"body.FormBody.Common.operatorTime",
+			"body.FormBody.Common.receiverSender",
+			"body.FormBody.Common.operatorMethod",
+			"body.FormBody.Common.operatorMethodOther":
 			// OK
 		default:
 			panic("JustReceivedMessage should not change: " + reason)
