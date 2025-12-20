@@ -37,7 +37,13 @@ func (ft FormType) Validate(m message.Message, pifo bool) error {
 
 // Fields returns an iterator on the set of message fields.
 func (ft FormType) Fields() iter.Seq[field.Field] {
-	panic("not implemented") // TODO: Implement
+	return func(yield func(field.Field) bool) {
+		for fd := range ft.AllFields() {
+			if !yield(ff2mf{fd}) {
+				return
+			}
+		}
+	}
 }
 
 // RenderPDF renders the form in PDF format.
