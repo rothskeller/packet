@@ -265,6 +265,13 @@ func (b *FormBody) Field(tag string) string { return b.fields[tag] }
 // SetField sets the value of the form field with the specified tag.  Setting a
 // field to an empty string removes it.
 func (b *FormBody) SetField(tag, value string) {
+	b.SetFieldR(tag, value, "body.FormBody.Field."+tag)
+}
+
+// SetFieldR sets the value of the form field with the specified tag.  Setting
+// a field to an empty string removes it.  If the result is a change, the body
+// is marked dirty with the specified reason.
+func (b *FormBody) SetFieldR(tag, value, reason string) {
 	if value == b.fields[tag] {
 		return
 	}
@@ -273,7 +280,7 @@ func (b *FormBody) SetField(tag, value string) {
 	} else {
 		b.fields[tag] = value
 	}
-	b.MarkDirty("body.FormBody.Field." + tag)
+	b.MarkDirty(reason)
 }
 
 // TextAfter returns any text that appears after the end of the form.
