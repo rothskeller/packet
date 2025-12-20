@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"io"
+	"log/slog"
 	"mime"
 	"net/mail"
 	"os"
@@ -110,5 +111,9 @@ func Write(m Message, filename string) (err error) {
 	if runtime.GOOS == "windows" {
 		encoded = bytes.ReplaceAll(encoded, lf, crlf)
 	}
-	return os.WriteFile(filename, encoded, 0666)
+	if err = os.WriteFile(filename, encoded, 0666); err != nil {
+		slog.Error("message.Write", "fname", filename, "err", err)
+		return err
+	}
+	return nil
 }

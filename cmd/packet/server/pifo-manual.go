@@ -1,5 +1,52 @@
 package server
 
+import (
+	"log/slog"
+	"net/http"
+	"strings"
+
+	"github.com/rothskeller/packet/incident"
+	"github.com/rothskeller/packet/message"
+)
+
+// servePostManualReceive handles POST /manual-receive requests, which contain
+// a received message that was manually provided.
+func (s *Server) servePostManualReceive(w http.ResponseWriter, r *http.Request) {
+	var (
+		makedr bool
+		mtext  string
+		msg    *message.JustReceivedMessage
+		err    error
+	)
+	// Check parameters.
+	makedr = r.FormValue("mrdr") != ""
+	mtext = strings.ReplaceAll(r.FormValue("mrmsg"), "\r\n", "\n")
+	if msg, err = message.NewJustReceivedMessage(mtext, r.FormValue("mrbbs"), ""); err != nil {
+		slog.Error("NewJustReceivedMessage", "err", err)
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+	err = incident.Write(r.FormValue("dir"), func(i *incident.Incident) error {
+		var dr message.Message
+
+		if dr, err = i.ReceiveMessage(msg); err != nil {
+			slog.Error("ReceiveMessage", "err", err)
+			return err
+		}
+		if dr != nil && makedr {
+			// if err = i.QueueSend(dr); err != nil {
+			// return fmt.Errorf("queueing delivery receipt: %s", err)
+			// }
+		}
+		return nil
+	})
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+	w.WriteHeader(http.StatusNoContent)
+}
+
 /*
 import (
 	"embed"

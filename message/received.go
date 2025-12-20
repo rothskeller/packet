@@ -12,7 +12,7 @@ import (
 
 // receivedRE is the regular expression for the "Received: " line that this
 // package generates when saving a received message.
-var receivedRE = regexp.MustCompile(`^FROM (\S*)\.ampr\.org BY pktmsg.local(?: FOR (\S+))?; (\w\w\w, \d\d \w\w\w \d\d\d\d \d\d:\d\d:\d\d [-+]\d\d\d\d)$`)
+var receivedRE = regexp.MustCompile(`^FROM (\S*)\.(?:ampr|scc-ares-races)\.org BY (?:packet|pktmsg).local(?: FOR (\S+))?; (\w\w\w, \d\d \w\w\w \d\d\d\d \d\d:\d\d:\d\d [-+]\d\d\d\d)$`)
 
 // A ReceivedMessage is for a message that the local system received from a
 // BBS at some point in the past, was stored locally on disk, and has been read
@@ -67,10 +67,10 @@ func (m *ReceivedMessage) RFC5322() string {
 	hdr := make(textproto.MIMEHeader)
 
 	if m.rxArea != "" {
-		hdr.Set("Received", fmt.Sprintf("FROM %s.ampr.org BY pktmsg.local FOR %s;\n\t%s",
+		hdr.Set("Received", fmt.Sprintf("FROM %s.scc-ares-races.org BY packet.local FOR %s;\n\t%s",
 			m.rxBBS, m.rxArea, m.rxDate.Format(time.RFC1123Z)))
 	} else {
-		hdr.Set("Received", fmt.Sprintf("FROM %s.ampr.org BY pktmsg.local; %s",
+		hdr.Set("Received", fmt.Sprintf("FROM %s.scc-ares-races.org BY packet.local; %s",
 			m.rxBBS, m.rxDate.Format(time.RFC1123Z)))
 	}
 	if m.from != "" {

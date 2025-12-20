@@ -511,7 +511,7 @@
     }
   </style>
   <script> // LogEntry
-    const myIdent = 'XND023'  // temporary for testing
+    const myIdent = '{{IDENT}}'
     // A <log-entry> represents a single line in the message log.  It is not
     // the same as a message:  a message can have more than one line if it has
     // multiple recipients, and log entries can exist without an underlying
@@ -561,6 +561,7 @@
     //     I: immediate: message has immediate handling order
     //     P: priority: message has priority handling order
     //     R: receipt: message is a receipt
+    //     U: unread: received message has not been read
     //     V: voice: log entry is for a voice message
     //     -: a receipt is needed for this log entry (and has not been received)
     //     +: a receipt has been received for this log entry
@@ -635,8 +636,10 @@
         this._toIDCell.textContent = data.ti
         this._toIDCell.classList.toggle('needs-receipt', data.f.includes('-'))
         this._sFullCell.textContent = data.s
+        this._sFullCell.classList.toggle('unread', data.f.includes('U'))
         this._sFullCell.classList.toggle('voice', data.f.includes('V'))
         this._sTrimCell.textContent = (data.fi && data.s.startsWith(data.fi + '_')) ? data.s.substring(data.fi.length + 1) : (data.ti && data.s.startsWith(data.ti + '_')) ? data.s.substring(data.ti.length + 1) : data.s
+        this._sTrimCell.classList.toggle('unread', data.f.includes('U'))
         this._sTrimCell.classList.toggle('voice', data.f.includes('V'))
         this._fuCell.textContent = data.f.includes('F') ? '★' : ''
         this._fuCell.title = data.f.includes('F') ? 'Needs Followup' : null
@@ -777,12 +780,23 @@
       color: #888;
     }
 
+    .unread::before {
+      content: "NEW";
+      font-size: 0.875rem;
+      background-color: #ff0000;
+      color: white;
+      padding-inline: 2px;
+      margin-right: 0.25rem;
+      cursor: default;
+    }
+
     .voice::before {
       content: "VOICE";
       font-size: 0.875rem;
       background-color: #a8e8a8;
       padding-inline: 2px;
       margin-right: 0.25rem;
+      cursor: default;
     }
   </style>
   <script> // LogGrid
@@ -949,19 +963,6 @@
       font-size: 1.5rem;
     }
 
-    #mrdtrow {
-      margin-top: 0.75rem;
-    }
-
-    #mrdate {
-      margin-left: 1rem;
-      width: 8rem;
-    }
-
-    #mrtime {
-      width: 4rem;
-    }
-
     #mrerr:not(:empty) {
       margin-top: 1.5rem;
       color: red;
@@ -1049,9 +1050,6 @@
         shown: () => manualMode,
         clicked: () => {
           document.getElementById('mrmsg').textContent = ''
-          const now = new Date()
-          document.getElementById('mrdate').value = ('0' + (now.getMonth() + 1)).slice(-2) + '/' + ('0' + now.getDate()).slice(-2) + '/' + now.getFullYear()
-          document.getElementById('mrtime').value = ('0' + now.getHours()).slice(-2) + ':' + ('0' + now.getMinutes()).slice(-2)
           document.getElementById('mrdlg').showModal()
         },
       })
@@ -1194,7 +1192,7 @@
     </div>
     <div>
       <div id=incname>{{INCNAME}}</div>
-      <div id=ident>{{IDENT}}</div>
+      <div id=ident>{{IDENT}}@{{BBS}}</div>
     </div>
   </div>
   <menu-bar>
@@ -1289,6 +1287,7 @@
   <dialog id=mrdlg>
     <form id=mrform>
       <input type=hidden name=dir value="{{DIR}}">
+      <input type=hidden name=mrbbs value="{{BBS}}">
       <h1>Manual Receive Message</h1>
       <p>
         Paste the received message, including the From, Subject, and other headers.
@@ -1298,20 +1297,13 @@
       </p>
       <textarea id=mrmsg name=mrmsg rows=10 required
         placeholder="From: ...&#10;Date: ...&#10;Subject: ...&#10;&#10;!SCCoPIFO!&#10;...&#10;!/ADDON!"></textarea>
-      <input type="file" id="mrfile" style="display:none;">
-      <div id=mrdtrow>
-        <label for=mrdate>When was this message received?</label>
-        <input id=mrdate name=mrdate placeholder=MM/DD/YYYY aria-label="Message Received Date" required
-          pattern="(0[1-9]|1[012])/(0[1-9]|[12][0-9]|3[01])/20[0-9][0-9]">
-        <input id=mrtime name=mrtime placeholder=HH:MM aria-label="Message Received Time" required
-          pattern="([01][0-9]|2[0-3]):?[0-5][0-9]|2400|24:00">
-      </div>
+      <input type=file id=mrfile style="display:none;">
       <div id=mrerr></div>
       <div id=mrsubrow>
         <label><input id=mrdr name=mrdr type=checkbox checked={{GENDRS}}> Generate delivery receipt</label>
         <div id=mrbuttons>
           <button id=mrcan type=button>Cancel</button>
-          <input id=mrsub type=submit value="Log and View">
+          <input id=mrsub type=submit value="Receive Message">
         </div>
       </div>
     </form>

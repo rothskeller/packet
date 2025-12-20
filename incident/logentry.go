@@ -114,6 +114,9 @@ const (
 	// FPriority is set when the log entry is for a message with priority
 	// handling order.
 	FPriority
+	// FUnread is set on received messages (other than receipts) that
+	// haven't been read.
+	FUnread
 	// FVoice is set when the (hand-entered) log entry is for a voice
 	// message.
 	FVoice
@@ -136,6 +139,9 @@ func (f LogEntryFlags) MarshalJSONTo(enc *jsontext.Encoder) (err error) {
 	}
 	if f&FIsReceipt != 0 {
 		sb.WriteByte('R')
+	}
+	if f&FUnread != 0 {
+		sb.WriteByte('U')
 	}
 	if f&FVoice != 0 {
 		sb.WriteByte('V')
@@ -167,6 +173,8 @@ func (f *LogEntryFlags) UnmarshalJSONFrom(dec *jsontext.Decoder) (err error) {
 				*f |= FPriority
 			case 'R':
 				*f |= FIsReceipt
+			case 'U':
+				*f |= FUnread
 			case 'V':
 				*f |= FVoice
 			case '-':

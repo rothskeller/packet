@@ -314,6 +314,7 @@ func (s *Server) registerHandlers() {
 	s.mux.HandleFunc("POST /incident-config", s.servePostIncidentConfig)
 	s.mux.HandleFunc("GET /incident", s.serveGetIncident)
 	s.mux.HandleFunc("GET /incident/log", s.serveGetIncidentLog)
+	s.mux.HandleFunc("POST /manual-receive", s.servePostManualReceive)
 	//s.mux.HandleFunc("GET /choose-incident", s.serveChooseIncident)
 	//s.mux.HandleFunc("GET /incident", s.serveGetIncident)
 	// s.mux.HandleFunc("GET /manual", s.serveGetManual)

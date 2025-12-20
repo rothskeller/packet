@@ -32,6 +32,7 @@ func (s *Server) serveGetIncident(w http.ResponseWriter, r *http.Request) {
 	}
 	err = incident.Read(dir, func(i *incident.Incident) error {
 		vars["DIR"] = dir
+		vars["BBS"] = i.Config.ConnectBBS
 		if i.Config.IncidentName != "" {
 			vars["INCNAME"] = i.Config.IncidentName
 		} else if i.Config.ActivationNum != "" {
@@ -40,9 +41,9 @@ func (s *Server) serveGetIncident(w http.ResponseWriter, r *http.Request) {
 			vars["INCNAME"] = dir
 		}
 		if i.Config.TacCall != "" {
-			vars["IDENT"] = i.Config.TacCall + "@" + i.Config.ConnectBBS
+			vars["IDENT"] = i.Config.TacCall
 		} else {
-			vars["IDENT"] = i.Config.OpCall + "@" + i.Config.ConnectBBS
+			vars["IDENT"] = i.Config.OpCall
 		}
 		if !i.Config.NoSendReceipts {
 			vars["GENDRS"] = "checked"
