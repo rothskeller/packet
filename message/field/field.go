@@ -6,8 +6,6 @@ import (
 	"github.com/rothskeller/packet/message/body"
 	"github.com/rothskeller/packet/message/payload"
 	"github.com/rothskeller/packet/message/subject"
-
-	"github.com/phpdave11/gofpdf"
 )
 
 // Field is the interface satisfied by all message fields.  Note that this is
@@ -16,6 +14,11 @@ import (
 type Field interface {
 	// Tag returns the PackItForms tag for the field, if any.
 	Tag() string
+	// Common is the tag string that identifies the field as one of the
+	// well-known common fields.  It allows software to address those
+	// fields without dependency on how they're stored in a particular
+	// message type.
+	Common() string
 	// Label returns the label for the field, if any.
 	Label() string
 	// Parent returns the parent field that contains this field, if any.
@@ -27,15 +30,17 @@ type Field interface {
 	Children() []Field
 	// Value returns the value of the field, in internal form.
 	Value(Message) string
+	// Default returns the default value of the field, in internal form.
+	Default() string
 	// ToHuman converts the internal form of a value for the field into the
-	// human form appropriate for display and editing.
+	// human form appropriate for display and editing (often a no-op).
 	ToHuman(string) string
 	// FromHuman converts the supplied value from human form to internal
-	// form, if possible; otherwise it makes no changes.  The default is an
-	// identity conversion.
+	// form, if possible; otherwise it makes no changes.  Implementations
+	// must not change the value if it is already in internal form.
 	FromHuman(string) string
-	// SetValue sets the value of the field.  The
-	// supplied value must be in internal form.
+	// SetValue sets the value of the field.  The supplied value must be in
+	// internal form.
 	SetValue(Message, string)
 	// Visible returns whether the field should be included when the
 	// message is displayed.  Note that fields with an empty value are
@@ -67,7 +72,8 @@ type Field interface {
 	Obscured() bool
 	// Choices returns a list of allowed or recommended values for the
 	// field.  Each element is a pair with internal and human
-	// representations of the value.
+	// representations of the value.  The list may vary depending on the
+	// values of other fields of the message.
 	Choices(Message) []ChoicePair
 	// Restricted returns whether the value of the field is restricted to
 	// one of the listed Choices (true), or whether they are just
@@ -80,11 +86,11 @@ type Field interface {
 	// Compare compares the value of the field in the actual message to
 	// the corresponding value in the expected message, and returns the
 	// results of the comparison.
-	Compare(expected, actual Message) *ComparedField
+	// Compare(expected, actual Message) *ComparedField
 	// RenderPDF renders the field onto the specified page of the specified
 	// PDF file, if it belongs there.  It may return any errors in the
 	// process (unsupported value, doesn't fit in the space, etc.).
-	RenderPDF(m Message, pdf *gofpdf.Pdf, page int) error
+	// RenderPDF(m Message, pdf *gofpdf.Pdf, page int) error
 }
 
 // Message is a reduced copy of message.Message (which see), containing only

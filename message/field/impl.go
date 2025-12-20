@@ -10,9 +10,11 @@ import (
 // field is the implementation of Field created by a FieldFactory.
 type field struct {
 	tag            string
+	common         string
 	label          string
 	parent         Field
 	children       []Field
+	defvalue       string
 	editHelp       string
 	editHint       string
 	multiline      bool
@@ -40,9 +42,11 @@ type field struct {
 var _ Field = (*field)(nil)
 
 func (f *field) Tag() string          { return f.tag }
+func (f *field) Common() string       { return f.common }
 func (f *field) Label() string        { return f.label }
 func (f *field) Parent() Field        { return f.parent }
 func (f *field) Children() []Field    { return f.children }
+func (f *field) Default() string      { return f.defvalue }
 func (f *field) EditHelp() string     { return f.editHelp }
 func (f *field) EditHint() string     { return f.editHint }
 func (f *field) Multiline() bool      { return f.multiline }
