@@ -141,7 +141,7 @@ field OpRelaySent
   label    "Operator: Relay Sent"
   pdf      text L 376.40 R 559.84 B 185.12 T 200.20 BL 187.80
 
-field Rec-Sent
+field Rec-Sent receiverSender
   label    "Operator: Receiver/Sender"
   type     restricted
   choice   sender
@@ -164,7 +164,7 @@ field -
   type     join
   children OpName OpCall
 
-field Method
+field Method operatorMethod
   label    "Operator: Tx Method"
   type     restricted
   choice   Telephone
@@ -183,7 +183,7 @@ field Method
   pdf      if Method="Amateur Radio" then circle X  42.24 Y 109.26 R 3.0
   pdf      if Method=Other then circle X 141.24 Y 109.26 R 3.0
 
-field Other
+field Other operatorMethodOther
   label    "Operator: Other Method"
   presence if Method=Other then optional else blocked
   pdf      text L 187.28 R 288.16 B 100.40 T 116.32 BL 105.72
