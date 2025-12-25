@@ -51,7 +51,7 @@ var ReadReceipt readReceipt
 var readReceiptOnce sync.Once
 
 func init() {
-	ReadReceipt.BaseMType = message.NewBaseMType("a read receipt", "")
+	ReadReceipt.BaseMType = message.NewBaseMType("a read receipt")
 	message.RegisterType(ReadReceipt)
 }
 
@@ -145,6 +145,8 @@ func (b *ReadReceiptBody) ReadTime() string { return b.readTime }
 // receipt itself.
 func (b *ReadReceiptBody) ExtraText() string { return b.extraText }
 
+func (b *ReadReceiptBody) Clone() body.Body { panic("should not be called") }
+
 //--- SUBJECT -----------------------------------------------------------------
 
 // A ReadReceiptSubject is a subject for a read receipt.
@@ -173,6 +175,8 @@ func (s *ReadReceiptSubject) EncodedSubject() string { return "READ: " + s.rmSub
 // ReceiptedMessageSubject returns the receipted message subject encoded in the
 // receipt message subject line.
 func (s *ReadReceiptSubject) ReceiptedMessageSubject() string { return s.rmSubject }
+
+func (s *ReadReceiptSubject) Clone() subject.Subject { panic("should not be called") }
 
 func init() { subject.RegisterDecoder(decodeReadReceiptSubject) }
 func decodeReadReceiptSubject(subject string) (subject.Subject, error) {

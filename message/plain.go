@@ -2,8 +2,13 @@ package message
 
 import (
 	"fmt"
+	"io/fs"
+	"net/http"
 
 	"github.com/rothskeller/packet/errors"
+	"github.com/rothskeller/packet/message/body"
+	"github.com/rothskeller/packet/message/payload"
+	"github.com/rothskeller/packet/message/subject"
 )
 
 var (
@@ -20,12 +25,14 @@ func (e ErrNotPlainTextBody) Error() string {
 
 // A PlainMessage is a plain text message with no special structure or
 // interpretation.
-type plainMessage struct{ *BaseMType }
+type plainMessage struct{ *BaseEditableMType }
+
+var _ EditableMType = plainMessage{}
 
 var PlainMessage plainMessage
 
 func init() {
-	PlainMessage.BaseMType = NewBaseMType("a plain text message", "plain")
+	PlainMessage.BaseEditableMType = NewBaseEditableMType("a plain text message", "plain", "p")
 	PlainMessage.AddField() // TODO
 }
 
@@ -66,3 +73,19 @@ func (m *PlainMessage) Validate(pifo bool) (err error) {
 	return err
 }
 */
+
+func (mt plainMessage) NewDraft() (msg *DraftMessage) {
+	return NewDraftMessage(PlainMessage, subject.NewPlainSubject(""), payload.NewOutpostPayload(body.NewPlainBody("")), false)
+}
+
+func (mt plainMessage) EditHTML(msg *DraftMessage, vars EditHTMLVars) ([]byte, error) {
+	panic("not implemented")
+}
+
+func (mt plainMessage) EditAssets() fs.FS {
+	panic("not implemented")
+}
+
+func (mt plainMessage) FromPOST(r *http.Request) (*DraftMessage, error) {
+	panic("not implemented")
+}

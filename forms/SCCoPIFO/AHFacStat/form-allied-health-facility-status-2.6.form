@@ -3,7 +3,7 @@ html     form-allied-health-facility-status.html
 version  2.6
 title    Allied Health Facility Status Form
 indef    an allied health facility status form
-create   AHFacStat
+create   AHFacStat a
 pdfFile  Allied_Health_Facility_Status_DEOC-9_v20180200_with_XSC_RACES_Routing_Slip_v20190527.pdf
 
 field MsgNo originMessageID

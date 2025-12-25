@@ -3,7 +3,7 @@ html     form-medical-facility-status-v2.html
 version  3.4
 title    Medical Facility Status Form
 indef    a medical facility status form
-create   MedFacStat
+create   MedFacStat m
 pdfFile  XSC_MedFacStat_v190531b_Fillable.pdf
 
 field MsgNo originMessageID

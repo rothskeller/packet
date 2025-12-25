@@ -6,11 +6,16 @@ import (
 	_ "embed"
 	"encoding/json/v2"
 	"errors"
+	"fmt"
 	"net/http"
+	"regexp"
+	"slices"
 	"strconv"
+	"strings"
 
 	"github.com/rothskeller/packet/form/htmlop"
 	"github.com/rothskeller/packet/incident"
+	"github.com/rothskeller/packet/message"
 	"golang.org/x/net/html"
 )
 
@@ -55,6 +60,7 @@ func (s *Server) serveGetIncident(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	vars["VERSION"] = "4.0.0" // TODO: compute this
+	vars["MTYPES"] = newMessageTypeList()
 	if doc, err = html.Parse(bytes.NewReader(incidentHTML)); err != nil {
 		ErrorPage(w, http.StatusInternalServerError, err, nil)
 		return
@@ -109,4 +115,27 @@ func (s *Server) serveGetIncidentLog(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json; charset=utf-8")
 	w.Header().Set("Cache-Control", "nostore, private")
 	json.MarshalWrite(w, ilog)
+}
+
+var titleCaseRE = regexp.MustCompile(`(?:^|[- ])[a-z]`)
+
+// newMessageTypeList returns a semicolon-separated string of creatable message
+// types.  Each element is a colon-separated string of tag, key, and name in
+// title case.
+func newMessageTypeList() string {
+	var list []message.MType
+	for mt := range message.AllTypes() {
+		if _, ok := mt.(message.EditableMType); ok {
+			list = append(list, mt)
+		}
+	}
+	slices.SortFunc(list, message.CompareTypes)
+	var data []string
+	for _, mt := range list {
+		emt := mt.(message.EditableMType)
+		_, name, _ := strings.Cut(mt.Name(), " ") // drop "a" or "an"
+		name = titleCaseRE.ReplaceAllStringFunc(name, strings.ToUpper)
+		data = append(data, fmt.Sprintf("%s:%s:%s", emt.CreateTag(), emt.CreateKey(), name))
+	}
+	return strings.Join(data, ";")
 }

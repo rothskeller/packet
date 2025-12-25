@@ -3,7 +3,7 @@ html     form-damage-assessment.html
 version  1.0
 title    Damage Assessment Form
 indef    a damage assessment form
-create   DmgAsmt
+create   DmgAsmt d
 pdfFile  Damage_Assessment_v20250731.pdf
 
 field MsgNo originMessageID

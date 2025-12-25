@@ -24,16 +24,21 @@ type FormDef struct {
 	Version string
 	// Title is the name of the form, in title case.
 	Title string
-	// Sort is the key used to place this form in a list with other forms.
-	// It is often the same as Title, but doesn't have to be.
-	Sort string
 	// IndefName is the name of the form preceded by the proper indefinite
 	// article ("a" or "an"), and rendered in prose case.
 	IndefName string
-	// CreateTags is a list of tag words that can be used to identify this
-	// version of this form when creating a new message.  It is empty if new
-	// messages cannot be created with this version of this form.
-	CreateTags []string
+	// CreateTag is a word that identifies this version of this form when
+	// creating a new message.  It is empty if new messages cannot be
+	// created with this version of this form.  Otherwise, it must be
+	// distinct among all versions of all forms.
+	CreateTag string
+	// CreateKey is a key (one or two letters) that identifies this version
+	// of this form when creating a new message.  It is empty if new
+	// messages cannot be created with this version of this form, and may
+	// be empty even if they can.  If it is non-empty, it must not be the
+	// same as any form's CreateTag, or the same as or a prefix of any
+	// form's CreateKey.
+	CreateKey string
 	// SubjectTag is the tag word that should be used to identify the form
 	// on the subject line of a message.
 	SubjectTag string

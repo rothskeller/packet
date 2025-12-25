@@ -19,14 +19,13 @@ func Write(filename string, form *FormDef) (err error) {
 	fmt.Fprintf(fh, "html     %s\n", form.HTMLName)
 	fmt.Fprintf(fh, "version  %s\n", form.Version)
 	fmt.Fprintf(fh, "title    %s\n", form.Title)
-	if form.Sort != "" && form.Sort != form.Title {
-		fmt.Fprintf(fh, "sort     %s\n", form.Title)
-	}
 	fmt.Fprintf(fh, "indef    %s\n", form.IndefName)
-	if len(form.CreateTags) != 0 {
-		fmt.Fprintf(fh, "create   %s\n", strings.Join(form.CreateTags, " "))
+	if form.CreateKey != "" {
+		fmt.Fprintf(fh, "create   %s %s\n", form.CreateTag, form.CreateKey)
+	} else if form.CreateTag != "" {
+		fmt.Fprintf(fh, "create   %s\n", form.CreateTag)
 	}
-	if form.SubjectTag != "" && (len(form.CreateTags) == 0 || form.SubjectTag != form.CreateTags[0]) {
+	if form.SubjectTag != "" && form.SubjectTag != form.CreateTag {
 		fmt.Fprintf(fh, "subject  %s\n", form.SubjectTag)
 	}
 	if form.HTMLFile != "" && filepath.Base(form.HTMLFile) != form.HTMLName {

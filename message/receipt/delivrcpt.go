@@ -55,7 +55,7 @@ var DeliveryReceipt deliveryReceipt
 var deliveryReceiptOnce sync.Once
 
 func init() {
-	DeliveryReceipt.BaseMType = message.NewBaseMType("a delivery receipt", "")
+	DeliveryReceipt.BaseMType = message.NewBaseMType("a delivery receipt")
 	message.RegisterType(DeliveryReceipt)
 }
 
@@ -162,6 +162,8 @@ func (b *DeliveryReceiptBody) DeliveryTime() string { return b.deliveryTime }
 // receipt itself.
 func (b *DeliveryReceiptBody) ExtraText() string { return b.extraText }
 
+func (b *DeliveryReceiptBody) Clone() body.Body { panic("should not be called") }
+
 //--- SUBJECT -----------------------------------------------------------------
 
 // A DeliveryReceiptSubject is a subject for a delivery receipt.
@@ -190,6 +192,8 @@ func (s *DeliveryReceiptSubject) EncodedSubject() string { return "DELIVERED: " 
 // ReceiptedMessageSubject returns the receipted message subject encoded in the
 // receipt message subject line.
 func (s *DeliveryReceiptSubject) ReceiptedMessageSubject() string { return s.rmSubject }
+
+func (s *DeliveryReceiptSubject) Clone() subject.Subject { panic("should not be called") }
 
 func init() { subject.RegisterDecoder(decodeDeliveryReceiptSubject) }
 func decodeDeliveryReceiptSubject(subject string) (_ subject.Subject, err error) {

@@ -1,28 +1,41 @@
 package form
 
 import (
+	"bytes"
 	"fmt"
 	"io/fs"
 	"iter"
+	"log/slog"
+	"net/http"
+	"net/url"
 	"os"
+	"path"
 	"strings"
 
 	"github.com/rothskeller/packet/errors"
 	"github.com/rothskeller/packet/form/formdef"
+	"github.com/rothskeller/packet/form/htmlop"
+	"github.com/rothskeller/packet/form/pifover"
 	"github.com/rothskeller/packet/message"
 	"github.com/rothskeller/packet/message/field"
+	"github.com/rothskeller/packet/message/payload"
 	"github.com/rothskeller/packet/message/subject"
 	"github.com/rothskeller/pdf/v2"
+	"golang.org/x/net/html"
+	"golang.org/x/net/html/atom"
 )
 
 type FormType struct {
 	*formdef.FormDef
 }
 
-var _ message.MType = (*FormType)(nil)
+var _ message.EditableMType = (*FormType)(nil)
 
-// CreateTag returns the tag and version number for creating the form.
-func (ft FormType) CreateTag() string { return strings.Join(ft.CreateTags, " ") }
+// CreateTag returns the tag for creating the form.
+func (ft FormType) CreateTag() string { return ft.FormDef.CreateTag }
+
+// CreateKey returns the key for creating the form.
+func (ft FormType) CreateKey() string { return ft.FormDef.CreateKey }
 
 // Name returns the name of the message type, as a phrase in lower case (other
 // than acronyms) starting with "a " or "an ".
@@ -194,4 +207,113 @@ func (ft FormType) Recognize(m message.Message) {
 	}
 	// It's our form.
 	m.SetType(ft)
+}
+
+// NewDraft returns a new draft message of this form type.
+func (ft FormType) NewDraft() *message.DraftMessage {
+	var urgent bool
+
+	body, _ := NewFormBody(ft.AddonName, ft.HTMLName, pifover.PIFOVersion, ft.Version)
+	for f := range ft.AllFields() {
+		if f.Tag != "" && f.Value != "" {
+			body.SetField(f.Tag, f.Value)
+			if f.Common == field.CHandling && f.Value == "IMMEDIATE" {
+				urgent = true
+			}
+		}
+	}
+	pload := payload.NewOutpostPayload(body)
+	pload.SetUrgent(urgent)
+	subj := subject.NewPlainSubject("")
+	return message.NewDraftMessage(ft, subj, pload, false)
+}
+
+// EditHTML returns the HTML form for editing the message.
+func (ft FormType) EditHTML(msg *message.DraftMessage, vars message.EditHTMLVars) (out []byte, err error) {
+	var (
+		formFile []byte
+		formHTML *html.Node
+		bundle   string
+		defFile  string
+		body     *FormBody
+		formBuf  bytes.Buffer
+		fields   = make(map[string]string)
+		values   = make(url.Values)
+	)
+	// Read and parse the HTML for the form.
+	if formFile, err = fs.ReadFile(ft.FormFS, ft.HTMLFile); err != nil {
+		slog.Error("fs.ReadFile", "f", ft.HTMLFile, "err", err)
+		return nil, err
+	}
+	if formHTML, err = html.Parse(bytes.NewReader(formFile)); err != nil {
+		slog.Error("html.Parse", "f", ft.HTMLFile, "err", err)
+		return nil, fmt.Errorf("%s: %s", ft.HTMLFile, err)
+	}
+	bundle, _, _ = strings.Cut(ft.HTMLFile, "/")
+	// If there is a definitions.html in the same directory, read and parse
+	// it too, and prepend it to the form HTML.
+	defFile = bundle + "/definitions.html"
+	if formFile, err = fs.ReadFile(ft.FormFS, defFile); err == nil {
+		var defHTML *html.Node
+		if defHTML, err = html.Parse(bytes.NewReader(formFile)); err != nil {
+			slog.Error("html.Parse", "f", defFile, "err", err)
+			return nil, fmt.Errorf("%s: %s", defFile, err)
+		}
+		formBody := findBody(formHTML)
+		defBody := findBody(defHTML)
+		for c := defBody.LastChild; c != nil; c = defBody.LastChild {
+			defBody.RemoveChild(c)
+			formBody.InsertBefore(c, formBody.FirstChild)
+		}
+	}
+	fields["assets"] = vars.AssetBase
+	fields["submit-url"] = vars.SubmitURL
+	fields["submit-label"] = vars.SubmitLabel
+	fields["save-url"] = vars.AltURL
+	fields["save-label"] = vars.AltLabel
+	if vars.ShowAddressFields {
+		fields["show-addrs"] = "true"
+	}
+	fields["addon-name"] = ft.AddonName
+	fields["form-html"] = ft.HTMLName
+	fields["form-version"] = ft.Version
+	if ft.PDFFile != "" {
+		fields["pdf-url"] = path.Join(vars.AssetBase, ft.PDFFile)
+	}
+	// Expand the templates in the form HTML, using the supplied fields.
+	htmlop.Expand(formHTML, fields)
+	// Fill in the form using the fields from the message.
+	body = msg.Body().(*FormBody)
+	for f := range ft.AllFields() {
+		if f.Tag != "" {
+			if v := body.Field(f.Tag); v != "" {
+				values.Set(f.Tag, v)
+			}
+		}
+	}
+	htmlop.FillForm(formHTML, values)
+	// Render and minimize the result.
+	htmlop.Minify(&formBuf, formHTML)
+	return formBuf.Bytes(), nil
+}
+
+func findBody(doc *html.Node) *html.Node {
+	for n := range doc.Descendants() {
+		if n.Type == html.ElementNode && n.DataAtom == atom.Body {
+			return n
+		}
+	}
+	return nil
+}
+
+// EditAssets returns the file system containing the form assets.
+func (ft FormType) EditAssets() (assets fs.FS) {
+	bundle, _, _ := strings.Cut(ft.HTMLFile, "/")
+	assets, _ = fs.Sub(ft.FormFS, bundle)
+	return assets
+}
+
+// FromPOST translates the HTML response back into a DraftMessage.
+func (ft FormType) FromPOST(r *http.Request) (msg *message.DraftMessage, err error) {
+	panic("not implemented")
 }

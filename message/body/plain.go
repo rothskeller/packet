@@ -28,3 +28,8 @@ func (b *PlainBody) SetBody(body string) {
 		b.MarkDirty("body.PlainBody.Body")
 	}
 }
+
+// Clone returns a copy of the body.
+func (b *PlainBody) Clone() Body {
+	return NewPlainBody(b.EncodedBody())
+}

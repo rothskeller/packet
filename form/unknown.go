@@ -27,7 +27,7 @@ type UnrecognizedForm struct{ *message.BaseMType }
 func init() {
 	var ft UnrecognizedForm
 
-	ft.BaseMType = message.NewBaseMType("an unrecognized form message", "")
+	ft.BaseMType = message.NewBaseMType("an unrecognized form message")
 	ft.AddField() // TODO
 	message.RegisterFallbackType(ft)
 }

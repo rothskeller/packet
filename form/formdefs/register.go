@@ -109,9 +109,9 @@ func registerFSForms() (err error) {
 		if def, derr := formdef.ReadFS(FormsFS, ff); derr != nil {
 			slog.Warn("form definition error", "f", ff, "err", derr)
 			err = errors.Join(err, derr)
-		} else {
-			message.RegisterType(form.FormType{FormDef: def})
-			// slog.Debug("registered form type", "addon", def.AddonName, "htmlName", def.HTMLName, "version", def.Version)
+		} else if derr = message.RegisterType(form.FormType{FormDef: def}); derr != nil {
+			slog.Warn("form registration error", "f", ff, "err", derr)
+			err = errors.Join(err, derr)
 		}
 	}
 	return err

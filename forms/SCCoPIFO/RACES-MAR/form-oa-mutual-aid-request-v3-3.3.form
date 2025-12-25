@@ -3,7 +3,7 @@ html     form-oa-mutual-aid-request-v3.html
 version  3.3
 title    RACES Mutual Aid Request Form
 indef    a RACES mutual aid request form
-create   RACES-MAR mar
+create   RACES-MAR rm
 pdfFile  XSC_RACES_MA_Req_v20240711_V1_Test76.pdf
 
 field MsgNo originMessageID

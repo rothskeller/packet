@@ -22,6 +22,8 @@ type Subject interface {
 	cachetrack.CacheTracker
 	// EncodedSubject returns the encoded subject line.
 	EncodedSubject() string
+	// Clone returns a copy of the subject.
+	Clone() Subject
 }
 
 // A Decoder is a function that can be registered with RegisterDecoder to

@@ -2,9 +2,8 @@ addon    SCCoPIFO
 html     form-ics213.html
 version  2.2
 title    ICS-213 General Message Form
-sort     0 ICS-213 General Message Form
 indef    an ICS-213 general message form
-create   ICS213
+create   ICS213 i
 pdfFile  ICS-213_SCC_Message_Form_v220119_fillable.pdf
 
 field MsgNo originMessageID

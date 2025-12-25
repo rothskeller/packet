@@ -96,7 +96,7 @@ tacname  Tactical station name if any.`,
 		}
 		if mtype = message.FindType(func(mt message.MType) bool {
 			if mt, ok := mt.(form.FormType); ok {
-				return mt.AddonName == addon && mt.HTMLName == msgtype && len(mt.CreateTags) != 0
+				return mt.AddonName == addon && mt.HTMLName == msgtype && mt.CreateTag() != ""
 			}
 			return false
 		}); mtype == nil {

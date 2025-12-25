@@ -75,6 +75,15 @@ func (p *OutpostPayload) SetRequestRR(requestRR bool) {
 	}
 }
 
+// Clone returns a copy of the Payload.
+func (p *OutpostPayload) Clone() Payload {
+	np := NewOutpostPayload(p.Body().Clone())
+	np.SetRequestDR(p.RequestDR())
+	np.SetRequestRR(p.RequestRR())
+	np.SetUrgent(p.Urgent())
+	return np
+}
+
 // encodedOutpostFlags returns the string encoding of the Outpost body envelope
 // flags.
 func (p *OutpostPayload) encodedOutpostFlags() (encoded string) {

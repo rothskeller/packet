@@ -40,3 +40,7 @@ func (s *PlainSubject) SetSubject(subject string) (err error) {
 	}
 	return err
 }
+
+func (s *PlainSubject) Clone() Subject {
+	return NewPlainSubject(s.EncodedSubject())
+}

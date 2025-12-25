@@ -3,7 +3,7 @@ html     form-checkin-out.html
 version  0.2
 title    Check-In / Check-Out Form
 indef    a check-in / check-out form
-create   Check-In Check-Out ci co
+create   Check-In ci
 
 field MsgNo originMessageID
   label    "Origin Message Number"

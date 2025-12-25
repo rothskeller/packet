@@ -3,7 +3,7 @@ html     form-cpod-commodities.html
 version  1.0
 title    CPOD Commodities Update Form
 indef    a CPOD commodities update form
-create   CPODUpd cc cu
+create   CPODUpd cu
 pdfFile  CPOD_Commodities_v20250730.pdf
 
 field MsgNo originMessageID

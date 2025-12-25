@@ -3,7 +3,7 @@ html     form-notable-report.html
 version  1.0
 title    Notable Report Form
 indef    a notable report form
-create   NotRep
+create   NotRep n
 pdfFile  Notable_Report_v20250804.pdf
 
 field MsgNo originMessageID

@@ -14,6 +14,8 @@ type Body interface {
 	cachetrack.CacheTracker
 	// EncodedBody returns the encoded message body.
 	EncodedBody() string
+	// Clone returns a copy of the body.
+	Clone() Body
 }
 
 // A Decoder is a function that can be registered with RegisterDecoder to

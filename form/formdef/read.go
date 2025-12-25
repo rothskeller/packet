@@ -69,17 +69,15 @@ TOPLEVEL:
 			form.Version = strings.Join(fields[1:], " ")
 		case "title":
 			form.Title = strings.Join(fields[1:], " ")
-			if form.Sort == "" {
-				form.Sort = form.Title
-			}
-		case "sort":
-			form.Sort = strings.Join(fields[1:], " ")
 		case "indef":
 			form.IndefName = strings.Join(fields[1:], " ")
 		case "create":
-			form.CreateTags = fields[1:]
-			if len(form.CreateTags) != 0 && form.SubjectTag == "" {
-				form.SubjectTag = form.CreateTags[0]
+			form.CreateTag = fields[1]
+			if form.SubjectTag == "" {
+				form.SubjectTag = form.CreateTag
+			}
+			if len(fields) > 2 {
+				form.CreateKey = fields[2]
 			}
 		case "subject":
 			form.SubjectTag = strings.Join(fields[1:], "_")

@@ -18,6 +18,12 @@ type Payload interface {
 	Body() body.Body
 	// Encode encodes the payload.
 	Encode() string
+	// Clone returns a copy of the payload.
+	Clone() Payload
+}
+
+type EditablePayload interface {
+	Payload
 }
 
 // A Decoder is a function that can be registered with RegisterDecoder to

@@ -154,6 +154,11 @@ func (s *SCCoSubject) Validate(packet bool) (err error) {
 	return err
 }
 
+func (s *SCCoSubject) Clone() Subject {
+	ns, _ := NewSCCoSubject(s.SubjectMessageID(), s.SubjectHandling(), s.SubjectSummary())
+	return ns
+}
+
 func init() { RegisterDecoder(decodeSCCoSubject) }
 func decodeSCCoSubject(subject string) (_ Subject, err error) {
 	var (

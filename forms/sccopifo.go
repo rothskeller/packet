@@ -1,4 +1,4 @@
-//go:build sccopifo && !sccopvt
+//go:build sccopifo
 
 package forms
 

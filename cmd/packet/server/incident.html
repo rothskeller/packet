@@ -908,7 +908,7 @@
       grid-row: span 2;
     }
   </style>
-  <script> // dialog handlers
+  <script> // Manual Receive Dialog
     function setupManualReceiveDialog() {
       function uploadMessage(file) {
         const reader = new FileReader()
@@ -988,6 +988,145 @@
       background-color: #a8e8a8;
     }
   </style>
+  <script> // New Message Dialog
+    const messageTypeData = '{{MTYPES}}'
+    const messageTypes = []
+    let keyPrefix = ''
+    function startNewMessage(tag) {
+      const params = new URLSearchParams({dir: '{{DIR}}', tag: tag})
+      window.open('/new-message' + params.toString(), '_blank')
+      document.getElementById('nmdlg').close()
+    }
+    function setupNewMessageDialog() {
+      const listDiv = document.getElementById('nmtypes')
+      const listItemTemplate = document.getElementById('nmtypetmpl')
+      messageTypeData.split(';').forEach(triplet => {
+        const [tag, key, name] = triplet.split(':', 3)
+        const tdiv = document.importNode(listItemTemplate.content, true).firstElementChild
+        tdiv.dataset.tag = tag
+        tdiv.dataset.key = key
+        tdiv.querySelector('.nmkey').textContent = key
+        tdiv.querySelector('.nmname').textContent = name
+        tdiv.addEventListener('click', () => {startNewMessage(tag)})
+        listDiv.appendChild(tdiv)
+        messageTypes.push(tdiv)
+      })
+      document.getElementById('nmdlg').addEventListener('keydown', evt => {
+        if (evt.key === 'Backspace') {
+          if (keyPrefix) {
+            keyPrefix = keyPrefix.substring(0, keyPrefix.length - 1)
+            for (let tdiv of messageTypes) {
+              if (tdiv.dataset.key.startsWith(keyPrefix)) tdiv.removeAttribute('hidden')
+            }
+          }
+          evt.stopPropagation()
+          return
+        } else if (evt.key === 'ArrowDown') {
+          const curr = listDiv.querySelector('.selected')
+          if (curr && curr.nextElementSibling) {
+            curr.classList.remove('selected')
+            curr.nextElementSibling.classList.add('selected')
+          } else if (!curr) {
+            messageTypes[0].classList.add('selected')
+          }
+          evt.stopPropagation()
+          return
+        } else if (evt.key === 'ArrowUp') {
+          const curr = listDiv.querySelector('.selected')
+          if (curr && curr.previousElementSibling) {
+            curr.classList.remove('selected')
+            curr.previousElementSibling.classList.add('selected')
+          } else if (!curr) {
+            messageTypes[messageTypes.length - 1].classList.add('selected')
+          }
+          evt.stopPropagation()
+          return
+        } else if (evt.key === 'Enter') {
+          const curr = listDiv.querySelector('.selected')
+          if (curr) startNewMessage(curr.dataset.tag)
+          evt.stopPropagation()
+          return
+        }
+        for (let tdiv of messageTypes) {
+          if (tdiv.dataset.key == keyPrefix + evt.key) {
+            evt.stopPropagation()
+            startNewMessage(tdiv.dataset.tag)
+          } else if (tdiv.dataset.key.startsWith(keyPrefix + evt.key)) {
+            evt.stopPropagation()
+            keyPrefix += evt.key
+            for (let tdiv2 of messageTypes) {
+              if (!tdiv2.dataset.key.startsWith(keyPrefix)) tdiv2.setAttribute('hidden', '')
+            }
+            return
+          }
+        }
+      })
+      document.getElementById('nmsub').addEventListener('click', () => {
+        const curr = listDiv.querySelector('.selected')
+        if (curr) startNewMessage(curr.dataset.tag)
+      })
+      document.getElementById('nmcan').addEventListener('click', () => {
+        document.getElementById('nmdlg').close()
+      })
+    }
+    function openNewMessageDialog() {
+      messageTypes.forEach(tdiv => {
+        tdiv.classList.remove('selected')
+        tdiv.removeAttribute('hidden')
+      })
+      keyPrefix = ''
+      document.getElementById('nmdlg').showModal()
+    }
+  </script>
+  <style>
+    #nmdlg {
+      margin: 4rem auto;
+      padding: 0 0.75rem 0.75rem;
+      z-index: 2;
+    }
+
+    #nmdlg h1 {
+      background-color: #a8e8a8;
+      margin: 0 -0.75rem;
+      padding: 0.5rem 0.75rem;
+      font-size: 1.5rem;
+    }
+
+    #nmtypes:focus-visible {
+      outline: none;
+    }
+
+    .nmtype {
+      display: flex;
+      padding-block: 0.15rem;
+    }
+
+    .nmtype.selected {
+      margin-inline: -0.75rem;
+      padding-inline: 0.75rem;
+      background-color: #f0f0f4;
+    }
+
+    .nmkey {
+      width: 2rem;
+    }
+
+    #nmbuttons {
+      margin-top: 1.5rem;
+      display: flex;
+      justify-content: end;
+      gap: 0.75rem;
+    }
+
+    #nmcan,
+    #nmsub {
+      border-radius: 0.25rem;
+    }
+
+    #nmsub {
+      background-color: #a8e8a8;
+    }
+  </style>
   <script> // Top-level event handlers
     window.addEventListener('click', evt => {
       if (evt.button !== 2) return
@@ -1042,7 +1181,7 @@
       // Message: New
       setupMenuItem({
         id: 'm-msg-new',
-        // TODO: 
+        clicked: () => {openNewMessageDialog()},
       })
       // Message: Manual Receive
       setupMenuItem({
@@ -1088,6 +1227,24 @@
       setupMenuItem({
         id: 'm-msg-edit-log', cid: 'cm-msg-edit-log',
         shown: () => true,
+        // TODO: 
+      })
+      // Message: Resend
+      setupMenuItem({
+        id: 'm-msg-resend', cid: 'cm-msg-resend',
+        shown: sel => sel.st === 'S',
+        // TODO: 
+      })
+      // Message: Send Copy
+      setupMenuItem({
+        id: 'm-msg-send-copy', cid: 'cm-msg-send-copy',
+        shown: sel => sel.st === 'R' || sel.st === 'S',
+        // TODO: 
+      })
+      // Message: Reply
+      setupMenuItem({
+        id: 'm-msg-reply', cid: 'cm-msg-reply',
+        shown: sel => sel.st === 'R',
         // TODO: 
       })
       // Message: Delete
@@ -1179,6 +1336,7 @@
       grid = document.querySelector('log-grid')
       setupMenuHandlers()
       setupManualReceiveDialog()
+      setupNewMessageDialog()
       fetchData()
     })
   </script>
@@ -1218,6 +1376,9 @@
         <menu-item id=m-msg-print shortcut=P hidden>Print</menu-item>
         <menu-item id=m-msg-edit shortcut=⏎ hidden>Edit</menu-item>
         <menu-item id=m-msg-edit-log hidden>Edit Log Entry</menu-item>
+        <menu-item id=m-msg-resend hidden>Resend</menu-item>
+        <menu-item id=m-msg-send-copy hidden>Send Copy</menu-item>
+        <menu-item id=m-msg-reply hidden>Reply</menu-item>
         <menu-item id=m-msg-delete hidden>Delete</menu-item>
         <hr>
         <menu-item id=m-msg-ready checkable hidden>Ready to Send</menu-item>
@@ -1254,6 +1415,9 @@
     <menu-item id=cm-msg-print shortcut=P>Print</menu-item>
     <menu-item id=cm-msg-edit shortcut=⏎>Edit</menu-item>
     <menu-item id=cm-msg-edit-log>Edit Log Entry</menu-item>
+    <menu-item id=cm-msg-resend>Resend</menu-item>
+    <menu-item id=cm-msg-send-copy>Send Copy</menu-item>
+    <menu-item id=cm-msg-reply>Reply</menu-item>
     <menu-item id=cm-msg-delete>Delete</menu-item>
     <hr>
     <menu-item id=cm-msg-ready checkable>Ready to Send</menu-item>
@@ -1295,7 +1459,7 @@
         You can also drag and drop the message, or
         <a id=mrupload href="#">upload a file</a> containing it.
       </p>
-      <textarea id=mrmsg name=mrmsg rows=10 required
+      <textarea id=mrmsg name=mrmsg rows=10 required autofocus
         placeholder="From: ...&#10;Date: ...&#10;Subject: ...&#10;&#10;!SCCoPIFO!&#10;...&#10;!/ADDON!"></textarea>
       <input type=file id=mrfile style="display:none;">
       <div id=mrerr></div>
@@ -1307,6 +1471,22 @@
         </div>
       </div>
     </form>
+  </dialog>
+  <dialog id=nmdlg>
+    <h1>New Outgoing Message</h1>
+    <p>Choose a message type:</p>
+    <div id=nmtypes tabindex=0 autofocus>
+      <template id=nmtypetmpl>
+        <div class=nmtype>
+          <span class=nmkey></span>
+          <span class=nmname></span>
+        </div>
+      </template>
+    </div>
+    <div id=nmbuttons>
+      <button id=nmcan type=button>Cancel</button>
+      <button id=nmsub type=button>Create Message</button>
+    </div>
   </dialog>
   <script>
     customElements.define('menu-item', MenuItem)

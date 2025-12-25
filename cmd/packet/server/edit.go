@@ -126,7 +126,7 @@ func submitCommon(w http.ResponseWriter, r *http.Request) message.Message {
 	addonName, htmlName, version = r.FormValue("addon-name"), r.FormValue("form-html"), r.FormValue("form-version")
 	if mtype = message.FindType(func(mt message.MType) bool {
 		if mt, ok := mt.(form.FormType); ok {
-			return mt.AddonName == addonName && mt.HTMLName == htmlName && mt.Version == version && len(mt.CreateTags) != 0
+			return mt.AddonName == addonName && mt.HTMLName == htmlName && mt.Version == version && mt.CreateTag() != ""
 		}
 		return false
 	}); mtype == nil {
@@ -210,10 +210,14 @@ func submitCheckInOut(_ http.ResponseWriter, r *http.Request) message.Message {
 		bod = body.NewPlainBody(fmt.Sprintf("Check-%s %s, %s\n", inOut, opCall, opName))
 	}
 	pload = payload.NewOutpostPayload(bod)
-	mtype.BaseMType = message.NewBaseMType(fmt.Sprintf("a check-%s message", strings.ToLower(inOut)), "")
+	mtype.BaseEditableMType = message.NewBaseEditableMType(fmt.Sprintf("a check-%s message", strings.ToLower(inOut)), "", "")
 	return message.NewDraftMessage(mtype, subj, pload, false)
 }
 
-type cicoMType struct{ *message.BaseMType }
+type cicoMType struct{ *message.BaseEditableMType }
 
 func (cicoMType) Recognize(message.Message) {}
+
+func (cicoMType) NewDraft() *message.DraftMessage {
+	panic("should not be called?")
+}

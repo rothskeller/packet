@@ -3,7 +3,7 @@ html     form-mhoc-beds-status-v3.html
 version  3.0
 title    Hospital Bed Availability Report
 indef    a hospital bed availability report
-create   HAvBed
+create   HAvBed h
 pdfFile  XSC_HAvBed_Report_v20251010.pdf
 
 field MsgNo originMessageID

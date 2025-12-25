@@ -304,6 +304,14 @@ func (b *FormBody) EncodedBody() string {
 	return b.body
 }
 
+// Clone returns a copy of the FormBody.
+func (b *FormBody) Clone() body.Body {
+	nb := *b
+	nb.Tracker = cachetrack.Tracker{}
+	nb.fields = maps.Clone(b.fields)
+	return &nb
+}
+
 // tagSort sorts tags in the order they should appear in the PackItForms
 // encoding.  It converts common non-numeric tags to fake numeric tags that
 // sort correctly.  Then it extracts the initial numeric part from each tag.

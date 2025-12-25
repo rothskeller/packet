@@ -3,7 +3,7 @@ html     form-windshield-survey.html
 version  1.0
 title    Windshield Survey Form
 indef    a windshield survey form
-create   WSSurvey
+create   WSSurvey w
 pdfFile  Windshield_Survey_v20250804.pdf
 
 field MsgNo originMessageID

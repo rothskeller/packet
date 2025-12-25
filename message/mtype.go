@@ -1,7 +1,12 @@
 package message
 
 import (
+	"cmp"
+	"fmt"
+	"io/fs"
 	"iter"
+	"net/http"
+	"strings"
 
 	"github.com/rothskeller/packet/errors"
 	"github.com/rothskeller/packet/message/field"
@@ -13,12 +18,6 @@ type MType interface {
 	// described by this MType, and if so, calls its SetType method to
 	// assign this MType to it.
 	Recognize(Message)
-	// CreateTag returns the tag(s) used to identify this message type on a
-	// "new" command line.  Multiple tags may be returned, separated by
-	// spaces.  Version numbers may be included in a tag; see the "new"
-	// command documentation for details.  Message types that cannot be
-	// created with "new" return an empty string.
-	CreateTag() string
 	// Name returns the name of the message type, as a phrase in lower case
 	// (other than acronyms) starting with "a " or "an ".
 	Name() string
@@ -33,6 +32,65 @@ type MType interface {
 	// footer of each page.  The returned error may be a Warning, showing a
 	// non-fatal rendering issue.
 	RenderPDF(m Message, filename, copyname string) error
+}
+
+// EditableMType is the interface satisfied by a message type that allows
+// creation and editing of messages.
+type EditableMType interface {
+	MType
+	// CreateTag returns the tag used to identify this message type on a
+	// "new" command line.  The tag is case insensitive.  It is an error
+	// for two message types to have the same tag.
+	CreateTag() string
+	// CreateKey returns the key (usually one or two letters) used to
+	// identify this message type in a GUI dialog box for creating a new
+	// message (or also on a "new" command line, as an alternative to
+	// CreateTag).  The key is case insensitive.  It is an error for two
+	// message types to have the same key, or for one to have a key that is
+	// a prefix of another's, or for any key to be the same as any
+	// CreateTag.  This method may return an empty string, in which case
+	//there is no shortcut key in the dialog and the message type must be
+	// selected with mouse or arrow keys.)
+	CreateKey() string
+	// NewDraft returns a new *message.DraftMessage of this type.  It has
+	// default values filled in but is otherwise empty.
+	NewDraft() *DraftMessage
+	// EditHTML returns the HTML for the edit page to edit the supplied
+	// DraftMessage of this type.  vars customize the HTML based on the
+	// the editing context.
+	EditHTML(msg *DraftMessage, vars EditHTMLVars) ([]byte, error)
+	// EditAssets returns the file system containing assets used by the
+	// HTML returned by EditHTML.
+	EditAssets() fs.FS
+	// FromPOST interprets the form POSTed by the HTML returned by EditHTML,
+	// and translates it into a DraftMessage of this message type.  If the
+	// POSTed form is invalid, FromPOST may return an error instead.
+	FromPOST(r *http.Request) (*DraftMessage, error)
+}
+
+type EditHTMLVars struct {
+	// SubmitURL is the URL that the edit form should POST to.  The URL
+	// should respond with either an error status with a text/plain body,
+	// or an http.StatusSeeOther with a redirect.
+	SubmitURL string
+	// SubmitLabel is the label of the submit button.  It is required.
+	SubmitLabel string
+	// AltURL is the URL that the form's alternate submit button should
+	// POST to.  It is optional; if not present, the alternate submit
+	// button is not shown.  The URL should respond with either an error
+	// status with a text/plain body containing an error message, or an
+	// http.StatusSeeOther with a redirect.
+	AltURL string
+	// AltLabel is the label of the alternate submit button.  It is
+	// required if AltURL is specified and ignored otherwise.
+	AltLabel string
+	// AssetBase is the URL base for any assets needed by the edit form.
+	// It should correspond to the file system returned by EditAssets.
+	AssetBase string
+	// ShowAddressFields is a boolean indicating whether the To Address and
+	// From Address fields should be shown and submitted.  (It's true for
+	// manual/GUI editing and false for Outpost editing.)
+	ShowAddressFields bool
 }
 
 // Warning wraps a non-fatal "error".
@@ -52,15 +110,44 @@ type registeredMType struct {
 var mtypes []registeredMType
 
 // RegisterType registers a message type.
-func RegisterType(mt MType) {
-	mtypes = append(mtypes, registeredMType{mt: mt})
+func RegisterType(mt MType) error {
+	return registerType(mt, false)
 }
 
 // RegisterFallbackType registers a message type whose recognizer is guaranteed
 // to be called after all types registered with RegisterType, even if they are
 // registered later.
-func RegisterFallbackType(mt MType) {
-	mtypes = append(mtypes, registeredMType{mt: mt, fallback: true})
+func RegisterFallbackType(mt MType) error {
+	return registerType(mt, true)
+}
+
+func registerType(mt MType, fallback bool) error {
+	var tag, key string
+
+	if mt, ok := mt.(EditableMType); ok {
+		tag, key = strings.ToLower(mt.CreateTag()), strings.ToLower(mt.CreateKey())
+		if tag != "" {
+			return errors.New("editable message types must have a CreateTag")
+		}
+		for _, exist := range mtypes {
+			if exist, ok := exist.mt.(EditableMType); ok {
+				etag, ekey := strings.ToLower(exist.CreateTag()), strings.ToLower(exist.CreateKey())
+				if tag == etag {
+					return fmt.Errorf("the CreateTag %q is already in use", mt.CreateTag())
+				}
+				if key == etag {
+					return fmt.Errorf("the CreateKey %q is already in use", mt.CreateKey())
+				}
+				if key != "" && ekey != "" {
+					if strings.HasPrefix(key, ekey) || strings.HasPrefix(ekey, key) {
+						return fmt.Errorf("the CreateKey %q conflicts with another CreateKey %q", mt.CreateKey(), exist.CreateKey())
+					}
+				}
+			}
+		}
+	}
+	mtypes = append(mtypes, registeredMType{mt: mt, fallback: fallback})
+	return nil
 }
 
 // SetType determines the type of a Message and sets its Type property to the
@@ -107,28 +194,44 @@ func FindType(pred func(MType) bool) MType {
 	return nil
 }
 
+// FindTypeTag returns the registered message type with the specified
+// CreateTag, or nil if none exists.
+func FindTypeTag(tag string) EditableMType {
+	for mt := range AllTypes() {
+		if emt, ok := mt.(EditableMType); ok && emt.CreateTag() == tag {
+			return emt
+		}
+	}
+	return nil
+}
+
+// CompareTypes returns -1/0/+1 for sorting a list of types.  Types are sorted
+// by name, except that plain text message always comes first.
+func CompareTypes(a, b MType) int {
+	if a == PlainMessage && b != PlainMessage {
+		return -1
+	}
+	if b == PlainMessage && a != PlainMessage {
+		return +1
+	}
+	an, bn := strings.ToLower(a.Name()), strings.ToLower(b.Name())
+	_, an, _ = strings.Cut(an, " ") // remove "a" or "an"
+	_, bn, _ = strings.Cut(bn, " ") // remove "a" or "an"
+	return cmp.Compare(an, bn)
+}
+
 //-----------------------------------------------------------------------------
 
 // BaseMType is the common core implementation for all message types.
 type BaseMType struct {
-	createTag string
-	name      string
-	fields    []field.Field
+	name   string
+	fields []field.Field
 }
 
 // NewBaseMType returns a new BaseMType with the specified details to be
 // returned by Name and CreateTag methods.
-func NewBaseMType(name, createTag string) *BaseMType {
-	return &BaseMType{name: name, createTag: createTag}
-}
-
-// CreateTag returns the tag(s) used to identify this message type on a "new"
-// command line.  Multiple tags may be returned, separated by spaces.  Version
-// numbers may be included in a tag; see the "new" command documentation for
-// details.  Message types that cannot be created with "new" return an empty
-// string.
-func (t *BaseMType) CreateTag() string {
-	return t.createTag
+func NewBaseMType(name string) *BaseMType {
+	return &BaseMType{name: name}
 }
 
 // Name returns the name of the message type, as a phrase in lower case (other
@@ -181,3 +284,35 @@ func (t *BaseMType) Fields() iter.Seq[field.Field] {
 func (t *BaseMType) RenderPDF(m Message, filename, copyname string) (err error) {
 	return RenderPlainPDF(m, filename, copyname)
 }
+
+//-----------------------------------------------------------------------------
+
+// BaseEditableMType is the common core implementation for all editable message
+// types.  Note that it is not a complete implementation; message types must
+// implement their own NewDraft and NewDraftCopy methods.
+type BaseEditableMType struct {
+	BaseMType
+	createTag string
+	createKey string
+}
+
+// NewBaseEditableMType returns a new BaseEditableMType with the specified
+// details to be returned by Name and CreateTag methods.
+func NewBaseEditableMType(name, createTag, createKey string) *BaseEditableMType {
+	return &BaseEditableMType{BaseMType: BaseMType{name: name}, createTag: createTag, createKey: createKey}
+}
+
+// CreateTag returns the tag used to identify this message type on a
+// "new" command line.  The tag is case insensitive.  It is an error
+// for two message types to have the same tag.
+func (t *BaseEditableMType) CreateTag() string { return t.createTag }
+
+// CreateKey returns the key (usually one or two letters) used to identify this
+// message type in a GUI dialog box for creating a new message (or also on a
+// "new" command line, as an alternative to CreateTag).  The key is case
+// insensitive.  It is an error for two message types to have the same key, or
+// for one to have a key that is a prefix of another's, or for any key to be
+// the same as any CreateTag.  This method may return an empty string, in which
+// case there is no shortcut key in the dialog and the message type must be
+// selected with mouse or arrow keys.)
+func (t *BaseEditableMType) CreateKey() string { return t.createKey }
