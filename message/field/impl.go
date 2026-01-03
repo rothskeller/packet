@@ -5,6 +5,7 @@ import (
 
 	"github.com/phpdave11/gofpdf"
 	"github.com/rothskeller/packet/errors"
+	"github.com/rothskeller/packet/message/msgifc"
 )
 
 // field is the implementation of Field created by a FieldFactory.
@@ -22,18 +23,18 @@ type field struct {
 	editHeight     int
 	obscured       bool
 	restricted     bool
-	valueFunc      func(Message) string
+	valueFunc      func(msgifc.Message) string
 	toHumanFunc    func(string) string
 	fromHumanFunc  func(string) string
-	setValueFunc   func(Message, string)
-	visibleFunc    func(Message) bool
-	editableFunc   func(Message, bool) bool
-	choicesFunc    func(Message) []ChoicePair
-	requiredFunc   func(Message) bool
+	setValueFunc   func(msgifc.Message, string)
+	visibleFunc    func(msgifc.Message) bool
+	editableFunc   func(msgifc.Message, bool) bool
+	choicesFunc    func(msgifc.Message) []msgifc.ChoicePair
+	requiredFunc   func(msgifc.Message) bool
 	requiredDesc   string
-	disallowedFunc func(Message) bool
+	disallowedFunc func(msgifc.Message) bool
 	disallowedDesc string
-	validateFuncs  []func(Message, bool) error
+	validateFuncs  []func(msgifc.Message, bool) error
 
 	// internal transient data
 	disallowed bool
@@ -54,7 +55,7 @@ func (f *field) EditSize() (int, int) { return f.editWidth, f.editHeight }
 func (f *field) Obscured() bool       { return f.obscured }
 func (f *field) Restricted() bool     { return f.restricted }
 
-func (f *field) Value(m Message) string {
+func (f *field) Value(m msgifc.Message) string {
 	if f.valueFunc != nil {
 		return f.valueFunc(m)
 	}
@@ -75,7 +76,7 @@ func (f *field) FromHuman(s string) string {
 	return strings.TrimSpace(s)
 }
 
-func (f *field) SetValue(m Message, val string) {
+func (f *field) SetValue(m msgifc.Message, val string) {
 	if f.setValueFunc != nil {
 		f.setValueFunc(m, val)
 	} else {
@@ -91,21 +92,21 @@ func (f *field) SetValue(m Message, val string) {
 	}
 }
 
-func (f *field) Visible(m Message) bool {
+func (f *field) Visible(m msgifc.Message) bool {
 	if f.visibleFunc != nil {
 		return f.visibleFunc(m)
 	}
 	return true
 }
 
-func (f *field) Editable(m Message, explicit bool) bool {
+func (f *field) Editable(m msgifc.Message, explicit bool) bool {
 	if f.editableFunc != nil {
 		return f.editableFunc(m, explicit)
 	}
 	return f.editHelp != ""
 }
 
-func (f *field) Choices(m Message) []ChoicePair {
+func (f *field) Choices(m msgifc.Message) []msgifc.ChoicePair {
 	if f.choicesFunc != nil {
 		return f.choicesFunc(m)
 	}
@@ -115,7 +116,7 @@ func (f *field) Choices(m Message) []ChoicePair {
 // Validate validates the value of the field and returns any problems with it.
 // If pifo is true, it restricts itself to those checks performed by
 // PackItForms.
-func (f *field) Validate(m Message, fi Field, pifo bool) (err error) {
+func (f *field) Validate(m msgifc.Message, fi Field, pifo bool) (err error) {
 	if err = f.validatePresence(m, fi); err != nil {
 		return err
 	}
@@ -124,7 +125,7 @@ func (f *field) Validate(m Message, fi Field, pifo bool) (err error) {
 
 // validatePresence validates the value of the field for compliance with
 // required or disallowed rules.
-func (f *field) validatePresence(m Message, fi Field) (err error) {
+func (f *field) validatePresence(m msgifc.Message, fi Field) (err error) {
 	val := fi.Value(m)
 	// If we have a value, check whether any value is allowed.
 	f.disallowed = false
@@ -153,7 +154,7 @@ func (f *field) validatePresence(m Message, fi Field) (err error) {
 
 // validateCustom validates the value of the field for compliance with
 // restricted choices and with any custom validation handlers.
-func (f *field) validateCustom(m Message, fi Field, pifo bool) (err error) {
+func (f *field) validateCustom(m msgifc.Message, fi Field, pifo bool) (err error) {
 	val := fi.Value(m)
 	// If we have a value and restricted choices, check to be sure the value
 	// is one of the allowed ones.
@@ -180,13 +181,13 @@ func (f *field) validateCustom(m Message, fi Field, pifo bool) (err error) {
 // Compare compares the value of the field in the actual message to
 // the corresponding value in the expected message, and returns the
 // results of the comparison.
-func (f *field) Compare(expected Message, actual Message) *ComparedField {
+func (f *field) Compare(expected msgifc.Message, actual msgifc.Message) *ComparedField {
 	panic("not implemented") // TODO: Implement
 }
 
 // RenderPDF renders the field onto the specified page of the specified
 // PDF file, if it belongs there.  It may return any errors in the
 // process (unsupported value, doesn't fit in the space, etc.).
-func (f *field) RenderPDF(m Message, pdf *gofpdf.Pdf, page int) error {
+func (f *field) RenderPDF(m msgifc.Message, pdf *gofpdf.Pdf, page int) error {
 	panic("not implemented") // TODO: Implement
 }

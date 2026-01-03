@@ -10,6 +10,7 @@ import (
 	"github.com/rothskeller/packet/errors"
 	"github.com/rothskeller/packet/message/address"
 	"github.com/rothskeller/packet/message/messageid"
+	"github.com/rothskeller/packet/message/msgifc"
 	"k8s.io/apimachinery/pkg/util/sets"
 )
 
@@ -26,7 +27,7 @@ func NewAddressList(label string) (ff *FieldFactory) {
 
 type addressList struct{ *field }
 
-func (f addressList) Validate(m Message, fi Field, pifo bool) (err error) {
+func (f addressList) Validate(m msgifc.Message, fi Field, pifo bool) (err error) {
 	if err = f.validatePresence(m, fi); err != nil {
 		return err
 	}
@@ -67,7 +68,7 @@ func NewCardinalNumber(tag, label string) (ff *FieldFactory) {
 
 type cardinalNumber struct{ *field }
 
-func (f cardinalNumber) Validate(m Message, fi Field, pifo bool) (err error) {
+func (f cardinalNumber) Validate(m msgifc.Message, fi Field, pifo bool) (err error) {
 	if err = f.validatePresence(m, fi); err != nil {
 		return err
 	}
@@ -117,7 +118,7 @@ func NewCheckboxGroup(label string, tagLabelPairs ...string) (ff *FieldFactory) 
 
 type checkboxGroup struct{ *field }
 
-func (f checkboxGroup) Value(m Message) string {
+func (f checkboxGroup) Value(m msgifc.Message) string {
 	var checked []string
 
 	// The internal value of a checkbox group is a comma-separated list of
@@ -172,7 +173,7 @@ func NewDate(tag, label string) (ff *FieldFactory) {
 
 type date struct{ *field }
 
-func (f date) Validate(m Message, fi Field, pifo bool) (err error) {
+func (f date) Validate(m msgifc.Message, fi Field, pifo bool) (err error) {
 	if err = f.validatePresence(m, fi); err != nil {
 		return err
 	}
@@ -239,7 +240,7 @@ func NewDateTime(label string, dateField, timeField *FieldFactory) (ff *FieldFac
 
 type datetime struct{ *field }
 
-func (f datetime) Value(m Message) string {
+func (f datetime) Value(m msgifc.Message) string {
 	d := f.children[0].Value(m)
 	t := f.children[1].Value(m)
 	return smartJoin(d, t)
@@ -252,13 +253,13 @@ func (f datetime) FromHuman(s string) string {
 	return smartJoin(d, t)
 }
 
-func (f datetime) SetValue(m Message, s string) {
+func (f datetime) SetValue(m msgifc.Message, s string) {
 	d, t, _ := strings.Cut(s, " ")
 	f.children[0].SetValue(m, d)
 	f.children[1].SetValue(m, t)
 }
 
-func (f datetime) required(m Message) bool {
+func (f datetime) required(m msgifc.Message) bool {
 	if fn := f.children[0].(date).requiredFunc; fn != nil && fn(m) {
 		return true
 	}
@@ -268,7 +269,7 @@ func (f datetime) required(m Message) bool {
 	return false
 }
 
-func (f datetime) disallowed(m Message) bool {
+func (f datetime) disallowed(m msgifc.Message) bool {
 	if fn := f.children[0].(date).disallowedFunc; fn != nil && !fn(m) {
 		return false
 	}
@@ -301,7 +302,7 @@ func NewFCCCallSign(tag, label string) (ff *FieldFactory) {
 
 type fccCallSign struct{ *field }
 
-func (f fccCallSign) Validate(m Message, fi Field, pifo bool) (err error) {
+func (f fccCallSign) Validate(m msgifc.Message, fi Field, pifo bool) (err error) {
 	if err = f.validatePresence(m, fi); err != nil {
 		return err
 	}
@@ -334,7 +335,7 @@ func NewFrequency(tag, label string) (ff *FieldFactory) {
 
 type frequency struct{ *field }
 
-func (f frequency) Validate(m Message, fi Field, pifo bool) (err error) {
+func (f frequency) Validate(m msgifc.Message, fi Field, pifo bool) (err error) {
 	if err = f.validatePresence(m, fi); err != nil {
 		return err
 	}
@@ -371,7 +372,7 @@ func NewFrequencyOffset(tag, label string) (ff *FieldFactory) {
 
 type frequencyOffset struct{ *field }
 
-func (f frequencyOffset) Validate(m Message, fi Field, pifo bool) (err error) {
+func (f frequencyOffset) Validate(m msgifc.Message, fi Field, pifo bool) (err error) {
 	if err = f.validatePresence(m, fi); err != nil {
 		return err
 	}
@@ -411,7 +412,7 @@ type messageID struct {
 	packet bool
 }
 
-func (f messageID) Validate(m Message, fi Field, pifo bool) (err error) {
+func (f messageID) Validate(m msgifc.Message, fi Field, pifo bool) (err error) {
 	if err = f.validatePresence(m, fi); err != nil {
 		return err
 	}
@@ -457,7 +458,7 @@ func NewPhoneNumber(tag, label string) (ff *FieldFactory) {
 
 type phoneNumber struct{ *field }
 
-func (f phoneNumber) Validate(m Message, fi Field, pifo bool) (err error) {
+func (f phoneNumber) Validate(m msgifc.Message, fi Field, pifo bool) (err error) {
 	if err = f.validatePresence(m, fi); err != nil {
 		return err
 	}
@@ -505,7 +506,7 @@ func NewRealNumber(tag, label string) (ff *FieldFactory) {
 
 type realNumber struct{ *field }
 
-func (f realNumber) Validate(m Message, fi Field, pifo bool) (err error) {
+func (f realNumber) Validate(m msgifc.Message, fi Field, pifo bool) (err error) {
 	if err = f.validatePresence(m, fi); err != nil {
 		return err
 	}
@@ -542,7 +543,7 @@ func NewTacticalCallSign(tag, label string) (ff *FieldFactory) {
 
 type tacticalCallSign struct{ *field }
 
-func (f tacticalCallSign) Validate(m Message, fi Field, pifo bool) (err error) {
+func (f tacticalCallSign) Validate(m msgifc.Message, fi Field, pifo bool) (err error) {
 	if err = f.validatePresence(m, fi); err != nil {
 		return err
 	}
@@ -579,7 +580,7 @@ func NewTime(tag, label string) (ff *FieldFactory) {
 
 type timef struct{ *field }
 
-func (f timef) Validate(m Message, fi Field, pifo bool) (err error) {
+func (f timef) Validate(m msgifc.Message, fi Field, pifo bool) (err error) {
 	if err = f.validatePresence(m, fi); err != nil {
 		return err
 	}

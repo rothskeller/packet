@@ -74,11 +74,11 @@ func (m *PlainMessage) Validate(pifo bool) (err error) {
 }
 */
 
-func (mt plainMessage) NewDraft() (msg *DraftMessage) {
+func (mt plainMessage) NewDraft() (msg Message) {
 	return NewDraftMessage(PlainMessage, subject.NewPlainSubject(""), payload.NewOutpostPayload(body.NewPlainBody("")), false)
 }
 
-func (mt plainMessage) EditHTML(msg *DraftMessage, vars EditHTMLVars) ([]byte, error) {
+func (mt plainMessage) EditHTML(msg Message, vars EditHTMLVars) ([]byte, error) {
 	panic("not implemented")
 }
 
@@ -86,6 +86,6 @@ func (mt plainMessage) EditAssets() fs.FS {
 	panic("not implemented")
 }
 
-func (mt plainMessage) FromPOST(r *http.Request) (*DraftMessage, error) {
+func (mt plainMessage) FromPOST(r *http.Request) (Message, error) {
 	panic("not implemented")
 }

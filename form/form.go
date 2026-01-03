@@ -55,7 +55,7 @@ func (ft FormType) Validate(m message.Message, pifo bool) error {
 }
 
 // Fields returns an iterator on the set of message fields.
-func (ft FormType) Fields(m field.Message) iter.Seq[field.Field] {
+func (ft FormType) Fields(m message.Message) iter.Seq[field.Field] {
 	return func(yield func(field.Field) bool) {
 		for fd := range ft.AllFields() {
 			if !yield(ff2mf{ft.FormDef, fd}) {
@@ -221,7 +221,7 @@ func (ft EditableFormType) Recognize(m message.Message) {
 }
 
 // NewDraft returns a new draft message of this form type.
-func (ft EditableFormType) NewDraft() *message.DraftMessage {
+func (ft EditableFormType) NewDraft() message.Message {
 	var urgent bool
 
 	body, _ := NewFormBody(ft.AddonName, ft.HTMLName, pifover.PIFOVersion, ft.Version)
@@ -240,7 +240,7 @@ func (ft EditableFormType) NewDraft() *message.DraftMessage {
 }
 
 // EditHTML returns the HTML form for editing the message.
-func (ft EditableFormType) EditHTML(msg *message.DraftMessage, vars message.EditHTMLVars) (out []byte, err error) {
+func (ft EditableFormType) EditHTML(msg message.Message, vars message.EditHTMLVars) (out []byte, err error) {
 	var (
 		formFile []byte
 		formHTML *html.Node
@@ -326,11 +326,12 @@ func (ft EditableFormType) EditAssets() (assets fs.FS) {
 }
 
 // FromPOST translates the HTML response back into a DraftMessage.
-func (ft EditableFormType) FromPOST(r *http.Request) (msg *message.DraftMessage, err error) {
+func (ft EditableFormType) FromPOST(r *http.Request) (msg message.Message, err error) {
 	var (
 		body *FormBody
 		subj *subject.SCCoSubject
 		payl *payload.OutpostPayload
+		dm   *message.DraftMessage
 	)
 	if body, err = NewFormBody(ft.AddonName, ft.HTMLName, pifover.PIFOVersion, ft.Version); err != nil {
 		slog.Error("form.NewFormBody", "err", err)
@@ -338,7 +339,7 @@ func (ft EditableFormType) FromPOST(r *http.Request) (msg *message.DraftMessage,
 	}
 	payl = payload.NewOutpostPayload(body)
 	subj, _ = subject.NewSCCoSubject("", "", "") // will give an error, ignored
-	msg = message.NewDraftMessage(ft, subj, payl, false)
+	dm = message.NewDraftMessage(ft, subj, payl, false)
 	for f := range ft.Fields(msg) {
 		if tag := f.Tag(); tag != "" {
 			if val := r.FormValue(tag); val != "" {
@@ -346,6 +347,6 @@ func (ft EditableFormType) FromPOST(r *http.Request) (msg *message.DraftMessage,
 			}
 		}
 	}
-	msg.SetTo(r.FormValue("ToAddr"))
-	return msg, nil
+	dm.SetTo(r.FormValue("ToAddr"))
+	return dm, nil
 }

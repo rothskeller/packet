@@ -8,7 +8,7 @@ import (
 	"strings"
 
 	"github.com/rothskeller/packet/errors"
-	"github.com/rothskeller/packet/message/cachetrack"
+	"github.com/rothskeller/packet/message/msgifc"
 )
 
 var (
@@ -18,13 +18,7 @@ var (
 )
 
 // Subject is the interface satisfied by all subject types.
-type Subject interface {
-	cachetrack.CacheTracker
-	// EncodedSubject returns the encoded subject line.
-	EncodedSubject() string
-	// Clone returns a copy of the subject.
-	Clone() Subject
-}
+type Subject = msgifc.Subject
 
 // A Decoder is a function that can be registered with RegisterDecoder to
 // decode a subject line encoding.  The function is given the message's encoded

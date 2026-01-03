@@ -45,7 +45,7 @@ func (s *Server) serveGetNewMessage(w http.ResponseWriter, r *http.Request) {
 		ErrPage(w, fmt.Sprintf("The message type tag %q is not recognized.  Please report this error to the author.", tag), http.StatusInternalServerError)
 		return
 	}
-	msg = mt.NewDraft()
+	msg = mt.NewDraft().(*message.DraftMessage)
 	err = incident.Write(dir, func(i *incident.Incident) (err error) {
 		if ident, err = i.AddDraftMessage(msg, true); err != nil {
 			return err
@@ -168,9 +168,11 @@ func (s *Server) servePostSendMessage(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, fmt.Sprintf("no such message type %q", tag), http.StatusBadRequest)
 		return
 	}
-	if msg, err = mt.FromPOST(r); err != nil {
+	if m, err := mt.FromPOST(r); err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
+	} else {
+		msg = m.(*message.DraftMessage)
 	}
 	if r.FormValue("readyToSend") == "true" {
 		// It's not ready to send unless we have a valid To: address.
@@ -343,7 +345,7 @@ func (s *Server) servePostNewMessageFrom(w http.ResponseWriter, r *http.Request)
 			_, typename, _ := strings.Cut(msg.Type().Name(), " ")
 			return errors.NewF("Creation of new %ss is not supported.", typename)
 		} else {
-			dr = emt.NewDraft()
+			dr = emt.NewDraft().(*message.DraftMessage)
 		}
 		switch action {
 		case "resend":

@@ -3,6 +3,7 @@ package form
 import (
 	"github.com/rothskeller/packet/form/formdef"
 	"github.com/rothskeller/packet/message/field"
+	"github.com/rothskeller/packet/message/msgifc"
 	"github.com/rothskeller/packet/message/payload"
 	"github.com/rothskeller/packet/message/subject"
 )
@@ -52,7 +53,7 @@ func (f ff2mf) Children() (c []field.Field) {
 }
 
 // Value returns the value of the field, in internal form.
-func (f ff2mf) Value(m field.Message) string {
+func (f ff2mf) Value(m msgifc.Message) string {
 	if f.fd.Tag != "" {
 		return m.Body().(*FormBody).Field(f.fd.Tag)
 	}
@@ -87,7 +88,7 @@ func (f ff2mf) FromHuman(human string) string {
 
 // SetValue sets the value of the field.  The supplied value must be in
 // internal form.
-func (f ff2mf) SetValue(msg field.Message, val string) {
+func (f ff2mf) SetValue(msg msgifc.Message, val string) {
 	if f.fd.Tag != "" {
 		reason := "body.FormBody.Field." + f.fd.Tag
 		if f.fd.Common != "" {
@@ -115,7 +116,7 @@ func (f ff2mf) SetValue(msg field.Message, val string) {
 // Visible returns whether the field should be included when the
 // message is displayed.  Note that fields with an empty value are
 // never displayed no matter what this method returns.
-func (f ff2mf) Visible(field.Message) bool {
+func (f ff2mf) Visible(msgifc.Message) bool {
 	return f.fd.Parent == nil
 }
 
@@ -124,7 +125,7 @@ func (f ff2mf) Visible(field.Message) bool {
 // asked to edit this field by name.  Note: as a side effect, this
 // method is allowed to clear the value of the field before returning
 // false when that's more appropriate than a validation failure.
-func (f ff2mf) Editable(m field.Message, explicit bool) bool {
+func (f ff2mf) Editable(m msgifc.Message, explicit bool) bool {
 	if f.fd.EditHelp == "" {
 		return false
 	}
@@ -175,7 +176,7 @@ func (f ff2mf) Obscured() bool { return f.fd.Type == "password" }
 // field.  Each element is a pair with internal and human
 // representations of the value.  The list may vary depending on the
 // values of other fields of the message.
-func (f ff2mf) Choices(field.Message) (cs []field.ChoicePair) {
+func (f ff2mf) Choices(msgifc.Message) (cs []field.ChoicePair) {
 	if f.fd.Type == "checkbox" {
 		return []field.ChoicePair{{PIFO: "", Human: ""}, {PIFO: "checked", Human: "checked"}}
 	}
@@ -194,6 +195,6 @@ func (f ff2mf) Restricted() bool { return f.fd.Type == "restricted" || f.fd.Type
 // Validate validates the value of the field and returns any problems
 // with it.  If pifo is true, it restricts itself to those checks
 // performed by PackItForms.
-func (f ff2mf) Validate(m field.Message, mf field.Field, pifo bool) error {
+func (f ff2mf) Validate(m msgifc.Message, mf field.Field, pifo bool) error {
 	panic("not implemented")
 }

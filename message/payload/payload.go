@@ -7,24 +7,12 @@ import (
 	"net/mail"
 
 	"github.com/rothskeller/packet/errors"
-	"github.com/rothskeller/packet/message/body"
-	"github.com/rothskeller/packet/message/cachetrack"
+	"github.com/rothskeller/packet/message/msgifc"
 )
 
 // Payload is the interface satisfied by all payload implementations.
-type Payload interface {
-	cachetrack.CacheTracker
-	// Body returns the payload body.
-	Body() body.Body
-	// Encode encodes the payload.
-	Encode() string
-	// Clone returns a copy of the payload.
-	Clone() Payload
-}
-
-type EditablePayload interface {
-	Payload
-}
+type Payload = msgifc.Payload
+type EditablePayload = msgifc.EditablePayload
 
 // A Decoder is a function that can be registered with RegisterDecoder to
 // recognize and decode a body wrapper, i.e., content transfer encoding.  The

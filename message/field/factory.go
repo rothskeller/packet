@@ -1,6 +1,9 @@
 package field
 
-import "github.com/phpdave11/gofpdf"
+import (
+	"github.com/phpdave11/gofpdf"
+	"github.com/rothskeller/packet/message/msgifc"
+)
 
 // A FieldFactory is used to create a Field implementation customized for a
 // specific message field.  To use it, call NewField, which returns a
@@ -45,7 +48,7 @@ func (ff *FieldFactory) AddField(cf *FieldFactory) Field {
 // internal form.  The default implementation returns an empty string unless
 // the message is a form and the tag passed to NewField is non-empty; in that
 // case, it returns the value of the corresponding PackItForms field.
-func (ff *FieldFactory) ValueFunc(fn func(Message) string) *FieldFactory {
+func (ff *FieldFactory) ValueFunc(fn func(msgifc.Message) string) *FieldFactory {
 	ff.f.valueFunc = fn
 	return ff
 }
@@ -70,7 +73,7 @@ func (ff *FieldFactory) FromHumanFunc(fn func(string) string) *FieldFactory {
 // supplied value will be in internal form.  The default implementation panics
 // unless the message is a form and the tag passed to NewField is non-empty; in
 // that case, it sets the value of the corresponding PackItForms field.
-func (ff *FieldFactory) SetValueFunc(fn func(Message, string)) *FieldFactory {
+func (ff *FieldFactory) SetValueFunc(fn func(msgifc.Message, string)) *FieldFactory {
 	ff.f.setValueFunc = fn
 	return ff
 }
@@ -78,13 +81,13 @@ func (ff *FieldFactory) SetValueFunc(fn func(Message, string)) *FieldFactory {
 // VisibleWhen provides a predicate function that determines when the field
 // should be included in displayed messages.  The default predicate always
 // returns true.  Note that fields with empty values are never displayed.
-func (ff *FieldFactory) VisibleWhen(pred func(Message) bool) *FieldFactory {
+func (ff *FieldFactory) VisibleWhen(pred func(msgifc.Message) bool) *FieldFactory {
 	ff.f.visibleFunc = pred
 	return ff
 }
 
 // Invisible is a predicate for VisibleWhen that always returns false.
-func Invisible(Message) bool { return false }
+func Invisible(msgifc.Message) bool { return false }
 
 // EditableWhen provides a predicate function that determines when the field's
 // value can be edited by a user.  The explicit flag passed to the predicate
@@ -92,17 +95,17 @@ func Invisible(Message) bool { return false }
 // by name (true) or whether editing it is being considered as part of the
 // sequence of fields (false).  The default predicate returns true if EditHelp
 // has been called for the field and false otherwise.
-func (ff *FieldFactory) EditableWhen(pred func(Message, bool) bool) *FieldFactory {
+func (ff *FieldFactory) EditableWhen(pred func(msgifc.Message, bool) bool) *FieldFactory {
 	ff.f.editableFunc = pred
 	return ff
 }
 
 // NotEditable is a predicate for EditableWhen that always returns false.
-func NotEditable(_ Message, _ bool) bool { return false }
+func NotEditable(_ msgifc.Message, _ bool) bool { return false }
 
 // OnlyExplicitlyEditable is a predicate for EditableWhen that only returns true
 // when the field is explicitly requested.
-func OnlyExplicitlyEditable(_ Message, explicit bool) bool { return explicit }
+func OnlyExplicitlyEditable(_ msgifc.Message, explicit bool) bool { return explicit }
 
 // EditHelp sets the help string for editing the field.
 func (ff *FieldFactory) EditHelp(help string) *FieldFactory {
@@ -160,7 +163,7 @@ func (ff *FieldFactory) AllowedValues(values ...any) *FieldFactory {
 // AllowedValuesFunc provides a function that returns the (runtime-variable)
 // list of allowed values for the field; other values cause validation
 // failures.
-func (ff *FieldFactory) AllowedValuesFunc(fn func(Message) []ChoicePair) *FieldFactory {
+func (ff *FieldFactory) AllowedValuesFunc(fn func(msgifc.Message) []msgifc.ChoicePair) *FieldFactory {
 	ff.f.choicesFunc = fn
 	ff.f.restricted = true
 	return ff
@@ -177,14 +180,14 @@ func (ff *FieldFactory) SuggestedValues(values ...any) *FieldFactory {
 
 // SuggestedValuesFunc provides a function that returns the (runtime-variable)
 // list of suggested values for the field; other values are also allowed.
-func (ff *FieldFactory) SuggestedValuesFunc(fn func(Message) []ChoicePair) *FieldFactory {
+func (ff *FieldFactory) SuggestedValuesFunc(fn func(msgifc.Message) []msgifc.ChoicePair) *FieldFactory {
 	ff.f.choicesFunc = fn
 	return ff
 }
 
 // Required marks a field as required: it must have a non-empty value.
 func (ff *FieldFactory) Required() *FieldFactory {
-	ff.f.requiredFunc = func(Message) bool { return true }
+	ff.f.requiredFunc = func(msgifc.Message) bool { return true }
 	return ff
 }
 
@@ -192,7 +195,7 @@ func (ff *FieldFactory) Required() *FieldFactory {
 // required.  It also provides a string to describe in English what the
 // predicate checks.  The string should interpolate into the sentence "The XXX
 // field is required when %s."
-func (ff *FieldFactory) RequiredWhen(when string, pred func(Message) bool) *FieldFactory {
+func (ff *FieldFactory) RequiredWhen(when string, pred func(msgifc.Message) bool) *FieldFactory {
 	ff.f.requiredFunc = pred
 	ff.f.requiredDesc = when
 	return ff
@@ -205,7 +208,7 @@ func (ff *FieldFactory) RequiredWhen(when string, pred func(Message) bool) *Fiel
 // been marked Required, the DisallowUnless predicate takes precedence, and the
 // string should also interpolate into the sentence "The XXX field is required
 // when %s."
-func (ff *FieldFactory) DisallowedUnless(unless string, pred func(Message) bool) *FieldFactory {
+func (ff *FieldFactory) DisallowedUnless(unless string, pred func(msgifc.Message) bool) *FieldFactory {
 	ff.f.disallowedFunc = pred
 	ff.f.disallowedDesc = unless
 	return ff
@@ -217,21 +220,21 @@ func (ff *FieldFactory) DisallowedUnless(unless string, pred func(Message) bool)
 // the flag passed to the function is true, the function should restrict itself
 // to those checks that PackItForms would enforce.  This method can be called
 // multiple times to register multiple validation functions for the field.
-func (ff *FieldFactory) ValidateFunc(fn func(Message, bool) error) *FieldFactory {
+func (ff *FieldFactory) ValidateFunc(fn func(msgifc.Message, bool) error) *FieldFactory {
 	ff.f.validateFuncs = append(ff.f.validateFuncs, fn)
 	return ff
 }
 
 // CompareFunc provides a function to compare the actual value of the field
 // from one message to the expected value in another message.
-func (ff *FieldFactory) CompareFunc(fn func(expected, actual Message) *ComparedField) *FieldFactory {
+func (ff *FieldFactory) CompareFunc(fn func(expected, actual msgifc.Message) *ComparedField) *FieldFactory {
 	panic("not implemented") // TODO:
 }
 
 // PDFRenderFunc provides a function to render the field onto the specified
 // page of the specified PDF file being generated, if it belongs there.  The
 // function may return errors if the value can't be rendered, doesn't fit, etc.
-func (ff *FieldFactory) PDFRenderFunc(fn func(Message, *gofpdf.Pdf, int) error) *FieldFactory {
+func (ff *FieldFactory) PDFRenderFunc(fn func(msgifc.Message, *gofpdf.Pdf, int) error) *FieldFactory {
 	panic("not implemented") // TODO:
 }
 
@@ -244,16 +247,16 @@ func (ff *FieldFactory) MakeField() Field {
 }
 
 func (ff *FieldFactory) setChoicesFunc(values []any) {
-	var pairs []ChoicePair
+	var pairs []msgifc.ChoicePair
 	var maxlen int
 
 	for _, value := range values {
 		switch value := value.(type) {
-		case ChoicePair:
+		case msgifc.ChoicePair:
 			pairs = append(pairs, value)
 			maxlen = max(maxlen, len(value.PIFO))
 		case string:
-			pairs = append(pairs, ChoicePair{value, value})
+			pairs = append(pairs, msgifc.ChoicePair{PIFO: value, Human: value})
 			maxlen = max(maxlen, len(value))
 		default:
 			panic("Allowed/Suggested value is not string or ChoicePair")
@@ -261,5 +264,5 @@ func (ff *FieldFactory) setChoicesFunc(values []any) {
 	}
 	ff.f.editWidth = maxlen
 	ff.f.editHeight = 1
-	ff.f.choicesFunc = func(Message) []ChoicePair { return pairs }
+	ff.f.choicesFunc = func(msgifc.Message) []msgifc.ChoicePair { return pairs }
 }
