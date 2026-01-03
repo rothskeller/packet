@@ -19,7 +19,7 @@ func (i *Incident) MarkMessageSent(dm *message.DraftMessage, le *LogEntry) (err 
 		now      = time.Now()
 	)
 	// First, update the OpDate and OpTime fields in the message.
-	for f := range dm.Type().Fields() {
+	for f := range dm.Fields(dm) {
 		switch f.Common() {
 		case field.COperatorDate:
 			f.SetValue(dm, now.Format("01/02/2006"))

@@ -51,7 +51,7 @@ func (i *Incident) AddDraftMessage(msg *message.DraftMessage, defaults bool) (id
 	// information into the message fields if it has them.  Also extract
 	// the handling from the message fields, if any, for use in the log
 	// entry.
-	for f := range msg.Fields() {
+	for f := range msg.Fields(msg) {
 		switch f.Common() {
 		case field.CDefaultBody:
 			maybeSetValue(msg, f, i.Config.DefaultBody, defaults)
@@ -187,7 +187,7 @@ func (i *Incident) UpdateDraftMessage(ident int, msg *message.DraftMessage) (err
 		return fmt.Errorf("message %d is not a draft", ident)
 	}
 	// Get the origin message ID and handling order from the message.
-	for f := range msg.Type().Fields() {
+	for f := range msg.Fields(msg) {
 		switch f.Common() {
 		case field.COriginMessageID:
 			omi = f.Value(msg)

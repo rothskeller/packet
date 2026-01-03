@@ -82,7 +82,7 @@ func (f *field) SetValue(m Message, val string) {
 		panic("SetValue called on non-settable field")
 	}
 	// If any other fields were newly made disallowed, remove their values.
-	for of := range m.Fields() {
+	for of := range m.Fields(m) {
 		if of, ok := of.(*field); ok && !of.disallowed && of.disallowedFunc != nil {
 			if of.disallowedFunc(m) {
 				of.SetValue(m, "")

@@ -55,7 +55,7 @@ func (ft FormType) Validate(m message.Message, pifo bool) error {
 }
 
 // Fields returns an iterator on the set of message fields.
-func (ft FormType) Fields() iter.Seq[field.Field] {
+func (ft FormType) Fields(m field.Message) iter.Seq[field.Field] {
 	return func(yield func(field.Field) bool) {
 		for fd := range ft.AllFields() {
 			if !yield(ff2mf{ft.FormDef, fd}) {
@@ -339,7 +339,7 @@ func (ft EditableFormType) FromPOST(r *http.Request) (msg *message.DraftMessage,
 	payl = payload.NewOutpostPayload(body)
 	subj, _ = subject.NewSCCoSubject("", "", "") // will give an error, ignored
 	msg = message.NewDraftMessage(ft, subj, payl, false)
-	for f := range ft.Fields() {
+	for f := range ft.Fields(msg) {
 		if tag := f.Tag(); tag != "" {
 			if val := r.FormValue(tag); val != "" {
 				f.SetValue(msg, val)

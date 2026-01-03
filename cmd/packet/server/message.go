@@ -350,7 +350,7 @@ func (s *Server) servePostNewMessageFrom(w http.ResponseWriter, r *http.Request)
 			if _, ok := msg.(*message.SentMessage); !ok {
 				return errors.New(`The "Resend" action can only be used with a sent message.`)
 			}
-			for f := range msg.Fields() {
+			for f := range msg.Fields(msg) {
 				switch f.Common() {
 				case field.CDestinationMessageID: // ignore
 				case field.COriginMessageID:
@@ -369,7 +369,7 @@ func (s *Server) servePostNewMessageFrom(w http.ResponseWriter, r *http.Request)
 			default:
 				return errors.New(`The "Send Copy" action can only be used with a received or sent message.`)
 			}
-			for f := range msg.Fields() {
+			for f := range msg.Fields(msg) {
 				switch f.Common() {
 				case field.CDestinationMessageID, field.COriginMessageID: // ignore
 				default:
@@ -382,7 +382,7 @@ func (s *Server) servePostNewMessageFrom(w http.ResponseWriter, r *http.Request)
 			if _, ok := msg.(*message.ReceivedMessage); !ok {
 				return errors.New(`The "Reply" action can only be used with a received message.`)
 			}
-			for f := range msg.Fields() {
+			for f := range msg.Fields(msg) {
 				switch f.Common() {
 				case field.CReference:
 					fref = f
@@ -394,7 +394,7 @@ func (s *Server) servePostNewMessageFrom(w http.ResponseWriter, r *http.Request)
 					f.SetValue(dr, f.Value(msg))
 				}
 			}
-			for f := range msg.Fields() {
+			for f := range msg.Fields(msg) {
 				switch f.Common() {
 				case field.COriginMessageID:
 					if fref != nil {
@@ -426,7 +426,7 @@ func (s *Server) servePostNewMessageFrom(w http.ResponseWriter, r *http.Request)
 // copyFields copies the values of all fields from the from message to the to
 // message.  The two messages are assumed to be of the same type.
 func copyFields(to *message.DraftMessage, from message.Message) {
-	for f := range from.Type().Fields() {
+	for f := range from.Fields(from) {
 		f.SetValue(to, f.Value(from))
 	}
 }

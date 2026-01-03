@@ -103,7 +103,7 @@ type Message interface {
 	// Body returns the message body.
 	Body() body.Body
 	// Fields returns an iterator on the message's fields.
-	Fields() iter.Seq[Field]
+	Fields(Message) iter.Seq[Field]
 }
 
 // ChoicePair is a pair of strings representing a choice for a field value.

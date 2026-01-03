@@ -51,7 +51,7 @@ func (i *Incident) ReceiveMessage(msg *message.JustReceivedMessage) (dr *message
 	// Put the local message ID and the operator information into the
 	// message fields if it has them.  Also extract the OMI and handling
 	// from the message fields, if any, for use in the log entry.
-	for f := range msg.Fields() {
+	for f := range msg.Fields(msg) {
 		switch f.Common() {
 		case "originMessageID":
 			le.FromMsgID = f.Value(msg)

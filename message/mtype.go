@@ -26,7 +26,7 @@ type MType interface {
 	// PackItForms would raise; otherwise the checks may be more extensive.
 	Validate(m Message, pifo bool) error
 	// Fields returns an iterator on the set of message fields.
-	Fields() iter.Seq[field.Field]
+	Fields(m field.Message) iter.Seq[field.Field]
 	// RenderPDF creates a PDF representation of the message in the
 	// specified file.  If copyname is not empty, it is placed in the
 	// footer of each page.  The returned error may be a Warning, showing a
@@ -239,7 +239,7 @@ func (t *BaseMType) Name() string { return t.name }
 // If pifo is true, it returns only problems that PackItForms would raise;
 // otherwise the checks may be more extensive.
 func (t *BaseMType) Validate(m Message, pifo bool) (err error) {
-	for f := range t.Fields() {
+	for f := range t.Fields(m) {
 		err = errors.Join(err, f.Validate(m, f, pifo))
 	}
 	return err
@@ -262,7 +262,7 @@ func (t *BaseMType) AddField(fs ...any) {
 }
 
 // Fields returns an iterator on the set of message fields.
-func (t *BaseMType) Fields() iter.Seq[field.Field] {
+func (t *BaseMType) Fields(m field.Message) iter.Seq[field.Field] {
 	return func(yield func(field.Field) bool) {
 		for _, f := range t.fields {
 			if !yield(f) {
