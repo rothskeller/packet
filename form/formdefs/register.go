@@ -109,9 +109,15 @@ func registerFSForms() (err error) {
 		if def, derr := formdef.ReadFS(FormsFS, ff); derr != nil {
 			slog.Warn("form definition error", "f", ff, "err", derr)
 			err = errors.Join(err, derr)
-		} else if derr = message.RegisterType(form.FormType{FormDef: def}); derr != nil {
-			slog.Warn("form registration error", "f", ff, "err", derr)
-			err = errors.Join(err, derr)
+		} else {
+			var ft message.MType = form.FormType{FormDef: def}
+			if def.CreateTag != "" {
+				ft = form.EditableFormType{FormType: ft.(form.FormType)}
+			}
+			if derr = message.RegisterType(ft); derr != nil {
+				slog.Warn("form registration error", "f", ff, "err", derr)
+				err = errors.Join(err, derr)
+			}
 		}
 	}
 	return err

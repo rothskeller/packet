@@ -134,7 +134,7 @@ func (s *Server) serveGetIncidentConfig(w http.ResponseWriter, r *http.Request) 
 	html.Render(w, doc)
 	return
 ERROR:
-	ErrorPage(w, http.StatusInternalServerError, err, nil)
+	ErrPage(w, err.Error(), http.StatusInternalServerError)
 }
 
 // guessSerialPorts makes a swag at the possible device files for serial ports.
@@ -199,11 +199,7 @@ func (s *Server) servePostIncidentConfig(w http.ResponseWriter, r *http.Request)
 			c.NoSendReceipts = false
 			c.ConnectBBS = r.FormValue("bbscall")
 			c.ConnectAddress = net.JoinHostPort(r.FormValue("tcpaddr"), r.FormValue("tcpport"))
-			if c.TacCall != "" {
-				c.TelnetUser = c.TacCall
-			} else {
-				c.TelnetUser = c.OpCall
-			}
+			c.TelnetUser = c.ActiveCall()
 			if r.FormValue("usesaved") != "" {
 				c.TelnetPassword = incident.GetIncDefaults().TelnetPasswords[c.TelnetUser]
 			} else {
@@ -236,5 +232,5 @@ func (s *Server) servePostIncidentConfig(w http.ResponseWriter, r *http.Request)
 	http.Redirect(w, r, strings.Replace(r.URL.String(), "-config", "", 1), http.StatusSeeOther)
 	return
 ERROR:
-	ErrorPage(w, http.StatusInternalServerError, err, nil)
+	ErrPage(w, err.Error(), http.StatusInternalServerError)
 }

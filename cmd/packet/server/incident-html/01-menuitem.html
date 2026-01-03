@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <script> // MenuItem
+    // A <menu-item> is a single element in a menu (<menu-bar>, <sub-menu>, or
+    // <context-menu>).
+    //
+    // Attributes:
+    //   checkable: Boolean attribute indicating that the menu item is a toggle.
+    //     If any item in a menu has this attribute, space is reserved on the
+    //     left side of all items in the menu where a check mark can be shown.
+    //   checked: Boolean attribute indicating that the menu item should be
+    //     initially checked.  Adding or removing this attribute after element
+    //     creation has no effect, and testing its presence will not detect
+    //     whether the item is currently checked.
+    //   shortcut: indicates the keyboard shortcut to activate this menu item,
+    //     if any.  Displayed on the right side of the menu item.  It can be
+    //     either a character, for a plain character shortcut key (case
+    //     insensitive), or '^' followed by a letter for a control character.
+    //
+    // Children:
+    //   A text node with the label of the menu item.
+    //   Optionally, a <sub-menu> element with a submenu triggered by this
+    //   menu item (supported only for items in the top menu bar).
+    //
+    // Events Dispatched:
+    //   'item-click':  when the item is activated.  For toggle items,
+    //     evt.detail indicates whether the item is now checked.
+    //   'visibility-change':  when the item's visibility changes.
+    //
+    // Methods:
+    //   adjustSubmenuPosition: sets the left offset of the submenu, if any, to
+    //     match the left offset of the item.
+    //   checkable:  returns whether the item supports being checked.
+    //   checked:  returns whether the item is checked.
+    //   click: act as if the item has been clicked.
+    //   focus:  gives keyboard focus to the item.
+    //   isSubmenuOpen:  returns whether the contained <sub-menu> is open, if
+    //     there is one; otherwise returns false.
+    //   openSubmenu:  opens the contained <sub-menu> if any; otherwise acts
+    //     like focus().
+    //   setChecked(bool):  sets the checked state of the item as specified.
+    //   show(bool):  sets the visible state of the item as specified.
+    //   shown:  returns whether the item is visible.
+    class MenuItem extends HTMLElement {
+      constructor() {
+        super()
+        this._button = null
+        this._submenu = null
+      }
+      connectedCallback() {
+        this.classList.toggle('checked', this.hasAttribute('checked'))
+        this._button = document.createElement('button')
+        this._button.setAttribute('tabindex', '-1')
+        if (this.hasAttribute('shortcut')) {
+          const tspan = document.createElement('span')
+          while (this.firstChild) tspan.appendChild(this.firstChild)
+          this._button.appendChild(tspan)
+          const sspan = document.createElement('span')
+          sspan.textContent = this.getAttribute('shortcut')
+          this._button.classList = 'with-shortcut'
+          this._button.appendChild(sspan)
+          if ((this._shortcutKey = this.getAttribute('shortcut').toLowerCase()).startsWith('^')) {
+            this._shortcutKey = this._shortcutKey.substring(1)
+            this._shortcutCtrl = true
+          } else this._shortcutCtrl = false
+          window.addEventListener('keydown', this._checkShortcut.bind(this))
+        } else {
+          while (this.firstChild) this._button.appendChild(this.firstChild)
+        }
+        this._button.addEventListener('click', this._onClick.bind(this))
+        this.appendChild(this._button)
+        this._submenu = this.querySelector('sub-menu')
+        if (this._submenu) this._submenu.addEventListener('submenu-open', this._onSubmenuOpen.bind(this))
+      }
+      adjustSubmenuPosition() {
+        if (!this._submenu) return
+        this._submenu.style.left = `${this._button.getBoundingClientRect().left}px`
+      }
+      checkable() {return this.hasAttribute('checkable')}
+      checked() {return this.classList.contains('checked')}
+      click() {
+        if (this._submenu) {
+          this._submenu.open()
+          return
+        }
+        if (this.hasAttribute('checkable')) this.classList.toggle('checked')
+        this.dispatchEvent(new CustomEvent('item-click', {
+          bubbles: true,
+          detail: {checked: this.classList.contains('checked')},
+        }))
+      }
+      focus() {this._button.focus()}
+      isSubmenuOpen() {return this._submenu && this._submenu.isOpen()}
+      openSubmenu() {
+        if (this._submenu) this._submenu.open()
+        else this.focus()
+      }
+      setChecked(checked) {this.classList.toggle('checked', checked)}
+      show(shouldShow) {
+        if (shouldShow === this.shown()) return
+        if (shouldShow) this.removeAttribute('hidden')
+        else this.setAttribute('hidden', '')
+        this.dispatchEvent(new CustomEvent('visibility-change'))
+      }
+      shown() {return !this.hasAttribute('hidden')}
+      _checkShortcut(evt) {
+        if (this.hasAttribute('hidden')) return
+        if (evt.target.closest('dialog')) return
+        if (evt.altKey || evt.metaKey) return
+        if (evt.ctrlKey !== this._shortcutCtrl) return
+        if (evt.key.toLowerCase() !== this._shortcutKey) return
+        this._onClick(evt)
+      }
+      _onClick(evt) {
+        evt.preventDefault()
+        evt.stopImmediatePropagation()
+        this.click()
+      }
+      _onSubmenuOpen(evt) {this.classList.toggle('open', evt.detail)}
+    }
+  </script>
+  <style>
+    menu-item button {
+      appearance: none;
+      border: none;
+      background-color: #dff6df;
+      font-size: 1rem;
+      padding: 0.5rem 0.75rem;
+    }
+
+    menu-item button.with-shortcut {
+      display: flex;
+      justify-content: space-between;
+      gap: 2rem;
+    }
+
+    sub-menu menu-item button,
+    context-menu menu-item button {
+      width: 100%;
+      text-align: left;
+    }
+
+    sub-menu.checkable button,
+    context-menu.checkable button {
+      position: relative;
+      padding-left: 1.75rem;
+    }
+
+    menu-item.checked button::before {
+      position: absolute;
+      top: 0.3rem;
+      left: 0.5rem;
+      content: "✓";
+      font-size: 1.25rem;
+    }
+
+    menu-item button:hover,
+    menu-item button:focus-visible,
+    menu-item.open>button {
+      background-color: #a8e8a8;
+      outline: none;
+    }
+  </style>
+</head>
+
+<body>
+  <script>
+    customElements.define('menu-item', MenuItem)
+  </script>
+</body>
+
+</html>

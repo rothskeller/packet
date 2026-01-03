@@ -52,6 +52,15 @@ func (m *DraftMessage) Received() bool { return false }
 // private message).
 func (m *DraftMessage) Bulletin() bool { return m.bulletin }
 
+// SetBulletin sets whether the message will be a BBS bulletin (as opposed to a
+// private message).
+func (m *DraftMessage) SetBulletin(bull bool) {
+	if m.bulletin != bull {
+		m.bulletin = bull
+		m.MarkDirty("envelope.DraftMessage.Bulletin")
+	}
+}
+
 // ReadyToSend returns whether the message is ready to be sent during the next
 // BBS connection.
 func (m *DraftMessage) ReadyToSend() bool { return m.readyToSend }
@@ -92,7 +101,7 @@ func (m *DraftMessage) RFC5322() string {
 
 // readDraftMessage creates a DraftMessage with the supplied common message
 // fields and based on the supplied headers.
-func readDraftMessage(hdr mail.Header, c *common) (_ Message, err error) {
+func readDraftMessage(filename string, hdr mail.Header, c *common) (_ Message, err error) {
 	m := DraftMessage{common: c}
 
 	m.bulletin = hdr.Get("X-Packet-Bulletin") != ""

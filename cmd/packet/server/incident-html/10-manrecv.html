@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <script> // Manual Receive Dialog
+    function setupManualReceiveDialog() {
+      function uploadMessage(file) {
+        const reader = new FileReader()
+        reader.onload = evt => {document.getElementById('mrmsg').value = evt.target.result}
+        reader.readAsText(file)
+      }
+      document.getElementById('mrupload').addEventListener('click', evt => {
+        evt.preventDefault()
+        document.getElementById('mrfile').click()
+      })
+      document.getElementById('mrmsg').addEventListener('drop', evt => {
+        uploadMessage(evt.dataTransfer.files[0])
+        evt.preventDefault()
+        evt.stopPropagation()
+      })
+      document.getElementById('mrfile').addEventListener('change', evt => {
+        if (evt.target.value) uploadMessage(evt.target.files[0])
+      })
+      document.getElementById('mrcan').addEventListener('click', () => {
+        document.getElementById('mrdlg').close()
+      })
+      document.getElementById('mrform').addEventListener('submit', async evt => {
+        evt.preventDefault()
+        const data = new FormData(evt.target)
+        const resp = await fetch('/manual-receive', {method: 'POST', body: data})
+        if (resp.ok) {
+          document.getElementById('mrdlg').close()
+          childAction(resp.headers.get('X-Packet-Action'))
+          return
+        }
+        const err = (await resp.text()) || resp.statusText
+        document.getElementById('mrerr').textContent = err
+      })
+    }
+    function openManualReceiveDialog() {
+      document.getElementById('mrmsg').value = ''
+      document.getElementById('mrdlg').showModal()
+    }
+  </script>
+  <style>
+    #mrdlg {
+      max-width: 40rem;
+      margin: 4rem auto;
+      padding: 0 0.75rem 0.75rem;
+      z-index: 2;
+    }
+
+    #mrform {
+      display: flex;
+      flex-direction: column;
+    }
+
+    #mrform h1 {
+      background-color: #a8e8a8;
+      margin: 0 -0.75rem;
+      padding: 0.5rem 0.75rem;
+      font-size: 1.5rem;
+    }
+
+    #mrerr:not(:empty) {
+      margin-top: 1.5rem;
+      color: red;
+    }
+
+    #mrsubrow {
+      margin-top: 1.5rem;
+      display: flex;
+      justify-content: space-between;
+    }
+
+    #mrbuttons {
+      display: flex;
+      gap: 0.75rem;
+    }
+
+    #mrcan,
+    #mrsub {
+      border-radius: 0.25rem;
+    }
+
+    #mrsub {
+      background-color: #a8e8a8;
+    }
+  </style>
+</head>
+
+<body>
+  <dialog id=mrdlg>
+    <form id=mrform>
+      <input type=hidden name=dir value="{{DIR}}">
+      <input type=hidden name=mrbbs value="{{BBS}}">
+      <h1>Manual Receive Message</h1>
+      <p>
+        Paste the received message, including the From, Subject, and other headers.
+        <br>
+        You can also drag and drop the message, or
+        <a id=mrupload href="#">upload a file</a> containing it.
+      </p>
+      <textarea id=mrmsg name=mrmsg rows=10 required autofocus
+        placeholder="From: ...&#10;Date: ...&#10;Subject: ...&#10;&#10;!SCCoPIFO!&#10;...&#10;!/ADDON!"></textarea>
+      <input type=file id=mrfile style="display:none;">
+      <div id=mrerr></div>
+      <div id=mrsubrow>
+        <label><input id=mrdr name=mrdr type=checkbox checked={{GENDRS}}> Generate delivery receipt</label>
+        <div id=mrbuttons>
+          <button id=mrcan type=button>Cancel</button>
+          <input id=mrsub type=submit value="Receive Message">
+        </div>
+      </div>
+    </form>
+  </dialog>
+</body>
+
+</html>

@@ -2,8 +2,10 @@ package incident
 
 import (
 	"context"
+	"fmt"
 	"log/slog"
 	"maps"
+	"strings"
 	"time"
 )
 
@@ -104,6 +106,27 @@ const (
 const (
 	TNCKPC3Plus = "KPC3+" // Kantronics KPC-3 Plus
 )
+
+// ActiveCall returns the active call sign in the configuration.
+func (c *Config) ActiveCall() string {
+	if c.TacCall != "" {
+		return c.TacCall
+	}
+	return c.OpCall
+}
+
+// ActiveName returns the active station name in the configuration.
+func (c *Config) ActiveName() string {
+	if c.TacCall != "" {
+		return c.TacName
+	}
+	return c.OpName
+}
+
+// FromAddress returns the From address for messages sent using the config.
+func (c *Config) FromAddress() string {
+	return fmt.Sprintf("%s@%s.scc-ares-races.org", strings.ToLower(c.ActiveCall()), strings.ToLower(c.ConnectBBS))
+}
 
 // Clone creates a clone of the configuration.
 func (c *Config) Clone() (n *Config) {

@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <script> // Manual Send Dialog
+    function setupManualSendDialog() {
+      document.getElementById('mscopy').addEventListener('click', async () => {
+        await navigator.clipboard.writeText(document.getElementById('mscmd').textContent)
+        document.getElementById('mscopied').textContent = 'Copied'
+      })
+      document.getElementById('mscan').addEventListener('click', () => {
+        document.getElementById('msdlg').close()
+      })
+      document.getElementById('mssent').addEventListener('click', async () => {
+        const params = new URLSearchParams({dir: '{{DIR}}', id: document.getElementById('msdlg').dataset.ident})
+        let showErr
+        try {
+          await fetch('/mark-sent?' + params.toString(), {method: 'POST'})
+          document.getElementById('msdlg').close()
+        } catch (err) {
+          document.getElementById('msdlg').close()
+          openErrorDialog('ManuL Send Error', err.toString())
+        }
+      })
+    }
+    async function openManualSendDialog(ident) {
+      try {
+        const params = new URLSearchParams({dir: '{{DIR}}', id: ident})
+        const resp = await fetch('/manual-send-command?' + params.toString())
+        if (!resp.ok) throw new Error(await resp.text())
+        document.getElementById('mscmd').textContent = await resp.text()
+        const dlg = document.getElementById('msdlg')
+        dlg.dataset.ident = ident
+        dlg.showModal()
+      } catch (err) {
+        openErrorDialog('Manual Send Error', err.toString())
+      }
+    }
+  </script>
+  <style>
+    #msdlg {
+      margin: 4rem auto;
+      padding: 0 0.75rem 0.75rem;
+      z-index: 2;
+    }
+
+    #msdlg h1 {
+      background-color: #a8e8a8;
+      margin: 0 -0.75rem;
+      padding: 0.5rem 0.75rem;
+      font-size: 1.5rem;
+    }
+
+    #msdlg code {
+      background-color: #f0f0f4;
+    }
+
+    #msinstr {
+      max-width: 40rem;
+    }
+
+    #msupsell {
+      color: #888;
+      font-size: 0.875rem;
+    }
+
+    #mscmd {
+      width: 100%;
+    }
+
+    #msbuttons {
+      margin-top: 1.5rem;
+      display: flex;
+      justify-content: stretch;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    #mscopied {
+      flex: auto;
+    }
+
+    #mscopy,
+    #mscan,
+    #mssent {
+      border-radius: 0.25rem;
+    }
+
+    #mscopy,
+    #mssent {
+      background-color: #a8e8a8;
+    }
+  </style>
+</head>
+
+<body>
+  <dialog id=msdlg>
+    <h1>Manual Send Message</h1>
+    <div id=msinstr>
+      <p>To send this message manually, using a terminal emulator to talk to a TNC:
+      <ol>
+        <li>Ensure your radio is on the correct frequency for {{BBS}}. See the
+          <a href="https://scc-ares-races.org/operations/packet/bbs" target=_blank>SCCo ARES/RACES Packet BBSes</a>
+          page for the proper frequencies.
+        <li>Ensure your TNC has the county standard settings. See the
+          <a href="https://scc-ares-races.org/packet/stc-tnc" target=_blank>Standard TNC Settings</a>
+          page for details.
+        <li>Ensure your TNC is identifying as {{IDENT}}. On most TNCs, this is a <code>MY {{IDENT}}</code> command.
+        <li>Tell your TNC to connect to {{BBS}}. On most TNCs, this is a <code>C {{BBS}}-1</code> command.
+        <li>Once connected, copy the message below (using the "Copy" button) and paste it into your terminal emulator.
+      </ol>
+      <p id=msupsell>Note: if your TNC is a Kantronics KPC-3 Plus or compatible, this software can handle the TNC for
+        you. Go to the Incident Configuration page, set the Connection Type to "Serial+TNC", supply the necessary
+        details, and then use the "Connect" button on the Incident page to send and receive messages.
+    </div>
+    <textarea id=mscmd rows=10 readonly></textarea>
+    <div id=msbuttons>
+      <button type=button id=mscopy>Copy</button>
+      <span id=mscopied></span>
+      <button type=button id=mscan>Cancel</button>
+      <button type=button id=mssent>Mark Message as Sent</button>
+    </div>
+  </dialog>
+</body>
+
+</html>

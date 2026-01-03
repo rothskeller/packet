@@ -5,15 +5,18 @@ import (
 	"context"
 	_ "embed"
 	"encoding/json/v2"
-	"errors"
 	"fmt"
+	"log/slog"
 	"net/http"
+	"os/exec"
 	"regexp"
 	"slices"
 	"strconv"
 	"strings"
+	"sync"
 
 	"github.com/rothskeller/packet/form/htmlop"
+	"github.com/rothskeller/packet/form/pifover"
 	"github.com/rothskeller/packet/incident"
 	"github.com/rothskeller/packet/message"
 	"golang.org/x/net/html"
@@ -21,6 +24,9 @@ import (
 
 //go:embed incident.html
 var incidentHTML []byte
+
+var serverPrintCmd string
+var serverPrintOnce sync.Once
 
 // serveGetIncident handles GET /incident requests.  They will have a dir=
 // parameter specifying the incident directory.
@@ -32,12 +38,16 @@ func (s *Server) serveGetIncident(w http.ResponseWriter, r *http.Request) {
 		vars = map[string]string{}
 	)
 	if dir = r.FormValue("dir"); dir == "" {
-		ErrorPage(w, http.StatusBadRequest, errors.New("incident directory is a required parameter"), nil)
+		ErrPage(w, "The GET /incident request is missing the required dir= parameter.", http.StatusBadRequest)
 		return
 	}
 	err = incident.Read(dir, func(i *incident.Incident) error {
 		vars["DIR"] = dir
+		vars["IDENT"] = i.Config.ActiveCall()
 		vars["BBS"] = i.Config.ConnectBBS
+		if i.Config.ConnectType == incident.ConnectNone {
+			vars["manual"] = "true"
+		}
 		if i.Config.IncidentName != "" {
 			vars["INCNAME"] = i.Config.IncidentName
 		} else if i.Config.ActivationNum != "" {
@@ -45,24 +55,24 @@ func (s *Server) serveGetIncident(w http.ResponseWriter, r *http.Request) {
 		} else {
 			vars["INCNAME"] = dir
 		}
-		if i.Config.TacCall != "" {
-			vars["IDENT"] = i.Config.TacCall
-		} else {
-			vars["IDENT"] = i.Config.OpCall
-		}
 		if !i.Config.NoSendReceipts {
 			vars["GENDRS"] = "checked"
 		}
 		return nil
 	})
 	if err != nil {
-		ErrorPage(w, http.StatusInternalServerError, err, nil)
+		ErrPage(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
-	vars["VERSION"] = "4.0.0" // TODO: compute this
+	vars["VERSION"] = pifover.PIFOVersion + ".0" // TODO: how to assign patch number?
 	vars["MTYPES"] = newMessageTypeList()
+	serverPrintOnce.Do(setServerCanPrint)
+	if serverPrintCmd != "" {
+		vars["SERVERPRINT"] = "true"
+	}
 	if doc, err = html.Parse(bytes.NewReader(incidentHTML)); err != nil {
-		ErrorPage(w, http.StatusInternalServerError, err, nil)
+		slog.Error("parse incident HTML", "err", err)
+		ErrPage(w, "The incident.html page could not be parsed.  Please report this error to the author.", http.StatusInternalServerError)
 		return
 	}
 	htmlop.Expand(doc, vars)
@@ -84,13 +94,16 @@ func (s *Server) serveGetIncidentLog(w http.ResponseWriter, r *http.Request) {
 		err  error
 	)
 	if dir = r.FormValue("dir"); dir == "" {
+		slog.Error("no incident dir")
 		http.Error(w, "dir is required", http.StatusBadRequest)
 		return
 	} else if !incident.IsIncident(dir) {
+		slog.Error("no such incident dir", "dir", dir)
 		http.Error(w, "dir is not an incident", http.StatusBadRequest)
 		return
 	}
 	if seq, err = strconv.Atoi(r.FormValue("seq")); err != nil || seq < 0 {
+		slog.Error("bad seq number", "seq", r.FormValue("seq"))
 		http.Error(w, "seq is missing or invalid", http.StatusBadRequest)
 		return
 	}
@@ -113,7 +126,7 @@ func (s *Server) serveGetIncidentLog(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	w.Header().Set("Content-Type", "application/json; charset=utf-8")
-	w.Header().Set("Cache-Control", "nostore, private")
+	w.Header().Set("Cache-Control", "no-store, private")
 	json.MarshalWrite(w, ilog)
 }
 
@@ -138,4 +151,14 @@ func newMessageTypeList() string {
 		data = append(data, fmt.Sprintf("%s:%s:%s", emt.CreateTag(), emt.CreateKey(), name))
 	}
 	return strings.Join(data, ";")
+}
+
+func setServerCanPrint() {
+	var err error
+
+	if serverPrintCmd, err = exec.LookPath("lpr"); err != nil || serverPrintCmd == "" {
+		if serverPrintCmd, err = exec.LookPath("lp"); err != nil {
+			serverPrintCmd = ""
+		}
+	}
 }

@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <script> // LogEntry
+    const myIdent = '{{IDENT}}'
+    // A <log-entry> represents a single line in the message log.  It is not
+    // the same as a message:  a message can have more than one line if it has
+    // multiple recipients, and log entries can exist without an underlying
+    // message.  (There are no <log-entry> elements in the HTML of the page;
+    // they are all created by Javascript.)
+    //
+    // A log entry can be displayed in two formats: compact and full.  The
+    // element renders both and lets the choice between them be made by
+    // classes on the containing <log-grid>.
+    //
+    // Events Dispatched:
+    //   'default-action': sent when the default action is invoked on the log
+    //     entry (Enter or double-click).
+    //   'entry-selected': sent when a log entry is selected.
+    //
+    // Methods:
+    //   deselect: called to tell a log entry that it has been deselected.
+    //   select: makes this log entry the current selection.
+    //   updateData(data): updates the data for this log entry.  See below for
+    //     data format.
+    //
+    // Properties:
+    //   The <log-entry> exposes the 'f', 'idx', 'seq', and 'st' properties of
+    //   the log entry it's displaying.  These should not be mutated.  See
+    //   below for their meanings.
+    //
+    // Log Entry Data:
+    //   The data for each log entry is passed to the page as a JSON object
+    //   with the following keys.  Note that the text below describes the
+    //   values of each field as assigned by the packet software, but those
+    //   fields marked with [*] are manually editable and may have other
+    //   contents.
+
+    //   id: an immutable id of the log entry
+    //   idx: zero-based location of the log entry in the sorted list
+    //   seq: the sequence number of the incident update when the log entry was
+    //     last changed.
+    //   st: the status of the message, one of:
+    //     D: draft: an outgoing message that is not yet ready to send
+    //     H: hand-entered: a log entry not associated with a message
+    //     Q: queued: an outgoing message that is ready to send but not yet sent
+    //     R: received: a received message
+    //     S: sent: a sent message
+    //     X: deleted: a log entry that has been deleted.
+    //   f: flags associated with the message, any combination of:
+    //     B: bulletin: message is a bulletin
+    //     F: followup: message needs follow-up
+    //     I: immediate: message has immediate handling order
+    //     P: priority: message has priority handling order
+    //     R: receipt: message is a receipt
+    //     U: unread: received message has not been read
+    //     V: voice: log entry is for a voice message
+    //     -: a receipt is needed for this log entry (and has not been received)
+    //     +: a receipt has been received for this log entry
+    //   t: the log entry timestamp in YYYY-MM-DDTHH:MM:SS.sss-07:00 format. [*]
+    //   fc: the call sign of the station that sent the message.  Will be empty
+    //     for an outgoing message.  Will be the bulletin area name for a
+    //     received bulletin. [*]
+    //   fi: the message ID assigned to the message by the sending station. [*]
+    //   li: the message ID assigned to the message by the local station.  For
+    //     receipts, the message ID assigned to the message being receipted.
+    //   tc: the call sign of a station to which the message was sent.  Will be
+    //     empty for a received message. [*]
+    //   ti: the message ID assigned to the message by the receiving station
+    //     identified in 'tc' (or by us, for a received message). [*]
+    //   s:  the subject line of the message. [*]
+    class LogEntry extends HTMLElement {
+      constructor() {
+        super()
+        this.ident = 0
+        this.seq = 0
+        this.st = ' '
+        this.f = ''
+        this.t = ''
+      }
+      connectedCallback() {
+        this.setAttribute('tabindex', '-1')
+        for (let n of ['time', 'fromCall', 'fromID', 'from', 'fromArr', 'localID', 'toArr', 'to', 'toCall', 'toID', 'sFull', 'sTrim', 'fu']) {
+          const div = document.createElement('div')
+          div.classList = n
+          this.appendChild(div)
+          this[`_${n}Cell`] = div
+        }
+        this.addEventListener('dblclick', this._onDblClick.bind(this))
+        this.addEventListener('focus', this._onFocus.bind(this))
+        this.addEventListener('keydown', this._onKeyDown.bind(this))
+      }
+      deselect() {this.classList.remove('selected')}
+      select() {
+        this.focus()
+        this._onFocus()
+      }
+      updateData(data) {
+        this.ident = data.id
+        this.seq = data.seq
+        this.st = data.st
+        this.f = data.f
+        this.t = data.t
+        if (this.st === 'X') return (this.style.display = 'none')
+        let inbound, outbound
+        switch (data.st) {
+          case 'D':
+          case 'Q':
+          case 'S':
+            outbound = true
+            break
+          case 'R':
+            inbound = true
+            break
+          case 'H':
+            if (data.tc === myIdent || (data.ti && !data.tc)) inbound = true
+            else if (data.fc === myIdent || (data.fi && !data.fc)) outbound = true
+            break
+        }
+        this.classList.toggle('bulletin', data.f.includes('B'))
+        this.classList.toggle('immediate', data.f.includes('I'))
+        this.classList.toggle('priority', data.f.includes('P'))
+        this.classList.toggle('receipt', data.f.includes('R') && data.st !== 'D' && data.st !== 'Q')
+        this._timeCell.classList.toggle('draft', data.st === 'D')
+        this._timeCell.classList.toggle('ready', data.st === 'Q')
+        this._timeCell.textContent = data.st === 'D' ? 'DRAFT' : data.st === 'Q' ? 'READY' : data.t.substring(11, 16)
+        this._fromCallCell.textContent = data.fc
+        this._fromIDCell.textContent = data.fi
+        this._fromCell.textContent = outbound ? '' : (data.fi || data.fc)
+        this._fromCell.classList.toggle('needs-receipt', data.f.includes('-'))
+        this._fromArrCell.textContent = this._fromCell.textContent ? '→' : ''
+        this._localIDCell.textContent = data.li
+        this._toCell.textContent = inbound ? '' : (data.ti || data.tc || '??????')
+        this._toArrCell.textContent = this._toCell.textContent ? '→' : ''
+        this._toCallCell.textContent = data.tc
+        this._toIDCell.textContent = data.ti
+        this._toIDCell.classList.toggle('needs-receipt', data.f.includes('-'))
+        this._sFullCell.textContent = data.s
+        this._sFullCell.classList.toggle('unread', data.f.includes('U'))
+        this._sFullCell.classList.toggle('voice', data.f.includes('V'))
+        this._sTrimCell.textContent = (data.fi && data.s && data.s.startsWith(data.fi + '_')) ? data.s.substring(data.fi.length + 1) : (data.ti && data.s.startsWith(data.ti + '_')) ? data.s.substring(data.ti.length + 1) : data.s
+        this._sTrimCell.classList.toggle('unread', data.f.includes('U'))
+        this._sTrimCell.classList.toggle('voice', data.f.includes('V'))
+        this._fuCell.textContent = data.f.includes('F') ? '★' : ''
+        this._fuCell.title = data.f.includes('F') ? 'Needs Followup' : null
+        if (this.classList.contains('selected')) this._onFocus()
+      }
+      _onDblClick() {
+        this.dispatchEvent(new CustomEvent('default-action', {bubbles: true}))
+      }
+      _onFocus() {
+        this.classList.add('selected')
+        this.dispatchEvent(new CustomEvent('entry-selected', {bubbles: true}))
+      }
+      _onKeyDown(evt) {
+        if (evt.key === 'Enter') {
+          this.dispatchEvent(new CustomEvent('default-action', {bubbles: true}))
+          evt.preventDefault()
+          evt.stopPropagation()
+        }
+      }
+    }
+  </script>
+  <style>
+    log-entry {
+      display: grid;
+      grid: subgrid/subgrid;
+      grid-column: span var(--columns);
+    }
+
+    log-entry.selected {
+      background-color: #f0f0f4;
+    }
+
+    log-grid:not(.show-receipts) log-entry.receipt {
+      display: none;
+    }
+
+    log-grid>*>* {
+      border: var(--border-width) solid #aaa;
+      margin-top: calc(-1 * var(--border-width));
+      margin-left: calc(-1 * var(--border-width));
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      padding: 0.1rem 0.25rem;
+    }
+
+    log-grid.compact .fromCall,
+    log-grid.compact .fromID,
+    log-grid.full .from,
+    log-grid.full .fromArr,
+    log-grid.full .localID,
+    log-grid.full .toArr,
+    log-grid.full .to,
+    log-grid.compact .toCall,
+    log-grid.compact .toID,
+    log-grid.compact .sFull,
+    log-grid.full .sTrim {
+      display: none;
+    }
+
+    log-grid.full .fromCall,
+    log-grid.full .toCall {
+      border-right-color: #ddd;
+    }
+
+    log-grid.full .fromID,
+    log-grid.full .toID {
+      border-left-color: #ddd;
+    }
+
+    log-grid.compact .from,
+    log-grid .sTrim,
+    log-grid .sFull {
+      border-right: none;
+    }
+
+    log-grid.compact .fromArr,
+    log-grid.compact .localID,
+    log-grid.compact .toArr {
+      border-inline: none;
+    }
+
+    log-grid.compact .to,
+    log-grid .fu {
+      border-left: none;
+    }
+
+    log-grid .fu:empty {
+      padding-inline: 0;
+    }
+
+    log-grid .fu:not(:empty) {
+      padding-left: 0.5rem;
+      color: #d73b30;
+      cursor: default;
+    }
+
+    .bulletin {
+      color: blue;
+    }
+
+    .draft {
+      background-color: #ff8080;
+      font-size: 0.875rem;
+    }
+
+    .immediate {
+      color: #b50000;
+    }
+
+    .from.needs-receipt::after,
+    .toID.needs-receipt::after {
+      content: "NO RCPT";
+      font-size: 0.875rem;
+      color: #000;
+      background-color: #ff8080;
+      padding-inline: 2px;
+      cursor: default;
+    }
+
+    .priority {
+      color: #805300;
+    }
+
+    .ready {
+      background-color: #a8e8a8;
+      font-size: 0.875rem;
+    }
+
+    .receipt {
+      color: #888;
+    }
+
+    .unread::before {
+      content: "NEW";
+      font-size: 0.875rem;
+      background-color: #ff0000;
+      color: white;
+      padding-inline: 2px;
+      margin-right: 0.25rem;
+      cursor: default;
+    }
+
+    .voice::before {
+      content: "VOICE";
+      font-size: 0.875rem;
+      background-color: #a8e8a8;
+      padding-inline: 2px;
+      margin-right: 0.25rem;
+      cursor: default;
+    }
+  </style>
+</head>
+
+<body>
+  <script>
+    customElements.define('log-entry', LogEntry)
+  </script>
+</body>
+
+</html>

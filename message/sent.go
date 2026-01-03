@@ -4,6 +4,7 @@ import (
 	"errors"
 	"fmt"
 	"iter"
+	"log/slog"
 	"net/mail"
 	"net/textproto"
 	"regexp"
@@ -117,7 +118,7 @@ var (
 
 // readSentMessage creates a SentMessage with the supplied common message
 // fields and based on the supplied headers.
-func readSentMessage(hdr mail.Header, c *common) (_ Message, err error) {
+func readSentMessage(filename string, hdr mail.Header, c *common) (_ Message, err error) {
 	m := SentMessage{common: c}
 	m.init()
 
@@ -142,6 +143,7 @@ func readSentMessage(hdr mail.Header, c *common) (_ Message, err error) {
 					ReceiverMessageID: match[3],
 				})
 			} else {
+				slog.Error("incorrect X-Packet-Receipt", "f", filename, "X-Packet-Receipt", rstr)
 				return nil, errors.New("incorrect X-Packet-Receipt: header format for stored sent message")
 			}
 		}

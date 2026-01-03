@@ -33,7 +33,7 @@ var (
 // receipted was delivered to us.  extraText is free-form text to be added to
 // the end of the receipt message body.  (This is rarely used since Outpost
 // users will never see it.)
-func NewDeliveryReceipt(rmTo, rmSubject, lmi string, deliveryTime time.Time, extraText string) (m message.Message, err error) {
+func NewDeliveryReceipt(rmTo, rmSubject, lmi string, deliveryTime time.Time, extraText string) (m *message.DraftMessage, err error) {
 	var (
 		subject *DeliveryReceiptSubject
 		body    *DeliveryReceiptBody
@@ -44,7 +44,10 @@ func NewDeliveryReceipt(rmTo, rmSubject, lmi string, deliveryTime time.Time, ext
 	if body, err = newDeliveryReceiptBody(rmTo, rmSubject, lmi, deliveryTime, extraText); err != nil {
 		return nil, err
 	}
-	return message.NewDraftMessage(DeliveryReceipt, subject, payload.NewOutpostPayload(body), false), nil
+	m = message.NewDraftMessage(DeliveryReceipt, subject, payload.NewOutpostPayload(body), false)
+	m.SetTo(rmTo)
+	m.SetReadyToSend(true)
+	return m, nil
 }
 
 //--- MTYPE -------------------------------------------------------------------

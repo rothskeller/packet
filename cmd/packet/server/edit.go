@@ -26,7 +26,7 @@ import (
 // serveEditAsset handles a GET /assets/{asset...} request.
 func (s *Server) serveAsset(w http.ResponseWriter, r *http.Request) {
 	r.URL.Path = "/" + r.PathValue("asset")
-	w.Header().Set("Cache-Control", "no-store")
+	w.Header().Set("Cache-Control", "no-store, private")
 	http.FileServerFS(formdefs.FormsFS).ServeHTTP(w, r)
 }
 
@@ -55,12 +55,12 @@ func (s *Server) editCommon(w http.ResponseWriter, fields map[string]string, def
 	// Read and parse the HTML for the form.
 	if formFile, err = fs.ReadFile(formdefs.FormsFS, def.HTMLFile); err != nil {
 		slog.Error("fs.ReadFile", "f", def.HTMLFile, "err", err)
-		ErrorPage(w, http.StatusInternalServerError, err, nil)
+		ErrPage(w, "The software was unable to open the template for this form.  Please report this error to the author.", http.StatusInternalServerError)
 		return
 	}
 	if formHTML, err = html.Parse(bytes.NewReader(formFile)); err != nil {
 		slog.Error("html.Parse", "f", def.HTMLFile, "err", err)
-		ErrorPage(w, http.StatusInternalServerError, fmt.Errorf("%s: %s", def.HTMLFile, err), nil)
+		ErrPage(w, "The software was unable to parse the template for this form.  Please report this error to the author.", http.StatusInternalServerError)
 		return
 	}
 	bundle, _, _ = strings.Cut(def.HTMLFile, "/")
@@ -71,7 +71,7 @@ func (s *Server) editCommon(w http.ResponseWriter, fields map[string]string, def
 		var defHTML *html.Node
 		if defHTML, err = html.Parse(bytes.NewReader(formFile)); err != nil {
 			slog.Error("html.Parse", "f", defFile, "err", err)
-			ErrorPage(w, http.StatusInternalServerError, fmt.Errorf("%s: %s", defFile, err), nil)
+			ErrPage(w, "The software was unable to parse the definitions for this form.  Please report this error to the author.", http.StatusInternalServerError)
 			return
 		}
 		formBody := findBody(formHTML)
@@ -101,12 +101,12 @@ func (s *Server) editCommon(w http.ResponseWriter, fields map[string]string, def
 	htmlop.Minify(&formBuf, formHTML)
 	// Reply with the form.
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")
-	w.Header().Set("Cache-Control", "no-store")
+	w.Header().Set("Cache-Control", "no-store, private")
 	w.Write(formBuf.Bytes())
 }
 
 // submitCommon reads a submitted form from a request and builds the
-// corresponding message.  If it returns nil, it rendered an ErrorPage.
+// corresponding message.  If it returns nil, it rendered an ErrPage.
 func submitCommon(w http.ResponseWriter, r *http.Request) message.Message {
 	var (
 		addonName string
@@ -125,13 +125,13 @@ func submitCommon(w http.ResponseWriter, r *http.Request) message.Message {
 	)
 	addonName, htmlName, version = r.FormValue("addon-name"), r.FormValue("form-html"), r.FormValue("form-version")
 	if mtype = message.FindType(func(mt message.MType) bool {
-		if mt, ok := mt.(form.FormType); ok {
+		if mt, ok := mt.(form.EditableFormType); ok {
 			return mt.AddonName == addonName && mt.HTMLName == htmlName && mt.Version == version && mt.CreateTag() != ""
 		}
 		return false
 	}); mtype == nil {
 		slog.Error("form not found", "addon", addonName, "html", htmlName, "ver", version)
-		ErrorPage(w, http.StatusInternalServerError, fmt.Errorf("no such form %s/%s/%s", addonName, htmlName, version), nil)
+		ErrPage(w, fmt.Sprintf("The form with addon=%s, type=%s, version=%s was not found.  Please report this error to the author.", addonName, htmlName, version), http.StatusInternalServerError)
 		return nil
 	} else {
 		def = mtype.(form.FormType).FormDef
@@ -141,7 +141,7 @@ func submitCommon(w http.ResponseWriter, r *http.Request) message.Message {
 	}
 	if fbody, err = form.NewFormBody(addonName, htmlName, pifover.PIFOVersion, version); err != nil {
 		slog.Error("form.NewFormBody", "addon", addonName, "html", htmlName, "ver", version)
-		ErrorPage(w, http.StatusInternalServerError, fmt.Errorf("%s/%s: %s", addonName, htmlName, err), nil)
+		ErrPage(w, fmt.Sprintf("The form with addon=%s, type=%s could not be created.  Please report this error to the author.", addonName, htmlName), http.StatusInternalServerError)
 		return nil
 	}
 	for f := range def.AllFields() {

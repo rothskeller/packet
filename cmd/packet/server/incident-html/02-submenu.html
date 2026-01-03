@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <script> // SubMenu
+    // A <sub-menu> is a container for <menu-item>s that appear underneath a
+    // <menu-item> in the <menu-bar>.
+    //
+    // Children:
+    //   A set of <menu-item> elements, possibly with interspersed <hr>
+    //   elements.
+    //
+    // Events Dispatched:
+    //   'menu-move': sent when an adjacent submenu should be opened.
+    //     evt.detail incidates which one (-1 = left, +1 = right).
+    //   'submenu-open': sent when the submenu opens or closes, with evt.detail
+    //     indicating which (boolean, true=open).
+    //
+    // Methods:
+    //   close:  close the submenu.
+    //   focus:  take keyboard focus.
+    //   isOpen:  returns whether the submenu is open.
+    //   open:  opens the submenu.
+    class SubMenu extends HTMLElement {
+      constructor() {
+        super()
+        this._items = null
+      }
+      connectedCallback() {
+        this._items = Array.from(this.querySelectorAll('menu-item'))
+        this._items.forEach(item => {
+          item.addEventListener('item-click', this._onItemClick.bind(this))
+          item.addEventListener('visibility-change', this._onVisibilityChange.bind(this))
+        })
+        this.classList.toggle('checkable', this._items.some(item => item.checkable()))
+        this._items = this._items.filter(item => item.shown())
+        this.setAttribute('popover', 'auto')
+        this.addEventListener('keydown', this._onKeyDown.bind(this))
+        this.addEventListener('toggle', this._onToggle.bind(this))
+      }
+      close() {this.togglePopover(false)}
+      focus() {this._items[0].focus()}
+      isOpen() {return this.matches(':popover-open')}
+      open() {
+        this.togglePopover({force: true, source: this.parentElement})
+        this.focus()
+      }
+      _onItemClick() {this.close()}
+      _onKeyDown(evt) {
+        const item = evt.target.closest('menu-item')
+        let idx = this._items.findIndex(i => i === item)
+        switch (evt.key) {
+          case 'ArrowUp': idx--; break;
+          case 'ArrowDown': idx++; break;
+          case 'Home': idx = 0; break;
+          case 'End': idx = this._items.length - 1; break;
+          case 'ArrowLeft':
+            this.dispatchEvent(new CustomEvent('menu-move', {bubbles: true, detail: -1}))
+            break
+          case 'ArrowRight':
+            this.dispatchEvent(new CustomEvent('menu-move', {bubbles: true, detail: +1}))
+            break
+          default:
+            return
+        }
+        evt.stopPropagation()
+        evt.preventDefault()
+        if (idx < 0 || idx >= this._items.length) return
+        if (this._items[idx] === item) return
+        this._items[idx].focus()
+      }
+      _onToggle(evt) {
+        this.dispatchEvent(new CustomEvent('submenu-open', {detail: evt.newState === 'open'}))
+      }
+      _onVisibilityChange() {
+        this._items = Array.from(this.querySelectorAll('menu-item')).filter(item => item.shown())
+      }
+    }
+  </script>
+  <style>
+    sub-menu:popover-open {
+      inset: unset;
+      position: absolute;
+      top: calc(5.5rem + 2 * var(--border-width));
+      border: var(--border-width) solid #888;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+    }
+
+    sub-menu hr {
+      width: 100%;
+      margin: 0;
+    }
+  </style>
+</head>
+
+<body>
+  <script>
+    customElements.define('sub-menu', SubMenu)
+  </script>
+</body>
+
+</html>

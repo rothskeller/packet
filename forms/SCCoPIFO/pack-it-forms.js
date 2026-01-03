@@ -279,9 +279,17 @@ function on_reset() {
   reset_form();
 }
 
-// Triggered by Submit button.
-function on_submit(e) {
-  if (adjust_submit()) the_form.submit();
+// Triggered by Submit or Save button.
+async function on_submit(evt) {
+  const submit = evt.target.id == "submit";
+  if (submit && !adjust_submit()) return;
+  const fd = new FormData(the_form);
+  if (submit) fd.set("readyToSend", "true");
+  const resp = await fetch(the_form.action, { method: "POST", body: fd });
+  if (resp.status === 204) {
+    window.opener.childAction(resp.headers.get("X-Packet-Action"));
+    window.close();
+  } else document.getElementById("error").textContent = await resp.text();
 }
 
 // Triggered by Show PDF button.
@@ -408,6 +416,8 @@ function setup_input_once(input) {
 function setup_buttons() {
   document.getElementById("submit").addEventListener("click", on_submit);
   document.getElementById("reset").addEventListener("click", on_reset);
+  const save = document.getElementById("save");
+  if (save) save.addEventListener("click", on_submit);
 }
 
 window.addEventListener("load", function () {

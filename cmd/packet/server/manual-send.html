@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>Packet Messaging</title>
+  <style>
+    :root {
+      --border-width: 1px;
+    }
+
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+    }
+
+    :root,
+    button,
+    input,
+    select,
+    textarea {
+      font-family: sans-serif;
+      font-size: 1em;
+    }
+
+    button,
+    input,
+    select,
+    textarea {
+      border: var(--border-width) solid #ccc;
+    }
+
+    input:invalid,
+    select:invalid,
+    textarea:invalid,
+    .invalid {
+      box-shadow: 0 0 6px 2px #c80000;
+      transition: box-shadow 0.5s;
+    }
+
+    [hidden] {
+      display: none !important;
+    }
+
+    body {
+      margin: 0;
+      display: grid;
+      grid: max-content max-content max-content max-content 1fr / auto;
+      height: 100vh;
+    }
+
+    #topbar {
+      height: 3.5rem;
+      padding-inline: 0.75rem;
+      background-color: #a8e8a8;
+      border-bottom: var(--border-width) solid #888;
+      display: grid;
+      grid: auto / max-content 1fr;
+      justify-items: center;
+      align-items: center;
+    }
+
+    #topleft {
+      display: flex;
+      align-items: center;
+      gap: 1.5rem;
+    }
+
+    #logo {
+      height: 3rem;
+    }
+
+    #slug {
+      margin-inline: -0.75rem 1.5rem;
+      font-weight: bold;
+      font-size: 1.25rem;
+      line-height: 1.4rem;
+      max-height: 2.8rem;
+      overflow: hidden;
+    }
+
+    #version {
+      font-weight: normal;
+      font-size: 0.875rem;
+      color: #444;
+    }
+
+    #incname {
+      font-weight: bold;
+      font-size: 1.125rem;
+    }
+
+    #topbar button {
+      font-size: 1.25rem;
+      padding: 0.25rem 0.75rem;
+      border: 2px solid #000;
+      border-radius: 0.5rem;
+      background-color: #efefef;
+    }
+
+    #topbar button:hover {
+      background-color: #dfdfdf;
+    }
+
+    #topbar button:focus {
+      outline: 4px solid #005fcc;
+      outline-offset: -2px;
+    }
+
+    @media (width < 54em) {
+      #topleft {
+        gap: 0.75rem;
+      }
+
+      #slug {
+        margin-inline: 0 0.75rem;
+      }
+
+      #topbar button {
+        font-size: 1rem;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div id=topbar>
+    <div id=topleft>
+      <img id=logo src="https://www.scc-ares-races.org/-67DB4F6F-/county-seal.svg">
+      <div id=slug>SCCo&nbsp;Packet<br>Messenger <span id=version>v{{VERSION}}</span></div>
+    </div>
+    <div>
+      <div id=incname>{{INCNAME}}</div>
+      <div id=ident>{{IDENT}}@{{BBS}}</div>
+    </div>
+  </div>
+  <h1>Manual Send Message</h1>
+  <div id=instructions>
+    <p>To send this message manually, using a terminal emulator to talk to a TNC:
+    <ol>
+      <li>Ensure your radio is on the correct frequency for {{BBS}}. See the
+        <a href="https://scc-ares-races.org/operations/packet/bbs" target=_blank>SCCo ARES/RACES Packet BBSes</a>
+        page for the proper frequencies.
+      <li>Ensure your TNC has the county standard settings. See the
+        <a href="https://scc-ares-races.org/packet/stc-tnc" target=_blank>Standard TNC Settings</a>
+        page for details.
+      <li>Ensure your TNC is identifying as {{IDENT}}. On most TNCs, this is a <code>MYCALL {{IDENT}}</code> command.
+      <li>Tell your TNC to connect to {{BBS}}. On most TNCs, this is a <code>C {{BBS}}-1</code> command.
+      <li>Once connected, copy the message below (using the "Copy" button) and paste it into your terminal emulator.
+    </ol>
+    <p id=upsell>Note: if your TNC is a Kantronics KPC-3 Plus or compatible, this software can handle the TNC for you.
+      Go to the Incident Configuration page, set the Connection Type to "Serial+TNC", supply the necessary details, and
+      then use the "Connect" button on the Incident page to send and receive messages.
+  </div>
+  <div id=command-row>
+    <textarea id=command>{{COMMAND}}</textarea>
+    <button type=button id=copy>Copy</button>
+  </div>
+  <div id=button-row>
+    <button type=button onclick="window.close()">Cancel</button>
+    <button type=button id=marksent>Mark Message as Sent</button>
+  </div>
+</body>
+
+</html>

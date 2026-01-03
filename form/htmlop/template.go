@@ -249,14 +249,13 @@ func (state *expandState) expandIf(node *html.Node) (next *html.Node) {
 		satisfied = value != ""
 	}
 	if satisfied {
-		next = node.FirstChild
 		for node.FirstChild != nil {
-			insertBefore(node, node.FirstChild)
+			child := node.FirstChild
+			insertBefore(node, child)
+			state.expand(child)
 		}
 	}
-	if next == nil {
-		next = node.NextSibling
-	}
+	next = node.NextSibling
 	removeNode(node)
 	return next
 }

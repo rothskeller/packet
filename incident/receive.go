@@ -3,7 +3,9 @@ package incident
 import (
 	"log/slog"
 	"strings"
+	"time"
 
+	"github.com/rothskeller/packet/errors"
 	"github.com/rothskeller/packet/message"
 	"github.com/rothskeller/packet/message/receipt"
 	"github.com/rothskeller/packet/message/subject"
@@ -13,7 +15,7 @@ import (
 // in the incident.  ReceiveMessage returns the delivery receipt that should be
 // sent for the message, if any; it is up to the caller to queue the delivery
 // receipt for sending.
-func (i *Incident) ReceiveMessage(msg *message.JustReceivedMessage) (dr message.Message, err error) {
+func (i *Incident) ReceiveMessage(msg *message.JustReceivedMessage) (dr *message.DraftMessage, err error) {
 	var (
 		le       LogEntry
 		handling string
@@ -27,6 +29,7 @@ func (i *Incident) ReceiveMessage(msg *message.JustReceivedMessage) (dr message.
 	}
 	// Create a log entry and assign a local message ID.
 	le = LogEntry{
+		Ident:   i.nextLogIdent(),
 		Index:   len(i.Log),
 		Seq:     i.Seq,
 		Status:  StatusReceived,
@@ -38,7 +41,6 @@ func (i *Incident) ReceiveMessage(msg *message.JustReceivedMessage) (dr message.
 		return nil, err
 	}
 	le.ToMsgID = le.LocalMsgID
-	le.Filename = le.LocalMsgID + ".txt"
 	if msg.Bulletin() {
 		le.Flags |= FBulletin
 		le.FromCall = strings.ToUpper(msg.RxArea())
@@ -89,24 +91,53 @@ func (i *Incident) ReceiveMessage(msg *message.JustReceivedMessage) (dr message.
 	case "PRIORITY":
 		le.Flags |= FPriority
 	}
-	// If we have a remote message ID, use that as the link filename.
-	if le.FromMsgID != "" {
-		le.Linkname = i.makeUniqueFilename(le.FromMsgID, ".txt")
-	}
 	// Save the message.
 	if err = i.saveMessage(msg, &le); err != nil {
 		return nil, err
 	}
 	// Add the log entry to the log.
 	i.Log = append(i.Log, &le)
+	i.sortLog()
 	// Generate a delivery receipt if appropriate.  (It's up to the caller
 	// to send it or not.)
 	if !msg.Bulletin() && !msg.Autoresponse() {
-		if dr, err = receipt.NewDeliveryReceipt(msg.To(), msg.Subject().EncodedSubject(), le.LocalMsgID, msg.RxDate(), ""); err != nil {
-			return nil, err
-		}
+		dr, _ = i.MakeDeliveryReceipt(msg, &le)
 	}
 	slog.Info("received message", "lid", le.LocalMsgID, "s", msg.Subject().EncodedSubject())
+	return dr, nil
+}
+
+// MakeDeliveryReceipt makes a delivery receipt for the supplied received
+// message.
+func (i *Incident) MakeDeliveryReceipt(msg message.Message, le *LogEntry) (dr *message.DraftMessage, err error) {
+	var date time.Time
+
+	switch msg := msg.(type) {
+	case *message.ReceivedMessage:
+		date = msg.RxDate()
+	case *message.JustReceivedMessage:
+		if msg.Autoresponse() {
+			return nil, errors.New("Delivery receipts are not appropriate for automatically generated messages.")
+		}
+		date = msg.RxDate()
+	case *message.DraftMessage, *message.SentMessage:
+		return nil, errors.New("Delivery receipts cannot be sent for outgoing messages.")
+	}
+	if msg.Bulletin() {
+		return nil, errors.New("Delivery receipts are not appropriate for bulletins and notices.")
+	}
+	switch msg.Type() {
+	case receipt.DeliveryReceipt, receipt.ReadReceipt:
+		return nil, errors.New("Delivery receipts are not appropriate for receipt messages.")
+	}
+	for _, e := range i.Log {
+		if e.LocalMsgID == le.LocalMsgID && e.Flags&FIsReceipt != 0 {
+			return nil, errors.New("A delivery receipt has already been generated for this message.")
+		}
+	}
+	if dr, err = receipt.NewDeliveryReceipt(msg.To(), msg.Subject().EncodedSubject(), le.LocalMsgID, date, ""); err != nil {
+		return nil, err
+	}
 	return dr, nil
 }
 

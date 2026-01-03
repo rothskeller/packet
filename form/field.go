@@ -3,11 +3,16 @@ package form
 import (
 	"github.com/rothskeller/packet/form/formdef"
 	"github.com/rothskeller/packet/message/field"
+	"github.com/rothskeller/packet/message/payload"
+	"github.com/rothskeller/packet/message/subject"
 )
 
 // ff2mf is an adapter that implements the message.Field interface for a
 // formdef.FieldDef structure.
-type ff2mf struct{ fd *formdef.FieldDef }
+type ff2mf struct {
+	def *formdef.FormDef
+	fd  *formdef.FieldDef
+}
 
 var _ field.Field = ff2mf{}
 
@@ -27,7 +32,7 @@ func (f ff2mf) Label() string { return f.fd.Label }
 // Generally only used for checkbox groups.
 func (f ff2mf) Parent() field.Field {
 	if f.fd.Parent != nil {
-		return ff2mf{f.fd.Parent}
+		return ff2mf{f.def, f.fd.Parent}
 	}
 	return nil
 }
@@ -41,7 +46,7 @@ func (f ff2mf) Children() (c []field.Field) {
 	}
 	c = make([]field.Field, len(f.fd.Children))
 	for i := range f.fd.Children {
-		c[i] = ff2mf{f.fd.Children[i]}
+		c[i] = ff2mf{f.def, f.fd.Children[i]}
 	}
 	return c
 }
@@ -89,6 +94,21 @@ func (f ff2mf) SetValue(msg field.Message, val string) {
 			reason = "body.FormBody.Common." + f.fd.Common
 		}
 		msg.Body().(*FormBody).SetFieldR(f.fd.Tag, val, reason)
+	}
+	switch f.fd.Common {
+	case field.COriginMessageID:
+		msg.Subject().(*subject.SCCoSubject).SetSubjectMessageID(f.Value(msg))
+	case field.CHandling:
+		msg.Subject().(*subject.SCCoSubject).SetSubjectHandling(f.Value(msg))
+		if f.Value(msg) == "IMMEDIATE" {
+			msg.Payload().(*payload.OutpostPayload).SetUrgent(true)
+		}
+	case field.CMessageSummary:
+		if tag := f.def.SubjectTag; tag != "" {
+			msg.Subject().(*subject.SCCoSubject).SetSubjectSummary(tag + "_" + f.Value(msg))
+		} else {
+			msg.Subject().(*subject.SCCoSubject).SetSubjectSummary(f.Value(msg))
+		}
 	}
 }
 

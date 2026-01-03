@@ -1,6 +1,7 @@
 package incident
 
 import (
+	"log/slog"
 	"os"
 	"path/filepath"
 
@@ -28,12 +29,14 @@ func (i *Incident) nextMessageID(tx bool) (lid string, err error) {
 			break
 		}
 		if lid, err = messageid.Increment(lid); err != nil {
+			slog.Error("increment message ID", "err", err)
 			return "", err
 		}
 	}
 	// Update the configuration to use the next message ID next time.  If
 	// Rx and Tx are sharing the same ID stream, update both.
 	if next, err = messageid.Increment(lid); err != nil {
+		slog.Error("increment message ID", "err", err)
 		return "", err
 	}
 	if i.Config.TxMessageID == i.Config.RxMessageID {

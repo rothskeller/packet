@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <script> // MenuBar
+    // The <menu-bar> is the application's top menu bar.
+    //
+    // Children:
+    //   A set of <menu-item> elements.
+    //
+    // Methods:
+    //   adjustSubmenuPositions: calls adjustSubmenuPosition on all submenus.
+    class MenuBar extends HTMLElement {
+      constructor() {
+        super()
+        this._items = null
+      }
+      connectedCallback() {
+        this._items = Array.from(this.children).filter(elm => elm.matches('menu-item'))
+        this._items.forEach(item => {
+          item.addEventListener('visibility-change', this.adjustSubmenuPositions.bind(this))
+          item.addEventListener('menu-move', this._onMenuMove.bind(this))
+        })
+        this.adjustSubmenuPositions()
+        this.addEventListener('keydown', this._onKeyDown.bind(this))
+      }
+      adjustSubmenuPositions() {
+        this._items.forEach(item => item.adjustSubmenuPosition())
+      }
+      _onKeyDown(evt) {
+        const items = Array.from(this.children).filter(elm => elm.matches('menu-item') && elm.shown())
+        const item = evt.target.closest('menu-item')
+        let idx = items.findIndex(i => i === item)
+        switch (evt.key) {
+          case 'ArrowLeft': idx--; break;
+          case 'ArrowRight': idx++; break;
+          case 'Home': idx = 0; break;
+          case 'End': idx = items.length - 1; break;
+          case 'ArrowDown':
+            item.openSubmenu()
+            break
+          default:
+            return
+        }
+        evt.stopPropagation()
+        evt.preventDefault()
+        if (idx < 0 || idx >= this._items.length) return
+        if (items[idx] === item) return
+        items[idx].focus()
+      }
+      _onMenuMove(evt) {
+        const items = Array.from(this.children).filter(elm => elm.matches('menu-item') && elm.shown())
+        const item = evt.target.closest('menu-item')
+        let idx = items.findIndex(i => i === item)
+        const open = evt.target.isOpen()
+        idx += evt.detail // -1 for left, +1 for right
+        if (idx >= 0 && idx < items.length)
+          if (open) items[idx].openSubmenu()
+          else items[idx].focus()
+      }
+    }
+  </script>
+  <style>
+    menu-bar {
+      margin: 0 0 var(--border-width);
+      background-color: #dff6df;
+      border-bottom: var(--border-width) solid #888;
+      display: flex;
+    }
+  </style>
+</head>
+
+<body>
+  <menu-bar>
+    <menu-item>Incident
+      <sub-menu>
+        <menu-item id=m-inc-new>New Incident</menu-item>
+        <menu-item id=m-inc-open>Open Other Incident</menu-item>
+        <hr>
+        <menu-item id=m-inc-settings>Incident Settings</menu-item>
+        <hr>
+        <menu-item id=m-inc-ics-309>Export ICS-309</menu-item>
+        <menu-item id=m-inc-archive>Export Archive</menu-item>
+      </sub-menu>
+    </menu-item>
+    <menu-item>Message
+      <sub-menu>
+        <menu-item id=m-msg-new shortcut=N>New</menu-item>
+        <if:manual><menu-item id=m-msg-man-rcv shortcut=R>Manual Receive</menu-item></if:manual>
+        <menu-item id=m-msg-man-log>Manual Log Entry</menu-item>
+        <hr>
+        <menu-item id=m-msg-view shortcut=⏎ hidden>View</menu-item>
+        <if:manual><menu-item id=m-msg-man-send shortcut=S hidden>Manual Send</menu-item></if:manual>
+        <menu-item id=m-msg-man-rcpt hidden>Create Receipt</menu-item>
+        <menu-item id=m-msg-print shortcut=P hidden>Print</menu-item>
+        <menu-item id=m-msg-edit shortcut=⏎ hidden>Edit</menu-item>
+        <menu-item id=m-msg-edit-log hidden>Edit Log Entry</menu-item>
+        <menu-item id=m-msg-resend hidden>Resend</menu-item>
+        <menu-item id=m-msg-send-copy hidden>Send Copy</menu-item>
+        <menu-item id=m-msg-reply hidden>Reply</menu-item>
+        <menu-item id=m-msg-delete hidden>Delete</menu-item>
+        <hr>
+        <menu-item id=m-msg-ready checkable hidden>Ready to Send</menu-item>
+        <menu-item id=m-msg-followup checkable hidden>Needs Followup</menu-item>
+        <menu-item id=m-msg-need-rcpt checkable hidden>Needs Receipt</menu-item>
+      </sub-menu>
+    </menu-item>
+    <menu-item>View
+      <sub-menu>
+        <menu-item id=m-view-compact checkable checked>Compact View</menu-item>
+        <menu-item id=m-view-receipts checkable>Show Receipts</menu-item>
+        <menu-item id=m-view-large checkable>Large Font</menu-item>
+      </sub-menu>
+    </menu-item>
+    <ifnot:manual>
+      <menu-item id=m-conn>Connect
+        <sub-menu>
+          <menu-item id=m-conn-sr shortcut=C>Send/Receive All</menu-item>
+          <menu-item id=m-conn-immed>Immediates Only</menu-item>
+          <menu-item id=m-conn-abort shortcut=^C hidden>Abort Connection</menu-item>
+        </sub-menu>
+      </menu-item>
+    </ifnot:manual>
+    <menu-item>Help
+      <sub-menu>
+        <menu-item id=m-help-man>Software Manual</menu-item>
+        <menu-item id=m-help-list>Packet Email List</menu-item>
+        <menu-item id=m-help-repo>Github Repository</menu-item>
+        <menu-item id=m-help-about>About SCCo Packet</menu-item>
+      </sub-menu>
+    </menu-item>
+  </menu-bar>
+  <script>
+    customElements.define('menu-bar', MenuBar)
+  </script>
+</body>
+
+</html>

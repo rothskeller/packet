@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <script> // data retrieval
+    let currentSeq = 0
+    async function fetchData() {
+      while (true) {
+        try {
+          const params = new URLSearchParams({dir: '{{DIR}}', seq: currentSeq})
+          const url = '/incident/log?' + params.toString()
+          const resp = await fetch(url)
+          if (!resp.ok) throw new Error(resp.statusText)
+          const data = await resp.json()
+          data.forEach(e => {if (e.seq > currentSeq) currentSeq = e.seq})
+          window.dispatchEvent(new CustomEvent('new-data', {detail: data}))
+          if (delayedChildAction) {
+            childAction(delayedChildAction, true)
+            delayedChildAction = null
+          }
+        } catch (e) {
+          console.error(e)
+          await new Promise(resolve => setTimeout(resolve, 5000));
+        }
+      }
+    }
+  </script>
+  <script> // window.onload
+    window.addEventListener('load', () => {
+      grid = document.querySelector('log-grid')
+      setupMenuHandlers()
+      setupManualReceiveDialog()
+      setupNewMessageDialog()
+      setupManualSendDialog()
+      setupErrorDialog()
+      setupEditLogEntryDialog()
+      setupDeleteMessageDialog()
+      fetchData()
+    })
+  </script>
+</head>
+
+</html>

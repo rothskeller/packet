@@ -47,9 +47,10 @@ func read(filename string, noHeaderOK bool) (m Message, err error) {
 		to     []string
 		c      common
 		issues error
-		parser func(mail.Header, *common) (Message, error)
+		parser func(string, mail.Header, *common) (Message, error)
 	)
 	if by, err = os.ReadFile(filename); err != nil {
+		slog.Error("os.ReadFile", "f", filename, "err", err)
 		return nil, err
 	}
 	by = bytes.ReplaceAll(by, crlf, lf)
@@ -60,6 +61,7 @@ func read(filename string, noHeaderOK bool) (m Message, err error) {
 		by = nby
 	}
 	if msg, err = mail.ReadMessage(bytes.NewReader(by)); err != nil {
+		slog.Error("mail.ReadMessage", "msg", string(by), "err", err)
 		return nil, fmt.Errorf("%s: %w", filename, err)
 	}
 	to = msg.Header["To"]
@@ -68,15 +70,20 @@ func read(filename string, noHeaderOK bool) (m Message, err error) {
 	c.to = strings.Join(to, ", ")
 	c.subject, issues = subject.Decode(msg.Header.Get("Subject"))
 	if ct := msg.Header.Get("Content-Type"); ct != "" {
-		if mt, params, err := mime.ParseMediaType(ct); err != nil ||
-			mt != "text/plain" || (params["charset"] != "" && strings.ToLower(params["charset"]) != "utf8") {
+		if mt, params, err := mime.ParseMediaType(ct); err != nil {
+			slog.Error("mime.ParseMediaType", "f", filename, "ct", ct, "err", err)
+			return nil, fmt.Errorf("%s: unsupported Content-Type %q", filename, ct)
+		} else if mt != "text/plain" || (params["charset"] != "" && strings.ToLower(params["charset"]) != "utf8") {
+			slog.Error("unsupported Content-Type", "f", filename, "ct", ct)
 			return nil, fmt.Errorf("%s: unsupported Content-Type %q", filename, ct)
 		}
 	}
 	if by, err = io.ReadAll(msg.Body); err != nil {
+		slog.Error("io.ReadAll msg.Body", "f", filename, "err", err)
 		return nil, fmt.Errorf("%s: body: %w", filename, err)
 	}
 	if c.payload, err = payload.Decode(msg.Header, string(by)); c.payload == nil {
+		slog.Error("payload.Decode", "f", filename, "err", err)
 		return nil, fmt.Errorf("%s: %w", filename, err)
 	} else {
 		issues = errors.Join(issues, err)
@@ -97,7 +104,7 @@ func read(filename string, noHeaderOK bool) (m Message, err error) {
 	} else {
 		parser = readDraftMessage
 	}
-	if m, err = parser(msg.Header, &c); m == nil {
+	if m, err = parser(filename, msg.Header, &c); m == nil {
 		return nil, err
 	} else {
 		SetType(m)

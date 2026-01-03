@@ -214,87 +214,190 @@
       </td>
     </tr>
   </table>
-  <table class="block-border" id="form-row-3">
-    <tr>
-      <td rowspan="4" class="block-caption" style="width:1px;">
-        T<br />O
-      </td>
-      <td>
-        <table class="same-line-label-layout">
-          <tr>
-            <th>ICS Position:</th>
-            <td style="padding-right:0;"><combo-box name="7a." tabindex=8 required
-                options="RACES Chief Radio Officer; RACES Unit; Planning"></combo-box></td>
-          </tr>
-        </table>
-      </td>
-      <td rowspan="4" class="block-caption" style="width:1px;">
-        F<br />R<br />O<br />M
-      </td>
-      <td>
-        <table class="same-line-label-layout">
-          <tr>
-            <th>ICS Position:</th>
-            <td><input type="text" name="8a." required tabindex="12" /></td>
-          </tr>
-        </table>
-      </td>
-    </tr>
-    <tr>
-      <td>
-        <table class="same-line-label-layout">
-          <tr>
-            <th>Location:</th>
-            <td style="padding-right:0;"><combo-box name="7b." tabindex=9 required></combo-box></td>
-          </tr>
-        </table>
-      </td>
-      <td>
-        <table class="same-line-label-layout">
-          <tr>
-            <th>Location:</th>
-            <td><input type="text" name="8b." required tabindex="13" /></td>
-          </tr>
-        </table>
-      </td>
-    </tr>
-    <tr>
-      <td>
-        <table class="same-line-label-layout">
-          <tr>
-            <th>Name:</th>
-            <td><input type="text" name="7c." tabindex="10" /></td>
-          </tr>
-        </table>
-      </td>
-      <td>
-        <table class="same-line-label-layout">
-          <tr>
-            <th>Name:</th>
-            <td><input type="text" name="8c." tabindex="14" /></td>
-          </tr>
-        </table>
-      </td>
-    </tr>
-    <tr>
-      <td>
-        <table class="same-line-label-layout">
-          <tr>
-            <th>Contact Info:</th>
-            <td><input type="text" name="7d." tabindex="11" /></td>
-          </tr>
-        </table>
-      </td>
-      <td>
-        <table class="same-line-label-layout">
-          <tr>
-            <th>Contact Info:</th>
-            <td><input type="text" name="8d." tabindex="15" /></td>
-          </tr>
-        </table>
-      </td>
-    </tr>
-  </table>
+  <if:show-addrs>
+    <table class="block-border" id="form-row-3">
+      <tr>
+        <td rowspan="5" class="block-caption" style="width:1px;">
+          T<br />O
+        </td>
+        <td>
+          <table class="same-line-label-layout">
+            <tr>
+              <th>Address:</th>
+              <td><input type="text" name="ToAddr" required tabindex="12"></td>
+            </tr>
+          </table>
+        </td>
+        <td rowspan="5" class="block-caption" style="width:1px;">
+          F<br />R<br />O<br />M
+        </td>
+        <td>
+          <table class="same-line-label-layout">
+            <tr>
+              <th>Address:</th>
+              <td><input type="text" name="FromAddr" readonly tabindex="12" /></td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+      <tr>
+        <td>
+          <table class="same-line-label-layout">
+            <tr>
+              <th>ICS Position:</th>
+              <td style="padding-right:0;"><combo-box name="7a." tabindex=8 required
+                  options="RACES Chief Radio Officer; RACES Unit; Planning"></combo-box></td>
+            </tr>
+          </table>
+        </td>
+        <td>
+          <table class="same-line-label-layout">
+            <tr>
+              <th>ICS Position:</th>
+              <td><input type="text" name="8a." required tabindex="12" /></td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+      <tr>
+        <td>
+          <table class="same-line-label-layout">
+            <tr>
+              <th>Location:</th>
+              <td style="padding-right:0;"><combo-box name="7b." tabindex=9 required></combo-box></td>
+            </tr>
+          </table>
+        </td>
+        <td>
+          <table class="same-line-label-layout">
+            <tr>
+              <th>Location:</th>
+              <td><input type="text" name="8b." required tabindex="13" /></td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+      <tr>
+        <td>
+          <table class="same-line-label-layout">
+            <tr>
+              <th>Name:</th>
+              <td><input type="text" name="7c." tabindex="10" /></td>
+            </tr>
+          </table>
+        </td>
+        <td>
+          <table class="same-line-label-layout">
+            <tr>
+              <th>Name:</th>
+              <td><input type="text" name="8c." tabindex="14" /></td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+      <tr>
+        <td>
+          <table class="same-line-label-layout">
+            <tr>
+              <th>Contact Info:</th>
+              <td><input type="text" name="7d." tabindex="11" /></td>
+            </tr>
+          </table>
+        </td>
+        <td>
+          <table class="same-line-label-layout">
+            <tr>
+              <th>Contact Info:</th>
+              <td><input type="text" name="8d." tabindex="15" /></td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+    </table>
+  </if:show-addrs>
+  <ifnot:show-addrs>
+    <table class="block-border" id="form-row-3">
+      <tr>
+        <td rowspan="4" class="block-caption" style="width:1px;">
+          T<br />O
+        </td>
+        <td>
+          <table class="same-line-label-layout">
+            <tr>
+              <th>ICS Position:</th>
+              <td style="padding-right:0;"><combo-box name="7a." tabindex=8 required
+                  options="RACES Chief Radio Officer; RACES Unit; Planning"></combo-box></td>
+            </tr>
+          </table>
+        </td>
+        <td rowspan="4" class="block-caption" style="width:1px;">
+          F<br />R<br />O<br />M
+        </td>
+        <td>
+          <table class="same-line-label-layout">
+            <tr>
+              <th>ICS Position:</th>
+              <td><input type="text" name="8a." required tabindex="12" /></td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+      <tr>
+        <td>
+          <table class="same-line-label-layout">
+            <tr>
+              <th>Location:</th>
+              <td style="padding-right:0;"><combo-box name="7b." tabindex=9 required></combo-box></td>
+            </tr>
+          </table>
+        </td>
+        <td>
+          <table class="same-line-label-layout">
+            <tr>
+              <th>Location:</th>
+              <td><input type="text" name="8b." required tabindex="13" /></td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+      <tr>
+        <td>
+          <table class="same-line-label-layout">
+            <tr>
+              <th>Name:</th>
+              <td><input type="text" name="7c." tabindex="10" /></td>
+            </tr>
+          </table>
+        </td>
+        <td>
+          <table class="same-line-label-layout">
+            <tr>
+              <th>Name:</th>
+              <td><input type="text" name="8c." tabindex="14" /></td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+      <tr>
+        <td>
+          <table class="same-line-label-layout">
+            <tr>
+              <th>Contact Info:</th>
+              <td><input type="text" name="7d." tabindex="11" /></td>
+            </tr>
+          </table>
+        </td>
+        <td>
+          <table class="same-line-label-layout">
+            <tr>
+              <th>Contact Info:</th>
+              <td><input type="text" name="8d." tabindex="15" /></td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+    </table>
+  </ifnot:show-addrs>
   <table class="block-border fullsize-textfields" style="border-bottom:4px solid #000;">
     <tr>
       <td><label>Agency</label></td>

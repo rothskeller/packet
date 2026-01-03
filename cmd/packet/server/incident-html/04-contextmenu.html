@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <script> // ContextMenu
+    // The <context-menu> is a container for <menu-item>s that appear where
+    // the user right-clicks on a log entry.
+    //
+    // Children:
+    //   A set of <menu-item> elements, possibly with interspersed <hr>
+    //   elements.
+    //
+    // Methods:
+    //   open(evt):  opens the submenu, placed at the location of the supplied
+    //     MouseEvent.
+    class ContextMenu extends HTMLElement {
+      constructor() {
+        super()
+        this._items = null
+      }
+      connectedCallback() {
+        this._items = Array.from(this.querySelectorAll('menu-item'))
+        this._items.forEach(item => {
+          item.addEventListener('item-click', this._onItemClick.bind(this))
+          item.addEventListener('visibility-change', this._onVisibilityChange.bind(this))
+        })
+        this.classList.toggle('checkable', this._items.some(item => item.checkable()))
+        this._items = this._items.filter(item => item.shown())
+        this.setAttribute('popover', 'auto')
+        this.addEventListener('keydown', this._onKeyDown.bind(this))
+        this.addEventListener('toggle', evt => {console.log(evt)})
+      }
+      open(evt) {
+        this.style.left = `${evt.pageX - 5}px`
+        this.style.top = `${evt.pageY - 5}px`
+        this.togglePopover(true)
+        this._items[0].focus()
+      }
+      _onItemClick() {this.togglePopover(false)}
+      _onKeyDown(evt) {
+        const item = evt.target.closest('menu-item')
+        let idx = this._items.findIndex(i => i === item)
+        switch (evt.key) {
+          case 'ArrowUp': idx--; break;
+          case 'ArrowDown': idx++; break;
+          case 'Home': idx = 0; break;
+          case 'End': idx = this._items.length - 1; break;
+          default:
+            return
+        }
+        evt.stopPropagation()
+        evt.preventDefault()
+        if (idx < 0 || idx >= this._items.length) return
+        if (this._items[idx] === item) return
+        this._items[idx].focus()
+      }
+      _onVisibilityChange() {
+        this._items = Array.from(this.querySelectorAll('menu-item')).filter(item => item.shown())
+      }
+    }
+  </script>
+  <style>
+    context-menu:popover-open {
+      inset: unset;
+      position: absolute;
+      border: var(--border-width) solid #888;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+    }
+
+    context-menu hr {
+      width: 100%;
+      margin: 0;
+    }
+  </style>
+</head>
+
+<body>
+  <context-menu id=cm-msg>
+    <menu-item id=cm-msg-view shortcut=⏎>View</menu-item>
+    <if:manual><menu-item id=cm-msg-man-send shortcut=S>Manual Send</menu-item></if:manual>
+    <menu-item id=cm-msg-man-rcpt>Create Receipt</menu-item>
+    <menu-item id=cm-msg-print shortcut=P>Print</menu-item>
+    <menu-item id=cm-msg-edit shortcut=⏎>Edit</menu-item>
+    <menu-item id=cm-msg-edit-log>Edit Log Entry</menu-item>
+    <menu-item id=cm-msg-resend>Resend</menu-item>
+    <menu-item id=cm-msg-send-copy>Send Copy</menu-item>
+    <menu-item id=cm-msg-reply>Reply</menu-item>
+    <menu-item id=cm-msg-delete>Delete</menu-item>
+    <hr>
+    <menu-item id=cm-msg-ready checkable>Ready to Send</menu-item>
+    <menu-item id=cm-msg-followup checkable>Needs Followup</menu-item>
+    <menu-item id=cm-msg-need-rcpt checkable>Needs Receipt</menu-item>
+  </context-menu>
+  <script>
+    customElements.define('context-menu', ContextMenu)
+  </script>
+</body>
+
+</html>

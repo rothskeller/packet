@@ -95,7 +95,7 @@ tacname  Tactical station name if any.`,
 			values.Set("tacName", decodeArg(args[6]))
 		}
 		if mtype = message.FindType(func(mt message.MType) bool {
-			if mt, ok := mt.(form.FormType); ok {
+			if mt, ok := mt.(form.EditableFormType); ok {
 				return mt.AddonName == addon && mt.HTMLName == msgtype && mt.CreateTag() != ""
 			}
 			return false

@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <script> // New Message Dialog
+    const messageTypeData = '{{MTYPES}}'
+    const messageTypes = []
+    let keyPrefix = ''
+    let newmsgwin = 1
+    function startNewMessage(tag) {
+      const params = new URLSearchParams({dir: '{{DIR}}', tag: tag})
+      window.open('/new-message?' + params.toString(), `new${newmsgwin++}`)
+      document.getElementById('nmdlg').close()
+    }
+    function setupNewMessageDialog() {
+      const listDiv = document.getElementById('nmtypes')
+      const listItemTemplate = document.getElementById('nmtypetmpl')
+      messageTypeData.split(';').forEach(triplet => {
+        const [tag, key, name] = triplet.split(':', 3)
+        const tdiv = document.importNode(listItemTemplate.content, true).firstElementChild
+        tdiv.dataset.tag = tag
+        tdiv.dataset.key = key
+        tdiv.querySelector('.nmkey').textContent = key
+        tdiv.querySelector('.nmname').textContent = name
+        tdiv.addEventListener('click', () => {startNewMessage(tag)})
+        listDiv.appendChild(tdiv)
+        messageTypes.push(tdiv)
+      })
+      document.getElementById('nmdlg').addEventListener('keydown', evt => {
+        if (evt.key === 'Backspace') {
+          if (keyPrefix) {
+            keyPrefix = keyPrefix.substring(0, keyPrefix.length - 1)
+            for (let tdiv of messageTypes) {
+              if (tdiv.dataset.key.startsWith(keyPrefix)) tdiv.removeAttribute('hidden')
+            }
+          }
+          evt.stopPropagation()
+          return
+        } else if (evt.key === 'ArrowDown') {
+          const curr = listDiv.querySelector('.selected')
+          if (curr && curr.nextElementSibling) {
+            curr.classList.remove('selected')
+            curr.nextElementSibling.classList.add('selected')
+          } else if (!curr) {
+            messageTypes[0].classList.add('selected')
+          }
+          evt.stopPropagation()
+          return
+        } else if (evt.key === 'ArrowUp') {
+          const curr = listDiv.querySelector('.selected')
+          if (curr && curr.previousElementSibling) {
+            curr.classList.remove('selected')
+            curr.previousElementSibling.classList.add('selected')
+          } else if (!curr) {
+            messageTypes[messageTypes.length - 1].classList.add('selected')
+          }
+          evt.stopPropagation()
+          return
+        } else if (evt.key === 'Enter') {
+          const curr = listDiv.querySelector('.selected')
+          if (curr) startNewMessage(curr.dataset.tag)
+          evt.stopPropagation()
+          return
+        }
+        for (let tdiv of messageTypes) {
+          if (tdiv.dataset.key == keyPrefix + evt.key) {
+            evt.stopPropagation()
+            startNewMessage(tdiv.dataset.tag)
+          } else if (tdiv.dataset.key.startsWith(keyPrefix + evt.key)) {
+            evt.stopPropagation()
+            keyPrefix += evt.key
+            for (let tdiv2 of messageTypes) {
+              if (!tdiv2.dataset.key.startsWith(keyPrefix)) tdiv2.setAttribute('hidden', '')
+            }
+            return
+          }
+        }
+      })
+      document.getElementById('nmsub').addEventListener('click', () => {
+        const curr = listDiv.querySelector('.selected')
+        if (curr) startNewMessage(curr.dataset.tag)
+      })
+      document.getElementById('nmcan').addEventListener('click', () => {
+        document.getElementById('nmdlg').close()
+      })
+    }
+    function openNewMessageDialog() {
+      messageTypes.forEach(tdiv => {
+        tdiv.classList.remove('selected')
+        tdiv.removeAttribute('hidden')
+      })
+      keyPrefix = ''
+      document.getElementById('nmdlg').showModal()
+    }
+  </script>
+  <style>
+    #nmdlg {
+      margin: 4rem auto;
+      padding: 0 0.75rem 0.75rem;
+      z-index: 2;
+    }
+
+    #nmdlg h1 {
+      background-color: #a8e8a8;
+      margin: 0 -0.75rem;
+      padding: 0.5rem 0.75rem;
+      font-size: 1.5rem;
+    }
+
+    #nmtypes:focus-visible {
+      outline: none;
+    }
+
+    .nmtype {
+      display: flex;
+      padding-block: 0.15rem;
+    }
+
+    .nmtype.selected {
+      margin-inline: -0.75rem;
+      padding-inline: 0.75rem;
+      background-color: #f0f0f4;
+    }
+
+    .nmkey {
+      width: 2rem;
+    }
+
+    #nmbuttons {
+      margin-top: 1.5rem;
+      display: flex;
+      justify-content: end;
+      gap: 0.75rem;
+    }
+
+    #nmcan,
+    #nmsub {
+      border-radius: 0.25rem;
+    }
+
+    #nmsub {
+      background-color: #a8e8a8;
+    }
+  </style>
+</head>
+
+<body>
+  <dialog id=nmdlg>
+    <h1>New Outgoing Message</h1>
+    <p>Choose a message type:</p>
+    <div id=nmtypes tabindex=0 autofocus>
+      <template id=nmtypetmpl>
+        <div class=nmtype>
+          <span class=nmkey></span>
+          <span class=nmname></span>
+        </div>
+      </template>
+    </div>
+    <div id=nmbuttons>
+      <button id=nmcan type=button>Cancel</button>
+      <button id=nmsub type=button>Create Message</button>
+    </div>
+  </dialog>
+</body>
+
+</html>

@@ -71,19 +71,13 @@ type EditableMType interface {
 type EditHTMLVars struct {
 	// SubmitURL is the URL that the edit form should POST to.  The URL
 	// should respond with either an error status with a text/plain body,
-	// or an http.StatusSeeOther with a redirect.
+	// an http.StatusSeeOther with a redirect, or an http.StatusNoContent
+	// (which means clase the window).
 	SubmitURL string
 	// SubmitLabel is the label of the submit button.  It is required.
 	SubmitLabel string
-	// AltURL is the URL that the form's alternate submit button should
-	// POST to.  It is optional; if not present, the alternate submit
-	// button is not shown.  The URL should respond with either an error
-	// status with a text/plain body containing an error message, or an
-	// http.StatusSeeOther with a redirect.
-	AltURL string
-	// AltLabel is the label of the alternate submit button.  It is
-	// required if AltURL is specified and ignored otherwise.
-	AltLabel string
+	// SaveLabel is the label of the save button, if any.
+	SaveLabel string
 	// AssetBase is the URL base for any assets needed by the edit form.
 	// It should correspond to the file system returned by EditAssets.
 	AssetBase string
@@ -91,6 +85,9 @@ type EditHTMLVars struct {
 	// From Address fields should be shown and submitted.  (It's true for
 	// manual/GUI editing and false for Outpost editing.)
 	ShowAddressFields bool
+	// FromAddress is the from address for the message (used only if
+	// ShowAddressFields is true).
+	FromAddress string
 }
 
 // Warning wraps a non-fatal "error".
@@ -126,7 +123,7 @@ func registerType(mt MType, fallback bool) error {
 
 	if mt, ok := mt.(EditableMType); ok {
 		tag, key = strings.ToLower(mt.CreateTag()), strings.ToLower(mt.CreateKey())
-		if tag != "" {
+		if tag == "" {
 			return errors.New("editable message types must have a CreateTag")
 		}
 		for _, exist := range mtypes {

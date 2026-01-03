@@ -8,6 +8,15 @@ import (
 	"strings"
 )
 
+// ErrPage emits an error page with the specified HTTP status and error message.
+func ErrPage(w http.ResponseWriter, err string, httpStatus int) {
+	err = html.EscapeString(err)
+	err = strings.ReplaceAll(err, "\n", "<br/>")
+	w.Header().Set("Content-Type", "text/html; charset=utf-8")
+	w.WriteHeader(httpStatus)
+	fmt.Fprintf(w, `<html><head><title>Problem</title></head><body><h3 id="something-went-wrong"><span style="font-size:24pt;color:red">⚠︎ </span>Something went wrong.</h3>This information might help resolve the problem:<br/><br/>%s</body></html>`, err)
+}
+
 // ErrorPage emits an error page with the specified HTTP status and error
 // message.  If state is non-nil, it is JSON-encoded and shown on the error
 // page.

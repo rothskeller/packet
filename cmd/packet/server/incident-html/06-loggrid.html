@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <script> // LogGrid
+    // The <log-grid> is the grid containing all log entries.
+    //
+    // Methods:
+    //   showReceipts(bool): sets the visibility of receipt messages.
+    //   updateEntries(dataArray): updates the data for entries in the grid.
+    //     The argument is an array of entry data objects.  Entries not already
+    //     existing in the grid are added to the end of it.  Entries whose
+    //     'st' is changed to 'X' are removed from the grid.
+    class LogGrid extends HTMLElement {
+      constructor() {
+        super()
+        this._entries = []
+        this.selected = null
+      }
+      connectedCallback() {
+        this.appendChild(document.getElementById('log-grid-header').content)
+        this.addEventListener('keydown', this._onKeyDown.bind(this))
+        window.addEventListener('new-data', this._onNewData.bind(this))
+      }
+      entryByIdent(ident) {
+        return this._entries.find(e => e.ident === ident)
+      }
+      showReceipts(show) {
+        this.classList.toggle('show-receipts', show)
+        this._setEntries()
+      }
+      _onEntrySelected(evt) {
+        if (this.selected === evt.target) return
+        if (this.selected) this.selected.deselect()
+        this.selected = evt.target
+      }
+      _onKeyDown(evt) {
+        const entry = evt.target.closest('log-entry')
+        const idx = this._entries.findIndex(e => e === entry)
+        switch (evt.key) {
+          case 'ArrowUp': idx--; break;
+          case 'ArrowDown': idx++; break;
+          case 'Home': idx = 0; break;
+          case 'End': idx = this._entries.length - 1; break;
+          default:
+            return
+        }
+        evt.preventDefault()
+        evt.stopPropagation()
+        if (idx < 0 || idx >= this._entries.length) return
+        if (this._entries[idx] === entry) return
+        this._entries[idx].select()
+      }
+      _onNewData(evt) {
+        evt.detail.forEach(data => {this._updateEntry(data)})
+        this._setEntries()
+      }
+      _setEntries() {
+        this._entries = []
+        const showReceipts = this.classList.contains('show-receipts')
+        Array.from(this.children).forEach(e => {
+          if (!e.st || e.st === 'X') return
+          if (!showReceipts && e.f.includes('R') && e.st !== 'D' && e.st !== 'Q') return
+          this._entries.push(e)
+        })
+      }
+      _updateEntry(data) {
+        let entry = this.children.item(data.idx + 2)
+        if (!entry) {
+          entry = new LogEntry()
+          entry.addEventListener('entry-selected', this._onEntrySelected.bind(this))
+          this.appendChild(entry)
+        }
+        entry.updateData(data)
+      }
+    }
+  </script>
+  <style>
+    log-grid.full {
+      --columns: 7;
+    }
+
+    log-grid.compact {
+      --columns: 8;
+    }
+
+    log-grid {
+      display: grid;
+      grid: auto-flow / repeat(calc(var(--columns) - 2), max-content) 1fr max-content;
+      margin: calc(-1 * var(--border-width)) 0 0 var(--border-width);
+    }
+
+    #full-header,
+    #compact-header {
+      display: grid;
+      grid: subgrid/subgrid;
+      grid-column: span var(--columns);
+      font-weight: bold;
+      text-align: center;
+      z-index: 1;
+    }
+
+    #full-header>*,
+    #compact-header>* {
+      border-color: black;
+    }
+
+    log-grid.compact #full-header,
+    log-grid.full #compact-header {
+      display: none;
+    }
+
+    log-grid.full #full-header {
+      grid-row: span 2;
+    }
+  </style>
+</head>
+
+<body>
+  <log-grid class=compact></log-grid>
+  <template id=log-grid-header>
+    <div id=full-header>
+      <div style="grid-row:span 2">
+        <div style="display:flex;height:100%;align-items:center">TIME<br>(24:00)</div>
+      </div>
+      <div style="grid-column:span 2">FROM</div>
+      <div style="grid-column:span 2">TO</div>
+      <div style="grid-row:span 2;grid-column:span 2">
+        <div style="display:flex;height:100%;align-items:center">Message</div>
+      </div>
+      <div>Call Sign/ID</div>
+      <div style="border-left-color:#ddd">Msg #</div>
+      <div>Call Sign/ID</div>
+      <div style="border-left-color:#ddd">Msg #</div>
+    </div>
+    <div id=compact-header>
+      <div>TIME</div>
+      <div style="grid-column: span 2">FROM</div>
+      <div>MSG ID</div>
+      <div style="grid-column: span 2">TO</div>
+      <div style="text-align:left;grid-column:span 2">MESSAGE</div>
+    </div>
+  </template>
+  <script>
+    customElements.define('log-grid', LogGrid)
+  </script>
+</body>
+
+</html>

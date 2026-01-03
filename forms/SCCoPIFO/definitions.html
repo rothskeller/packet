@@ -1,11 +1,6 @@
-<def:the-form addon-name="Outpost ADDON name for the form set" form-html="HTML filename identifying the form type"
-  form-version="Form version number" submit-label="Label for the submit button"
-  pdf-url="URL of the PDF file for the Show PDF button">
+<def:the-form submit-url="URL for form submit" submit-label="Label for the submit button"
+  save-label="Label for the save button" pdf-url="URL for the Show PDF button">
   <form id=the-form method=POST action={{submit-url}}>
-    <input type=hidden name="addon-name" value={{addon-name}}>
-    <input type=hidden name="form-html" value={{form-html}}>
-    <input type=hidden name="form-version" value={{form-version}}>
-    <if:outpost-index><input type=hidden name="outpost-index" value={{outpost-index}}></if:outpost-index>
     <slot></slot>
   </form>
   <table id=button-header class=same-line-label-layout>
@@ -13,6 +8,9 @@
       <td style="vertical-align:middle;white-space:nowrap;">
         <input type=button id=submit tabindex=600 disabled value="Submit Form" value={{submit-label}}
           style="font-weight:bold">
+        <if:save-label>
+          <input type=button id=save tabindex=601 value={{save-label}} style="font-weight:bold">
+        </if:save-label>
         &nbsp;&nbsp;
         <input type=button id=reset tabindex=602 value="Reset Form">
         <if:pdf-url>
@@ -22,6 +20,9 @@
           <input type=text class=invalid disabled style="margin-left:1em;width:2em;border:1px solid #cccccc;" />
           &nbsp;&nbsp;= required
         </span>
+        <div id=error></div>
+      </td>
+    </tr>
   </table>
 </def:the-form>
 
@@ -40,6 +41,7 @@
 <def:scco-header form-title="Title to put in the top banner.  Required."
   form-version="Form version number to put in the top banner.  Required."
   paper-version="Paper form version number or date to put in the top banner."
+  show-addrs="True if the form should have To/From Address fields."
   to-ics-positions="Semicolon-separated list of possibilities for To ICS Position"
   to-locations="Semicolon-separated list of possibilities for To Location">
   <table id="scco-banner" class="block-caption noborder">
@@ -86,77 +88,165 @@
           </label>
         </div>
   </table>
-  <table id="form-row-3">
-    <tr>
-      <td rowspan=4 class=block-caption style="width:1px;">
-        T<br />O
-      <td>
-        <table class=same-line-label-layout>
-          <tr>
-            <th>ICS Position:
-            <td style="padding-right:0;">
-              <if:to-ics-positions>
-                <combo-box name="7a." tabindex=8 required options={{to-ics-positions}}></combo-box>
-              </if:to-ics-positions>
-              <ifnot:to-ics-positions>
-                <input type=text name="7a." tabindex=8 required>
-              </ifnot:to-ics-positions>
-        </table>
-      <td rowspan=4 class=block-caption style="width:1px;">
-        F<br />R<br />O<br />M
-      <td>
-        <table class=same-line-label-layout>
-          <tr>
-            <th>ICS Position:
-            <td><input type=text name="8a." required tabindex=12>
-        </table>
-    <tr>
-      <td>
-        <table class=same-line-label-layout>
-          <tr>
-            <th>Location:
-            <td style="padding-right:0;">
-              <if:to-ics-locations>
-                <combo-box name="7b." tabindex=9 required options={{to-ics-locations}}></combo-box>
-              </if:to-ics-locations>
-              <ifnot:to-ics-locations>
-                <input type=text name="7b." tabindex=9 required>
-              </ifnot:to-ics-locations>
-        </table>
-      <td>
-        <table class=same-line-label-layout>
-          <tr>
-            <th>Location:
-            <td><input type=text name="8b." required tabindex=13>
-        </table>
-    <tr>
-      <td>
-        <table class=same-line-label-layout>
-          <tr>
-            <th>Name:
-            <td><input type=text name="7c." tabindex=10>
-        </table>
-      <td>
-        <table class=same-line-label-layout>
-          <tr>
-            <th>Name:
-            <td><input type=text name="8c." tabindex=14>
-        </table>
-      </td>
-    <tr>
-      <td>
-        <table class=same-line-label-layout>
-          <tr>
-            <th>Contact Info:
-            <td><input type=text name="7d." tabindex=11>
-        </table>
-      <td>
-        <table class=same-line-label-layout>
-          <tr>
-            <th>Contact Info:
-            <td><input type=text name="8d." tabindex=15>
-        </table>
-  </table>
+  <if:show-addrs>
+    <table id="form-row-3">
+      <tr>
+        <td rowspan=5 class=block-caption style="width:1px;">
+          T<br />O
+        <td>
+          <table class=same-line-label-layout>
+            <tr>
+              <th>Address:
+              <td><input type=text name=ToAddr tabindex=8 required>
+          </table>
+        <td rowspan=5 class=block-caption style="width:1px;">
+          F<br />R<br />O<br />M
+        <td>
+          <table class=same-line-label-layout>
+            <tr>
+              <th>Address:
+              <td><input type=text name=FromAddr readonly tabindex=12>
+          </table>
+      <tr>
+        <td>
+          <table class=same-line-label-layout>
+            <tr>
+              <th>ICS Position:
+              <td style="padding-right:0;">
+                <if:to-ics-positions>
+                  <combo-box name="7a." tabindex=8 required options={{to-ics-positions}}></combo-box>
+                </if:to-ics-positions>
+                <ifnot:to-ics-positions>
+                  <input type=text name="7a." tabindex=8 required>
+                </ifnot:to-ics-positions>
+          </table>
+        <td>
+          <table class=same-line-label-layout>
+            <tr>
+              <th>ICS Position:
+              <td><input type=text name="8a." required tabindex=12>
+          </table>
+      <tr>
+        <td>
+          <table class=same-line-label-layout>
+            <tr>
+              <th>Location:
+              <td style="padding-right:0;">
+                <if:to-ics-locations>
+                  <combo-box name="7b." tabindex=9 required options={{to-ics-locations}}></combo-box>
+                </if:to-ics-locations>
+                <ifnot:to-ics-locations>
+                  <input type=text name="7b." tabindex=9 required>
+                </ifnot:to-ics-locations>
+          </table>
+        <td>
+          <table class=same-line-label-layout>
+            <tr>
+              <th>Location:
+              <td><input type=text name="8b." required tabindex=13>
+          </table>
+      <tr>
+        <td>
+          <table class=same-line-label-layout>
+            <tr>
+              <th>Name:
+              <td><input type=text name="7c." tabindex=10>
+          </table>
+        <td>
+          <table class=same-line-label-layout>
+            <tr>
+              <th>Name:
+              <td><input type=text name="8c." tabindex=14>
+          </table>
+        </td>
+      <tr>
+        <td>
+          <table class=same-line-label-layout>
+            <tr>
+              <th>Contact Info:
+              <td><input type=text name="7d." tabindex=11>
+          </table>
+        <td>
+          <table class=same-line-label-layout>
+            <tr>
+              <th>Contact Info:
+              <td><input type=text name="8d." tabindex=15>
+          </table>
+    </table>
+  </if:show-addrs>
+  <ifnot:show-addrs>
+    <table id="form-row-3">
+      <tr>
+        <td rowspan=4 class=block-caption style="width:1px;">
+          T<br />O
+        <td>
+          <table class=same-line-label-layout>
+            <tr>
+              <th>ICS Position:
+              <td style="padding-right:0;">
+                <if:to-ics-positions>
+                  <combo-box name="7a." tabindex=8 required options={{to-ics-positions}}></combo-box>
+                </if:to-ics-positions>
+                <ifnot:to-ics-positions>
+                  <input type=text name="7a." tabindex=8 required>
+                </ifnot:to-ics-positions>
+          </table>
+        <td rowspan=4 class=block-caption style="width:1px;">
+          F<br />R<br />O<br />M
+        <td>
+          <table class=same-line-label-layout>
+            <tr>
+              <th>ICS Position:
+              <td><input type=text name="8a." required tabindex=12>
+          </table>
+      <tr>
+        <td>
+          <table class=same-line-label-layout>
+            <tr>
+              <th>Location:
+              <td style="padding-right:0;">
+                <if:to-ics-locations>
+                  <combo-box name="7b." tabindex=9 required options={{to-ics-locations}}></combo-box>
+                </if:to-ics-locations>
+                <ifnot:to-ics-locations>
+                  <input type=text name="7b." tabindex=9 required>
+                </ifnot:to-ics-locations>
+          </table>
+        <td>
+          <table class=same-line-label-layout>
+            <tr>
+              <th>Location:
+              <td><input type=text name="8b." required tabindex=13>
+          </table>
+      <tr>
+        <td>
+          <table class=same-line-label-layout>
+            <tr>
+              <th>Name:
+              <td><input type=text name="7c." tabindex=10>
+          </table>
+        <td>
+          <table class=same-line-label-layout>
+            <tr>
+              <th>Name:
+              <td><input type=text name="8c." tabindex=14>
+          </table>
+        </td>
+      <tr>
+        <td>
+          <table class=same-line-label-layout>
+            <tr>
+              <th>Contact Info:
+              <td><input type=text name="7d." tabindex=11>
+          </table>
+        <td>
+          <table class=same-line-label-layout>
+            <tr>
+              <th>Contact Info:
+              <td><input type=text name="8d." tabindex=15>
+          </table>
+    </table>
+  </ifnot:show-addrs>
 </def:scco-header>
 
 <def:scco-footer>

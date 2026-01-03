@@ -13,12 +13,16 @@ import (
 	"os/exec"
 	"os/signal"
 	"path/filepath"
+	"strconv"
 	"strings"
 	"time"
 
 	"github.com/fsnotify/fsnotify"
 	"github.com/rothskeller/packet/cmd/packet/osdep"
+	"github.com/rothskeller/packet/errors"
 	"github.com/rothskeller/packet/form/formdefs"
+	"github.com/rothskeller/packet/incident"
+	"github.com/rothskeller/packet/message"
 )
 
 const (
@@ -290,7 +294,7 @@ func (s *Server) handleRequest(w http.ResponseWriter, r *http.Request) {
 	}
 	slog.LogAttrs(context.Background(), slog.LevelDebug, r.Method+" "+r.URL.Path, attrs...)
 	// Never cache any response.
-	w.Header().Set("Cache-Control", "no-store")
+	w.Header().Set("Cache-Control", "no-store, private")
 	// Handle the request.
 	s.mux.ServeHTTP(w, r)
 }
@@ -307,7 +311,6 @@ func (s *Server) registerHandlers() {
 	s.mux.HandleFunc("/ping", func(w http.ResponseWriter, r *http.Request) { w.WriteHeader(http.StatusNoContent) })
 	s.mux.HandleFunc("GET /outpost-new", s.outpostNewRequest)
 	s.mux.HandleFunc("GET /outpost-edit", s.outpostEditRequest)
-	s.mux.HandleFunc("GET /assets/{asset...}", s.serveAsset)
 	s.mux.HandleFunc("POST /outpost-submit", s.outpostSubmit)
 	s.mux.HandleFunc("GET /pdf/{filename}", s.serveRenderedPDF)
 	s.mux.HandleFunc("GET /incident-config", s.serveGetIncidentConfig)
@@ -316,6 +319,20 @@ func (s *Server) registerHandlers() {
 	s.mux.HandleFunc("GET /incident/log", s.serveGetIncidentLog)
 	s.mux.HandleFunc("POST /manual-receive", s.servePostManualReceive)
 	s.mux.HandleFunc("GET /new-message", s.serveGetNewMessage)
+	s.mux.HandleFunc("GET /edit-message", s.serveGetEditMessage)
+	s.mux.HandleFunc("GET /assets/{tag}/{asset...}", s.serveGetAsset)
+	s.mux.HandleFunc("POST /send-message", s.servePostSendMessage)
+	s.mux.HandleFunc("GET /manual-send-command", s.serveGetManualSendCommand)
+	s.mux.HandleFunc("POST /mark-sent", s.servePostMarkSent)
+	s.mux.HandleFunc("GET /view-message", s.serveGetViewMessage)
+	s.mux.HandleFunc("POST /print-message", s.servePostPrintMessage)
+	s.mux.HandleFunc("POST /make-receipt", s.servePostMakeReceipt)
+	s.mux.HandleFunc("POST /edit-log-entry", s.servePostEditLogEntry)
+	s.mux.HandleFunc("POST /reset-log-entry", s.servePostResetLogEntry)
+	s.mux.HandleFunc("POST /delete-log-entry", s.servePostDeleteLogEntry)
+	s.mux.HandleFunc("POST /toggle-flag", s.servePostToggleFlag)
+	s.mux.HandleFunc("POST /new-message-from", s.servePostNewMessageFrom)
+	s.mux.HandleFunc("POST /delete-message", s.servePostDeleteMessage)
 	//s.mux.HandleFunc("GET /choose-incident", s.serveChooseIncident)
 	//s.mux.HandleFunc("GET /incident", s.serveGetIncident)
 	// s.mux.HandleFunc("GET /manual", s.serveGetManual)
@@ -324,4 +341,82 @@ func (s *Server) registerHandlers() {
 	// s.mux.HandleFunc("GET /manual-setup", s.serveGetManualSetup)
 	// s.mux.HandleFunc("POST /manual-setup", s.servePostManualSetup)
 	// s.mux.HandleFunc("/manual-assets/{asset...}", s.serveManualAsset)
+}
+
+// serveIncident is a helper function for handlers that take a dir= parameter
+// identifying an incident directory.  If the supplied dir is a valid incident
+// directory, act will be invoked with that incident locked (for read or write
+// depending on the write flag).  If act is successful and finish is non-nil,
+// finish will be invoked.  If finish is nil, it defaults to
+// {w.WriteHeader(http.StatusNoContent); return nil}.  If any error occurs
+// (invalid dir, act or finish return non-nil), serveIncident issues an error
+// response to the client.  This will be either an HTML error page or a
+// text/plain body, depending on the request's Accept header.
+func serveIncident(w http.ResponseWriter, r *http.Request, write bool, act func(*incident.Incident) error, finish func() error) {
+	var err error
+
+	operate := func(i *incident.Incident) (err error) {
+		if err = act(i); err != nil {
+			return err
+		}
+		if finish == nil {
+			w.WriteHeader(http.StatusNoContent)
+			return nil
+		}
+		return finish()
+	}
+	if write {
+		err = incident.Write(r.FormValue("dir"), operate)
+	} else {
+		err = incident.Read(r.FormValue("dir"), operate)
+	}
+	if err != nil {
+		if strings.Contains(r.Header.Get("Accept"), "html") {
+			ErrPage(w, err.Error(), http.StatusBadRequest)
+		} else {
+			http.Error(w, err.Error(), http.StatusBadRequest)
+		}
+	}
+}
+
+// serveLogIdent is a helper function for handlers that take dir= and id=
+// parameters identifying an incident directory and a log entry in the
+// incident.  If the supplied dir is a valid incident directory, act will be
+// invoked with that incident locked (for read or write depending on the write
+// flag) and that log entry fetched.  If act is successful and finish is
+// non-nil, finish will be invoked.  If finish is nil, it defaults to
+// {w.WriteHeader(http.StatusNoContent); return nil}.  If any error occurs
+// (invalid dir or id, or act or finish return non-nil), serveLogIdent issues
+// an error response to the client.
+func serveLogIdent(w http.ResponseWriter, r *http.Request, write bool, act func(*incident.Incident, *incident.LogEntry) error, finish func() error) {
+	serveIncident(w, r, write, func(i *incident.Incident) (err error) {
+		ident, _ := strconv.Atoi(r.FormValue("id"))
+		if le := i.GetLogEntryByIdent(ident); le == nil {
+			return errors.NewF("There is no message with LEID %q in this incident.", r.FormValue("id"))
+		} else {
+			return act(i, le)
+		}
+	}, finish)
+}
+
+// serveMessage is a helper function for handlers that take dir= and id=
+// parameters identifying an incident directory and a log entry in the
+// incident.  If the supplied dir is a valid incident directory, act will be
+// invoked with that incident locked (for read or write depending on the write
+// flag), that log entry fetched, and the message referred to by that log entry
+// fetched.  If act is successful and finish is non-nil, finish will be
+// invoked.  If finish is nil, it defaults to
+// {w.WriteHeader(http.StatusNoContent); return nil}.  If any error occurs
+// (invalid dir or id, or act or finish return non-nil), serveLogIdent issues
+// an error response to the client.
+func serveMessage(w http.ResponseWriter, r *http.Request, write bool, act func(*incident.Incident, *incident.LogEntry, message.Message) error, finish func() error) {
+	serveLogIdent(w, r, write, func(i *incident.Incident, le *incident.LogEntry) (err error) {
+		if msg, err := i.GetMessageFromLogEntry(le); msg == nil && err != nil {
+			return err
+		} else if msg == nil {
+			return errors.New("There is no message associated with this log entry.")
+		} else {
+			return act(i, le, msg)
+		}
+	}, finish)
 }

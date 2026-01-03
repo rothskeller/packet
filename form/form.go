@@ -29,13 +29,19 @@ type FormType struct {
 	*formdef.FormDef
 }
 
-var _ message.EditableMType = (*FormType)(nil)
+var _ message.MType = (*FormType)(nil)
+
+type EditableFormType struct {
+	FormType
+}
+
+var _ message.EditableMType = EditableFormType{}
 
 // CreateTag returns the tag for creating the form.
-func (ft FormType) CreateTag() string { return ft.FormDef.CreateTag }
+func (ft EditableFormType) CreateTag() string { return ft.FormDef.CreateTag }
 
 // CreateKey returns the key for creating the form.
-func (ft FormType) CreateKey() string { return ft.FormDef.CreateKey }
+func (ft EditableFormType) CreateKey() string { return ft.FormDef.CreateKey }
 
 // Name returns the name of the message type, as a phrase in lower case (other
 // than acronyms) starting with "a " or "an ".
@@ -52,7 +58,7 @@ func (ft FormType) Validate(m message.Message, pifo bool) error {
 func (ft FormType) Fields() iter.Seq[field.Field] {
 	return func(yield func(field.Field) bool) {
 		for fd := range ft.AllFields() {
-			if !yield(ff2mf{fd}) {
+			if !yield(ff2mf{ft.FormDef, fd}) {
 				return
 			}
 		}
@@ -208,9 +214,14 @@ func (ft FormType) Recognize(m message.Message) {
 	// It's our form.
 	m.SetType(ft)
 }
+func (ft EditableFormType) Recognize(m message.Message) {
+	if ft.FormType.Recognize(m); m.Type() != nil {
+		m.SetType(ft)
+	}
+}
 
 // NewDraft returns a new draft message of this form type.
-func (ft FormType) NewDraft() *message.DraftMessage {
+func (ft EditableFormType) NewDraft() *message.DraftMessage {
 	var urgent bool
 
 	body, _ := NewFormBody(ft.AddonName, ft.HTMLName, pifover.PIFOVersion, ft.Version)
@@ -224,12 +235,12 @@ func (ft FormType) NewDraft() *message.DraftMessage {
 	}
 	pload := payload.NewOutpostPayload(body)
 	pload.SetUrgent(urgent)
-	subj := subject.NewPlainSubject("")
+	subj, _ := subject.NewSCCoSubject("", "", "")
 	return message.NewDraftMessage(ft, subj, pload, false)
 }
 
 // EditHTML returns the HTML form for editing the message.
-func (ft FormType) EditHTML(msg *message.DraftMessage, vars message.EditHTMLVars) (out []byte, err error) {
+func (ft EditableFormType) EditHTML(msg *message.DraftMessage, vars message.EditHTMLVars) (out []byte, err error) {
 	var (
 		formFile []byte
 		formHTML *html.Node
@@ -269,8 +280,7 @@ func (ft FormType) EditHTML(msg *message.DraftMessage, vars message.EditHTMLVars
 	fields["assets"] = vars.AssetBase
 	fields["submit-url"] = vars.SubmitURL
 	fields["submit-label"] = vars.SubmitLabel
-	fields["save-url"] = vars.AltURL
-	fields["save-label"] = vars.AltLabel
+	fields["save-label"] = vars.SaveLabel
 	if vars.ShowAddressFields {
 		fields["show-addrs"] = "true"
 	}
@@ -283,6 +293,8 @@ func (ft FormType) EditHTML(msg *message.DraftMessage, vars message.EditHTMLVars
 	// Expand the templates in the form HTML, using the supplied fields.
 	htmlop.Expand(formHTML, fields)
 	// Fill in the form using the fields from the message.
+	values.Set("ToAddr", msg.To())
+	values.Set("FromAddr", vars.FromAddress)
 	body = msg.Body().(*FormBody)
 	for f := range ft.AllFields() {
 		if f.Tag != "" {
@@ -307,13 +319,33 @@ func findBody(doc *html.Node) *html.Node {
 }
 
 // EditAssets returns the file system containing the form assets.
-func (ft FormType) EditAssets() (assets fs.FS) {
+func (ft EditableFormType) EditAssets() (assets fs.FS) {
 	bundle, _, _ := strings.Cut(ft.HTMLFile, "/")
 	assets, _ = fs.Sub(ft.FormFS, bundle)
 	return assets
 }
 
 // FromPOST translates the HTML response back into a DraftMessage.
-func (ft FormType) FromPOST(r *http.Request) (msg *message.DraftMessage, err error) {
-	panic("not implemented")
+func (ft EditableFormType) FromPOST(r *http.Request) (msg *message.DraftMessage, err error) {
+	var (
+		body *FormBody
+		subj *subject.SCCoSubject
+		payl *payload.OutpostPayload
+	)
+	if body, err = NewFormBody(ft.AddonName, ft.HTMLName, pifover.PIFOVersion, ft.Version); err != nil {
+		slog.Error("form.NewFormBody", "err", err)
+		return nil, err
+	}
+	payl = payload.NewOutpostPayload(body)
+	subj, _ = subject.NewSCCoSubject("", "", "") // will give an error, ignored
+	msg = message.NewDraftMessage(ft, subj, payl, false)
+	for f := range ft.Fields() {
+		if tag := f.Tag(); tag != "" {
+			if val := r.FormValue(tag); val != "" {
+				f.SetValue(msg, val)
+			}
+		}
+	}
+	msg.SetTo(r.FormValue("ToAddr"))
+	return msg, nil
 }

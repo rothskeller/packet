@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <script> // Top-level event handlers
+    const serverCanPrint = '{{SERVERPRINT}}'
+    let delayedChildAction
+    function childAction(s, nodelay) {
+      if (!s) return
+      const [action, ident] = s.split(':')
+      const item = grid.entryByIdent(parseInt(ident))
+      if (!item) {
+        if (!nodelay) delayedChildAction = s
+        return
+      }
+      item.select()
+      if (action === 'manual-send') openManualSendDialog(ident)
+      if (action === 'edit') {
+        const params = new URLSearchParams({dir: '{{DIR}}', id: ident})
+        window.open('/edit-message?' + params.toString(), `edit${ident}`)
+      }
+    }
+    window.addEventListener('click', evt => {
+      if (evt.button !== 2) return
+      const entry = evt.target.closest('log-entry')
+      if (!entry) return
+      document.querySelector('context-menu').open(evt)
+      evt.preventDefault()
+    })
+    window.addEventListener('contextmenu', evt => {
+      const entry = evt.target.closest('log-entry')
+      if (!entry) return
+      setTimeout(() => {
+        document.querySelector('context-menu').open(evt)
+      }, 10)
+      evt.preventDefault()
+      evt.stopImmediatePropagation()
+    })
+    window.addEventListener('default-action', () => {
+      const view = document.getElementById('m-msg-view')
+      if (view.shown()) view.click()
+      else document.getElementById('m-msg-edit').click()
+    })
+    function setupMenuHandlers() { // called by window.onload
+      const manualMode = !document.getElementById('m-conn')
+      const setupMenuItem1 = function (id, settings) {
+        const item = document.getElementById(id)
+        if (!item) return
+        if (settings.shown || settings.checked) {
+          grid.addEventListener('entry-selected', evt => {
+            if (settings.shown) item.show(settings.shown(evt.target))
+            if (settings.checked) item.setChecked(settings.checked(evt.target))
+          })
+        }
+        if (settings.clicked) item.addEventListener('item-click', () => {
+          settings.clicked(grid.selected, item)
+        })
+      }
+      const setupMenuItem = function (settings) {
+        setupMenuItem1(settings.id, settings)
+        if (settings.cid) setupMenuItem1(settings.cid, settings)
+      }
+      // Incident: New
+      // TODO: 
+      // Incident: Open
+      // TODO: 
+      // Incident: Settings
+      // TODO: 
+      // Incident: ICS-309
+      // TODO: 
+      // Incident: Archive
+      // TODO: 
+      // Message: New
+      setupMenuItem({
+        id: 'm-msg-new',
+        clicked: () => {openNewMessageDialog()},
+      })
+      // Message: Manual Receive
+      setupMenuItem({
+        id: 'm-msg-man-rcv',
+        shown: () => manualMode,
+        clicked: () => {openManualReceiveDialog()}
+      })
+      // Message: Manual Log Entry
+      setupMenuItem({
+        id: 'm-msg-man-log', cid: 'cm-msg-man-log',
+        clicked: () => {openEditLogEntryDialog(null)}
+      })
+      // Message: View
+      setupMenuItem({
+        id: 'm-msg-view', cid: 'cm-msg-view',
+        shown: sel => sel.st === 'R' || sel.st === 'S',
+        clicked: sel => {
+          const params = new URLSearchParams({dir: '{{DIR}}', id: sel.ident})
+          window.open('/view-message?' + params.toString(), `view${sel.ident}`)
+        }
+      })
+      // Message: Manual Send
+      setupMenuItem({
+        id: 'm-msg-man-send', cid: 'cm-msg-man-send',
+        shown: sel => manualMode && (sel.st === 'D' || sel.st === 'Q'),
+        clicked: sel => {openManualSendDialog(sel.ident)},
+      })
+      // Message: Create Receipt
+      setupMenuItem({
+        id: 'm-msg-man-rcpt', cid: 'cm-msg-man-rcpt',
+        shown: sel => manualMode && sel.st === 'R',
+        clicked: async sel => {
+          const params = new URLSearchParams({dir: '{{DIR}}', id: sel.ident})
+          const resp = await fetch('/make-receipt?' + params.toString(), {method: 'POST'})
+          if (resp.ok)
+            childAction(resp.headers.get('X-Packet-Action'))
+          else
+            openErrorDialog('Create Receipt Error', await resp.text())
+        }
+      })
+      // Message: Print
+      setupMenuItem({
+        id: 'm-msg-print', cid: 'cm-msg-print',
+        shown: sel => sel.st !== 'H',
+        clicked: sel => {
+          const params = new URLSearchParams({dir: '{{DIR}}', id: sel.ident})
+          if (serverCanPrint) {
+            fetch('/print-message?' + params.toString(), {method: 'POST'})
+          } else {
+            const win = window.open('/view-message?' + params.toString(), `view${sel.ident}`)
+            win.addEventListener('load', () => {win.print()})
+          }
+        }
+      })
+      // Message: Edit
+      setupMenuItem({
+        id: 'm-msg-edit', cid: 'cm-msg-edit',
+        shown: sel => sel.st === 'D' || sel.st === 'Q',
+        clicked: sel => {
+          const params = new URLSearchParams({dir: '{{DIR}}', id: sel.ident})
+          window.open('/edit-message?' + params.toString(), `edit${sel.ident}`)
+        }
+      })
+      // Message; Edit Log Entry
+      setupMenuItem({
+        id: 'm-msg-edit-log', cid: 'cm-msg-edit-log',
+        shown: sel => sel.st !== 'D' && sel.st !== 'Q',
+        clicked: sel => {openEditLogEntryDialog(sel)}
+      })
+      // Message: Resend
+      setupMenuItem({
+        id: 'm-msg-resend', cid: 'cm-msg-resend',
+        shown: sel => sel.st === 'S',
+        clicked: async sel => {
+          const params = new URLSearchParams({dir: '{{DIR}}', id: sel.ident, action: 'resend'})
+          const resp = await fetch('/new-message-from?' + params.toString(), {method: 'POST'})
+          if (!resp.ok) openErrorDialog('Send Copy', await resp.text())
+          else childAction(resp.headers.get('X-Packet-Action'))
+        },
+      })
+      // Message: Send Copy
+      setupMenuItem({
+        id: 'm-msg-send-copy', cid: 'cm-msg-send-copy',
+        shown: sel => sel.st === 'R' || sel.st === 'S',
+        clicked: async sel => {
+          const params = new URLSearchParams({dir: '{{DIR}}', id: sel.ident, action: 'copy'})
+          const resp = await fetch('/new-message-from?' + params.toString(), {method: 'POST'})
+          if (!resp.ok) openErrorDialog('Send Copy', await resp.text())
+          else childAction(resp.headers.get('X-Packet-Action'))
+        },
+      })
+      // Message: Reply
+      setupMenuItem({
+        id: 'm-msg-reply', cid: 'cm-msg-reply',
+        shown: sel => sel.st === 'R',
+        clicked: async sel => {
+          const params = new URLSearchParams({dir: '{{DIR}}', id: sel.ident, action: 'reply'})
+          const resp = await fetch('/new-message-from?' + params.toString(), {method: 'POST'})
+          if (!resp.ok) openErrorDialog('Send Copy', await resp.text())
+          else childAction(resp.headers.get('X-Packet-Action'))
+        },
+      })
+      // Message: Delete
+      setupMenuItem({
+        id: 'm-msg-delete', cid: 'cm-msg-delete',
+        shown: sel => sel.st === 'D' || sel.st === 'Q' || sel.st === 'M',
+        clicked: async sel => {
+          if (sel.st !== 'M') {
+            openDeleteMessageDialog(sel)
+            return
+          }
+          const params = new URLSearchParams({dir: '{{DIR}}', id: sel.ident})
+          const resp = await fetch('/delete-log-entry?' + params.toString(), {method: 'POST'})
+          if (!resp.ok) openErrorDialog('Delete Log Entry', await resp.text())
+        },
+      })
+      // Message: Ready to Send
+      setupMenuItem({
+        id: 'm-msg-ready', cid: 'cm-msg-ready',
+        shown: sel => sel.st === 'D' || sel.st === 'Q',
+        checked: sel => sel.st === 'Q',
+        clicked: async sel => {
+          const params = new URLSearchParams({dir: '{{DIR}}', id: sel.ident, flag: 'Q'})
+          const resp = await fetch('/toggle-flag?' + params.toString(), {method: 'POST'})
+          if (!resp.ok) openErrorDialog('Toggle Ready-to-Send Flag', await resp.text())
+          // TODO: handle 200 response
+        },
+      })
+      // Message: Needs Followup
+      setupMenuItem({
+        id: 'm-msg-followup', cid: 'cm-msg-followup',
+        shown: () => true,
+        checked: sel => sel.f.includes('F'),
+        clicked: async sel => {
+          const params = new URLSearchParams({dir: '{{DIR}}', id: sel.ident, flag: 'F'})
+          const resp = await fetch('/toggle-flag?' + params.toString(), {method: 'POST'})
+          if (!resp.ok) openErrorDialog('Toggle Needs Follow-Up Flag', await resp.text())
+        },
+      })
+      // Message: Needs Receipt
+      setupMenuItem({
+        id: 'm-msg-need-rcpt', cid: 'cm-msg-need-rcpt',
+        shown: sel => sel.st === 'S' && !sel.f.includes('+') && !sel.f.includes('R'),
+        checked: sel => sel.f.includes('-'),
+        clicked: async sel => {
+          const params = new URLSearchParams({dir: '{{DIR}}', id: sel.ident, flag: '-'})
+          const resp = await fetch('/toggle-flag?' + params.toString(), {method: 'POST'})
+          if (!resp.ok) openErrorDialog('Toggle Needs Receipt Flag', await resp.text())
+        },
+      })
+      // View: Compact View
+      setupMenuItem({
+        id: 'm-view-compact',
+        clicked: (sel, item) => {
+          grid.classList.toggle('full', !item.checked())
+          grid.classList.toggle('compact', item.checked())
+        }
+      })
+      // View: Show Receipts
+      setupMenuItem({
+        id: 'm-view-receipts',
+        clicked: (sel, item) => {grid.showReceipts(item.checked())}
+      })
+      // View: Large Font
+      setupMenuItem({
+        id: 'm-view-large',
+        clicked: (sel, item) => {
+          document.documentElement.style.fontSize = item.checked() ? '1.25em' : null
+          document.querySelector('menu-bar').adjustSubmenuPositions()
+        }
+      })
+      // TODO: 
+      // Connect: Send/Receive All
+      // TODO: 
+      // Connect: Immediates Only
+      // TODO: 
+      // Connect: Abort Connection
+      // TODO: 
+      // Help: Software Manual
+      // TODO: 
+      // Help: Packet Email List
+      // TODO:
+      // Help: Github Repository
+      // TODO: 
+      // Help: About SCCo Packet
+      // TODO: 
+    }
+  </script>
+</head>
+
+</html>

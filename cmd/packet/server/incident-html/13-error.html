@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <script> // Error Dialog
+    function setupErrorDialog() {
+      document.getElementById('errok').addEventListener('click', () => {
+        document.getElementById('errdlg').close()
+      })
+    }
+    function openErrorDialog(title, error) {
+      document.getElementById('errtitle').textContent = title
+      document.getElementById('errmsg').textContent = error
+      document.getElementById('errdlg').showModal()
+    }
+  </script>
+  <style>
+    #errdlg {
+      margin: 4rem auto;
+      padding: 0 0.75rem 0.75rem;
+      z-index: 2;
+    }
+
+    #errdlg h1 {
+      background-color: #e7a6a6;
+      margin: 0 -0.75rem;
+      padding: 0.5rem 0.75rem;
+      font-size: 1.5rem;
+    }
+
+    #errmsg {
+      max-width: 40rem;
+    }
+
+    #errbuttons {
+      margin-top: 1.5rem;
+      display: flex;
+      justify-content: end;
+    }
+
+    #errok {
+      border-radius: 0.25rem;
+      background-color: #e7a6a6;
+    }
+  </style>
+</head>
+
+<body>
+  <dialog id=errdlg>
+    <h1 id=errtitle></h1>
+    <p id=errmsg></p>
+    <div id=errbuttons>
+      <button type=button id=errok>OK</button>
+    </div>
+  </dialog>
+</body>
+
+</html>

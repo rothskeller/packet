@@ -179,87 +179,191 @@
       </td>
     </tr>
   </table>
-  <table id="form-row-3">
-    <tr>
-      <td rowspan="4" class="block-caption" style="width:1px;">
-        T<br />O
-      </td>
-      <td>
-        <table class="same-line-label-layout">
-          <tr>
-            <th>ICS Position:<span class="field-number">7</span></th>
-            <td><input name="7." type="text" required tabindex="17" /></td>
-          </tr>
-        </table>
-      </td>
-      <td rowspan="4" class="block-caption" style="width:1px;">
-        F<br />R<br />O<br />M
-      </td>
-      <td>
-        <table class="same-line-label-layout">
-          <tr>
-            <th>ICS Position:<span class="field-number">8</span></th>
-            <td><input name="8." type="text" required tabindex="22" />
-            </td>
-          </tr>
-        </table>
-      </td>
-    </tr>
-    <tr>
-      <td>
-        <table class="same-line-label-layout">
-          <tr>
-            <th>Location:<span class="field-number">9</span></th>
-            <td><input name="9a." type="text" required tabindex="18" /></td>
-          </tr>
-        </table>
-      </td>
-      <td>
-        <table class="same-line-label-layout">
-          <tr>
-            <th>Location:<span class="field-number">9</span></th>
-            <td><input name="9b." type="text" required tabindex="23" /></td>
-          </tr>
-        </table>
-      </td>
-    </tr>
-    <tr>
-      <td>
-        <table class="same-line-label-layout">
-          <tr>
-            <th>Name:</th>
-            <td><input name="ToName" type="text" tabindex="19" /></td>
-          </tr>
-        </table>
-      </td>
-      <td>
-        <table class="same-line-label-layout">
-          <tr>
-            <th>Name:</th>
-            <td><input name="FmName" type="text" tabindex="24" /></td>
-          </tr>
-        </table>
-      </td>
-    </tr>
-    <tr>
-      <td>
-        <table class="same-line-label-layout">
-          <tr>
-            <th>Telephone #:</th>
-            <td><input name="ToTel" type="text" tabindex="20" /></td>
-          </tr>
-        </table>
-      </td>
-      <td>
-        <table class="same-line-label-layout">
-          <tr>
-            <th>Telephone #:</th>
-            <td><input name="FmTel" type="text" tabindex="25" /></td>
-          </tr>
-        </table>
-      </td>
-    </tr>
-  </table>
+  <if:show-addrs>
+    <table id="form-row-3">
+      <tr>
+        <td rowspan="5" class="block-caption" style="width:1px;">
+          T<br />O
+        </td>
+        <td>
+          <table class="same-line-label-layout">
+            <tr>
+              <th>Address:</th>
+              <td><input name="ToAddr" type="text" required tabindex="17" /></td>
+            </tr>
+          </table>
+        </td>
+        <td rowspan="5" class="block-caption" style="width:1px;">
+          F<br />R<br />O<br />M
+        </td>
+        <td>
+          <table class="same-line-label-layout">
+            <tr>
+              <th>Address:</th>
+              <td><input name="FromAddr" type="text" readonly tabindex="22" />
+              </td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+      <tr>
+        <td>
+          <table class="same-line-label-layout">
+            <tr>
+              <th>ICS Position:<span class="field-number">7</span></th>
+              <td><input name="7." type="text" required tabindex="17" /></td>
+            </tr>
+          </table>
+        </td>
+        <td>
+          <table class="same-line-label-layout">
+            <tr>
+              <th>ICS Position:<span class="field-number">8</span></th>
+              <td><input name="8." type="text" required tabindex="22" />
+              </td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+      <tr>
+        <td>
+          <table class="same-line-label-layout">
+            <tr>
+              <th>Location:<span class="field-number">9</span></th>
+              <td><input name="9a." type="text" required tabindex="18" /></td>
+            </tr>
+          </table>
+        </td>
+        <td>
+          <table class="same-line-label-layout">
+            <tr>
+              <th>Location:<span class="field-number">9</span></th>
+              <td><input name="9b." type="text" required tabindex="23" /></td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+      <tr>
+        <td>
+          <table class="same-line-label-layout">
+            <tr>
+              <th>Name:</th>
+              <td><input name="ToName" type="text" tabindex="19" /></td>
+            </tr>
+          </table>
+        </td>
+        <td>
+          <table class="same-line-label-layout">
+            <tr>
+              <th>Name:</th>
+              <td><input name="FmName" type="text" tabindex="24" /></td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+      <tr>
+        <td>
+          <table class="same-line-label-layout">
+            <tr>
+              <th>Telephone #:</th>
+              <td><input name="ToTel" type="text" tabindex="20" /></td>
+            </tr>
+          </table>
+        </td>
+        <td>
+          <table class="same-line-label-layout">
+            <tr>
+              <th>Telephone #:</th>
+              <td><input name="FmTel" type="text" tabindex="25" /></td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+    </table>
+  </if:show-addrs>
+  <ifnot:show-addrs>
+    <table id="form-row-3">
+      <tr>
+        <td rowspan="4" class="block-caption" style="width:1px;">
+          T<br />O
+        </td>
+        <td>
+          <table class="same-line-label-layout">
+            <tr>
+              <th>ICS Position:<span class="field-number">7</span></th>
+              <td><input name="7." type="text" required tabindex="17" /></td>
+            </tr>
+          </table>
+        </td>
+        <td rowspan="4" class="block-caption" style="width:1px;">
+          F<br />R<br />O<br />M
+        </td>
+        <td>
+          <table class="same-line-label-layout">
+            <tr>
+              <th>ICS Position:<span class="field-number">8</span></th>
+              <td><input name="8." type="text" required tabindex="22" />
+              </td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+      <tr>
+        <td>
+          <table class="same-line-label-layout">
+            <tr>
+              <th>Location:<span class="field-number">9</span></th>
+              <td><input name="9a." type="text" required tabindex="18" /></td>
+            </tr>
+          </table>
+        </td>
+        <td>
+          <table class="same-line-label-layout">
+            <tr>
+              <th>Location:<span class="field-number">9</span></th>
+              <td><input name="9b." type="text" required tabindex="23" /></td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+      <tr>
+        <td>
+          <table class="same-line-label-layout">
+            <tr>
+              <th>Name:</th>
+              <td><input name="ToName" type="text" tabindex="19" /></td>
+            </tr>
+          </table>
+        </td>
+        <td>
+          <table class="same-line-label-layout">
+            <tr>
+              <th>Name:</th>
+              <td><input name="FmName" type="text" tabindex="24" /></td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+      <tr>
+        <td>
+          <table class="same-line-label-layout">
+            <tr>
+              <th>Telephone #:</th>
+              <td><input name="ToTel" type="text" tabindex="20" /></td>
+            </tr>
+          </table>
+        </td>
+        <td>
+          <table class="same-line-label-layout">
+            <tr>
+              <th>Telephone #:</th>
+              <td><input name="FmTel" type="text" tabindex="25" /></td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+    </table>
+  </ifnot:show-addrs>
   <table id="form-body" class="noborder border">
     <tr>
       <td>

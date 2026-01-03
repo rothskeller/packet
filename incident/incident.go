@@ -173,14 +173,17 @@ func Read(dir string, fn func(*Incident) error) (err error) {
 		stateFile string
 	)
 	if !filepath.IsAbs(dir) {
+		slog.Error("not an incident directory", "dir", dir)
 		return ErrNotIncident
 	}
 	if lockFH, err = os.Open(filepath.Join(dir, lockFileName)); err != nil {
+		slog.Error("open lock file", "lf", filepath.Join(dir, lockFileName), "err", err)
 		return err
 	}
 	defer lockFH.Close()
 	if err = osdep.ReadLock(lockFH); err != nil {
-		return fmt.Errorf("write lock %s: %s", lockFH.Name(), err)
+		slog.Error("lock for read", "lf", lockFH.Name(), "err", err)
+		return fmt.Errorf("read lock %s: %s", lockFH.Name(), err)
 	}
 	defer osdep.Unlock(lockFH)
 	stateFile = filepath.Join(dir, jsonFileName)
@@ -206,13 +209,16 @@ func Write(dir string, fn func(*Incident) error) (err error) {
 		stateFile string
 	)
 	if !filepath.IsAbs(dir) {
+		slog.Error("not an incident directory", "dir", dir)
 		return ErrNotIncident
 	}
 	if lockFH, err = os.OpenFile(filepath.Join(dir, lockFileName), os.O_RDWR, 0666); err != nil {
+		slog.Error("open lock file", "lf", filepath.Join(dir, lockFileName), "err", err)
 		return err
 	}
 	defer lockFH.Close()
 	if err = osdep.WriteLock(lockFH); err != nil {
+		slog.Error("lock for write", "lf", lockFH.Name(), "err", err)
 		return fmt.Errorf("write lock %s: %s", lockFH.Name(), err)
 	}
 	defer osdep.Unlock(lockFH)
@@ -229,12 +235,15 @@ func Write(dir string, fn func(*Incident) error) (err error) {
 		return err
 	}
 	if _, err = fmt.Fprintf(lockFH, "%08d", inc.Seq); err != nil {
+		slog.Error("write to lock file", "lf", lockFH.Name(), "err", err)
 		return fmt.Errorf("write %s: %s", lockFH.Name(), err)
 	}
 	if err = osdep.Unlock(lockFH); err != nil {
+		slog.Error("unlock", "lf", lockFH.Name(), "err", err)
 		return fmt.Errorf("unlock %s: %s", lockFH.Name(), err)
 	}
 	if err = lockFH.Close(); err != nil {
+		slog.Error("close lock file", "lf", lockFH.Name(), "err", err)
 		return fmt.Errorf("close %s: %s", lockFH.Name(), err)
 	}
 	return nil
@@ -252,15 +261,18 @@ func Watch(ctx context.Context, dir string, seq int) (err error) {
 		ch       chan struct{}
 	)
 	if !IsIncident(dir) {
+		slog.Error("not an incident directory", "dir", dir)
 		return ErrNotIncident
 	}
 	// Open and lock the lock file.
 	lockFile = filepath.Join(dir, lockFileName)
 	if lockFH, err = os.Open(lockFile); err != nil {
+		slog.Error("open lock file", "lf", lockFile, "err", err)
 		return err
 	}
 	defer lockFH.Close()
 	if err = osdep.ReadLock(lockFH); err != nil {
+		slog.Error("read lock file", "lf", lockFile, "err", err)
 		return fmt.Errorf("read lock %s: %s", lockFile, err)
 	}
 	defer osdep.Unlock(lockFH)

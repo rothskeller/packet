@@ -28,7 +28,7 @@ func maybeShowREADME(w http.ResponseWriter, r *http.Request) bool {
 		return false
 	}
 	os.Remove(rmfile)
-	w.Header().Set("Cache-Control", "nostore")
+	w.Header().Set("Cache-Control", "no-store, private")
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")
 	w.Write(data)
 	fmt.Fprintf(w, `<div style="margin-top:2rem"><button onclick="location.href='%s'">Continue</button></div>`,

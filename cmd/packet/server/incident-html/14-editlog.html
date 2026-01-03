@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <script> // Edit Log Entry Dialog
+    function setupEditLogEntryDialog() {
+      document.getElementById('eledel').addEventListener('click', async () => {
+        const params = new URLSearchParams({dir: '{{DIR}}', id: document.getElementById('eleid').value})
+        const resp = await fetch('/delete-log-entry?' + params.toString(), {method: 'POST'})
+        if (resp.ok)
+          document.getElementById('eledlg').close()
+        else
+          document.getElementById('eleerr').textContent = await resp.text()
+      })
+      document.getElementById('elereset').addEventListener('click', async () => {
+        const params = new URLSearchParams({dir: '{{DIR}}', id: document.getElementById('eleid').value})
+        const resp = await fetch('/reset-log-entry?' + params.toString(), {method: 'POST'})
+        if (resp.ok)
+          document.getElementById('eledlg').close()
+        else
+          document.getElementById('eleerr').textContent = await resp.text()
+      })
+      document.getElementById('elecan').addEventListener('click', () => {
+        document.getElementById('eledlg').close()
+      })
+      document.getElementById('elesub').addEventListener('click', async () => {
+        const fd = new FormData(document.getElementById('eleform'))
+        const resp = await fetch('/edit-log-entry', {method: 'POST', body: fd})
+        if (resp.ok) {
+          childAction(resp.headers.get('X-Packet-Action'))
+          document.getElementById('eledlg').close()
+        } else {
+          document.getElementById('eleerr').textContent = await resp.text()
+        }
+      })
+    }
+    function openEditLogEntryDialog(entry, voice) {
+      let date
+      if (entry) {
+        date = new Date(entry.t)
+        document.getElementById('eleid').value = entry.ident
+        document.getElementById('eletitle').textContent = 'Edit Log Entry'
+        document.getElementById('elefromcall').value = entry.querySelector('.fromCall').textContent
+        document.getElementById('elefromid').value = entry.querySelector('.fromID').textContent
+        document.getElementById('eletocall').value = entry.querySelector('.toCall').textContent
+        document.getElementById('eletoid').value = entry.querySelector('.toID').textContent
+        document.getElementById('elesumm').value = entry.querySelector('.sFull').textContent
+        document.getElementById('elefu').checked = entry.f.includes('F')
+        document.getElementById('elenr').parentElement.style.display = entry.st === 'S' && !entry.f.includes('+') ? null : 'none'
+        document.getElementById('elenr').checked = entry.f.includes('-')
+        document.getElementById('elevm').parentElement.style.display = entry.st === 'H' ? null : 'none'
+        document.getElementById('elevm').checked = entry.f.includes('V')
+        document.getElementById('eledel').style.display = entry.st === 'H' ? null : 'none'
+        document.getElementById('elereset').style.display = entry.st === 'H' ? 'none' : null
+      } else {
+        date = new Date()
+        document.getElementById('eleid').value = 'NEW'
+        document.getElementById('eletitle').textContent = 'New Log Entry'
+        document.getElementById('elefromcall').value = ''
+        document.getElementById('elefromid').value = ''
+        document.getElementById('eletocall').value = ''
+        document.getElementById('eletoid').value = ''
+        document.getElementById('elesumm').value = ''
+        document.getElementById('elefu').checked = ''
+        document.getElementById('elenr').parentElement.style.display = 'none'
+        document.getElementById('elevm').parentElement.style.display = null
+        document.getElementById('elevm').checked = voice
+        document.getElementById('eledel').style.display = 'none'
+        document.getElementById('elereset').style.display = 'none'
+      }
+      document.getElementById('eledate').value = `0${date.getMonth() + 1}`.substr(-2) + '/' + `0${date.getDate()}`.substr(-2) + '/' + date.getFullYear()
+      document.getElementById('eletime').value = `0${date.getHours()}`.substr(-2) + ':' + `0${date.getMinutes()}`.substr(-2)
+      document.getElementById('eledlg').showModal()
+    }
+  </script>
+  <style>
+    #eledlg {
+      margin: 4rem auto;
+      padding: 0 0.75rem 0.75rem;
+      z-index: 2;
+    }
+
+    #eledlg h1 {
+      background-color: #a8e8a8;
+      margin: 0 -0.75rem;
+      padding: 0.5rem 0.75rem;
+      font-size: 1.5rem;
+    }
+
+    #eleerr:not(:empty) {
+      color: red;
+      margin-top: 1.5rem;
+      max-width: 40rem;
+    }
+
+    #elegrid {
+      display: grid;
+      grid: auto-flow / max-content max-content 1fr max-content 1fr;
+      gap: 0.25rem 0.75rem;
+      margin-top: 1.5rem;
+      align-items: baseline;
+    }
+
+    .elelabel,
+    #elegrid label {
+      font-weight: bold;
+    }
+
+    #eledate {
+      width: 6rem;
+    }
+
+    #eletime {
+      width: 4rem;
+    }
+
+    #elefromcall,
+    #elefromid,
+    #eletocall,
+    #eletoid {
+      width: 8rem;
+    }
+
+    #elesumm,
+    #eleflags {
+      grid-column: span 4;
+    }
+
+    #elesumm {
+      width: 100%;
+    }
+
+    #eleflags {
+      display: flex;
+      flex-direction: column;
+    }
+
+    #eleflags label {
+      font-weight: normal;
+    }
+
+    #elebuttons {
+      margin-top: 1.5rem;
+      display: flex;
+      justify-content: stretch;
+      gap: 0.75rem;
+    }
+
+    #eledel,
+    #elereset,
+    #elecan,
+    #elesub {
+      border-radius: 0.25rem;
+    }
+
+    #elebspace {
+      flex: auto;
+    }
+
+    #elesub {
+      background-color: #a8e8a8;
+    }
+  </style>
+</head>
+
+<body>
+  <dialog id=eledlg>
+    <h1 id=eletitle></h1>
+    <div id=eleerr></div>
+    <form id=eleform>
+      <input type=hidden name=dir value={{DIR}}>
+      <input type=hidden id=eleid name=id>
+      <div id=elegrid>
+        <div class=elelabel>Log Entry</div>
+        <label for=eledate>Date</label>
+        <div>
+          <input type=text id=eledate name=date placeholder="MM/DD/YYYY" required
+            pattern="(?:0[1-9]|1[0-2])/(?:0[1-9]|[12][0-9]|3[01])/20\d\d">
+        </div>
+        <label for=eletime>Time</label>
+        <div>
+          <input type=text id=eletime name=time placeholder="HH:MM" required
+            pattern="(?:(?:[01][0-9]|2[0-3]):[0-5][0-9])|24:00">
+        </div>
+        <div class=elelabel>From</div>
+        <label for=elefromcall>Call Sign/ID</label>
+        <div><input type=text id=elefromcall name=fromcall aria-label="From Call Sign/ID"></div>
+        <label for=elefromid>Msg #</label>
+        <div><input type=text id=elefromid name=fromid aria-label="From Msg #"></div>
+        <div class=elelabel>To</div>
+        <label for=eletocall>Call Sign/ID</label>
+        <div><input type=text id=eletocall name=tocall aria-label="To Call Sign/ID"></div>
+        <label for=eletoid>Msg #</label>
+        <div><input type=text id=eletoid name=toid aria-label="To Msg #"></div>
+        <label for=elesumm>Message</label>
+        <input type=text id=elesumm name=summ>
+        <div class=elelabel>Flags</div>
+        <div id=eleflags>
+          <label><input type=checkbox id=elefu name=fu> Needs Follow-Up</label>
+          <label><input type=checkbox id=elenr name=nr> Needs Receipt</label>
+          <label><input type=checkbox id=elevm name=vm> Show on Voice ICS-309</label>
+        </div>
+      </div>
+      <div id=elebuttons>
+        <button type=button id=eledel>Delete Log Entry</button>
+        <button type=button id=elereset>Reset Log Entry</button>
+        <span id=elebspace></span>
+        <button type=button id=elecan>Cancel</button>
+        <button type=button id=elesub>Save Log Entry</button>
+      </div>
+    </form>
+  </dialog>
+</body>
+
+</html>

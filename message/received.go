@@ -3,6 +3,7 @@ package message
 import (
 	"errors"
 	"fmt"
+	"log/slog"
 	"net/mail"
 	"net/textproto"
 	"regexp"
@@ -82,7 +83,7 @@ func (m *ReceivedMessage) RFC5322() string {
 
 // readReceivedMessage creates a ReceivedMessage with the supplied common
 // message fields and based on the supplied headers.
-func readReceivedMessage(hdr mail.Header, cm *common) (_ Message, err error) {
+func readReceivedMessage(filename string, hdr mail.Header, cm *common) (_ Message, err error) {
 	m := ReceivedMessage{common: cm}
 	m.OnDirty(func(reason string) {
 		panic("ReceivedMessage should not change: " + reason)
@@ -95,6 +96,7 @@ func readReceivedMessage(hdr mail.Header, cm *common) (_ Message, err error) {
 	} else {
 		// This shouldn't happen:  stored messages with a Received: header
 		// should always have our Received: header format
+		slog.Error("incorrect Received header", "f", filename, "Received", hdr.Get("Received"))
 		return nil, errors.New("incorrect Received: header format for stored received message")
 	}
 	m.from = strings.Join(hdr["From"], ", ")
