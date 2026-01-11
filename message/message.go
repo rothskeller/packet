@@ -49,6 +49,17 @@ func (m *common) Type() MType { return m.MType }
 // SetType sets the message type for the message.
 func (m *common) SetType(t MType) { m.MType = t }
 
+// SetSubject changes the subject object of the message.  This is used when a
+// message type Recognizes a message, and reinterprets the subject line using a
+// different Subject implementation.
+func (m *common) SetSubject(s subject.Subject) {
+	m.subject = s
+	if m.subject.Dirty() {
+		m.Tracker.MarkDirty("envelope.common.subject")
+	}
+	m.subject.OnDirty(m.Tracker.MarkDirty)
+}
+
 // RFC5322 returns the message encoded in RFC-5322 format for storage or email
 // transmission.
 func (m *common) RFC5322() string { return m.rfc5322(nil) }

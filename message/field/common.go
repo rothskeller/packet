@@ -22,6 +22,10 @@ const (
 	COriginMessageID      = "originMessageID"
 	CReceiverSender       = "receiverSender"
 	CReference            = "reference"
+	CSubjectFormTag       = "subjectFormTag"
+	CSubjectHandling      = "subjectHandling"
+	CSubjectMessageID     = "subjectMessageID"
+	CSubjectSummary       = "subjectSummary"
 	CTacticalCall         = "tacticalCall"
 	CTacticalName         = "tacticalName"
 	CToICSPosition        = "toICSPosition"
@@ -49,6 +53,10 @@ var CommonTags = sets.New(
 	COriginMessageID,
 	CReceiverSender,
 	CReference,
+	CSubjectFormTag,
+	CSubjectHandling,
+	CSubjectMessageID,
+	CSubjectSummary,
 	CTacticalCall,
 	CTacticalName,
 	CToICSPosition,

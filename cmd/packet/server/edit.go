@@ -119,7 +119,7 @@ func submitCommon(w http.ResponseWriter, r *http.Request) message.Message {
 		handling  string
 		summary   string
 		pload     *payload.OutpostPayload
-		subj      *subject.SCCoSubject
+		subj      *form.FormSubject
 		msg       *message.DraftMessage
 		err       error
 	)
@@ -163,7 +163,7 @@ func submitCommon(w http.ResponseWriter, r *http.Request) message.Message {
 	if strings.HasPrefix(handling, "I") {
 		pload.SetUrgent(true)
 	}
-	subj, _ = subject.NewSCCoSubject(msgID, handling, def.SubjectTag+"_"+summary)
+	subj, _ = form.NewFormSubject(msgID, handling, def.SubjectTag, summary)
 	msg = message.NewDraftMessage(mtype, subj, pload, false)
 	return msg
 }
@@ -203,10 +203,10 @@ func submitCheckInOut(_ http.ResponseWriter, r *http.Request) message.Message {
 		mtype   cicoMType
 	)
 	if tacCall != "" {
-		subj, _ = subject.NewSCCoSubject(msgno, "ROUTINE", fmt.Sprintf("Check-%s %s, %s", inOut, tacCall, tacName))
+		subj, _ = subject.NewPlainSubject(msgno, "ROUTINE", fmt.Sprintf("Check-%s %s, %s", inOut, tacCall, tacName))
 		bod = body.NewPlainBody(fmt.Sprintf("Check-%s %s, %s\n%s, %s\n", inOut, tacCall, tacName, opCall, opName))
 	} else {
-		subj, _ = subject.NewSCCoSubject(msgno, "ROUTINE", fmt.Sprintf("Check-%s %s, %s", inOut, opCall, opName))
+		subj, _ = subject.NewPlainSubject(msgno, "ROUTINE", fmt.Sprintf("Check-%s %s, %s", inOut, opCall, opName))
 		bod = body.NewPlainBody(fmt.Sprintf("Check-%s %s, %s\n", inOut, opCall, opName))
 	}
 	pload = payload.NewOutpostPayload(bod)

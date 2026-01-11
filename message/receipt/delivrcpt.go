@@ -35,16 +35,14 @@ var (
 // users will never see it.)
 func NewDeliveryReceipt(rmTo, rmSubject, lmi string, deliveryTime time.Time, extraText string) (m *message.DraftMessage, err error) {
 	var (
-		subject *DeliveryReceiptSubject
-		body    *DeliveryReceiptBody
+		subj *subject.PlainSubject
+		body *DeliveryReceiptBody
 	)
-	if subject, err = newDeliveryReceiptSubject(rmSubject); err != nil {
-		return nil, err
-	}
+	subj, _ = subject.NewPlainSubject("", "", "DELIVERED: "+rmSubject)
 	if body, err = newDeliveryReceiptBody(rmTo, rmSubject, lmi, deliveryTime, extraText); err != nil {
 		return nil, err
 	}
-	m = message.NewDraftMessage(DeliveryReceipt, subject, payload.NewOutpostPayload(body), false)
+	m = message.NewDraftMessage(DeliveryReceipt, subj, payload.NewOutpostPayload(body), false)
 	m.SetTo(rmTo)
 	m.SetReadyToSend(true)
 	return m, nil
@@ -166,42 +164,4 @@ func (b *DeliveryReceiptBody) DeliveryTime() string { return b.deliveryTime }
 func (b *DeliveryReceiptBody) ExtraText() string { return b.extraText }
 
 func (b *DeliveryReceiptBody) Clone() body.Body { panic("should not be called") }
-
-//--- SUBJECT -----------------------------------------------------------------
-
-// A DeliveryReceiptSubject is a subject for a delivery receipt.
-type DeliveryReceiptSubject struct {
-	cachetrack.NoTracker
-	rmSubject string
-}
-
-var _ subject.Subject = (*DeliveryReceiptSubject)(nil)
-
-// newDeliveryReceiptSubject creates a new subject line for a delivery receipt.
-// rmSubject is the encoded subject line of the message being receipted.
-// The function returns an error if the rmSubject is invalid.
-func newDeliveryReceiptSubject(rmSubject string) (s *DeliveryReceiptSubject, err error) {
-	if rmSubject == "" {
-		return nil, ErrNoRMSubject
-	} else if strings.ContainsAny(rmSubject, "\r\n") {
-		return nil, ErrNewlineInRMSubject
-	}
-	return &DeliveryReceiptSubject{rmSubject: rmSubject}, nil
-}
-
-// EncodedSubject returns the encoded subject line.
-func (s *DeliveryReceiptSubject) EncodedSubject() string { return "DELIVERED: " + s.rmSubject }
-
-// ReceiptedMessageSubject returns the receipted message subject encoded in the
-// receipt message subject line.
-func (s *DeliveryReceiptSubject) ReceiptedMessageSubject() string { return s.rmSubject }
-
-func (s *DeliveryReceiptSubject) Clone() subject.Subject { panic("should not be called") }
-
-func init() { subject.RegisterDecoder(decodeDeliveryReceiptSubject) }
-func decodeDeliveryReceiptSubject(subject string) (_ subject.Subject, err error) {
-	if strings.HasPrefix(subject, "DELIVERED: ") {
-		return &DeliveryReceiptSubject{rmSubject: subject[11:]}, nil
-	}
-	return nil, nil
-}
+func (b *DeliveryReceiptBody) IsForm() bool     { return false }

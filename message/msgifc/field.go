@@ -72,9 +72,9 @@ type Field interface {
 	// recommendations and any other value is accepted (false).
 	Restricted() bool
 	// Validate validates the value of the field and returns any problems
-	// with it.  If pifo is true, it restricts itself to those checks
+	// with it.  flags customizes the validation.
 	// performed by PackItForms.
-	Validate(m Message, f Field, pifo bool) error
+	Validate(m Message, f Field, flags ValidateFlags) error
 	// Compare compares the value of the field in the actual message to
 	// the corresponding value in the expected message, and returns the
 	// results of the comparison.

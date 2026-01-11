@@ -75,7 +75,8 @@ func (m *PlainMessage) Validate(pifo bool) (err error) {
 */
 
 func (mt plainMessage) NewDraft() (msg Message) {
-	return NewDraftMessage(PlainMessage, subject.NewPlainSubject(""), payload.NewOutpostPayload(body.NewPlainBody("")), false)
+	s, _ := subject.NewPlainSubject("", "", "")
+	return NewDraftMessage(PlainMessage, s, payload.NewOutpostPayload(body.NewPlainBody("")), false)
 }
 
 func (mt plainMessage) EditHTML(msg Message, vars EditHTMLVars) ([]byte, error) {

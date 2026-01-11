@@ -34,7 +34,7 @@ type field struct {
 	requiredDesc   string
 	disallowedFunc func(msgifc.Message) bool
 	disallowedDesc string
-	validateFuncs  []func(msgifc.Message, bool) error
+	validateFunc   func(msgifc.Message, msgifc.Field, msgifc.ValidateFlags) error
 
 	// internal transient data
 	disallowed bool
@@ -114,18 +114,16 @@ func (f *field) Choices(m msgifc.Message) []msgifc.ChoicePair {
 }
 
 // Validate validates the value of the field and returns any problems with it.
-// If pifo is true, it restricts itself to those checks performed by
-// PackItForms.
-func (f *field) Validate(m msgifc.Message, fi Field, pifo bool) (err error) {
+func (f *field) Validate(m msgifc.Message, fi msgifc.Field, flags msgifc.ValidateFlags) (err error) {
 	if err = f.validatePresence(m, fi); err != nil {
 		return err
 	}
-	return f.validateCustom(m, fi, pifo)
+	return f.validateCustom(m, fi, flags)
 }
 
 // validatePresence validates the value of the field for compliance with
 // required or disallowed rules.
-func (f *field) validatePresence(m msgifc.Message, fi Field) (err error) {
+func (f *field) validatePresence(m msgifc.Message, fi msgifc.Field) (err error) {
 	val := fi.Value(m)
 	// If we have a value, check whether any value is allowed.
 	f.disallowed = false
@@ -154,28 +152,31 @@ func (f *field) validatePresence(m msgifc.Message, fi Field) (err error) {
 
 // validateCustom validates the value of the field for compliance with
 // restricted choices and with any custom validation handlers.
-func (f *field) validateCustom(m msgifc.Message, fi Field, pifo bool) (err error) {
+func (f *field) validateCustom(m msgifc.Message, fi msgifc.Field, flags msgifc.ValidateFlags) (err error) {
+	if f.validateFunc != nil {
+		return f.validateFunc(m, fi, flags)
+	}
+	if !f.restricted {
+		return nil
+	}
 	val := fi.Value(m)
+	if val == "" {
+		return nil
+	}
 	// If we have a value and restricted choices, check to be sure the value
 	// is one of the allowed ones.
-	if val != "" && f.restricted {
-		var found bool
+	var found bool
 
-		for _, choice := range f.Choices(m) {
-			if val == choice.PIFO {
-				found = true
-				break
-			}
-		}
-		if !found {
-			return errors.NewF("The %q field does not contain one of its allowed values.", f.label)
+	for _, choice := range f.Choices(m) {
+		if val == choice.PIFO {
+			found = true
+			break
 		}
 	}
-	// Run any custom validation checks.
-	for _, fn := range f.validateFuncs {
-		err = errors.Join(err, fn(m, pifo))
+	if !found {
+		return errors.NewF("The %q field does not contain one of its allowed values.", f.label)
 	}
-	return err
+	return nil
 }
 
 // Compare compares the value of the field in the actual message to

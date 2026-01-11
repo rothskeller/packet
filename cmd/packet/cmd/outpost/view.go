@@ -14,7 +14,6 @@ import (
 	"github.com/rothskeller/packet/cmd/packet/server"
 	"github.com/rothskeller/packet/form"
 	"github.com/rothskeller/packet/message"
-	"github.com/rothskeller/packet/message/subject"
 )
 
 var viewCmd = &cobra.Command{
@@ -71,8 +70,7 @@ opdt     Date and time that the message was received`,
 					summary = body.Field(fd.Tag)
 				}
 			}
-			summary = ft.SubjectTag + "_" + summary
-			subj, _ := subject.NewSCCoSubject(msgID, handling, summary)
+			subj, _ := form.NewFormSubject(msgID, handling, ft.SubjectTag, summary)
 			msg = message.NewDraftMessage(msg.Type(), subj, msg.Payload(), false)
 		}
 		if len(args) == 5 {

@@ -31,16 +31,14 @@ var (
 // is rarely used since Outpost users will never see it.)
 func NewReadReceipt(rmTo, rmSubject string, readTime time.Time, extraText string) (m message.Message, err error) {
 	var (
-		subject *ReadReceiptSubject
-		body    *ReadReceiptBody
+		subj *subject.PlainSubject
+		body *ReadReceiptBody
 	)
-	if subject, err = newReadReceiptSubject(rmSubject); err != nil {
-		return nil, err
-	}
+	subj, _ = subject.NewPlainSubject("", "", "READ: "+rmSubject)
 	if body, err = newReadReceiptBody(rmTo, rmSubject, readTime, extraText); err != nil {
 		return nil, err
 	}
-	return message.NewDraftMessage(ReadReceipt, subject, payload.NewOutpostPayload(body), false), nil
+	return message.NewDraftMessage(ReadReceipt, subj, payload.NewOutpostPayload(body), false), nil
 }
 
 // --- MTYPE -------------------------------------------------------------------
@@ -146,42 +144,4 @@ func (b *ReadReceiptBody) ReadTime() string { return b.readTime }
 func (b *ReadReceiptBody) ExtraText() string { return b.extraText }
 
 func (b *ReadReceiptBody) Clone() body.Body { panic("should not be called") }
-
-//--- SUBJECT -----------------------------------------------------------------
-
-// A ReadReceiptSubject is a subject for a read receipt.
-type ReadReceiptSubject struct {
-	cachetrack.NoTracker
-	rmSubject string
-}
-
-var _ subject.Subject = (*ReadReceiptSubject)(nil)
-
-// newReadReceiptSubject creates a new subject line for a read receipt.
-// rmSubject is the encoded subject line of the message being receipted.  The
-// function returns an error if the rmSubject is invalid.
-func newReadReceiptSubject(rmSubject string) (s *ReadReceiptSubject, err error) {
-	if rmSubject == "" {
-		return nil, ErrNoRMSubject
-	} else if strings.ContainsAny(rmSubject, "\r\n") {
-		return nil, ErrNewlineInRMSubject
-	}
-	return &ReadReceiptSubject{rmSubject: rmSubject}, nil
-}
-
-// EncodedSubject returns the encoded subject line.
-func (s *ReadReceiptSubject) EncodedSubject() string { return "READ: " + s.rmSubject }
-
-// ReceiptedMessageSubject returns the receipted message subject encoded in the
-// receipt message subject line.
-func (s *ReadReceiptSubject) ReceiptedMessageSubject() string { return s.rmSubject }
-
-func (s *ReadReceiptSubject) Clone() subject.Subject { panic("should not be called") }
-
-func init() { subject.RegisterDecoder(decodeReadReceiptSubject) }
-func decodeReadReceiptSubject(subject string) (subject.Subject, error) {
-	if strings.HasPrefix(subject, "READ: ") {
-		return &ReadReceiptSubject{rmSubject: subject[6:]}, nil
-	}
-	return nil, nil
-}
+func (b *ReadReceiptBody) IsForm() bool     { return false }

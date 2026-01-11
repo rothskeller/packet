@@ -1,6 +1,4 @@
-// Package subject defines the Subject interface, which represents a subject
-// line of a packet message.
-package subject
+package form
 
 import (
 	"fmt"
@@ -13,63 +11,76 @@ import (
 	"github.com/rothskeller/packet/message/field"
 	"github.com/rothskeller/packet/message/messageid"
 	"github.com/rothskeller/packet/message/msgifc"
+	"github.com/rothskeller/packet/message/subject"
 )
-
-// Subject is the interface satisfied by all subject types.
-type Subject = msgifc.Subject
-
-// A PlainSubject is a subject line for a packet message that does not contain
-// a form.  It should comply with the Santa Clara County standard for packet
-// message subject lines.
-type PlainSubject struct {
-	msgifc.CacheTracker
-	encoded  string
-	msgID    string
-	handling string
-	summary  string
-}
-
-var _ Subject = (*PlainSubject)(nil)
 
 var (
 	handlingCodes = map[string]string{"I": "IMMEDIATE", "P": "PRIORITY", "R": "ROUTINE"}
 	oldSeverityRE = regexp.MustCompile(`^[A-Z]/[A-Z]$`)
 )
 
-// NewPlainSubject creates a new SCCo-standard non-form message subject with
-// the specified parameters.  It returns any problems with the parameters.
-func NewPlainSubject(msgID, handling, summary string) (s *PlainSubject, err error) {
-	s = new(PlainSubject)
-	if msgID == "" && handling == "" {
-		err = s.SetSubjectSummary(summary)
-	} else {
-		err = errors.Join(
-			s.SetSubjectMessageID(msgID),
-			s.SetSubjectHandling(handling),
-			s.SetSubjectSummary(summary),
-		)
-	}
+// A FormSubject is a subject that is encoded according to the Santa Clara
+// County standard for packet forms message subject lines.
+type FormSubject struct {
+	msgifc.CacheTracker
+	encoded  string
+	msgID    string
+	handling string
+	formtag  string
+	summary  string
+}
+
+var _ msgifc.Subject = (*FormSubject)(nil)
+
+// NewFormSubject creates a new SCCo-standard form message subject with the
+// specified parameters.  It returns any problems with the parameters.
+func NewFormSubject(msgID, handling, formtag, summary string) (s *FormSubject, err error) {
+	s = new(FormSubject)
+	err = errors.Join(
+		s.SetSubjectMessageID(msgID),
+		s.SetSubjectHandling(handling),
+		s.SetSubjectFormTag(formtag),
+		s.SetSubjectSummary(summary),
+	)
 	return s, err
 }
 
-// EncodedSubject returns the encoded subject line.
-func (s *PlainSubject) EncodedSubject() string {
-	if s.Dirty() {
-		if s.msgID == "" && s.handling == "" {
-			s.encoded = s.summary
+// formSubjectFromPlainSubject converts a PlainSubject to a FormSubject.
+func formSubjectFromPlainSubject(ps *subject.PlainSubject) (fs *FormSubject) {
+	fs = new(FormSubject)
+	summary := ps.SubjectSummary()
+	first, rest, space := strings.Cut(summary, " ")
+	tag, nontag, found := strings.Cut(first, "_")
+	if found {
+		if space {
+			summary = nontag + " " + rest
 		} else {
-			s.encoded = fmt.Sprintf("%s_%s_%s", s.msgID, s.handling, s.summary)
+			summary = nontag
 		}
+	} else {
+		tag = ""
+	}
+	fs.SetSubjectMessageID(ps.SubjectMessageID())
+	fs.SetSubjectHandling(ps.SubjectHandling())
+	fs.SetSubjectFormTag(tag)
+	fs.SetSubjectSummary(summary)
+	return fs
+}
+
+// EncodedSubject returns the encoded subject line.
+func (s *FormSubject) EncodedSubject() string {
+	if s.Dirty() {
+		s.encoded = fmt.Sprintf("%s_%s_%s_%s", s.msgID, s.handling, s.formtag, s.summary)
 		s.MarkClean()
 	}
 	return s.encoded
 }
 
 // SubjectMessageID returns the message ID encoded in the subject line.
-func (s *PlainSubject) SubjectMessageID() string { return s.msgID }
+func (s *FormSubject) SubjectMessageID() string { return s.msgID }
 
 // SetSubjectMessageID sets the message ID encoded in the subject line.
-func (s *PlainSubject) SetSubjectMessageID(msgID string) (err error) {
+func (s *FormSubject) SetSubjectMessageID(msgID string) (err error) {
 	if trim := strings.Map(removeNewlineUnderline, msgID); len(trim) < len(msgID) {
 		err = errors.New("Invalid characters were removed from the message ID on the subject line.")
 		msgID = trim
@@ -80,7 +91,7 @@ func (s *PlainSubject) SetSubjectMessageID(msgID string) (err error) {
 	}
 	if s.msgID != msgID {
 		s.msgID = msgID
-		s.MarkDirty("subject.PlainSubject.MessageID")
+		s.MarkDirty("subject.FormSubject.MessageID")
 	}
 	return err
 }
@@ -88,7 +99,7 @@ func (s *PlainSubject) SetSubjectMessageID(msgID string) (err error) {
 // SubjectHandling returns the handling order encoded in the subject line.
 // If the subject line contained a known handling order code, SubjectHandling
 // returns the corresponding full word.
-func (s *PlainSubject) SubjectHandling() string {
+func (s *FormSubject) SubjectHandling() string {
 	if long := handlingCodes[s.handling]; long != "" {
 		return long
 	}
@@ -98,7 +109,7 @@ func (s *PlainSubject) SubjectHandling() string {
 // SetSubjectHandling sets the handling order encoded in the subject line.  If
 // it is sent to a known handling order word, the corresponding code is
 // encoded in the subject line.
-func (s *PlainSubject) SetSubjectHandling(handling string) (err error) {
+func (s *FormSubject) SetSubjectHandling(handling string) (err error) {
 	if handling == "" {
 		err = errors.New("The subject line does not have a handling order code.")
 	} else {
@@ -131,11 +142,29 @@ func (s *PlainSubject) SetSubjectHandling(handling string) (err error) {
 	return err
 }
 
+// SubjectFormTag returns the form tag encoded in the subject line.
+func (s *FormSubject) SubjectFormTag() string { return s.formtag }
+
+// SetSubjectFormTag sets the form tag encoded in the subject line.
+func (s *FormSubject) SetSubjectFormTag(formtag string) (err error) {
+	if formtag == "" {
+		err = errors.New("The subject line does not have a form tag.")
+	} else if trim := strings.Map(removeNewlineUnderline, formtag); len(trim) < len(formtag) {
+		err = errors.New("Invalid characters were removed from the form tag on the subject line.")
+		formtag = trim
+	}
+	if s.msgID != formtag {
+		s.formtag = formtag
+		s.MarkDirty("subject.FormSubject.FormTag")
+	}
+	return err
+}
+
 // SubjectSummary returns the message summary encoded in the subject line.
-func (s *PlainSubject) SubjectSummary() string { return s.summary }
+func (s *FormSubject) SubjectSummary() string { return s.summary }
 
 // SetSubjectSummary sets the message summary encoded in the subject line.
-func (s *PlainSubject) SetSubjectSummary(summary string) (err error) {
+func (s *FormSubject) SetSubjectSummary(summary string) (err error) {
 	if summary == "" {
 		err = errors.New("The subject line does not have a message summary.")
 	} else if s := strings.Map(removeNewlines, summary); len(s) < len(summary) {
@@ -144,39 +173,40 @@ func (s *PlainSubject) SetSubjectSummary(summary string) (err error) {
 	}
 	if s.summary != summary {
 		s.summary = summary
-		s.MarkDirty("subject.PlainSubject.Summary")
+		s.MarkDirty("subject.FormSubject.Summary")
 	}
 	return err
 }
 
 // Clone creates a copy of the subject.
-func (s *PlainSubject) Clone() Subject {
-	ns, _ := NewPlainSubject(s.SubjectMessageID(), s.SubjectHandling(), s.SubjectSummary())
+func (s *FormSubject) Clone() msgifc.Subject {
+	ns, _ := NewFormSubject(s.SubjectMessageID(), s.SubjectHandling(), s.SubjectFormTag(), s.SubjectSummary())
 	return ns
 }
 
-func (s *PlainSubject) Fields() iter.Seq[msgifc.Field] {
+func (s *FormSubject) Fields() iter.Seq[msgifc.Field] {
 	return slices.Values(subjectFields)
 }
 
-func DecodePlainSubject(subject string) (s *PlainSubject) {
+func DecodeFormSubject(subject string) (s *FormSubject) {
 	var (
 		fields string
 		rest   string
 	)
-	s = &PlainSubject{encoded: subject}
+	s = &FormSubject{encoded: subject}
 	if idx := strings.IndexByte(subject, ' '); idx >= 0 {
 		fields, rest = subject[:idx], subject[idx:]
 	} else {
 		fields = subject
 	}
-	parts := strings.SplitN(fields, "_", 3)
-	if len(parts) < 3 {
+	parts := strings.SplitN(fields, "_", 4)
+	if len(parts) < 4 {
 		s.summary = subject
 	} else {
 		s.msgID = parts[0]
 		s.handling = parts[1]
-		s.summary = parts[2] + rest
+		s.formtag = parts[2]
+		s.summary = parts[3] + rest
 	}
 	return s
 }
@@ -186,20 +216,20 @@ var subjectFields = []msgifc.Field{
 		Common(field.CSubjectMessageID).
 		ValueFunc(func(m msgifc.Message) string { return m.Subject().SubjectMessageID() }).
 		SetValueFunc(func(m msgifc.Message, s string) { m.Subject().SetSubjectMessageID(s) }).
-		EditHelp("This is the message ID assigned to the message by the originating station.  It has the form XXX-###P, where XXX is the three-character prefix associated with the originating station, ### is a unique number, and P is a suffix letter.").
+		VisibleWhen(field.Invisible).
 		ValidateFunc(func(m msgifc.Message, f msgifc.Field, vf msgifc.ValidateFlags) error {
 			if m.Bulletin() && f.Value(m) == "" {
 				return nil
 			}
-			return field.ValidateMessageID(m, f, vf)
+			return errors.AddPrefix(field.ValidateMessageID(m, f, vf), "On the subject line: ")
 		}).
 		MakeField(),
 	field.NewField("", "Handling").
 		Common(field.CSubjectHandling).
 		AllowedValues("ROUTINE", "PRIORITY", "IMMEDIATE").
-		EditHelp("This is the handling order for the message, one of ROUTINE, PRIORITY, or IMMEDIATE.").
 		ValueFunc(func(m msgifc.Message) string { return m.Subject().SubjectHandling() }).
 		SetValueFunc(func(m msgifc.Message, s string) { m.Subject().SetSubjectHandling(s) }).
+		VisibleWhen(field.Invisible).
 		ValidateFunc(func(m msgifc.Message, f msgifc.Field, vf msgifc.ValidateFlags) error {
 			if vf&msgifc.VPIFOOnly != 0 {
 				return nil
@@ -217,11 +247,25 @@ var subjectFields = []msgifc.Field{
 			}
 		}).
 		MakeField(),
+	field.NewField("", "Form Tag").
+		Common(field.CSubjectFormTag).
+		ValueFunc(func(m msgifc.Message) string { return m.Subject().(*FormSubject).SubjectFormTag() }).
+		VisibleWhen(field.Invisible).
+		ValidateFunc(func(m msgifc.Message, f msgifc.Field, vf msgifc.ValidateFlags) error {
+			if vf&msgifc.VPIFOOnly != 0 {
+				return nil
+			}
+			if f.Value(m) == "" {
+				return errors.New("The subject line does not have a form tag.")
+			}
+			return nil
+		}).
+		MakeField(),
 	field.NewField("", "Message Summary").
 		Common(field.CSubjectSummary).
-		EditHelp("This is a brief summary of the content of the message: the content of the subject line after the encoded message ID and handling order.").
 		ValueFunc(func(m msgifc.Message) string { return m.Subject().SubjectSummary() }).
 		SetValueFunc(func(m msgifc.Message, s string) { m.Subject().SetSubjectSummary(s) }).
+		VisibleWhen(field.Invisible).
 		ValidateFunc(func(m msgifc.Message, f msgifc.Field, vf msgifc.ValidateFlags) error {
 			if vf&msgifc.VPIFOOnly != 0 {
 				return nil

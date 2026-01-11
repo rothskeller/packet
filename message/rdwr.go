@@ -68,7 +68,6 @@ func read(filename string, noHeaderOK bool) (m Message, err error) {
 	to = append(to, msg.Header["Cc"]...)
 	to = append(to, msg.Header["Bcc"]...)
 	c.to = strings.Join(to, ", ")
-	c.subject, issues = subject.Decode(msg.Header.Get("Subject"))
 	if ct := msg.Header.Get("Content-Type"); ct != "" {
 		if mt, params, err := mime.ParseMediaType(ct); err != nil {
 			slog.Error("mime.ParseMediaType", "f", filename, "ct", ct, "err", err)
@@ -82,20 +81,11 @@ func read(filename string, noHeaderOK bool) (m Message, err error) {
 		slog.Error("io.ReadAll msg.Body", "f", filename, "err", err)
 		return nil, fmt.Errorf("%s: body: %w", filename, err)
 	}
-	if c.payload, err = payload.Decode(msg.Header, string(by)); c.payload == nil {
-		slog.Error("payload.Decode", "f", filename, "err", err)
-		return nil, fmt.Errorf("%s: %w", filename, err)
-	} else {
-		issues = errors.Join(issues, err)
+	if c.payload, issues = payload.Decode(msg.Header, string(by)); c.payload == nil {
+		slog.Error("payload.Decode", "f", filename, "err", issues)
+		return nil, fmt.Errorf("%s: %w", filename, issues)
 	}
-	if b, ok := c.Body().(interface{ ShouldHaveFormSubject() bool }); ok && b.ShouldHaveFormSubject() {
-		if s, ok := c.subject.(interface {
-			ToFormSubject() (subject.Subject, error)
-		}); ok {
-			c.subject, err = s.ToFormSubject()
-			issues = errors.Join(issues, err)
-		}
-	}
+	c.subject = subject.DecodePlainSubject(msg.Header.Get("Subject"))
 	c.init()
 	if msg.Header.Get("Received") != "" {
 		parser = readReceivedMessage

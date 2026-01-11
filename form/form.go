@@ -18,6 +18,7 @@ import (
 	"github.com/rothskeller/packet/form/pifover"
 	"github.com/rothskeller/packet/message"
 	"github.com/rothskeller/packet/message/field"
+	"github.com/rothskeller/packet/message/msgifc"
 	"github.com/rothskeller/packet/message/payload"
 	"github.com/rothskeller/packet/message/subject"
 	"github.com/rothskeller/pdf/v2"
@@ -50,7 +51,7 @@ func (ft FormType) Name() string { return ft.IndefName }
 // Validate validates the contents of the message and returns any
 // problems.  If pifo is true, it returns only problems that
 // PackItForms would raise; otherwise the checks may be more extensive.
-func (ft FormType) Validate(m message.Message, pifo bool) error {
+func (ft FormType) Validate(m message.Message, flags msgifc.ValidateFlags) error {
 	panic("not implemented") // TODO: Implement
 }
 
@@ -58,7 +59,7 @@ func (ft FormType) Validate(m message.Message, pifo bool) error {
 func (ft FormType) Fields(m message.Message) iter.Seq[field.Field] {
 	return func(yield func(field.Field) bool) {
 		for fd := range ft.AllFields() {
-			if !yield(ff2mf{ft.FormDef, fd}) {
+			if !yield(ff2mf{fd}) {
 				return
 			}
 		}
@@ -176,9 +177,7 @@ func (ft FormType) RenderPDF(m message.Message, filename, copyname string) (err 
 	}
 	// If we didn't find a message ID in the body, check the subject line.
 	if msgID == "" {
-		if s, ok := m.Subject().(*subject.SCCoSubject); ok {
-			msgID = s.SubjectMessageID()
-		}
+		msgID = m.Subject().(*FormSubject).SubjectMessageID()
 	}
 	// Write the page footers.
 	if err = message.RenderPDFFooters(out, msgID, copyname); err != nil {
@@ -212,8 +211,10 @@ func (ft FormType) Recognize(m message.Message) {
 		return
 	}
 	// It's our form.
+	m.SetSubject(formSubjectFromPlainSubject(m.Subject().(*subject.PlainSubject)))
 	m.SetType(ft)
 }
+
 func (ft EditableFormType) Recognize(m message.Message) {
 	if ft.FormType.Recognize(m); m.Type() != nil {
 		m.SetType(ft)
@@ -235,7 +236,7 @@ func (ft EditableFormType) NewDraft() message.Message {
 	}
 	pload := payload.NewOutpostPayload(body)
 	pload.SetUrgent(urgent)
-	subj, _ := subject.NewSCCoSubject("", "", "")
+	subj, _ := NewFormSubject("", "", ft.SubjectTag, "")
 	return message.NewDraftMessage(ft, subj, pload, false)
 }
 
@@ -329,7 +330,7 @@ func (ft EditableFormType) EditAssets() (assets fs.FS) {
 func (ft EditableFormType) FromPOST(r *http.Request) (msg message.Message, err error) {
 	var (
 		body *FormBody
-		subj *subject.SCCoSubject
+		subj *FormSubject
 		payl *payload.OutpostPayload
 		dm   *message.DraftMessage
 	)
@@ -338,7 +339,7 @@ func (ft EditableFormType) FromPOST(r *http.Request) (msg message.Message, err e
 		return nil, err
 	}
 	payl = payload.NewOutpostPayload(body)
-	subj, _ = subject.NewSCCoSubject("", "", "") // will give an error, ignored
+	subj, _ = NewFormSubject("", "", ft.SubjectTag, "") // will give an error, ignored
 	dm = message.NewDraftMessage(ft, subj, payl, false)
 	for f := range ft.Fields(msg) {
 		if tag := f.Tag(); tag != "" {

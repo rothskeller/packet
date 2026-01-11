@@ -33,3 +33,5 @@ func (b *PlainBody) SetBody(body string) {
 func (b *PlainBody) Clone() Body {
 	return NewPlainBody(b.EncodedBody())
 }
+
+func (b *PlainBody) IsForm() bool { return false }

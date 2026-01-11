@@ -16,9 +16,8 @@ type MType interface {
 	// (other than acronyms) starting with "a " or "an ".
 	Name() string
 	// Validate validates the contents of the message and returns any
-	// problems.  If pifo is true, it returns only problems that
-	// PackItForms would raise; otherwise the checks may be more extensive.
-	Validate(m Message, pifo bool) error
+	// problems.  Flags customize the validation.
+	Validate(m Message, flags ValidateFlags) error
 	// Fields returns an iterator on the set of message fields.
 	Fields(m Message) iter.Seq[Field]
 	// RenderPDF creates a PDF representation of the message in the
@@ -61,6 +60,20 @@ type EditableMType interface {
 	// POSTed form is invalid, FromPOST may return an error instead.
 	FromPOST(r *http.Request) (Message, error)
 }
+
+// ValidateFlags are flags for the Validate method.
+type ValidateFlags uint
+
+// Values for ValidateFlags.
+const (
+	// VPIFOOnly indicates that validation should only complain about
+	// problems that would block submission in the  PackItForms form editor.
+	// If this flag is not set, more extensive checks are acceptable.
+	VPIFOOnly ValidateFlags = 1 << iota
+	// VPacket indicates that the message should be validated as a packet
+	// message (i.e., it's known not to be a voice message).
+	VPacket
+)
 
 type EditHTMLVars struct {
 	// SubmitURL is the URL that the edit form should POST to.  The URL

@@ -168,9 +168,9 @@ func (t *BaseMType) Name() string { return t.name }
 // Validate validates the contents of the message and returns any problems.
 // If pifo is true, it returns only problems that PackItForms would raise;
 // otherwise the checks may be more extensive.
-func (t *BaseMType) Validate(m Message, pifo bool) (err error) {
+func (t *BaseMType) Validate(m Message, flags msgifc.ValidateFlags) (err error) {
 	for f := range t.Fields(m) {
-		err = errors.Join(err, f.Validate(m, f, pifo))
+		err = errors.Join(err, f.Validate(m, f, flags))
 	}
 	return err
 }

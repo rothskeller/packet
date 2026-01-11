@@ -17,6 +17,8 @@ type Message interface {
 	To() string
 	// Subject is the subject of the message.
 	Subject() Subject
+	// SetSubject sets the subject of the message.
+	SetSubject(Subject)
 	// Bulletin returns whether the message is a BBS bulletin (as opposed
 	// to a private message).
 	Bulletin() bool

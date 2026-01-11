@@ -11,7 +11,6 @@ import (
 
 	"github.com/rothskeller/packet/message"
 	"github.com/rothskeller/packet/message/address"
-	"github.com/rothskeller/packet/message/subject"
 )
 
 // A LogEntry represents a single line in the ICS-309 log for the incident.
@@ -270,9 +269,7 @@ func (i *Incident) ResetLogEntry(le *LogEntry) (err error) {
 			}
 		}
 		if le.FromMsgID == "" {
-			if s, ok := msg.Subject().(*subject.SCCoSubject); ok {
-				le.FromMsgID = s.SubjectMessageID()
-			}
+			le.FromMsgID = msg.Subject().SubjectMessageID()
 		}
 		le.ToCall = ""
 		le.ToMsgID = le.LocalMsgID

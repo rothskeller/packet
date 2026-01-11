@@ -109,8 +109,6 @@ func NewJustReceivedMessage(retrieved, rxBBS, rxArea string) (m *JustReceivedMes
 	if t, err := time.Parse(time.RFC1123Z, msg.Header.Get("Date")); err == nil {
 		m.date = t
 	}
-	// Handle the Subject header.
-	m.subject, issues = subject.Decode(msg.Header.Get("Subject"))
 	// Compute the return address if there wasn't an envelope From line.
 	if !hadMessage {
 		var line string
@@ -144,12 +142,12 @@ func NewJustReceivedMessage(retrieved, rxBBS, rxArea string) (m *JustReceivedMes
 		return m, err
 	}
 	// Unwrap and parse the payload.
-	if m.payload, err = payload.Decode(mail.Header(headers), string(by)); m.payload == nil {
+	if m.payload, issues = payload.Decode(mail.Header(headers), string(by)); m.payload == nil {
 		m.payload, _ = payload.Decode(nil, "")
-		return m, err
-	} else {
-		issues = errors.Join(issues, err)
+		return m, issues
 	}
+	// Handle the Subject header.
+	m.subject = subject.DecodePlainSubject(msg.Header.Get("Subject"))
 	// Set the message type.
 	SetType(m)
 	// Nothing should change from this point on.

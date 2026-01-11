@@ -6,7 +6,6 @@ import (
 	"strings"
 	"time"
 
-	"github.com/rothskeller/packet/message/subject"
 	"github.com/rothskeller/pdf/v2"
 )
 
@@ -114,9 +113,7 @@ func RenderPlainPDF(m Message, filename, copyname string) (err error) {
 			avail.LLY += 2 * footerFontSize
 		}
 	}
-	if s, ok := m.Subject().(*subject.SCCoSubject); ok {
-		msgID = s.SubjectMessageID()
-	}
+	msgID = m.Subject().SubjectMessageID()
 	if err = RenderPDFFooters(ph, msgID, copyname); err != nil {
 		return err
 	}

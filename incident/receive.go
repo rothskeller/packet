@@ -8,7 +8,6 @@ import (
 	"github.com/rothskeller/packet/errors"
 	"github.com/rothskeller/packet/message"
 	"github.com/rothskeller/packet/message/receipt"
-	"github.com/rothskeller/packet/message/subject"
 )
 
 // ReceiveMessage takes a JustReceivedMessage received from JNOS and saves it
@@ -77,13 +76,11 @@ func (i *Incident) ReceiveMessage(msg *message.JustReceivedMessage) (dr *message
 	}
 	// Check the subject line for OMI and handling that we didn't get from
 	// the message body.  Then set log flags for the handling.
-	if s, ok := msg.Subject().(*subject.SCCoSubject); ok {
-		if le.FromMsgID == "" {
-			le.FromMsgID = s.SubjectMessageID()
-		}
-		if handling == "" {
-			handling = s.SubjectHandling()
-		}
+	if le.FromMsgID == "" {
+		le.FromMsgID = msg.Subject().SubjectMessageID()
+	}
+	if handling == "" {
+		handling = msg.Subject().SubjectHandling()
 	}
 	switch handling {
 	case "IMMEDIATE":

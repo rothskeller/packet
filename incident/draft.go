@@ -13,7 +13,6 @@ import (
 	"github.com/rothskeller/packet/message/field"
 	"github.com/rothskeller/packet/message/messageid"
 	"github.com/rothskeller/packet/message/receipt"
-	"github.com/rothskeller/packet/message/subject"
 )
 
 // AddDraftMessage takes a DraftMessage and saves it in the incident, assigning
@@ -103,14 +102,12 @@ func (i *Incident) AddDraftMessage(msg *message.DraftMessage, defaults bool) (id
 	}
 	// Check the subject line for info that we didn't get from the
 	// message body.  Then set log flags for the handling.
-	if s, ok := msg.Subject().(*subject.SCCoSubject); ok {
-		if le.LocalMsgID == "" {
-			le.LocalMsgID = s.SubjectMessageID()
-			le.FromMsgID = le.LocalMsgID
-		}
-		if handling == "" {
-			handling = s.SubjectHandling()
-		}
+	if le.LocalMsgID == "" {
+		le.LocalMsgID = msg.Subject().SubjectMessageID()
+		le.FromMsgID = le.LocalMsgID
+	}
+	if handling == "" {
+		handling = msg.Subject().SubjectHandling()
 	}
 	switch handling {
 	case "IMMEDIATE":
@@ -123,9 +120,7 @@ func (i *Incident) AddDraftMessage(msg *message.DraftMessage, defaults bool) (id
 		if le.LocalMsgID, err = i.nextMessageID(true); err != nil {
 			return 0, err
 		}
-		if s, ok := msg.Subject().(*subject.SCCoSubject); ok {
-			s.SetSubjectMessageID(le.LocalMsgID)
-		}
+		msg.Subject().SetSubjectMessageID(le.LocalMsgID)
 		le.FromMsgID = le.LocalMsgID
 	}
 	le.Subject = msg.Subject().EncodedSubject()
@@ -195,13 +190,11 @@ func (i *Incident) UpdateDraftMessage(ident int, msg *message.DraftMessage) (err
 			handling = f.Value(msg)
 		}
 	}
-	if s, ok := msg.Subject().(*subject.SCCoSubject); ok {
-		if omi == "" {
-			omi = s.SubjectMessageID()
-		}
-		if handling == "" {
-			handling = s.SubjectHandling()
-		}
+	if omi == "" {
+		omi = msg.Subject().SubjectMessageID()
+	}
+	if handling == "" {
+		handling = msg.Subject().SubjectHandling()
 	}
 	// If the origin message ID in the message is different from the LMI,
 	// we'll need to change the LMI.  But first, make sure it's valid and

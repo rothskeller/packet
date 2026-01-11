@@ -44,6 +44,12 @@ func (ff *FieldFactory) AddField(cf *FieldFactory) Field {
 	return cf.tf
 }
 
+// Common sets the common field ID for the field, if any.
+func (ff *FieldFactory) Common(c string) *FieldFactory {
+	ff.f.common = c
+	return ff
+}
+
 // ValueFunc provides a function that returns the value of the field, in
 // internal form.  The default implementation returns an empty string unless
 // the message is a form and the tag passed to NewField is non-empty; in that
@@ -220,8 +226,8 @@ func (ff *FieldFactory) DisallowedUnless(unless string, pred func(msgifc.Message
 // the flag passed to the function is true, the function should restrict itself
 // to those checks that PackItForms would enforce.  This method can be called
 // multiple times to register multiple validation functions for the field.
-func (ff *FieldFactory) ValidateFunc(fn func(msgifc.Message, bool) error) *FieldFactory {
-	ff.f.validateFuncs = append(ff.f.validateFuncs, fn)
+func (ff *FieldFactory) ValidateFunc(fn func(msgifc.Message, msgifc.Field, msgifc.ValidateFlags) error) *FieldFactory {
+	ff.f.validateFunc = fn
 	return ff
 }
 

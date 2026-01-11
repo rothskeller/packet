@@ -6,6 +6,7 @@ import (
 	"io/fs"
 	"iter"
 
+	"github.com/rothskeller/packet/message/msgifc"
 	"github.com/rothskeller/pdf/v2"
 )
 
@@ -51,7 +52,7 @@ type FormDef struct {
 	// used to render this version of this form in PDF format.  If may be
 	// empty for a plain text rendering.
 	PDFFile string
-	// Fields is a list of fields of the form.
+	// Fields is a list of the field definitions of the form.
 	Fields []*FieldDef
 }
 
@@ -123,6 +124,8 @@ type FieldDef struct {
 	CompareMethod string
 	// PDF is the set of PDF rendering instructions for this field.
 	PDF []PDFFieldRenderer
+	// Field is the Field interface implementation for this field.
+	Field msgifc.Field
 }
 
 // A Choice is a pair of raw and human representations of the same value, and

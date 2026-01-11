@@ -20,7 +20,6 @@ import (
 	"github.com/rothskeller/packet/form/formdef"
 	"github.com/rothskeller/packet/message"
 	"github.com/rothskeller/packet/message/payload"
-	"github.com/rothskeller/packet/message/subject"
 )
 
 const (
@@ -205,7 +204,7 @@ func (s *Server) outpostSubmit(w http.ResponseWriter, r *http.Request) {
 	})
 	// Then we add the desired EOF marker.  Yes, all of this.
 	body += "&4VAO=%0D%0A%23EOF"
-	msgID = msg.Subject().(*subject.SCCoSubject).SubjectMessageID()
+	msgID = msg.Subject().SubjectMessageID()
 	if sendToOpdirect(w, r, body, msgID) {
 		serveMessagePDF(w, r, msg)
 	}
