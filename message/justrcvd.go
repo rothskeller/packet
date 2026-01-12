@@ -48,6 +48,9 @@ func (m *JustReceivedMessage) BBSRxDate() time.Time { return m.bbsRxDate }
 // portion of the received body.)
 func (m *JustReceivedMessage) IsMultipart() bool { return m.isMultipart }
 
+// SetLocalID sets the local ID of the message.
+func (m *JustReceivedMessage) SetLocalID(localID string) { m.localID = localID }
+
 // NewJustReceivedMessage creates a new JustReceivedMessage by decoding the
 // provided retrieved message (i.m., the output of a JNOS "R" or "V" command).
 // rxBBS specifies the BBS from which the message was retrieved, if known.

@@ -7,7 +7,6 @@ import (
 	"strings"
 
 	"github.com/rothskeller/packet/errors"
-	"github.com/rothskeller/packet/message/field"
 	"github.com/rothskeller/packet/message/msgifc"
 )
 
@@ -149,63 +148,17 @@ func CompareTypes(a, b MType) int {
 
 //-----------------------------------------------------------------------------
 
-// BaseMType is the common core implementation for all message types.
+// BaseMType is a common core implementation for some message types.
 type BaseMType struct {
-	name   string
-	fields []msgifc.Field
+	name string
 }
 
-// NewBaseMType returns a new BaseMType with the specified details to be
-// returned by Name and CreateTag methods.
+// NewBaseMType returns a new BaseMType with the specified name.
 func NewBaseMType(name string) *BaseMType {
 	return &BaseMType{name: name}
 }
 
-// Name returns the name of the message type, as a phrase in lower case (other
-// than acronyms) starting with "a " or "an ".
 func (t *BaseMType) Name() string { return t.name }
-
-// Validate validates the contents of the message and returns any problems.
-// If pifo is true, it returns only problems that PackItForms would raise;
-// otherwise the checks may be more extensive.
-func (t *BaseMType) Validate(m Message, flags msgifc.ValidateFlags) (err error) {
-	for f := range t.Fields(m) {
-		err = errors.Join(err, f.Validate(m, f, flags))
-	}
-	return err
-}
-
-// AddField adds fields to a form definition.  It is usually called by the
-// form definition's initFunc.  The arguments can be either field.Field
-// implementations or *field.FieldFactory instances.
-func (t *BaseMType) AddField(fs ...any) {
-	for _, f := range fs {
-		switch f := f.(type) {
-		case field.Field:
-			t.fields = append(t.fields, f)
-		case *field.FieldFactory:
-			t.fields = append(t.fields, f.MakeField())
-		default:
-			panic("AddField arguments must be field.Field or *field.FieldFactory")
-		}
-	}
-}
-
-// Fields returns an iterator on the set of message fields.
-func (t *BaseMType) Fields(m Message) iter.Seq[field.Field] {
-	return func(yield func(field.Field) bool) {
-		for _, f := range t.fields {
-			if !yield(f) {
-				return
-			}
-			for _, cf := range f.Children() {
-				if !yield(cf) {
-					return
-				}
-			}
-		}
-	}
-}
 
 // RenderPDF creates a PDF representation of the message in the specified file.
 func (t *BaseMType) RenderPDF(m Message, filename, copyname string) (err error) {
@@ -214,7 +167,7 @@ func (t *BaseMType) RenderPDF(m Message, filename, copyname string) (err error) 
 
 //-----------------------------------------------------------------------------
 
-// BaseEditableMType is the common core implementation for all editable message
+// BaseEditableMType is a common core implementation for editable message
 // types.  Note that it is not a complete implementation; message types must
 // implement their own NewDraft and NewDraftCopy methods.
 type BaseEditableMType struct {
@@ -229,17 +182,6 @@ func NewBaseEditableMType(name, createTag, createKey string) *BaseEditableMType 
 	return &BaseEditableMType{BaseMType: BaseMType{name: name}, createTag: createTag, createKey: createKey}
 }
 
-// CreateTag returns the tag used to identify this message type on a
-// "new" command line.  The tag is case insensitive.  It is an error
-// for two message types to have the same tag.
 func (t *BaseEditableMType) CreateTag() string { return t.createTag }
 
-// CreateKey returns the key (usually one or two letters) used to identify this
-// message type in a GUI dialog box for creating a new message (or also on a
-// "new" command line, as an alternative to CreateTag).  The key is case
-// insensitive.  It is an error for two message types to have the same key, or
-// for one to have a key that is a prefix of another's, or for any key to be
-// the same as any CreateTag.  This method may return an empty string, in which
-// case there is no shortcut key in the dialog and the message type must be
-// selected with mouse or arrow keys.)
 func (t *BaseEditableMType) CreateKey() string { return t.createKey }

@@ -3,28 +3,32 @@ package message
 import (
 	"errors"
 	"fmt"
+	"iter"
 	"log/slog"
 	"net/mail"
 	"net/textproto"
 	"regexp"
 	"strings"
 	"time"
+
+	"github.com/rothskeller/packet/message/field"
 )
 
 // receivedRE is the regular expression for the "Received: " line that this
 // package generates when saving a received message.
-var receivedRE = regexp.MustCompile(`^FROM (\S*)\.(?:ampr|scc-ares-races)\.org BY (?:packet|pktmsg).local(?: FOR (\S+))?; (\w\w\w, \d\d \w\w\w \d\d\d\d \d\d:\d\d:\d\d [-+]\d\d\d\d)$`)
+var receivedRE = regexp.MustCompile(`^FROM (\S*)\.(?:ampr|scc-ares-races)\.org BY (?:packet|pktmsg).local(?: ID (\S+))?(?: FOR (\S+))?; (\w\w\w, \d\d \w\w\w \d\d\d\d \d\d:\d\d:\d\d [-+]\d\d\d\d)$`)
 
 // A ReceivedMessage is for a message that the local system received from a
 // BBS at some point in the past, was stored locally on disk, and has been read
 // from local storage.
 type ReceivedMessage struct {
 	*common
-	rxBBS  string
-	rxArea string
-	rxDate time.Time
-	from   string
-	date   time.Time
+	rxBBS   string
+	rxArea  string
+	rxDate  time.Time
+	from    string
+	date    time.Time
+	localID string
 }
 
 var _ Message = (*ReceivedMessage)(nil)
@@ -49,6 +53,9 @@ func (m *ReceivedMessage) From() string { return m.from }
 // header).
 func (m *ReceivedMessage) Date() time.Time { return m.date }
 
+// LocalID returns the local message ID as recorded in its Received header.
+func (m *ReceivedMessage) LocalID() string { return m.localID }
+
 // Bulletin returns whether the message is a BBS bulletin (as opposed to a
 // private message).  This is determined by whether it was received from a
 // bulletin area on the BBS.
@@ -67,13 +74,14 @@ func (m *ReceivedMessage) Received() bool { return true }
 func (m *ReceivedMessage) RFC5322() string {
 	hdr := make(textproto.MIMEHeader)
 
-	if m.rxArea != "" {
-		hdr.Set("Received", fmt.Sprintf("FROM %s.scc-ares-races.org BY packet.local FOR %s;\n\t%s",
-			m.rxBBS, m.rxArea, m.rxDate.Format(time.RFC1123Z)))
-	} else {
-		hdr.Set("Received", fmt.Sprintf("FROM %s.scc-ares-races.org BY packet.local; %s",
-			m.rxBBS, m.rxDate.Format(time.RFC1123Z)))
+	rcvd := fmt.Sprintf("FROM %s.scc-ares-races.org BY packet.local", m.rxBBS)
+	if m.localID != "" {
+		rcvd += " ID " + m.localID
 	}
+	if m.rxArea != "" {
+		rcvd += " FOR " + m.rxArea
+	}
+	rcvd += ";\n\t" + m.rxDate.Format(time.RFC1123Z)
 	if m.from != "" {
 		hdr.Set("From", m.from)
 	}
@@ -91,8 +99,9 @@ func readReceivedMessage(filename string, hdr mail.Header, cm *common) (_ Messag
 
 	if match := receivedRE.FindStringSubmatch(hdr.Get("Received")); match != nil {
 		m.rxBBS = match[1]
-		m.rxArea = match[2]
-		m.rxDate, _ = time.Parse(time.RFC1123Z, match[3])
+		m.localID = match[2]
+		m.rxArea = match[3]
+		m.rxDate, _ = time.Parse(time.RFC1123Z, match[4])
 	} else {
 		// This shouldn't happen:  stored messages with a Received: header
 		// should always have our Received: header format
@@ -104,4 +113,53 @@ func readReceivedMessage(filename string, hdr mail.Header, cm *common) (_ Messag
 		m.date = t
 	}
 	return &m, nil
+}
+
+func (m *ReceivedMessage) Fields() iter.Seq[field.Field] {
+	return func(yield func(field.Field) bool) {
+		for _, f := range receivedFields {
+			if !yield(f) {
+				return
+			}
+		}
+		for f := range m.Subject().Fields() {
+			if !yield(f) {
+				return
+			}
+		}
+		for f := range m.Body().Fields() {
+			if !yield(f) {
+				return
+			}
+		}
+	}
+}
+
+var receivedFields = []field.Field{
+	field.NewField("", "From").
+		Common(field.CHeaderFrom).
+		ValueFunc(func(m Message) string { return m.(*ReceivedMessage).from }).
+		MakeField(),
+	field.NewField("", "To").
+		Common(field.CHeaderTo).
+		ValueFunc(func(m Message) string { return m.To() }).
+		MakeField(),
+	field.NewField("", "Sent").
+		Common(field.CHeaderDate).
+		ValueFunc(func(m Message) string { return m.(*ReceivedMessage).date.Format("01/02/2006 15:04") }).
+		MakeField(),
+	field.NewField("", "Received").
+		Common(field.CHeaderReceived).
+		ValueFunc(func(m Message) string {
+			var val string
+			rm := m.(*ReceivedMessage)
+			if rm.rxArea != "" {
+				val = "in " + rm.rxArea + " "
+			}
+			val += "at " + rm.rxDate.Format("01/02/2006 15:04")
+			if rm.localID != "" {
+				val += " as " + rm.localID
+			}
+			return val
+		}).MakeField(),
 }

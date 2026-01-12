@@ -28,7 +28,6 @@ func init() {
 	var ft UnrecognizedForm
 
 	ft.BaseMType = message.NewBaseMType("an unrecognized form message")
-	ft.AddField() // TODO
 	message.RegisterFallbackType(ft)
 }
 
@@ -38,25 +37,24 @@ func init() {
 func (ft UnrecognizedForm) Recognize(m message.Message) {
 	var (
 		body *FormBody
-		def  *formdef.FormDef
 	)
 	if body, _ = m.Body().(*FormBody); body == nil {
 		return // It's not a form.
 	}
-	def = &formdef.FormDef{
+	body.def = &formdef.FormDef{
 		AddonName: body.addonName,
 		HTMLName:  body.formHTML,
 		Version:   body.formVersion,
 		IndefName: fmt.Sprintf("an unknown form %s version %s", body.formHTML, body.formVersion),
 	}
 	for _, f := range body.FieldList() {
-		def.Fields = append(def.Fields, &formdef.FieldDef{
+		body.def.Fields = append(body.def.Fields, &formdef.FieldDef{
 			Label: fmt.Sprintf("Field %s", f),
 			Tag:   f,
 			Type:  "text",
 		})
 	}
-	m.SetType(FormType{def})
+	m.SetType(FormType{body.def})
 }
 
 /*

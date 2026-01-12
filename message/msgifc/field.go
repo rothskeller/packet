@@ -14,11 +14,9 @@ type Field interface {
 	// Label returns the label for the field, if any.
 	Label() string
 	// Parent returns the parent field that contains this field, if any.
-	// Generally only used for checkbox groups.
 	Parent() Field
 	// Children returns the list of child fields contained by this field,
-	// if any.  Generally only used for checkbox groups.  A Field may not
-	// have both a Parent and Children.
+	// if any.  A Field may not have both a Parent and Children.
 	Children() []Field
 	// Value returns the value of the field, in internal form.
 	Value(Message) string
@@ -40,9 +38,7 @@ type Field interface {
 	Visible(Message) bool
 	// Editable returns whether the field should be included when the
 	// message is edited.  The explicit flag is true if the user explicitly
-	// asked to edit this field by name.  Note: as a side effect, this
-	// method is allowed to clear the value of the field before returning
-	// false when that's more appropriate than a validation failure.
+	// asked to edit this field by name.
 	Editable(m Message, explicit bool) bool
 	// EditHelp returns the help string for editing of the field.
 	EditHelp() string
@@ -73,7 +69,6 @@ type Field interface {
 	Restricted() bool
 	// Validate validates the value of the field and returns any problems
 	// with it.  flags customizes the validation.
-	// performed by PackItForms.
 	Validate(m Message, f Field, flags ValidateFlags) error
 	// Compare compares the value of the field in the actual message to
 	// the corresponding value in the expected message, and returns the

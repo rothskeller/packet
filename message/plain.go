@@ -29,12 +29,7 @@ type plainMessage struct{ *BaseEditableMType }
 
 var _ EditableMType = plainMessage{}
 
-var PlainMessage plainMessage
-
-func init() {
-	PlainMessage.BaseEditableMType = NewBaseEditableMType("a plain text message", "plain", "p")
-	PlainMessage.AddField() // TODO
-}
+var PlainMessage = plainMessage{NewBaseEditableMType("a plain text message", "plain", "p")}
 
 // Recognize does nothing.  Messages are assigned the PlainMessage type by
 // SetType when nothing else matches.

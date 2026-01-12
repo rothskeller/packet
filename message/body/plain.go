@@ -1,7 +1,11 @@
 package body
 
 import (
+	"iter"
+
 	"github.com/rothskeller/packet/message/cachetrack"
+	"github.com/rothskeller/packet/message/field"
+	"github.com/rothskeller/packet/message/msgifc"
 )
 
 // A PlainBody is a body that consists of unencoded plain text.
@@ -35,3 +39,18 @@ func (b *PlainBody) Clone() Body {
 }
 
 func (b *PlainBody) IsForm() bool { return false }
+
+func (b *PlainBody) Fields() iter.Seq[field.Field] {
+	return func(yield func(field.Field) bool) {
+		yield(plainBodyField)
+	}
+}
+
+var plainBodyField = field.NewField("", "Body").
+	Common(field.CDefaultBody).
+	ValueFunc(func(m msgifc.Message) string { return m.Body().(*PlainBody).body }).
+	SetValueFunc(func(m msgifc.Message, s string) { m.Body().(*PlainBody).body = s }).
+	Required().
+	EditHelp("This is the body of the message.").
+	Multiline().
+	MakeField()

@@ -11,6 +11,8 @@ import (
 	"slices"
 	"strings"
 	"time"
+
+	"github.com/rothskeller/packet/message/field"
 )
 
 // A SentMessage is for a message that the local system sent to a BBS.
@@ -128,7 +130,7 @@ func readSentMessage(filename string, hdr mail.Header, c *common) (_ Message, er
 	}
 	m.bulletin = hdr.Get("X-Packet-Bulletin") != ""
 	for _, rlist := range hdr["X-Packet-Receipt"] {
-		for _, rstr := range strings.Split(rlist, ",") {
+		for rstr := range strings.SplitSeq(rlist, ",") {
 			rstr = strings.TrimSpace(rstr)
 			if match := readReceiptHeaderRE.FindStringSubmatch(rstr); match != nil {
 				m.receipts = append(m.receipts, SentMessageReceipt{
@@ -149,4 +151,50 @@ func readSentMessage(filename string, hdr mail.Header, c *common) (_ Message, er
 		}
 	}
 	return &m, nil
+}
+
+func (m *SentMessage) Fields() iter.Seq[field.Field] {
+	return func(yield func(field.Field) bool) {
+		for _, f := range sentFields {
+			if !yield(f) {
+				return
+			}
+		}
+		for f := range m.Subject().Fields() {
+			if !yield(f) {
+				return
+			}
+		}
+		for f := range m.Body().Fields() {
+			if !yield(f) {
+				return
+			}
+		}
+	}
+}
+
+var sentFields = []field.Field{
+	field.NewField("", "From").
+		Common(field.CHeaderFrom).
+		ValueFunc(func(m Message) string { return m.(*SentMessage).from }).
+		MakeField(),
+	field.NewField("", "To").
+		Common(field.CHeaderTo).
+		ValueFunc(func(m Message) string { return m.To() }).
+		MakeField(),
+	field.NewField("", "Sent").
+		Common(field.CHeaderDate).
+		ValueFunc(func(m Message) string { return m.(*SentMessage).date.Format("01/02/2006 15:04") }).
+		MakeField(),
+	field.NewField("", "Received").
+		Common(field.CHeaderReceived).
+		ValueFunc(func(m Message) string {
+			var rstr []string
+			for _, r := range m.(*SentMessage).receipts {
+				if !r.HasBeenRead {
+					rstr = append(rstr, fmt.Sprintf("by %s at %s as %s", r.ReceiverAddress, r.ReceiptDate, r.ReceiverMessageID))
+				}
+			}
+			return strings.Join(rstr, ", ")
+		}).MakeField(),
 }

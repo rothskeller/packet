@@ -2,24 +2,19 @@ package msgifc
 
 import (
 	"io/fs"
-	"iter"
 	"net/http"
 )
 
-// MType is the interface satisfied by all messages types.
+// MType is the interface satisfied by all message types.
 type MType interface {
 	// Recognize detects whether the argument message is of the type
 	// described by this MType, and if so, calls its SetType method to
-	// assign this MType to it.
+	// assign this MType to it.  (It may also call the SetSubject method to
+	// change the Subject implementation in use by the message.)
 	Recognize(Message)
 	// Name returns the name of the message type, as a phrase in lower case
 	// (other than acronyms) starting with "a " or "an ".
 	Name() string
-	// Validate validates the contents of the message and returns any
-	// problems.  Flags customize the validation.
-	Validate(m Message, flags ValidateFlags) error
-	// Fields returns an iterator on the set of message fields.
-	Fields(m Message) iter.Seq[Field]
 	// RenderPDF creates a PDF representation of the message in the
 	// specified file.  If copyname is not empty, it is placed in the
 	// footer of each page.  The returned error may be a Warning, showing a
@@ -42,7 +37,7 @@ type EditableMType interface {
 	// message types to have the same key, or for one to have a key that is
 	// a prefix of another's, or for any key to be the same as any
 	// CreateTag.  This method may return an empty string, in which case
-	//there is no shortcut key in the dialog and the message type must be
+	// there is no shortcut key in the dialog and the message type must be
 	// selected with mouse or arrow keys.)
 	CreateKey() string
 	// NewDraft returns a new *message.DraftMessage of this type.  It has

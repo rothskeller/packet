@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"os"
 	"strings"
-	"time"
 
+	"github.com/rothskeller/packet/message/field"
 	"github.com/rothskeller/pdf/v2"
 )
 
@@ -31,6 +31,7 @@ func RenderPlainPDF(m Message, filename, copyname string) (err error) {
 		ph       *pdf.PDF
 		avail    pdf.Rectangle
 		from     string
+		to       string
 		date     string
 		rcvd     string
 		body     string
@@ -54,23 +55,25 @@ func RenderPlainPDF(m Message, filename, copyname string) (err error) {
 	// Add a banner.
 	(pdf.Text{String: plainPDFBanner(m.Type().Name()), Rectangle: avail, Font: headingFont, FontSize: headingFontSize, Align: "lt"}).Draw(ph)
 	avail.URY -= 2 * headingFontSize
-	if m, ok := m.(interface{ From() string }); ok {
-		from = m.From()
+	for f := range m.Fields() {
+		switch f.Common() {
+		case field.CHeaderFrom:
+			from = f.Value(m)
+		case field.CHeaderTo:
+			to = f.Value(m)
+		case field.CHeaderDate:
+			date = f.Value(m)
+		case field.CHeaderReceived:
+			rcvd = f.Value(m)
+		}
 	}
-	if m, ok := m.(interface{ Date() time.Time }); ok {
-		date = m.Date().Format(timestampFormat)
-	}
-	if m, ok := m.(interface{ RxDate() time.Time }); ok {
-		rcvd = m.RxDate().Format(timestampFormat)
-	}
-	// TODO: add receipt information
 	if from != "" {
 		(pdf.Text{String: "From", Rectangle: avail, Font: metadataLabelFont, FontSize: metadataFontSize, Align: "lT"}).Draw(ph)
 		avail.LLX += metadataLabelWidth // temporarily
 		(pdf.Text{String: from, Rectangle: avail, Font: metadataFont, FontSize: metadataFontSize, Align: "lT"}).Draw(ph)
 		avail.LLX, avail.URY = avail.LLX-metadataLabelWidth, avail.URY-metadataLineSpacing
 	}
-	if m.To() != "" {
+	if to != "" {
 		(pdf.Text{String: "To", Rectangle: avail, Font: metadataLabelFont, FontSize: metadataFontSize, Align: "lT"}).Draw(ph)
 		avail.LLX += metadataLabelWidth // temporarily
 		(pdf.Text{String: m.To(), Rectangle: avail, Font: metadataFont, FontSize: metadataFontSize, Align: "lT"}).Draw(ph)

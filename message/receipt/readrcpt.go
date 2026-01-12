@@ -2,15 +2,16 @@ package receipt
 
 import (
 	"fmt"
+	"iter"
 	"regexp"
 	"strings"
-	"sync"
 	"time"
 
 	"github.com/rothskeller/packet/errors"
 	"github.com/rothskeller/packet/message"
 	"github.com/rothskeller/packet/message/body"
 	"github.com/rothskeller/packet/message/cachetrack"
+	"github.com/rothskeller/packet/message/field"
 	"github.com/rothskeller/packet/message/payload"
 	"github.com/rothskeller/packet/message/subject"
 )
@@ -46,7 +47,6 @@ func NewReadReceipt(rmTo, rmSubject string, readTime time.Time, extraText string
 type readReceipt struct{ *message.BaseMType }
 
 var ReadReceipt readReceipt
-var readReceiptOnce sync.Once
 
 func init() {
 	ReadReceipt.BaseMType = message.NewBaseMType("a read receipt")
@@ -56,12 +56,7 @@ func init() {
 func (mt readReceipt) Recognize(m message.Message) {
 	if _, ok := m.Body().(*ReadReceiptBody); ok {
 		m.SetType(ReadReceipt)
-		readReceiptOnce.Do(readReceiptInit)
 	}
-}
-
-func readReceiptInit() {
-	ReadReceipt.AddField() // TODO
 }
 
 //--- BODY --------------------------------------------------------------------
@@ -145,3 +140,9 @@ func (b *ReadReceiptBody) ExtraText() string { return b.extraText }
 
 func (b *ReadReceiptBody) Clone() body.Body { panic("should not be called") }
 func (b *ReadReceiptBody) IsForm() bool     { return false }
+
+func (b *ReadReceiptBody) Fields() iter.Seq[field.Field] {
+	return func(yield func(field.Field) bool) {
+		yield(receiptBodyField)
+	}
+}

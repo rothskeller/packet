@@ -40,6 +40,7 @@ func (i *Incident) ReceiveMessage(msg *message.JustReceivedMessage) (dr *message
 		return nil, err
 	}
 	le.ToMsgID = le.LocalMsgID
+	msg.SetLocalID(le.LocalMsgID)
 	if msg.Bulletin() {
 		le.Flags |= FBulletin
 		le.FromCall = strings.ToUpper(msg.RxArea())
@@ -50,7 +51,7 @@ func (i *Incident) ReceiveMessage(msg *message.JustReceivedMessage) (dr *message
 	// Put the local message ID and the operator information into the
 	// message fields if it has them.  Also extract the OMI and handling
 	// from the message fields, if any, for use in the log entry.
-	for f := range msg.Fields(msg) {
+	for f := range msg.Fields() {
 		switch f.Common() {
 		case "originMessageID":
 			le.FromMsgID = f.Value(msg)

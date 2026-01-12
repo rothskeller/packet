@@ -10,6 +10,10 @@ const (
 	CFromICSPosition      = "fromICSPosition"
 	CFromLocation         = "fromLocation"
 	CHandling             = "handling"
+	CHeaderDate           = "headerDate"
+	CHeaderFrom           = "headerFrom"
+	CHeaderReceived       = "headerReceived"
+	CHeaderTo             = "headerTo"
 	CMessageDate          = "messageDate"
 	CMessageSummary       = "messageSummary"
 	CMessageTime          = "messageTime"
@@ -41,6 +45,10 @@ var CommonTags = sets.New(
 	CFromICSPosition,
 	CFromLocation,
 	CHandling,
+	CHeaderDate,
+	CHeaderFrom,
+	CHeaderReceived,
+	CHeaderTo,
 	CMessageDate,
 	CMessageSummary,
 	CMessageTime,

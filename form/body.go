@@ -3,6 +3,7 @@ package form
 import (
 	"cmp"
 	"fmt"
+	"iter"
 	"maps"
 	"regexp"
 	"slices"
@@ -10,8 +11,11 @@ import (
 	"unicode/utf8"
 
 	"github.com/rothskeller/packet/errors"
+	"github.com/rothskeller/packet/form/formdef"
+	"github.com/rothskeller/packet/form/pifover"
 	"github.com/rothskeller/packet/message/body"
 	"github.com/rothskeller/packet/message/cachetrack"
+	"github.com/rothskeller/packet/message/field"
 )
 
 var (
@@ -62,6 +66,7 @@ var fieldOrders = map[string]string{
 type FormBody struct {
 	cachetrack.Tracker
 	body        string
+	def         *formdef.FormDef
 	addonName   string
 	formHTML    string
 	pifoVersion string
@@ -76,27 +81,13 @@ var _ body.Body = (*FormBody)(nil)
 // NewFormBody creates a new form message body with the specified HTML
 // identifier and version numbers.  It returns an error if the arguments are
 // invalid.
-func NewFormBody(addonName, formHTML, pifoVersion, formVersion string) (b *FormBody, err error) {
-	if !addonNameRE.MatchString(addonName) {
-		err = errors.Join(err, ErrInvalidAddonName)
-	}
-	if !formHTMLRE.MatchString(formHTML) {
-		err = errors.Join(err, ErrInvalidFormHTML)
-	}
-	if !versionRE.MatchString(pifoVersion) {
-		err = errors.Join(err, ErrInvalidPIFOVersion)
-	}
-	if !versionRE.MatchString(formVersion) {
-		err = errors.Join(err, ErrInvalidFormVersion)
-	}
-	if err != nil {
-		return nil, err
-	}
+func NewFormBody(def *formdef.FormDef) (b *FormBody, err error) {
 	b = &FormBody{
-		addonName:   addonName,
-		formHTML:    formHTML,
-		pifoVersion: pifoVersion,
-		formVersion: formVersion,
+		def:         def,
+		addonName:   def.AddonName,
+		formHTML:    def.HTMLName,
+		pifoVersion: pifover.PIFOVersion,
+		formVersion: def.Version,
 		fields:      make(map[string]string),
 	}
 	b.MarkDirty("")
@@ -254,6 +245,17 @@ func (b *FormBody) FormVersion() string { return b.formVersion }
 
 // TextBefore returns any text that appears before the start of the form.
 func (b *FormBody) TextBefore() string { return b.textBefore }
+
+// Fields returns an iterator of the message fields.
+func (b *FormBody) Fields() iter.Seq[field.Field] {
+	return func(yield func(field.Field) bool) {
+		for fd := range b.def.AllFields() {
+			if !yield(ff2mf{fd}) {
+				return
+			}
+		}
+	}
+}
 
 // FieldList returns a list of the field tags defined in the form.
 func (b *FormBody) FieldList() []string { return slices.Collect(maps.Keys(b.fields)) }

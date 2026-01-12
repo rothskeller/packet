@@ -262,7 +262,7 @@ func (i *Incident) ResetLogEntry(le *LogEntry) (err error) {
 			le.FromCall = strings.ToUpper(strings.TrimSpace(le.FromCall))
 		}
 		le.FromMsgID = ""
-		for f := range msg.Fields(msg) {
+		for f := range msg.Fields() {
 			switch f.Common() {
 			case "originMessageID":
 				le.FromMsgID = f.Value(msg)

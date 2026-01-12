@@ -20,8 +20,6 @@ import (
 // Message is the interface satisfied by all messages.
 type Message = msgifc.Message
 
-//-----------------------------------------------------------------------------
-
 // common is the common parts of the message that are the same for all four
 // implementations.
 type common struct {
@@ -34,7 +32,7 @@ type common struct {
 
 func (m *common) init() {
 	if m.subject.Dirty() {
-		m.Tracker.MarkDirty("envelope.common.subject")
+		m.Tracker.MarkDirty("envelope.common.Subject")
 	}
 	if m.payload.Dirty() {
 		m.Tracker.MarkDirty("envelope.common.Payload")
@@ -43,15 +41,13 @@ func (m *common) init() {
 	m.payload.OnDirty(m.Tracker.MarkDirty)
 }
 
-// Type returns the message type for the message.
-func (m *common) Type() MType { return m.MType }
+func (m *common) Type() MType              { return m.MType }
+func (m *common) SetType(t MType)          { m.MType = t }
+func (m *common) Subject() subject.Subject { return m.subject }
+func (m *common) To() string               { return m.to }
+func (m *common) Payload() payload.Payload { return m.payload }
+func (m *common) Body() body.Body          { return m.payload.Body() }
 
-// SetType sets the message type for the message.
-func (m *common) SetType(t MType) { m.MType = t }
-
-// SetSubject changes the subject object of the message.  This is used when a
-// message type Recognizes a message, and reinterprets the subject line using a
-// different Subject implementation.
 func (m *common) SetSubject(s subject.Subject) {
 	m.subject = s
 	if m.subject.Dirty() {
@@ -60,8 +56,6 @@ func (m *common) SetSubject(s subject.Subject) {
 	m.subject.OnDirty(m.Tracker.MarkDirty)
 }
 
-// RFC5322 returns the message encoded in RFC-5322 format for storage or email
-// transmission.
 func (m *common) RFC5322() string { return m.rfc5322(nil) }
 
 func (m *common) rfc5322(headers textproto.MIMEHeader) string {
@@ -95,33 +89,12 @@ func (m *common) rfc5322(headers textproto.MIMEHeader) string {
 	return sb.String()
 }
 
-// Subject returns the Subject of the message.
-func (m *common) Subject() subject.Subject { return m.subject }
-
-// To returns the list of recipients for the message.  Use ParseAddressList to
-// decode it (but note that To: lines in received messages might not be
-// syntactically correct).
-func (m *common) To() string { return m.to }
-
-// Payload returns the payload of the message.
-func (m *common) Payload() payload.Payload { return m.payload }
-
-// Body returns the body of the message.
-func (m *common) Body() body.Body { return m.payload.Body() }
-
 // common embeds three different interfaces that satisfy CacheTracker, so we
 // need explicit methods to direct calls to those functions to the correct one.
 
-// Dirty returns whether the cache is dirty (i.m., invalid).
-func (m *common) Dirty() bool { return m.Tracker.Dirty() }
-
-// MarkClean marks the cache as clean.
-func (m *common) MarkClean() { m.Tracker.MarkClean() }
-
-// OnDirty registers a function to be called when the cache becomes dirty.
+func (m *common) Dirty() bool             { return m.Tracker.Dirty() }
+func (m *common) MarkClean()              { m.Tracker.MarkClean() }
 func (m *common) OnDirty(fn func(string)) { m.Tracker.OnDirty(fn) }
-
-// MarkDirty marks the cache as dirty.
 func (m *common) MarkDirty(reason string) { m.Tracker.MarkDirty(reason) }
 
 // rfc5322AddressList parses the provided string as an address list and, if

@@ -2,15 +2,17 @@ package receipt
 
 import (
 	"fmt"
+	"iter"
 	"regexp"
 	"strings"
-	"sync"
 	"time"
 
 	"github.com/rothskeller/packet/errors"
 	"github.com/rothskeller/packet/message"
 	"github.com/rothskeller/packet/message/body"
 	"github.com/rothskeller/packet/message/cachetrack"
+	"github.com/rothskeller/packet/message/field"
+	"github.com/rothskeller/packet/message/msgifc"
 	"github.com/rothskeller/packet/message/payload"
 	"github.com/rothskeller/packet/message/subject"
 )
@@ -53,7 +55,6 @@ func NewDeliveryReceipt(rmTo, rmSubject, lmi string, deliveryTime time.Time, ext
 type deliveryReceipt struct{ *message.BaseMType }
 
 var DeliveryReceipt deliveryReceipt
-var deliveryReceiptOnce sync.Once
 
 func init() {
 	DeliveryReceipt.BaseMType = message.NewBaseMType("a delivery receipt")
@@ -63,12 +64,7 @@ func init() {
 func (mt deliveryReceipt) Recognize(m message.Message) {
 	if _, ok := m.Body().(*DeliveryReceiptBody); ok {
 		m.SetType(DeliveryReceipt)
-		deliveryReceiptOnce.Do(deliveryReceiptInit)
 	}
-}
-
-func deliveryReceiptInit() {
-	DeliveryReceipt.AddField() // TODO
 }
 
 //--- BODY --------------------------------------------------------------------
@@ -165,3 +161,14 @@ func (b *DeliveryReceiptBody) ExtraText() string { return b.extraText }
 
 func (b *DeliveryReceiptBody) Clone() body.Body { panic("should not be called") }
 func (b *DeliveryReceiptBody) IsForm() bool     { return false }
+
+func (b *DeliveryReceiptBody) Fields() iter.Seq[field.Field] {
+	return func(yield func(field.Field) bool) {
+		yield(receiptBodyField)
+	}
+}
+
+var receiptBodyField = field.NewField("", "Body").
+	Common(field.CDefaultBody).
+	ValueFunc(func(m msgifc.Message) string { return m.Body().EncodedBody() }).
+	MakeField()

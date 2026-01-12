@@ -4,7 +4,6 @@ import (
 	"bytes"
 	"fmt"
 	"io/fs"
-	"iter"
 	"log/slog"
 	"net/http"
 	"net/url"
@@ -15,10 +14,8 @@ import (
 	"github.com/rothskeller/packet/errors"
 	"github.com/rothskeller/packet/form/formdef"
 	"github.com/rothskeller/packet/form/htmlop"
-	"github.com/rothskeller/packet/form/pifover"
 	"github.com/rothskeller/packet/message"
 	"github.com/rothskeller/packet/message/field"
-	"github.com/rothskeller/packet/message/msgifc"
 	"github.com/rothskeller/packet/message/payload"
 	"github.com/rothskeller/packet/message/subject"
 	"github.com/rothskeller/pdf/v2"
@@ -47,24 +44,6 @@ func (ft EditableFormType) CreateKey() string { return ft.FormDef.CreateKey }
 // Name returns the name of the message type, as a phrase in lower case (other
 // than acronyms) starting with "a " or "an ".
 func (ft FormType) Name() string { return ft.IndefName }
-
-// Validate validates the contents of the message and returns any
-// problems.  If pifo is true, it returns only problems that
-// PackItForms would raise; otherwise the checks may be more extensive.
-func (ft FormType) Validate(m message.Message, flags msgifc.ValidateFlags) error {
-	panic("not implemented") // TODO: Implement
-}
-
-// Fields returns an iterator on the set of message fields.
-func (ft FormType) Fields(m message.Message) iter.Seq[field.Field] {
-	return func(yield func(field.Field) bool) {
-		for fd := range ft.AllFields() {
-			if !yield(ff2mf{fd}) {
-				return
-			}
-		}
-	}
-}
 
 // RenderPDF renders the form in PDF format.
 func (ft FormType) RenderPDF(m message.Message, filename, copyname string) (err error) {
@@ -211,6 +190,7 @@ func (ft FormType) Recognize(m message.Message) {
 		return
 	}
 	// It's our form.
+	body.def = ft.FormDef
 	m.SetSubject(formSubjectFromPlainSubject(m.Subject().(*subject.PlainSubject)))
 	m.SetType(ft)
 }
@@ -225,7 +205,7 @@ func (ft EditableFormType) Recognize(m message.Message) {
 func (ft EditableFormType) NewDraft() message.Message {
 	var urgent bool
 
-	body, _ := NewFormBody(ft.AddonName, ft.HTMLName, pifover.PIFOVersion, ft.Version)
+	body, _ := NewFormBody(ft.FormDef)
 	for f := range ft.AllFields() {
 		if f.Tag != "" && f.Value != "" {
 			body.SetField(f.Tag, f.Value)
@@ -334,14 +314,14 @@ func (ft EditableFormType) FromPOST(r *http.Request) (msg message.Message, err e
 		payl *payload.OutpostPayload
 		dm   *message.DraftMessage
 	)
-	if body, err = NewFormBody(ft.AddonName, ft.HTMLName, pifover.PIFOVersion, ft.Version); err != nil {
+	if body, err = NewFormBody(ft.FormDef); err != nil {
 		slog.Error("form.NewFormBody", "err", err)
 		return nil, err
 	}
 	payl = payload.NewOutpostPayload(body)
 	subj, _ = NewFormSubject("", "", ft.SubjectTag, "") // will give an error, ignored
 	dm = message.NewDraftMessage(ft, subj, payl, false)
-	for f := range ft.Fields(msg) {
+	for f := range body.Fields() {
 		if tag := f.Tag(); tag != "" {
 			if val := r.FormValue(tag); val != "" {
 				f.SetValue(msg, val)

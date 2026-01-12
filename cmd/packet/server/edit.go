@@ -14,7 +14,6 @@ import (
 	"github.com/rothskeller/packet/form/formdef"
 	"github.com/rothskeller/packet/form/formdefs"
 	"github.com/rothskeller/packet/form/htmlop"
-	"github.com/rothskeller/packet/form/pifover"
 	"github.com/rothskeller/packet/message"
 	"github.com/rothskeller/packet/message/body"
 	"github.com/rothskeller/packet/message/payload"
@@ -139,7 +138,7 @@ func submitCommon(w http.ResponseWriter, r *http.Request) message.Message {
 	if def.AddonName == "SCCoPIFO" && def.HTMLName == "form-checkin-out.html" {
 		return submitCheckInOut(w, r) // special case
 	}
-	if fbody, err = form.NewFormBody(addonName, htmlName, pifover.PIFOVersion, version); err != nil {
+	if fbody, err = form.NewFormBody(def); err != nil {
 		slog.Error("form.NewFormBody", "addon", addonName, "html", htmlName, "ver", version)
 		ErrPage(w, fmt.Sprintf("The form with addon=%s, type=%s could not be created.  Please report this error to the author.", addonName, htmlName), http.StatusInternalServerError)
 		return nil

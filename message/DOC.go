@@ -27,11 +27,9 @@
 // and registered with this package.
 //
 // All Message implementations contain a subject.Subject, which represents the
-// subject line of the message.  There are four implementations of the Subject
-// interface defined in this package group:  subject.PlainSubject,
-// subject.SCCoSubject, receipt.DeliveryReceiptSubject, and
-// receipt.ReadReceiptSubject.  Additional implementations can be defined
-// elsewhere and registered with the subject package.
+// subject line of the message.  There is one implementations of the Subject
+// interface defined in this package group:  subject.PlainSubject.  Additional
+// implementations can be defined elsewhere.
 //
 // All Message implementations contain a payload.Payload, which handles content
 // transfer encoding wrappers around the message body.  There is one

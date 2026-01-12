@@ -1,6 +1,7 @@
 package message
 
 import (
+	"iter"
 	"net/mail"
 	"net/textproto"
 	"strings"
@@ -8,6 +9,8 @@ import (
 
 	"github.com/rothskeller/packet/errors"
 	"github.com/rothskeller/packet/message/address"
+	"github.com/rothskeller/packet/message/field"
+	"github.com/rothskeller/packet/message/msgifc"
 	"github.com/rothskeller/packet/message/payload"
 	"github.com/rothskeller/packet/message/subject"
 )
@@ -40,41 +43,22 @@ func NewDraftMessage(mtype MType, subject subject.Subject, payload payload.Paylo
 	return m
 }
 
-// Draft returns whether the message is a draft.
-func (m *DraftMessage) Draft() bool { return true }
-
-// Received returns whether the message has been received by the local system.
-// It returns false for a message that has been sent or is being prepared to be
-// sent.
-func (m *DraftMessage) Received() bool { return false }
-
-// Bulletin returns whether the message will be a BBS bulletin (as opposed to a
-// private message).
-func (m *DraftMessage) Bulletin() bool { return m.bulletin }
-
-// SetBulletin sets whether the message will be a BBS bulletin (as opposed to a
-// private message).
+func (m *DraftMessage) Draft() bool       { return true }
+func (m *DraftMessage) Received() bool    { return false }
+func (m *DraftMessage) Bulletin() bool    { return m.bulletin }
+func (m *DraftMessage) ReadyToSend() bool { return m.readyToSend }
 func (m *DraftMessage) SetBulletin(bull bool) {
 	if m.bulletin != bull {
 		m.bulletin = bull
 		m.MarkDirty("envelope.DraftMessage.Bulletin")
 	}
 }
-
-// ReadyToSend returns whether the message is ready to be sent during the next
-// BBS connection.
-func (m *DraftMessage) ReadyToSend() bool { return m.readyToSend }
-
-// SetReadyToSend sets whether the draft message is ready to be sent during the
-// next BBS connection.
 func (m *DraftMessage) SetReadyToSend(ready bool) {
 	if m.readyToSend != ready {
 		m.readyToSend = ready
 		m.MarkDirty("envelope.DraftMessage.ReadyToSend")
 	}
 }
-
-// SetTo sets the list of recipients for the message.
 func (m *common) SetTo(to string) (err error) {
 	to = strings.ReplaceAll(to, "\n", " ")
 	if _, err = address.ParseList(to); err != nil {
@@ -85,8 +69,6 @@ func (m *common) SetTo(to string) (err error) {
 	return err
 }
 
-// RFC5322 returns the message encoded in RFC-5322 format for storage or email
-// transmission.
 func (m *DraftMessage) RFC5322() string {
 	hdr := make(textproto.MIMEHeader)
 
@@ -121,3 +103,45 @@ func (m *DraftMessage) ToSentMessage(from string, date time.Time) (s *SentMessag
 	s.init()
 	return s
 }
+
+func (m *DraftMessage) Fields() iter.Seq[msgifc.Field] {
+	return func(yield func(msgifc.Field) bool) {
+		if !yield(draftToField) {
+			return
+		}
+		for f := range m.Subject().Fields() {
+			if !yield(f) {
+				return
+			}
+		}
+		for f := range m.Body().Fields() {
+			if !yield(f) {
+				return
+			}
+		}
+	}
+}
+
+var draftToField = field.NewField("", "To Address").
+	Common(field.CHeaderTo).
+	ValueFunc(func(m Message) string { return m.To() }).
+	FromHumanFunc(func(s string) string {
+		if addrs, err := address.ParseList(s); err == nil {
+			trim := make([]string, len(addrs))
+			for i := range addrs {
+				trim[i] = addrs[i].Address
+			}
+			return strings.Join(trim, ", ")
+		}
+		return s
+	}).
+	SetValueFunc(func(m msgifc.Message, s string) { m.(*DraftMessage).SetTo(s) }).
+	Required().
+	ValidateFunc(func(m msgifc.Message, f msgifc.Field, vf msgifc.ValidateFlags) error {
+		if _, err := address.ParseList(m.To()); err != nil {
+			return errors.New(`Field "To Address" contains an invalid packet address.`)
+		}
+		return nil
+	}).
+	EditHelp("This is the comma-separated list of packet addresses to which the message will be sent.  Packet addresses usually have the form callsign@bbsname, and there is usually only one of them.").
+	MakeField()
