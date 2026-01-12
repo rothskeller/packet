@@ -356,13 +356,11 @@ field -
 field OpDate operatorDate
   label    "Operator: Date"
   type     date
-  presence required
   pdf      text L 401.32 R 473.56 B 104.96 T 119.44 BL 108.47
 
 field OpTime operatorTime
   label    "Operator: Time"
   type     time
-  presence required
   pdf      text L 537.64 R 569.32 B 104.96 T 119.44 BL 108.47
 
 field -

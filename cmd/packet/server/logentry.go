@@ -13,6 +13,7 @@ import (
 	"github.com/rothskeller/packet/incident"
 	"github.com/rothskeller/packet/message"
 	"github.com/rothskeller/packet/message/address"
+	"github.com/rothskeller/packet/message/msgifc"
 )
 
 // servePostEditLogEntry handles POST /edit-log-entry requests, which edit or
@@ -240,7 +241,11 @@ func toggleQueued(i *incident.Incident, le *incident.LogEntry, force bool) (warn
 		if addrs, err := address.ParseList(dm.To()); err != nil || len(addrs) == 0 {
 			return nil, errors.New("The message cannot be marked ready to send because it does not have a valid To: address.")
 		}
-		// TODO: try validating the message and returning warnings
+		if !force {
+			if warn = message.ValidateMessage(dm, msgifc.VPacket); warn != nil {
+				return warn, nil
+			}
+		}
 		dm.SetReadyToSend(true)
 		return nil, i.UpdateDraftMessage(le.Ident, dm)
 	} else {

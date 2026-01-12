@@ -13,6 +13,7 @@ import (
 	"github.com/rothskeller/packet/incident"
 	"github.com/rothskeller/packet/message"
 	"github.com/rothskeller/packet/message/address"
+	"github.com/rothskeller/packet/message/msgifc"
 )
 
 // servePostManualReceive handles POST /manual-receive requests, which contain
@@ -104,7 +105,12 @@ func (s *Server) serveGetManualSendCommand(w http.ResponseWriter, r *http.Reques
 			}
 		}
 	}
-	// TODO: validate the message and include any errors in the HTML
+	if r.FormValue("force") == "" {
+		if err = message.ValidateMessage(msg, msgifc.VPacket); err != nil {
+			http.Error(w, err.Error(), http.StatusConflict)
+			return
+		}
+	}
 	// Generate the actual send command.
 	if msg.Bulletin() {
 		cmd.WriteString("SB ")

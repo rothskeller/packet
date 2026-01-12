@@ -13,28 +13,20 @@
       })
       document.getElementById('mssent').addEventListener('click', async () => {
         const params = new URLSearchParams({dir: '{{DIR}}', id: document.getElementById('msdlg').dataset.ident})
-        let showErr
         try {
           await fetch('/mark-sent?' + params.toString(), {method: 'POST'})
           document.getElementById('msdlg').close()
         } catch (err) {
           document.getElementById('msdlg').close()
-          openErrorDialog('ManuL Send Error', err.toString())
+          openErrorDialog('Manual Send Error', err.toString())
         }
       })
     }
-    async function openManualSendDialog(ident) {
-      try {
-        const params = new URLSearchParams({dir: '{{DIR}}', id: ident})
-        const resp = await fetch('/manual-send-command?' + params.toString())
-        if (!resp.ok) throw new Error(await resp.text())
-        document.getElementById('mscmd').textContent = await resp.text()
-        const dlg = document.getElementById('msdlg')
-        dlg.dataset.ident = ident
-        dlg.showModal()
-      } catch (err) {
-        openErrorDialog('Manual Send Error', err.toString())
-      }
+    function openManualSendDialog(ident, command) {
+      document.getElementById('mscmd').textContent = command
+      const dlg = document.getElementById('msdlg')
+      dlg.dataset.ident = ident
+      dlg.showModal()
     }
   </script>
   <style>

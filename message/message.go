@@ -8,6 +8,7 @@ import (
 	"slices"
 	"strings"
 
+	"github.com/rothskeller/packet/errors"
 	"github.com/rothskeller/packet/message/address"
 	"github.com/rothskeller/packet/message/body"
 	"github.com/rothskeller/packet/message/cachetrack"
@@ -110,4 +111,13 @@ func rfc5322AddressList(s string) string {
 		return strings.Join(list, ",\r\n\t")
 	}
 	return s
+}
+
+// Validate validates an entire message.  It returns a join of all validation
+// errors, or nil if there are none.
+func ValidateMessage(msg Message, flags msgifc.ValidateFlags) (err error) {
+	for f := range msg.Fields() {
+		err = errors.Join(err, f.Validate(msg, f, flags))
+	}
+	return err
 }

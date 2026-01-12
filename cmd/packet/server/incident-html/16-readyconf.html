@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <script> // Ready Confirm Dialog
+    function setupReadyConfirmDialog() {
+      document.getElementById('rcsub').addEventListener('click', async () => {
+        const dlg = document.getElementById('rcdlg')
+        const params = new URLSearchParams({dir: '{{DIR}}', id: dlg.dataset.ident, force: 'true'})
+        if (dlg.dataset.next === 'manual') {
+          const resp = await fetch('/manual-send-command?' + params.toString())
+          dlg.close()
+          if (!resp.ok) openErrorDialog('Manual Send Error', await resp.text())
+          else openManualSendDialog(dlg.dataset.ident, await resp.text())
+        } else {
+          params.set('flag', 'Q')
+          const resp = await fetch('/toggle-flag?' + params.toString(), {method: 'POST'})
+          dlg.close()
+          if (!resp.ok) openErrorDialog('Send Message', await resp.text())
+        }
+      })
+      document.getElementById('rccan').addEventListener('click', () => {
+        document.getElementById('rcdlg').close()
+      })
+    }
+    function openReadyConfirmDialog(item, warnings, next) {
+      document.getElementById('rcmsgnum').textContent = item.querySelector('.localID').textContent
+      document.getElementById('rcdlg').dataset.ident = item.ident
+      document.getElementById('rcdlg').dataset.next = next
+      document.getElementById('rcwarn').textContent = warnings
+      document.getElementById('rcdlg').showModal()
+    }
+  </script>
+  <style>
+    #rcdlg {
+      margin: 4rem auto;
+      padding: 0 0.75rem 0.75rem;
+      z-index: 2;
+    }
+
+    #rcdlg h1 {
+      background-color: #e7cca6;
+      margin: 0 -0.75rem;
+      padding: 0.5rem 0.75rem;
+      font-size: 1.5rem;
+    }
+
+    #rcmsg {
+      max-width: 40rem;
+      margin-top: 0.75rem;
+    }
+
+    #rcmsg:first-child {
+      margin-top: 1.5rem;
+    }
+
+    #rcwarn {
+      max-width: 40rem;
+      margin-top: 0.75rem;
+      font-family: 'Courier New', Courier, monospace;
+      white-space: pre-wrap;
+    }
+
+    #rcbuttons {
+      margin-top: 1.5rem;
+      display: flex;
+      justify-content: end;
+      gap: 0.75rem;
+    }
+
+    #rccan,
+    #rcsub {
+      border-radius: 0.25rem;
+    }
+
+    #rcsub {
+      background-color: #e7cca6;
+    }
+  </style>
+</head>
+
+<body>
+  <dialog id=rcdlg>
+    <h1>Message Validation</h1>
+    <div id=rcmsg><span id=rcmsgnum></span> has the following validation errors:</div>
+    <div id=rcwarn></div>
+    <div id=rcmsg>Are you sure you want to send it in its current form?</div>
+    <div id=rcbuttons>
+      <button id=rccan type=button>Cancel</button>
+      <button id=rcsub type=button>Send Anyway</button>
+    </div>
+  </dialog>
+</body>
+
+</html>

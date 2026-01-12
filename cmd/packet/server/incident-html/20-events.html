@@ -99,7 +99,13 @@
       setupMenuItem({
         id: 'm-msg-man-send', cid: 'cm-msg-man-send',
         shown: sel => manualMode && (sel.st === 'D' || sel.st === 'Q'),
-        clicked: sel => {openManualSendDialog(sel.ident)},
+        clicked: async sel => {
+          const params = new URLSearchParams({dir: '{{DIR}}', id: sel.ident})
+          const resp = await fetch('/manual-send-command?' + params.toString())
+          if (resp.status === 409) openReadyConfirmDialog(sel, await resp.text(), 'manual')
+          else if (!resp.ok) openErrorDialog('Manual Send Error', await resp.text())
+          else openManualSendDialog(sel.ident, await resp.text())
+        },
       })
       // Message: Create Receipt
       setupMenuItem({
@@ -199,7 +205,7 @@
           const params = new URLSearchParams({dir: '{{DIR}}', id: sel.ident, flag: 'Q'})
           const resp = await fetch('/toggle-flag?' + params.toString(), {method: 'POST'})
           if (!resp.ok) openErrorDialog('Toggle Ready-to-Send Flag', await resp.text())
-          // TODO: handle 200 response
+          else if (resp.status !== 204) openReadyConfirmDialog(sel, await resp.text(), 'ready')
         },
       })
       // Message: Needs Followup
