@@ -19,13 +19,10 @@ import (
 )
 
 var (
-	addonNameRE           = regexp.MustCompile(`^[A-Z][A-Za-z0-9_]*$`)
 	fieldLineRE           = regexp.MustCompile(`(?i)^([A-Z0-9][-A-Z0-9.]*): \[`)
-	formHTMLRE            = regexp.MustCompile(`^[a-z][-a-z0-9]+\.html$`)
 	formRecognizeRE       = regexp.MustCompile(`(?s)^\n*!([A-Z][A-Za-z0-9_]*)!\n#T:.*\n!/ADDON!\n`)
 	headerRE              = regexp.MustCompile(`^#T: ([a-z][-a-z0-9]+\.html)\n#V: (\d+(?:\.\d+)*[A-Za-z]?)-(\d+(?:\.\d+)*[A-Za-z]*)\n`)
 	quoteSCCoPIFO         = strings.NewReplacer(`\`, `\\`, "\n", `\n`, "]", "`]")
-	versionRE             = regexp.MustCompile(`^\d+(?:\.\d+)*[A-Za-z]*$`)
 	ErrInvalidAddonName   = errors.New("The form addon name must start with an uppercase letter and contain only letters, digits, and underscores.")
 	ErrInvalidFormHTML    = errors.New("The form HTML name must start with a lowercase letter, contain only lowercase letters, digits, and dashes, and end with \".html\".")
 	ErrInvalidPIFOVersion = errors.New("The PackItForms version number must be a dot-separated sequence of one or more non-negative integers, followed by zero or more letters.")
@@ -267,7 +264,7 @@ func (b *FormBody) Field(tag string) string { return b.fields[tag] }
 // SetField sets the value of the form field with the specified tag.  Setting a
 // field to an empty string removes it.
 func (b *FormBody) SetField(tag, value string) {
-	b.SetFieldR(tag, value, "body.FormBody.Field."+tag)
+	b.SetFieldR(tag, value, "form.FormBody.Field."+tag)
 }
 
 // SetFieldR sets the value of the form field with the specified tag.  Setting
@@ -346,7 +343,3 @@ func encodeField(sb *strings.Builder, tag, value string) {
 	}
 	fmt.Fprintf(sb, "%s: [%s]\n", tag, value)
 }
-
-// ShouldHaveFormSubject returns true to call for parsing the subject line
-// appropriately for a form.
-func (b *FormBody) ShouldHaveFormSubject() bool { return true }

@@ -38,8 +38,7 @@ func (b *PlainBody) Clone() Body {
 	return NewPlainBody(b.EncodedBody())
 }
 
-func (b *PlainBody) IsForm() bool { return false }
-
+// Fields returns an interator on the one and only body field.
 func (b *PlainBody) Fields() iter.Seq[field.Field] {
 	return func(yield func(field.Field) bool) {
 		yield(plainBodyField)

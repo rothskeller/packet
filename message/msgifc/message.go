@@ -28,12 +28,6 @@ type Message interface {
 	// Bulletin returns whether the message is a BBS bulletin (as opposed
 	// to a private message).
 	Bulletin() bool
-	// Draft returns whether the message is a draft.
-	Draft() bool
-	// Received returns whether the message has been received by the local
-	// system.  It returns false for a message that has been sent or is
-	// being prepared to be sent.
-	Received() bool
 	// Payload is the payload of the message.
 	Payload() Payload
 	// Body is the body of the message.

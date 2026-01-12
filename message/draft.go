@@ -43,8 +43,6 @@ func NewDraftMessage(mtype MType, subject subject.Subject, payload payload.Paylo
 	return m
 }
 
-func (m *DraftMessage) Draft() bool       { return true }
-func (m *DraftMessage) Received() bool    { return false }
 func (m *DraftMessage) Bulletin() bool    { return m.bulletin }
 func (m *DraftMessage) ReadyToSend() bool { return m.readyToSend }
 func (m *DraftMessage) SetBulletin(bull bool) {

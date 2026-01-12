@@ -49,14 +49,6 @@ func (m *SentMessage) Date() time.Time { return m.date }
 // to a private message).
 func (m *SentMessage) Bulletin() bool { return m.bulletin }
 
-// Draft returns whether the message is a draft.
-func (m *SentMessage) Draft() bool { return false }
-
-// Received returns whether the message has been received by the local system.
-// It returns false for a message that has been sent or is being prepared to be
-// sent.
-func (m *SentMessage) Received() bool { return false }
-
 // Receipts returns an iterator on the receipts that we have received for the
 // message.
 func (m *SentMessage) Receipts() iter.Seq[SentMessageReceipt] {

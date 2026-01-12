@@ -8,6 +8,7 @@ import (
 	"strings"
 
 	"github.com/rothskeller/packet/errors"
+	"github.com/rothskeller/packet/message/cachetrack"
 	"github.com/rothskeller/packet/message/field"
 	"github.com/rothskeller/packet/message/messageid"
 	"github.com/rothskeller/packet/message/msgifc"
@@ -22,7 +23,7 @@ var (
 // A FormSubject is a subject that is encoded according to the Santa Clara
 // County standard for packet forms message subject lines.
 type FormSubject struct {
-	msgifc.CacheTracker
+	cachetrack.Tracker
 	encoded  string
 	msgID    string
 	handling string
@@ -91,7 +92,7 @@ func (s *FormSubject) SetSubjectMessageID(msgID string) (err error) {
 	}
 	if s.msgID != msgID {
 		s.msgID = msgID
-		s.MarkDirty("subject.FormSubject.MessageID")
+		s.MarkDirty("form.FormSubject.MessageID")
 	}
 	return err
 }
@@ -137,7 +138,7 @@ func (s *FormSubject) SetSubjectHandling(handling string) (err error) {
 	}
 	if s.handling != handling {
 		s.handling = handling
-		s.MarkDirty("subject.SCCoSubject.Handling")
+		s.MarkDirty("form.SCCoSubject.Handling")
 	}
 	return err
 }
@@ -155,7 +156,7 @@ func (s *FormSubject) SetSubjectFormTag(formtag string) (err error) {
 	}
 	if s.msgID != formtag {
 		s.formtag = formtag
-		s.MarkDirty("subject.FormSubject.FormTag")
+		s.MarkDirty("form.FormSubject.FormTag")
 	}
 	return err
 }
@@ -173,7 +174,7 @@ func (s *FormSubject) SetSubjectSummary(summary string) (err error) {
 	}
 	if s.summary != summary {
 		s.summary = summary
-		s.MarkDirty("subject.FormSubject.Summary")
+		s.MarkDirty("form.FormSubject.Summary")
 	}
 	return err
 }

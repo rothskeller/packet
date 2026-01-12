@@ -61,14 +61,6 @@ func (m *ReceivedMessage) LocalID() string { return m.localID }
 // bulletin area on the BBS.
 func (m *ReceivedMessage) Bulletin() bool { return m.rxArea != "" }
 
-// Draft returns whether the message is a draft.
-func (m *ReceivedMessage) Draft() bool { return false }
-
-// Received returns whether the message has been received by the local system.
-// It returns false for a message that has been sent or is being prepared to be
-// sent.
-func (m *ReceivedMessage) Received() bool { return true }
-
 // RFC5322 returns the message encoded in RFC-5322 format for storage or email
 // transmission.
 func (m *ReceivedMessage) RFC5322() string {

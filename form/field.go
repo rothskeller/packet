@@ -2,6 +2,7 @@ package form
 
 import (
 	"fmt"
+	"iter"
 	"regexp"
 	"slices"
 	"strconv"
@@ -269,7 +270,7 @@ func (f ff2mf) SetValue(msg msgifc.Message, val string) {
 		// Look for other fields that have a value but that will be
 		// disallowed after this change.  If any are found, remove
 		// their values.
-		for f2 := range msg.Type().(*FormType).AllFields() {
+		for f2 := range msg.Type().(EditableFormType).AllFields() {
 			if f2 == f.fd || f2.Tag == "" || fv(msg, f2) == "" {
 				continue
 			}
@@ -283,18 +284,18 @@ func (f ff2mf) SetValue(msg msgifc.Message, val string) {
 				}
 			}
 			if presence == formdef.Blocked {
-				reason := "body.FormBody.Field." + f2.Tag
+				reason := "form.FormBody.Field." + f2.Tag
 				if f2.Common != "" {
-					reason = "body.FormBody.Common." + f2.Common
+					reason = "form.FormBody.Common." + f2.Common
 				}
 				msg.Body().(*FormBody).SetFieldR(f2.Tag, "", reason)
 			}
 		}
 	}
 	if f.fd.Tag != "" {
-		reason := "body.FormBody.Field." + f.fd.Tag
+		reason := "form.FormBody.Field." + f.fd.Tag
 		if f.fd.Common != "" {
-			reason = "body.FormBody.Common." + f.fd.Common
+			reason = "form.FormBody.Common." + f.fd.Common
 		}
 		msg.Body().(*FormBody).SetFieldR(f.fd.Tag, val, reason)
 	} else if f.fd.Type == "dateTime" {
@@ -559,7 +560,9 @@ func condstr(m msgifc.Message, tag, val string) string {
 	if tag == "" {
 		return ""
 	}
-	for fd := range m.Type().(*FormType).AllFields() {
+	for fd := range m.Type().(interface {
+		AllFields() iter.Seq[*formdef.FieldDef]
+	}).AllFields() {
 		if fd.Tag == tag {
 			label, ftype = fd.Label, fd.Type
 			break

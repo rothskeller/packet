@@ -10,6 +10,7 @@ import (
 	"strings"
 
 	"github.com/rothskeller/packet/errors"
+	"github.com/rothskeller/packet/message/cachetrack"
 	"github.com/rothskeller/packet/message/field"
 	"github.com/rothskeller/packet/message/messageid"
 	"github.com/rothskeller/packet/message/msgifc"
@@ -22,7 +23,7 @@ type Subject = msgifc.Subject
 // a form.  It should comply with the Santa Clara County standard for packet
 // message subject lines.
 type PlainSubject struct {
-	msgifc.CacheTracker
+	cachetrack.Tracker
 	encoded  string
 	msgID    string
 	handling string
