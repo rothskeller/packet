@@ -6,6 +6,8 @@ import (
 	"path/filepath"
 	"strconv"
 	"strings"
+
+	"github.com/rothskeller/pdf/v2"
 )
 
 func Write(filename string, form *FormDef) (err error) {
@@ -34,15 +36,18 @@ func Write(filename string, form *FormDef) (err error) {
 	if form.PDFFile != "" {
 		fmt.Fprintf(fh, "pdfFile  %s\n", filepath.Base(form.PDFFile))
 	}
+	fmt.Fprint(fh, "deftext ")
+	emitTextStyles(fh, form.DefaultTextStyle, nil)
+	fmt.Fprintln(fh)
 	for _, fd := range form.Fields {
-		emitField(fh, fd)
+		emitField(fh, fd, form.DefaultTextStyle)
 	}
 	return nil
 }
 
-func emitField(fh *os.File, fd *FieldDef) {
+func emitField(fh *os.File, fd *FieldDef, deftext *pdf.Text) {
 	for _, c := range fd.Children {
-		emitField(fh, c)
+		emitField(fh, c, deftext)
 	}
 	switch {
 	case fd.Tag != "" && fd.Common != "":
@@ -117,11 +122,11 @@ func emitField(fh *os.File, fd *FieldDef) {
 		fmt.Fprintf(fh, "  compare  %s\n", fd.CompareMethod)
 	}
 	for _, pr := range fd.PDF {
-		emitPDFRenderer(fh, pr)
+		emitPDFRenderer(fh, pr, deftext)
 	}
 }
 
-func emitPDFRenderer(fh *os.File, pr PDFFieldRenderer) {
+func emitPDFRenderer(fh *os.File, pr PDFFieldRenderer, deftext *pdf.Text) {
 	fmt.Fprint(fh, "  pdf      ")
 	for _, c := range pr.Conditions {
 		if c.Set {
@@ -185,34 +190,38 @@ func emitPDFRenderer(fh *os.File, pr PDFFieldRenderer) {
 		if r.Baseline != 0 {
 			fmt.Fprintf(fh, " BL %6.2f", r.Baseline)
 		}
-		if r.Font != "Times-Roman" {
-			fmt.Fprintf(fh, " FT %s", r.Font)
-		}
-		if r.FontSize != 12 {
-			fmt.Fprintf(fh, " FS %.1f", r.FontSize)
-		}
-		if r.MinFontSize != 8 {
-			fmt.Fprintf(fh, " FS %.1f", r.MinFontSize)
-		}
-		if r.LineHeight != 1.15 {
-			fmt.Fprintf(fh, " FS %.2f", r.LineHeight)
-		}
-		if r.Align != "" && r.Align != "lF" {
-			fmt.Fprintf(fh, " A %s", r.Align)
-		}
-		if !r.Wrap {
-			fmt.Fprint(fh, " WR f")
-		}
-		if r.Clip {
-			fmt.Fprint(fh, " CL t")
-		}
-		if r.Color[0] != 0 || r.Color[1] != 0 || r.Color[2] != 153 {
-			fmt.Fprintf(fh, " C %02X%02X%02X", r.Color[0], r.Color[1], r.Color[2])
-		}
+		emitTextStyles(fh, r.Text, deftext)
 	}
 	fmt.Fprintln(fh)
-
 }
+
+func emitTextStyles(fh *os.File, ts, deftext *pdf.Text) {
+	if deftext == nil || ts.Font != deftext.Font {
+		fmt.Fprintf(fh, " FT %s", ts.Font)
+	}
+	if deftext == nil || ts.FontSize != deftext.FontSize {
+		fmt.Fprintf(fh, " FS %.1f", ts.FontSize)
+	}
+	if deftext == nil || ts.MinFontSize != deftext.MinFontSize {
+		fmt.Fprintf(fh, " FS %.1f", ts.MinFontSize)
+	}
+	if deftext == nil || ts.LineHeight != deftext.LineHeight {
+		fmt.Fprintf(fh, " FS %.2f", ts.LineHeight)
+	}
+	if deftext == nil || ts.Align != "" && ts.Align != deftext.Align {
+		fmt.Fprintf(fh, " A %s", ts.Align)
+	}
+	if deftext == nil || ts.Wrap != deftext.Wrap {
+		fmt.Fprint(fh, " WR f")
+	}
+	if deftext == nil || ts.Clip != deftext.Clip {
+		fmt.Fprint(fh, " CL t")
+	}
+	if deftext == nil || ts.Color[0] != deftext.Color[0] || ts.Color[1] != deftext.Color[1] || ts.Color[2] != deftext.Color[2] {
+		fmt.Fprintf(fh, " C %02X%02X%02X", ts.Color[0], ts.Color[1], ts.Color[2])
+	}
+}
+
 func maybeQuote(s string) string {
 	if strings.ContainsAny(s, " #") {
 		return strconv.Quote(s)

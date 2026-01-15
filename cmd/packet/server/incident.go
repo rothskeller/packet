@@ -8,12 +8,15 @@ import (
 	"fmt"
 	"log/slog"
 	"net/http"
+	"os"
 	"os/exec"
+	"path/filepath"
 	"regexp"
 	"slices"
 	"strconv"
 	"strings"
 	"sync"
+	"time"
 
 	"github.com/rothskeller/packet/form/htmlop"
 	"github.com/rothskeller/packet/form/pifover"
@@ -161,4 +164,23 @@ func setServerCanPrint() {
 			serverPrintCmd = ""
 		}
 	}
+}
+
+func (s *Server) servePostViewICS309(w http.ResponseWriter, r *http.Request) {
+	var dir string
+
+	signature := r.FormValue("signature")
+	serveIncident(w, r, false, func(i *incident.Incident) (err error) {
+		dir = i.Dir
+		return i.GenerateICS309(signature)
+	}, func() error {
+		if fh, err := os.Open(filepath.Join(dir, "ICS-309.pdf")); err != nil {
+			return err
+		} else {
+			w.Header().Set("Content-Type", "application/pdf")
+			http.ServeContent(w, r, "ICS-309.pdf", time.Time{}, fh)
+			fh.Close()
+			return nil
+		}
+	})
 }

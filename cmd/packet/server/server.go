@@ -333,6 +333,7 @@ func (s *Server) registerHandlers() {
 	s.mux.HandleFunc("POST /toggle-flag", s.servePostToggleFlag)
 	s.mux.HandleFunc("POST /new-message-from", s.servePostNewMessageFrom)
 	s.mux.HandleFunc("POST /delete-message", s.servePostDeleteMessage)
+	s.mux.HandleFunc("POST /view-ics309", s.servePostViewICS309)
 	//s.mux.HandleFunc("GET /choose-incident", s.serveChooseIncident)
 	//s.mux.HandleFunc("GET /incident", s.serveGetIncident)
 	// s.mux.HandleFunc("GET /manual", s.serveGetManual)

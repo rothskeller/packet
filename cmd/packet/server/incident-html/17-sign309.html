@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <script> // Sign ICS-309 Dialog
+    function setupSignICS309Dialog() {
+      document.getElementById('s3can').addEventListener('click', () => {
+        document.getElementById('s3dlg').close()
+      })
+      document.getElementById('s3sub').addEventListener('click', async () => {
+        document.getElementById('s3dlg').close()
+      })
+    }
+    function openSignICS309Dialog() {
+      document.getElementById('s3dlg').showModal()
+    }
+  </script>
+  <style>
+    #s3dlg {
+      margin: 4rem auto;
+      padding: 0 0.75rem 0.75rem;
+      z-index: 2;
+    }
+
+    #s3dlg h1 {
+      background-color: #a8e8a8;
+      margin: 0 -0.75rem;
+      padding: 0.5rem 0.75rem;
+      font-size: 1.5rem;
+    }
+
+    #s3err:not(:empty) {
+      color: red;
+      margin-top: 1.5rem;
+      max-width: 40rem;
+    }
+
+    #s3dlg p {
+      margin-top: 0.75rem;
+      max-width: 40rem;
+    }
+
+    #s3sign {
+      margin-left: 2rem;
+      width: 20rem;
+    }
+
+    #s3note {
+      color: red;
+    }
+
+    #s3buttons {
+      margin-top: 1.5rem;
+      display: flex;
+      justify-content: end;
+      gap: 0.75rem;
+    }
+
+    #s3can,
+    #s3sub {
+      border-radius: 0.25rem;
+    }
+
+    #s3sub {
+      background-color: #a8e8a8;
+    }
+  </style>
+</head>
+
+<body>
+  <dialog id=s3dlg>
+    <h1>Generate ICS-309 Log</h1>
+    <div id=s3err></div>
+    <form id=s3form action=/view-ics309 method=POST target=_blank>
+      <input type=hidden name=dir value={{DIR}}>
+      <p>If you want to sign the ICS-309 log, enter your signature here. (If you don't, leave it blank.)</p>
+      <p><label for=s3sign>Signature</label> <input id=s3sign name=signature></p>
+      <p>
+        <span id=s3note>NOTICE:</span>
+        By adding your signature, you are making a legal assertion that the log is accurate. Do not sign it unless you
+        are sure of that.
+      </p>
+      <div id=s3buttons>
+        <button type=button id=s3can>Cancel</button>
+        <button type=submit id=s3sub>Generate ICS-309</button>
+      </div>
+    </form>
+  </dialog>
+</body>
+
+</html>

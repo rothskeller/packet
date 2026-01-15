@@ -52,6 +52,8 @@ type FormDef struct {
 	// used to render this version of this form in PDF format.  If may be
 	// empty for a plain text rendering.
 	PDFFile string
+	// DefaultTextStyle is the default style for all PDF text objects.
+	DefaultTextStyle *pdf.Text
 	// Fields is a list of the field definitions of the form.
 	Fields []*FieldDef
 }

@@ -5,6 +5,7 @@ import (
 	"encoding/hex"
 	"errors"
 	"fmt"
+	"io"
 	"io/fs"
 	"os"
 	"path"
@@ -19,6 +20,16 @@ import (
 )
 
 var markupColor = []byte{0, 0, 153, 255}
+var defaultTextStyle = &pdf.Text{
+	Font:        "Times-Roman",
+	FontSize:    12.0,
+	MinFontSize: 8.0,
+	LineHeight:  1.15,
+	Color:       markupColor,
+	Align:       "lF",
+	Wrap:        true,
+	Clip:        false,
+}
 
 func Read(filename string) (form *FormDef, err error) {
 	if filepath.IsAbs(filename) {
@@ -35,20 +46,25 @@ func Read(filename string) (form *FormDef, err error) {
 }
 
 func ReadFS(formsFS fs.FS, filename string) (form *FormDef, err error) {
+	var fh fs.File
+
+	if fh, err = formsFS.Open(filename); err != nil {
+		return nil, err
+	}
+	defer fh.Close()
+	return ReadFH(formsFS, fh, filename)
+}
+
+func ReadFH(formsFS fs.FS, fh io.Reader, filename string) (form *FormDef, err error) {
 	var (
-		fh      fs.File
 		in      *bufio.Scanner
 		fields  []string
 		line    string
 		linenum int
 		fd      *FieldDef
 	)
-	if fh, err = formsFS.Open(filename); err != nil {
-		return nil, err
-	}
-	defer fh.Close()
 	in = bufio.NewScanner(fh)
-	form = &FormDef{FormFS: formsFS}
+	form = &FormDef{FormFS: formsFS, DefaultTextStyle: defaultTextStyle}
 TOPLEVEL:
 	for in.Scan() {
 		linenum++
@@ -85,6 +101,14 @@ TOPLEVEL:
 			form.HTMLFile = strings.Join(fields[1:], " ")
 		case "pdfFile":
 			form.PDFFile = strings.Join(fields[1:], " ")
+		case "deftext":
+			if attrs, err := parsePDFAttrs(fields[1:]); err != nil {
+				return nil, fmt.Errorf("%s:%d: %s", filename, linenum, err)
+			} else if form.DefaultTextStyle, err = parseTextStyles(attrs, defaultTextStyle); err != nil {
+				return nil, fmt.Errorf("%s:%d: %s", filename, linenum, err)
+			} else if len(attrs) != 0 {
+				return nil, fmt.Errorf("%s:%d: excess attributes", filename, linenum)
+			}
 		case "field":
 			break TOPLEVEL
 		default:
@@ -189,7 +213,7 @@ TOPLEVEL:
 			case "compare":
 				fd.CompareMethod = strings.Join(fields[1:], " ")
 			case "pdf":
-				if err = parsePDFRender(fd, fields[1:]); err != nil {
+				if err = parsePDFRender(fd, fields[1:], form.DefaultTextStyle); err != nil {
 					return nil, fmt.Errorf("%s:%d: %s", filename, linenum, err)
 				}
 			case "children":
@@ -253,7 +277,7 @@ func parsePresence(fd *FieldDef, tokens []string) (err error) {
 	return nil
 }
 
-func parsePDFRender(fd *FieldDef, words []string) (err error) {
+func parsePDFRender(fd *FieldDef, words []string, deftext *pdf.Text) (err error) {
 	var (
 		pr    PDFFieldRenderer
 		attrs map[string]string
@@ -279,7 +303,7 @@ func parsePDFRender(fd *FieldDef, words []string) (err error) {
 	case "cross":
 		pr.Renderer, err = parseCrossParams(attrs)
 	case "text":
-		pr.Renderer, err = parseTextParams(attrs)
+		pr.Renderer, err = parseTextParams(attrs, deftext)
 	default:
 		err = fmt.Errorf("unknown shape name %q", words[0])
 	}
@@ -406,19 +430,133 @@ func parseCrossParams(attrs map[string]string) (r CrossRenderer, err error) {
 	return r, nil
 }
 
-func parseTextParams(attrs map[string]string) (r TextRenderer, err error) {
-	var text pdf.Text
+func parseTextStyles(attrs map[string]string, deftext *pdf.Text) (ts *pdf.Text, err error) {
+	ts = new(pdf.Text)
 
+	if ts.Color, err = getColorAttr(attrs, "C", deftext.Color); err != nil {
+		return nil, err
+	}
+	ts.Color = ts.Color[:3] // remove alpha
+	if s, ok := attrs["FT"]; ok {
+		delete(attrs, "FT")
+		ts.Font = s
+	} else {
+		ts.Font = deftext.Font
+	}
+	if s, ok := attrs["FS"]; ok {
+		if v, err := strconv.ParseFloat(s, 64); err != nil || v <= 0 {
+			return nil, errors.New("invalid FS value")
+		} else {
+			delete(attrs, "FS")
+			ts.FontSize = v
+		}
+	} else {
+		ts.FontSize = deftext.FontSize
+	}
+	if s, ok := attrs["MS"]; ok {
+		if v, err := strconv.ParseFloat(s, 64); err != nil || v <= 0 || v > ts.FontSize {
+			return nil, errors.New("invalid MS value")
+		} else {
+			delete(attrs, "MS")
+			ts.MinFontSize = v
+		}
+	} else {
+		ts.MinFontSize = deftext.MinFontSize
+	}
+	if s, ok := attrs["LH"]; ok {
+		if v, err := strconv.ParseFloat(s, 64); err != nil || v <= 0 {
+			return nil, errors.New("invalid LH value")
+		} else {
+			delete(attrs, "LH")
+			ts.LineHeight = v
+		}
+	} else {
+		ts.LineHeight = deftext.LineHeight
+	}
+	if s, ok := attrs["A"]; ok {
+		delete(attrs, "A")
+		ts.Align = s
+		if _, ok := attrs["HA"]; ok {
+			return nil, errors.New("cannot specify both A and HA")
+		}
+		if _, ok := attrs["VA"]; ok {
+			return nil, errors.New("cannot specify both A and VA")
+		}
+	} else {
+		if s, ok := attrs["HA"]; ok {
+			delete(attrs, "HA")
+			switch s {
+			case "l", "left":
+				ts.Align = "l"
+			case "c", "center":
+				ts.Align = "c"
+			case "r", "right":
+				ts.Align = "r"
+			default:
+				return nil, errors.New("invalid HA value")
+			}
+		} else {
+			ts.Align = deftext.Align[:1]
+		}
+		if s, ok := attrs["VA"]; ok {
+			delete(attrs, "VA")
+			switch s {
+			case "t", "top":
+				ts.Align += "t"
+			case "c", "center":
+				ts.Align += "m"
+			case "b", "bottom":
+				ts.Align += "b"
+			case "baseline":
+				ts.Align += "F"
+			default:
+				return nil, errors.New("invalid VA value")
+			}
+		} else {
+			ts.Align += deftext.Align[1:]
+		}
+	}
+	if s, ok := attrs["WR"]; ok {
+		delete(attrs, "WR")
+		switch s {
+		case "t", "true":
+			ts.Wrap = true
+		case "f", "false":
+			ts.Wrap = false
+		default:
+			return nil, errors.New("invalid WR value")
+		}
+	} else {
+		ts.Wrap = deftext.Wrap
+	}
+	if s, ok := attrs["CL"]; ok {
+		delete(attrs, "CL")
+		switch s {
+		case "t", "true":
+			ts.Clip = true
+		case "f", "false":
+			ts.Clip = false
+		default:
+			return nil, errors.New("invalid CL value")
+		}
+	} else {
+		ts.Clip = deftext.Clip
+	}
+	return ts, nil
+}
+
+func parseTextParams(attrs map[string]string, deftext *pdf.Text) (r TextRenderer, err error) {
+	var text *pdf.Text
+
+	if text, err = parseTextStyles(attrs, deftext); err != nil {
+		return r, err
+	}
 	if text.Rectangle, err = getRectangleAttrs(attrs); err != nil {
 		return r, err
 	}
 	if text.Page, err = getPageAttr(attrs); err != nil {
 		return r, err
 	}
-	if text.Color, err = getColorAttr(attrs, "C", markupColor); err != nil {
-		return r, err
-	}
-	text.Color = text.Color[:3] // remove alpha
 	if s, ok := attrs["S"]; ok {
 		delete(attrs, "S")
 		text.String = s
@@ -431,113 +569,10 @@ func parseTextParams(attrs map[string]string) (r TextRenderer, err error) {
 			text.Baseline = v
 		}
 	}
-	if s, ok := attrs["FT"]; ok {
-		delete(attrs, "FT")
-		text.Font = s
-	} else {
-		text.Font = "Times-Roman"
-	}
-	if s, ok := attrs["FS"]; ok {
-		if v, err := strconv.ParseFloat(s, 64); err != nil || v <= 0 {
-			return r, errors.New("invalid FS value")
-		} else {
-			delete(attrs, "FS")
-			text.FontSize = v
-		}
-	} else {
-		text.FontSize = 12
-	}
-	if s, ok := attrs["MS"]; ok {
-		if v, err := strconv.ParseFloat(s, 64); err != nil || v <= 0 || v > text.FontSize {
-			return r, errors.New("invalid MS value")
-		} else {
-			delete(attrs, "MS")
-			text.MinFontSize = v
-		}
-	} else {
-		text.MinFontSize = 8
-	}
-	if s, ok := attrs["LH"]; ok {
-		if v, err := strconv.ParseFloat(s, 64); err != nil || v <= 0 {
-			return r, errors.New("invalid LH value")
-		} else {
-			delete(attrs, "LH")
-			text.LineHeight = v
-		}
-	} else {
-		text.LineHeight = 1.15
-	}
-	if s, ok := attrs["A"]; ok {
-		delete(attrs, "A")
-		text.Align = s
-		if _, ok := attrs["HA"]; ok {
-			return r, errors.New("cannot specify both A and HA")
-		}
-		if _, ok := attrs["VA"]; ok {
-			return r, errors.New("cannot specify both A and VA")
-		}
-	} else {
-		if s, ok := attrs["HA"]; ok {
-			delete(attrs, "HA")
-			switch s {
-			case "l", "left":
-				text.Align = "l"
-			case "c", "center":
-				text.Align = "c"
-			case "r", "right":
-				text.Align = "r"
-			default:
-				return r, errors.New("invalid HA value")
-			}
-		} else {
-			text.Align = "l"
-		}
-		if s, ok := attrs["VA"]; ok {
-			delete(attrs, "VA")
-			switch s {
-			case "t", "top":
-				text.Align += "t"
-			case "c", "center":
-				text.Align += "m"
-			case "b", "bottom":
-				text.Align += "b"
-			case "baseline":
-				text.Align += "F"
-			default:
-				return r, errors.New("invalid VA value")
-			}
-		} else {
-			text.Align += "F"
-		}
-	}
-	if s, ok := attrs["WR"]; ok {
-		delete(attrs, "WR")
-		switch s {
-		case "t", "true":
-			text.Wrap = true
-		case "f", "false":
-			text.Wrap = false
-		default:
-			return r, errors.New("invalid WR value")
-		}
-	} else {
-		text.Wrap = true
-	}
-	if s, ok := attrs["CL"]; ok {
-		delete(attrs, "CL")
-		switch s {
-		case "t", "true":
-			text.Clip = true
-		case "f", "false":
-			text.Clip = false
-		default:
-			return r, errors.New("invalid CL value")
-		}
-	}
 	if len(attrs) != 0 {
 		return r, errors.New("excess attributes")
 	}
-	r.Text = &text
+	r.Text = text
 	return r, nil
 }
 
