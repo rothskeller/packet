@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>Open/Create Incident - SCCo Packet</title>
+  <script>
+    window.addEventListener('load', function () {
+      document.getElementById('subdirs').addEventListener('dblclick', function () {this.form.submit()})
+    })
+  </script>
+  <style>
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+    }
+
+    :root,
+    input,
+    select {
+      font-family: sans-serif;
+      font-size: 1rem;
+    }
+
+    body {
+      margin: 0 0.75rem;
+    }
+
+    h1 {
+      background-color: #a8e8a8;
+      margin: 0 -0.75rem;
+      padding: 0.5rem 0.75rem;
+      font-size: 1.5rem;
+    }
+
+    p,
+    form {
+      max-width: 40rem;
+    }
+
+    form,
+    #browse {
+      display: flex;
+      flex-direction: column;
+      align-items: stretch;
+    }
+
+    #browse {
+      margin-top: 1.5rem;
+    }
+
+    #buttons {
+      margin: 0.5rem 0 0.75rem;
+      display: flex;
+      justify-content: end;
+      gap: 0.75rem;
+    }
+
+    input[type="submit"] {
+      border-radius: 0.25rem;
+      border: 1px solid #ccc;
+    }
+
+    #open,
+    #create {
+      background-color: #a8e8a8;
+    }
+
+    #mkdir-row {
+      margin-top: 0.75rem;
+      display: flex;
+      justify-content: stretch;
+      align-items: baseline;
+      gap: 0.75rem;
+    }
+
+    #mkname {
+      flex: auto;
+    }
+
+    #error {
+      color: red;
+      max-width: 40rem;
+    }
+  </style>
+</head>
+
+<body>
+  <h1>Open or Create Incident</h1>
+  <p>
+    Select the directory containing the incident you want to open.
+    To create a new incident, select or create an empty directory.
+  </p>
+  <form method=POST>
+    <input type=hidden name=return value={{return}}>
+    <input id=dir name=dir value="{{DIR}}" autofocus>
+    <div id=buttons>
+      <if:return><input type=submit id=cancel name=cancel value=Cancel></if:return>
+      <input type=submit id=open name=open value="Open">
+    </div>
+    <if:error>
+      <div id=error>{{error}}</div>
+    </if:error>
+    <if:browse>
+      <div id=browse>
+        <div>Browse to another directory:</div>
+        <select id=subdirs name=subdir size=10>
+          <if:parent>
+            <option value="..">.. (up)</option>
+          </if:parent>
+          <for:subdirs>
+            <option value={{.}}>{{.}}</option>
+          </for:subdirs>
+        </select>
+      </div>
+    </if:browse>
+  </form>
+  <if:mkdir>
+    <form method=POST>
+      <input type=hidden name=return value={{return}}>
+      <input type=hidden name=dir value="{{DIR}}">
+      <div id=mkdir-row>
+        <span>Create subdirectory named: </span>
+        <input id=mkname name=mkname>
+        <input type=submit name=mkdir value="Create Subdirectory">
+      </div>
+    </form>
+  </if:mkdir>
+</body>
+
+</html>

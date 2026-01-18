@@ -3,6 +3,7 @@ package server
 
 import (
 	"context"
+	_ "embed"
 	"fmt"
 	"io"
 	"log"
@@ -334,6 +335,8 @@ func (s *Server) registerHandlers() {
 	s.mux.HandleFunc("POST /new-message-from", s.servePostNewMessageFrom)
 	s.mux.HandleFunc("POST /delete-message", s.servePostDeleteMessage)
 	s.mux.HandleFunc("POST /view-ics309", s.servePostViewICS309)
+	s.mux.HandleFunc("GET /manpage.html", s.serveGetManPage)
+	s.mux.HandleFunc("/incident-open", s.serveIncidentOpen)
 	//s.mux.HandleFunc("GET /choose-incident", s.serveChooseIncident)
 	//s.mux.HandleFunc("GET /incident", s.serveGetIncident)
 	// s.mux.HandleFunc("GET /manual", s.serveGetManual)
@@ -342,6 +345,14 @@ func (s *Server) registerHandlers() {
 	// s.mux.HandleFunc("GET /manual-setup", s.serveGetManualSetup)
 	// s.mux.HandleFunc("POST /manual-setup", s.servePostManualSetup)
 	// s.mux.HandleFunc("/manual-assets/{asset...}", s.serveManualAsset)
+}
+
+//go:embed manpage.html
+var manpageHTML []byte
+
+func (s *Server) serveGetManPage(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "text/html; charset=utf-8")
+	w.Write(manpageHTML)
 }
 
 // serveIncident is a helper function for handlers that take a dir= parameter

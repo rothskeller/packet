@@ -61,17 +61,27 @@
         if (settings.cid) setupMenuItem1(settings.cid, settings)
       }
       // Incident: New
-      // TODO: 
       // Incident: Open
-      // TODO: 
+      setupMenuItem({
+        id: 'm-inc-new', cid: 'm-inc-open',
+        clicked: () => {
+          const params = new URLSearchParams({return: '{{DIR}}'})
+          location.href = '/incident-open?' + params.toString()
+        },
+      })
       // Incident: Settings
-      // TODO: 
+      setupMenuItem({
+        id: 'm-inc-settings',
+        clicked: () => {
+          const params = new URLSearchParams({dir: '{{DIR}}'})
+          location.href = '/incident-config?' + params.toString()
+        },
+      })
       // Incident: ICS-309
       setupMenuItem({
         id: 'm-inc-ics-309',
         clicked: () => {openSignICS309Dialog()}
       })
-      // TODO: 
       // Incident: Archive
       // TODO: 
       // Message: New
@@ -263,13 +273,20 @@
       // Connect: Abort Connection
       // TODO: 
       // Help: Software Manual
-      // TODO: 
+      setupMenuItem({
+        id: 'm-help-man',
+        clicked: () => {window.open('/manpage.html', 'manpage')},
+      })
       // Help: Packet Email List
-      // TODO:
+      setupMenuItem({
+        id: 'm-help-list',
+        clicked: () => {window.open('https://scc-ares-races.groups.io/g/packet', '_blank')},
+      })
       // Help: Github Repository
-      // TODO: 
-      // Help: About SCCo Packet
-      // TODO: 
+      setupMenuItem({
+        id: 'm-help-repo',
+        clicked: () => {window.open('https://github.com/rothskeller/packet', '_blank')},
+      })
     }
   </script>
 </head>
