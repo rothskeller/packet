@@ -2,6 +2,7 @@
 package server
 
 import (
+	"bytes"
 	"context"
 	_ "embed"
 	"fmt"
@@ -22,6 +23,8 @@ import (
 	"github.com/rothskeller/packet/cmd/packet/osdep"
 	"github.com/rothskeller/packet/errors"
 	"github.com/rothskeller/packet/form/formdefs"
+	"github.com/rothskeller/packet/form/htmlop"
+	"github.com/rothskeller/packet/form/pifover"
 	"github.com/rothskeller/packet/incident"
 	"github.com/rothskeller/packet/message"
 )
@@ -337,22 +340,20 @@ func (s *Server) registerHandlers() {
 	s.mux.HandleFunc("POST /view-ics309", s.servePostViewICS309)
 	s.mux.HandleFunc("GET /manpage.html", s.serveGetManPage)
 	s.mux.HandleFunc("/incident-open", s.serveIncidentOpen)
-	//s.mux.HandleFunc("GET /choose-incident", s.serveChooseIncident)
-	//s.mux.HandleFunc("GET /incident", s.serveGetIncident)
-	// s.mux.HandleFunc("GET /manual", s.serveGetManual)
-	// s.mux.HandleFunc("POST /manual-command", s.servePostManualCommand)
-	// s.mux.HandleFunc("POST /manual-create", s.servePostManualCreate)
-	// s.mux.HandleFunc("GET /manual-setup", s.serveGetManualSetup)
-	// s.mux.HandleFunc("POST /manual-setup", s.servePostManualSetup)
-	// s.mux.HandleFunc("/manual-assets/{asset...}", s.serveManualAsset)
 }
 
 //go:embed manpage.html
 var manpageHTML []byte
 
 func (s *Server) serveGetManPage(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Content-Type", "text/html; charset=utf-8")
-	w.Write(manpageHTML)
+	if doc, err := htmlop.Parse(bytes.NewReader(manpageHTML)); err != nil {
+		ErrPage(w, err.Error(), http.StatusInternalServerError)
+		return
+	} else {
+		htmlop.Expand(doc, map[string]string{"VERSION": pifover.PIFOVersion}) // TODO: better source
+		w.Header().Set("Content-Type", "text/html; charset=utf-8")
+		htmlop.Minify(w, doc)
+	}
 }
 
 // serveIncident is a helper function for handlers that take a dir= parameter

@@ -10,8 +10,8 @@ import (
 
 	"github.com/spf13/cobra"
 
-	"github.com/rothskeller/packet/form"
 	"github.com/rothskeller/packet/message"
+	"github.com/rothskeller/packet/message/field"
 )
 
 var convertCmd = &cobra.Command{
@@ -45,7 +45,8 @@ and a sequence number.`,
 			spool   string
 			ents    []os.DirEntry
 		)
-		// Verify that the message file is reachable.
+		// Read the message file.  Note that ReadNoHeader always returns
+		// a DraftMessage.
 		msgfile = decodeArg(args[0])
 		if msg, err = message.ReadNoHeader(msgfile); msg == nil {
 			slog.Error("can't read message file", "f", msgfile, "err", err)
@@ -55,24 +56,20 @@ and a sequence number.`,
 		// info and the destination message ID.
 		switch args[1] {
 		case "unread", "read", "received", "retrieved":
-			if ft, ok := msg.Type().(form.FormType); ok {
-				body := msg.Body().(*form.FormBody)
-				body.SetField("RECEIVED", "RECEIVED")
-				for fd := range ft.AllFields() {
-					switch fd.Common {
-					case "destinationMessageID":
-						body.SetField(fd.Tag, decodeArg(args[2]))
-					case "operatorCall":
-						body.SetField(fd.Tag, decodeArg(args[3]))
-					case "operatorName":
-						body.SetField(fd.Tag, decodeArg(args[4]))
-					case "operatorDate":
-						date, _, _ := strings.Cut(decodeArg(args[5]), " ")
-						body.SetField(fd.Tag, date)
-					case "operatorTime":
-						_, time, _ := strings.Cut(decodeArg(args[5]), " ")
-						body.SetField(fd.Tag, time)
-					}
+			for fd := range msg.Fields() {
+				switch fd.Common() {
+				case field.CDestinationMessageID:
+					fd.SetValue(msg, decodeArg(args[2]))
+				case field.COperatorCall:
+					fd.SetValue(msg, decodeArg(args[3]))
+				case field.COperatorName:
+					fd.SetValue(msg, decodeArg(args[4]))
+				case field.COperatorDate:
+					date, _, _ := strings.Cut(decodeArg(args[5]), " ")
+					fd.SetValue(msg, date)
+				case field.COperatorTime:
+					_, time, _ := strings.Cut(decodeArg(args[5]), " ")
+					fd.SetValue(msg, time)
 				}
 			}
 		}

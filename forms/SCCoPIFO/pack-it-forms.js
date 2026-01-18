@@ -285,10 +285,18 @@ async function on_submit(evt) {
   if (submit && !adjust_submit()) return;
   const fd = new FormData(the_form);
   if (submit) fd.set("readyToSend", "true");
-  const resp = await fetch(the_form.action, { method: "POST", body: fd });
-  if (resp.status === 204) {
-    window.opener.childAction(resp.headers.get("X-Packet-Action"));
-    window.close();
+  const resp = await fetch(the_form.action, {
+    method: "POST",
+    body: fd,
+    redirect: "manual",
+  });
+  if (resp.status == 204) {
+    const action = resp.headers.get("X-Packet-Action");
+    if (action.startsWith("redirect:")) location.href = action.substring(9);
+    else {
+      window.opener.childAction(resp.headers.get("X-Packet-Action"));
+      window.close();
+    }
   } else document.getElementById("error").textContent = await resp.text();
 }
 

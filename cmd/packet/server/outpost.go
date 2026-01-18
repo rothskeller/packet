@@ -17,8 +17,8 @@ import (
 	"time"
 
 	"github.com/rothskeller/packet/form"
-	"github.com/rothskeller/packet/form/formdef"
 	"github.com/rothskeller/packet/message"
+	"github.com/rothskeller/packet/message/field"
 	"github.com/rothskeller/packet/message/payload"
 )
 
@@ -30,8 +30,7 @@ const (
 // outpostNewRequest handles a GET /outpost-new request, which is sent by the
 // "packet outpost new" command.  The form parameters are:
 //
-//   - addon: name of the Outpost addon responsible for the form.  Required.
-//   - msgtype: message type, also the name of the form HTML file.  Required.
+//   - formtag: create tag of the form to create.  Required.
 //   - msgID: default origin message ID for new message.  Required.
 //   - opName: operator's name.  Required.
 //   - opCall: operator's FCC call sign.  Required.
@@ -39,60 +38,45 @@ const (
 //   - tacCall: tactical station call sign.  Optional.
 func (s *Server) outpostNewRequest(w http.ResponseWriter, r *http.Request) {
 	var (
-		def     *formdef.FormDef
-		addon   string
-		msgtype string
-		fields  = make(map[string]string)
+		formtag string
+		mtype   message.EditableMType
+		msg     message.Message
 	)
 	if maybeShowREADME(w, r) {
 		return
 	}
 	// Find the definition of the form.
-	addon, msgtype = r.FormValue("addon"), r.FormValue("msgtype")
-	if mtype := message.FindType(func(mt message.MType) bool {
-		if mt, ok := mt.(form.EditableFormType); ok {
-			return mt.AddonName == addon && mt.HTMLName == msgtype && mt.CreateTag() != ""
-		}
-		return false
-	}); mtype == nil {
-		slog.Error("no form definition", "addon", addon, "html", msgtype)
-		ErrPage(w, fmt.Sprintf("No editable form definition was found for addon=%s, type=%s.  Please report this to the author.", addon, msgtype), http.StatusInternalServerError)
+	formtag = r.FormValue("formtag")
+	if mtype = message.FindTypeTag(formtag); mtype == nil {
+		slog.Error("no form definition", "formtag", formtag)
+		ErrPage(w, fmt.Sprintf("No editable form definition was found for %q.  Please report this to the author.", formtag), http.StatusInternalServerError)
 		return
-	} else {
-		def = mtype.(form.FormType).FormDef
 	}
+	msg = mtype.NewDraft()
 	// Walk through the fields of the form, setting fields.
-	for f := range def.AllFields() {
-		// Default values for fields.
-		if f.Tag != "" && f.Value != "" {
-			fields[f.Tag] = f.Value // default value
-		}
+	for f := range msg.Fields() {
 		// Well-known fields with supplied values.
-		switch f.Common {
-		case "messageDate", "formDate":
-			fields[f.Tag] = time.Now().Format("01/02/2006")
-		case "operatorCall":
-			fields[f.Tag] = r.FormValue("opCall")
-		case "operatorName":
-			fields[f.Tag] = r.FormValue("opName")
-		case "originMessageID":
-			fields[f.Tag] = r.FormValue("msgID")
-		case "tacticalCall":
-			if v := r.FormValue("tacCall"); v != "" {
-				fields[f.Tag] = v
-			}
-		case "tacticalName":
-			if v := r.FormValue("tacName"); v != "" {
-				fields[f.Tag] = v
-			}
-		case "useTactical":
+		switch f.Common() {
+		case field.CMessageDate, field.CFormDate:
+			f.SetValue(msg, time.Now().Format("01/02/2006"))
+		case field.COperatorCall:
+			f.SetValue(msg, r.FormValue("opCall"))
+		case field.COperatorName:
+			f.SetValue(msg, r.FormValue("opName"))
+		case field.COriginMessageID:
+			f.SetValue(msg, r.FormValue("msgID"))
+		case field.CTacticalCall:
+			f.SetValue(msg, r.FormValue("tacCall"))
+		case field.CTacticalName:
+			f.SetValue(msg, r.FormValue("tacName"))
+		case field.CUseTactical:
 			if r.FormValue("tacCall") != "" {
-				fields[f.Tag] = "checked"
+				f.SetValue(msg, "checked")
 			}
 		}
 	}
-	s.editCommon(w, fields, def, "")
-	slog.Info("rendered editor for new form", "addon", addon, "html", msgtype, "msgID", r.FormValue("msgID"))
+	s.outpostEditCommon(w, msg, "")
+	slog.Info("rendered editor for new form", "formtag", formtag, "msgID", r.FormValue("msgID"))
 }
 
 // outpostEditRequest handles a GET /outpost-edit request, which is sent by the
@@ -102,13 +86,10 @@ func (s *Server) outpostNewRequest(w http.ResponseWriter, r *http.Request) {
 //   - index:  Outpost index of the message.  Required.
 func (s *Server) outpostEditRequest(w http.ResponseWriter, r *http.Request) {
 	var (
-		index  string
-		msg    message.Message
-		def    *formdef.FormDef
-		body   *form.FormBody
-		msgID  string
-		err    error
-		fields = make(map[string]string)
+		index string
+		msg   message.Message
+		msgID string
+		err   error
 	)
 	if maybeShowREADME(w, r) {
 		return
@@ -126,24 +107,43 @@ func (s *Server) outpostEditRequest(w http.ResponseWriter, r *http.Request) {
 		slog.Error("read message from Outpost", "f", r.FormValue("msgfile"), "err", err)
 		ErrPage(w, "The message provided by Outpost was not in a valid format.  Please report this error to the author.", http.StatusInternalServerError)
 		return
-	} else if mt, ok := msg.Type().(form.FormType); !ok {
+	} else if _, ok := msg.Type().(form.EditableFormType); !ok {
 		slog.Error("message from Outpost is not a form", "f", r.FormValue("msgfile"), "type", fmt.Sprintf("%T", msg.Type()))
 		ErrPage(w, "The message provided by Outpost was not in a valid format.  Please report this error to the author.", http.StatusInternalServerError)
 		return
-	} else {
-		def = mt.FormDef
 	}
-	body = msg.Body().(*form.FormBody)
-	for fd := range def.AllFields() {
-		if fd.Tag != "" {
-			fields[fd.Tag] = body.Field(fd.Tag)
-		}
-		if fd.Common == "originMessageID" {
-			msgID = body.Field(fd.Tag)
+	for f := range msg.Fields() {
+		if f.Common() == field.COriginMessageID {
+			msgID = f.Value(msg)
 		}
 	}
-	s.editCommon(w, fields, def, index)
-	slog.Info("rendered editor for existing form", "addon", def.AddonName, "html", def.HTMLName, "msgID", msgID)
+	s.outpostEditCommon(w, msg, index)
+	slog.Info("rendered editor for existing form", "msgID", msgID)
+}
+
+// outpostEditCommon is the common parts of Outpost new and edit message.
+func (s *Server) outpostEditCommon(w http.ResponseWriter, msg message.Message, index string) {
+	var (
+		tag    string
+		vars   message.EditHTMLVars
+		out    []byte
+		err    error
+		params = make(url.Values)
+	)
+	tag = msg.Type().(message.EditableMType).CreateTag()
+	params.Set("formtag", tag)
+	if index != "" {
+		params.Set("outpost-index", index)
+	}
+	vars.AssetBase = "/assets/" + url.PathEscape(tag)
+	vars.SubmitLabel = "Submit to Outpost"
+	vars.SubmitURL = "/outpost-submit?" + params.Encode()
+	if out, err = msg.Type().(message.EditableMType).EditHTML(msg.(*message.DraftMessage), vars); err != nil {
+		ErrPage(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+	w.Header().Set("Content-Type", "text/html; charset=utf-8")
+	w.Write(out)
 }
 
 var eofRE = regexp.MustCompile(`(?i)%23EOF`)
@@ -152,29 +152,39 @@ var eofRE = regexp.MustCompile(`(?i)%23EOF`)
 // of forms edited through an outpost-new or outpost-edit request.
 func (s *Server) outpostSubmit(w http.ResponseWriter, r *http.Request) {
 	var (
-		msg    message.Message
-		addon  string
-		msgID  string
-		bbuild strings.Builder
-		body   string
+		msg     message.Message
+		addon   string
+		msgID   string
+		bbuild  strings.Builder
+		body    string
+		formtag string
+		mtype   message.EditableMType
+		err     error
 	)
-	if msg = submitCommon(w, r); msg == nil {
-		return // ErrPage emitted
+	formtag = r.FormValue("formtag")
+	if mtype = message.FindTypeTag(formtag); mtype == nil {
+		slog.Error("form not found", "formtag", formtag)
+		ErrPage(w, fmt.Sprintf("The form with tag=%q was not found.  Please report this error to the author.", formtag), http.StatusInternalServerError)
+		return
 	}
-	if ft, ok := msg.Type().(form.FormType); ok {
+	if msg, err = mtype.FromPOST(r); err != nil {
+		ErrPage(w, fmt.Sprintf("The form could not be read (%s).  Please report this error to the author.", err), http.StatusInternalServerError)
+		return
+	}
+	if ft, ok := msg.Type().(form.EditableFormType); ok {
 		addon = ft.AddonName
-		// Fill in the OpDate and OpTime fields.
-		for fd := range ft.AllFields() {
-			switch fd.Common {
-			case "operatorDate":
-				msg.Body().(*form.FormBody).SetField(fd.Tag, time.Now().Format("01/02/2006"))
-			case "operatorTime":
-				msg.Body().(*form.FormBody).SetField(fd.Tag, time.Now().Format("15:04"))
-			}
-		}
 	} else {
 		// Must be the special case Check-In/Out.
 		addon = "SCCoPIFO"
+	}
+	// Fill in the OpDate and OpTime fields.
+	for fd := range msg.Fields() {
+		switch fd.Common() {
+		case field.COperatorDate:
+			fd.SetValue(msg, time.Now().Format("01/02/2006"))
+		case field.COperatorTime:
+			fd.SetValue(msg, time.Now().Format("15:04"))
+		}
 	}
 	// The message body posted to Opdirect must be specially constructed
 	// because Opdirect is sensitive to the order of elements in it.  It
@@ -291,29 +301,26 @@ func serveMessagePDF(w http.ResponseWriter, r *http.Request, msg message.Message
 		ErrPage(w, "The software was unable to create a PDF file for this message.  Please report this error to the author.", http.StatusInternalServerError)
 		return
 	}
-	// Send a redirect to fetch that file.  We can't serve the PDF directly
-	// because the browser will want to re-fetch it to handle save, print,
-	// or reload, so it has to have its own URL.
-	http.Redirect(w, r, "/pdf/"+filepath.Base(fname), http.StatusSeeOther)
-	slog.Debug("redirecting to PDF", "url", "/pdf"+filepath.Base(fname))
+	// Tell the client to redirect to fetch that file.  We can't serve the
+	// PDF directly because the browser will want to re-fetch it to handle
+	// save, print, or reload, so it has to have its own URL.
+	w.Header().Set("X-Packet-Action", "redirect:/pdf/"+filepath.Base(fname))
+	w.WriteHeader(http.StatusNoContent)
+	slog.Debug("redirecting to PDF", "url", "/pdf/"+filepath.Base(fname))
 }
 
 // CreateTempPDF creates a PDF rendering of the supplied message in a temporary
 // file, and returns the filename.
 func CreateTempPDF(msg message.Message) (fname string, err error) {
 	var (
-		def    *formdef.FormDef
 		msgid  string
 		tmpdir = os.TempDir()
 	)
 	// Get the origin message number.
-	if ft, ok := msg.Type().(form.FormType); ok {
-		def = ft.FormDef
-		for fd := range def.AllFields() {
-			if fd.Common == "originMessageID" {
-				msgid = msg.Body().(*form.FormBody).Field(fd.Tag)
-				break
-			}
+	for fd := range msg.Fields() {
+		if fd.Common() == "originMessageID" {
+			msgid = fd.Value(msg)
+			break
 		}
 	}
 	if msgid == "" {
@@ -349,4 +356,16 @@ func CreateTempPDF(msg message.Message) (fname string, err error) {
 	}
 	slog.Debug("created temp PDF", "f", fname)
 	return fname, nil
+}
+
+// serveRenderedPDF handles a GET /pdf/{filename} request.
+func (s *Server) serveRenderedPDF(w http.ResponseWriter, r *http.Request) {
+	fname := r.PathValue("filename")
+	if !strings.HasSuffix(fname, ".pdf") || strings.HasPrefix(fname, ".") || strings.ContainsAny(fname, `/\`) {
+		http.Error(w, "Not Found", http.StatusNotFound)
+		return
+	}
+	r.URL.Path = "/" + fname
+	w.Header().Set("Cache-Control", "max-age=3600")
+	http.FileServerFS(os.DirFS(os.TempDir())).ServeHTTP(w, r)
 }

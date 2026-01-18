@@ -191,7 +191,26 @@ func (ft FormType) Recognize(m message.Message) {
 	}
 	// It's our form.
 	body.def = ft.FormDef
-	m.SetSubject(formSubjectFromPlainSubject(m.Subject().(*subject.PlainSubject)))
+	// If we have a subject line, convert it to a form subject.  Otherwise,
+	// manufacture a form subject from the form contents.  (This can happen
+	// when Outpost sends us a message body without headers.)
+	if m.Subject().EncodedSubject() != "" {
+		m.SetSubject(formSubjectFromPlainSubject(m.Subject().(*subject.PlainSubject)))
+	} else {
+		var msgID, handling, summary string
+		for fd := range ft.AllFields() {
+			switch fd.Common {
+			case field.COriginMessageID:
+				msgID = body.Field(fd.Tag)
+			case field.CHandling:
+				handling = body.Field(fd.Tag)
+			case field.CMessageSummary:
+				summary = body.Field(fd.Tag)
+			}
+		}
+		subj, _ := NewFormSubject(msgID, handling, ft.SubjectTag, summary)
+		m.SetSubject(subj)
+	}
 	m.SetType(ft)
 }
 
@@ -269,7 +288,8 @@ func (ft EditableFormType) EditHTML(msg message.Message, vars message.EditHTMLVa
 	fields["form-html"] = ft.HTMLName
 	fields["form-version"] = ft.Version
 	if ft.PDFFile != "" {
-		fields["pdf-url"] = path.Join(vars.AssetBase, ft.PDFFile)
+		_, rmbundle, _ := strings.Cut(ft.PDFFile, "/")
+		fields["pdf-url"] = path.Join(vars.AssetBase, rmbundle)
 	}
 	// Expand the templates in the form HTML, using the supplied fields.
 	htmlop.Expand(formHTML, fields)

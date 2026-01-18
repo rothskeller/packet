@@ -14,6 +14,7 @@ import (
 	"github.com/rothskeller/packet/cmd/packet/server"
 	"github.com/rothskeller/packet/form"
 	"github.com/rothskeller/packet/message"
+	"github.com/rothskeller/packet/message/field"
 )
 
 var viewCmd = &cobra.Command{
@@ -46,54 +47,33 @@ opdt     Date and time that the message was received`,
 			browse  *exec.Cmd
 			out     string
 		)
-		// Verify that the message file is reachable.
+		// Read the message file.  Note that since it has no headers,
+		// it will be returned as a DraftMessage.
 		msgfile = decodeArg(args[0])
 		if msg, err = message.ReadNoHeader(msgfile); msg == nil {
 			slog.Error("can't read message file", "f", msgfile, "err", err)
 			return fmt.Errorf("%s: %s", msgfile, err)
-		}
-		// Since we read the message with no headers, it has no
-		// subject.  But we'd like to have one for PDF rendering, so
-		// we'll construct one.
-		if ft, ok := msg.Type().(form.FormType); ok {
-			var msgID, handling, summary string
-			body := msg.Body().(*form.FormBody)
-			for fd := range ft.AllFields() {
-				switch fd.Common {
-				case "originMessageID":
-					msgID = body.Field(fd.Tag)
-				case "handling":
-					if handling = body.Field(fd.Tag); handling != "" {
-						handling = handling[:1]
-					}
-				case "messageSummary":
-					summary = body.Field(fd.Tag)
-				}
-			}
-			subj, _ := form.NewFormSubject(msgID, handling, ft.SubjectTag, summary)
-			msg = message.NewDraftMessage(msg.Type(), subj, msg.Payload(), false)
 		}
 		if len(args) == 5 {
 			// This is a received message.  Fill in the fields as
 			// given.  (We're still leaving the type as
 			// DraftMessage, though, because we don't have the
 			// details to put into a ReceivedMessage.)
-			// TODO: revisit
 			if ft, ok := msg.Type().(form.FormType); ok {
 				body := msg.Body().(*form.FormBody)
 				body.SetField("RECEIVED", "RECEIVED")
 				for fd := range ft.AllFields() {
 					switch fd.Common {
-					case "destinationMessageID":
+					case field.CDestinationMessageID:
 						body.SetField(fd.Tag, decodeArg(args[1]))
-					case "operatorCall":
+					case field.COperatorCall:
 						body.SetField(fd.Tag, decodeArg(args[2]))
-					case "operatorName":
+					case field.COperatorName:
 						body.SetField(fd.Tag, decodeArg(args[3]))
-					case "operatorDate":
+					case field.COperatorDate:
 						date, _, _ := strings.Cut(decodeArg(args[4]), " ")
 						body.SetField(fd.Tag, date)
-					case "operatorTime":
+					case field.COperatorTime:
 						_, time, _ := strings.Cut(decodeArg(args[4]), " ")
 						body.SetField(fd.Tag, time)
 					}

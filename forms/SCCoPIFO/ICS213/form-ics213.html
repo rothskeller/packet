@@ -93,7 +93,7 @@
       </td>
       <td style="vertical-align:middle;">
         <label>Destination Msg #:<span class="field-number">3</span>
-          <input name="3." class="message-number" type="text" tabindex="2" disabled="disabled" />
+          <input name="3." class="message-number" type="text" tabindex="2" disabled />
         </label>
       </td>
     </tr>
@@ -485,8 +485,8 @@
         </td>
         <td colspan="2" class="border-left">
           <label>Operator Call Sign:
-            <input class="call-sign no-msg-init include-in-submit" name="OpCall" type="text" tabindex="508"
-              disabled="disabled" required />
+            <input class="call-sign no-msg-init include-in-submit" name="OpCall" type="text" tabindex="508" readonly
+              required />
           </label>
         </td>
       </tr>
@@ -503,7 +503,7 @@
         </td>
         <td colspan="2" class="border-left">
           <label class="label-sameline">Operator Name:
-            <input class="no-msg-init include-in-submit" name="OpName" type="text" tabindex="509" disabled="disabled" />
+            <input class="no-msg-init include-in-submit" name="OpName" type="text" tabindex="509" readonly />
           </label>
         </td>
       </tr>
@@ -542,14 +542,12 @@
         </td>
         <td class="border-left">
           <label>Date:
-            <input name="OpDate" type="text" tabindex="510" class="date no-msg-init init-on-submit"
-              disabled="disabled" />
+            <input name="OpDate" type="text" tabindex="510" class="date no-msg-init init-on-submit" readonly />
           </label>
         </td>
         <td>
           <label>Time:
-            <input name="OpTime" type="text" tabindex="511" class="time no-msg-init init-on-submit"
-              disabled="disabled" />
+            <input name="OpTime" type="text" tabindex="511" class="time no-msg-init init-on-submit" readonly />
           </label>
         </td>
       </tr>

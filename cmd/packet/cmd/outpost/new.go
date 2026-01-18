@@ -57,15 +57,11 @@ tacname  Tactical station name if any.`,
 		if addon = decodeArg(args[0]); !addonRE.MatchString(addon) {
 			slog.Error("invalid addon", "addon", addon)
 			return fmt.Errorf("invalid addon name %q", addon)
-		} else {
-			values.Set("addon", addon)
 		}
 		// Check message type syntax.  Existence is checked below.
 		if msgtype = decodeArg(args[1]); !msgTypeRE.MatchString(msgtype) {
 			slog.Error("invalid msgtype", "msgtype", msgtype)
 			return fmt.Errorf("invalid message type %q", msgtype)
-		} else {
-			values.Set("msgtype", msgtype)
 		}
 		// Check message ID syntax.
 		if msgID = decodeArg(args[2]); !msgIDRE.MatchString(msgID) {
@@ -96,7 +92,10 @@ tacname  Tactical station name if any.`,
 		}
 		if mtype = message.FindType(func(mt message.MType) bool {
 			if mt, ok := mt.(form.EditableFormType); ok {
-				return mt.AddonName == addon && mt.HTMLName == msgtype && mt.CreateTag() != ""
+				if mt.AddonName == addon && mt.HTMLName == msgtype && mt.CreateTag() != "" {
+					values.Set("formtag", mt.CreateTag())
+					return true
+				}
 			}
 			return false
 		}); mtype == nil {
@@ -106,7 +105,7 @@ tacname  Tactical station name if any.`,
 		if err = neCommon(values, "/outpost-new"); err != nil {
 			return err
 		}
-		slog.Info("opened browser for new message", "addon", addon, "msgtype", msgtype, "msgID", msgID)
+		slog.Info("opened browser for new Outpost message", "addon", addon, "msgtype", msgtype, "msgID", msgID)
 		return nil
 	},
 }

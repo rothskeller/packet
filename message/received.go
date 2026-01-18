@@ -86,7 +86,9 @@ func (m *ReceivedMessage) RFC5322() string {
 func readReceivedMessage(filename string, hdr mail.Header, cm *common) (_ Message, err error) {
 	m := ReceivedMessage{common: cm}
 	m.OnDirty(func(reason string) {
-		panic("ReceivedMessage should not change: " + reason)
+		if reason != "envelope.common.subject" {
+			panic("ReceivedMessage should not change: " + reason)
+		}
 	})
 
 	if match := receivedRE.FindStringSubmatch(hdr.Get("Received")); match != nil {
