@@ -55,7 +55,6 @@ work in a new incident directory.`,
 				// It's not currently an incident directory.
 				// Is it a legal one?
 				if incident.IsUnsafeIncidentDir(dir) {
-					println(dir)
 					return errors.New("incident data should not be in root, home, Desktop, or Documents; make an incident-specific directory instead")
 				}
 				// Does it exist, or can we create it?
@@ -92,7 +91,8 @@ work in a new incident directory.`,
 		}
 		// Build the request URL.
 		if dir == "" {
-			address += "/choose-incident"
+			cwd, _ := os.Getwd()
+			address += "/incident-open?dir=" + url.QueryEscape(cwd)
 		} else if created {
 			address += "/incident-config?dir=" + url.QueryEscape(dir)
 		} else {
