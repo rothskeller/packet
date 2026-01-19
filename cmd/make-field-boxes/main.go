@@ -13,6 +13,7 @@
 package main
 
 import (
+	"cmp"
 	"flag"
 	"fmt"
 	"image"
@@ -20,8 +21,17 @@ import (
 	"image/draw"
 	"image/png"
 	"os"
+	"slices"
 	"strings"
 )
+
+type renderline struct {
+	x    float64
+	y    float64
+	line string
+}
+
+var renderlines []renderline
 
 func main() {
 	var (
@@ -59,8 +69,16 @@ func main() {
 			case r == 0xffff && g == 0 && b == 0xffff && a == 0xffff:
 				showRect(im, x, y, color.White, 0, "box", *pagenum)
 			}
-
 		}
+	}
+	slices.SortFunc(renderlines, func(a, b renderline) int {
+		if a.y != b.y {
+			return -cmp.Compare(a.y, b.y)
+		}
+		return cmp.Compare(a.x, b.x)
+	})
+	for _, line := range renderlines {
+		fmt.Println(line.line)
 	}
 	return
 
@@ -104,11 +122,12 @@ func showRect(im image.Image, x, y int, stop color.Color, margin float64, keywor
 	pt := 792.0 - float64(t-im.Bounds().Min.Y)*792.0/float64(im.Bounds().Dy()) - margin
 	pb := 792.0 - float64(b-im.Bounds().Min.Y)*792.0/float64(im.Bounds().Dy()) + margin
 	// Write the line.
-	fmt.Printf("  pdf      %s ", keyword)
+	line := fmt.Sprintf("  pdf      %s ", keyword)
 	if pagenum != 1 {
-		fmt.Printf("P %d ", pagenum)
+		line += fmt.Sprintf("P %d ", pagenum)
 	}
-	fmt.Printf("L %6.2f R %6.2f B %6.2f T %6.2f\n", pl, pr, pb, pt)
+	line += fmt.Sprintf("L %6.2f R %6.2f B %6.2f T %6.2f", pl, pr, pb, pt)
+	renderlines = append(renderlines, renderline{x: pl, y: pt, line: line})
 }
 
 func showCircle(im image.Image, x, y int, stop color.Color, margin, maxRadius float64, pagenum int) {
@@ -148,11 +167,12 @@ func showCircle(im image.Image, x, y int, stop color.Color, margin, maxRadius fl
 	cy := (py1 + py2) / 2
 	r := (px2-px1)/2 - margin
 	r = min(r, maxRadius)
-	fmt.Printf("  pdf      circle ")
+	line := "  pdf      circle "
 	if pagenum != 1 {
-		fmt.Printf("P %d ", pagenum)
+		line += fmt.Sprintf("P %d ", pagenum)
 	}
-	fmt.Printf("X %6.2f Y %6.2f R %4.2f\n", cx, cy, r)
+	line += fmt.Sprintf("X %6.2f Y %6.2f R %4.2f", cx, cy, r)
+	renderlines = append(renderlines, renderline{x: cx, y: cy, line: line})
 }
 
 func isBlankRow(png image.Image, l, r, y int, stop color.Color) bool {
