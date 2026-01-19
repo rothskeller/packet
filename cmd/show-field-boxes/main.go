@@ -77,6 +77,7 @@ func main() {
 	for fd := range def.AllFields() {
 		for _, pr := range fd.PDF {
 			if err = markField(dest, pr); err != nil {
+				err = fmt.Errorf("%s: %s", fd.Tag, err)
 				goto ERROR
 			}
 		}
@@ -103,6 +104,8 @@ func markField(dest *pdf.PDF, pr formdef.PDFFieldRenderer) (err error) {
 			markRect(dest, pr.Page, pr.Rectangle),
 			markBaseline(dest, pr.Page, pr.Rectangle.LLX, pr.Rectangle.URX, pr.Baseline),
 		)
+	case formdef.BoxRenderer:
+		err = markRect(dest, pr.Page, pr.Rectangle)
 	}
 	return err
 }
