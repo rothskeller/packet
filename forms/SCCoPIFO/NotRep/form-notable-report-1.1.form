@@ -162,9 +162,9 @@ field 23.
 
 field 25.
   label    "25. Name of the County Incident"
-  presence if 24.=Yes then required else blocked
+  presence if 23.=Yes then optional else blocked
   width    59
-  help     "This is the county operational area's name for the incident leading to this notable report.  It is required when \"Incident Specific\" is \"Yes\", and otherwise not allowed."
+  help     "This is the county operational area's name for the incident leading to this notable report, if any.  It is only allowed when \"Escalate to County Op Area?\" is \"Yes\"."
   pdf      text L 194.12 R 563.44 B 499.76 T 513.28 BL 502.80
 
 field 30. messageSummary
