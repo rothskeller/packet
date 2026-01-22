@@ -3,10 +3,159 @@
 
 <head>
   <title>SCCo Packet Software</title>
+  <style>
+    :root {
+      --border-width: 1px;
+      font-family: sans-serif;
+      font-size: 1em;
+    }
+
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0 0.75rem 1.5rem;
+    }
+
+    #topbar {
+      margin: 0 -0.75rem 1.5rem;
+      height: 3.5rem;
+      padding-inline: 0.75rem;
+      background-color: #a8e8a8;
+      border-bottom: var(--border-width) solid #888;
+      display: grid;
+      grid: auto / max-content 1fr;
+      align-items: center;
+    }
+
+    #topleft {
+      display: flex;
+      align-items: center;
+      gap: 1.5rem;
+    }
+
+    #logo {
+      height: 3rem;
+    }
+
+    #slug {
+      margin-inline: -0.75rem 3rem;
+      font-weight: bold;
+      font-size: 1.25rem;
+      line-height: 1.4rem;
+      max-height: 2.8rem;
+      overflow: hidden;
+    }
+
+    #version {
+      font-weight: normal;
+      font-size: 0.875rem;
+      color: #444;
+    }
+
+    #topright {
+      font-weight: bold;
+      font-size: 1.25rem;
+    }
+
+    sup {
+      vertical-align: text-top;
+    }
+
+    @media (width < 54em) {
+      #topleft {
+        gap: 0.75rem;
+      }
+
+      #slug {
+        margin-inline: 0 0.75rem;
+      }
+
+      #topbar button {
+        font-size: 1rem;
+      }
+    }
+  </style>
 </head>
 
 <body>
-  <h1>SCCo Packet Software</h1>
+  <div id=topbar>
+    <div id=topleft>
+      <img id=logo src="https://www.scc-ares-races.org/-67DB4F6F-/county-seal.svg"><!-- TODO: replace with local-->
+      <div id=slug>SCCo&nbsp;Packet<br>Messenger <span id=version>v{{VERSION}}</span></div>
+    </div>
+    <div id=topright>Software Manual</div>
+  </div>
+  <div style="max-width:40rem">
+    <p>
+      The SCCo Packet Messenger software supports Amateur Radio Emergency Service
+      (<a target=_blank href=https://arrl.org/ares>ARES<sup>®</sup></a>)
+      packet radio messaging in Santa Clara County, California.
+      It is the successor to PacFORMS (by Phil Henderson KF6ZFQ), PackItForms
+      (by John Kristian W6JMK), and packet shell (by Steve Roth KC6RSC).
+      The Packet Messenger software operates in two modes: as an Outpost
+      add-on, and as standalone packet messaging software.
+    </p>
+    <p>
+      Most Santa Clara County ARES/RACES packet operations and operators use the
+      <a target=_blank href=https://www.scc-ares-races.org/operations/equipment/packet/software/outpost>
+        Outpost Packet Message Manager
+      </a>
+      software, which is the county standard packet message manager.
+      In these environments, the SCCo Packet Messenger acts as an add-on to Outpost,
+      adding the ability to send and retrieve messages containing standard county forms.
+    </p>
+    <p>
+      The SCCo Packet Messenger can also be used as a packet message manager in its own right,
+      independent of Outpost.
+      It provides both a graphical user interface and a scriptable command line interface.
+      It supports both manual operation (operator interacts with TNC) and automatic operation (software handles the
+      TNC).
+      It runs on any operating system and has no external dependencies other than a browser for the graphical user
+      interface.
+    </p>
+    <h2>Outpost Add-On Operation</h2>
+    <p>
+      The SCCo Packet Messenger software is bundled in the county standard packet software installer.
+      When installed using that installer, it is automatically connected to Outpost.
+      If the SCCo Packet Messenger software is installed separately for some reason,
+      it can be connected to Outpost by running the
+      <code>packet install</code>
+      command. The connection can be broken with the
+      <code>packet uninstall</code>
+      command.
+    </p>
+    <p>
+      Whenever an Outpost user asks to view a forms message (i.e., one that starts with
+      <code>!SCCoPIFO!</code>
+      or similar), Outpost will relay the request to the SCCo Packet Messenger,
+      which will render the original form in PDF format and open it in a browser window.
+    </p>
+    <p>
+      Similarly, whenever an Outpost user asks to create a new forms message using one
+      of the entries in the "Forms" menu, Outpost will relay the request to the SCCo
+      Packet Messenger, which will open the appropriate form in a browser window.
+      When the user submits that form, the SCCo Packet Messenger will encode it for
+      transmission and hand it back to Outpost. It will also render the message in
+      PDF format so that it can be printed if desired.
+    </p>
+    <p>
+      The first time that the SCCo Packet Messenger is used each day,
+      it will contact the SCCo ARES/RACES web server and
+      look for updated versions of the Santa Clara County standard forms.
+      These will be installed automatically.
+      (Obviously this only works if the system has Internet access.)
+    </p>
+    <p>
+      The SCCo Packet Messenger software handles all county standard forms.
+      Individual systems may have other Outpost add-ons that handle other forms,
+      such as city-specific forms.
+      These are independent and not affected by the SCCo Packet Messenger.
+    </p>
+  </div>
 </body>
 
 </html>
