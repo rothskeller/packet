@@ -3,9 +3,11 @@
 <script type=text/javascript src={{assets}}/pack-it-forms.js></script>
 <title>Damage Assessment</title>
 <packet-form>
-  <form-roo form-title="Damage Assessment" paper-version="PDF: 20251228">
-    <form-dthtf
-      to-ics-positions="Damage/Safety Assessment Group; Construction &amp; Eng. Branch; Operations"></form-dthtf>
+  <form-roo form-title="Damage Assessment" paper-version="PDF: 20251228" omistyle="width:6.02rem"
+    dmistyle="width:12.67rem" rrstyle="width:17.81rem" rsstyle="width:18.03rem" opstyle="width:13.62rem"
+    ocstyle="width:6.58rem" odstyle="width:4.05rem" otstyle="width:4.97rem">
+    <form-dthtf to-ics-positions="Damage/Safety Assessment Group; Construction &amp; Eng. Branch; Operations"
+      mdstyle="width:4.21rem" mtstyle="width:4.50rem" tostyle="width:12.75rem" frstyle="width:12.90rem"></form-dthtf>
     <div class=section>Overview</div>
     <div class=layout-grid style="--columns: max-content 1fr max-content 1fr">
       <div class=pair>
@@ -56,7 +58,7 @@
             Exterior</label>
           <label style="grid-area:1/2"><input name=27c. type=checkbox required>c. Structural</label>
           <label style="grid-area:2/2"><input name=27d. type=checkbox required>d. Other
-            <span style="font-weight: normal">(define in comments)</span></label>
+            <span class=annotation>(define in comments)</span></label>
         </div>
       </div>
       <div class="pair colspan4">
@@ -72,7 +74,8 @@
       <div class="border subgrid rowspan3 colspan4">
         <div class="label colspan4">30. What is the damage classification for this property?</div>
         <div></div>
-        <div class="subgrid required-group rowspan2 colspan3" style="--columns: repeat(3, max-content); column-gap: 0.5rem; margin-left: 0.5rem">
+        <div class="subgrid required-group rowspan2 colspan3"
+          style="--columns: repeat(3, max-content); column-gap: 0.5rem; margin-left: 0.5rem">
           <label style="order:1"><input name=29. type=radio value=Destroyed>a. Destroyed</label>
           <label style="order:4"><input name=29. type=radio value=Major>b. Major</label>
           <label style="order:2"><input name=29. type=radio value=Minor>c. Minor</label>
