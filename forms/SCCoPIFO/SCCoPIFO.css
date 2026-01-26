@@ -253,6 +253,9 @@ input:not([type]) {
 textarea {
   margin: 0;
   border: none;
+  font-family: "Times New Roman", serif;
+  font-size: 1rem;
+  color: rgb(0, 0, 153);
 }
 
 /* INVALID AREAS */

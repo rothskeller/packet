@@ -2,7 +2,7 @@
   tabindex="Input control tabindex attribute" required="Input is required"
   placeholder="String to display in input field before a value is entered" width="Control width (CSS units)"
   class="Control class name">
-  <input type=text {{name}} list="{{name}}--list" {{tabindex}} {{placeholder}} {{required}} {{class}}>
+  <input {{name}} list="{{name}}--list" {{tabindex}} {{placeholder}} {{required}} {{class}}>
   <datalist id="{{name}}--list">
     <for:options>
       <option value="{{.}}"></option>
