@@ -1,3 +1,185 @@
+<def:combo-box name="Input control name attribute" options="List of dropdown values, separated by semicolons"
+  tabindex="Input control tabindex attribute" required="Input is required"
+  placeholder="String to display in input field before a value is entered" width="Control width (CSS units)"
+  class="Control class name">
+  <input type=text {{name}} list="{{name}}--list" {{tabindex}} {{placeholder}} {{required}} {{class}}>
+  <datalist id="{{name}}--list">
+    <for:options>
+      <option value="{{.}}"></option>
+    </for:options>
+  </datalist>
+</def:combo-box>
+
+<def:packet-form submit-url="URL for form submit" submit-label="Label for the submit button"
+  save-label="Label for the save button" pdf-url="URL for the Show PDF button">
+  <div id=form-controls>
+    <div id=button-header>
+      <input type=button id=submit disabled value="Submit Form" value={{submit-label}}>
+      <if:save-label>
+        <input type=button id=save value={{save-label}}>
+      </if:save-label>
+      <input type=button id=reset value="Reset Form">
+      <if:pdf-url>
+        <input type=button id=show-PDF value="Show PDF" onclick="window.open('{{pdf-url}}', '_blank')">
+      </if:pdf-url>
+      <span id=invalid-example>
+        <input class=invalid disabled style="margin-left:1em;width:2em;border:1px solid #cccccc;" />
+        <span>&nbsp;&nbsp;= required</span>
+      </span>
+    </div>
+    <div id=error></div>
+  </div>
+  <div id=form-holder>
+    <form id=the-form method=POST action={{submit-url}} style="width:60rem">
+      <slot></slot>
+    </form>
+  </div>
+</def:packet-form>
+
+<def:form-roo form-title="Title to put in the top banner.  Required."
+  form-version="Form version number to put in the top banner.  Required."
+  paper-version="Paper form version number or date to put in the top banner.">
+  <div id=form-header>
+    <div id=form-title>{{form-title}}</div>
+    <div>PIF: {{form-version}}</div>
+    <div>{{paper-version}}</div>
+  </div>
+  <div id=form-header-roo>
+    <div class=section-inline>Radio Operator Only:</div>
+    <div class=pair>
+      <label for=MsgNo>1. Origin Msg #:</label>
+      <input id=MsgNo name=MsgNo class=message-number required style="width:8.15rem">
+    </div>
+    <div class=pair>
+      <label for=DestMsgNo>2. Destination Msg #:</label>
+      <input id=DestMsgNo name=DestMsgNo class=message-number disabled style="width:11.19rem">
+    </div>
+  </div>
+  <div class=border-thick>
+    <slot></slot>
+  </div>
+  <div id=form-footer-relay>
+    <div class="section-inline colspan5">Radio Operator Only:</div>
+    <div class=section-inline>Relay:</div>
+    <div class=pair>
+      <label for=OpRelayRcvd>Rcvd:</label>
+      <input id=OpRelayRcvd name=OpRelayRcvd style="width:17.81rem">
+    </div>
+    <div class=pair>
+      <label for=OpRelaySent>Sent:</label>
+      <input id=OpRelaySent name=OpRelaySent style="width:17.67rem">
+    </div>
+  </div>
+  <div id=form-footer-opinfo>
+    <div class=pair>
+      <label for=OpName>Name:</label>
+      <input id=OpName name=OpName style="width:11.01rem">
+    </div>
+    <div class=pair>
+      <label for=OpCall>Call Sign:</label>
+      <input id=OpCall name=OpCall class=call-sign required style="width:6.33rem">
+    </div>
+    <div class=pair>
+      <label for=OpDate>Date:</label>
+      <input id=OpDate name=OpDate class=date readonly style="width:5.45rem">
+    </div>
+    <div class=pair>
+      <label for=OpTime>Time (24hr):</label>
+      <input id=OpTime name=OpTime class=time readonly style="width:6.11rem">
+    </div>
+  </div>
+</def:form-roo>
+
+<def:form-dthtf show-addrs="True if the form should have To/From Address fields."
+  to-ics-positions="Semicolon-separated list of possibilities for To ICS Position"
+  to-locations="Semicolon-separated list of possibilities for To Location">
+  <div class=layout-grid style="--columns: max-content 1fr max-content 1fr max-content max-content">
+    <div class=pair>
+      <label for=1a.>3. Date:</label>
+      <input id=1a. name=1a. class=date required style="width:4.48rem">
+    </div>
+    <div class=pair>
+      <label for=1b.>4. Time:</label>
+      <input id=1b. name=1b. class=time required style="width:4.77rem">
+    </div>
+    <div class=pair>
+      <div class=label>5. Handling:</div>
+      <div class=required-group>
+        <label>
+          <input type=radio name=5. required value=IMMEDIATE>Immediate
+          <span>(ASAP)</span>
+        </label>
+        <label>
+          <input type=radio name=5. required value=PRIORITY>Priority
+          <span>(&lt;1 hr)</span>
+        </label>
+        <label>
+          <input type=radio name=5. required value=ROUTINE>Routine
+          <span>(&lt;2 hrs)</span>
+        </label>
+      </div>
+    </div>
+  </div>
+  <div class=layout-grid style="--columns: max-content max-content 1fr max-content max-content 1fr">
+    <div class=to-from style="grid-area:1/1/6/2">TO</div>
+    <div class=to-from style="grid-area:1/4/6/5">FROM</div>
+    <if:show-addrs>
+      <div class=pair style="grid-area:1/2/2/4">
+        <label for=ToAddr>Address:</label>
+        <input id=ToAddr name=ToAddr required>
+      </div>
+    </if:show-addrs>
+    <div class=pair style="grid-area:2/2/3/4">
+      <label for=7a.>6. ICS Position:</label>
+      <if:to-ics-positions>
+        <combo-box name=7a. required options={{to-ics-positions}} width="13.27rem"></combo-box>
+      </if:to-ics-positions>
+      <ifnot:to-ics-positions>
+        <input id=7a. name=7a. required style="width:13.27rem">
+      </ifnot:to-ics-positions>
+    </div>
+    <div class=pair style="grid-area:3/2/4/4">
+      <label for=7b.>7. Location:</label>
+      <if:to-ics-locations>
+        <combo-box name=7b. required options={{to-ics-locations}} width="13.27rem"></combo-box>
+      </if:to-ics-locations>
+      <ifnot:to-ics-locations>
+        <input id=7b. name=7b. required style="width:13.27rem">
+      </ifnot:to-ics-locations>
+    </div>
+    <div class=pair style="grid-area:4/2/5/4">
+      <label for=7c.>8. Name:</label>
+      <input id=7c. name=7c. style="width:13.27rem">
+    </div>
+    <div class=pair style="grid-area:5/2/6/4">
+      <label for=7d.>9. Contact Info:</label>
+      <input id=7d. name=7d. style="width:13.27rem">
+    </div>
+    <if:show-addrs>
+      <div class=pair style="grid-area:1/5/2/7">
+        <label for=FromAddr>Address:</label>
+        <input id=FromAddr name=FromAddr readonly>
+      </div>
+    </if:show-addrs>
+    <div class=pair style="grid-area:2/5/3/7">
+      <label for=8a.>10. ICS Position:</label>
+      <input id=8a. name=8a. required style="width:13.46rem">
+    </div>
+    <div class=pair style="grid-area:3/5/4/7">
+      <label for=8b.>11. Location:</label>
+      <input id=8b. name=8b. required style="width:13.46rem">
+    </div>
+    <div class=pair style="grid-area:4/5/5/7">
+      <label for=8c.>12. Name:</label>
+      <input id=8c. name=8c. style="width:13.46rem">
+    </div>
+    <div class=pair style="grid-area:5/5/6/7">
+      <label for=8d.>13. Contact Info:</label>
+      <input id=8d. name=8d. style="width:13.46rem">
+    </div>
+  </div>
+</def:form-dthtf>
+
 <def:the-form submit-url="URL for form submit" submit-label="Label for the submit button"
   save-label="Label for the save button" pdf-url="URL for the Show PDF button">
   <form id=the-form method=POST action={{submit-url}}>
@@ -25,18 +207,6 @@
     </tr>
   </table>
 </def:the-form>
-
-<def:combo-box name="Input control name attribute" options="List of dropdown values, separated by semicolons"
-  tabindex="Input control tabindex attribute" required="Input is required"
-  placeholder="String to display in input field before a value is entered" width="Control width (CSS units)"
-  class="Control class name">
-  <input type=text {{name}} list="{{name}}--list" {{tabindex}} {{placeholder}} {{required}} {{class}}>
-  <datalist id="{{name}}--list">
-    <for:options>
-      <option value="{{.}}"></option>
-    </for:options>
-  </datalist>
-</def:combo-box>
 
 <def:scco-header form-title="Title to put in the top banner.  Required."
   form-version="Form version number to put in the top banner.  Required."

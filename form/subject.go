@@ -132,7 +132,7 @@ func (s *FormSubject) SetSubjectHandling(handling string) (err error) {
 				err = errors.New("The subject line has an old-style severity code, which is no longer part of the County standard.")
 			} else {
 				handling = strings.Map(removeNewlineUnderline, handling)
-				err = errors.New("The handling order on the subject line is not one of the standard handling order codes (I, P, or R).")
+				err = errors.NewF("The handling order on the subject line (%q) is not one of the standard handling order codes (I, P, or R).", handling)
 			}
 		}
 	}
@@ -237,14 +237,14 @@ var subjectFields = []msgifc.Field{
 			}
 			if h := f.Value(m); m.Bulletin() && h == "" {
 				return nil
-			} else if handlingCodes[h] != "" {
+			} else if h == "ROUTINE" || h == "PRIORITY" || h == "IMMEDIATE" {
 				return nil
 			} else if h == "" {
 				return errors.New("The subject line does not have a handling order code.")
 			} else if oldSeverityRE.MatchString(h) {
 				return errors.New("The subject line has an old-style severity code, which is no longer part of the County standard.")
 			} else {
-				return errors.New("The handling order on the subject line is not one of the standard handling order codes (I, P, or R).")
+				return errors.NewF("The handling order on the subject line (%q) is not one of the standard handling order codes (I, P, or R).", h)
 			}
 		}).
 		MakeField(),

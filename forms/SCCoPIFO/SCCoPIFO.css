@@ -1,0 +1,274 @@
+body {
+  margin: 0;
+  height: 100vh;
+  display: grid;
+  grid: max-content 1fr / 100%;
+  font-family: sans-serif;
+  font-size: 1rem;
+}
+
+/* FORM CONTROLS AREA: button bar and error display */
+
+#form-controls {
+  margin-bottom: 1.5rem;
+}
+
+#button-header {
+  height: 2.5rem;
+  padding-left: 1.5rem;
+  border-bottom: 1px solid #888;
+  background-color: #aaa;
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+}
+
+#button-header.valid {
+  background-color: #a8e8a8;
+}
+
+input[type=button] {
+  border-width: 0.1625rem;
+  font-family: sans-serif;
+  font-weight: bold;
+  font-size: 1rem;
+}
+
+input[type=button]:focus {
+  outline: 0.125rem solid #0261df;
+  border-radius: 0.125rem;
+}
+
+#error {
+  display: none;
+}
+
+#error:not(:empty) {
+  display: block;
+  margin: 0.75rem 0.75rem 0;
+  color: red;
+}
+
+#error:not(:empty)::before {
+  content: "ERROR: ";
+}
+
+/* FORM AREA LAYOUT */
+
+/* <div id=form-holder> is a wrapper around the form that provides vertical
+ * scrolling.  (We can't put that on the form itself because the form has
+ * fixed width, and we want the scroll bar at the right edge of the window
+ * rather than the right edge of the form.) */
+#form-holder {
+  margin: 0 0.75rem 1.5rem;
+  padding: 1px; /* Offset negative margins for borders. */
+  overflow-y: auto;
+}
+
+/* A layout grid is the basic building block of the form.  For clarity, they
+ * are written as <div class=layout-grid style="--columns: ...">. */
+.layout-grid {
+  display: grid;
+  grid: auto-flow / var(--columns);
+}
+
+/* <div class=layout-pair> is a particularly common layout grid with two cells:
+ * a label and a control. */
+.layout-pair {
+  display: grid;
+  grid: auto / max-content 1fr;
+}
+
+/* A vertical layout simply arrays things vertically. */
+.layout-vertical {
+  display: grid;
+  grid: auto-flow / auto;
+}
+
+/* <div class=subgrid> creates a subgrid of the current grid, slaved to the
+ * parent grid's row and column definitions.  This is generally used to apply
+ * styles like borders or visibility to a subset of the parent grid. */
+.subgrid {
+  display: grid;
+  grid: subgrid/subgrid;
+}
+
+/* class=border adds a standard border around its element. */
+.border {
+  margin: -1px 0 0 -1px;
+  border: 1px solid #aaa;
+  padding-block: 0.25rem;
+}
+
+/* class=border-thick adds a thick border around its element. */
+.border-thick {
+  border: 3px solid #444;
+}
+
+/* <div class=pair> defines a subgrid spanning two columns of one row of the
+ * parent grid for a label and control, with a standard border around both. */
+.pair {
+  grid-column: span 2;
+  margin: -1px 0 0 -1px;
+  border: 1px solid #aaa;
+  padding-block: 0.25rem;
+  display: grid;
+  grid: auto / subgrid;
+  align-items: baseline;
+}
+.pair> :first-child {
+  margin-left: 0.25rem;
+}
+.pair> :last-child {
+  margin-inline: 0.5rem;
+}
+
+/* Convenience classes for building grids. */
+.colspan2 { grid-column: span 2; }
+.colspan3 { grid-column: span 3; }
+.colspan4 { grid-column: span 4; }
+.colspan5 { grid-column: span 5; }
+.rowspan2 { grid-row: span 2; }
+
+/* SECTION HEADERS */
+
+.section {
+  margin: -1px -2px 0;
+  border: 2px solid #444;
+  background-color: #ccc;
+  padding-inline: 0.25rem;
+  font-size: 1.25rem;
+  font-weight: bold;
+}
+
+/* <div class=section-inline> is styled like a section header, but for a cell
+ * rather than a row. */
+.section-inline {
+  margin: -1px 0 0 -1px;
+  border: 1px solid #aaa;
+  background-color: #ccc;
+  padding: 0.25rem;
+  font-weight: bold;
+}
+
+/* <div class=subsec> is a subsection header, formatted like a label but without
+ * a corresponding control. */
+.subsec {
+  margin: -1px 0 0 -1px;
+  border: 1px solid #aaa;
+  padding: 0.25rem;
+  font-weight: bold;
+}
+
+/* STANDARD HEADERS AND FOOTERS */
+
+/* <div id=form-header> is the header row at the top of every form that
+ * contains its title and version numbers. */
+#form-header {
+  margin: -1px 0 0 -1px;
+  border: 1px solid #aaa;
+  background-color: #deeaf6;
+  padding: 0.25rem;
+  display: grid;
+  grid: auto / 1fr max-content;
+  align-items: center;
+  text-align: right;
+}
+
+/* <div id=form-title> is the left side of <div id=form-header>, containing the
+ * form title. */
+#form-title {
+  grid-row: span 2;
+  text-align: left;
+  font-size: 1.25rem;
+  font-weight: bold;
+}
+
+/* <div id=form-header-roo> is the "Radio Operator Only" row at the top of each
+ * form, with the message numbers. */
+#form-header-roo {
+  margin-bottom: 1rem;
+  display: grid;
+  grid: auto-flow / max-content max-content 1fr max-content 1fr;
+  align-items: baseline;
+}
+
+/* <div class=to-from> is the "TO" and "FROM" headers to the left of the
+ * addressing fields. */
+.to-from {
+  margin: -1px 0 0 -1px;
+  border: 1px solid #aaa;
+  padding: 0.125rem;
+  writing-mode: sideways-lr;
+  text-align: center;
+  font-size: 1.25rem;
+  font-weight: bold;
+}
+
+/* <div id=form-footer-relay> is the "Radio Operator Only" banner and relay
+ * received/sent fields at the bottom of each form. */
+#form-footer-relay {
+  margin-top: 1rem;
+  display: grid;
+  grid: auto-flow / max-content max-content 1fr max-content 1fr;
+}
+
+/* <div id=form-footer-opinfo> is the row at the bottom of the form with the
+ * radio operator name, call, date, and time. */
+#form-footer-opinfo {
+  display: grid;
+  grid: auto-flow / max-content 1fr max-content 1fr max-content max-content max-content max-content;
+}
+
+/* FORM CONTROLS */
+
+label,
+.label {
+  font-weight: bold;
+}
+
+label:not([for]) {
+  margin-left: 1.5rem;
+  text-indent: -1.5rem;
+}
+
+label>input {
+  margin-right: 0.375rem;
+}
+
+.label {
+  margin-left: 0.25rem;
+}
+
+input:not([type]) {
+  min-width: 0;
+  margin: 0;
+  border: none;
+  padding-inline: 0;
+  font-family: "Times New Roman", serif;
+  font-size: 1rem;
+  color: rgb(0, 0, 153);
+}
+
+textarea {
+  margin: 0;
+  border: none;
+}
+
+/* INVALID AREAS */
+
+input:invalid,
+textarea:invalid,
+.invalid {
+  box-shadow: 0 0 6px 2px #c80000;
+  background-color: #fff8f8;
+}
+.required-group input[type="checkbox"]:invalid,
+.required-group input[type="radio"]:invalid {
+  box-shadow: none;
+  background-color: inherit;
+}
+
+[hidden] {
+  display: none !important;
+}
