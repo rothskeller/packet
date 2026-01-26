@@ -119,7 +119,7 @@ input[type=button]:focus {
 .pair> :first-child {
   margin-left: 0.25rem;
 }
-.pair> :last-child {
+.pair> :nth-child(2) {
   margin-inline: 0.5rem;
 }
 
@@ -129,6 +129,7 @@ input[type=button]:focus {
 .colspan4 { grid-column: span 4; }
 .colspan5 { grid-column: span 5; }
 .rowspan2 { grid-row: span 2; }
+.rowspan3 { grid-row: span 3; }
 
 /* SECTION HEADERS */
 

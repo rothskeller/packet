@@ -1,8 +1,8 @@
 <def:combo-box name="Input control name attribute" options="List of dropdown values, separated by semicolons"
   tabindex="Input control tabindex attribute" required="Input is required"
-  placeholder="String to display in input field before a value is entered" width="Control width (CSS units)"
+  placeholder="String to display in input field before a value is entered" style="Control style"
   class="Control class name">
-  <input {{name}} list="{{name}}--list" {{tabindex}} {{placeholder}} {{required}} {{class}}>
+  <input {{name}} list="{{name}}--list" {{tabindex}} {{placeholder}} {{required}} {{class}} {{style}}>
   <datalist id="{{name}}--list">
     <for:options>
       <option value="{{.}}"></option>
@@ -462,8 +462,8 @@
 </def:scco-footer>
 
 <def:jurisdiction-box name="Input control name for the jurisdiction field.  Required."
-  tabindex="Input control tab index">
-  <combo-box {{name}} {{tabindex}} placeholder="Select one..." required
+  tabindex="Input control tab index" style="CSS style">
+  <combo-box {{name}} {{tabindex}} {{style}} placeholder="Select one..." required
     options="Campbell; Cupertino; Gilroy; Los Altos; Los Altos Hills; Los Gatos; Milpitas; Monte Sereno; Morgan Hill; Mountain View; Palo Alto; San Jose; Santa Clara (City); Saratoga; Sunnyvale; Santa Clara County; County unincorporated">
   </combo-box>
 </def:jurisdiction-box>

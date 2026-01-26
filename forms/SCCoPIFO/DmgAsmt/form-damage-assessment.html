@@ -1,135 +1,119 @@
 <!DOCTYPE html>
-<link rel=stylesheet type=text/css href={{assets}}/pack-it-forms.css>
-<style>
-  .annotation {
-    font-size: 80%;
-    font-weight: normal
-  }
-</style>
+<link rel=stylesheet href={{assets}}/SCCoPIFO.css>
 <script type=text/javascript src={{assets}}/pack-it-forms.js></script>
 <title>Damage Assessment</title>
-<the-form>
-  <scco-header form-title="Damage Assessment" paper-version="PDF: 20250812"
-    to-ics-positions="Damage/Safety Assessment Group; Construction &amp; Eng. Branch; Operations"></scco-header>
-  <table class=veoci>
-    <caption>Overview
-    <tr>
-      <td class=label>Jurisdiction:
-      <td class="input nest">
-        <table>
-          <tr>
-            <td class=input><jurisdiction-box name="20." tabindex=20></jurisdiction-box>
-            <td class=label>Incident Name:
-            <td class=input><input type=text name=21. tabindex=20 required>
-        </table>
-    <tr>
-      <td class=label>Address:
-      <td class="input nest">
-        <table>
-          <tr>
-            <td class=input><input type=text name=22. tabindex=20 required>
-            <td class=label>Unit/Suite:
-            <td class=input><input type=text name=23. tabindex=20 style="max-width:5em">
-        </table>
-    <tr>
-      <td class=label-top>Type of Structure:
-      <td class=input>
-        <table class="boxgroup required-group">
-          <tr>
-            <td><input name=24. type=radio value="Single Family" tabindex=20 required>Single Family
-            <td><input name=24. type=radio value="Mobile Home" tabindex=20 required>Mobile Home
-            <td><input name=24. type=radio value="Non-Profit Orgs" tabindex=20 required>Non-Profit Orgs
-          <tr>
-            <td><input name=24. type=radio value=Multi-Family tabindex=20 required>Multi-Family
-            <td><input name=24. type=radio value=Business tabindex=20 required>Business
-            <td><input name=24. type=radio value=Outbuilding tabindex=20 required>Outbuilding
-        </table>
-    <tr>
-      <td class=label>Number of Stories:
-      <td class=input><input name=25. type=text class=nonzero-cardinal-number tabindex=20>
-    <tr>
-      <td class=label>Own/Rent:
-      <td class=input>
-        <table class=boxgroup>
-          <tr>
-            <td><input name=26. type=radio value=Own tabindex=20>Own
-            <td><input name=26. type=radio value=Rent tabindex=20>Rent
-        </table>
-    <tr>
-      <td class=label-top>Types of Damage:
-      <td class=input>
-        <table class="boxgroup required-group">
-          <tr>
-            <td><input name=27a. type=checkbox tabindex=20 required>Flooding
-            <td><input name=27c. type=checkbox tabindex=20 required>Structural
-          <tr>
-            <td><input name=27b. type=checkbox tabindex=20 required>Roof / Windows / Other Exterior
-            <td><input name=27d. type=checkbox tabindex=20 required>Other <span class=annotation>(define in
-                comments)</span>
-        </table>
-    <tr>
-      <td class=label-top>Basement Type:</td>
-      <td class=input>
-        <table class="boxgroup required-group">
-          <tr>
-            <td><input name=28. type=radio value=Basement tabindex=20 required>Basement
-            <td><input name=28. type=radio value="Basement and Crawlspace" tabindex=20 required>Basement and
-              Crawlspace
-          <tr>
-            <td><input name=28. type=radio value=Crawlspace tabindex=20 required>Crawlspace
-            <td><input name=28. type=radio value=N/A tabindex=20 required>N/A
-        </table>
-    <tr>
-      <td class=label colspan=2 style="border-bottom:none;padding-bottom:0">What is the damage classification for this
-        property?
-    <tr>
-      <td class=label>
-      <td class=input>
-        <table class="boxgroup required-group">
-          <tr>
-            <td><input name=29. type=radio value=Destroyed tabindex=20 required>Destroyed
-            <td><input name=29. type=radio value=Minor tabindex=20 required>Minor
-            <td><input name=29. type=radio value="No Visible Damage" tabindex=20 required>No Visible Damage
-          <tr>
-            <td><input name=29. type=radio value=Major tabindex=20 required>Major
-            <td colspan=2><input name=29. type=radio value=Affected tabindex=20 required>Affected
-              (Superficial or Cosmetic Damage Only)
-        </table>
-    <tr>
-      <td class=label>Tag:
-      <td class=input>
-        <table class=boxgroup>
-          <tr>
-            <td><input name=30. type=radio value=Green tabindex=20>Green Tagged
-            <td><input name=30. type=radio value=Yellow tabindex=20>Yellow Tagged
-            <td><input name=30. type=radio value=Red tabindex=20>Red Tagged
-        </table>
-    <tr>
-      <td class=label>Insurance:
-      <td class="input nest">
-        <table>
-          <tr>
-            <td class=input>
-              <table class=boxgroup>
-                <tr>
-                  <td><input name=31. type=radio value=Yes tabindex=20>Yes
-                  <td><input name=31. type=radio value=No tabindex=20>No
-              </table>
-            <td class=label>Estimated Damage ($):
-            <td class=input><input type=text name=32. class=cardinal-number tabindex=20 style="width:8em">
-        </table>
-    <tr>
-      <td class=label>Comments:
-      <td class=input><textarea name=33. rows=2 tabindex=20></textarea>
-    <tr>
-      <td class=label>Contact Name:
-      <td class="input nest">
-        <table>
-          <tr>
-            <td class=input><input type=text name=34. tabindex=20 required>
-            <td class=label>Contact Phone:
-            <td class=input><input type=text name=35. class=phone-number tabindex=20 required>
-        </table>
-  </table>
-  <scco-footer></scco-footer>
-</the-form>
+<packet-form>
+  <form-roo form-title="Damage Assessment" paper-version="PDF: 20251228">
+    <form-dthtf
+      to-ics-positions="Damage/Safety Assessment Group; Construction &amp; Eng. Branch; Operations"></form-dthtf>
+    <div class=section>Overview</div>
+    <div class=layout-grid style="--columns: max-content 1fr max-content 1fr">
+      <div class=pair>
+        <label for=20.>21. Jurisdiction:</label>
+        <jurisdiction-box id=20. name=20. style="width:15.46rem"></jurisdiction-box>
+      </div>
+      <div class=pair>
+        <label for=21.>22. Incident Name:</label>
+        <input id=21. name=21. required style="width:13.95rem">
+      </div>
+      <div class=pair>
+        <label for=22.>23. Address:</label>
+        <input id=22. name=22. required style="width:15.46rem">
+      </div>
+      <div class=pair>
+        <label for=23.>24. Unit/Suite:</label>
+        <input id=23. name=23. style="width:13.95rem">
+      </div>
+    </div>
+    <div class=layout-grid style="--columns: repeat(3, max-content) 1fr">
+      <div class="pair colspan4">
+        <div class=label>25. Type of Structure:</div>
+        <div class="layout-grid required-group colspan3" style="--columns: repeat(3, max-content); column-gap: 0.5rem">
+          <label style="order:1"><input name=24. type=radio value="Single Family" required>a. Single Family</label>
+          <label style="order:4"><input name=24. type=radio value=Multi-Family required>b. Multi-Family</label>
+          <label style="order:2"><input name=24. type=radio value="Mobile Home" required>c. Mobile Home</label>
+          <label style="order:5"><input name=24. type=radio value=Business required>d. Business</label>
+          <label style="order:3"><input name=24. type=radio value="Non-Profit Orgs" required>e. Non-Profit Orgs</label>
+          <label style="order:6"><input name=24. type=radio value=Outbuilding required>f. Outbuilding</label>
+        </div>
+      </div>
+      <div class="pair colspan4">
+        <label for=25.>26. Number of Stories:</label>
+        <input id=25. name=25. class="cardinal-number colspan3" style="width:34.77rem">
+      </div>
+      <div class="pair colspan4">
+        <div class=label>27. Own/Rent:</div>
+        <div class=colspan3>
+          <label><input name=26. type=radio value=Own>Own</label>
+          <label><input name=26. type=radio value=Rent>Rent</label>
+        </div>
+      </div>
+      <div class="pair colspan4">
+        <div class=label>28. Types of Damage:</div>
+        <div class="subgrid required-group" style="grid-area:1/2/3/4; column-gap: 0.5rem">
+          <label style="grid-area:1/1"><input name=27a. type=checkbox required>a. Flooding</label>
+          <label style="grid-area:2/1"><input name=27b. type=checkbox required>b. Roof / Windows / Other
+            Exterior</label>
+          <label style="grid-area:1/2"><input name=27c. type=checkbox required>c. Structural</label>
+          <label style="grid-area:2/2"><input name=27d. type=checkbox required>d. Other
+            <span style="font-weight: normal">(define in comments)</span></label>
+        </div>
+      </div>
+      <div class="pair colspan4">
+        <div class=label>29. Basement Type:</div>
+        <div class="subgrid required-group" style="grid-area: 1/2/3/4; column-gap: 0.5rem">
+          <label style="grid-area:1/1"><input name=28. type=radio value=Basement>a. Basement</label>
+          <label style="grid-area:2/1"><input name=28. type=radio value=Crawlspace>b. Crawlspace</label>
+          <label style="grid-area:1/2"><input name=28. type=radio value="Basement and Crawlspace">c. Basement and
+            Crawlspace</label>
+          <label style="grid-area:2/2"><input name=28. type=radio value=N/A>d. N/A</label>
+        </div>
+      </div>
+      <div class="border subgrid rowspan3 colspan4">
+        <div class="label colspan4">30. What is the damage classification for this property?</div>
+        <div></div>
+        <div class="subgrid required-group rowspan2 colspan3" style="--columns: repeat(3, max-content); column-gap: 0.5rem; margin-left: 0.5rem">
+          <label style="order:1"><input name=29. type=radio value=Destroyed>a. Destroyed</label>
+          <label style="order:4"><input name=29. type=radio value=Major>b. Major</label>
+          <label style="order:2"><input name=29. type=radio value=Minor>c. Minor</label>
+          <label class=colspan2 style="order:5"><input name=29. type=radio value=Affected>d. Affected (Superficial or
+            Cosmetic Damage Only)</label>
+          <label style="order:3"><input name=29. type=radio value="No Visible Damage">e. No Visible Damage</label>
+        </div>
+      </div>
+      <div class="border subgrid rowspan3 colspan4">
+        <div class=label>31. Tag:</div>
+        <div class="subgrid colspan3" style="column-gap: 0.5rem">
+          <label><input name=30. type=radio value=Green>a. Green Tagged</label>
+          <label><input name=30. type=radio value=Yellow>b. Yellow Tagged</label>
+          <label><input name=30. type=radio value=Red>c. Red Tagged</label>
+        </div>
+      </div>
+    </div>
+    <div class=layout-grid style="--columns: max-content 1fr max-content 1fr">
+      <div class=pair>
+        <div class=label>32. Insurance:</div>
+        <div>
+          <label><input name=31. type=radio value=Yes>Yes</label>
+          <label><input name=31. type=radio value=No>No</label>
+        </div>
+      </div>
+      <div class=pair>
+        <label for=32.>33. Estimated Damage ($):</label>
+        <input id=32. name=32. class=cardinal-number style="width:11.17rem">
+      </div>
+      <div class="pair colspan4">
+        <label for=33.>34. Comments:</label>
+        <textarea id=33. name=33. class=colspan3 style="width:43.67rem;height:4.38rem"></textarea>
+      </div>
+      <div class=pair>
+        <label for=34.>35. Contact Name:</label>
+        <input id=34. name=34. required style="width:14.70rem">
+      </div>
+      <div class=pair>
+        <label for=35.>36. Contact Phone:</label>
+        <input id=35. name=35. class=phone-number required style="width:13.58rem">
+      </div>
+    </div>
+  </form-roo>
+</packet-form>
