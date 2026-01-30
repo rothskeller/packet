@@ -1,52 +1,60 @@
 <!DOCTYPE html>
-<link rel=stylesheet type=text/css href={{assets}}/pack-it-forms.css>
-<style>
-  .annotation {
-    font-size: 80%;
-    font-weight: normal
-  }
-</style>
+<link rel=stylesheet href={{assets}}/SCCoPIFO.css>
 <script type=text/javascript src={{assets}}/pack-it-forms.js></script>
 <title>Road Closure</title>
-<the-form>
-  <scco-header form-title="Road Closure" paper-version="PDF: 20250812"
-    to-ics-positions="Public Works Group; Construction &amp; Eng. Branch; Operations"></scco-header>
-  <table class=veoci>
-    <caption>Initial Information
-    <tr>
-      <td class=label>Jurisdiction:
-      <td class=input><jurisdiction-box name="20." tabindex=20></jurisdiction-box>
-    <tr>
-      <td class=label>Road/Intersection:
-      <td class=input><input type=text name=21. tabindex=20 required>
-    <tr>
-      <td class=label>Location:
-      <td class=input><textarea name=22. tabindex=20 required></textarea>
-    <tr>
-      <td class=label>Details:
-      <td class=input><textarea name=23. tabindex=20 required></textarea>
-    <tr>
-      <td class=label>Status:
-      <td class=input>
-        <table class="boxgroup required-group">
-          <tr>
-            <td><input type=radio name=24. value="Planned Closure" tabindex=20 required>Planned Closure
-            <td><input type=radio name=24. value=Closed tabindex=20 required>Closed
-            <td><input type=radio name=24. value=Reopened tabindex=20 required>Reopened
-        </table>
-  </table>
-  <table class=veoci>
-    <caption>Closure Time
-    <tr>
-      <td class=label>Closure Start Date:
-      <td class=input><input type=text name=30d. class=date tabindex=30>
-      <td class=label>Closure Start Time:
-      <td class=input><input type=text name=30t. class=time tabindex=30 required-if=30d.start-date else-disallowed>
-    <tr>
-      <td class=label>Closure End Date:
-      <td class=input><input type=text name=31d. class=date tabindex=30>
-      <td class=label>Closure End Time:
-      <td class=input><input type=text name=31t. class=time tabindex=30 required-if=31d.end-date else-disallowed>
-  </table>
-  <scco-footer></scco-footer>
-</the-form>
+<packet-form>
+  <form-roo form-title="Road Closure" paper-version="PDF: 20251228" omistyle="width:7.90rem" dmistyle="width:10.80rem"
+    rrstyle="width:17.72rem" rsstyle="width:17.74rem" opstyle="width:14.57rem" ocstyle="width:5.51rem"
+    odstyle="width:6.17rem" otstyle="width:2.58rem">
+    <form-dthtf to-ics-positions="Public Works Group; Construction &amp; Eng. Branch; Operations"
+      mdstyle="width:4.48rem" mtstyle="width:4.77rem" tostyle="width:13.27rem" frstyle="width:13.46rem"></form-dthtf>
+    <div class=section>Initial Information</div>
+    <div class="layout-pair">
+      <div class=pair>
+        <label for=20.>21. Jurisdiction:</label>
+        <jurisdiction-box id=20. name=20. style="width:34.83rem"></jurisdiction-box>
+      </div>
+      <div class=pair>
+        <label for=21.>22. Road/Intersection:</label>
+        <input id=21. name=21. required style="width:34.83rem">
+      </div>
+    </div>
+    <div class="layout-pair">
+      <div class=pair>
+        <label for=22.>23. Location:</label>
+        <textarea id=22. name=22. required style="width:43.67rem;height:5.35rem"></textarea>
+      </div>
+      <div class=pair>
+        <label for=23.>24. Details:</label>
+        <textarea id=23. name=23. required style="width:43.67rem;height:5.36rem"></textarea>
+      </div>
+      <div class=pair>
+        <div class=label>25. Status:</div>
+        <div class=required-group>
+          <label><input type=radio name=24. value="Planned Closure">a. Planned Closure</label>
+          <label><input type=radio name=24. value=Closed>b. Closed</label>
+          <label><input type=radio name=24. value=Reopened>c. Reopened</label>
+        </div>
+      </div>
+    </div>
+    <div class=section>Closure Time</div>
+    <div class="layout-grid" style="--columns: max-content 1fr max-content 1fr">
+      <div class=pair>
+        <label for=30d.>31. Closure Start Date:</label>
+        <input id=30d. name=30d. class=date style="width:12.86rem">
+      </div>
+      <div class=pair>
+        <label for=30t.>33. Closure Start Time:</label>
+        <input id=30t. name=30t. class=time required-if=30d.start-date else-disallowed style="width:12.56rem">
+      </div>
+      <div class=pair>
+        <label for=31d.>32. Closure End Date:</label>
+        <input id=31d. name=31d. class=date style="width:12.86rem">
+      </div>
+      <div class=pair>
+        <label for=31t.>34. Closure End Time:</label>
+        <input id=31t. name=31t. class=time required-if=31d.end-date else-disallowed style="width:12.56rem">
+      </div>
+    </div>
+  </form-roo>
+</packet-form>
