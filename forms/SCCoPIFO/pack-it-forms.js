@@ -178,7 +178,7 @@ function adjust_pattern(input) {
 
 // Adjusts the required flags on all controls in a required group.
 function adjust_required_group(group) {
-  if (group.querySelector(":checked") || group.closest("[hidden]")) {
+  if (group.querySelector(":checked") || group.closest("[hidden]") || !group.classList.contains('required-group')) {
     group.querySelectorAll("input[type=checkbox]:required").forEach((r) => {
       r.required = false
     })
@@ -254,6 +254,20 @@ function adjust_required_disabled() {
           break
       }
       adjust_pattern(elm)
+    })
+  document
+    .querySelectorAll(".required-group,.was-required-group")
+    .forEach((elm) => {
+      if (elm.closest("[hidden]")) return
+      if (!elm.hasAttribute("required-if")) return
+      const cond = Conditional.getOrMake(elm, "required-if")
+      if (cond.test()) {
+        elm.classList.remove('was-required-group')
+        elm.classList.add('required-group')
+      } else {
+        elm.classList.remove('required-group')
+        elm.classList.add('was-required-group')
+      }
     })
   adjust_required_groups()
 }
@@ -401,12 +415,15 @@ function setup_required_if() {
       inherit_conditionals(elm)
       elm.addEventListener("input", adjust_required_disabled)
     })
+  document.querySelectorAll('.required-group').forEach(elm => {
+    inherit_conditionals(elm)
+  })
   adjust_required_disabled()
 }
 
 // Sets up required groups.
 function setup_required_groups() {
-  required_groups = Array.from(document.querySelectorAll(".required-group"))
+  required_groups = Array.from(document.querySelectorAll(".required-group,.was-required-group"))
   required_groups.forEach((g) => {
     g.addEventListener("change", on_required_group_change)
   })
