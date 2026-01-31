@@ -1,125 +1,124 @@
 <!DOCTYPE html>
-<link rel=stylesheet type=text/css href={{assets}}/pack-it-forms.css>
-<style>
-  .annotation {
-    font-size: 80%;
-    font-weight: normal
-  }
-</style>
+<link rel=stylesheet href={{assets}}/SCCoPIFO.css>
 <script type=text/javascript src={{assets}}/pack-it-forms.js></script>
 <title>Shelter Form</title>
-<the-form>
-  <scco-header form-title="Shelter Form" paper-version="PDF: 20250812"
-    to-ics-positions="Care &amp; Shelter Unit; Mass Care &amp; Emerg. Asst. Branch; Operations"></scco-header>
-  <table class=veoci>
-    <caption>General Site Information
-    <tr>
-      <td class=label>Jurisdiction:
-      <td class=input><jurisdiction-box name="20." tabindex=20></jurisdiction-box>
-    <tr>
-      <td class=label>Shelter Name:
-      <td class=input><input type=text name=21. tabindex=20 required>
-    <tr>
-      <td class=label>Location:
-      <td class=input><input type=text name=22. tabindex=20 required>
-    <tr>
-      <td class=label-top>Type:<br><span class=annotation>(multi-select)</span>
-      <td class=input>
-        <table class="boxgroup required-group">
-          <tr>
-            <td><input type=checkbox name=23a. tabindex=20 required>Congregate
-            <td><input type=checkbox name=23c. tabindex=20 required>Temporary Evacuation Point
-            <td><input type=checkbox name=23e. tabindex=20 required>Large Animals
-          <tr>
-            <td><input type=checkbox name=23b. tabindex=20 required>Non-Congregate
-            <td><input type=checkbox name=23d. tabindex=20 required>Pets Accepted
-        </table>
-    <tr>
-      <td class=label>Shelter Status:
-      <td class=input>
-        <table class="boxgroup required-group">
-          <tr>
-            <td><input type=radio name=24. value=Setup tabindex=20 required>Setup in progress, not accepting
-              guests
-            <td><input type=radio name=24. value=Full tabindex=20 required>Full, not accepting guests
-          <tr>
-            <td><input type=radio name=24. value=Open tabindex=20 required>Open, accepting guests
-            <td><input type=radio name=24. value=Closed tabindex=20 required>Closed
-        </table>
-    <tr>
-      <td class=label-top>Resources:<br><span class=annotation>(multi-select)</span>
-      <td class=input>
-        <table class=boxgroup>
-          <tr>
-            <td><input type=checkbox name=25a. tabindex=20>Warming Center
-            <td><input type=checkbox name=25c. tabindex=20>Food &amp; Drink
-          <tr>
-            <td><input type=checkbox name=25b. tabindex=20>Cooling Center
-            <td><input type=checkbox name=25d. tabindex=20>Charging Stations
-        </table>
-    <tr>
-      <td class=label>Notes:
-      <td class=input><textarea name=26. tabindex=20></textarea>
-    <tr>
-      <td class=label>ADA Compliant:
-      <td class="input nest">
-        <table>
-          <tr>
-            <td class=input>
-              <table class=boxgroup>
-                <tr>
-                  <td><input type=radio name=27. value=Yes tabindex=20>Yes
-                  <td><input type=radio name=27. value=No tabindex=20>No
-              </table>
-            <td class=label>Pets Allowed?
-            <td class=input>
-              <table class=boxgroup>
-                <tr>
-                  <td><input type=radio name=28. value=Yes tabindex=20>Yes
-                  <td><input type=radio name=28. value=No tabindex=20>No
-              </table>
-        </table>
-    <tr>
-      <td class=label>Maximum Capacity:
-      <td class="input nest">
-        <table>
-          <tr>
-            <td class=input><input type=text name=29. class=cardinal-number tabindex=20 required>
-            <td class=label>Total Registered:
-            <td class=input><input type=text name=30. class=cardinal-number tabindex=20 required>
-            <td class=label>Cot Numbers:
-            <td class=input><input type=text name=31. class=cardinal-number tabindex=20 required>
-        </table>
-    <tr>
-      <td class=label>AFN Considerations:
-      <td class=input><textarea name=32. tabindex=20></textarea>
-  </table>
-  <table class=veoci>
-    <caption>Contact Information
-    <tr>
-      <td class=label>Managed By:
-      <td class=input>
-        <table class="boxgroup required-group">
-          <tr>
-            <td><input type=radio name=40. value=ARC tabindex=40 required>American Red Cross
-            <td><input type=radio name=40. value=Government tabindex=40 required>Government
-            <td><input type=radio name=40. value=Community tabindex=40 required>Community
-          <tr>
-            <td><input type=radio name=40. value=Private tabindex=40 required>Private
-            <td><input type=radio name=40. value=Other tabindex=40 required>Other
-        </table>
-    <tr>
-      <td class=label>Primary Contact Name:
-      <td class="input nest">
-        <table>
-          <tr>
-            <td class=input><input type=text name=41. tabindex=40 required>
-            <td class=label>Primary Contact Phone Number:
-            <td class=input><input type=text name=42. class=phone-number tabindex=40 required>
-        </table>
-    <tr>
-      <td class=label>Primary Contact Email:
-      <td class=input><input type=text name=43. tabindex=40>
-  </table>
-  <scco-footer></scco-footer>
-</the-form>
+<packet-form>
+  <form-roo form-title="Shelter Form" paper-version="PDF: 20251228" omistyle="width:8.26rem" dmistyle="width:10.81rem"
+    rrstyle="width:17.33rem" rsstyle="width:18.03rem" opstyle="width:14.26rem" ocstyle="width:5.55rem"
+    odstyle="width:6.20rem" otstyle="width:2.82rem">
+    <form-dthtf to-ics-positions="Care &amp; Shelter Unit; Mass Care &amp; Emerg. Asst. Branch; Operations"
+      mdstyle="width:4.48rem" mtstyle="width:4.77rem" tostyle="width:13.27rem" frstyle="width:13.46rem"></form-dthtf>
+    <div class=section>General Site Information</div>
+    <div class=layout-pair>
+      <div class=pair>
+        <label for=20.>21. Jurisdiction:</label>
+        <jurisdiction-box id=20. name=20. style="width:36.54rem"></jurisdiction-box>
+      </div>
+      <div class=pair>
+        <label for=21.>22. Shelter Name:</label>
+        <input id=21. name=21. required style="width:36.54rem">
+      </div>
+      <div class=pair>
+        <label for=22.>23. Location:</label>
+        <input id=22. name=22. required style="width:36.54rem">
+      </div>
+      <div class=pair>
+        <div class=label>24. Type:<br><span class=annotation>(multi-select)</span></div>
+        <div class="layout-grid required-group" style="--columns: max-content max-content 1fr; column-gap: 0.5rem">
+          <label style="order:1"><input type=checkbox name=23a.>a. Congregate</label>
+          <label style="order:4"><input type=checkbox name=23b.>b. Non-Congregate</label>
+          <label style="order:2"><input type=checkbox name=23c.>c. Temporary Evacuation Point</label>
+          <label style="order:5"><input type=checkbox name=23d.>d. Pets Accepted</label>
+          <label style="order:3"><input type=checkbox name=23e.>e. Large Animals</label>
+        </div>
+      </div>
+      <div class=pair>
+        <div class=label>25. Shelter Status:</div>
+        <div class="layout-grid required-group" style="--columns: max-content 1fr; column-gap: 0.5rem">
+          <label style="order:1"><input type=radio name=24. value=Setup>a. Setup in progress, not accepting guests</label>
+          <label style="order:3"><input type=radio name=24. value=Open>b. Open, accepting guests</label>
+          <label style="order:2"><input type=radio name=24. value=Full>c. Full, not accepting guests</label>
+          <label style="order:4"><input type=radio name=24. value=Closed>d. Closed</label>
+        </div>
+      </div>
+      <div class=pair>
+        <div class=label>26. Resources:<br><span class=annotation>(multi-select)</span></div>
+        <div class=layout-grid style="--columns: max-content 1fr; column-gap: 0.5rem">
+          <label style="order:1"><input type=checkbox name=25a.>a. Warming Center</label>
+          <label style="order:3"><input type=checkbox name=25b.>b. Cooling Center</label>
+          <label style="order:2"><input type=checkbox name=25c.>c. Food &amp; Drink</label>
+          <label style="order:4"><input type=checkbox name=25d.>d. Charging Stations</label>
+        </div>
+      </div>
+    </div>
+    <div class=layout-pair>
+      <div class=pair>
+        <label for=26.>27. Notes:</label>
+        <textarea id=26. name=26. style="width:39.51rem;height:5.28rem"></textarea>
+      </div>
+    </div>
+    <div class=layout-grid style="--columns: max-content 1fr max-content 1fr">
+      <div class=pair>
+        <div class=label>28. ADA Compliant:</div>
+        <div>
+          <label><input type=radio name=27. value=Yes>Yes</label>
+          <label><input type=radio name=27. value=No>No</label>
+        </div>
+      </div>
+      <div class=pair>
+        <div class=label>29. Pets Allowed?</div>
+        <div>
+          <label><input type=radio name=28. value=Yes>Yes</label>
+          <label><input type=radio name=28. value=No>No</label>
+        </div>
+      </div>
+    </div>
+    <div class=layout-grid style="--columns: max-content 1fr max-content 1fr max-content 1fr">
+      <div class=pair>
+        <label for=29.>29. Maximum Capacity:</label>
+        <input id=29. name=29. class=cardinal-number required style="width:5.38rem">
+      </div>
+      <div class=pair>
+        <label for=30.>30. Total Registered:</label>
+        <input id=30. name=30. class=cardinal-number required style="width:6.14rem">
+      </div>
+      <div class=pair>
+        <label for=31.>31. Cot Numbers:</label>
+        <input id=31. name=31. class=cardinal-number required style="width:6.90rem">
+      </div>
+    </div>
+    <div class=layout-pair>
+      <div class=pair>
+        <label for=32.>32. AFN Considerations:</label>
+        <textarea id=32. name=32. style="width:34.27rem;height:4.15rem"></textarea>
+      </div>
+    </div>
+    <div class=section>Contact Information</div>
+    <div class=layout-pair>
+      <div class=pair>
+        <div class=label>41. Managed By:</div>
+        <div class="layout-grid required-group" style="--columns: max-content max-content 1fr; column-gap: 0.5rem">
+          <label style="order:1"><input type=radio name=40. value=ARC>a. American Red Cross</label>
+          <label style="order:4"><input type=radio name=40. value=Private>b. Private</label>
+          <label style="order:2"><input type=radio name=40. value=Government>c. Government</label>
+          <label style="order:5"><input type=radio name=40. value=Community>d. Community</label>
+          <label style="order:3"><input type=radio name=40. value=Other>e. Other</label>
+        </div>
+      </div>
+    </div>
+    <div class=layout-grid style="--columns: max-content 1fr max-content 1fr">
+      <div class=pair>
+        <label for=41.>42. Primary Contact Name:</label>
+        <input id=41. name=41. required style="width:11.45rem">
+      </div>
+      <div class=pair>
+        <label for=42.>43. Primary Contact Phone Number:</label>
+        <input id=42. name=42. class=phone-number required style="width:7.10rem">
+      </div>
+      <div class="pair colspan4">
+        <label for=43.>44. Primary Contact Email:</label>
+        <input id=43. name=43. class=colspan3 style="width:33.09rem">
+      </div>
+    </div>
+  </form-roo>
+</packet-form>
