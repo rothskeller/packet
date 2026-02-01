@@ -1,64 +1,58 @@
 <!DOCTYPE html>
-<link rel=stylesheet type=text/css href={{assets}}/pack-it-forms.css>
-<style>
-  .annotation {
-    font-size: 80%;
-    font-weight: normal
-  }
-</style>
+<link rel=stylesheet href={{assets}}/SCCoPIFO.css>
 <script type=text/javascript src={{assets}}/pack-it-forms.js></script>
 <title>Windshield Survey</title>
-<the-form>
-  <scco-header form-title="Windshield Survey" paper-version="PDF: 20250812"
-    to-ics-positions="Damage/Safety Assessment Group; Construction &amp; Eng. Branch; Operations"></scco-header>
-  <table class=veoci>
-    <caption>Overview
-    <tr>
-      <td class=label>Jurisdiction:
-      <td class=input><jurisdiction-box name="20." tabindex=20></jurisdiction-box>
-    <tr>
-      <td class=label>Team:
-      <td class=input><input type=text name=21. tabindex=20 required>
-    <tr>
-      <td class=label>Location:
-      <td class=input><input type=text name=22. tabindex=20 required>
-    <tr>
-      <td class=label>Item:
-      <td class=input>
-        <table class="boxgroup required-group">
-          <tr>
-            <td><input type=checkbox name=23a. tabindex=20 required>Building
-            <td><input type=checkbox name=23b. tabindex=20 required>Road
-        </table>
-    <tr hidden-until=23a.>
-      <td class=label>Building Type:
-      <td class=input>
-        <table class="boxgroup required-group" required-if=23a. else-disallowed>
-          <tr>
-            <td><input type=radio name=24. value=Single tabindex=20>Single Family Home
-            <td><input type=radio name=24. value=Mobile tabindex=20>Mobile Home or Trailer
-          <tr>
-            <td><input type=radio name=24. value=Townhouse tabindex=20>Townhouse or Condo
-            <td><input type=radio name=24. value=Business tabindex=20>Business
-          <tr>
-            <td><input type=radio name=24. value=Apartment tabindex=20>Apartment
-            <td><input type=radio name=24. value=Other tabindex=20>Other <span class=annotation>(describe
-                below)</span>
-        </table>
-    <tr>
-      <td class=label>Damage Categorization:
-      <td class=input>
-        <table class="boxgroup required-group">
-          <tr>
-            <td><input type=radio name=26. value=Affected tabindex=20 required>Affected
-            <td><input type=radio name=26. value=Major tabindex=20 required>Major
-          <tr>
-            <td><input type=radio name=26. value=Minor tabindex=20 required>Minor
-            <td><input type=radio name=26. value=Destroyed tabindex=20 required>Destroyed
-        </table>
-    <tr>
-      <td class=label>Safety Hazards /<br>Other Damage Observed:
-      <td class=input><textarea name=27. tabindex=20></textarea>
-  </table>
-  <scco-footer></scco-footer>
-</the-form>
+<packet-form>
+  <form-roo form-title="Windshield Survey" paper-version="PDF: 20251228" omistyle="width:9.15rem"
+    dmistyle="width:9.47rem" rrstyle="width:17.72rem" rsstyle="width:17.74rem" opstyle="width:14.57rem"
+    ocstyle="width:5.51rem" odstyle="width:6.17rem" otstyle="width:2.58rem">
+    <form-dthtf to-ics-positions="Damage/Safety Assessment Group; Construction &amp; Eng. Branch; Operations"
+      mdstyle="width:4.48rem" mtstyle="width:4.77rem" tostyle="width:13.27rem" frstyle="width:13.46rem"></form-dthtf>
+    <div class=section>Overview</div>
+    <div class=layout-pair>
+      <div class=pair>
+        <label for=20.>11. Jurisdiction:</label>
+        <jurisdiction-box id=20. name=20. style="width:37.42rem"></jurisdiction-box>
+      </div>
+      <div class=pair>
+        <label for=21.>12. Team:</label>
+        <input id=21. name=21. required style="width:37.42rem">
+      </div>
+      <div class=pair>
+        <label for=22.>13. Location:</label>
+        <input id=22. name=22. requiredd style="width:37.42rem">
+      </div>
+      <div class=pair>
+        <div class=label>14. Item:</div>
+        <div class=required-group>
+          <label><input type=checkbox name=23a.>Building</label>
+          <label><input type=checkbox name=23b.>Road</label>
+        </div>
+      </div>
+      <div class=pair hidden-until=23a.>
+        <div class=label>15. Building Type:</div>
+        <div class="layout-pair required-group" required-if=23a. else-disallowed>
+          <label style="order:1"><input type=radio name=24. value=Single>a. Single Family Home</label>
+          <label style="order:3"><input type=radio name=24. value=Townhouse>b. Townhouse or Condo</label>
+          <label style="order:5"><input type=radio name=24. value=Apartment>c. Apartment</label>
+          <label style="order:2"><input type=radio name=24. value=Mobile>d. Mobile Home or Trailer</label>
+          <label style="order:4"><input type=radio name=24. value=Business>e. Business</label>
+          <label style="order:6"><input type=radio name=24. value=Other>f. Other <span class=annotation>(describe below)</span></label>
+        </div>
+      </div>
+      <div class=pair>
+        <div class=label>16. Damage Categorization:</div>
+        <div class="layout-pair required-group">
+          <label style="order:1"><input type=radio name=26. value=Affected>Affected</label>
+          <label style="order:3"><input type=radio name=26. value=Minor>Minor</label>
+          <label style="order:2"><input type=radio name=26. value=Major>Major</label>
+          <label style="order:4"><input type=radio name=26. value=Destroyed>Destroyed</label>
+        </div>
+      </div>
+      <div class=pair>
+        <label for=27.>17. Safety Hazards /<br>Other Damage Observed:</label>
+        <textarea id=27. name=27. style="width:43.67rem;height:7.59rem"></textarea>
+      </div>
+    </div>
+  </form-roo>
+</packet-form>
