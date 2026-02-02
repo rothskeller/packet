@@ -39,6 +39,15 @@ func Write(filename string, form *FormDef) (err error) {
 	fmt.Fprint(fh, "deftext ")
 	emitTextStyles(fh, form.DefaultTextStyle, nil)
 	fmt.Fprintln(fh)
+	if form.RenderSummary != "" || form.RenderBody != "" {
+		if form.RenderSummary != "" {
+			fmt.Fprintf(fh, "render_summary %q\n", form.RenderSummary)
+		}
+		if form.RenderBody != "" {
+			fmt.Fprintf(fh, "render_body    %q\n", form.RenderBody)
+		}
+		fmt.Fprintln(fh)
+	}
 	for _, fd := range form.Fields {
 		emitField(fh, fd, form.DefaultTextStyle)
 	}

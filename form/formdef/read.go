@@ -111,6 +111,10 @@ TOPLEVEL:
 			}
 		case "field":
 			break TOPLEVEL
+		case "render_summary":
+			form.RenderSummary = strings.Join(fields[1:], " ")
+		case "render_body":
+			form.RenderBody = strings.Join(fields[1:], " ")
 		default:
 			return nil, fmt.Errorf("%s:%d: unknown keyword %q", filename, linenum, fields[0])
 		}
@@ -727,7 +731,11 @@ LOOP:
 	for _, r := range line {
 		switch {
 		case escaped:
-			curtoken += string(r)
+			if r == 'n' {
+				curtoken += "\n"
+			} else {
+				curtoken += string(r)
+			}
 			escaped = false
 		case r == '\\':
 			escaped = true

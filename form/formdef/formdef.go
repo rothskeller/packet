@@ -56,6 +56,14 @@ type FormDef struct {
 	DefaultTextStyle *pdf.Text
 	// Fields is a list of the field definitions of the form.
 	Fields []*FieldDef
+	// RenderSummary is a format string telling how to generate the message
+	// summary from the message fields.  When not set (the default), the
+	// summary comes from the field designated to provide it.
+	RenderSummary string
+	// RenderBody is a format string telling how to generate the message
+	// body from the message fields.  When not set (the default), they are
+	// encoded in PackItForms format.
+	RenderBody string
 }
 
 // AllFields returns an iterator on all fields of the form, including children

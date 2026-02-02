@@ -15,6 +15,7 @@ import (
 	"github.com/rothskeller/packet/form/formdef"
 	"github.com/rothskeller/packet/form/htmlop"
 	"github.com/rothskeller/packet/message"
+	"github.com/rothskeller/packet/message/body"
 	"github.com/rothskeller/packet/message/field"
 	"github.com/rothskeller/packet/message/payload"
 	"github.com/rothskeller/packet/message/subject"
@@ -334,6 +335,11 @@ func (ft EditableFormType) FromPOST(r *http.Request) (msg message.Message, err e
 		payl *payload.OutpostPayload
 		dm   *message.DraftMessage
 	)
+	if ft.RenderBody != "" {
+		// This is a message that is edited as a form but rendered as
+		// plain text, e.g. a check-in message.  Handled separately.
+		return ft.renderFromPOST(r)
+	}
 	if body, err = NewFormBody(ft.FormDef); err != nil {
 		slog.Error("form.NewFormBody", "err", err)
 		return nil, err
@@ -350,4 +356,58 @@ func (ft EditableFormType) FromPOST(r *http.Request) (msg message.Message, err e
 	}
 	dm.SetTo(r.FormValue("ToAddr"))
 	return dm, nil
+}
+
+// renderFromPOST translates the HTML response into a plain text DraftMessage.
+func (ft EditableFormType) renderFromPOST(r *http.Request) (msg message.Message, err error) {
+	// For both the subject summary and the body, we use the form fields as
+	// variables to substitute into the rendering templates.
+	var variables = make(map[string]string)
+	r.FormValue("") // ensure form has been parsed
+	for k := range r.Form {
+		if v := r.FormValue(k); v != "" {
+			variables[k] = v
+		}
+	}
+	summary := renderString(ft.RenderSummary, variables)
+	bodytext := renderString(ft.RenderBody, variables)
+	// Walk through the fields to get the other subject line elements.
+	var msgID, handling string
+	for f := range ft.AllFields() {
+		switch f.Common {
+		case field.COriginMessageID:
+			msgID = r.FormValue(f.Tag)
+		case field.CHandling:
+			if f.Tag != "" {
+				handling = r.FormValue(f.Tag)
+			} else {
+				handling = f.Value
+			}
+		}
+	}
+	// Build the message.
+	b := body.NewPlainBody(bodytext)
+	p := payload.NewOutpostPayload(b)
+	if handling == "IMMEDIATE" {
+		p.SetUrgent(true)
+	}
+	s, _ := subject.NewPlainSubject(msgID, handling, summary)
+	dm := message.NewDraftMessage(message.PlainMessage, s, p, false)
+	dm.SetTo(r.FormValue("ToAddr"))
+	return dm, nil
+}
+
+func renderString(tmpl string, variables map[string]string) string {
+	var buf bytes.Buffer
+
+	// First, parse the template.
+	doc, _ := htmlop.Parse(strings.NewReader(tmpl))
+	if doc == nil {
+		return ""
+	}
+	// Next, apply the variables.
+	htmlop.Expand(doc, variables)
+	// Finally, render the result.
+	htmlop.Minify(&buf, doc)
+	return buf.String()
 }

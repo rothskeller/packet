@@ -2,7 +2,6 @@ package htmlop
 
 import (
 	"io"
-	"log/slog"
 
 	"github.com/rothskeller/packet/errors"
 	"golang.org/x/net/html"
@@ -41,7 +40,6 @@ func Parse(r io.Reader) (doc *html.Node, err error) {
 		case html.SelfClosingTagToken:
 			ptr.AppendChild(&html.Node{Type: html.ElementNode, Data: tk.Data, DataAtom: tk.DataAtom, Attr: tk.Attr})
 		case html.StartTagToken:
-			slog.Debug("start", "data", tk.Data, "atom", tk.DataAtom)
 			n := &html.Node{Type: html.ElementNode, Data: tk.Data, DataAtom: tk.DataAtom, Attr: tk.Attr}
 			ptr.AppendChild(n)
 			if !voidElements.Has(n.DataAtom) {

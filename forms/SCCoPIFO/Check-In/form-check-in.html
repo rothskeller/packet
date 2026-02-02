@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<link rel=stylesheet href={{assets}}/SCCoPIFO.css>
+<script type=text/javascript src={{assets}}/pack-it-forms.js></script>
+<title>Check-In Message</title>
+<packet-form>
+  <div id=form-header>
+    <div id=form-title>Check-In Message</div>
+  </div>
+  <div id=form-header-roo>
+    <div class=section-inline>Radio Operator Only:</div>
+    <div class=pair>
+      <label for=MsgNo>Origin Msg #:</label>
+      <input id=MsgNo name=MsgNo class=message-number required>
+    </div>
+    <div class=pair>
+      <label for=DestMsgNo>Destination Msg #:</label>
+      <input id=DestMsgNo name=DestMsgNo class=message-number disabled>
+    </div>
+  </div>
+  <div class=border-thick>
+    <div class=layout-grid style="--columns: max-content 1fr max-content 1fr">
+      <if:show-addrs>
+        <div class="pair colspan4">
+          <label for=FromAddr>From:</label>
+          <input id=FromAddr name=FromAddr class=colspan3 readonly>
+        </div>
+        <div class="pair colspan4">
+          <label for=ToAddr>To:</label>
+          <input id=ToAddr name=ToAddr class=colspan3 required>
+        </div>
+      </if:show-addrs>
+      <div class=pair>
+        <label for=opcall>Operator Call Sign:</label>
+        <input id=opcall name=opcall required>
+      </div>
+      <div class=pair>
+        <label for=opname>Operator Name:</label>
+        <input id=opname name=opname required>
+      </div>
+      <div class=pair>
+        <label for=taccall>Tactical Call Sign:</label>
+        <input id=taccall name=taccall>
+      </div>
+      <div class=pair>
+        <label for=tacname>Station Name:</label>
+        <input id=tacname name=tacname required-if=taccall else-disallowed>
+      </div>
+    </div>
+  </div>
+</packet-form>
