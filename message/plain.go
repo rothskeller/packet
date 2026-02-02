@@ -1,14 +1,20 @@
 package message
 
 import (
+	"bytes"
+	_ "embed"
 	"fmt"
 	"io/fs"
+	"log/slog"
 	"net/http"
+	"net/url"
 
 	"github.com/rothskeller/packet/errors"
+	"github.com/rothskeller/packet/form/htmlop"
 	"github.com/rothskeller/packet/message/body"
 	"github.com/rothskeller/packet/message/payload"
 	"github.com/rothskeller/packet/message/subject"
+	"golang.org/x/net/html"
 )
 
 var (
@@ -74,14 +80,58 @@ func (mt plainMessage) NewDraft() (msg Message) {
 	return NewDraftMessage(PlainMessage, s, payload.NewOutpostPayload(body.NewPlainBody("")), false)
 }
 
-func (mt plainMessage) EditHTML(msg Message, vars EditHTMLVars) ([]byte, error) {
-	panic("not implemented")
+//go:embed plain.html
+var plainHTML []byte
+
+// EditHTML returns the HTML form for editing the message.
+func (mt plainMessage) EditHTML(msg Message, vars EditHTMLVars) (out []byte, err error) {
+	var (
+		formHTML *html.Node
+		formBuf  bytes.Buffer
+		fields   = make(map[string]string)
+		values   = make(url.Values)
+	)
+	// Read and parse the HTML for the form.
+	if formHTML, err = html.Parse(bytes.NewReader(plainHTML)); err != nil {
+		slog.Error("html.Parse", "err", err)
+		return nil, err
+	}
+	fields["submit-url"] = vars.SubmitURL
+	fields["submit-label"] = vars.SubmitLabel
+	fields["save-label"] = vars.SaveLabel
+	if vars.ShowAddressFields {
+		fields["show-addrs"] = "true"
+	}
+	// Expand the templates in the form HTML, using the supplied fields.
+	htmlop.Expand(formHTML, fields)
+	// Fill in the form using the fields from the message.
+	values.Set("ToAddr", msg.To())
+	values.Set("FromAddr", vars.FromAddress)
+	values.Set("MsgNo", msg.Subject().SubjectMessageID())
+	values.Set("handling", msg.Subject().SubjectHandling())
+	values.Set("subject", msg.Subject().SubjectSummary())
+	values.Set("body", msg.Body().EncodedBody())
+	htmlop.FillForm(formHTML, values)
+	// Render and minimize the result.
+	htmlop.Minify(&formBuf, formHTML)
+	return formBuf.Bytes(), nil
 }
 
-func (mt plainMessage) EditAssets() fs.FS {
-	panic("not implemented")
-}
+// EditAssets returns the file system containing the form assets.
+func (mt plainMessage) EditAssets() (assets fs.FS) { return nil }
 
-func (mt plainMessage) FromPOST(r *http.Request) (Message, error) {
-	panic("not implemented")
+// FromPOST translates the HTML response back into a DraftMessage.
+func (mt plainMessage) FromPOST(r *http.Request) (msg Message, err error) {
+	var (
+		bdy  *body.PlainBody
+		subj *subject.PlainSubject
+		payl *payload.OutpostPayload
+		dm   *DraftMessage
+	)
+	bdy = body.NewPlainBody(r.FormValue("body"))
+	payl = payload.NewOutpostPayload(bdy)
+	subj, _ = subject.NewPlainSubject(r.FormValue("MsgNo"), r.FormValue("handling"), r.FormValue("subject"))
+	dm = NewDraftMessage(PlainMessage, subj, payl, false)
+	dm.SetTo(r.FormValue("ToAddr"))
+	return dm, nil
 }

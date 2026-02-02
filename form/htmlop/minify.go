@@ -26,7 +26,11 @@ func Minify(w io.Writer, n *html.Node) (err error) {
 	case html.DoctypeNode:
 		_, err = fmt.Fprintf(w, "<!DOCTYPE %s>", n.Data)
 	case html.TextNode:
-		_, err = io.WriteString(w, minifyStringReplacer.Replace(n.Data))
+		if n.Parent != nil && n.Parent.Data == "script" {
+			_, err = io.WriteString(w, n.Data)
+		} else {
+			_, err = io.WriteString(w, minifyStringReplacer.Replace(n.Data))
+		}
 	case html.CommentNode:
 		err = nil
 	default:
