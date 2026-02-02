@@ -1,8 +1,7 @@
 <def:combo-box name="Input control name attribute" options="List of dropdown values, separated by semicolons"
-  tabindex="Input control tabindex attribute" required="Input is required"
-  placeholder="String to display in input field before a value is entered" style="Control style"
-  class="Control class name">
-  <input {{name}} list="{{name}}--list" {{tabindex}} {{placeholder}} {{required}} {{class}} {{style}}>
+  required="Input is required" placeholder="String to display in input field before a value is entered"
+  style="Control style" class="Control class name">
+  <input id={{name}} {{name}} list="{{name}}--list" {{placeholder}} {{required}} {{class}} {{style}}>
   <datalist id="{{name}}--list">
     <for:options>
       <option value="{{.}}"></option>
@@ -38,8 +37,8 @@
 
 <def:form-roo form-title="Title to put in the top banner.  Required."
   form-version="Form version number to put in the top banner.  Required."
-  paper-version="Paper form version number or date to put in the top banner."
-  omistyle dmistyle rrstyle rsstyle opstyle ocstyle odstyle otstyle>
+  paper-version="Paper form version number or date to put in the top banner." omistyle dmistyle rrstyle rsstyle opstyle
+  ocstyle odstyle otstyle>
   <div id=form-header>
     <div id=form-title>{{form-title}}</div>
     <div>PIF: {{form-version}}</div>
@@ -74,27 +73,26 @@
   <div id=form-footer-opinfo>
     <div class=pair>
       <label for=OpName>Name:</label>
-      <input id=OpName name=OpName style={{opstyle}}>
+      <input id=OpName name=OpName style={{opstyle}} readonly>
     </div>
     <div class=pair>
       <label for=OpCall>Call Sign:</label>
-      <input id=OpCall name=OpCall class=call-sign required style={{ocstyle}}>
+      <input id=OpCall name=OpCall class=call-sign required style={{ocstyle}} readonly>
     </div>
     <div class=pair>
       <label for=OpDate>Date:</label>
-      <input id=OpDate name=OpDate class=date readonly style={{odstyle}}>
+      <input id=OpDate name=OpDate class=date readonly style={{odstyle}} readonly>
     </div>
     <div class=pair>
       <label for=OpTime>Time <span class=annotation>(24hr)</span>:</label>
-      <input id=OpTime name=OpTime class=time readonly style={{otstyle}}>
+      <input id=OpTime name=OpTime class=time readonly style={{otstyle}} readonly>
     </div>
   </div>
 </def:form-roo>
 
 <def:form-dthtf show-addrs="True if the form should have To/From Address fields."
   to-ics-positions="Semicolon-separated list of possibilities for To ICS Position"
-  to-locations="Semicolon-separated list of possibilities for To Location"
-  mdstyle mtstyle tostyle frstyle>
+  to-locations="Semicolon-separated list of possibilities for To Location" mdstyle mtstyle tostyle frstyle>
   <div class=layout-grid style="--columns: max-content 1fr max-content 1fr max-content max-content">
     <div class=pair>
       <label for=1a.>3. Date:</label>
@@ -106,7 +104,7 @@
     </div>
     <div class=pair>
       <div class=label>5. Handling:</div>
-      <div class=required-group>
+      <div class="layout-horizontal colgap required-group">
         <label>
           <input type=radio name=5. required value=IMMEDIATE>Immediate
           <span>(ASAP)</span>
@@ -464,8 +462,8 @@
 </def:scco-footer>
 
 <def:jurisdiction-box name="Input control name for the jurisdiction field.  Required."
-  tabindex="Input control tab index" style="CSS style">
-  <combo-box {{name}} {{tabindex}} {{style}} placeholder="Select one..." required
+  class="CSS class" style="CSS style">
+  <combo-box {{name}} {{class}} {{style}} placeholder="Select one..." required
     options="Campbell; Cupertino; Gilroy; Los Altos; Los Altos Hills; Los Gatos; Milpitas; Monte Sereno; Morgan Hill; Mountain View; Palo Alto; San Jose; Santa Clara (City); Saratoga; Sunnyvale; Santa Clara County; County unincorporated">
   </combo-box>
 </def:jurisdiction-box>

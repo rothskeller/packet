@@ -9,16 +9,11 @@
     <form-dthtf to-ics-positions="CPOD Unit; Mass Care &amp; Emerg. Asst. Branch; Operations" mdstyle="width:4.48rem"
       mtstyle="width:4.77rem" tostyle="width:13.27rem" frstyle="width:13.46rem"></form-dthtf>
     <div class=section>Overview</div>
-    <div class=layout-pair>
-      <div class=pair>
-        <label for=20.>21. Jurisdiction:</label>
-        <combo-box name="20." placeholder="Select one..." required options="Campbell; Cupertino; Gilroy;
-  Los Altos; Los Altos Hills; Los Gatos; Milpitas; Monte Sereno; Morgan Hill; Mountain View; Palo Alto; San Jose;
-  Santa Clara (City); Saratoga; Sunnyvale; Santa Clara County; County unincorporated" width="36.19rem">
-        </combo-box>
-      </div>
-    </div>
     <div class=layout-grid style="--columns: max-content 1fr max-content 1fr">
+      <div class="pair colspan4">
+        <label for=20.>21. Jurisdiction:</label>
+        <jurisdiction-box name=20. class=colspan3 style="width: 36.19rem"></jurisdiction-box>
+      </div>
       <div class=pair>
         <label for=21d.>22. Prepared Date:</label>
         <input id=21d. name=21d. class=date required style="width:14.55rem">
@@ -34,18 +29,18 @@
         <label for=30.>31. Site Name:</label>
         <input id=30. name=30. required style="width:37.83rem">
       </div>
-    </div>
-    <div class="border layout-grid" style="--columns: max-content auto auto auto 1fr; column-gap: 0.5rem">
-      <div class=label style="grid-area:1/1/3/2">32. Status Update:</div>
-      <label style="grid-area:1/2"><input id=31. name=31. type=radio value=Activated required>a. Activated</label>
-      <label style="grid-area:2/2"><input id=31. name=31. type=radio value="Pending Activation" required>b. Pending
-        Activation</label>
-      <label style="grid-area:1/3"><input id=31. name=31. type=radio value="Pending Demobilization" required>c.
-        Pending Demobilization</label>
-      <label style="grid-area:2/3"><input id=31. name=31. type=radio value=Demobilization required>d.
-        Demobilization</label>
-      <label style="grid-area:1/4/3/5"><input id=31. name=31. type=radio value="Not Activated" required>e. Not
-        Activated</label>
+      <div class=pair>
+        <div class=label>32. Status Update:</div>
+        <div class="layout-grid colgap required-group" style="--columns: repeat(3, max-content)">
+          <label style="order:1"><input id=31. name=31. type=radio value=Activated>a. Activated</label>
+          <label style="order:4"><input id=31. name=31. type=radio value="Pending Activation">b. Pending
+            Activation</label>
+          <label style="order:2"><input id=31. name=31. type=radio value="Pending Demobilization">c. Pending
+            Demobilization</label>
+          <label style="order:5"><input id=31. name=31. type=radio value=Demobilization>d. Demobilization</label>
+          <label style="order:3"><input id=31. name=31. type=radio value="Not Activated">e. Not Activated</label>
+        </div>
+      </div>
     </div>
     <div class=section>Commodities</div>
     <div class=layout-pair>

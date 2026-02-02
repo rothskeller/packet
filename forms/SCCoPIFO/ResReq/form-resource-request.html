@@ -16,7 +16,7 @@
       </div>
       <div class="pair colspan4">
         <label for=21.>22. Jurisdiction:</label>
-        <jurisdiction-box name="21." style="grid-column: span 3; width:37.42rem"></jurisdiction-box>
+        <jurisdiction-box name=21. class=colspan3 style="width:37.42rem"></jurisdiction-box>
       </div>
       <div class=pair>
         <label for=22d.>23. Date:</label>
@@ -51,7 +51,7 @@
             <div class=layout-pair>
               <div class=pair>
                 <div class=label>3{{n}}d. Includes Items for Demobilization?</div>
-                <div class=required-group required-if={{id}}n.>
+                <div class="layout-horizontal colgap required-group" required-if={{id}}n.>
                   <label><input type=radio name={{id}}i. value=Yes>Yes</label>
                   <label><input type=radio name={{id}}i. value=No>No</label>
                 </div>
@@ -68,10 +68,10 @@
       <item n=6 id=28 hidden-until=27n.></item>
     </div>
     <div class=section>Priority</div>
-    <div class=layout-pair style="column-gap: 0.5rem">
+    <div class="layout-pair colgap">
       <div class=pair>
         <div class=label>41. Priority:<br><span class=annotation>(Pick One)</span></div>
-        <div class="layout-pair required-group" style="column-gap: 0.5rem">
+        <div class="layout-pair colgap required-group">
           <label style="order:1"><input name=30. type=radio value=Urgent>a. Urgent (as soon as possible)</label>
           <label style="order:3"><input name=30. type=radio value=High>b. High (within 24 hours)</label>
           <label style="order:2"><input name=30. type=radio value=Medium>c. Medium (1–2 days)</label>

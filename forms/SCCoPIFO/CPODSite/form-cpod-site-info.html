@@ -9,16 +9,11 @@
     <form-dthtf to-ics-positions="CPOD Unit; Mass Care &amp; Emerg. Asst. Branch; Operations" mdstyle="width:4.48rem"
       mtstyle="width:4.77rem" tostyle="width:13.27rem" frstyle="width:13.46rem"></form-dthtf>
     <div class=section>Overview</div>
-    <div class=layout-pair>
-      <div class=pair>
-        <label for=20.>21. Jurisdiction:</label>
-        <combo-box name="20." placeholder="Select one..." required options="Campbell; Cupertino; Gilroy;
-  Los Altos; Los Altos Hills; Los Gatos; Milpitas; Monte Sereno; Morgan Hill; Mountain View; Palo Alto; San Jose;
-  Santa Clara (City); Saratoga; Sunnyvale; Santa Clara County; County unincorporated" width="36.19rem">
-        </combo-box>
-      </div>
-    </div>
     <div class=layout-grid style="--columns: max-content 1fr max-content 1fr">
+      <div class="pair colspan4">
+        <label for=20.>21. Jurisdiction:</label>
+        <jurisdiction-box name=20. class=colspan3 style="width:36.19rem"></jurisdiction-box>
+      </div>
       <div class=pair>
         <label for=21d.>22. Prepared Date:</label>
         <input id=21d. name=21d. class=date required style="width:14.55rem">
@@ -29,36 +24,37 @@
       </div>
     </div>
     <div class=section>General Site Information</div>
-    <div class=layout-pair>
-      <div class=pair>
+    <div class=layout-grid style="--columns: repeat(3, max-content) 1fr">
+      <div class="pair colspan4">
         <label for=22.>31. Site Name:</label>
-        <input id=22. name=22. required style="width:37.83rem">
+        <input id=22. name=22. required class=colspan3 style="width:37.83rem">
       </div>
-    </div>
-    <div class=layout-grid style="--columns: max-content auto auto auto 1fr">
-      <div class="border subgrid required-group" style="grid-area: 1/1/3/6; column-gap: 0.5rem">
-        <div class=label style="grid-area:1/1/3/2">32. CPOD Type:</div>
-        <label style="grid-area:1/2"><input id=23. name=23. type=radio value="Type I" required>a. Type I</label>
-        <label style="grid-area:2/2"><input id=23. name=23. type=radio value="Type II" required>b. Type II</label>
-        <label style="grid-area:1/3"><input id=23. name=23. type=radio value="Type III" required>c. Type III</label>
-        <label style="grid-area:2/3"><input id=23. name=23. type=radio value=LSA required>d. LSA (Logistics Staging
-          Area)</label>
-        <label style="grid-area:1/4/3/5"><input id=23. name=23. type=radio value="Non-CPOD Distribution Point"
-            required>e.
-          Non-CPOD Distribution Point<br>
-          <span style="font-weight:normal">(smaller than a Type III CPOD)</span></label>
+      <div class="pair colspan4">
+        <div class=label>32. CPOD Type:</div>
+        <div class="subgrid rowspan2 colspan3 colgap required-group">
+          <label style="order:1"><input id=23. name=23. type=radio value="Type I" required>a. Type I</label>
+          <label style="order:4"><input id=23. name=23. type=radio value="Type II" required>b. Type II</label>
+          <label style="order:2"><input id=23. name=23. type=radio value="Type III" required>c. Type III</label>
+          <label style="order:5"><input id=23. name=23. type=radio value=LSA required>d. LSA (Logistics Staging
+            Area)</label>
+          <label class=rowspan2 style="order:3"><input id=23. name=23. type=radio value="Non-CPOD Distribution Point"
+              required>e. Non-CPOD Distribution Point<br> <span class=annotation>(smaller than a Type III
+              CPOD)</span></label>
+        </div>
       </div>
-      <div class="border subgrid required-group" style="grid-area: 3/1/5/6; column-gap: 0.5rem">
-        <div class=label style="grid-area:1/1/3/2">33. Status:</div>
-        <label style="grid-area:1/2"><input id=24. name=24. type=radio value=Activated required>a. Activated</label>
-        <label style="grid-area:2/2"><input id=24. name=24. type=radio value="Pending Activation" required>b. Pending
-          Activation</label>
-        <label style="grid-area:1/3"><input id=24. name=24. type=radio value="Pending Demobilization" required>c.
-          Pending Demobilization</label>
-        <label style="grid-area:2/3"><input id=24. name=24. type=radio value=Demobilization required>d.
-          Demobilization</label>
-        <label style="grid-area:1/4/3/5"><input id=24. name=24. type=radio value="Not Activated" required>e. Not
-          Activated</label>
+      <div class="pair colspan4">
+        <div class=label>33. Status:</div>
+        <div class="subgrid rowspan2 colspan3 colgap required-group">
+          <label style="order:1"><input id=24. name=24. type=radio value=Activated required>a. Activated</label>
+          <label style="order:4"><input id=24. name=24. type=radio value="Pending Activation" required>b. Pending
+            Activation</label>
+          <label style="order:2"><input id=24. name=24. type=radio value="Pending Demobilization" required>c. Pending
+            Demobilization</label>
+          <label style="order:5"><input id=24. name=24. type=radio value=Demobilization required>d.
+            Demobilization</label>
+          <label class=rowspan2 style="order:3"><input id=24. name=24. type=radio value="Not Activated" required>e. Not
+            Activated</label>
+        </div>
       </div>
     </div>
     <div class=layout-grid style="--columns: max-content 1fr max-content 1fr max-content max-content">
@@ -94,7 +90,7 @@
         <textarea name=28. style="width:33.00rem;height:2.14rem"></textarea>
       </div>
     </div>
-    <div class=layout-grid style="--columns: max-content 1fr max-content-1fr">
+    <div class=layout-grid style="--columns: max-content 1fr max-content 1fr">
       <div class="section colspan4">Contact Information</div>
       <div class="subgrid colspan4">
         <div class=pair>
@@ -119,7 +115,7 @@
       </div>
       <div class="pair colspan4">
         <div class=label>53. Road/Walkway type:</div>
-        <div class=colspan3>
+        <div class="colspan3 layout-horizontal colgap">
           <label><input id=42a. name=42a. type=checkbox>a. Concrete</label>
           <label><input id=42b. name=42b. type=checkbox>b. Gravel Hard-Stand</label>
           <label><input id=42c. name=42c. type=checkbox>c. Paved</label>
@@ -128,7 +124,7 @@
       </div>
       <div class="pair colspan4">
         <div class=label>54. Accessible at All Times:</div>
-        <div>
+        <div class="layout-horizontal colgap">
           <label><input id=43. name=43. type=radio value=Yes>Yes</label>
           <label><input id=43. name=43. type=radio value=No>No</label>
         </div>
@@ -136,7 +132,7 @@
       <div class="subgrid colspan4">
         <div class=pair>
           <div class=label>55. Access Controlled by Gate:</div>
-          <div>
+          <div class="layout-horizontal colgap">
             <label><input id=44. name=44. type=radio value=Yes>Yes</label>
             <label><input id=44. name=44. type=radio value=No>No</label>
           </div>
@@ -152,7 +148,7 @@
       </div>
       <div class="pair colspan4">
         <div class="label colspan2">58. Spike Strips at any of the driveways:</div>
-        <div class=colspan2>
+        <div class="layout-horizontal colgap colspan2">
           <label><input id=47. name=47. type=radio value=Yes>Yes</label>
           <label><input id=47. name=47. type=radio value=No>No</label>
         </div>

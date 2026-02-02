@@ -12,7 +12,7 @@
     <div class=layout-grid style="--columns: max-content 1fr max-content 1fr">
       <div class=pair>
         <label for=20.>21. Jurisdiction:</label>
-        <jurisdiction-box id=20. name=20. style="width:15.46rem"></jurisdiction-box>
+        <jurisdiction-box name=20. style="width:15.46rem"></jurisdiction-box>
       </div>
       <div class=pair>
         <label for=21.>22. Incident Name:</label>
@@ -26,11 +26,9 @@
         <label for=23.>24. Unit/Suite:</label>
         <input id=23. name=23. style="width:13.95rem">
       </div>
-    </div>
-    <div class=layout-grid style="--columns: repeat(3, max-content) 1fr">
       <div class="pair colspan4">
         <div class=label>25. Type of Structure:</div>
-        <div class="layout-grid required-group colspan3" style="--columns: repeat(3, max-content); column-gap: 0.5rem">
+        <div class="layout-grid colgap required-group colspan3" style="--columns: repeat(3, max-content)">
           <label style="order:1"><input name=24. type=radio value="Single Family" required>a. Single Family</label>
           <label style="order:4"><input name=24. type=radio value=Multi-Family required>b. Multi-Family</label>
           <label style="order:2"><input name=24. type=radio value="Mobile Home" required>c. Mobile Home</label>
@@ -45,37 +43,33 @@
       </div>
       <div class="pair colspan4">
         <div class=label>27. Own/Rent:</div>
-        <div class=colspan3>
+        <div class="layout-horizontal colgap colspan3">
           <label><input name=26. type=radio value=Own>Own</label>
           <label><input name=26. type=radio value=Rent>Rent</label>
         </div>
       </div>
       <div class="pair colspan4">
         <div class=label>28. Types of Damage:</div>
-        <div class="subgrid required-group" style="grid-area:1/2/3/4; column-gap: 0.5rem">
-          <label style="grid-area:1/1"><input name=27a. type=checkbox required>a. Flooding</label>
-          <label style="grid-area:2/1"><input name=27b. type=checkbox required>b. Roof / Windows / Other
-            Exterior</label>
-          <label style="grid-area:1/2"><input name=27c. type=checkbox required>c. Structural</label>
-          <label style="grid-area:2/2"><input name=27d. type=checkbox required>d. Other
-            <span class=annotation>(define in comments)</span></label>
+        <div class="layout-pair colgap required-group colspan3">
+          <label style="order:1"><input name=27a. type=checkbox required>a. Flooding</label>
+          <label style="order:3"><input name=27b. type=checkbox required>b. Roof / Windows / Other Exterior</label>
+          <label style="order:2"><input name=27c. type=checkbox required>c. Structural</label>
+          <label style="order:4"><input name=27d. type=checkbox required>d. Other <span class=annotation>(define in comments)</span></label>
         </div>
       </div>
       <div class="pair colspan4">
         <div class=label>29. Basement Type:</div>
-        <div class="subgrid required-group" style="grid-area: 1/2/3/4; column-gap: 0.5rem">
-          <label style="grid-area:1/1"><input name=28. type=radio value=Basement>a. Basement</label>
-          <label style="grid-area:2/1"><input name=28. type=radio value=Crawlspace>b. Crawlspace</label>
-          <label style="grid-area:1/2"><input name=28. type=radio value="Basement and Crawlspace">c. Basement and
-            Crawlspace</label>
-          <label style="grid-area:2/2"><input name=28. type=radio value=N/A>d. N/A</label>
+        <div class="layout-pair colgap required-group colspan3">
+          <label style="order:1"><input name=28. type=radio value=Basement>a. Basement</label>
+          <label style="order:3"><input name=28. type=radio value=Crawlspace>b. Crawlspace</label>
+          <label style="order:2"><input name=28. type=radio value="Basement and Crawlspace">c. Basement and Crawlspace</label>
+          <label style="order:4"><input name=28. type=radio value=N/A>d. N/A</label>
         </div>
       </div>
       <div class="border subgrid rowspan3 colspan4">
         <div class="label colspan4">30. What is the damage classification for this property?</div>
         <div></div>
-        <div class="subgrid required-group rowspan2 colspan3"
-          style="--columns: repeat(3, max-content); column-gap: 0.5rem; margin-left: 0.5rem">
+        <div class="layout-grid colgap required-group rowspan2 colspan3" style="--columns: max-content max-content 1fr; margin-inline: 0.25rem">
           <label style="order:1"><input name=29. type=radio value=Destroyed>a. Destroyed</label>
           <label style="order:4"><input name=29. type=radio value=Major>b. Major</label>
           <label style="order:2"><input name=29. type=radio value=Minor>c. Minor</label>
@@ -84,19 +78,17 @@
           <label style="order:3"><input name=29. type=radio value="No Visible Damage">e. No Visible Damage</label>
         </div>
       </div>
-      <div class="border subgrid rowspan3 colspan4">
+      <div class="pair colspan4">
         <div class=label>31. Tag:</div>
-        <div class="subgrid colspan3" style="column-gap: 0.5rem">
+        <div class="layout-horizontal colgap colspan3">
           <label><input name=30. type=radio value=Green>a. Green Tagged</label>
           <label><input name=30. type=radio value=Yellow>b. Yellow Tagged</label>
           <label><input name=30. type=radio value=Red>c. Red Tagged</label>
         </div>
       </div>
-    </div>
-    <div class=layout-grid style="--columns: max-content 1fr max-content 1fr">
       <div class=pair>
         <div class=label>32. Insurance:</div>
-        <div>
+        <div class="layout-horizontal colgap">
           <label><input name=31. type=radio value=Yes>Yes</label>
           <label><input name=31. type=radio value=No>No</label>
         </div>

@@ -20,35 +20,39 @@
       </div>
       <div class=pair>
         <label for=21.>23. Jurisdiction:</label>
-        <jurisdiction-box id=21. name="21." style="width:13.78rem"></jurisdiction-box>
+        <jurisdiction-box name=21. style="width:13.78rem"></jurisdiction-box>
       </div>
       <div class=pair>
         <label for=22.>24. Incident Name:</label>
         <input id=22. name=22. required style="width:14.36rem">
       </div>
     </div>
-    <div class=layout-grid style="--columns: repeat(3, max-content) 1fr; column-gap: 0.5rem">
-      <div class="pair colspan4">
+    <div class=layout-pair>
+      <div class=pair>
         <div class=label>25. Emergency Declaration:</div>
-        <label><input type=radio name=23. value=Unknown>Unknown</label>
-        <label><input type=radio name=23. value=Yes>Yes</label>
-        <label><input type=radio name=23. value=No>No</label>
+        <div class="layout-horizontal colgap">
+          <label><input type=radio name=23. value=Unknown>Unknown</label>
+          <label><input type=radio name=23. value=Yes>Yes</label>
+          <label><input type=radio name=23. value=No>No</label>
+        </div>
       </div>
-      <div class="pair colspan4 rowspan2">
-        <div class="label rowspan2" style="order:1">26. EOC Activation:</div>
-        <label style="order:2"><input type=radio name=24. value=Normal>a. Normal</label>
-        <label style="order:5"><input type=radio name=24. value=Partial>b. Partial</label>
-        <label style="order:3"><input type=radio name=24. value="Duty Officer">c. Duty Officer</label>
-        <label style="order:6"><input type=radio name=24. value=Full>d. Full</label>
-        <label style="order:4"><input type=radio name=24. value=Monitor>e. Monitor</label>
+      <div class=pair>
+        <div class=label>26. EOC Activation:</div>
+        <div class="layout-grid colgap" style="--columns: max-content max-content 1fr">
+          <label style="order:1"><input type=radio name=24. value=Normal>a. Normal</label>
+          <label style="order:4"><input type=radio name=24. value=Partial>b. Partial</label>
+          <label style="order:2"><input type=radio name=24. value="Duty Officer">c. Duty Officer</label>
+          <label style="order:5"><input type=radio name=24. value=Full>d. Full</label>
+          <label style="order:3"><input type=radio name=24. value=Monitor>e. Monitor</label>
+        </div>
       </div>
-      <div class="pair colspan4">
+      <div class=pair>
         <label for=25.>27. Incident Description:</label>
-        <textarea id=25. name=25. class=colspan3 style="width:43.67rem;height:5.15rem"></textarea>
+        <textarea id=25. name=25. style="width:43.67rem;height:5.15rem"></textarea>
       </div>
-      <div class="pair colspan4">
+      <div class=pair>
         <label for=26.>28. Additional Incident<br>Information:</label>
-        <textarea id=26. name=26. class=colspan3 style="width:43.67rem;height:3.26rem"></textarea>
+        <textarea id=26. name=26. style="width:43.67rem;height:3.26rem"></textarea>
       </div>
     </div>
     <div class=section>Reported By</div>
@@ -70,7 +74,7 @@
     <div class=layout-grid style="--columns: max-content 1fr max-content 1fr">
       <div class="pair colspan4">
         <div class=label>41. Office Status:</div>
-        <div class=colspan3>
+        <div class="layout-horizontal colgap colspan3">
           <label><input type=radio name=50. value=Unknown>Unknown</label>
           <label><input type=radio name=50. value=Open>Open</label>
           <label><input type=radio name=50. value=Closed>Closed</label>
@@ -117,7 +121,7 @@
       <div class="subsec rowspan2">Communications</div>
       <div class=pair>
         <div class=label>61a. Status:</div>
-        <div>
+        <div class="layout-horizontal colgap">
           <label><input type=radio name=70a. value=Normal>Normal</label>
           <label><input type=radio name=70a. value=Problem>Problem</label>
           <label><input type=radio name=70a. value=Failure>Failure</label>
@@ -131,7 +135,7 @@
       <div class="subsec rowspan2">Debris</div>
       <div class=pair>
         <div class=label>62a. Status:</div>
-        <div>
+        <div class="layout-horizontal colgap">
           <label><input type=radio name=71a. value=Normal>Normal</label>
           <label><input type=radio name=71a. value=Problem>Problem</label>
           <label><input type=radio name=71a. value=Failure>Failure</label>
@@ -145,7 +149,7 @@
       <div class="subsec rowspan2">Flooding</div>
       <div class=pair>
         <div class=label>63a. Status:</div>
-        <div>
+        <div class="layout-horizontal colgap">
           <label><input type=radio name=72a. value=Normal>Normal</label>
           <label><input type=radio name=72a. value=Problem>Problem</label>
           <label><input type=radio name=72a. value=Failure>Failure</label>
@@ -159,7 +163,7 @@
       <div class="subsec rowspan2">HazMat</div>
       <div class=pair>
         <div class=label>64a. Status:</div>
-        <div>
+        <div class="layout-horizontal colgap">
           <label><input type=radio name=73a. value=Normal>Normal</label>
           <label><input type=radio name=73a. value=Problem>Problem</label>
           <label><input type=radio name=73a. value=Failure>Failure</label>
@@ -173,7 +177,7 @@
       <div class="subsec rowspan2">Emergency Services</div>
       <div class=pair>
         <div class=label>65a. Status:</div>
-        <div>
+        <div class="layout-horizontal colgap">
           <label><input type=radio name=74a. value=Normal>Normal</label>
           <label><input type=radio name=74a. value=Problem>Problem</label>
           <label><input type=radio name=74a. value=Failure>Failure</label>
@@ -187,7 +191,7 @@
       <div class="subsec rowspan2">Casualties</div>
       <div class=pair>
         <div class=label>66a. Status:</div>
-        <div>
+        <div class="layout-horizontal colgap">
           <label><input type=radio name=75a. value=Normal>Normal</label>
           <label><input type=radio name=75a. value=Problem>Problem</label>
           <label><input type=radio name=75a. value=Failure>Failure</label>
@@ -201,7 +205,7 @@
       <div class="subsec rowspan2">Utilities (Gas)</div>
       <div class=pair>
         <div class=label>67a. Status:</div>
-        <div>
+        <div class="layout-horizontal colgap">
           <label><input type=radio name=76a. value=Normal>Normal</label>
           <label><input type=radio name=76a. value=Problem>Problem</label>
           <label><input type=radio name=76a. value=Failure>Failure</label>
@@ -215,7 +219,7 @@
       <div class="subsec rowspan2">Utilities (Electric)</div>
       <div class=pair>
         <div class=label>68a. Status:</div>
-        <div>
+        <div class="layout-horizontal colgap">
           <label><input type=radio name=77a. value=Normal>Normal</label>
           <label><input type=radio name=77a. value=Problem>Problem</label>
           <label><input type=radio name=77a. value=Failure>Failure</label>
@@ -229,7 +233,7 @@
       <div class="subsec rowspan2">Infrastructure (Power)</div>
       <div class=pair>
         <div class=label>69a. Status:</div>
-        <div>
+        <div class="layout-horizontal colgap">
           <label><input type=radio name=78a. value=Normal>Normal</label>
           <label><input type=radio name=78a. value=Problem>Problem</label>
           <label><input type=radio name=78a. value=Failure>Failure</label>
@@ -243,7 +247,7 @@
       <div class="subsec rowspan2">Infrastructure (Water)</div>
       <div class=pair>
         <div class=label>70a. Status:</div>
-        <div>
+        <div class="layout-horizontal colgap">
           <label><input type=radio name=79a. value=Normal>Normal</label>
           <label><input type=radio name=79a. value=Problem>Problem</label>
           <label><input type=radio name=79a. value=Failure>Failure</label>
@@ -257,7 +261,7 @@
       <div class="subsec rowspan2">Infrastructure (Sewer)</div>
       <div class=pair>
         <div class=label>71a. Status:</div>
-        <div>
+        <div class="layout-horizontal colgap">
           <label><input type=radio name=80a. value=Normal>Normal</label>
           <label><input type=radio name=80a. value=Problem>Problem</label>
           <label><input type=radio name=80a. value=Failure>Failure</label>
@@ -271,7 +275,7 @@
       <div class="subsec rowspan2">Search and Rescue</div>
       <div class=pair>
         <div class=label>72a. Status:</div>
-        <div>
+        <div class="layout-horizontal colgap">
           <label><input type=radio name=81a. value=Normal>Normal</label>
           <label><input type=radio name=81a. value=Problem>Problem</label>
           <label><input type=radio name=81a. value=Failure>Failure</label>
@@ -285,7 +289,7 @@
       <div class="subsec rowspan2">Transportation (Roads)</div>
       <div class=pair>
         <div class=label>73a. Status:</div>
-        <div>
+        <div class="layout-horizontal colgap">
           <label><input type=radio name=82a. value=Normal>Normal</label>
           <label><input type=radio name=82a. value=Problem>Problem</label>
           <label><input type=radio name=82a. value=Failure>Failure</label>
@@ -299,7 +303,7 @@
       <div class="subsec rowspan2">Transportation (Bridges)</div>
       <div class=pair>
         <div class=label>74a. Status:</div>
-        <div>
+        <div class="layout-horizontal colgap">
           <label><input type=radio name=83a. value=Normal>Normal</label>
           <label><input type=radio name=83a. value=Problem>Problem</label>
           <label><input type=radio name=83a. value=Failure>Failure</label>
@@ -313,7 +317,7 @@
       <div class="subsec rowspan2">Civil Unrest</div>
       <div class=pair>
         <div class=label>75a. Status:</div>
-        <div>
+        <div class="layout-horizontal colgap">
           <label><input type=radio name=84a. value=Normal>Normal</label>
           <label><input type=radio name=84a. value=Problem>Problem</label>
           <label><input type=radio name=84a. value=Failure>Failure</label>
@@ -327,7 +331,7 @@
       <div class="subsec rowspan2">Animal Issues</div>
       <div class=pair>
         <div class=label>76a. Status:</div>
-        <div>
+        <div class="layout-horizontal colgap">
           <label><input type=radio name=85a. value=Normal>Normal</label>
           <label><input type=radio name=85a. value=Problem>Problem</label>
           <label><input type=radio name=85a. value=Failure>Failure</label>
@@ -343,7 +347,7 @@
     <div class="layout-pair">
       <div class=pair>
         <div class=label>81. Lifeline Status:</div>
-        <div class=required-group>
+        <div class="layout-horizontal colgap required-group">
           <label><input type=radio name=90. value=Stable required>Stable</label>
           <label><input type=radio name=90. value=Stabilizing required>Stabilizing</label>
           <label><input type=radio name=90. value=Unstable required>Unstable</label>

@@ -12,7 +12,7 @@
     <div class=layout-pair>
       <div class=pair>
         <label for=20.>21. Jurisdiction:</label>
-        <jurisdiction-box id=20. name=20. style="width:36.54rem"></jurisdiction-box>
+        <jurisdiction-box name=20. style="width:36.54rem"></jurisdiction-box>
       </div>
       <div class=pair>
         <label for=21.>22. Shelter Name:</label>
@@ -24,7 +24,7 @@
       </div>
       <div class=pair>
         <div class=label>24. Type:<br><span class=annotation>(multi-select)</span></div>
-        <div class="layout-grid required-group" style="--columns: max-content max-content 1fr; column-gap: 0.5rem">
+        <div class="layout-grid colgap required-group" style="--columns: max-content max-content 1fr">
           <label style="order:1"><input type=checkbox name=23a.>a. Congregate</label>
           <label style="order:4"><input type=checkbox name=23b.>b. Non-Congregate</label>
           <label style="order:2"><input type=checkbox name=23c.>c. Temporary Evacuation Point</label>
@@ -34,7 +34,7 @@
       </div>
       <div class=pair>
         <div class=label>25. Shelter Status:</div>
-        <div class="layout-grid required-group" style="--columns: max-content 1fr; column-gap: 0.5rem">
+        <div class="layout-grid colgap required-group" style="--columns: max-content 1fr">
           <label style="order:1"><input type=radio name=24. value=Setup>a. Setup in progress, not accepting guests</label>
           <label style="order:3"><input type=radio name=24. value=Open>b. Open, accepting guests</label>
           <label style="order:2"><input type=radio name=24. value=Full>c. Full, not accepting guests</label>
@@ -43,7 +43,7 @@
       </div>
       <div class=pair>
         <div class=label>26. Resources:<br><span class=annotation>(multi-select)</span></div>
-        <div class=layout-grid style="--columns: max-content 1fr; column-gap: 0.5rem">
+        <div class="layout-grid colgap" style="--columns: max-content 1fr">
           <label style="order:1"><input type=checkbox name=25a.>a. Warming Center</label>
           <label style="order:3"><input type=checkbox name=25b.>b. Cooling Center</label>
           <label style="order:2"><input type=checkbox name=25c.>c. Food &amp; Drink</label>
@@ -60,14 +60,14 @@
     <div class=layout-grid style="--columns: max-content 1fr max-content 1fr">
       <div class=pair>
         <div class=label>28. ADA Compliant:</div>
-        <div>
+        <div class="layout-horizontal colgap">
           <label><input type=radio name=27. value=Yes>Yes</label>
           <label><input type=radio name=27. value=No>No</label>
         </div>
       </div>
       <div class=pair>
         <div class=label>29. Pets Allowed?</div>
-        <div>
+        <div class="layout-horizontal colgap">
           <label><input type=radio name=28. value=Yes>Yes</label>
           <label><input type=radio name=28. value=No>No</label>
         </div>
@@ -97,7 +97,7 @@
     <div class=layout-pair>
       <div class=pair>
         <div class=label>41. Managed By:</div>
-        <div class="layout-grid required-group" style="--columns: max-content max-content 1fr; column-gap: 0.5rem">
+        <div class="layout-grid colgap required-group" style="--columns: max-content max-content 1fr">
           <label style="order:1"><input type=radio name=40. value=ARC>a. American Red Cross</label>
           <label style="order:4"><input type=radio name=40. value=Private>b. Private</label>
           <label style="order:2"><input type=radio name=40. value=Government>c. Government</label>

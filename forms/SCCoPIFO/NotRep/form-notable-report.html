@@ -11,7 +11,7 @@
     <div class=layout-grid style="--columns: max-content 1fr max-content 1fr">
       <div class=pair>
         <label for=20.>21. Jurisdiction:</label>
-        <jurisdiction-box id=20. name=20. style="width:15.41rem"></jurisdiction-box>
+        <jurisdiction-box name=20. style="width:15.41rem"></jurisdiction-box>
       </div>
       <div class=pair>
         <label for=21.>22. Originator:</label>
@@ -21,7 +21,7 @@
     <div class=layout-pair>
       <div class=pair>
         <div class=label>23. Severity: <span class=annotation>(Pick One)</span></div>
-        <div class=required-group>
+        <div class="layout-horizontal colgap required-group">
           <label><input name=22. type=radio value=High required>High</label>
           <label><input name=22. type=radio value=Medium required>Medium</label>
           <label><input name=22. type=radio value=Low required>Low</label>
@@ -29,7 +29,7 @@
       </div>
       <div class=pair>
         <div class=label>24. Escalate to County Op Area?</div>
-        <div class=required-group>
+        <div class="layout-horizontal colgap required-group">
           <label><input name=23. type=radio value=Yes required>Yes</label>
           <label><input name=23. type=radio value=No required>No</label>
         </div>
@@ -56,8 +56,7 @@
     </div>
     <div class="border layout-vertical">
       <div class=label>34. Event Type:</div>
-      <div class="required-group layout-grid"
-        style="--columns: max-content max-content 1fr; column-gap: 0.5rem; margin-left: 2rem">
+      <div class="required-group layout-grid colgap" style="--columns: max-content max-content 1fr; margin-left: 2rem">
         <label style="order:1"><input name=32. type=radio value=1 required>1: Transportation</label>
         <label style="order:4"><input name=32. type=radio value=2 required>2: Communications</label>
         <label style="order:7"><input name=32. type=radio value=3 required>3: Construction and Engineering</label>
@@ -106,7 +105,7 @@
     <div class=layout-grid style="--columns: repeat(3, max-content) 1fr">
       <div class=pair>
         <div class=label>51. Do you want this event to expire?</div>
-        <div class=required-group>
+        <div class="layout-horizontal colgap required-group">
           <label><input name=50. type=radio value=Yes required>Yes</label>
           <label><input name=50. type=radio value=No required>No</label>
         </div>

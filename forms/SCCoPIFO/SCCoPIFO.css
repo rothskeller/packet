@@ -85,6 +85,11 @@ input[type=button]:focus {
   grid: auto-flow / auto;
 }
 
+/* A horizontal layout arrays things horizontally. */
+.layout-horizontal {
+  display: flex;
+}
+
 /* <div class=subgrid> creates a subgrid of the current grid, slaved to the
  * parent grid's row and column definitions.  This is generally used to apply
  * styles like borders or visibility to a subset of the parent grid. */
@@ -105,22 +110,24 @@ input[type=button]:focus {
   border: 3px solid #444;
 }
 
+/* class=colgap puts a small gap between columns. */
+.colgap {
+  column-gap: 1rem;
+}
+
 /* <div class=pair> defines a subgrid spanning two columns of one row of the
- * parent grid for a label and control, with a standard border around both. */
+ * parent grid for a label and control, with a standard border around both and
+ * a gap between them.  It's equivalent to <div class="subgrid border colgap
+ * colspan2", plus baseline alignment. */
 .pair {
   grid-column: span 2;
   margin: -1px 0 0 -1px;
   border: 1px solid #aaa;
-  padding-block: 0.25rem;
+  padding: 0.25rem;
   display: grid;
   grid: auto / subgrid;
   align-items: baseline;
-}
-.pair> :first-child {
-  margin-left: 0.25rem;
-}
-.pair> :nth-child(2) {
-  margin-inline: 0.5rem;
+  column-gap: 1rem;
 }
 
 /* Convenience classes for building grids. */
@@ -235,10 +242,6 @@ label:not([for]) {
 
 label>input {
   margin-right: 0.375rem;
-}
-
-.label {
-  margin-left: 0.25rem;
 }
 
 .annotation {
