@@ -275,15 +275,17 @@ func (f ff2mf) SetValue(msg msgifc.Message, val string) {
 				continue
 			}
 			presence := f2.Presence
+			found := false
 			for _, pc := range f2.PresenceCond {
 				if pc.OtherField == f.fd.Tag {
+					found = true
 					if (pc.OtherValue == "" && val != "") || (pc.OtherValue != "" && pc.OtherValue == val) {
 						presence = pc.Presence
 						break
 					}
 				}
 			}
-			if presence == formdef.Blocked {
+			if found && presence == formdef.Blocked {
 				reason := "form.FormBody.Field." + f2.Tag
 				if f2.Common != "" {
 					reason = "form.FormBody.Common." + f2.Common

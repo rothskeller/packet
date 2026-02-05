@@ -137,6 +137,7 @@ input[type=button]:focus {
 .colspan5 { grid-column: span 5; }
 .rowspan2 { grid-row: span 2; }
 .rowspan3 { grid-row: span 3; }
+.rowspan4 { grid-row: span 4; }
 
 /* SECTION HEADERS */
 

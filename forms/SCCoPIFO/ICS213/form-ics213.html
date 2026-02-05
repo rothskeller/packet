@@ -1,556 +1,188 @@
 <!DOCTYPE html>
-<link rel="stylesheet" type="text/css" href="{{assets}}/pack-it-forms.css" />
-<style>
-  #the-form input[name="6d."] {
-    width: 8em;
-  }
-
-  #the-form input[name="Other"] {
-    width: 7em;
-  }
-
-  #the-form input[name="OpCall"] {
-    width: 7em;
-  }
-
-  #the-form input[name="OpName"] {
-    width: 15em;
-  }
-
-  #the-form input[name="OpDate"] {
-    width: 8em;
-  }
-
-  #the-form input[name="OpTime"] {
-    width: 8em;
-  }
-
-  td.print-checkbox {
-    color: #606060;
-  }
-
-  td.print-checkbox>div {
-    height: 0.8em;
-    width: 0.8em;
-    display: inline-block;
-    margin-right: 0.5em;
-    background-color: #ebebeb;
-    border: 1px solid #cccccc;
-  }
-
-  @media print {
-    td.print-checkbox {
-      color: black;
-    }
-
-    td.print-checkbox>div {
-      background-color: white;
-      border: 1px solid #444444;
-    }
-  }
-
-  table#form-row-2 {
-    border-top: 2px solid #000000;
-    border-left: 2px solid #000000;
-    border-right: 2px solid #000000;
-  }
-
-  table#form-row-3 {
-    border-left: 2px solid #000000;
-    border-right: 2px solid #000000;
-  }
-
-  table#form-body {
-    border-left: 2px solid #000000;
-    border-right: 2px solid #000000;
-    border-bottom: 2px solid #000000;
-  }
-</style>
-<script type="text/javascript" src="{{assets}}/pack-it-forms.js"></script>
-<title>XSC ICS-213 Message</title>
-<the-form>
-  <table id="form-row-1">
-    <tr>
-      <td>
-        <table class="same-line-label-layout">
-          <tr>
-            <td colspan="2">
-              <span style="font-size:175%;font-weight:bold;">MESSAGE FORM</span>
-            </td>
-          </tr>
-          <tr>
-            <td><span>SCCo ICS Form 213 (01/19/2022)</span></td>
-            <td style="text-align:right;">
-              <span>PDF {{form-version}}</span>
-            </td>
-          </tr>
-        </table>
-      </td>
-      <td style="vertical-align:middle;">
-        <label>Origin Msg #:<span class="field-number">2</span>
-          <input name="MsgNo" class="message-number" type="text" required tabindex="1" />
-        </label>
-      </td>
-      <td style="vertical-align:middle;">
-        <label>Destination Msg #:<span class="field-number">3</span>
-          <input name="3." class="message-number" type="text" tabindex="2" disabled />
-        </label>
-      </td>
-    </tr>
-  </table>
-  <table id="form-row-2">
-    <tr>
-      <td rowspan="2">
-        <label>Date<span class="field-number">1</span> :
-          <br />
-          <br />
-          <input name="1a." class="date" type="text" tabindex="3" required />
-        </label>
-      </td>
-      <td rowspan="2">
-        <label title="0001 to 2400">Time
-          <span style="font-size:75%;font-weight:normal;">(24hr)</span> :
-          <br />
-          <br />
-          <input name="1b." class="time" type="text" tabindex="4" required />
-        </label>
-      </td>
-      <td class="label-sameline">
-        <b>Handling</b><span class="field-number">5</span> :
-        <div class="required-group">
-          <label title="As soon as possible">
-            <input name="5." type="radio" tabindex="8" required value="IMMEDIATE" />
-            <span class="bold">Immediate</span>
-            <span style="font-size:75%;font-weight:normal;">(ASAP)</span>
-          </label><label title="Less than one hour">
-            <input name="5." type="radio" tabindex="9" required value="PRIORITY" />
-            <span class="bold">Priority</span>
-            <span style="font-size:75%;font-weight:normal;">(&lt;1 hr)</span>
-          </label><label title="Less than two hours">
-            <input name="5." type="radio" tabindex="10" required value="ROUTINE" />
-            <span class="bold">Routine</span>
-            <span style="font-size:75%;font-weight:normal;">(&lt;2 hr)</span>
-          </label>
-        </div>
-      </td>
-    </tr>
-    <tr>
-      <td>
-        <table class="same-line-label-layout">
-          <tr>
-            <th style="padding-bottom:0.3em;">
-              This message requests you to<span class="field-number">6</span> :
-            </th>
-            <td>
-            </td>
-          </tr>
-          <tr>
-            <th align="right">Take Action:
-            </th>
-            <td class="horizontal">
-              <label>
-                <input name="6a." type="radio" value="Yes" tabindex="11" /> Yes
-              </label>
-            </td>
-            <td>
-              <label>
-                <input name="6a." type="radio" value="No" tabindex="12" /> No
-              </label>
-            </td>
-          </tr>
-          <tr>
-            <th align="right">Reply:
-            </th>
-            <td class="horizontal" style="width:16em;padding-right:0px;">
-              <label>
-                <input name="6b." type="radio" value="Yes" tabindex="13">
-                Yes, by
-              </label>
-              <input name="6d." type="text" style="margin-right:0px;" tabindex="13" allowed-if="6b.=Yes" />
-            </td>
-            <td>
-              <label>
-                <input name="6b." type="radio" value="No" tabindex="14">
-                No
-              </label>
-            </td>
-          </tr>
-        </table>
-      </td>
-    </tr>
-  </table>
-  <if:show-addrs>
-    <table id="form-row-3">
-      <tr>
-        <td rowspan="5" class="block-caption" style="width:1px;">
-          T<br />O
-        </td>
-        <td>
-          <table class="same-line-label-layout">
-            <tr>
-              <th>Address:</th>
-              <td><input name="ToAddr" type="text" required tabindex="17" /></td>
-            </tr>
-          </table>
-        </td>
-        <td rowspan="5" class="block-caption" style="width:1px;">
-          F<br />R<br />O<br />M
-        </td>
-        <td>
-          <table class="same-line-label-layout">
-            <tr>
-              <th>Address:</th>
-              <td><input name="FromAddr" type="text" readonly tabindex="22" />
-              </td>
-            </tr>
-          </table>
-        </td>
-      </tr>
-      <tr>
-        <td>
-          <table class="same-line-label-layout">
-            <tr>
-              <th>ICS Position:<span class="field-number">7</span></th>
-              <td><input name="7." type="text" required tabindex="17" /></td>
-            </tr>
-          </table>
-        </td>
-        <td>
-          <table class="same-line-label-layout">
-            <tr>
-              <th>ICS Position:<span class="field-number">8</span></th>
-              <td><input name="8." type="text" required tabindex="22" />
-              </td>
-            </tr>
-          </table>
-        </td>
-      </tr>
-      <tr>
-        <td>
-          <table class="same-line-label-layout">
-            <tr>
-              <th>Location:<span class="field-number">9</span></th>
-              <td><input name="9a." type="text" required tabindex="18" /></td>
-            </tr>
-          </table>
-        </td>
-        <td>
-          <table class="same-line-label-layout">
-            <tr>
-              <th>Location:<span class="field-number">9</span></th>
-              <td><input name="9b." type="text" required tabindex="23" /></td>
-            </tr>
-          </table>
-        </td>
-      </tr>
-      <tr>
-        <td>
-          <table class="same-line-label-layout">
-            <tr>
-              <th>Name:</th>
-              <td><input name="ToName" type="text" tabindex="19" /></td>
-            </tr>
-          </table>
-        </td>
-        <td>
-          <table class="same-line-label-layout">
-            <tr>
-              <th>Name:</th>
-              <td><input name="FmName" type="text" tabindex="24" /></td>
-            </tr>
-          </table>
-        </td>
-      </tr>
-      <tr>
-        <td>
-          <table class="same-line-label-layout">
-            <tr>
-              <th>Telephone #:</th>
-              <td><input name="ToTel" type="text" tabindex="20" /></td>
-            </tr>
-          </table>
-        </td>
-        <td>
-          <table class="same-line-label-layout">
-            <tr>
-              <th>Telephone #:</th>
-              <td><input name="FmTel" type="text" tabindex="25" /></td>
-            </tr>
-          </table>
-        </td>
-      </tr>
-    </table>
-  </if:show-addrs>
-  <ifnot:show-addrs>
-    <table id="form-row-3">
-      <tr>
-        <td rowspan="4" class="block-caption" style="width:1px;">
-          T<br />O
-        </td>
-        <td>
-          <table class="same-line-label-layout">
-            <tr>
-              <th>ICS Position:<span class="field-number">7</span></th>
-              <td><input name="7." type="text" required tabindex="17" /></td>
-            </tr>
-          </table>
-        </td>
-        <td rowspan="4" class="block-caption" style="width:1px;">
-          F<br />R<br />O<br />M
-        </td>
-        <td>
-          <table class="same-line-label-layout">
-            <tr>
-              <th>ICS Position:<span class="field-number">8</span></th>
-              <td><input name="8." type="text" required tabindex="22" />
-              </td>
-            </tr>
-          </table>
-        </td>
-      </tr>
-      <tr>
-        <td>
-          <table class="same-line-label-layout">
-            <tr>
-              <th>Location:<span class="field-number">9</span></th>
-              <td><input name="9a." type="text" required tabindex="18" /></td>
-            </tr>
-          </table>
-        </td>
-        <td>
-          <table class="same-line-label-layout">
-            <tr>
-              <th>Location:<span class="field-number">9</span></th>
-              <td><input name="9b." type="text" required tabindex="23" /></td>
-            </tr>
-          </table>
-        </td>
-      </tr>
-      <tr>
-        <td>
-          <table class="same-line-label-layout">
-            <tr>
-              <th>Name:</th>
-              <td><input name="ToName" type="text" tabindex="19" /></td>
-            </tr>
-          </table>
-        </td>
-        <td>
-          <table class="same-line-label-layout">
-            <tr>
-              <th>Name:</th>
-              <td><input name="FmName" type="text" tabindex="24" /></td>
-            </tr>
-          </table>
-        </td>
-      </tr>
-      <tr>
-        <td>
-          <table class="same-line-label-layout">
-            <tr>
-              <th>Telephone #:</th>
-              <td><input name="ToTel" type="text" tabindex="20" /></td>
-            </tr>
-          </table>
-        </td>
-        <td>
-          <table class="same-line-label-layout">
-            <tr>
-              <th>Telephone #:</th>
-              <td><input name="FmTel" type="text" tabindex="25" /></td>
-            </tr>
-          </table>
-        </td>
-      </tr>
-    </table>
-  </ifnot:show-addrs>
-  <table id="form-body" class="noborder border">
-    <tr>
-      <td>
-        <table class="same-line-label-layout">
-          <tr>
-            <th>Subject:<span class="field-number">10</span>
-            </th>
-            <td>
-              <input name="10." type="text" required tabindex="30" />
-            </td>
-          </tr>
-        </table>
-      </td>
-    </tr>
-    <tr>
-      <td>
-        <table class="same-line-label-layout">
-          <tr>
-            <th>Reference:<span class="field-number">11</span>
-            </th>
-            <td>
-              <input name="11." type="text" tabindex="31" placeholder="e.g. Number of earlier msg." />
-            </td>
-          </tr>
-        </table>
-      </td>
-    </tr>
-    <tr>
-      <td style="height:8em;">
-        <label>Message:<span class="field-number">12</span>
-          <textarea name="12." rows="6" cols="80" wrap="hard" required tabindex="32"></textarea>
-        </label>
-      </td>
-    </tr>
-  </table>
-  <table id="form-row-5" class="noborder">
-    <tr>
-      <td class="block-caption">Action Taken:<span class="field-number">13</span>
-        <span style="font-weight:normal;">(For use by Originator/Recipient)</span>
-        &#160;&#160;USE SEPARATE MESSAGE FORM IF SENDING REPLY!
-      </td>
-    </tr>
-    <tr>
-      <td style="height:5em;"></td>
-    </tr>
-    <tr>
-      <td>
-        <table class="same-line-label-layout">
-          <tr>
-            <td class="bold">
-              CC:
-            </td>
-            <td class="print-checkbox">
-              <div></div> Management
-            </td>
-            <td class="print-checkbox">
-              <div></div> Operations
-            </td>
-            <td class="print-checkbox">
-              <div></div> Planning
-            </td>
-            <td class="print-checkbox">
-              <div></div> Logistics
-            </td>
-            <td class="print-checkbox">
-              <div></div> Finance
-            </td>
-          </tr>
-        </table>
-      </td>
-    </tr>
-  </table>
-  <div style="page-break-inside:avoid;">
-    <table id="form-row-six">
-      <tr>
-        <td class="block-caption">
-          Operator Use Only:<span class="field-number">14</span>
-        </td>
-      </tr>
-    </table>
-    <table>
-      <tr>
-        <td class="block-caption" style="width:1px;">
-          Relay:
-        </td>
-        <td>
-          <table class="same-line-label-layout">
-            <tr>
-              <th>Rcvd:</th>
-              <td><input type="text" name="OpRelayRcvd" tabindex="500" /></td>
-            </tr>
-          </table>
-        </td>
-        <td>
-          <table class="same-line-label-layout">
-            <tr>
-              <th>Sent:</th>
-              <td><input type="text" name="OpRelaySent" tabindex="501" /></td>
-            </tr>
-          </table>
-        </td>
-      </tr>
-    </table>
-    <table class="noborder" style="border-top:none;">
-      <tr class="horizontal">
-        <td colspan="3">
-          <span class="bold">
-            How
-            <label class="intext">
-              Received <input name="Rec-Sent" value="receiver" type="radio" tabindex="-1" class="no-msg-init"
-                onclick="return false;" />
-            </label>
-            or
-            <label class="intext">
-              Sent <input name="Rec-Sent" value="sender" type="radio" tabindex="-1" class="no-msg-init"
-                onclick="return false;" />
-            </label>
-          </span>
-        </td>
-        <td colspan="2" class="border-left">
-          <label>Operator Call Sign:
-            <input class="call-sign no-msg-init include-in-submit" name="OpCall" type="text" tabindex="508" readonly
-              required />
-          </label>
-        </td>
-      </tr>
-      <tr class="horizontal">
-        <td>
-          <label>
-            <input name="Method" type="radio" value="Telephone" tabindex="-1" /> Telephone
-          </label>
-        </td>
-        <td colspan="2">
-          <label>
-            <input name="Method" type="radio" value="Dispatch Center" tabindex="-1" /> Dispatch Center
-          </label>
-        </td>
-        <td colspan="2" class="border-left">
-          <label class="label-sameline">Operator Name:
-            <input class="no-msg-init include-in-submit" name="OpName" type="text" tabindex="509" readonly />
-          </label>
-        </td>
-      </tr>
-      <tr class="horizontal">
-        <td>
-          <label>
-            <input name="Method" type="radio" value="EOC Radio" tabindex="-1" /> EOC Radio
-          </label>
-        </td>
-        <td>
-          <label>
-            <input name="Method" type="radio" value="FAX" tabindex="-1" /> FAX
-          </label>
-        </td>
-        <td>
-          <label>
-            <input name="Method" type="radio" value="Courier" tabindex="-1" /> Courier
-          </label>
-        </td>
-        <td colspan="2" class="border-left">
-        </td>
-      </tr>
-      <tr class="horizontal">
-        <td>
-          <label>
-            <input name="Method" type="radio" value="Amateur Radio" tabindex="-1" /> Amateur Radio
-          </label>
-        </td>
-        <td colspan="2">
-          <label>
-            <input name="Method" type="radio" value="Other" tabindex="-1" /> Other:
-          </label>
-          <label>
-            <input name="Other" type="text" tabindex="-1" />
-          </label>
-        </td>
-        <td class="border-left">
-          <label>Date:
-            <input name="OpDate" type="text" tabindex="510" class="date no-msg-init init-on-submit" readonly />
-          </label>
-        </td>
-        <td>
-          <label>Time:
-            <input name="OpTime" type="text" tabindex="511" class="time no-msg-init init-on-submit" readonly />
-          </label>
-        </td>
-      </tr>
-    </table>
+<link rel=stylesheet href={{assets}}/SCCoPIFO.css>
+<script type=text/javascript src={{assets}}/pack-it-forms.js></script>
+<title>ICS-213 Message Form</title>
+<packet-form>
+  <div id=form-header>
+    <div id=form-title>ICS-213 Message Form</div>
+    <div>PIF: {{form-version}}</div>
+    <div>PDF: 20220119</div>
   </div>
-</the-form>
+  <div id=form-header-roo>
+    <div class=section-inline>Radio Operator Only:</div>
+    <div class=pair>
+      <label for=MsgNo>1. Origin Msg #:</label>
+      <input id=MsgNo name=MsgNo class=message-number required style="width:5.40rem">
+    </div>
+    <div class=pair>
+      <label for=DestMsgNo>2. Destination Msg #:</label>
+      <input id=DestMsgNo name=DestMsgNo class=message-number disabled style="width:5.15rem">
+    </div>
+  </div>
+  <div class=border-thick>
+    <div class=layout-grid style="--columns: max-content max-content 1fr">
+      <div class="border subgrid rowspan3" style="padding-inline: 0.25rem">
+        <label for=1a. class=rowspan2>1. Date:</label>
+        <div><input id=1a. name=1a. class=date required style="width:4.71rem"></div>
+      </div>
+      <div class="border subgrid rowspan3" style="padding-inline: 0.25rem">
+        <label for=1b. class=rowspan2>Time <span class=annotation>(24hr):</span></label>
+        <div style="text-align: center"><input id=1b. name=1b. class=time required style="width:3.59rem"></div>
+      </div>
+      <div class=layout-pair>
+        <div class=pair>
+          <div class=label>5. Handling <span class=annotation>(✓ one):</span></div>
+          <div class="layout-horizontal colgap required-group">
+            <label>
+              <input type=radio name=5. required value=IMMEDIATE>Immediate
+              <span>(ASAP)</span>
+            </label>
+            <label>
+              <input type=radio name=5. required value=PRIORITY>Priority
+              <span>(&lt;1 hr)</span>
+            </label>
+            <label>
+              <input type=radio name=5. required value=ROUTINE>Routine
+              <span>(&lt;2 hrs)</span>
+            </label>
+          </div>
+        </div>
+      </div>
+      <div class="border subgrid rowspan2" style="padding-inline: 0.25rem; row-gap: 0.25rem">
+        <div class=label>6. This Message Requests You To:</div>
+        <div class="layout-grid colgap"
+          style="--columns: repeat(3, max-content); margin-left: 1.5rem; align-items: baseline; row-gap: 0.25rem">
+          <div class=label style="justify-self:end;margin:0">TAKE ACTION <span class=annotation>(✓ one):</span></div>
+          <label><input type=radio name=6a. value=Yes>Yes</label>
+          <label><input type=radio name=6a. value=No>No</label>
+          <div class=label style="justify-self:end;margin:0">REPLY <span class=annotation>(✓ one):</span></div>
+          <div>
+            <label for=6b.><input type=radio id=6b. name=6b. value=Yes>Yes,</label>
+            <label for=6d.>by <input id=6d. name=6d. allowed-if="6b.=Yes" style="width:3.44rem"></label>
+          </div>
+          <label><input type=radio name=6b. value=No>No</label>
+        </div>
+      </div>
+    </div>
+    <div class=layout-grid style="--columns: max-content max-content 1fr max-content max-content 1fr">
+      <div class=to-from style="grid-area:1/1/6/2">TO</div>
+      <div class=to-from style="grid-area:1/4/6/5">FROM</div>
+      <if:show-addrs>
+        <div class=pair style="grid-area:1/2/2/4">
+          <label for=ToAddr>Address:</label>
+          <input id=ToAddr name=ToAddr required>
+        </div>
+      </if:show-addrs>
+      <div class=pair style="grid-area:2/2/3/4">
+        <label for=7.>ICS Position:</label>
+        <input id=7. name=7. required>
+      </div>
+      <div class=pair style="grid-area:3/2/4/4">
+        <label for=9a.>Location:</label>
+        <input id=9a. name=9a. required>
+      </div>
+      <div class=pair style="grid-area:4/2/5/4">
+        <label for=ToName>Name:</label>
+        <input id=ToName name=ToName>
+      </div>
+      <div class=pair style="grid-area:5/2/6/4">
+        <label for=ToTel>Telephone #:</label>
+        <input id=ToTel name=ToTel>
+      </div>
+      <if:show-addrs>
+        <div class=pair style="grid-area:1/5/2/7">
+          <label for=FromAddr>Address:</label>
+          <input id=FromAddr name=FromAddr readonly>
+        </div>
+      </if:show-addrs>
+      <div class=pair style="grid-area:2/5/3/7">
+        <label for=8.>ICS Position:</label>
+        <input id=8. name=8. required>
+      </div>
+      <div class=pair style="grid-area:3/5/4/7">
+        <label for=9b.>Location:</label>
+        <input id=9b. name=9b. required>
+      </div>
+      <div class=pair style="grid-area:4/5/5/7">
+        <label for=FmName>Name:</label>
+        <input id=FmName name=FmName>
+      </div>
+      <div class=pair style="grid-area:5/5/6/7">
+        <label for=FmTel>Telephone #:</label>
+        <input id=FmTel name=8d.>
+      </div>
+    </div>
+    <div class=layout-pair>
+      <div class=pair>
+        <label for=10.>10. Subject:</label>
+        <input id=10. name=10. required style="width:37.66rem">
+      </div>
+      <div class=pair>
+        <label for=1.>11. Reference:</label>
+        <input id=11. name=11. style="width:25.52rem">
+      </div>
+      <div class=pair>
+        <label for=12.>12. Message:</label>
+        <textarea id=12. name=12. style="width:45.07rem;height:9.93rem"></textarea>
+      </div>
+    </div>
+  </div>
+  <div class=layout-grid style="--columns: max-content 1fr 1fr; margin-top: 1rem; align-items: baseline">
+    <div class="section colspan3">14. Operator Use Only:</div>
+    <div class=section-inline>Relay:</div>
+    <div class="layout-pair">
+      <div class=pair>
+        <label for=OpRelayRcvd>Rcvd:</label>
+        <input id=OpRelayRcvd name=OpRelayRcvd style="width:15.29rem">
+      </div>
+    </div>
+    <div class="layout-pair">
+      <div class=pair>
+        <label for=OpRelaySent>Sent:</label>
+        <input id=OpRelaySent name=OpRelaySent style="width:15.29rem">
+      </div>
+    </div>
+    <div class="subgrid colspan2 rowspan4">
+      <div class=section-inline>How:</div>
+      <div class=border style="padding: 0.25rem">
+        <label for=Rec-Sent-R><input type=radio id=Rec-Sent-R name=Rec-Sent value=receiver>Received or </label>
+        <label for=Rec-Sent-S><input type=radio id=Rec-Sent-S name=Rec-Sent value=sender>Sent</label>
+        <span class=annotation>(✓ one):</span>
+      </div>
+      <div class="colspan2 rowspan3 colgap border" style="display: grid; grid: subgrid / max-content max-content 1fr">
+        <label><input type=radio name=Method value=Telephone>Telephone</label>
+        <label class=colspan2><input type=radio name=Method value="Dispatch Center">Dispatch Center</label>
+        <label><input type=radio name=Method value="EOC Radio">EOC Radio</label>
+        <label><input type=radio name=Method value=Fax>Fax</label>
+        <label><input type=radio name=Method value=Courier>Courier</label>
+        <label><input type=radio name=Method value="Amateur Radio">Amateur Radio</label>
+        <div class=colspan2>
+          <label for=Method-O><input type=radio id=Method-O name=Method value=Other>Other</label>
+          &nbsp;
+          <input name=Other placeholder="(describe)" allowed-if="Method=Other" style="width:8.41rem">
+        </div>
+      </div>
+    </div>
+    <div class=rowspan4 style="display: grid; grid: subgrid / max-content 1fr">
+      <div class=pair>
+        <label for=OpCall>Operator Call Sign:</label>
+        <input id=OpCall name=OpCall class=call-sign required style="width:13.04rem" readonly>
+      </div>
+      <div class=pair>
+        <label for=OpName>Operator Name:</label>
+        <input id=OpName name=OpName style="width:13.84rem" readonly>
+      </div>
+      <div class="border colspan2" style="padding: 0.25rem">&nbsp;</div>
+      <div class="layout-grid colspan2" style="--columns: max-content 1fr max-content 1fr">
+        <div class=pair>
+          <label for=OpDate>Date:</label>
+          <input id=OpDate name=OpDate class=date readonly style="width:4.71rem" readonly>
+        </div>
+        <div class=pair>
+          <label for=OpTime>Time <span class=annotation>(24hr)</span>:</label>
+          <input id=OpTime name=OpTime class=time readonly style="width:3.40rem" readonly>
+        </div>
+      </div>
+    </div>
+  </div>
+</packet-form>
