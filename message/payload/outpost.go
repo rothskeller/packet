@@ -6,6 +6,7 @@ import (
 	"io"
 	"mime/quotedprintable"
 	"net/mail"
+	"regexp"
 	"strings"
 
 	"github.com/rothskeller/packet/errors"
@@ -20,6 +21,7 @@ type OutpostPayload struct {
 	urgent    bool
 	requestDR bool
 	requestRR bool
+	bbsRoutes string
 }
 
 var _ Payload = (*OutpostPayload)(nil)
@@ -75,12 +77,16 @@ func (p *OutpostPayload) SetRequestRR(requestRR bool) {
 	}
 }
 
+// BBSRoutes returns the BBS routing lines at the top of the body (if any).
+func (p *OutpostPayload) BBSRoutes() string { return p.bbsRoutes }
+
 // Clone returns a copy of the Payload.
 func (p *OutpostPayload) Clone() Payload {
 	np := NewOutpostPayload(p.Body().Clone())
 	np.SetRequestDR(p.RequestDR())
 	np.SetRequestRR(p.RequestRR())
 	np.SetUrgent(p.Urgent())
+	np.bbsRoutes = p.BBSRoutes()
 	return np
 }
 
@@ -136,6 +142,7 @@ func decodeOutpostPayload(headers mail.Header, payload string) (_ Payload, err e
 		return nil, errors.NewF("This message has an unsupported Content-Transfer-Encoding %q.", cte)
 	}
 	p := new(OutpostPayload)
+	payload = p.extractBBSRoutes(payload)
 	if payload, err = p.decodeOutpostFlags(payload); err != nil {
 		return nil, err
 	}
@@ -200,6 +207,17 @@ func isQPHex(b byte) bool {
 	return (b >= '0' && b <= '9') || (b >= 'A' && b <= 'F')
 }
 
+var bbsRoutesRE = regexp.MustCompile(`^(?:R:\d{6}/\d{4}[zZ]? .*\n)+\n`)
+
+// extractBBSRoutes removes any BBS routing headers from the top of the body.
+func (p *OutpostPayload) extractBBSRoutes(payload string) string {
+	if match := bbsRoutesRE.FindString(payload); match != "" {
+		p.bbsRoutes = match[:len(match)-1]
+		return payload[len(match):]
+	}
+	return payload
+}
+
 // decodeOutpostFlags decodes and removes Outpost flags from the payload.
 func (p *OutpostPayload) decodeOutpostFlags(payload string) (decoded string, err error) {
 	var (
@@ -253,11 +271,14 @@ func (p *OutpostPayload) Encode() (payload string) {
 	}
 	p.MarkClean()
 	// Next, encode the body.
-	if isJNOSSafe(payload) {
-		return payload
-	} else {
-		return "!B64!" + lineBreakEvery76(base64.StdEncoding.EncodeToString([]byte(payload)))
+	if !isJNOSSafe(payload) {
+		payload = "!B64!" + lineBreakEvery76(base64.StdEncoding.EncodeToString([]byte(payload)))
 	}
+	// If we have BBS routes, add them on top.
+	if p.bbsRoutes != "" {
+		payload = p.bbsRoutes + "\n" + payload
+	}
+	return payload
 }
 
 // isJNOSSafe returns whether the body can be sent to JNOS safely.  JNOS does
