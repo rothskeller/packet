@@ -256,12 +256,18 @@ func (env *Envelope) parseHeadersCommon(h mail.Header) {
 	env.SubjectLine = h.Get("Subject")
 }
 
+var bbsRoutingRE = regexp.MustCompile(`^(?:R:\d{6}/\d{4}[zZ]? .*\n)+\n`)
+
 // parseOutpost handles the Outpost codes at the start of the body, if any.
 func (env *Envelope) parseOutpost(original string) (string, error) {
 	var (
 		found bool
-		body  = original
+		body  string
 	)
+	// If the message passed through the BBS network, routing headers may
+	// have been added at the top of the body.  Remove those.
+	original = bbsRoutingRE.ReplaceAllLiteralString(original, "")
+	body = original
 	for {
 		switch {
 		case strings.HasPrefix(body, "\n"):
