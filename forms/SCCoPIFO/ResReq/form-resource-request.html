@@ -35,7 +35,7 @@
             <div class=layout-grid style="--columns: max-content 1fr max-content max-content">
               <div class=pair>
                 <label for={{id}}n.>3{{n}}a. Item Name:</label>
-                <input name={{id}}n. required style="width:19.56rem">
+                <input name={{id}}n. {{required}} style="width:19.56rem">
               </div>
               <div class=pair>
                 <label for={{id}}q.>3{{n}}b. Quantity Requested:</label>
@@ -60,7 +60,7 @@
           </div>
         </div>
       </def:item>
-      <item n=1 id=23></item>
+      <item n=1 id=23 required></item>
       <item n=2 id=24 hidden-until=23n.></item>
       <item n=3 id=25 hidden-until=24n.></item>
       <item n=4 id=26 hidden-until=25n.></item>
@@ -86,7 +86,7 @@
         <input id=40. name=40. required style="width:11.28rem">
       </div>
       <div class="border colspan2">
-        <label style="margin-left:0"><input type=checkbox name=40s.>54. with signature</label>
+        <label style="margin-left:0"><input type=checkbox name=40s. value=checked>54. with signature</label>
       </div>
       <div class=pair>
         <label for=41.>52. Requested By Phone:</label>

@@ -15,3 +15,5 @@ When possible:
   Forms accept invalid input
   Implement server-side printing on Windows
   PDF page numbering overwrites boilerplate text on ICS-213 form
+  NotRep and ResReq are not received properly by previous version: hidden fields
+  not shown because their triggering fields no longer exist.

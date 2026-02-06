@@ -163,7 +163,7 @@ field 26.
 field 27. defaultBody
   label    "Other Damage Observed"
   type     multiline
-  pdf      text L  39.44 R 563.44 B 302.12 T 393.16 A lT
+  pdf      text L  41.44 R 563.44 B 302.12 T 393.16 A lT
 
 field OpRelayRcvd
   label    "Operator: Relay Received"

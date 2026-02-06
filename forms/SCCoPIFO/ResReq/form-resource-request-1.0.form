@@ -115,7 +115,7 @@ field 21.
   presence required
   pdf      text L 114.44 R 563.44 B 524.36 T 538.00 BL 527.40
 
-field 22d.
+field 22d. formDate
   label    Date
   type     date
   presence required
@@ -179,8 +179,8 @@ field 24i.
   choice   Yes
   choice   No
   presence required
-  pdf      if 24i.=Yes then circle X 362.16 Y 369.60 R 2.84
-  pdf      if 24i.=No then circle X 315.60 Y 369.54 R 2.84
+  pdf      if 24i.=Yes then circle X 315.60 Y 369.54 R 2.84
+  pdf      if 24i.=No then circle X 362.16 Y 369.60 R 2.84
 
 field 25n.
   label    "Item 3: Item Name"
@@ -203,8 +203,8 @@ field 25i.
   choice   Yes
   choice   No
   presence required
-  pdf      if 25i.=Yes then circle X 362.16 Y 296.76 R 2.84
-  pdf      if 25i.=No then circle X 315.60 Y 296.70 R 2.84
+  pdf      if 25i.=Yes then circle X 315.60 Y 296.70 R 2.84
+  pdf      if 25i.=No then circle X 362.16 Y 296.76 R 2.84
 
 field 26n.
   label    "Item 4: Item Name"
@@ -227,8 +227,8 @@ field 26i.
   choice   Yes
   choice   No
   presence required
-  pdf      if 26i.=Yes then circle X 362.16 Y 223.80 R 2.84
-  pdf      if 26i.=No then circle X 315.60 Y 223.74 R 2.84
+  pdf      if 26i.=Yes then circle X 315.60 Y 223.74 R 2.84
+  pdf      if 26i.=No then circle X 362.16 Y 223.80 R 2.84
 
 field 27n.
   label    "Item 5: Item Name"

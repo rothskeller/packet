@@ -139,7 +139,7 @@ field 21.
   help     "This is the name of the jurisdiction requesting resources.  It is required."
   pdf      text L 114.44 R 563.44 B 524.36 T 538.00 BL 527.40
 
-field 22d.
+field 22d. formDate
   label    "23. Date"
   type     date
   presence required
@@ -220,8 +220,8 @@ field 24i.
   choice   No
   presence required
   help     "This indicates whether the requested item needs to be tracked for demobilization.  It is required when there is an item name, otherwise not allowed."
-  pdf      if 24i.=Yes then circle X 362.16 Y 369.60 R 2.84
-  pdf      if 24i.=No then circle X 315.60 Y 369.54 R 2.84
+  pdf      if 24i.=Yes then circle X 315.60 Y 369.54 R 2.84
+  pdf      if 24i.=No then circle X 362.16 Y 369.60 R 2.84
 
 field 25n.
   label    "33a. Item 3: Item Name"
@@ -251,8 +251,8 @@ field 25i.
   choice   No
   presence required
   help     "This indicates whether the requested item needs to be tracked for demobilization.  It is required when there is an item name, otherwise not allowed."
-  pdf      if 25i.=Yes then circle X 362.16 Y 296.76 R 2.84
-  pdf      if 25i.=No then circle X 315.60 Y 296.70 R 2.84
+  pdf      if 25i.=Yes then circle X 315.60 Y 296.70 R 2.84
+  pdf      if 25i.=No then circle X 362.16 Y 296.76 R 2.84
 
 field 26n.
   label    "34a. Item 4: Item Name"
@@ -282,8 +282,8 @@ field 26i.
   choice   No
   presence required
   help     "This indicates whether the requested item needs to be tracked for demobilization.  It is required when there is an item name, otherwise not allowed."
-  pdf      if 26i.=Yes then circle X 362.16 Y 223.80 R 2.84
-  pdf      if 26i.=No then circle X 315.60 Y 223.74 R 2.84
+  pdf      if 26i.=Yes then circle X 315.60 Y 223.74 R 2.84
+  pdf      if 26i.=No then circle X 362.16 Y 223.80 R 2.84
 
 field 27n.
   label    "35a. Item 5: Item Name"

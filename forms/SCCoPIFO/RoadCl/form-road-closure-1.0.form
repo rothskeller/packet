@@ -119,13 +119,13 @@ field 22.
   label    Location
   type     multiline
   presence required
-  pdf      text L  39.44 R 563.44 B 442.52 T 506.68 A lt
+  pdf      text L  41.44 R 563.44 B 442.52 T 506.68 A lt
 
 field 23. defaultBody
   label    Details
   type     multiline
   presence required
-  pdf      text L  39.44 R 563.44 B 361.40 T 425.68 A lt
+  pdf      text L  41.44 R 563.44 B 361.40 T 425.68 A lt
 
 field 24.
   label    Status

@@ -90,7 +90,7 @@ field 8d.
   label    "From Contact Info"
   pdf      text L 401.96 R 563.44 B 582.68 T 599.92 BL 587.64
 
-field 20d.
+field 20d. formDate
   label    "Prepared Date"
   type     date
   presence required
@@ -162,12 +162,12 @@ field 24.
 field 25.
   label    "Incident Description"
   type     multiline
-  pdf      text L  39.44 R 563.44 B 400.16 T 461.92 A lT
+  pdf      text L  41.44 R 563.44 B 400.16 T 461.92 A lT
 
 field 26. defaultBody
   label    "Additional Incident Information"
   type     multiline
-  pdf      text L  39.44 R 563.44 B 345.44 T 384.52 A lT
+  pdf      text L  41.44 R 563.44 B 345.44 T 384.52 A lT
 
 field 30.
   label    "Prepared By"
@@ -245,9 +245,9 @@ field 70a.
   choice   Problem
   choice   Failure
   choice   Unknown
-  pdf      if 70a.=Normal then circle P 2 X 378.36 Y 707.64 R 2.36
-  pdf      if 70a.=Problem then circle P 2 X 237.24 Y 707.64 R 2.72
-  pdf      if 70a.=Failure then circle P 2 X 306.96 Y 707.64 R 2.72
+  pdf      if 70a.=Normal then circle P 2 X 237.24 Y 707.64 R 2.72
+  pdf      if 70a.=Problem then circle P 2 X 306.96 Y 707.64 R 2.72
+  pdf      if 70a.=Failure then circle P 2 X 378.36 Y 707.64 R 2.36
   pdf      if 70a.=Unknown then circle P 2 X 443.04 Y 707.58 R 2.60
 
 field 70b.
@@ -281,8 +281,8 @@ field 72a.
   choice   Unknown
   pdf      if 72a.=Normal then circle P 2 X 237.24 Y 618.36 R 2.72
   pdf      if 72a.=Problem then circle P 2 X 306.96 Y 618.36 R 2.72
-  pdf      if 72a.=Failure then circle P 2 X 442.80 Y 618.36 R 2.72
-  pdf      if 72a.=Unknown then circle P 2 X 378.54 Y 618.36 R 2.66
+  pdf      if 72a.=Failure then circle P 2 X 378.54 Y 618.36 R 2.66
+  pdf      if 72a.=Unknown then circle P 2 X 442.80 Y 618.36 R 2.72
 
 field 72b.
   label    "Flooding Comments"
@@ -313,10 +313,10 @@ field 74a.
   choice   Problem
   choice   Failure
   choice   Unknown
-  pdf      if 74a.=Normal then circle P 2 X 378.54 Y 529.08 R 2.78
+  pdf      if 74a.=Normal then circle P 2 X 237.24 Y 529.02 R 2.84
   pdf      if 74a.=Problem then circle P 2 X 306.96 Y 529.08 R 2.72
-  pdf      if 74a.=Failure then circle P 2 X 442.80 Y 529.08 R 2.84
-  pdf      if 74a.=Unknown then circle P 2 X 237.24 Y 529.02 R 2.84
+  pdf      if 74a.=Failure then circle P 2 X 378.54 Y 529.08 R 2.78
+  pdf      if 74a.=Unknown then circle P 2 X 442.80 Y 529.08 R 2.84
 
 field 74b.
   label    "Emergency Services Comments"
@@ -330,10 +330,10 @@ field 75a.
   choice   Problem
   choice   Failure
   choice   Unknown
-  pdf      if 75a.=Normal then circle P 2 X 378.60 Y 484.56 R 2.84
-  pdf      if 75a.=Problem then circle P 2 X 442.80 Y 484.56 R 2.84
-  pdf      if 75a.=Failure then circle P 2 X 237.24 Y 484.50 R 2.84
-  pdf      if 75a.=Unknown then circle P 2 X 306.96 Y 484.50 R 2.84
+  pdf      if 75a.=Normal then circle P 2 X 237.24 Y 484.50 R 2.84
+  pdf      if 75a.=Problem then circle P 2 X 306.96 Y 484.50 R 2.84
+  pdf      if 75a.=Failure then circle P 2 X 378.60 Y 484.56 R 2.84
+  pdf      if 75a.=Unknown then circle P 2 X 442.80 Y 484.56 R 2.84
 
 field 75b.
   label    "Casualties Comments"
@@ -348,9 +348,9 @@ field 76a.
   choice   Failure
   choice   Unknown
   pdf      if 76a.=Normal then circle P 2 X 237.30 Y 439.92 R 2.90
-  pdf      if 76a.=Problem then circle P 2 X 378.60 Y 439.92 R 2.84
-  pdf      if 76a.=Failure then circle P 2 X 442.80 Y 439.92 R 2.84
-  pdf      if 76a.=Unknown then circle P 2 X 306.96 Y 439.86 R 2.84
+  pdf      if 76a.=Problem then circle P 2 X 306.96 Y 439.86 R 2.84
+  pdf      if 76a.=Failure then circle P 2 X 378.60 Y 439.92 R 2.84
+  pdf      if 76a.=Unknown then circle P 2 X 442.80 Y 439.92 R 2.84
 
 field 76b.
   label    "Utilities (Gas) Comments"
@@ -432,10 +432,10 @@ field 81a.
   choice   Problem
   choice   Failure
   choice   Unknown
-  pdf      if 81a.=Normal then circle P 2 X 307.02 Y 216.84 R 2.90
-  pdf      if 81a.=Problem then circle P 2 X 378.54 Y 216.84 R 2.90
-  pdf      if 81a.=Failure then circle P 2 X 442.80 Y 216.84 R 2.84
-  pdf      if 81a.=Unknown then circle P 2 X 237.24 Y 216.78 R 2.84
+  pdf      if 81a.=Normal then circle P 2 X 237.24 Y 216.78 R 2.84
+  pdf      if 81a.=Problem then circle P 2 X 307.02 Y 216.84 R 2.90
+  pdf      if 81a.=Failure then circle P 2 X 378.54 Y 216.84 R 2.90
+  pdf      if 81a.=Unknown then circle P 2 X 442.80 Y 216.84 R 2.84
 
 field 81b.
   label    "Search and Rescue Comments"
@@ -449,10 +449,10 @@ field 82a.
   choice   Problem
   choice   Failure
   choice   Unknown
-  pdf      if 82a.=Normal then circle P 2 X 378.54 Y 172.20 R 2.90
-  pdf      if 82a.=Problem then circle P 2 X 442.80 Y 172.20 R 2.84
-  pdf      if 82a.=Failure then circle P 2 X 237.24 Y 172.14 R 2.84
-  pdf      if 82a.=Unknown then circle P 2 X 306.96 Y 172.14 R 2.84
+  pdf      if 82a.=Normal then circle P 2 X 237.24 Y 172.14 R 2.84
+  pdf      if 82a.=Problem then circle P 2 X 306.96 Y 172.14 R 2.84
+  pdf      if 82a.=Failure then circle P 2 X 378.54 Y 172.20 R 2.90
+  pdf      if 82a.=Unknown then circle P 2 X 442.80 Y 172.20 R 2.84
 
 field 82b.
   label    "Transportation (Roads) Comments"
@@ -466,10 +466,10 @@ field 83a.
   choice   Problem
   choice   Failure
   choice   Unknown
-  pdf      if 83a.=Normal then circle P 2 X 378.60 Y 127.56 R 2.84
-  pdf      if 83a.=Problem then circle P 2 X 442.80 Y 127.56 R 2.84
-  pdf      if 83a.=Failure then circle P 2 X 237.24 Y 127.50 R 2.84
-  pdf      if 83a.=Unknown then circle P 2 X 306.96 Y 127.50 R 2.84
+  pdf      if 83a.=Normal then circle P 2 X 237.24 Y 127.50 R 2.84
+  pdf      if 83a.=Problem then circle P 2 X 306.96 Y 127.50 R 2.84
+  pdf      if 83a.=Failure then circle P 2 X 378.60 Y 127.56 R 2.84
+  pdf      if 83a.=Unknown then circle P 2 X 442.80 Y 127.56 R 2.84
 
 field 83b.
   label    "Transportation (Bridges) Comments"
@@ -527,13 +527,13 @@ field 91.
   label    "Lifeline Update"
   type     multiline
   presence required
-  pdf      text P 3 L  40.64 R 563.32 B 520.04 T 597.88 A lT
+  pdf      text P 3 L  42.64 R 563.32 B 520.04 T 597.88 A lT
 
 field 92.
   label    "Unmet Needs"
   type     multiline
   presence required
-  pdf      text P 3 L  40.64 R 563.32 B 411.80 T 502.84 A lT
+  pdf      text P 3 L  42.64 R 563.32 B 411.80 T 502.84 A lT
 
 field OpRelayRcvd
   label    "Operator: Relay Received"
