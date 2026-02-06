@@ -141,7 +141,6 @@ field 31.
   choice   Pending Demobilization
   choice   Demobilization
   choice   Not Activated
-  presence required
   pdf      if 31.=Activated then circle X 155.64 Y 481.14 R 2.84
   pdf      if 31.="Pending Demobilization" then circle X 299.64 Y 481.14 R 2.84
   pdf      if 31.="Not Activated" then circle X 443.64 Y 481.14 R 2.84

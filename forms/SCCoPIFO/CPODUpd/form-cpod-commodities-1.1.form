@@ -169,7 +169,6 @@ field 31.
   mchoice  "Pending Demobilization" "c. Pending Demobilization"
   mchoice  Demobilization "d. Demobilization"
   mchoice  "Not Activated" "e. Not Activated"
-  presence required
   help     "This is the status of the CPOD.  It is required."
   pdf      if 31.=Activated then circle X 155.64 Y 481.14 R 2.84
   pdf      if 31.="Pending Demobilization" then circle X 299.64 Y 481.14 R 2.84

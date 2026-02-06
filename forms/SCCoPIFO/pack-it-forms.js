@@ -28,6 +28,7 @@ var standardAttributes = {
       let value = evt.target.value.replaceAll('-', '/')
       if (/^\d\//.test(value)) value = '0' + value
       if (/^\d\d\/\d\//.test(value)) value = value.substring(0, 3) + '0' + value.substring(3)
+      if (/^\d\d\/\d\d\/\d\d$/.test(value)) value = value.substring(0, 6) + '20' + value.substring(6)
       evt.target.value = value
     },
   },
@@ -39,6 +40,15 @@ var standardAttributes = {
   "phone-number": {
     pattern: "[a-zA-Z ]*([+][0-9]+ )?[0-9][0-9 \\-]*([xX][0-9]+)?",
     placeholder: "000-000-0000 x00",
+    cleanupHandler: evt => {
+      let value = evt.target.value
+      const ext = /[xX][0-9]+$/.exec(value)
+      if (ext) value = value.substring(0, ext.index)
+      const digits = value.replaceAll(/[^0-9]/g, '')
+      if (digits.length === 10) value = digits.substring(0, 3) + '-' + digits.substring(3, 6) + '-' + digits.substring(6)
+      if (ext) value += ' ' + ext[0]
+      evt.target.value = value
+    },
   },
   "real-number": { pattern: "[\\-+]?[0-9]*\\.[0-9]+|[\\-+]?[0-9]+" },
   time: {
@@ -438,7 +448,10 @@ function setup_input_once(input) {
         var placeholder = standardAttributes[s]?.placeholder
         if (placeholder) input.placeholder = placeholder
         var cleanup = standardAttributes[s]?.cleanupHandler
-        if (cleanup) input.addEventListener('change', cleanup)
+        if (cleanup) input.addEventListener('change', evt => {
+          cleanup(evt)
+          adjust_submit()
+        })
       }
     }
   }

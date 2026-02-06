@@ -281,7 +281,7 @@ field 33. defaultBody
   type     multiline
   width    108
   help     "This gives additional comments about the damage to the property."
-  pdf      text L  39.44 R 563.44 B 226.64 T 279.16 A lT
+  pdf      text L  41.44 R 563.44 B 226.64 T 279.16 A lT
 
 field 34.
   label    "35. Contact Name"
