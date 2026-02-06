@@ -150,13 +150,13 @@ field 23a.
   label    "14. Item: Building"
   type     checkbox
   help     "This indicates that the item surveyed was a building.  At least one item type is required."
-  pdf      cross L 187.80 R 195.60 B 493.08 T 500.88
+  pdf      if 23a. then cross L 187.80 R 195.60 B 493.08 T 500.88
 
 field 23b.
   label    "14. Item: Road"
   type     checkbox
   help     "This indicates that the item surveyed was a road.  At least one item type is required."
-  pdf      cross L 295.80 R 303.60 B 493.08 T 500.88
+  pdf      if 23b. then cross L 295.80 R 303.60 B 493.08 T 500.88
 
 field 24.
   label    "15. Building Type"

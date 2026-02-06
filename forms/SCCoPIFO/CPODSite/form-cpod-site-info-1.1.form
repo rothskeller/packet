@@ -133,7 +133,7 @@ field 20.
   help     "This is the name of the jurisdiction responsible for the CPOD.  It is required."
   pdf      text L 129.20 R 563.44 B 546.20 T 559.84 BL 549.24
 
-field 21d.
+field 21d. formDate
   label    "22. Prepared Date"
   type     date
   presence required
@@ -262,28 +262,28 @@ field 42a.
   clabel   Concrete
   type     checkbox
   help     "This indicates that some access roads or walkways are concrete."
-  pdf      cross L 173.28 R 181.08 B 255.24 T 263.04
+  pdf      if 42a. then cross L 173.28 R 181.08 B 255.24 T 263.04
 
 field 42b.
   label    "53b. Access: Gravel Hard-Stand"
   clabel   "Gravel Hard-Stand"
   type     checkbox
   help     "This indicates that some access roads or walkways are gravel hard-stand."
-  pdf      cross L 257.64 R 265.44 B 255.24 T 263.04
+  pdf      if 42b. then cross L 257.64 R 265.44 B 255.24 T 263.04
 
 field 42c.
   label    "53c. Access: Paved"
   clabel   Paved
   type     checkbox
   help     "This indicates that some access roads or walkways are paved."
-  pdf      cross L 387.96 R 395.76 B 255.24 T 263.04
+  pdf      if 42c. then cross L 387.96 R 395.76 B 255.24 T 263.04
 
 field 42d.
   label    "53d. Access: Other"
   clabel   Other
   type     checkbox
   help     "This indicates that some access roads or walkways have other surfaces.  Give the details in the Additional Information field."
-  pdf      cross L 460.68 R 468.48 B 255.24 T 263.04
+  pdf      if 42d. then cross L 460.68 R 468.48 B 255.24 T 263.04
 
 field -
   label    "53. Access"
@@ -334,49 +334,49 @@ field 50a.
   clabel   "has perimeter fencing"
   type     checkbox
   help     "This indicates whether the site has perimeter fencing."
-  pdf      cross L  70.08 R  77.88 B 135.36 T 143.16
+  pdf      if 50a. then cross L  70.08 R  77.88 B 135.36 T 143.16
 
 field 50b.
   label    "61b. Safety: Has outside lighting"
   clabel   "has outside lighting"
   type     checkbox
   help     "This indicates whether the site has fixed lighting throughout all outside areas."
-  pdf      cross L  70.08 R  77.88 B 119.88 T 127.68
+  pdf      if 50b. then cross L  70.08 R  77.88 B 119.88 T 127.68
 
 field 50c.
   label    "61c. Safety: Has inside lighting"
   clabel   "has inside lighting"
   type     checkbox
   help     "This indicates whether the site has fixed lighting throughout all inside areas."
-  pdf      cross L  70.08 R  77.88 B 104.28 T 112.08
+  pdf      if 50c. then cross L  70.08 R  77.88 B 104.28 T 112.08
 
 field 50d.
   label    "61d. Safety: Monitored with CCTV"
   clabel   "monitored with CCTV"
   type     checkbox
   help     "This indicates whether the site is monitored using closed-circuit TV cameras."
-  pdf      cross L  70.08 R  77.88 B  88.80 T  96.60
+  pdf      if 50d. then cross L  70.08 R  77.88 B  88.80 T  96.60
 
 field 50e.
   label    "61e. Safety: Has PA system"
   clabel   "has PA system"
   type     checkbox
   help     "This indicates whether the site has a public address system installed."
-  pdf      cross L 331.80 R 339.60 B 135.36 T 143.16
+  pdf      if 50e. then cross L 331.80 R 339.60 B 135.36 T 143.16
 
 field 50f.
   label    "61f. Safety: Has covered areas"
   clabel   "has covered areas"
   type     checkbox
   help     "This indicates whether the site has covered areas."
-  pdf      cross L 331.80 R 339.60 B 119.88 T 127.68
+  pdf      if 50f. then cross L 331.80 R 339.60 B 119.88 T 127.68
 
 field 50g.
   label    "61g. Safety: Has fixed equipment"
   clabel   "has fixed equipment"
   type     checkbox
   help     "This indicates whether there is fixed or non-fixed equipment located on the site that may be difficult to move."
-  pdf      cross L 331.80 R 339.60 B 104.28 T 112.08
+  pdf      if 50g. then cross L 331.80 R 339.60 B 104.28 T 112.08
 
 field -
   label    "61. Safety"
@@ -395,21 +395,21 @@ field 52a.
   clabel   "wheelchair access"
   type     checkbox
   help     "This indicates whether there are sidewalks leading to the site that have wheelchair access."
-  pdf      cross P 2 L 156.24 R 164.16 B 671.52 T 679.44
+  pdf      if 52a. then cross P 2 L 156.24 R 164.16 B 671.52 T 679.44
 
 field 52b.
   label    "63b. Accessibility: Uneven surfaces"
   clabel   "uneven surfaces"
   type     checkbox
   help     "This indicates whether there are uneven surfaces leading up to the site."
-  pdf      cross P 2 L 156.24 R 164.16 B 656.16 T 664.32
+  pdf      if 52b. then cross P 2 L 156.24 R 164.16 B 656.16 T 664.32
 
 field 52c.
   label    "63c. Accessibility: Ramp from staff parking"
   clabel   "ramp from staff parking"
   type     checkbox
   help     "This indicates whether there is a ramp from the staff parking location leading up to the POD location."
-  pdf      cross P 2 L 156.24 R 164.16 B 640.56 T 648.72
+  pdf      if 52c. then cross P 2 L 156.24 R 164.16 B 640.56 T 648.72
 
 field -
   label    "63. Accessibility"

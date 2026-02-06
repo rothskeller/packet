@@ -151,35 +151,35 @@ field 23a.
   clabel   Congregate
   type     checkbox
   help     "This indicates that the shelter is a congregate shelter."
-  pdf      cross L 115.80 R 123.60 B 493.08 T 500.88
+  pdf      if 23a. then cross L 115.80 R 123.60 B 493.08 T 500.88
 
 field 23b.
   label    "24b. Type: Non-Congregate"
   clabel   Non-Congregate
   type     checkbox
   help     "This indicates that the shelter is a non-congregate shelter."
-  pdf      cross L 115.68 R 123.48 B 477.60 T 485.40
+  pdf      if 23b. then cross L 115.68 R 123.48 B 477.60 T 485.40
 
 field 23c.
   label    "24c. Type: Temporary Evacuation Point"
   clabel   "Temporary Evacuation Point"
   type     checkbox
   help     "This indicates that the shelter is a temporary evacuation point."
-  pdf      cross L 223.80 R 231.60 B 493.08 T 500.88
+  pdf      if 23c. then cross L 223.80 R 231.60 B 493.08 T 500.88
 
 field 23d.
   label    "24d. Type: Pets Accepted"
   clabel   "Pets Accepted"
   type     checkbox
   help     "This indicates that the shelter accepts pets."
-  pdf      cross L 223.80 R 231.60 B 477.60 T 485.40
+  pdf      if 23d. then cross L 223.80 R 231.60 B 477.60 T 485.40
 
 field 23e.
   label    "24e. Type: Large Animals"
   clabel   "Large Animals"
   type     checkbox
   help     "This indicates that the shelter accepts large animals."
-  pdf      cross L 403.80 R 411.60 B 493.08 T 500.88
+  pdf      if 23e. then cross L 403.80 R 411.60 B 493.08 T 500.88
 
 field -
   label    "24. Type"
@@ -206,28 +206,28 @@ field 25a.
   clabel   "Warming Center"
   type     checkbox
   help     "This indicate that the shelter is a warming center."
-  pdf      cross L 115.80 R 123.60 B 433.20 T 441.00
+  pdf      if 25a. then cross L 115.80 R 123.60 B 433.20 T 441.00
 
 field 25b.
   label    "26b. Resources: Cooling Center"
   clabel   "Cooling Center"
   type     checkbox
   help     "This indicates that the shelter is a cooling center."
-  pdf      cross L 115.68 R 123.48 B 417.60 T 425.40
+  pdf      if 25b. then cross L 115.68 R 123.48 B 417.60 T 425.40
 
 field 25c.
   label    "26c. Resources: Food & Drink"
   clabel   "Food & Drink"
   type     checkbox
   help     "This indicates that the shelter offers food and drink."
-  pdf      cross L 295.80 R 303.60 B 433.20 T 441.00
+  pdf      if 25c. then cross L 295.80 R 303.60 B 433.20 T 441.00
 
 field 25d.
   label    "26d. Resources: Charging Stations"
   clabel   "Charging Stations"
   type     checkbox
   help     "This indicates that the shelter has charging stations."
-  pdf      cross L 295.80 R 303.60 B 417.60 T 425.40
+  pdf      if 25d. then cross L 295.80 R 303.60 B 417.60 T 425.40
 
 field -
   label    "26. Resources"

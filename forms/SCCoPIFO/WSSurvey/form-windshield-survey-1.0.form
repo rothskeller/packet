@@ -123,12 +123,12 @@ field 22. messageSummary
 field 23a.
   label    "Item: Building"
   type     checkbox
-  pdf      cross L 187.80 R 195.60 B 493.08 T 500.88
+  pdf      if 23a. then cross L 187.80 R 195.60 B 493.08 T 500.88
 
 field 23b.
   label    "Item: Road"
   type     checkbox
-  pdf      cross L 295.80 R 303.60 B 493.08 T 500.88
+  pdf      if 23b. then cross L 295.80 R 303.60 B 493.08 T 500.88
 
 field 24.
   label    "Building Type"

@@ -124,31 +124,31 @@ field 23a.
   label    "Type: Congregate"
   clabel   Congregate
   type     checkbox
-  pdf      cross L 115.80 R 123.60 B 493.08 T 500.88
+  pdf      if 23a. then cross L 115.80 R 123.60 B 493.08 T 500.88
 
 field 23b.
   label    "Type: Non-Congregate"
   clabel   Non-Congregate
   type     checkbox
-  pdf      cross L 115.68 R 123.48 B 477.60 T 485.40
+  pdf      if 23b. then cross L 115.68 R 123.48 B 477.60 T 485.40
 
 field 23c.
   label    "Type: Temporary Evacuation Point"
   clabel   "Temporary Evacuation Point"
   type     checkbox
-  pdf      cross L 223.80 R 231.60 B 493.08 T 500.88
+  pdf      if 23c. then cross L 223.80 R 231.60 B 493.08 T 500.88
 
 field 23d.
   label    "Type: Pets Accepted"
   clabel   "Pets Accepted"
   type     checkbox
-  pdf      cross L 223.80 R 231.60 B 477.60 T 485.40
+  pdf      if 23d. then cross L 223.80 R 231.60 B 477.60 T 485.40
 
 field 23e.
   label    "Type: Large Animals"
   clabel   "Large Animals"
   type     checkbox
-  pdf      cross L 403.80 R 411.60 B 493.08 T 500.88
+  pdf      if 23e. then cross L 403.80 R 411.60 B 493.08 T 500.88
 
 field -
   label    Type
@@ -173,25 +173,25 @@ field 25a.
   label    "Resources: Warming Center"
   clabel   "Warming Center"
   type     checkbox
-  pdf      cross L 115.80 R 123.60 B 433.20 T 441.00
+  pdf      if 25a. then cross L 115.80 R 123.60 B 433.20 T 441.00
 
 field 25b.
   label    "Resources: Cooling Center"
   clabel   "Cooling Center"
   type     checkbox
-  pdf      cross L 115.68 R 123.48 B 417.60 T 425.40
+  pdf      if 25b. then cross L 115.68 R 123.48 B 417.60 T 425.40
 
 field 25c.
   label    "Resources: Food & Drink"
   clabel   "Food & Drink"
   type     checkbox
-  pdf      cross L 295.80 R 303.60 B 433.20 T 441.00
+  pdf      if 25c. then cross L 295.80 R 303.60 B 433.20 T 441.00
 
 field 25d.
   label    "Resources: Charging Stations"
   clabel   "Charging Stations"
   type     checkbox
-  pdf      cross L 295.80 R 303.60 B 417.60 T 425.40
+  pdf      if 25d. then cross L 295.80 R 303.60 B 417.60 T 425.40
 
 field -
   label    Resources

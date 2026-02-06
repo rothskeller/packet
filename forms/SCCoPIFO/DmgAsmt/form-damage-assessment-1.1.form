@@ -192,28 +192,28 @@ field 27a.
   clabel   Flooding
   type     checkbox
   help     "This indicates that the property sustained flooding damage."
-  pdf      cross L 152.04 R 159.24 B 426.36 T 433.56
+  pdf      if 27a. then cross L 152.04 R 159.24 B 426.36 T 433.56
 
 field 27b.
   label    "28b. Damage Type: Roof/Windows/Exterior"
   clabel   "Roof / Windows / Other Exterior"
   type     checkbox
   help     "This indicates that the property sustained damage to the roof, windows, or other exterior features."
-  pdf      cross L 152.04 R 159.24 B 410.76 T 417.96
+  pdf      if 27b. then cross L 152.04 R 159.24 B 410.76 T 417.96
 
 field 27c.
   label    "28c. Damage Type: Structural"
   clabel   Structural
   type     checkbox
   help     "This indicates that the property sustained structural damage."
-  pdf      cross L 332.04 R 339.24 B 426.36 T 433.56
+  pdf      if 27c. then cross L 332.04 R 339.24 B 426.36 T 433.56
 
 field 27d.
   label    "28d. Damage Type: Other"
   clabel   Other
   type     checkbox
   help     "This indicates that the property sustained other uncategorized damage.  (Describe in the Comments field.)"
-  pdf      cross L 332.04 R 339.24 B 410.76 T 417.96
+  pdf      if 27d. then cross L 332.04 R 339.24 B 410.76 T 417.96
 
 field -
   label    "28. Types of Damage"

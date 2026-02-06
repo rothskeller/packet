@@ -110,7 +110,7 @@ field 20.
   presence required
   pdf      text L 129.20 R 563.44 B 546.20 T 559.84 BL 549.24
 
-field 21d.
+field 21d. formDate
   label    "Prepared Date"
   type     date
   presence required

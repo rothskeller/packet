@@ -108,7 +108,7 @@ field 20.
   presence required
   pdf      text L 129.20 R 563.44 B 546.20 T 559.84 BL 549.24
 
-field 21d.
+field 21d. formDate
   label    "Prepared Date"
   type     date
   presence required
@@ -209,25 +209,25 @@ field 42a.
   label    "Access: Concrete"
   clabel   Concrete
   type     checkbox
-  pdf      cross L 173.28 R 181.08 B 255.24 T 263.04
+  pdf      if 42a. then cross L 173.28 R 181.08 B 255.24 T 263.04
 
 field 42b.
   label    "Access: Gravel Hard-Stand"
   clabel   "Gravel Hard-Stand"
   type     checkbox
-  pdf      cross L 257.64 R 265.44 B 255.24 T 263.04
+  pdf      if 42b. then cross L 257.64 R 265.44 B 255.24 T 263.04
 
 field 42c.
   label    "Access: Paved"
   clabel   Paved
   type     checkbox
-  pdf      cross L 387.96 R 395.76 B 255.24 T 263.04
+  pdf      if 42c. then cross L 387.96 R 395.76 B 255.24 T 263.04
 
 field 42d.
   label    "Access: Other"
   clabel   Other
   type     checkbox
-  pdf      cross L 460.68 R 468.48 B 255.24 T 263.04
+  pdf      if 42d. then cross L 460.68 R 468.48 B 255.24 T 263.04
 
 field -
   label    Access
@@ -270,43 +270,43 @@ field 50a.
   label    "Safety: Has perimeter fencing"
   clabel   "has perimeter fencing"
   type     checkbox
-  pdf      cross L  70.08 R  77.88 B 135.36 T 143.16
+  pdf      if 50a. then cross L  70.08 R  77.88 B 135.36 T 143.16
 
 field 50b.
   label    "Safety: Has outside lighting"
   clabel   "has outside lighting"
   type     checkbox
-  pdf      cross L  70.08 R  77.88 B 119.88 T 127.68
+  pdf      if 50b. then cross L  70.08 R  77.88 B 119.88 T 127.68
 
 field 50c.
   label    "Safety: Has inside lighting"
   clabel   "has inside lighting"
   type     checkbox
-  pdf      cross L  70.08 R  77.88 B 104.28 T 112.08
+  pdf      if 50c. then cross L  70.08 R  77.88 B 104.28 T 112.08
 
 field 50d.
   label    "Safety: Monitored with CCTV"
   clabel   "monitored with CCTV"
   type     checkbox
-  pdf      cross L  70.08 R  77.88 B  88.80 T  96.60
+  pdf      if 50d. then cross L  70.08 R  77.88 B  88.80 T  96.60
 
 field 50e.
   label    "Safety: Has PA system"
   clabel   "has PA system"
   type     checkbox
-  pdf      cross L 331.80 R 339.60 B 135.36 T 143.16
+  pdf      if 50e. then cross L 331.80 R 339.60 B 135.36 T 143.16
 
 field 50f.
   label    "Safety: Has covered areas"
   clabel   "has covered areas"
   type     checkbox
-  pdf      cross L 331.80 R 339.60 B 119.88 T 127.68
+  pdf      if 50f. then cross L 331.80 R 339.60 B 119.88 T 127.68
 
 field 50g.
   label    "Safety: Has fixed equipment"
   clabel   "has fixed equipment"
   type     checkbox
-  pdf      cross L 331.80 R 339.60 B 104.28 T 112.08
+  pdf      if 50g. then cross L 331.80 R 339.60 B 104.28 T 112.08
 
 field -
   label    Safety
@@ -322,19 +322,19 @@ field 52a.
   label    "Accessibility: Wheelchair access"
   clabel   "wheelchair access"
   type     checkbox
-  pdf      cross P 2 L 156.24 R 164.16 B 671.52 T 679.44
+  pdf      if 52a. then cross P 2 L 156.24 R 164.16 B 671.52 T 679.44
 
 field 52b.
   label    "Accessibility: Uneven surfaces"
   clabel   "uneven surfaces"
   type     checkbox
-  pdf      cross P 2 L 156.24 R 164.16 B 656.16 T 664.32
+  pdf      if 52b. then cross P 2 L 156.24 R 164.16 B 656.16 T 664.32
 
 field 52c.
   label    "Accessibility: Ramp from staff parking"
   clabel   "ramp from staff parking"
   type     checkbox
-  pdf      cross P 2 L 156.24 R 164.16 B 640.56 T 648.72
+  pdf      if 52c. then cross P 2 L 156.24 R 164.16 B 640.56 T 648.72
 
 field -
   label    Accessibility
