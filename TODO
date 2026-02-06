@@ -1,10 +1,9 @@
 Before release:
   Update all form htmls
   Finish software manual
-  Plain text message support
-  Check-in / Check-out message support
   Code cleanup and TODOs
   TESTING
+  Packet install should install new forms *above* Generic ICS-213.
 
 When possible:
   Shift form HTML parsing from html.Parse to htmlop.Parse

@@ -73,6 +73,12 @@ func (s *Server) outpostNewRequest(w http.ResponseWriter, r *http.Request) {
 			if r.FormValue("tacCall") != "" {
 				f.SetValue(msg, "checked")
 			}
+		case field.CReceiverSender:
+			f.SetValue(msg, "sender")
+		case field.COperatorMethod:
+			f.SetValue(msg, "Other")
+		case field.COperatorMethodOther:
+			f.SetValue(msg, "Packet")
 		}
 	}
 	s.outpostEditCommon(w, msg, "")
@@ -171,12 +177,7 @@ func (s *Server) outpostSubmit(w http.ResponseWriter, r *http.Request) {
 		ErrPage(w, fmt.Sprintf("The form could not be read (%s).  Please report this error to the author.", err), http.StatusInternalServerError)
 		return
 	}
-	if ft, ok := msg.Type().(form.EditableFormType); ok {
-		addon = ft.AddonName
-	} else {
-		// Must be the special case Check-In/Out.
-		addon = "SCCoPIFO"
-	}
+	addon = mtype.(form.EditableFormType).AddonName
 	// Fill in the OpDate and OpTime fields.
 	for fd := range msg.Fields() {
 		switch fd.Common() {
@@ -322,6 +323,11 @@ func CreateTempPDF(msg message.Message) (fname string, err error) {
 			msgid = fd.Value(msg)
 			break
 		}
+	}
+	if msgid == "" {
+		// No message number field found.  See if we can extract one
+		// from the subject line.
+		msgid = msg.Subject().SubjectMessageID()
 	}
 	if msgid == "" {
 		// No message number found, so create one with an UNK- prefix.

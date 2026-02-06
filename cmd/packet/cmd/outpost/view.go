@@ -76,6 +76,12 @@ opdt     Date and time that the message was received`,
 					case field.COperatorTime:
 						_, time, _ := strings.Cut(decodeArg(args[4]), " ")
 						body.SetField(fd.Tag, time)
+					case field.CReceiverSender:
+						body.SetField(fd.Tag, "receiver")
+					case field.COperatorMethod:
+						body.SetField(fd.Tag, "Other")
+					case field.COperatorMethodOther:
+						body.SetField(fd.Tag, "Packet")
 					}
 				}
 			}

@@ -350,7 +350,7 @@ func (ft EditableFormType) FromPOST(r *http.Request) (msg message.Message, err e
 	for f := range body.Fields() {
 		if tag := f.Tag(); tag != "" {
 			if val := r.FormValue(tag); val != "" {
-				f.SetValue(dm, val)
+				f.SetValue(dm, strings.ReplaceAll(val, "\r", ""))
 			}
 		}
 	}
