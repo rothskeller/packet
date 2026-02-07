@@ -84,8 +84,27 @@ func emitField(fh *os.File, fd *FieldDef, deftext *pdf.Text) {
 		}
 		fmt.Fprintf(fh, "  children %s\n", strings.Join(ctags, " "))
 	}
-	if fd.Value != "" {
-		fmt.Fprintf(fh, "  value    %s\n", maybeQuote(fd.Value))
+	if fd.Value != "" || len(fd.ValueCond) != 0 {
+		fmt.Fprint(fh, "  value    ")
+		for i, vc := range fd.ValueCond {
+			if i != 0 {
+				fmt.Fprint(fh, " else if ")
+			} else {
+				fmt.Fprint(fh, "if ")
+			}
+			fmt.Fprint(fh, vc.OtherField)
+			if vc.OtherValue != "" {
+				fmt.Fprint(fh, "=", maybeQuote(vc.OtherValue))
+			}
+			fmt.Fprint(fh, " then ", maybeQuote(vc.ThisValue))
+		}
+		if fd.Value != "" {
+			if len(fd.ValueCond) != 0 {
+				fmt.Fprint(fh, " else ")
+			}
+			fmt.Fprint(fh, maybeQuote(fd.Value))
+		}
+		fmt.Fprintln(fh)
 	}
 	for _, c := range fd.Choices {
 		if c.CondField != "" && c.CondValue != "" {

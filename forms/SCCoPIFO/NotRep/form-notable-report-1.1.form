@@ -160,6 +160,10 @@ field 23.
   pdf      if 23.=Yes then circle X 227.70 Y 524.88 R 2.90
   pdf      if 23.=No then circle X 299.64 Y 524.82 R 2.84
 
+field 24.
+  type     static
+  value    if 25. then Yes else if 23.=Yes then No
+
 field 25.
   label    "25. Name of the County Incident"
   presence if 23.=Yes then optional else blocked

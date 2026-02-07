@@ -184,7 +184,9 @@ TOPLEVEL:
 					return nil, fmt.Errorf("%s:%d: type needs a single argument", filename, linenum)
 				}
 			case "value":
-				fd.Value = strings.Join(fields[1:], " ")
+				if err = parseValue(fd, fields[1:]); err != nil {
+					return nil, fmt.Errorf("%s:%d: %s", filename, linenum, err)
+				}
 			case "choice":
 				c := strings.Join(fields[1:], " ")
 				fd.Choices = append(fd.Choices, Choice{Raw: c, Human: c})
@@ -277,6 +279,33 @@ func parsePresence(fd *FieldDef, tokens []string) (err error) {
 		}
 	default:
 		return errors.New("invalid presence syntax")
+	}
+	return nil
+}
+
+func parseValue(fd *FieldDef, tokens []string) (err error) {
+	for len(tokens) >= 4 && tokens[0] == "if" && tokens[2] == "then" {
+		vc := &ValueCond{OtherField: tokens[1], ThisValue: tokens[3]}
+		vc.OtherField, vc.OtherValue, _ = strings.Cut(vc.OtherField, "=")
+		fd.ValueCond = append(fd.ValueCond, vc)
+		tokens = tokens[4:] // remove conditional
+		if len(tokens) != 0 {
+			if len(tokens) < 2 || tokens[0] != "else" {
+				return errors.New("invalid conditional value syntax")
+			}
+			tokens = tokens[1:] // remove "else"
+		}
+	}
+	switch len(tokens) {
+	case 0: // nothing
+	case 1:
+		fd.Value = tokens[0]
+	default:
+		if len(fd.ValueCond) == 0 {
+			fd.Value = strings.Join(tokens, " ")
+		} else {
+			return errors.New("invalid conditional value syntax")
+		}
 	}
 	return nil
 }

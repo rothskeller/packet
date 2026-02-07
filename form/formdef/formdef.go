@@ -107,9 +107,11 @@ type FieldDef struct {
 	Type string
 	// Value is the static value of the field, for fields of type `static`.
 	// For fields of type `join`, it is the format string used to join the
-	// subsidiary field values.  For most other field types, it is the default
-	// value of the field when creating a new form.
+	// subsidiary field values.  For most other field types, it is the
+	// default value of the field when creating a new form.
 	Value string
+	// ValueCond describes a conditional change to Value.  It is optional.
+	ValueCond []*ValueCond
 	// Choices is the set of allowed values for the field, for fields of
 	// type `restricted`.
 	Choices []Choice
@@ -145,6 +147,16 @@ type Choice struct {
 	Human     string
 	CondField string
 	CondValue string
+}
+
+// A ValueCond describes a conditional change to a field's Value based on the
+// value of another field.  If OtherField's value matches OtherValue, or
+// OtherField's value is non-empty and OtherValue is empty, the instant field's
+// Value is set to this structure's ThisValue value.
+type ValueCond struct {
+	OtherField string
+	OtherValue string
+	ThisValue  string
 }
 
 // A PresenceCond describes a conditional change to a field's Presence based on

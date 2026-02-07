@@ -62,11 +62,17 @@ func (f ff2mf) Children() (c []field.Field) {
 }
 
 // Value returns the value of the field, in internal form.
-func (f ff2mf) Value(m msgifc.Message) string {
-	if f.fd.Tag != "" {
-		return fv(m, f.fd)
-	}
+func (f ff2mf) Value(m msgifc.Message) (val string) {
 	switch f.fd.Type {
+	case "static":
+		val = f.fd.Value
+		for _, vc := range f.fd.ValueCond {
+			if cond(m, vc.OtherField, vc.OtherValue) {
+				val = vc.ThisValue
+				break
+			}
+		}
+		return val
 	case "checkboxGroup":
 		var set []string
 		for _, c := range f.fd.Children {
@@ -82,14 +88,24 @@ func (f ff2mf) Value(m msgifc.Message) string {
 				set = append(set, fv(m, c))
 			}
 		}
-		if f.fd.Value != "" {
-			return joinWithPattern(set, f.fd.Value)
+		val = f.fd.Value
+		for _, vc := range f.fd.ValueCond {
+			if cond(m, vc.OtherField, vc.OtherValue) {
+				val = vc.ThisValue
+				break
+			}
+		}
+		if val != "" {
+			return joinWithPattern(set, val)
 		} else {
 			set = slices.DeleteFunc(set, func(s string) bool { return s == "" })
 			return strings.Join(set, " ")
 		}
 	default:
-		return f.fd.Value
+		if f.fd.Tag != "" {
+			return fv(m, f.fd)
+		}
+		return ""
 	}
 }
 
@@ -547,7 +563,7 @@ func evalPresence(m msgifc.Message, fd *formdef.FieldDef) (formdef.Presence, str
 }
 
 // cond evaluates a conditional based on field values.  Conditionals appear in
-// PresenceCond and in Choices.
+// ValueCond, PresenceCond, and in Choices.
 func cond(m msgifc.Message, tag, val string) bool {
 	if tag == "" {
 		return true

@@ -138,11 +138,7 @@ func (ft FormType) RenderPDF(m message.Message, filename, copyname string) (err 
 				}
 			}
 			// Compute the value to be displayed.
-			if fd.Type == "static" {
-				value = fd.Value
-			} else {
-				value = body.Field(fd.Tag)
-			}
+			value = ff2mf{fd}.Value(m)
 			// Apply the renderer.
 			err = pr.Renderer.Draw(out, value)
 			if errors.As(err, &etr) {
@@ -337,10 +333,17 @@ func (ft EditableFormType) FromPOST(r *http.Request) (msg message.Message, err e
 	dm = message.NewDraftMessage(ft, subj, payl, false)
 	for f := range body.Fields() {
 		if tag := f.Tag(); tag != "" {
-			if val := r.FormValue(tag); val != "" {
-				f.SetValue(dm, strings.ReplaceAll(val, "\r", ""))
-			}
+			f.SetValue(dm, strings.ReplaceAll(r.FormValue(tag), "\r", ""))
 		}
+	}
+	// Set the values of conditional static fields based on the fields we
+	// just read.
+	for fd := range ft.FormDef.AllFields() {
+		if fd.Tag == "" || fd.Type != "static" || len(fd.ValueCond) == 0 {
+			continue
+		}
+		value := ff2mf{fd}.Value(dm)
+		body.SetField(fd.Tag, value)
 	}
 	dm.SetTo(r.FormValue("ToAddr"))
 	return dm, nil

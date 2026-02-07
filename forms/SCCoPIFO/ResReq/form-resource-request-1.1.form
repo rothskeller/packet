@@ -394,11 +394,19 @@ field 43.
   help     "This is the position held by the person requesting the resources.  It is required."
   pdf      text P 2 L 166.52 R 563.44 B 597.80 T 611.32 BL 600.84
 
+field 50.
+  type     static
+  value    if 51. then Yes else No
+
 field 51.
   label    "61. Name of Jurisdiction's Incident"
   width    54
   help     "This is the name of the current jurisdiction incident that this resource request relates to.  It is required if \"Relates to Jurisdiction Incident\" is \"Yes\", otherwise not allowed."
   pdf      text P 2 L 221.84 R 563.44 B 552.80 T 566.32 BL 555.84
+
+field 52.
+  type     static
+  value    if 53. then Yes else No
 
 field 53.
   label    "62. Name of County's Incident"
