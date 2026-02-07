@@ -4,7 +4,7 @@ version  1.1
 title    CPOD Site Information Form
 indef    a CPOD site information form
 create   CPODSite cs
-pdfFile  CPOD_Site_Information_v20251228.pdf
+pdfFile  CPOD_Site_Information_v20260207.pdf
 
 field MsgNo originMessageID
   label    "1. Origin Message Number"
@@ -423,7 +423,7 @@ field 60d.
   pdf      text P 2 L 127.04 R 258.88 B 601.52 T 615.04 BL 604.56
 
 field 60t.
-  label    "73. Time Opened"
+  label    "72. Time Opened"
   type     time
   help     "This is the time of day when the CPOD site opened or will open."
   pdf      text P 2 L 348.32 R 563.44 B 601.52 T 615.04 BL 604.56
@@ -435,7 +435,7 @@ field -
   help     "This is the date and time when the CPOD site opened or will open, in MM/DD/YYYY HH:MM format (24-hour clock).  It is required."
 
 field 61d.
-  label    "72. Date Closed"
+  label    "73. Date Closed"
   type     date
   help     "This is the date on which the CPOD site closed or will close."
   pdf      text P 2 L 127.04 R 258.88 B 583.52 T 597.04 BL 586.56

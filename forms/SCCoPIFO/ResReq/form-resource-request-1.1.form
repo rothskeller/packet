@@ -4,7 +4,7 @@ version  1.1
 title    Resource Request Form
 indef    a resource request form
 create   ResReq rr
-pdfFile  Resource_Request_v20251228.pdf
+pdfFile  Resource_Request_v20260207.pdf
 
 field MsgNo originMessageID
   label    "1. Origin Message Number"
@@ -373,27 +373,27 @@ field 40.
   pdf      text P 2 L 166.52 R 301.84 B 633.80 T 646.84 BL 636.60
 
 field 40s.
-  label    "54. with signature"
+  label    "52. with signature"
   type     checkbox
   help     "This indicates whether the original resource request form was signed."
   pdf      if 40s. then text S "(with signature)" P 2 L 421.40 R 563.44 B 633.80 T 646.84 BL 636.60
 
 field 41.
-  label    "52. Requested By Phone"
+  label    "53. Requested By Phone"
   type     phoneNumber
   presence required
   help     "This is the phone number of the person requesting the resources.  It is required."
   pdf      text P 2 L 166.52 R 301.84 B 615.80 T 629.32 BL 618.84
 
 field 42.
-  label    "55. Requested By Email"
+  label    "54. Requested By Email"
   presence required
   width    32
   help     "This is the email address of the person requesting the resources.  It is required."
   pdf      text P 2 L 421.40 R 563.44 B 615.80 T 629.32 BL 618.84
 
 field 43.
-  label    "53. Requested By Position"
+  label    "55. Requested By Position"
   presence required
   width    85
   help     "This is the position held by the person requesting the resources.  It is required."

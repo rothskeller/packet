@@ -4,7 +4,7 @@ version  1.1
 title    Shelter Form
 indef    a shelter form
 create   Shelter sh
-pdfFile  Shelter_v20251228.pdf
+pdfFile  Shelter_v20260207.pdf
 
 field MsgNo originMessageID
   label    "1. Origin Message Number"
@@ -260,7 +260,7 @@ field 28.
   pdf      if 28.=No then circle X 496.32 Y 336.00 R 1.76
 
 field 29.
-  label    "29. Maximum Capacity"
+  label    "30. Maximum Capacity"
   type     cardinalNumber
   presence required
   width    3
@@ -268,7 +268,7 @@ field 29.
   pdf      text L 150.56 R 215.08 B 310.40 T 323.92 BL 313.44
 
 field 30.
-  label    "30. Total Registered"
+  label    "31. Total Registered"
   type     cardinalNumber
   presence required
   width    3
@@ -276,7 +276,7 @@ field 30.
   pdf      text L 318.44 R 392.08 B 310.40 T 323.92 BL 313.44
 
 field 31.
-  label    "31. Cot Numbers"
+  label    "32. Cot Numbers"
   type     cardinalNumber
   presence required
   width    3
@@ -284,7 +284,7 @@ field 31.
   pdf      text L 480.68 R 563.44 B 310.40 T 323.92 BL 313.44
 
 field 32.
-  label    "32. AFN Considerations"
+  label    "33. AFN Considerations"
   type     multiline
   width    108
   help     "This field describes shelter considerations relating to access and functional needs."

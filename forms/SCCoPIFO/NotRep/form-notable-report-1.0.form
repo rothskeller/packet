@@ -4,30 +4,30 @@ version  1.0
 title    Notable Report Form
 indef    a notable report form
 subject  NotRep
-pdfFile  Notable_Report_v20251228.pdf
+pdfFile  Notable_Report_v20260207.pdf
 
 field MsgNo originMessageID
-  label    "Origin Message Number"
+  label    "1. Origin Message Number"
   type     messageID
   presence required
-  pdf      text L 231.56 R 335.32 B 726.44 T 744.52 BL 731.76
+  pdf      text L 231.20 R 335.20 B 726.56 T 744.40 BL 731.76
 
 field DestMsgNo destinationMessageID
-  label    "Destination Message Number"
+  label    "2. Destination Message Number"
   type     messageID
-  pdf      text L 444.20 R 564.76 B 726.44 T 744.52 BL 731.76
+  pdf      text L 443.72 R 564.88 B 726.56 T 744.40 BL 731.76
 
 field 1a. messageDate
-  label    "Message Date"
+  label    "3. Message Date"
   type     date
   presence required
-  pdf      text L  82.28 R 132.76 B 666.92 T 692.20 BL 675.48
+  pdf      text L  79.04 R 132.88 B 672.32 T 692.32 BL 678.48
 
 field 1b. messageTime
-  label    "Message Time"
+  label    "4. Message Time"
   type     time
   presence required
-  pdf      text L 182.36 R 236.32 B 666.92 T 692.20 BL 675.48
+  pdf      text L 179.12 R 236.32 B 672.32 T 692.32 BL 678.48
 
 field -
   label    "Message Date/Time"
@@ -36,59 +36,59 @@ field -
   presence required
 
 field 5. handling
-  label    Handling
+  label    "5. Handling"
   type     restricted
   choice   IMMEDIATE
   choice   PRIORITY
   choice   ROUTINE
   presence required
-  pdf      if 5.=IMMEDIATE then circle X 314.34 Y 687.24 R 2.18
-  pdf      if 5.=PRIORITY then circle X 421.50 Y 687.24 R 2.18
-  pdf      if 5.=ROUTINE then circle X 510.42 Y 687.18 R 2.30
+  pdf      if 5.=IMMEDIATE then circle X 309.72 Y 682.74 R 2.72
+  pdf      if 5.=PRIORITY then  circle X 406.86 Y 682.74 R 2.66
+  pdf      if 5.=ROUTINE then   circle X 487.92 Y 682.68 R 2.84
 
 field 7a. toICSPosition
-  label    "To ICS Position"
+  label    "6. To ICS Position"
   value    "Situation Analysis Unit"
   choice   Situation Analysis Unit
   choice   Common Operating Picture Spec.
   choice   Planning
   presence required
-  pdf      text L 146.36 R 299.32 B 648.92 T 661.96 BL 651.36
+  pdf      text L 146.12 R 299.20 B 654.32 T 667.36 BL 656.64
 
 field 7b. toLocation
-  label    "To Location"
+  label    "7. To Location"
   value    "County EOC"
   presence required
-  pdf      text L 146.36 R 299.32 B 630.92 T 643.96 BL 633.36
+  pdf      text L 146.12 R 299.20 B 636.32 T 649.36 BL 638.64
 
 field 7c.
-  label    "To Name"
-  pdf      text L 146.36 R 299.32 B 612.92 T 625.96 BL 615.36
+  label    "8. To Name"
+  pdf      text L 146.12 R 299.20 B 618.32 T 631.36 BL 620.64
 
 field 7d.
-  label    "To Contact Info"
-  pdf      text L 146.36 R 299.32 B 590.84 T 607.96 BL 595.32
+  label    "9. To Contact Info"
+  pdf      text L 146.12 R 299.20 B 596.24 T 613.36 BL 600.72
 
 field 8a. fromICSPosition
-  label    "From ICS Position"
+  label    "10. From ICS Position"
   presence required
-  pdf      text L 408.68 R 563.44 B 648.92 T 661.96 BL 651.36
+  pdf      text L 408.68 R 563.68 B 654.32 T 667.36 BL 656.64
 
 field 8b. fromLocation
-  label    "From Location"
+  label    "11. From Location"
   presence required
-  pdf      text L 408.68 R 563.44 B 630.92 T 643.96 BL 633.36
+  pdf      text L 408.68 R 563.68 B 636.32 T 649.36 BL 638.64
 
 field 8c.
-  label    "From Name"
-  pdf      text L 408.68 R 563.44 B 612.92 T 625.96 BL 615.36
+  label    "12. From Name"
+  pdf      text L 408.68 R 563.68 B 618.32 T 631.36 BL 620.64
 
 field 8d.
-  label    "From Contact Info"
-  pdf      text L 408.68 R 563.44 B 590.84 T 607.96 BL 595.32
+  label    "13. From Contact Info"
+  pdf      text L 408.68 R 563.68 B 596.24 T 613.36 BL 600.72
 
 field 20.
-  label    Jurisdiction
+  label    "21. Jurisdiction"
   choice   Campbell
   choice   Cupertino
   choice   Gilroy
@@ -107,32 +107,32 @@ field 20.
   choice   Santa Clara County
   choice   County unincorporated
   presence required
-  pdf      text L 114.44 R 299.32 B 554.24 T 567.76 BL 557.28
+  pdf      text L 114.20 R 299.20 B 559.76 T 573.28 BL 562.56
 
 field 21.
-  label    Originator
+  label    "22. Originator"
   presence required
-  pdf      text L 374.84 R 563.44 B 554.24 T 567.76 BL 557.28
+  pdf      text L 374.84 R 563.68 B 559.76 T 573.28 BL 562.56
 
 field 22.
-  label    Severity
+  label    "23. Severity"
   type     restricted
   choice   High
   choice   Medium
   choice   Low
   presence required
-  pdf      if 22.=High then circle X 227.64 Y 542.88 R 2.72
-  pdf      if 22.=Medium then circle X 299.64 Y 542.88 R 2.72
-  pdf      if 22.=Low then circle X 407.64 Y 542.88 R 2.72
+  pdf      if 22.=High then    circle X 227.46 Y 548.28 R 2.78
+  pdf      if 22.=Medium then  circle X 299.46 Y 548.28 R 2.78
+  pdf      if 22.=Low then     circle X 407.46 Y 548.28 R 2.78
 
 field 23.
-  label    "Escalate to County Op Area?"
+  label    "24. Escalate to County Op Area?"
   type     restricted
   choice   Yes
   choice   No
   presence required
-  pdf      if 23.=Yes then circle X 227.70 Y 524.88 R 2.90
-  pdf      if 23.=No then circle X 299.64 Y 524.82 R 2.84
+  pdf      if 23.=Yes then circle X 227.46 Y 530.28 R 2.78
+  pdf      if 23.=No then circle X 299.46 Y 530.28 R 2.78
 
 field 24.
   label    "Incident Specific?"
@@ -141,26 +141,26 @@ field 24.
   presence if 23.=Yes then required else blocked
 
 field 25.
-  label    "Name of Op Area Incident"
-  presence if 24.=Yes then required else blocked
-  pdf      text L 194.12 R 563.44 B 499.76 T 513.28 BL 502.80
+  label    "25. Name of the County Incident"
+  presence if 23.=Yes then optional else blocked
+  pdf      text L 193.64 R 563.68 B 505.28 T 518.80 BL 508.08
 
 field 30. messageSummary
-  label    Title
+  label    "31. Title"
   presence required
-  pdf      text L  84.68 R 563.44 B 463.64 T 477.16 BL 466.68
+  pdf      text L  84.56 R 563.68 B 469.28 T 482.80 BL 472.08
 
 field 31d. formDate
-  label    Date
+  label    "32. Date"
   type     date
   presence required
-  pdf      text L  84.68 R 299.92 B 445.64 T 459.16 BL 448.68
+  pdf      text L  84.56 R 299.92 B 451.28 T 464.80 BL 454.08
 
 field 31t.
-  label    Time
+  label    "33. Time"
   type     time
   presence required
-  pdf      text L 351.32 R 563.44 B 445.64 T 459.16 BL 448.68
+  pdf      text L 350.96 R 563.68 B 451.28 T 464.80 BL 454.08
 
 field -
   label    Date/Time
@@ -169,7 +169,7 @@ field -
   presence required
 
 field 32.
-  label    "Event Type"
+  label    "34. Event Type"
   type     restricted
   mchoice  1 1: Transportation
   mchoice  2 2: Communications
@@ -192,77 +192,77 @@ field 32.
   mchoice  19 19: Donations Management
   mchoice  20 20: Continuity of Operations/Government
   presence required
-  pdf      if 32.=1 then circle X  58.92 Y 422.22 R 2.84
-  pdf      if 32.=8 then circle X 227.64 Y 422.22 R 2.84
-  pdf      if 32.=15 then circle X 407.64 Y 422.28 R 2.72
-  pdf      if 32.=2 then circle X  58.92 Y 406.74 R 2.84
-  pdf      if 32.=9 then circle X 227.64 Y 406.80 R 2.72
-  pdf      if 32.=16 then circle X 407.64 Y 406.80 R 2.72
-  pdf      if 32.=3 then circle X  58.92 Y 391.14 R 2.84
-  pdf      if 32.=10 then circle X 227.70 Y 391.20 R 2.90
-  pdf      if 32.=17 then circle X 407.70 Y 391.20 R 2.90
-  pdf      if 32.=4 then circle X  58.92 Y 375.66 R 2.84
-  pdf      if 32.=11 then circle X 227.64 Y 375.66 R 2.84
-  pdf      if 32.=18 then circle X 407.70 Y 375.72 R 2.90
-  pdf      if 32.=5 then circle X  58.98 Y 360.12 R 2.90
-  pdf      if 32.=12 then circle X 227.70 Y 360.12 R 2.90
-  pdf      if 32.=19 then circle X 407.70 Y 360.12 R 2.90
-  pdf      if 32.=6 then circle X  58.98 Y 344.64 R 2.90
-  pdf      if 32.=13 then circle X 227.64 Y 344.58 R 2.84
-  pdf      if 32.=20 then circle X 407.70 Y 344.64 R 2.90
-  pdf      if 32.=7 then circle X  58.92 Y 328.98 R 2.84
-  pdf      if 32.=14 then circle X 227.70 Y 329.04 R 2.90
+  pdf      if 32.=1 then  circle X  58.74 Y 427.86 R 2.78
+  pdf      if 32.=8 then  circle X 227.46 Y 427.80 R 2.66
+  pdf      if 32.=15 then circle X 407.46 Y 427.80 R 2.66
+  pdf      if 32.=2 then  circle X  58.74 Y 412.26 R 2.78
+  pdf      if 32.=9 then  circle X 227.46 Y 412.20 R 2.66
+  pdf      if 32.=16 then circle X 407.46 Y 412.20 R 2.66
+  pdf      if 32.=3 then  circle X  58.74 Y 396.66 R 2.78
+  pdf      if 32.=10 then circle X 407.52 Y 396.66 R 2.72
+  pdf      if 32.=17 then circle X 227.46 Y 396.60 R 2.78
+  pdf      if 32.=4 then  circle X  58.74 Y 381.30 R 2.78
+  pdf      if 32.=11 then circle X 227.46 Y 381.24 R 2.78
+  pdf      if 32.=18 then circle X 407.52 Y 381.24 R 2.84
+  pdf      if 32.=5 then  circle X  58.74 Y 365.70 R 2.54
+  pdf      if 32.=12 then circle X 227.46 Y 365.64 R 2.66
+  pdf      if 32.=19 then circle X 407.46 Y 365.70 R 2.54
+  pdf      if 32.=6 then  circle X  58.74 Y 350.10 R 2.78
+  pdf      if 32.=13 then circle X 227.52 Y 350.04 R 2.84
+  pdf      if 32.=20 then circle X 407.52 Y 350.04 R 2.84
+  pdf      if 32.=7 then  circle X  58.74 Y 334.50 R 2.78
+  pdf      if 32.=14 then circle X 227.52 Y 334.44 R 2.84
 
 field 33. defaultBody
-  label    Details
+  label    "35. Details"
   type     multiline
   presence required
-  pdf      text L  94.52 R 563.44 B 268.76 T 305.08 BL 296.64
+  pdf      text L  94.40 R 563.68 B 274.16 T 310.48 BL 301.92
 
 field 40.
-  label    "Point of Contact Name"
-  pdf      text L 165.68 R 299.32 B 231.32 T 244.48 BL 234.12
+  label    "41. Point of Contact Name"
+  pdf      text L 165.56 R 299.20 B 236.96 T 250.00 BL 239.52
 
 field 41.
-  label    "Contact Phone Number"
+  label    "42. Contact Phone Number"
   type     phoneNumber
-  pdf      text L 434.72 R 563.44 B 231.32 T 244.48 BL 234.12
+  pdf      text L 434.60 R 563.68 B 236.96 T 250.00 BL 239.52
 
 field 42.
-  label    "Contact Email"
-  pdf      text L 165.68 R 563.44 B 213.32 T 226.84 BL 216.36
+  label    "43. Contact Email"
+  pdf      text L 165.56 R 563.68 B 218.96 T 232.48 BL 221.76
 
 field 50.
-  label    "Event Expires?"
+  label    "51. Event Expires?"
   type     restricted
   choice   Yes
   choice   No
   presence required
-  pdf      if 50.=Yes then circle X 231.66 Y 185.88 R 2.90
-  pdf      if 50.=No then circle X 267.90 Y 185.88 R 2.90
+  pdf      if 50.=Yes then circle X 231.48 Y 191.16 R 2.84
+  pdf      if 50.=No then circle X 267.72 Y 191.16 R 2.84
 
 field 51.
-  label    "Date to Expire"
+  label    "52. Date to Expire"
   presence if 50.=Yes then required else blocked
-  pdf      text L 392.84 R 563.44 B 179.72 T 191.32 BL 181.80
+  pdf      text L 392.72 R 563.68 B 185.12 T 196.72 BL 187.20
 
 field OpRelayRcvd
   label    "Operator: Relay Received"
-  pdf      text L 106.88 R 320.56 B 136.04 T 150.40 BL 139.44
+  pdf      text L 106.88 R 320.56 B 141.44 T 155.92 BL 144.96
 
 field OpRelaySent
   label    "Operator: Relay Sent"
-  pdf      text L 353.00 R 564.76 B 136.04 T 150.40 BL 139.44
+  pdf      text L 352.88 R 564.88 B 141.44 T 155.92 BL 144.96
 
 field OpName operatorName
   label    "Operator: Name"
   presence required
-  pdf      text L  72.92 R 204.76 B 117.08 T 131.56 BL 120.60
+  pdf      text L  72.80 R 204.88 B 122.48 T 136.96 BL 126.00
 
 field OpCall operatorCall
   label    "Operator: Call Sign"
   presence required
-  pdf      text L 255.20 R 326.32 B 117.08 T 131.56 BL 120.60
+  pdf      text L 254.84 R 326.32 B 122.48 T 136.96 BL 126.00
 
 field -
   label    Operator
@@ -272,12 +272,12 @@ field -
 field OpDate operatorDate
   label    "Operator: Date"
   type     date
-  pdf      text L 359.84 R 420.76 B 117.08 T 131.56 BL 120.60
+  pdf      text L 359.84 R 420.88 B 122.48 T 136.96 BL 126.00
 
 field OpTime operatorTime
   label    "Operator: Time"
   type     time
-  pdf      text L 482.72 R 564.76 B 117.08 T 131.56 BL 120.60
+  pdf      text L 482.72 R 564.88 B 122.48 T 136.96 BL 126.00
 
 field -
   label    "Operator: Date/Time"
@@ -285,4 +285,4 @@ field -
   children OpDate OpTime
 
 field -
-  pdf      box L 279.84 R 335.16 B  22.32 T  33.36 F FFFFFF
+  pdf      box L 280.44 R 332.40 B  22.68 T  34.08 F FFFFFF

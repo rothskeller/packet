@@ -4,7 +4,7 @@ version  1.1
 title    CPOD Commodities Update Form
 indef    a CPOD commodities update form
 create   CPODUpd cu
-pdfFile  CPOD_Commodities_v20251228.pdf
+pdfFile  CPOD_Commodities_v20260207.pdf
 
 field MsgNo originMessageID
   label    "1. Origin Message Number"
