@@ -15,7 +15,7 @@ import (
 func main() {
 	reopenLogFile()
 	logInvocation()
-	redirectPIFOtoGUI()
+	defaultCommands()
 	cmd.Execute()
 }
 
@@ -38,12 +38,16 @@ func logInvocation() {
 	slog.LogAttrs(context.Background(), slog.LevelDebug, "START", attrs...)
 }
 
-func redirectPIFOtoGUI() {
+func defaultCommands() {
+	if len(os.Args) != 1 {
+		return // They specified a command.
+	}
+	// Assign a default command based on the executable name.
 	// If the user invoked pifo.exe without arguments, treat that as if they
 	// invoked with "gui".
 	if exe := strings.ToLower(filepath.Base(os.Args[0])); exe == "pifo" || exe == "pifo.exe" {
-		if len(os.Args) == 1 {
-			os.Args = append(os.Args, "gui")
-		}
+		os.Args = append(os.Args, "gui")
+	} else if strings.Contains(exe, "install") || strings.Contains(exe, "setup") {
+		os.Args = append(os.Args, "install")
 	}
 }
