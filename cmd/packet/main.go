@@ -4,6 +4,7 @@ import (
 	"context"
 	"log/slog"
 	"os"
+	"path/filepath"
 	"runtime/debug"
 	"strings"
 
@@ -14,6 +15,7 @@ import (
 func main() {
 	reopenLogFile()
 	logInvocation()
+	redirectPIFOtoGUI()
 	cmd.Execute()
 }
 
@@ -34,4 +36,14 @@ func logInvocation() {
 		attrs = append(attrs, slog.Bool("admin", true))
 	}
 	slog.LogAttrs(context.Background(), slog.LevelDebug, "START", attrs...)
+}
+
+func redirectPIFOtoGUI() {
+	// If the user invoked pifo.exe without arguments, treat that as if they
+	// invoked with "gui".
+	if exe := strings.ToLower(filepath.Base(os.Args[0])); exe == "pifo" || exe == "pifo.exe" {
+		if len(os.Args) == 1 {
+			os.Args = append(os.Args, "gui")
+		}
+	}
 }

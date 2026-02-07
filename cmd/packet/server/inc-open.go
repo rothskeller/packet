@@ -11,6 +11,7 @@ import (
 	"slices"
 	"strings"
 
+	"github.com/rothskeller/packet/cmd/packet/osdep"
 	"github.com/rothskeller/packet/form/htmlop"
 	"github.com/rothskeller/packet/incident"
 	"golang.org/x/net/html"
@@ -19,9 +20,9 @@ import (
 //go:embed inc-open.html
 var incOpenHTML []byte
 
-// serveIncidentOpen handles GET and POST /incident-open requests.  They have,
-// at minimum, a dir= parameter indicating the current directory to start or
-// continue browsing from.
+// serveIncidentOpen handles GET and POST /incident-open requests.  They should
+// have, at minimum, a dir= parameter indicating the current directory to start
+// or continue browsing from.  (If not, the user's home directory is used.)
 func (s *Server) serveIncidentOpen(w http.ResponseWriter, r *http.Request) {
 	var (
 		subdirs []string
@@ -32,6 +33,9 @@ func (s *Server) serveIncidentOpen(w http.ResponseWriter, r *http.Request) {
 	)
 	if dir == "" {
 		dir = r.FormValue("return")
+	}
+	if dir == "" {
+		dir = osdep.HomeDir
 	}
 	if r.FormValue("mkdir") != "" && r.FormValue("mkname") != "" {
 		dir = filepath.Join(dir, r.FormValue("mkname"))

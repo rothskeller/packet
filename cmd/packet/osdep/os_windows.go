@@ -29,9 +29,15 @@ var (
 	// LogsDir is the pathname of the directory containing the packet server
 	// log files for the current user.
 	LogsDir string
+	// HomeDir is the user's home directory (or the root, if for some reason
+	// the user's home directory isn't discernable).
+	HomeDir string
 )
 
 func init() {
+	if HomeDir, _ = os.UserHomeDir(); HomeDir == "" {
+		HomeDir = "C:\\"
+	}
 	if ad := os.Getenv("APPDATA"); ad != "" {
 		DefaultsFile = filepath.Join(ad, "packet.json")
 	}

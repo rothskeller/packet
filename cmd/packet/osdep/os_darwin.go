@@ -25,18 +25,19 @@ var (
 	// LogsDir is the pathname of the directory containing the packet server
 	// log files for the current user.
 	LogsDir string
+	// HomeDir is the user's home directory (or the root, if for some reason
+	// the user's home directory isn't discernable).
+	HomeDir string
 )
 
 func init() {
-	var home string
-
-	if home = os.Getenv("HOME"); home == "" {
+	if HomeDir = os.Getenv("HOME"); HomeDir == "" {
 		fmt.Fprintln(os.Stderr, "ERROR: can't locate data files: $HOME not set")
 		os.Exit(1)
 	}
-	AddressFile = home + "/.local/state/packet/server.url"
-	LogsDir = home + "/.local/state/packet/log"
-	DefaultsFile = home + "/.config/packet/packet.json"
+	AddressFile = HomeDir + "/.local/state/packet/server.url"
+	LogsDir = HomeDir + "/.local/state/packet/log"
+	DefaultsFile = HomeDir + "/.config/packet/packet.json"
 }
 
 // ReadLock locks the file for reading.
