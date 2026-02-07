@@ -24,9 +24,9 @@ import (
 	"github.com/rothskeller/packet/errors"
 	"github.com/rothskeller/packet/form/formdefs"
 	"github.com/rothskeller/packet/form/htmlop"
-	"github.com/rothskeller/packet/form/pifover"
 	"github.com/rothskeller/packet/incident"
 	"github.com/rothskeller/packet/message"
+	"github.com/rothskeller/packet/packetver"
 )
 
 const (
@@ -351,7 +351,7 @@ func (s *Server) serveGetManPage(w http.ResponseWriter, r *http.Request) {
 		ErrPage(w, err.Error(), http.StatusInternalServerError)
 		return
 	} else {
-		htmlop.Expand(doc, map[string]string{"VERSION": pifover.PIFOVersion}) // TODO: better source
+		htmlop.Expand(doc, map[string]string{"VERSION": packetver.Version})
 		w.Header().Set("Content-Type", "text/html; charset=utf-8")
 		htmlop.Minify(w, doc)
 	}

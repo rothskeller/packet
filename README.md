@@ -7,6 +7,6 @@ Clara County (California) ARES/RACES.
 
 This software was written by Steve Roth, KC6RSC.
 
-Copyright © 2021–2025 by Steven Roth <steve@rothskeller.net>
+Copyright © 2021–2026 by Steven Roth <steve@rothskeller.net>
 
 See LICENSE.txt for license details.

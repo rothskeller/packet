@@ -19,9 +19,9 @@ import (
 	"time"
 
 	"github.com/rothskeller/packet/form/htmlop"
-	"github.com/rothskeller/packet/form/pifover"
 	"github.com/rothskeller/packet/incident"
 	"github.com/rothskeller/packet/message"
+	"github.com/rothskeller/packet/packetver"
 	"golang.org/x/net/html"
 )
 
@@ -67,7 +67,7 @@ func (s *Server) serveGetIncident(w http.ResponseWriter, r *http.Request) {
 		ErrPage(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
-	vars["VERSION"] = pifover.PIFOVersion + ".0" // TODO: how to assign patch number?
+	vars["VERSION"] = packetver.Version
 	vars["MTYPES"] = newMessageTypeList()
 	serverPrintOnce.Do(setServerCanPrint)
 	if serverPrintCmd != "" {
