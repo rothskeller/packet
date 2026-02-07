@@ -562,8 +562,7 @@ field 83a.
   pdf      if 83a.=Normal then circle P 2 X 237.24 Y 127.50 R 2.84
   pdf      if 83a.=Problem then circle P 2 X 306.96 Y 127.50 R 2.84
   pdf      if 83a.=Failure then circle P 2 X 378.60 Y 127.56 R 2.84
-  pdf      if 83a.=Unknown then circle P 2 X 44
-  2.80 Y 127.56 R 2.84
+  pdf      if 83a.=Unknown then circle P 2 X 442.80 Y 127.56 R 2.84
 
 field 83b.
   label    "74b. Transportation (Bridges) Comments"

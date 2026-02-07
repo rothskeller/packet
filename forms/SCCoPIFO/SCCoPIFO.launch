@@ -13,5 +13,5 @@ ADDON -fn XSC Windshield Survey             -a SCCoPIFO -t form-windshield-surve
 ADDON -fn XSC Check-Out Message             -a SCCoPIFO -t form-check-out.html
 LINE
 ADDON -fn XSC Allied Health Facility Status -a SCCoPIFO -t form-allied-health-facility-status.html
-ADDON -fn XSC HAvBed Report                 -a SCCoPIFO -t form-mhoc-beds-status.html
+ADDON -fn XSC HAvBed Report                 -a SCCoPIFO -t form-mhoc-beds-status-v3.html
 ADDON -fn XSC Medical Facility Status       -a SCCoPIFO -t form-medical-facility-status-v2.html
