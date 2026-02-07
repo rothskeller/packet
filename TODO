@@ -2,7 +2,6 @@ Before release:
   Finish software manual
   Code cleanup and TODOs
   TESTING
-  Packet install should install new forms *above* Generic ICS-213.
 
 When possible:
   PDF support for Unicode

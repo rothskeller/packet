@@ -59,6 +59,19 @@ var includeLineRE = regexp.MustCompile(`(?i)^INCLUDE\s*(.*)$`)
 // addons that are keys in that map are removed from the configuration.  This
 // function is a no-op if packet is not connected to Outpost.
 func UpdateOutpostConfiguration(datadir string, remove map[string]bool) (err error) {
+	// Old PIFO algorithm:
+	// If reference(s) to our directory are already in Launch.ini, leave it
+	// alone, remove any such references from Launch.local, and we're done.
+	// Otherwise, replace the first line of Launch.local referencing our
+	// directory with references to our launch files, or add them at the end
+	// if there are no existing references.  Remove any other
+	// pre-existing lines referencing our directory, and blank lines.  Add a
+	// blank line at the beginning and the end.
+	//
+	// A fresh install of the SCCo packet installer leaves a reference to
+	// SCCoPIFO.launch at the top of Launch.ini (after header comments) and
+	// does not create a Launch.local at all.  That must be how the combined
+	// installer leaves it, because the PIFO installer wouldn't do that.
 	var (
 		iniFName    string
 		launchFiles []string
@@ -95,6 +108,7 @@ func UpdateOutpostConfiguration(datadir string, remove map[string]bool) (err err
 			return fmt.Errorf("addon %q defined in both %s and %s", addonName, addons[addonName], lf)
 		}
 		addons[addonName] = lf
+		delete(remove, addonName)
 		if err = writeAddonINI(lf); err != nil {
 			return err
 		}
@@ -132,9 +146,9 @@ func writeAddonINI(launchFile string) (err error) {
 // entries in "add" are added, unless there are already entries for them, in
 // which case the existing entries for them are replaced.  The entries in "set"
 // are updated if they exist, but not added.  The entries in "remove" are
-// removed if they are found.  All entries matching removePath are removed.
-// Entries in the "set" map that are matched are removed from the map.  An
-// error is returned only if the file cannot be read or written.
+// removed if they are found.  All remaining entries matching removePath are
+// removed.  Entries in the "set" map that are matched are removed from the map.
+// An error is returned only if the file cannot be read or written.
 func UpdateLaunchFile(filename string, add, set map[string]string, remove map[string]bool, removePath string) (err error) {
 	var (
 		fh       *os.File
@@ -156,23 +170,11 @@ func UpdateLaunchFile(filename string, add, set map[string]string, remove map[st
 				continue
 			}
 			launchfile := strings.TrimSpace(match[1])
-			if strings.HasPrefix(launchfile, removePath) {
-				// This directory is deleted during install, so
-				// remove this entry.
-				slog.Info("removed include from launch file", "f", filename, "include", launchfile)
-				modified = true
-				continue
-			}
 			if !strings.HasSuffix(strings.ToLower(launchfile), ".launch") {
 				lines = append(lines, line)
 				continue
 			}
 			addonName := strings.TrimSuffix(strings.ToLower(filepath.Base(launchfile)), ".launch")
-			if remove[addonName] {
-				slog.Info("removed include from launch file", "f", filename, "include", launchfile)
-				modified = true
-				continue
-			}
 			if sb := add[addonName]; sb != "" {
 				if !strings.EqualFold(sb, launchfile) {
 					slog.Info("modified include in launch file", "f", filename, "from", launchfile, "to", sb)
@@ -183,9 +185,8 @@ func UpdateLaunchFile(filename string, add, set map[string]string, remove map[st
 				delete(add, addonName)
 				remove[addonName] = true
 				continue
-			}
-			if sb := set[addonName]; sb != "" {
-				if strings.EqualFold(sb, launchfile) {
+			} else if sb := set[addonName]; sb != "" {
+				if !strings.EqualFold(sb, launchfile) {
 					slog.Info("modified include in launch file", "f", filename, "from", launchfile, "to", sb)
 					line = "INCLUDE " + sb
 					modified = true
@@ -193,6 +194,16 @@ func UpdateLaunchFile(filename string, add, set map[string]string, remove map[st
 				lines = append(lines, line)
 				delete(set, addonName)
 				remove[addonName] = true
+				continue
+			} else if remove[addonName] {
+				slog.Info("removed include from launch file", "f", filename, "include", launchfile)
+				modified = true
+				continue
+			} else if strings.HasPrefix(launchfile, removePath) {
+				// This directory is deleted during install, so
+				// remove this entry.
+				slog.Info("removed include from launch file", "f", filename, "include", launchfile)
+				modified = true
 				continue
 			}
 			lines = append(lines, line)
