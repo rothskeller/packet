@@ -340,6 +340,7 @@ func (s *Server) registerHandlers() {
 	s.mux.HandleFunc("POST /view-ics309", s.servePostViewICS309)
 	s.mux.HandleFunc("GET /manpage.html", s.serveGetManPage)
 	s.mux.HandleFunc("/incident-open", s.serveIncidentOpen)
+	s.mux.HandleFunc("GET /county-seal.svg", s.serveGetCountySeal)
 }
 
 //go:embed manpage.html
@@ -354,6 +355,14 @@ func (s *Server) serveGetManPage(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "text/html; charset=utf-8")
 		htmlop.Minify(w, doc)
 	}
+}
+
+//go:embed county-seal.svg
+var countySealSVG []byte
+
+func (s *Server) serveGetCountySeal(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "image/svg+xml")
+	w.Write(countySealSVG)
 }
 
 // serveIncident is a helper function for handlers that take a dir= parameter

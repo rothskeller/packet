@@ -1,6 +1,6 @@
 Before release:
   Finish software manual
-  Code cleanup and TODOs
+  Manage patch level version number
   TESTING
 
 When possible:
@@ -10,6 +10,6 @@ When possible:
   Update wppsvr, packet-ex
   Forms accept invalid input
   Implement server-side printing on Windows
-  NotRep and ResReq are not received properly by previous version: hidden fields
-  not shown because their triggering fields no longer exist.
   Grid-based HTML for RACES-MAR and HAvBed
+  Incident archive
+  Field comparisons
