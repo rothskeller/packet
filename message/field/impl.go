@@ -3,7 +3,6 @@ package field
 import (
 	"strings"
 
-	"github.com/phpdave11/gofpdf"
 	"github.com/rothskeller/packet/errors"
 	"github.com/rothskeller/packet/message/msgifc"
 )
@@ -183,12 +182,5 @@ func (f *field) validateCustom(m msgifc.Message, fi msgifc.Field, flags msgifc.V
 // the corresponding value in the expected message, and returns the
 // results of the comparison.
 func (f *field) Compare(expected msgifc.Message, actual msgifc.Message) *ComparedField {
-	panic("not implemented") // TODO: Implement
-}
-
-// RenderPDF renders the field onto the specified page of the specified
-// PDF file, if it belongs there.  It may return any errors in the
-// process (unsupported value, doesn't fit in the space, etc.).
-func (f *field) RenderPDF(m msgifc.Message, pdf *gofpdf.Pdf, page int) error {
 	panic("not implemented") // TODO: Implement
 }

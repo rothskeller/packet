@@ -1,7 +1,6 @@
 package field
 
 import (
-	"github.com/phpdave11/gofpdf"
 	"github.com/rothskeller/packet/message/msgifc"
 )
 
@@ -234,13 +233,6 @@ func (ff *FieldFactory) ValidateFunc(fn func(msgifc.Message, msgifc.Field, msgif
 // CompareFunc provides a function to compare the actual value of the field
 // from one message to the expected value in another message.
 func (ff *FieldFactory) CompareFunc(fn func(expected, actual msgifc.Message) *ComparedField) *FieldFactory {
-	panic("not implemented") // TODO:
-}
-
-// PDFRenderFunc provides a function to render the field onto the specified
-// page of the specified PDF file being generated, if it belongs there.  The
-// function may return errors if the value can't be rendered, doesn't fit, etc.
-func (ff *FieldFactory) PDFRenderFunc(fn func(msgifc.Message, *gofpdf.Pdf, int) error) *FieldFactory {
 	panic("not implemented") // TODO:
 }
 

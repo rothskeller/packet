@@ -412,7 +412,6 @@ func (s *Server) servePostNewMessageFrom(w http.ResponseWriter, r *http.Request)
 					}
 				}
 			}
-		// TODO: reply fields
 		default:
 			return errors.NewF("%q is not a recognized action for the /new-message-from request.", action)
 		}
