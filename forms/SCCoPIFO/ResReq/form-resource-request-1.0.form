@@ -165,12 +165,13 @@ field 24n.
 field 24q.
   label    "Item 2: Quantity Requested"
   type     cardinalNumber
-  presence required
+  presence if 24n. then required else blocked
   pdf      text L 532.64 R 563.44 B 416.48 T 430.00 BL 419.52
 
 field 24d.
   label    "Item 2: Description"
   type     multiline
+  presence if 24n. then optional else blocked
   pdf      text L 171.92 R 563.44 B 380.60 T 412.00 BL 403.56
 
 field 24i.
@@ -178,7 +179,7 @@ field 24i.
   type     restricted
   choice   Yes
   choice   No
-  presence required
+  presence if 24n. then required else blocked
   pdf      if 24i.=Yes then circle X 315.60 Y 369.54 R 2.84
   pdf      if 24i.=No then circle X 362.16 Y 369.60 R 2.84
 
@@ -189,12 +190,13 @@ field 25n.
 field 25q.
   label    "Item 3: Quantity Requested"
   type     cardinalNumber
-  presence required
+  presence if 25n. then required else blocked
   pdf      text L 532.64 R 563.44 B 343.52 T 357.16 BL 346.56
 
 field 25d.
   label    "Item 3: Description"
   type     multiline
+  presence if 25n. then optional else blocked
   pdf      text L 171.92 R 563.44 B 307.64 T 339.04 BL 330.60
 
 field 25i.
@@ -202,7 +204,7 @@ field 25i.
   type     restricted
   choice   Yes
   choice   No
-  presence required
+  presence if 25n. then required else blocked
   pdf      if 25i.=Yes then circle X 315.60 Y 296.70 R 2.84
   pdf      if 25i.=No then circle X 362.16 Y 296.76 R 2.84
 
@@ -213,12 +215,13 @@ field 26n.
 field 26q.
   label    "Item 4: Quantity Requested"
   type     cardinalNumber
-  presence required
+  presence if 26n. then required else blocked
   pdf      text L 532.64 R 563.44 B 270.68 T 284.20 BL 273.72
 
 field 26d.
   label    "Item 4: Description"
   type     multiline
+  presence if 26n. then optional else blocked
   pdf      text L 171.92 R 563.44 B 234.80 T 266.20 BL 257.76
 
 field 26i.
@@ -226,7 +229,7 @@ field 26i.
   type     restricted
   choice   Yes
   choice   No
-  presence required
+  presence if 26n. then required else blocked
   pdf      if 26i.=Yes then circle X 315.60 Y 223.74 R 2.84
   pdf      if 26i.=No then circle X 362.16 Y 223.80 R 2.84
 
@@ -237,12 +240,13 @@ field 27n.
 field 27q.
   label    "Item 5: Quantity Requested"
   type     cardinalNumber
-  presence required
+  presence if 27n. then required else blocked
   pdf      text L 532.64 R 563.44 B 197.72 T 211.36 BL 200.76
 
 field 27d.
   label    "Item 5: Description"
   type     multiline
+  presence if 27n. then optional else blocked
   pdf      text L 171.92 R 563.44 B 161.84 T 193.24 BL 184.80
 
 field 27i.
@@ -250,7 +254,7 @@ field 27i.
   type     restricted
   choice   Yes
   choice   No
-  presence required
+  presence if 27n. then required else blocked
   pdf      if 27i.=Yes then circle X 315.60 Y 150.96 R 2.72
   pdf      if 27i.=No then circle X 362.16 Y 150.96 R 2.84
 
@@ -261,12 +265,13 @@ field 28n.
 field 28q.
   label    "Item 6: Quantity Requested"
   type     cardinalNumber
-  presence required
+  presence if 28n. then required else blocked
   pdf      text L 532.64 R 563.44 B 124.88 T 138.40 BL 127.92
 
 field 28d.
   label    "Item 6: Description"
   type     multiline
+  presence if 28n. then optional else blocked
   pdf      text L 171.92 R 563.44 B  89.00 T 120.40 BL 111.96
 
 field 28i.
@@ -274,7 +279,7 @@ field 28i.
   type     restricted
   choice   Yes
   choice   No
-  presence required
+  presence if 28n. then required else blocked
   pdf      if 28i.=Yes then circle X 315.66 Y  78.00 R 2.90
   pdf      if 28i.=No then circle X 362.16 Y  78.00 R 2.84
 
