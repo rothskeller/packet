@@ -1,19 +1,15 @@
 Before release:
-  Update all form htmls
   Finish software manual
   Code cleanup and TODOs
   TESTING
   Packet install should install new forms *above* Generic ICS-213.
 
 When possible:
-  Shift form HTML parsing from html.Parse to htmlop.Parse
-  New HTML for forms, with field help
   PDF support for Unicode
   Packet shell functionality
   BBS connection functionality
   Update wppsvr, packet-ex
   Forms accept invalid input
   Implement server-side printing on Windows
-  PDF page numbering overwrites boilerplate text on ICS-213 form
   NotRep and ResReq are not received properly by previous version: hidden fields
   not shown because their triggering fields no longer exist.

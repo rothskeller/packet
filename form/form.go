@@ -21,7 +21,6 @@ import (
 	"github.com/rothskeller/packet/message/subject"
 	"github.com/rothskeller/pdf/v2"
 	"golang.org/x/net/html"
-	"golang.org/x/net/html/atom"
 )
 
 type FormType struct {
@@ -257,7 +256,7 @@ func (ft EditableFormType) EditHTML(msg message.Message, vars message.EditHTMLVa
 		slog.Error("fs.ReadFile", "f", ft.HTMLFile, "err", err)
 		return nil, err
 	}
-	if formHTML, err = html.Parse(bytes.NewReader(formFile)); err != nil {
+	if formHTML, err = htmlop.Parse(bytes.NewReader(formFile)); err != nil {
 		slog.Error("html.Parse", "f", ft.HTMLFile, "err", err)
 		return nil, fmt.Errorf("%s: %s", ft.HTMLFile, err)
 	}
@@ -267,15 +266,13 @@ func (ft EditableFormType) EditHTML(msg message.Message, vars message.EditHTMLVa
 	defFile = bundle + "/definitions.html"
 	if formFile, err = fs.ReadFile(ft.FormFS, defFile); err == nil {
 		var defHTML *html.Node
-		if defHTML, err = html.Parse(bytes.NewReader(formFile)); err != nil {
+		if defHTML, err = htmlop.Parse(bytes.NewReader(formFile)); err != nil {
 			slog.Error("html.Parse", "f", defFile, "err", err)
 			return nil, fmt.Errorf("%s: %s", defFile, err)
 		}
-		formBody := findBody(formHTML)
-		defBody := findBody(defHTML)
-		for c := defBody.LastChild; c != nil; c = defBody.LastChild {
-			defBody.RemoveChild(c)
-			formBody.InsertBefore(c, formBody.FirstChild)
+		for c := defHTML.LastChild; c != nil; c = defHTML.LastChild {
+			defHTML.RemoveChild(c)
+			formHTML.InsertBefore(c, formHTML.FirstChild)
 		}
 	}
 	fields["assets"] = vars.AssetBase
@@ -309,15 +306,6 @@ func (ft EditableFormType) EditHTML(msg message.Message, vars message.EditHTMLVa
 	// Render and minimize the result.
 	htmlop.Minify(&formBuf, formHTML)
 	return formBuf.Bytes(), nil
-}
-
-func findBody(doc *html.Node) *html.Node {
-	for n := range doc.Descendants() {
-		if n.Type == html.ElementNode && n.DataAtom == atom.Body {
-			return n
-		}
-	}
-	return nil
 }
 
 // EditAssets returns the file system containing the form assets.

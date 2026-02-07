@@ -219,28 +219,37 @@
       <td style="border:none;padding:4pt 4pt;">
         <span style="font-size:150%;">{{form-title}}</span>
         <br>
+      </td>
       <td style="border:none;padding:2pt 4pt;text-align:right;vertical-align:bottom;">
         <span style="font-weight:normal;">PIF: {{form-version}}<br>{{paper-version}}</span>
+      </td>
+    </tr>
   </table>
   <table>
     <tr>
       <td style="white-space:nowrap;width:1px;">
         <b>Message Numbers:</b>
+      </td>
       <td>
         <b>Origin:</b>
         <input type=text name=MsgNo class="message-number no-msg-init" tabindex=1 required>
+      </td>
       <td>
         <b>Destination:</b>
         <input type=text name=DestMsgNo class=message-number disabled tabindex=2>
+      </td>
+    </tr>
   </table>
   <table>
     <tr>
       <td>
         <b>Date:</b>
         <input type=text name="1a." class=date required tabindex=3>
+      </td>
       <td>
         <b>Time:</b>
         <input type=text name="1b." class=time required tabindex=4>
+      </td>
       <td class="label-sameline">
         <b>Handling:</b>
         <div class=required-group style="margin-left:0.5em;padding-left:0;padding-right:0.5em;">
@@ -257,31 +266,40 @@
             <span style="font-weight:normal;">(&lt;2 hrs)</span>
           </label>
         </div>
+      </td>
+    </tr>
   </table>
   <if:show-addrs>
     <table id="form-row-3">
       <tr>
         <td rowspan=5 class=block-caption style="width:1px;">
           T<br />O
+        </td>
         <td>
           <table class=same-line-label-layout>
             <tr>
-              <th>Address:
-              <td><input type=text name=ToAddr tabindex=8 required>
+              <th>Address:</th>
+              <td><input type=text name=ToAddr tabindex=8 required></td>
+            </tr>
           </table>
+        </td>
         <td rowspan=5 class=block-caption style="width:1px;">
           F<br />R<br />O<br />M
+        </td>
         <td>
           <table class=same-line-label-layout>
             <tr>
-              <th>Address:
-              <td><input type=text name=FromAddr readonly tabindex=12>
+              <th>Address:</th>
+              <td><input type=text name=FromAddr readonly tabindex=12></td>
+            </tr>
           </table>
+        </td>
+      </tr>
       <tr>
         <td>
           <table class=same-line-label-layout>
             <tr>
-              <th>ICS Position:
+              <th>ICS Position:</th>
               <td style="padding-right:0;">
                 <if:to-ics-positions>
                   <combo-box name="7a." tabindex=8 required options={{to-ics-positions}}></combo-box>
@@ -289,18 +307,24 @@
                 <ifnot:to-ics-positions>
                   <input type=text name="7a." tabindex=8 required>
                 </ifnot:to-ics-positions>
+              </td>
+            </tr>
           </table>
+        </td>
         <td>
           <table class=same-line-label-layout>
             <tr>
-              <th>ICS Position:
-              <td><input type=text name="8a." required tabindex=12>
+              <th>ICS Position:</th>
+              <td><input type=text name="8a." required tabindex=12></td>
+            </tr>
           </table>
+        </td>
+      </tr>
       <tr>
         <td>
           <table class=same-line-label-layout>
             <tr>
-              <th>Location:
+              <th>Location:</th>
               <td style="padding-right:0;">
                 <if:to-ics-locations>
                   <combo-box name="7b." tabindex=9 required options={{to-ics-locations}}></combo-box>
@@ -308,40 +332,55 @@
                 <ifnot:to-ics-locations>
                   <input type=text name="7b." tabindex=9 required>
                 </ifnot:to-ics-locations>
-          </table>
-        <td>
-          <table class=same-line-label-layout>
-            <tr>
-              <th>Location:
-              <td><input type=text name="8b." required tabindex=13>
-          </table>
-      <tr>
-        <td>
-          <table class=same-line-label-layout>
-            <tr>
-              <th>Name:
-              <td><input type=text name="7c." tabindex=10>
-          </table>
-        <td>
-          <table class=same-line-label-layout>
-            <tr>
-              <th>Name:
-              <td><input type=text name="8c." tabindex=14>
+              </td>
+            </tr>
           </table>
         </td>
+        <td>
+          <table class=same-line-label-layout>
+            <tr>
+              <th>Location:</th>
+              <td><input type=text name="8b." required tabindex=13></td>
+            </tr>
+          </table>
+        </td>
+      </tr>
       <tr>
         <td>
           <table class=same-line-label-layout>
             <tr>
-              <th>Contact Info:
-              <td><input type=text name="7d." tabindex=11>
+              <th>Name:</th>
+              <td><input type=text name="7c." tabindex=10></td>
+            </tr>
           </table>
+        </td>
         <td>
           <table class=same-line-label-layout>
             <tr>
-              <th>Contact Info:
-              <td><input type=text name="8d." tabindex=15>
+              <th>Name:</th>
+              <td><input type=text name="8c." tabindex=14></td>
+            </tr>
           </table>
+        </td>
+      </tr>
+      <tr>
+        <td>
+          <table class=same-line-label-layout>
+            <tr>
+              <th>Contact Info:</th>
+              <td><input type=text name="7d." tabindex=11></td>
+            </tr>
+          </table>
+        </td>
+        <td>
+          <table class=same-line-label-layout>
+            <tr>
+              <th>Contact Info:</th>
+              <td><input type=text name="8d." tabindex=15></td>
+            </tr>
+          </table>
+        </td>
+      </tr>
     </table>
   </if:show-addrs>
   <ifnot:show-addrs>
@@ -349,10 +388,11 @@
       <tr>
         <td rowspan=4 class=block-caption style="width:1px;">
           T<br />O
+        </td>
         <td>
           <table class=same-line-label-layout>
             <tr>
-              <th>ICS Position:
+              <th>ICS Position:</th>
               <td style="padding-right:0;">
                 <if:to-ics-positions>
                   <combo-box name="7a." tabindex=8 required options={{to-ics-positions}}></combo-box>
@@ -360,20 +400,27 @@
                 <ifnot:to-ics-positions>
                   <input type=text name="7a." tabindex=8 required>
                 </ifnot:to-ics-positions>
+              </td>
+            </tr>
           </table>
+        </td>
         <td rowspan=4 class=block-caption style="width:1px;">
           F<br />R<br />O<br />M
+        </td>
         <td>
           <table class=same-line-label-layout>
             <tr>
-              <th>ICS Position:
-              <td><input type=text name="8a." required tabindex=12>
+              <th>ICS Position:</th>
+              <td><input type=text name="8a." required tabindex=12></td>
+            </tr>
           </table>
+        </td>
+      </tr>
       <tr>
         <td>
           <table class=same-line-label-layout>
             <tr>
-              <th>Location:
+              <th>Location:</th>
               <td style="padding-right:0;">
                 <if:to-ics-locations>
                   <combo-box name="7b." tabindex=9 required options={{to-ics-locations}}></combo-box>
@@ -381,40 +428,55 @@
                 <ifnot:to-ics-locations>
                   <input type=text name="7b." tabindex=9 required>
                 </ifnot:to-ics-locations>
-          </table>
-        <td>
-          <table class=same-line-label-layout>
-            <tr>
-              <th>Location:
-              <td><input type=text name="8b." required tabindex=13>
-          </table>
-      <tr>
-        <td>
-          <table class=same-line-label-layout>
-            <tr>
-              <th>Name:
-              <td><input type=text name="7c." tabindex=10>
-          </table>
-        <td>
-          <table class=same-line-label-layout>
-            <tr>
-              <th>Name:
-              <td><input type=text name="8c." tabindex=14>
+              </td>
+            </tr>
           </table>
         </td>
+        <td>
+          <table class=same-line-label-layout>
+            <tr>
+              <th>Location:</th>
+              <td><input type=text name="8b." required tabindex=13></td>
+            </tr>
+          </table>
+        </td>
+      </tr>
       <tr>
         <td>
           <table class=same-line-label-layout>
             <tr>
-              <th>Contact Info:
-              <td><input type=text name="7d." tabindex=11>
+              <th>Name:</th>
+              <td><input type=text name="7c." tabindex=10></td>
+            </tr>
           </table>
+        </td>
         <td>
           <table class=same-line-label-layout>
             <tr>
-              <th>Contact Info:
-              <td><input type=text name="8d." tabindex=15>
+              <th>Name:</th>
+              <td><input type=text name="8c." tabindex=14></td>
+            </tr>
           </table>
+        </td>
+      </tr>
+      <tr>
+        <td>
+          <table class=same-line-label-layout>
+            <tr>
+              <th>Contact Info:</th>
+              <td><input type=text name="7d." tabindex=11></td>
+            </tr>
+          </table>
+        </td>
+        <td>
+          <table class=same-line-label-layout>
+            <tr>
+              <th>Contact Info:</th>
+              <td><input type=text name="8d." tabindex=15></td>
+            </tr>
+          </table>
+        </td>
+      </tr>
     </table>
   </ifnot:show-addrs>
 </def:scco-header>
@@ -423,40 +485,52 @@
   <div style="page-break-inside:avoid;">
     <table class=border style="border:1px solid #aaaaaa;">
       <tr class=block-caption>
-        <td colspan=3>Radio Operator Only:
+        <td colspan=3>Radio Operator Only:</td>
+      </tr>
       <tr>
-        <td class=block-caption style="width:1px;">Relay:
+        <td class=block-caption style="width:1px;">Relay:</td>
         <td style="width:50%">
           <table class=same-line-label-layout>
             <tr>
-              <th>Rcvd:
-              <td><input type=text name=OpRelayRcvd tabindex=500>
+              <th>Rcvd:</th>
+              <td><input type=text name=OpRelayRcvd tabindex=500></td>
+            </tr>
           </table>
+        </td>
         <td style="width:50%">
           <table class=same-line-label-layout>
             <tr>
-              <th>Sent:
-              <td><input type=text name=OpRelaySent tabindex=501>
+              <th>Sent:</th>
+              <td><input type=text name=OpRelaySent tabindex=501></td>
+            </tr>
           </table>
+        </td>
+      </tr>
     </table>
     <table>
       <tr>
         <td style="padding-right:0;">
           <table class=same-line-label-layout>
             <tr>
-              <th>Name:
+              <th>Name:</th>
               <td><input type=text name=OpName class="no-msg-init include-in-submit" tabindex=502
-                  style="margin-right:0;">
+                  style="margin-right:0;"></td>
+            </tr>
           </table>
+        </td>
         <td>
           <b>Call Sign:</b>
           <input type=text name=OpCall class="no-msg-init include-in-submit call-sign" tabindex=503 required>
+        </td>
         <td>
           <b>Date:</b>
           <input type=text name=OpDate class="date no-msg-init init-on-submit" tabindex=504 readonly>
+        </td>
         <td>
           <b>Time:</b>
           <input type=text name=OpTime class="time no-msg-init init-on-submit" tabindex=505 readonly>
+        </td>
+      </tr>
     </table>
   </div>
 </def:scco-footer>

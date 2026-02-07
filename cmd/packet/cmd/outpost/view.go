@@ -59,7 +59,14 @@ opdt     Date and time that the message was received`,
 			// given.  (We're still leaving the type as
 			// DraftMessage, though, because we don't have the
 			// details to put into a ReceivedMessage.)
-			if ft, ok := msg.Type().(form.FormType); ok {
+			var ft *form.FormType
+			switch t := msg.Type().(type) {
+			case *form.FormType:
+				ft = t
+			case form.EditableFormType:
+				ft = &t.FormType
+			}
+			if ft != nil {
 				body := msg.Body().(*form.FormBody)
 				body.SetField("RECEIVED", "RECEIVED")
 				for fd := range ft.AllFields() {

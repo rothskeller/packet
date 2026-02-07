@@ -146,7 +146,7 @@
   }
   window.addEventListener('load', function () {
     for (let row = 1; row <= 5; row++) {
-      document.querySelectorAll(`input[name^="18.${row}b."]`).forEach(role => {
+      document.querySelectorAll(`select[name^="18.${row}b."]`).forEach(role => {
         role.addEventListener('change', () => {showStandardTypes(row, role.value);});
         showStandardTypes(row, role.value);
       });
@@ -461,10 +461,10 @@
               <td style="padding-right:1px;width:14em;">
                 <select name="18.{{row}}b." {{tabindex++}} required-if=18.{{row}}a. else-disallowed>
                   <option value=""></option>
-                  <option value="Field Communicator"></option>
-                  <option value="Net Control Operator"></option>
-                  <option value="Packet Operator"></option>
-                  <option value="Shadow Communicator"></option>
+                  <option value="Field Communicator">Field Communicator</option>
+                  <option value="Net Control Operator">Net Control Operator</option>
+                  <option value="Packet Operator">Packet Operator</option>
+                  <option value="Shadow Communicator">Shadow Communicator</option>
                 </select>
               </td>
               <td>
@@ -472,7 +472,7 @@
                   <tr>
                     <td><input type="text" name="18.{{row}}f." {{tabindex++}} {{placeholder}} allowed-if=18.{{row}}a.>
                     </td>
-                    <td style="width:1em;"><input type="checkbox" name="18.{{row}}g." tabindex="-1"
+                    <td style="width:1em;"><input type="checkbox" name="18.{{row}}g." value=checked tabindex="-1"
                         allowed-if=18.{{row}}a.></td>
                   </tr>
                 </table>
@@ -669,7 +669,7 @@
               <label for="25s" style="font-weight:normal;">Signature:</label>
             </td>
             <td style="width:1em;">
-              <input type="checkbox" id="25s" name="25s." />
+              <input type="checkbox" id="25s" name="25s." value=checked />
             </td>
             <td style="padding-left:0px;text-align:left;">
               <label for="25s" style="font-weight:normal;">

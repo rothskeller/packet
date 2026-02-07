@@ -142,7 +142,7 @@ field 21.
   help     "This is the type of the facility, such as Skilled Nursing, Home Health, Dialysis, Community Health Center, Surgical Center, or Hospice.  It is required when the \"Report Type\" is \"Complete\"."
   pdf      text P 2 L 339.08 R 467.22 B 651.68 T 672.04
 
-field 22d.
+field 22d. formDate
   label    Date
   type     date
   presence required
@@ -202,7 +202,7 @@ field 25d.
   type     date
   presence if 20.=Complete then required
   help     "This is the date of the incident for which this report is filed, in MM/DD/YYYY format.  It is required when the \"Report Type\" is \"Complete\"."
-  pdf      text P 2 L 339.08 R 588.40 B 585.08 T 595.08
+  pdf      text P 2 L 339.08 R 588.40 B 585.08 T 595.08 A rF
 
 field 35.
   label    "Facility Status"
@@ -555,6 +555,7 @@ field 46.
   label    "Other Care Beds Type"
   width    17
   help     "This is the other type of beds available at the facility, if any."
+  pdf      text P 2 L 338.96 R 451.00 B 248.12 T 258.88 BL 251.48
 
 field 46a.
   label    "Other Care Beds: Staffed M"

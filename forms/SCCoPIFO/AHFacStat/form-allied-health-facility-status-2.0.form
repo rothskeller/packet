@@ -106,7 +106,7 @@ field 21.
   presence if 20.=Complete then required
   pdf      text P 2 L 339.08 R 467.22 B 651.68 T 672.04
 
-field 22d.
+field 22d. formDate
   label    Date
   type     date
   presence required
@@ -152,7 +152,7 @@ field 25d.
   label    "Incident Date"
   type     date
   presence if 20.=Complete then required
-  pdf      text P 2 L 339.08 R 588.40 B 585.08 T 595.08
+  pdf      text P 2 L 339.08 R 588.40 B 585.08 T 595.08 A rF
 
 field 35.
   label    "Facility Status"
@@ -437,6 +437,7 @@ field 45e.
 
 field 46.
   label    "Other Care Beds Type"
+  pdf      text P 2 L 338.96 R 451.00 B 248.12 T 258.88 BL 251.48
 
 field 46a.
   label    "Other Care Beds: Staffed M"

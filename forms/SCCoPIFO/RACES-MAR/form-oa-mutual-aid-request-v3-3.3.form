@@ -110,7 +110,7 @@ field 8d.
   help     "This is contact information (phone number, email, etc.) for the message author.  It is optional and rarely provided."
   pdf      text L 383.20 R 574.12 B 612.32 T 627.04 BL 615.96
 
-field 15.
+field 15. messageSummary
   label    "Agency Name"
   presence required
   width    80
