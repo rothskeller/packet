@@ -65,6 +65,7 @@ func formSubjectFromPlainSubject(ps *subject.PlainSubject) (fs *FormSubject) {
 	fs.SetSubjectHandling(ps.SubjectHandling())
 	fs.SetSubjectFormTag(tag)
 	fs.SetSubjectSummary(summary)
+	fs.EncodedSubject() // make sure result is marked clean
 	return fs
 }
 
