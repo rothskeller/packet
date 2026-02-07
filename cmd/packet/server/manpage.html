@@ -112,10 +112,10 @@
       The SCCo Packet Messenger can also be used as a packet message manager in its own right,
       independent of Outpost.
       It provides both a graphical user interface and a scriptable command line interface.
-      It supports both manual operation (operator interacts with TNC) and automatic operation (software handles the
-      TNC).
-      It runs on any operating system and has no external dependencies other than a browser for the graphical user
-      interface.
+      It supports both manual operation (operator interacts with TNC) and
+      automatic operation (software handles the TNC).
+      It runs on any operating system and has no external dependencies
+      other than a browser for the graphical user interface.
     </p>
     <h2>Outpost Add-On Operation</h2>
     <p>
@@ -126,7 +126,7 @@
       <code>packet install</code>
       command. The connection can be broken with the
       <code>packet uninstall</code>
-      command.
+      command, or by uninstalling the SCCo Packet Messenger software.
     </p>
     <p>
       Whenever an Outpost user asks to view a forms message (i.e., one that starts with
@@ -154,6 +154,96 @@
       Individual systems may have other Outpost add-ons that handle other forms,
       such as city-specific forms.
       These are independent and not affected by the SCCo Packet Messenger.
+    </p>
+    <h2>Standalone Packet Messenger Operation</h2>
+    <p>
+      The SCCo Packet Messenger can be used without Outpost, in both graphical
+      and command line interfaces.
+      When run standalone, it operates on an "incident", which is a folder
+      containing a set of related messages that get reported on the same
+      ICS-309 message log form.
+      A new "incident" should be created in a new folder whenever you would
+      normally start a new ICS-309.
+    </p>
+    <p>
+      To start the SCCo Packet Messenger's graphical interface, run the
+      <code>packet gui</code> command (or, if installed on Windows through the
+      SCCo standard packet installer, <code>C:\PackItForms\pifo.exe</code>).
+      If you are in an incident folder when you run that command, or you add
+      a folder path on the command line, it will start in that incident.
+      Otherwise, it will ask you to choose or create an incident folder.
+      To use the SCCo Packet Messenger's command line interface, you should be
+      in the desired incident folder before invoking the <code>packet</code>
+      command.
+    </p>
+    <h3>Incident Settings</h3>
+    <p>
+      Each incident has its own settings that control how its messages are
+      handled.  Only a few of the settings are required:
+    </p>
+    <ul>
+      <li>
+        Your call sign and name.  You can also supply a tactical call sign
+        and station name if appropriate.
+      </li>
+      <li>
+        The starting message ID to be assigned to new messages.
+        You can assign separate message ID sequences for incoming and outgoing
+        messages, but usually they share the same sequence.
+      </li>
+      <li>
+        The BBS you're connecting to and the method of connecting to it.  Three
+        connection methods are currently supported:
+        <ul>
+          <li>
+            Manual operations.  The SCCo Packet Messenger doesn't connect to the
+            BBS for you; it just gives you commands you can paste into a
+            separate connection that you manage.  For this method, you need to
+            provide the BBS name (so the software can use it in message headers)
+            but nothing else.
+          </li>
+          <li>
+            Serial+TNC connection.  The SCCo Packet Messenger will connect to
+            the BBS (that you specify by AX.25 address) by talking to a TNC (of
+            a type you specify) through a serial port (that you specify).
+          </li>
+          <li>
+            Telnet connection.  The SCCo Packet Messenger will connect to the
+            BBS (that you specify by name, hostname or IP address, and port
+            number), logging in with your tactical or FCC call sign and the
+            password you specify.  (Note: SCCo ARES/RACES issues passwords for
+            telnet access only to network maintenance staff and others with
+            demonstrated need.)
+          </li>
+        </ul>
+      </li>
+    </ul>
+    <p>
+      The rest of the incident settings are optional.  These include:
+    </p>
+    <ul>
+      <li>
+        ICS-309 header information:  incident name, activation number,
+        and operational period.  These are shown on the generated ICS-309 forms.
+      </li>
+      <li>
+        Bulletin retrieval settings:  you can specify which BBS areas to
+        retrieve bulletins (and SCCo notices) from, and how often to check for
+        them.
+      </li>
+      <li>
+        Defaults for new messages:  you can specify default values for the To
+        Address, To ICS Position, To Location, From ICS Position, and From
+        Location fields of messages.  You can also specify default body text
+        (e.g., <code>**** This is drill traffic ****</code>) to be put in the
+        primary text field of new messages.
+      </li>
+    </ul>
+    <p>
+      When creating a new incident, you are prompted to supply these incident
+      settings (at minimum the required ones).  To change them later, use the
+      Incident → Incident Settings menu item (graphical interface) or the
+      <code>edit config</code> command (command line interface).
     </p>
   </div>
 </body>
