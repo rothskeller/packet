@@ -117,7 +117,7 @@ func readSentMessage(filename string, hdr mail.Header, c *common) (_ Message, er
 	m.init()
 
 	m.from = strings.Join(hdr["From"], ", ")
-	if t, err := time.Parse(time.RFC1123Z, hdr.Get("Date")); err == nil {
+	if t, err := mail.ParseDate(hdr.Get("Date")); err == nil {
 		m.date = t
 	}
 	m.bulletin = hdr.Get("X-Packet-Bulletin") != ""

@@ -95,7 +95,7 @@ func readReceivedMessage(filename string, hdr mail.Header, cm *common) (_ Messag
 		m.rxBBS = match[1]
 		m.localID = match[2]
 		m.rxArea = match[3]
-		m.rxDate, _ = time.Parse(time.RFC1123Z, match[4])
+		m.rxDate, _ = mail.ParseDate(match[4])
 	} else {
 		// This shouldn't happen:  stored messages with a Received: header
 		// should always have our Received: header format
@@ -103,7 +103,7 @@ func readReceivedMessage(filename string, hdr mail.Header, cm *common) (_ Messag
 		return nil, errors.New("incorrect Received: header format for stored received message")
 	}
 	m.from = strings.Join(hdr["From"], ", ")
-	if t, err := time.Parse(time.RFC1123Z, hdr.Get("Date")); err == nil {
+	if t, err := mail.ParseDate(hdr.Get("Date")); err == nil {
 		m.date = t
 	}
 	return &m, nil

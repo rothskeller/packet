@@ -109,7 +109,7 @@ func NewJustReceivedMessage(retrieved, rxBBS, rxArea string) (m *JustReceivedMes
 	to = append(to, msg.Header["Bcc"]...)
 	m.to = strings.Join(to, ", ")
 	// Handle the Date header.
-	if t, err := time.Parse(time.RFC1123Z, msg.Header.Get("Date")); err == nil {
+	if t, err := mail.ParseDate(msg.Header.Get("Date")); err == nil {
 		m.date = t
 	}
 	// Compute the return address if there wasn't an envelope From line.
