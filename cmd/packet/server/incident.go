@@ -83,6 +83,13 @@ func (s *Server) serveGetIncident(w http.ResponseWriter, r *http.Request) {
 	html.Render(w, doc)
 }
 
+type ilogUpdate struct {
+	Seq          int                  `json:"seq"`
+	Log          []*incident.LogEntry `json:"log"`
+	ConnProgress string               `json:"connProgress"`
+	ConnError    string               `json:"connError"`
+}
+
 // serveGetIncidentLog handles GET /incident/log requests.  They will have a
 // dir= parameter specifying the incident directory and a seq= parameter
 // specifying the sequence number of the data already held by the client.  This
@@ -91,10 +98,10 @@ func (s *Server) serveGetIncident(w http.ResponseWriter, r *http.Request) {
 // entries with a higher sequence number.
 func (s *Server) serveGetIncidentLog(w http.ResponseWriter, r *http.Request) {
 	var (
-		dir  string
-		seq  int
-		ilog []*incident.LogEntry
-		err  error
+		dir string
+		seq int
+		upd ilogUpdate
+		err error
 	)
 	if dir = r.FormValue("dir"); dir == "" {
 		slog.Error("no incident dir")
@@ -117,9 +124,10 @@ func (s *Server) serveGetIncidentLog(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	err = incident.Read(dir, func(i *incident.Incident) error {
+		upd.Seq = i.Seq
 		for _, e := range i.Log {
 			if e.Seq > seq {
-				ilog = append(ilog, e)
+				upd.Log = append(upd.Log, e)
 			}
 		}
 		return nil
@@ -130,7 +138,7 @@ func (s *Server) serveGetIncidentLog(w http.ResponseWriter, r *http.Request) {
 	}
 	w.Header().Set("Content-Type", "application/json; charset=utf-8")
 	w.Header().Set("Cache-Control", "no-store, private")
-	json.MarshalWrite(w, ilog)
+	json.MarshalWrite(w, upd)
 }
 
 var titleCaseRE = regexp.MustCompile(`(?:^|[- ])[a-z]`)

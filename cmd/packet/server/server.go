@@ -341,6 +341,8 @@ func (s *Server) registerHandlers() {
 	s.mux.HandleFunc("GET /manpage.html", s.serveGetManPage)
 	s.mux.HandleFunc("/incident-open", s.serveIncidentOpen)
 	s.mux.HandleFunc("GET /county-seal.svg", s.serveGetCountySeal)
+	s.mux.HandleFunc("POST /connect-bbs", s.servePostConnectBBS)
+	s.mux.HandleFunc("GET /connect-progress", s.serveGetConnectProgress)
 	s.mux.HandleFunc("GET /{$}", func(w http.ResponseWriter, r *http.Request) {
 		http.Redirect(w, r, "/incident-open", http.StatusSeeOther)
 	})

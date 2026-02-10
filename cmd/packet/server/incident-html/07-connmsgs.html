@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <script>
+    window.addEventListener('conn-progress', evt => {
+      if (evt.detail) {
+        document.getElementById('conn-err').textContent = evt.detail.error
+        document.getElementById('conn-progress').textContent = evt.detail.progress
+      } else {
+        document.getElementById('conn-progress').textContent = ''
+      }
+    })
+  </script>
+  <style>
+    div#conn-err:not(:empty) {
+      background-color: #ff8080;
+      padding: 0.25rem;
+      border-top: 2px solid #aaa;
+    }
+
+    div#conn-err:not(:empty):before {
+      content: "ERROR: ";
+    }
+
+    #conn-progress:not(:empty) {
+      background-color: #dff6df;
+      padding: 0.25rem;
+      border-top: 2px solid #aaa;
+    }
+  </style>
+</head>
+
+<body>
+  <div id=conn-err></div>
+  <div id=conn-progress></div>
+</body>
+
+</html>

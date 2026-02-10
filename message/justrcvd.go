@@ -30,6 +30,8 @@ type JustReceivedMessage struct {
 
 var _ Message = (*JustReceivedMessage)(nil)
 
+func (m *JustReceivedMessage) receivedMessage() *ReceivedMessage { return &m.ReceivedMessage }
+
 // Autoresponse returns whether the message was sent as an auto-response (m.g.,
 // a bounce message, a vacation responder, etc.).  Note that false negatives
 // are possible depending on the message retrieval mechanics.

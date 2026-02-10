@@ -271,10 +271,24 @@
           document.querySelector('menu-bar').adjustSubmenuPositions()
         }
       })
-      // TODO:
       // Connect: Send/Receive All
-      // TODO:
+      setupMenuItem({
+        id: 'm-conn-sr',
+        clicked: async () => {
+          const params = new URLSearchParams({ dir: '{{DIR}}' })
+          await fetch('/connect-bbs?' + params.toString(), { method: 'POST' })
+          watchConnection('{{DIR}}')
+        }
+      })
       // Connect: Immediates Only
+      setupMenuItem({
+        id: 'm-conn-immed',
+        clicked: async () => {
+          const params = new URLSearchParams({ dir: '{{DIR}}', immOnly: 'true' })
+          await fetch('/connect-bbs?' + params.toString(), { method: 'POST' })
+          watchConnection('{{DIR}}')
+        }
+      })
       // TODO:
       // Connect: Abort Connection
       // TODO:

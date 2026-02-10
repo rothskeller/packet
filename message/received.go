@@ -33,6 +33,8 @@ type ReceivedMessage struct {
 
 var _ Message = (*ReceivedMessage)(nil)
 
+func (m *ReceivedMessage) receivedMessage() *ReceivedMessage { return m }
+
 // RxBBS returns the name of the BBS from which the message was retrieved, if
 // known.  (It may not be known for a manually received message.)
 func (m *ReceivedMessage) RxBBS() string { return m.rxBBS }
@@ -132,7 +134,7 @@ func (m *ReceivedMessage) Fields() iter.Seq[field.Field] {
 var receivedFields = []field.Field{
 	field.NewField("", "From").
 		Common(field.CHeaderFrom).
-		ValueFunc(func(m Message) string { return m.(*ReceivedMessage).from }).
+		ValueFunc(func(m Message) string { return rm(m).from }).
 		MakeField(),
 	field.NewField("", "To").
 		Common(field.CHeaderTo).
@@ -140,20 +142,24 @@ var receivedFields = []field.Field{
 		MakeField(),
 	field.NewField("", "Sent").
 		Common(field.CHeaderDate).
-		ValueFunc(func(m Message) string { return m.(*ReceivedMessage).date.Format("01/02/2006 15:04") }).
+		ValueFunc(func(m Message) string { return rm(m).date.Format("01/02/2006 15:04") }).
 		MakeField(),
 	field.NewField("", "Received").
 		Common(field.CHeaderReceived).
-		ValueFunc(func(m Message) string {
+		ValueFunc(func(msg Message) string {
 			var val string
-			rm := m.(*ReceivedMessage)
-			if rm.rxArea != "" {
-				val = "in " + rm.rxArea + " "
+			m := rm(msg)
+			if m.rxArea != "" {
+				val = "in " + m.rxArea + " "
 			}
-			val += "at " + rm.rxDate.Format("01/02/2006 15:04")
-			if rm.localID != "" {
-				val += " as " + rm.localID
+			val += "at " + m.rxDate.Format("01/02/2006 15:04")
+			if m.localID != "" {
+				val += " as " + m.localID
 			}
 			return val
 		}).MakeField(),
+}
+
+func rm(m Message) *ReceivedMessage {
+	return m.(interface{ receivedMessage() *ReceivedMessage }).receivedMessage()
 }

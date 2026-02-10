@@ -7,20 +7,41 @@
     async function fetchData() {
       while (true) {
         try {
-          const params = new URLSearchParams({dir: '{{DIR}}', seq: currentSeq})
+          const params = new URLSearchParams({ dir: '{{DIR}}', seq: currentSeq })
           const url = '/incident/log?' + params.toString()
           const resp = await fetch(url)
           if (!resp.ok) throw new Error(resp.statusText)
           const data = await resp.json()
-          data.forEach(e => {if (e.seq > currentSeq) currentSeq = e.seq})
-          window.dispatchEvent(new CustomEvent('new-data', {detail: data}))
+          currentSeq = data.seq
+          window.dispatchEvent(new CustomEvent('new-data', { detail: data.log }))
           if (delayedChildAction) {
             childAction(delayedChildAction, true)
             delayedChildAction = null
           }
         } catch (e) {
           console.error(e)
-          await new Promise(resolve => setTimeout(resolve, 5000));
+          await new Promise(resolve => setTimeout(resolve, 5000))
+        }
+      }
+    }
+    async function watchConnection(dir) {
+      let connSeq = 0
+      while (true) {
+        try {
+          const params = new URLSearchParams({ dir: dir, seq: connSeq })
+          const url = '/connect-progress?' + params.toString()
+          const resp = await fetch(url)
+          if (resp.status === 410) {
+            window.dispatchEvent(new CustomEvent('conn-progress', { detail: null }))
+            return
+          }
+          if (!resp.ok) throw new Error(resp.statusText)
+          const data = await resp.json()
+          connSeq = data.seq
+          window.dispatchEvent(new CustomEvent('conn-progress', { detail: data }))
+        } catch (e) {
+          console.error(e)
+          return
         }
       }
     }
