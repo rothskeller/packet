@@ -120,6 +120,7 @@ func (s *Server) serveGetIncidentConfig(w http.ResponseWriter, r *http.Request) 
 			}
 			variables["areas"] = strings.Join(triplets, ";")
 		}
+		form.Set("viewflags", inc.Config.ViewFlags.String())
 		return nil
 	})
 	if err != nil {
@@ -222,6 +223,7 @@ func (s *Server) servePostIncidentConfig(w http.ResponseWriter, r *http.Request)
 				}
 			}
 		}
+		c.ViewFlags, _ = incident.ParseViewFlags(r.FormValue("viewflags"))
 		inc.UpdateConfig(c)
 		inc.UpdateIncDefaults()
 		return nil

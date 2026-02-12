@@ -125,7 +125,7 @@ func Create(dir string, fn func(*Incident) error) (err error) {
 		os.Remove(lockFH.Name())
 		return fmt.Errorf("write lock %s: %s", lockFH.Name(), err)
 	}
-	inc = &Incident{Dir: dir, Seq: 1}
+	inc = &Incident{Dir: dir, Seq: 1, Config: configFromDefaults()}
 	if err = fn(inc); err != nil {
 		osdep.Unlock(lockFH)
 		lockFH.Close()

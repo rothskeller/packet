@@ -256,12 +256,18 @@
         clicked: (sel, item) => {
           grid.classList.toggle('full', !item.checked())
           grid.classList.toggle('compact', item.checked())
+          const params = new URLSearchParams({ dir: document.body.dataset.dir, compact: item.checked() })
+          fetch(`/set-view-flag?` + params.toString(), { method: 'POST' })
         }
       })
       // View: Show Receipts
       setupMenuItem({
         id: 'm-view-receipts',
-        clicked: (sel, item) => { grid.showReceipts(item.checked()) }
+        clicked: (sel, item) => {
+          grid.showReceipts(item.checked())
+          const params = new URLSearchParams({ dir: document.body.dataset.dir, receipts: item.checked() })
+          fetch(`/set-view-flag?` + params.toString(), { method: 'POST' })
+        }
       })
       // View: Large Font
       setupMenuItem({
@@ -269,6 +275,8 @@
         clicked: (sel, item) => {
           document.documentElement.style.fontSize = item.checked() ? '1.25em' : null
           document.querySelector('menu-bar').adjustSubmenuPositions()
+          const params = new URLSearchParams({ dir: document.body.dataset.dir, large: item.checked() })
+          fetch(`/set-view-flag?` + params.toString(), { method: 'POST' })
         }
       })
       // Connect: Send/Receive All

@@ -26,7 +26,7 @@ func FillForm(doc *html.Node, values url.Values) {
 	switch doc.DataAtom {
 	case atom.Input:
 		switch getAttr(doc, "type") {
-		case "hidden", "submit":
+		case "submit":
 			// nothing
 		case "checkbox", "radio":
 			var sbchecked bool
@@ -42,6 +42,12 @@ func FillForm(doc *html.Node, values url.Values) {
 			} else if sbchecked {
 				setAttr(doc, "checked", "")
 			}
+		case "hidden":
+			// If the field already has a value, leave it alone.
+			if hasAttr(doc, "value") {
+				break
+			}
+			fallthrough
 		default:
 			if val := values.Get(name); val != "" {
 				setAttr(doc, "value", val)

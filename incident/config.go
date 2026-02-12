@@ -2,6 +2,8 @@ package incident
 
 import (
 	"context"
+	"encoding/json/jsontext"
+	"errors"
 	"fmt"
 	"log/slog"
 	"maps"
@@ -84,6 +86,71 @@ type Config struct {
 	// NoSendReceipts is a flag indicating that delivery receipts should
 	// not be automatically generated and sent for received messages.
 	NoSendReceipts bool `json:"noSendReceipts,omitempty"`
+	// ViewFlags is a bitmask of flags describing how the incident log is
+	// displayed.
+	ViewFlags ViewFlag `json:"viewFlags,omitempty"`
+}
+
+// A ViewFlag is a flag (or bitmask of flags) describing how the incident log
+// is displayed.
+type ViewFlag uint8
+
+// Values for ViewFlag
+const (
+	// ViewFull is a flag indicating that the incident log view should be in
+	// full (vs. compact) format.
+	ViewFull ViewFlag = 1 << iota
+	// ViewReceipts is a flag indicating that the incident log view should
+	// include receipt messages.
+	ViewReceipts
+	// ViewLarge is a flag indicating that the incident log view should use
+	// a large font.
+	ViewLarge
+)
+
+func (f ViewFlag) MarshalJSONTo(enc *jsontext.Encoder) (err error) {
+	return enc.WriteToken(jsontext.String(f.String()))
+}
+func (f ViewFlag) String() string {
+	var sb strings.Builder
+
+	if f&ViewFull != 0 {
+		sb.WriteByte('F')
+	}
+	if f&ViewLarge != 0 {
+		sb.WriteByte('L')
+	}
+	if f&ViewReceipts != 0 {
+		sb.WriteByte('R')
+	}
+	return sb.String()
+}
+
+func (f *ViewFlag) UnmarshalJSONFrom(dec *jsontext.Decoder) (err error) {
+	if tok, err := dec.ReadToken(); err != nil {
+		return err
+	} else if tok.Kind() != '"' {
+		return errors.New(`key "viewFlags" must map to a string`)
+	} else if *f, err = ParseViewFlags(tok.String()); err != nil {
+		return fmt.Errorf(`%s in key "viewFlags"`, err)
+	} else {
+		return nil
+	}
+}
+func ParseViewFlags(s string) (f ViewFlag, err error) {
+	for _, r := range s {
+		switch r {
+		case 'F':
+			f |= ViewFull
+		case 'L':
+			f |= ViewLarge
+		case 'R':
+			f |= ViewReceipts
+		default:
+			return 0, fmt.Errorf(`unknown flag "%s"`, string(r))
+		}
+	}
+	return f, nil
 }
 
 type CheckFrequency struct {
@@ -222,6 +289,9 @@ func (inc *Incident) UpdateConfig(c *Config) {
 	}
 	if c.NoSendReceipts != inc.Config.NoSendReceipts {
 		attrs = append(attrs, slog.Bool("NoSendReceipts", c.NoSendReceipts))
+	}
+	if c.ViewFlags != inc.Config.ViewFlags {
+		attrs = append(attrs, slog.String("ViewFlags", c.ViewFlags.String()))
 	}
 	if len(attrs) != 0 {
 		slog.LogAttrs(context.Background(), slog.LevelInfo, "incident configuration changed", attrs...)

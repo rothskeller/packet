@@ -54,6 +54,9 @@ type IncDefaults struct {
 	// IncidentDirs is a list of recent incident directories, used to make
 	// it easy for the user to return to them.
 	IncidentDirs []string `json:"incidentDirs,omitempty"`
+	// ViewFlags is a bitmask of flags describing how the incident log is
+	// displayed.
+	ViewFlags ViewFlag `json:"viewFlags,omitempty"`
 }
 
 // GetIncDefaults retrieves the current incident defaults.  It returns a valid
@@ -84,6 +87,21 @@ func GetIncDefaults() (idef *IncDefaults) {
 		slog.Error("json.UnmarshalRead", "f", fname, "err", err)
 	}
 	return idef
+}
+
+func configFromDefaults() (c *Config) {
+	defs := GetIncDefaults()
+	return &Config{
+		OpCall:         defs.OpCall,
+		OpName:         defs.OpName,
+		ConnectType:    defs.ConnectType,
+		ConnectBBS:     defs.ConnectBBS,
+		ConnectAddress: defs.ConnectAddress,
+		SerialPort:     defs.SerialPort,
+		TNCType:        defs.TNCType,
+		TelnetPassword: defs.TelnetPasswords[defs.OpCall],
+		ViewFlags:      defs.ViewFlags,
+	}
 }
 
 // UpdateIncDefaults updates the incident defaults based on the configuration
@@ -158,6 +176,7 @@ func (inc *Incident) UpdateIncDefaults() {
 	if len(idef.IncidentDirs) > maxIncidentDirs {
 		idef.IncidentDirs = idef.IncidentDirs[len(idef.IncidentDirs)-maxIncidentDirs:]
 	}
+	idef.ViewFlags = inc.Config.ViewFlags
 	// Rewind and truncate the file and write the structure.
 	if _, err = fh.Seek(0, 0); err != nil {
 		slog.Error("fh.Seek", "f", fname, "err", err)

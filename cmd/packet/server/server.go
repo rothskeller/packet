@@ -344,6 +344,7 @@ func (s *Server) registerHandlers() {
 	s.mux.HandleFunc("POST /connect-bbs", s.servePostConnectBBS)
 	s.mux.HandleFunc("POST /connect-abort", s.servePostConnectAbort)
 	s.mux.HandleFunc("GET /connect-progress", s.serveGetConnectProgress)
+	s.mux.HandleFunc("POST /set-view-flag", s.servePostSetViewFlag)
 	s.mux.HandleFunc("GET /{$}", func(w http.ResponseWriter, r *http.Request) {
 		http.Redirect(w, r, "/incident-open", http.StatusSeeOther)
 	})

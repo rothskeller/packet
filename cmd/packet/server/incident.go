@@ -61,6 +61,7 @@ func (s *Server) serveGetIncident(w http.ResponseWriter, r *http.Request) {
 		if !i.Config.NoSendReceipts {
 			vars["GENDRS"] = "checked"
 		}
+		vars["VIEWFLAGS"] = i.Config.ViewFlags.String()
 		return nil
 	})
 	if err != nil {
