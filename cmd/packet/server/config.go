@@ -23,7 +23,7 @@ import (
 	"golang.org/x/net/html"
 )
 
-//go:embed inc-setup.html
+//go:embed config.html
 var configForm []byte
 
 func (s *Server) serveGetIncidentConfig(w http.ResponseWriter, r *http.Request) {

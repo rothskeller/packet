@@ -4,7 +4,7 @@
 <head>
   <title>Incident Setup</title>
   <script>
-    let form, conntypeRow, manualRow, serialTNCRow, telnetRow, helpLabel, helpText
+    let form, bbsCommBlock, conntypeRow, manualRow, serialTNCRow, telnetRow, helpLabel, helpText, bulletinsBlock
     function setValue(elm, val) {
       elm.value = val
       elm.dispatchEvent(new CustomEvent('i-change'))
@@ -22,7 +22,7 @@
       src.addEventListener('input', autoValue)
       src.addEventListener('change', autoValue)
       src.addEventListener('i-change', autoValue)
-      tgt.addEventListener('input', () => {tgt.removeAttribute('x-auto')})
+      tgt.addEventListener('input', () => { tgt.removeAttribute('x-auto') })
       autoValue()
     }
     function setupHelpText() {
@@ -31,7 +31,7 @@
         if (!id) return
         elm.id = `help-${id}`
         if (form[id].forEach)
-          form[id].forEach(item => {item.setAttribute('aria-describedby', `help-${id}`)})
+          form[id].forEach(item => { item.setAttribute('aria-describedby', `help-${id}`) })
         else
           form[id].setAttribute('aria-describedby', `help-${id}`)
       })
@@ -99,18 +99,23 @@
           manualRow.removeAttribute('hidden')
           serialTNCRow.remove()
           telnetRow.remove()
+          bulletinsBlock.remove()
           break
         case 'serial+tnc':
           manualRow.remove()
           conntypeRow.insertAdjacentElement('afterend', serialTNCRow)
           serialTNCRow.removeAttribute('hidden')
           telnetRow.remove()
+          bbsCommBlock.insertAdjacentElement('afterend', bulletinsBlock)
+          bulletinsBlock.removeAttribute('hidden')
           break
         case 'telnet':
           manualRow.remove()
           serialTNCRow.remove()
           conntypeRow.insertAdjacentElement('afterend', telnetRow)
           telnetRow.removeAttribute('hidden')
+          bbsCommBlock.insertAdjacentElement('afterend', bulletinsBlock)
+          bulletinsBlock.removeAttribute('hidden')
           break
       }
     }
@@ -247,16 +252,18 @@
       if (evt.key === 'F1' || evt.key === 'Help')
         document.getElementById('help').togglePopover()
     })
-    window.addEventListener('focusin', evt => {showHelp(evt.target)})
+    window.addEventListener('focusin', evt => { showHelp(evt.target) })
     window.addEventListener('focusout', evt => {
       if (!evt.relatedTarget) showHelp(document.body)
     })
     window.addEventListener('load', evt => {
       form = document.forms[0]
+      bbsCommBlock = document.getElementById('bbscomm')
       conntypeRow = document.getElementById('conntype')
       manualRow = document.getElementById('manual')
       serialTNCRow = document.getElementById('serial+tnc')
       telnetRow = document.getElementById('telnet')
+      bulletinsBlock = document.getElementById('bulletins')
       helpLabel = document.getElementById('help-label')
       helpText = document.getElementById('help-text')
       document.querySelectorAll('input.date').forEach(elm => {
@@ -277,9 +284,9 @@
       setupAutoValue(form.rxmsgid, form.txmsgid, v => v)
       setupHelpText()
       if (af = document.querySelector('[autofocus]')) showHelp(af)
-      showConnTypeSettings()
       setRequiredIf()
       setupBulletinAreas()
+      showConnTypeSettings()
       checkFormValidity()
     })
   </script>
@@ -649,7 +656,8 @@
         </div>
       </div>
     </div>
-    <div class="form-grid borders-inside" style="grid: auto-flow/max-content max-content 1fr max-content max-content">
+    <div id=bbscomm class="form-grid borders-inside"
+      style="grid: auto-flow/max-content max-content 1fr max-content max-content">
       <div class="border tblr heading cspan5">BBS Communications</div>
       <div id=conntype class="form-grid container subgrid2 border tblr cspan5">
         <div><label>Connection Method:</label></div>
@@ -799,7 +807,7 @@
         </div>
       </div>
     </div>
-    <div class="form-grid borders-inside" style="grid: auto-flow/1fr">
+    <div id=bulletins class="form-grid borders-inside" style="grid: auto-flow/1fr">
       <div class="border tblr heading">Bulletin Retrieval</div>
       <div class="border tblr">
         <div id=bulletin-rows style="display:grid;grid:auto-flow/repeat(3,max-content);gap:0.25rem 1rem"
