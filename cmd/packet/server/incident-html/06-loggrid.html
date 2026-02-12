@@ -21,6 +21,7 @@
         this.appendChild(document.getElementById('log-grid-header').content)
         this.addEventListener('keydown', this._onKeyDown.bind(this))
         window.addEventListener('new-data', this._onNewData.bind(this))
+        this.classList.toggle('manual', !!document.getElementById('m-conn'))
       }
       entryByIdent(ident) {
         return this._entries.find(e => e.ident === ident)
@@ -38,10 +39,10 @@
         const entry = evt.target.closest('log-entry')
         const idx = this._entries.findIndex(e => e === entry)
         switch (evt.key) {
-          case 'ArrowUp': idx--; break;
-          case 'ArrowDown': idx++; break;
-          case 'Home': idx = 0; break;
-          case 'End': idx = this._entries.length - 1; break;
+          case 'ArrowUp': idx--; break
+          case 'ArrowDown': idx++; break
+          case 'Home': idx = 0; break
+          case 'End': idx = this._entries.length - 1; break
           default:
             return
         }
@@ -52,7 +53,11 @@
         this._entries[idx].select()
       }
       _onNewData(evt) {
-        evt.detail.forEach(data => {this._updateEntry(data)})
+        if (evt.detail.length) {
+          let empty = document.getElementById('empty-grid')
+          if (empty) empty.remove()
+        }
+        evt.detail.forEach(data => { this._updateEntry(data) })
         this._setEntries()
       }
       _setEntries() {
@@ -116,6 +121,14 @@
     log-grid.full #full-header {
       grid-row: span 2;
     }
+
+    #empty-grid {
+      grid-column: span var(--columns);
+      font-size: 1.25rem;
+      color: #888;
+      text-align: center;
+      padding-top: 1.25rem;
+    }
   </style>
 </head>
 
@@ -143,6 +156,20 @@
       <div style="grid-column: span 2">TO</div>
       <div style="text-align:left;grid-column:span 2">MESSAGE</div>
     </div>
+    <if:manual>
+      <div id=empty-grid>
+        There are no messages in this incident yet.<br>
+        Press [N] to start writing a new outgoing message.<br>
+        Press [R] for a window where you can paste a received message.
+      </div>
+    </if:manual>
+    <ifnot:manual>
+      <div id=empty-grid>
+        There are no messages in this incident yet.<br>
+        Press [C] to connect to the BBS and retrieve messages.<br>
+        Press [N] to start writing a new outgoing message.
+      </div>
+    </ifnot:manual>
   </template>
   <script>
     customElements.define('log-grid', LogGrid)
