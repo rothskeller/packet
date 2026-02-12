@@ -5,7 +5,6 @@ Before release:
 When possible:
   PDF support for Unicode
   Packet shell functionality
-  BBS connection functionality
   Update wppsvr, packet-ex
   Forms accept invalid input
   Implement server-side printing on Windows

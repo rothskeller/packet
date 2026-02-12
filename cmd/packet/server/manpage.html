@@ -179,11 +179,11 @@
     <h3>Incident Settings</h3>
     <p>
       Each incident has its own settings that control how its messages are
-      handled.  Only a few of the settings are required:
+      handled. Only a few of the settings are required:
     </p>
     <ul>
       <li>
-        Your call sign and name.  You can also supply a tactical call sign
+        Your call sign and name. You can also supply a tactical call sign
         and station name if appropriate.
       </li>
       <li>
@@ -192,26 +192,26 @@
         messages, but usually they share the same sequence.
       </li>
       <li>
-        The BBS you're connecting to and the method of connecting to it.  Three
+        The BBS you're connecting to and the method of connecting to it. Three
         connection methods are currently supported:
         <ul>
           <li>
-            Manual operations.  The SCCo Packet Messenger doesn't connect to the
+            Manual operations. The SCCo Packet Messenger doesn't connect to the
             BBS for you; it just gives you commands you can paste into a
-            separate connection that you manage.  For this method, you need to
+            separate connection that you manage. For this method, you need to
             provide the BBS name (so the software can use it in message headers)
             but nothing else.
           </li>
           <li>
-            Serial+TNC connection.  The SCCo Packet Messenger will connect to
+            Serial+TNC connection. The SCCo Packet Messenger will connect to
             the BBS (that you specify by AX.25 address) by talking to a TNC (of
             a type you specify) through a serial port (that you specify).
           </li>
           <li>
-            Telnet connection.  The SCCo Packet Messenger will connect to the
+            Telnet connection. The SCCo Packet Messenger will connect to the
             BBS (that you specify by name, hostname or IP address, and port
             number), logging in with your tactical or FCC call sign and the
-            password you specify.  (Note: SCCo ARES/RACES issues passwords for
+            password you specify. (Note: SCCo ARES/RACES issues passwords for
             telnet access only to network maintenance staff and others with
             demonstrated need.)
           </li>
@@ -219,32 +219,129 @@
       </li>
     </ul>
     <p>
-      The rest of the incident settings are optional.  These include:
+      The rest of the incident settings are optional. These include:
     </p>
     <ul>
       <li>
-        ICS-309 header information:  incident name, activation number,
-        and operational period.  These are shown on the generated ICS-309 forms.
+        ICS-309 header information: incident name, activation number,
+        and operational period. These are shown on the generated ICS-309 forms.
       </li>
       <li>
-        Bulletin retrieval settings:  you can specify which BBS areas to
+        Bulletin retrieval settings: you can specify which BBS areas to
         retrieve bulletins (and SCCo notices) from, and how often to check for
         them.
       </li>
       <li>
-        Defaults for new messages:  you can specify default values for the To
+        Defaults for new messages: you can specify default values for the To
         Address, To ICS Position, To Location, From ICS Position, and From
-        Location fields of messages.  You can also specify default body text
+        Location fields of messages. You can also specify default body text
         (e.g., <code>**** This is drill traffic ****</code>) to be put in the
         primary text field of new messages.
       </li>
     </ul>
     <p>
       When creating a new incident, you are prompted to supply these incident
-      settings (at minimum the required ones).  To change them later, use the
+      settings (at minimum the required ones). To change them later, use the
       Incident → Incident Settings menu item (graphical interface) or the
       <code>edit config</code> command (command line interface).
     </p>
+    <h3>Incident Log</h3>
+    <p>
+      An incident consists of a set of ICS-309 log entries. Most of the time,
+      there is one entry per packet message. However, packet messages sent to
+      multiple recipients will have a log entry per recipient. Also, log
+      entries can be added manually that do not correspond to any packet
+      message, such as shift change notations, voice message log entries, etc.
+    </p>
+    <p>
+      The log can be formatted in either of two layouts.  When rendered as an
+      PDF ICS-309 form, it uses the traditional 6-column layout of the
+      SCCo-standard printed ICS-309 form.  When rendered on screen in the
+      command line interface, it uses a more compact layout with 5 columns.
+      When rendered on screen in the graphical interface, you can choose either,
+      but the compact layout is the default:
+    </p>
+    <ul>
+      <li>
+        The "TIME" column contains the time of day of the log entry. (ICS-309
+        logs should never span more than 24 hours, so the column does not
+        display the date.)
+      </li>
+      <li>
+        For messages that the local station has received, the "FROM" column
+        indicates the origin of the message: either its origin message ID, if
+        known, or its origin station call sign.  (For bulletins, it shows the
+        BBS area that the bulletin was retrieved from.)
+      </li>
+      <li>
+        The "MSG ID" column displays the local message ID of the message.  For
+        receipt messages, it displays the local message ID of the message
+        described by the receipt.
+      </li>
+      <li>
+        For messages that the local station has sent, the "TO" column indicates
+        one destination of the message:  either its destination message ID, if
+        we've received a receipt for it giving that information, or else the
+        destination station call sign.  (If the local station sends a message to
+        multiple recipients, there will be a separate log entry for each.)
+      </li>
+      <li>
+        The "MESSAGE" column contains the subject line of the message.  (In the
+        compact layout, if the subject line starts with a message ID that is
+        displayed in another column, the message ID is omitted here to save
+        space.)
+      </li>
+    </ul>
+    <p>
+      Note: the above descriptions indicate what the software puts in each
+      column when creating, sending, or receiving a packet message.  The
+      descriptions may not hold if the user manually adds or edits log entries.
+    </p>
+    <p>
+      The colors of the log entries indicate the message severity.  Immediate
+      messages are shown in red; priority messages are shown in gold.  Bulletin
+      messages are shown in blue.  Log entries for receipt messages are normally
+      not shown, but when they are requested, they are shown in gray.
+    </p>
+    <p>
+      Log entries may be decorated with a number of markers.  These appear only
+      on screen, not in the generated ICS-309 PDF form.
+    </p>
+    <ul>
+      <li>
+        A <span style="background-color: #ff8080; font-size: 0.875rem">DRAFT</span>
+        marker in the "TIME" column indicates that the
+        message is being written and is not yet ready to send.
+      </li>
+      <li>
+        A <span style="background-color: #a8e8a8; font-size: 0.875rem">READY</span>
+        marker in the "TIME" column indicates that the message
+        will be sent the next time the software connects to the BBS, but that
+        it has not been sent yet.
+      </li>
+      <li>
+        A <span style="background-color: #ff8080; font-size: 0.875rem">NO RCPT</span>
+        marker indicates that we have not yet received a
+        delivery receipt for the message (which we sent).  This marker appears
+        in the "TO Msg #" column in the traditional layout and the "FROM" column
+        in the compact layout.
+      </li>
+      <li>
+        A <span style="background-color: #ff8080; font-size: 0.875rem">NEW</span>
+        marker in the "MESSAGE" column indicates that the message
+        (which we received) has not been read yet.
+      </li>
+      <li>
+        A <span style="background-color: #a8e8a8; font-size: 0.875rem">VOICE</span>
+        marker in the "MESSAGE" column indicates that the log
+        entry is for a voice message, not a packet message.  (When the ICS-309
+        form is printed, it will appear on a separate form for voice messages.)
+      </li>
+      <li>
+        A red star (<span style="color: #d73b30">★</span>) in the right margin
+        indicates that the message needs follow up.
+      </li>
+    </ul>
   </div>
 </body>
 
