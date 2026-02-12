@@ -66,9 +66,6 @@ func (i *Incident) saveMessage(msg message.Message, le *LogEntry) (err error) {
 			return err
 		}
 	}
-	if _, ok := msg.(*message.DraftMessage); ok {
-		return nil // no PDF generation for unsent messages
-	}
 	switch msg.Body().(type) {
 	case *receipt.DeliveryReceiptBody, *receipt.ReadReceiptBody:
 		return nil // no PDF generation for receipts

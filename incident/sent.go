@@ -3,6 +3,7 @@ package incident
 import (
 	"os"
 	"path/filepath"
+	"strings"
 	"time"
 
 	"github.com/rothskeller/packet/message"
@@ -60,5 +61,6 @@ func (i *Incident) MarkMessageSent(dm *message.DraftMessage, le *LogEntry) (err 
 	}
 	// Remove the file associated with the unsent message.
 	os.Remove(filepath.Join(i.Dir, oldfname))
+	os.Remove(filepath.Join(i.Dir, strings.TrimSuffix(oldfname, ".txt")+".pdf"))
 	return nil
 }
