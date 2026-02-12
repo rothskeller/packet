@@ -1,101 +1,92 @@
 <!DOCTYPE html>
-<link rel="stylesheet" type="text/css" href="{{assets}}/pack-it-forms.css" />
-<style>
-  table.section td:nth-child(1) {
-    width: 1px;
-    white-space: nowrap;
-  }
-</style>
-<script type="text/javascript" src="{{assets}}/pack-it-forms.js"></script>
-<title>HAvBed Report</title>
-<the-form>
-  <scco-header form-title="SCCo Medical Health Branch -- HAvBed Poll" paper-version="ReddiNet: 20250731.1"
-    to-ics-positions="EMS Unit; Medical Health Branch; Operations Section"
-    to-locations="PHDOC; County EOC"></scco-header>
-  <table class="section">
-    <tr class="block-caption">
-      <td colspan="2">Hospital</td>
-    </tr>
-    <tr>
-      <td>Hospital Name:</td>
-      <td><select-hospital></select-hospital></td>
-    </tr>
-    <tr>
-      <td>Command Center Status:</td>
-      <td>
-        <select name="22." required tabindex="22">
-          <option value="" selected disabled hidden style="display:none;"></option>
-          <option value="Available" data-background-color="green">Available</option>
-          <option value="Drill or Exercise" data-background-color="purple">Drill or Exercise</option>
-          <option value="Full Activation" data-background-color="red">Full Activation</option>
-          <option value="Monitoring" data-background-color="orange">Monitoring</option>
-          <option value="Not Activated" data-background-color="green">Not Activated</option>
-          <option value="Unavailable" data-background-color="red">Unavailable</option>
-          <option value="Limited Activation" data-background-color="red">Limited Activation</option>
-        </select>
-      </td>
-    </tr>
-    <tr class="block-caption">
-      <td>Category</td>
-      <td>Available Currently<br>Staffed Beds</td>
-    </tr>
-    <tr>
-      <td>ICU:</td>
-      <td><input name="41." type="text" class="cardinal-number" required tabindex="41" /></td>
-    </tr>
-    <tr>
-      <td>Tele:</td>
-      <td><input name="52." type="text" class="cardinal-number" required tabindex="42" /></td>
-    </tr>
-    <tr>
-      <td>Med/Surg:</td>
-      <td><input name="43." type="text" class="cardinal-number" required tabindex="43" /></td>
-    </tr>
-    <tr>
-      <td>PICU:</td>
-      <td><input name="46." type="text" class="cardinal-number" required tabindex="44" /></td>
-    </tr>
-    <tr>
-      <td>NICU:</td>
-      <td><input name="53." type="text" class="cardinal-number" required tabindex="45" /></td>
-    </tr>
-    <tr>
-      <td>Peds Tele:</td>
-      <td><input name="54." type="text" class="cardinal-number" required tabindex="46" /></td>
-    </tr>
-    <tr>
-      <td>Pediatrics:</td>
-      <td><input name="47." type="text" class="cardinal-number" required tabindex="47" /></td>
-    </tr>
-    <tr>
-      <td>Burn:</td>
-      <td><input name="42." type="text" class="cardinal-number" required tabindex="48" /></td>
-    </tr>
-    <tr>
-      <td>OB/GYN:</td>
-      <td><input name="55." type="text" class="cardinal-number" required tabindex="49" /></td>
-    </tr>
-    <tr>
-      <td>Psych:</td>
-      <td><input name="48." type="text" class="cardinal-number" required tabindex="50" /></td>
-    </tr>
-    <tr>
-      <td style="text-align:right">TOTAL:</td>
-      <td><input name="56." type="text" class="cardinal-number" required tabindex="51" /></td>
-    </tr>
-    <tr>
-      <td>OR:</td>
-      <td><input name="45." type="text" class="cardinal-number" required tabindex="52" /></td>
-    </tr>
-    <tr>
-      <td>Isolation:</td>
-      <td><input name="44." type="text" class="cardinal-number" required tabindex="53" /></td>
-    </tr>
-    <tr>
-      <td>Vent:</td>
-      <td><input name="50." type="text" class="cardinal-number" required tabindex="54" /></td>
-    </tr>
-  </table>
-  <br />
-  <scco-footer></scco-footer>
-</the-form>
+<link rel=stylesheet href={{assets}}/SCCoPIFO.css>
+<script type=text/javascript src={{assets}}/pack-it-forms.js></script>
+<title>HAvBed Poll</title>
+<packet-form>
+  <form-roo form-title="SCCo Medical Health Branch — HAvBed Poll" paper-version="PDF: 20251211" omistyle="width:9.43rem"
+    dmistyle="width:8.48rem" rrstyle="width:16.69rem" rsstyle="width:17.55rem" opstyle="width:12.87rem"
+    ocstyle="width:6.70rem" odstyle="width:4.33rem" otstyle="width:3.83rem">
+    <form-dthtf to-ics-positions="EMS Unit; Medical Health Branch; Operations Section" to-locations="PHDOC; County EOC"
+      mdstyle="width:4.17rem" mtstyle="width:3.91rem" tostyle="width:12.47rem" frstyle="width:13.11rem"></form-dthtf>
+    <div class=section>Hospital</div>
+    <div class=layout-pair>
+      <div class=pair>
+        <label for=20.>21. Hospital Name:</label>
+        <hospital-box name=20. style="width:30.02rem"></hospital-box>
+      </div>
+      <div class=pair>
+        <label>22. Command Center Status:</label>
+        <div class="layout-pair colgap required-group">
+          <label style="order:1"><input type=radio name=22. value=Available>a. Available</label>
+          <label style="order:3"><input type=radio name=22. value="Not Activated">b. Not Activated</label>
+          <label style="order:5"><input type=radio name=22. value="Drill or Exercise">c. Drill/Exercise</label>
+          <label style="order:7"><input type=radio name=22. value=Monitoring>d. Monitoring</label>
+          <label style="order:2"><input type=radio name=22. value="Limited Activation">e. Limited Activation</label>
+          <label style="order:4"><input type=radio name=22. value="Full Activation">f. Full Activation</label>
+          <label style="order:6"><input type=radio name=22. value=Unvailable>g. Unvailable</label>
+        </div>
+      </div>
+    </div>
+    <div class=layout-grid style="--columns: max-content max-content 1fr">
+      <div class=section-inline>Category</div>
+      <div class=section-inline style="text-align:center">Available Currently<br>Staffed Beds</div>
+      <div class=section-inline style="grid-row: span 15"></div>
+      <div class=pair>
+        <label for=41.>31. ICU:</label>
+        <input id=41. name=41. class=cardinal-number required style="width:5.21rem; text-align:right">
+      </div>
+      <div class=pair>
+        <label for=52.>32. Tele:</label>
+        <input id=52. name=52. class=cardinal-number required style="width:5.21rem; text-align:right">
+      </div>
+      <div class=pair>
+        <label for=43.>33. Med/Surg:</label>
+        <input id=43. name=43. class=cardinal-number required style="width:5.21rem; text-align:right">
+      </div>
+      <div class=pair>
+        <label for=46.>34. PICU:</label>
+        <input id=46. name=46. class=cardinal-number required style="width:5.21rem; text-align:right">
+      </div>
+      <div class=pair>
+        <label for=53.>35. NICU:</label>
+        <input id=53. name=53. class=cardinal-number required style="width:5.21rem; text-align:right">
+      </div>
+      <div class=pair>
+        <label for=54.>36. Peds Tele:</label>
+        <input id=54. name=54. class=cardinal-number required style="width:5.21rem; text-align:right">
+      </div>
+      <div class=pair>
+        <label for=47.>37. PEDS:</label>
+        <input id=47. name=47. class=cardinal-number required style="width:5.21rem; text-align:right">
+      </div>
+      <div class=pair>
+        <label for=42.>38. Burn:</label>
+        <input id=42. name=42. class=cardinal-number required style="width:5.21rem; text-align:right">
+      </div>
+      <div class=pair>
+        <label for=55.>39. OB/GYN:</label>
+        <input id=55. name=55. class=cardinal-number required style="width:5.21rem; text-align:right">
+      </div>
+      <div class=pair>
+        <label for=48.>40. Psych:</label>
+        <input id=48. name=48. class=cardinal-number required style="width:5.21rem; text-align:right">
+      </div>
+      <div class=pair>
+        <label for=56.>41.&nbsp;&nbsp;&nbsp;&nbsp;TOTAL:</label>
+        <input id=56. name=56. class=cardinal-number required style="width:5.21rem; text-align:right">
+      </div>
+      <div class=pair>
+        <label for=45.>42. OR:</label>
+        <input id=45. name=45. class=cardinal-number required style="width:5.21rem; text-align:right">
+      </div>
+      <div class=pair>
+        <label for=44.>43. Isolation:</label>
+        <input id=44. name=44. class=cardinal-number required style="width:5.21rem; text-align:right">
+      </div>
+      <div class=pair>
+        <label for=50.>44. Vent:</label>
+        <input id=50. name=50. class=cardinal-number required style="width:5.21rem; text-align:right">
+      </div>
+    </div>
+  </form-roo>
+</packet-form>

@@ -4,33 +4,33 @@ version  3.0
 title    Hospital Bed Availability Report
 indef    a hospital bed availability report
 create   HAvBed h
-pdfFile  XSC_HAvBed_Report_v20251010.pdf
+pdfFile  XSC_HAvBed_Report_v20251211.pdf
 
 field MsgNo originMessageID
-  label    "Origin Message Number"
+  label    "1. Origin Message Number"
   type     messageID
   presence required
   help     "This is the message number assigned to the message by the origin station.  Valid message numbers have the form XXX-###P, where XXX is the three-character message number prefix assigned to the station, ### is a sequence number (any number of digits), and P is an optional suffix letter.  This field is required."
-  pdf      text L 218.20 R 348.28 B 716.12 T 730.96 BL 719.89
+  pdf      text L 226.64 R 339.76 B 716.24 T 730.96 BL 719.76
 
 field DestMsgNo destinationMessageID
-  label    "Destination Message Number"
+  label    "2. Destination Message Number"
   type     messageID
-  pdf      text L 445.72 R 573.28 B 716.12 T 730.96 BL 719.89
+  pdf      text L 445.16 R 546.88 B 716.24 T 730.96 BL 719.76
 
 field 1a. messageDate
-  label    "Message Date"
+  label    "3. Message Date"
   type     date
   presence required
   help     "This is the date the message was written, in MM/DD/YYYY format.  It is required."
-  pdf      text L  69.76 R 136.72 B 658.88 T 676.48 BL 663.89
+  pdf      text L  78.32 R 128.32 B 657.20 T 676.48 BL 663.12
 
 field 1b. messageTime
-  label    "Message Time"
+  label    "4. Message Time"
   type     time
   presence required
   help     "This is the time the message was written, in HH:MM format (24-hour clock).  It is required."
-  pdf      text L 201.28 R 235.72 B 658.88 T 676.48 BL 663.89
+  pdf      text L 171.44 R 218.32 B 657.20 T 676.48 BL 663.12
 
 field -
   label    "Message Date/Time"
@@ -40,7 +40,7 @@ field -
   help     "This is the date and time the message was written, in MM/DD/YYYY HH:MM format (24-hour clock).  It is required."
 
 field 5. handling
-  label    Handling
+  label    "5. Handling"
   type     restricted
   value    IMMEDIATE
   choice   IMMEDIATE
@@ -48,12 +48,12 @@ field 5. handling
   choice   ROUTINE
   presence required
   help     "This is the message handling order, which specifies how fast it needs to be delivered.  Allowed values are \"ROUTINE\" (within 2 hours), \"PRIORITY\" (within 1 hour), and \"IMMEDIATE\".  This field is required."
-  pdf      if 5.=IMMEDIATE then circle X 303.78 Y 667.86 R 3.9
-  pdf      if 5.=PRIORITY then circle X 405.90 Y 669.24 R 4
-  pdf      if 5.=ROUTINE then circle X 491.94 Y 669.24 R 3.9
+  pdf      if 5.=IMMEDIATE then circle X 294.24 Y 667.08 R 2.72
+  pdf      if 5.=PRIORITY then  circle X 390.78 Y 667.14 R 2.78
+  pdf      if 5.=ROUTINE then   circle X 471.66 Y 667.08 R 2.78
 
 field 7a. toICSPosition
-  label    "To ICS Position"
+  label    "6. To ICS Position"
   value    "EMS Unit"
   choice   EMS Unit
   choice   Medical Health Branch
@@ -61,58 +61,58 @@ field 7a. toICSPosition
   presence required
   width    30
   help     "This is the ICS position to which the message is addressed.  It is required."
-  pdf      text L 127.36 R 299.80 B 636.92 T 654.40 BL 641.91
+  pdf      text L 136.16 R 285.76 B 635.12 T 652.72 BL 640.08
 
 field 7b. toLocation
-  label    "To Location"
+  label    "7. To Location"
   value    PHDOC
   choice   PHDOC
   choice   County EOC
   presence required
   width    32
   help     "This is the location of the recipient ICS position.  It is required."
-  pdf      text L 127.36 R 300.40 B 614.36 T 632.44 BL 619.54
+  pdf      text L 136.16 R 285.76 B 612.80 T 630.64 BL 618.00
 
 field 7c.
-  label    "To Name"
+  label    "8. To Name"
   width    34
   help     "This is the name of the person holding the recipient ICS position.  It is optional and rarely provided."
-  pdf      text L 127.36 R 299.80 B 591.92 T 609.88 BL 597.03
+  pdf      text L 136.16 R 285.76 B 590.24 T 608.32 BL 595.44
 
 field 7d.
-  label    "To Contact Info"
+  label    "9. To Contact Info"
   width    29
   help     "This is contact information (phone number, email, etc.) for the receipient.  It is optional and rarely provided."
-  pdf      text L 127.36 R 300.40 B 569.36 T 587.44 BL 574.60
+  pdf      text L 136.16 R 285.76 B 567.68 T 585.76 BL 572.88
 
 field 8a. fromICSPosition
-  label    "From ICS Position"
+  label    "10. From ICS Position"
   presence required
   width    30
   help     "This is the ICS position of the message author.  It is required."
-  pdf      text L 392.92 R 571.84 B 636.92 T 654.40 BL 641.91
+  pdf      text L 392.72 R 550.00 B 635.12 T 652.72 BL 640.08
 
 field 8b. fromLocation
-  label    "From Location"
+  label    "11. From Location"
   presence required
   width    32
   help     "This is the location of the message author.  It is required."
-  pdf      text L 392.92 R 572.44 B 614.36 T 632.44 BL 619.54
+  pdf      text L 392.72 R 550.00 B 612.80 T 630.64 BL 618.00
 
 field 8c.
-  label    "From Name"
+  label    "12. From Name"
   width    34
   help     "This is the name of the message author.  It is optional and rarely provided."
-  pdf      text L 392.92 R 571.84 B 591.92 T 609.88 BL 597.03
+  pdf      text L 392.72 R 550.00 B 590.24 T 608.32 BL 595.44
 
 field 8d.
-  label    "From Contact Info"
+  label    "13. From Contact Info"
   width    29
   help     "This is contact information (phone number, email, etc.) for the message author.  It is optional and rarely provided."
-  pdf      text L 392.92 R 572.44 B 569.36 T 587.44 BL 574.60
+  pdf      text L 392.72 R 550.00 B 567.68 T 585.76 BL 572.88
 
 field 20. messageSummary
-  label    "Hospital Name"
+  label    "21. Hospital Name"
   type     restricted
   choice   El Camino Hospital Los Gatos
   choice   El Camino Hospital Mountain View
@@ -129,161 +129,161 @@ field 20. messageSummary
   choice   Valley Medical Center
   presence required
   help     "This is the name of the hospital reporting availability.  It is required."
-  pdf      text L 169.76 R 572.44 B 529.04 T 546.88 BL 534.04
+  pdf      text L 189.76 R 550.00 B 527.12 T 545.20 BL 532.32
 
 field 22.
-  label    "Command Center Status"
+  label    "22. Command Center Status"
   type     restricted
-  choice   Available
-  choice   Drill or Exercise
-  choice   Full Activation
-  choice   Monitoring
-  choice   Not Activated
-  choice   Unavailable
-  choice   Limited Activation
+  mchoice  "Available" "a. Available"
+  mchoice  "Not Activated" "b. Not Activated"
+  mchoice  "Drill or Exercise" "c. Drill or Exercise"
+  mchoice  "Monitoring" "d. Monitoring"
+  mchoice  "Limited Activation" "e. Limited Activation"
+  mchoice  "Full Activation" "f. Full Activation"
+  mchoice  "Unavailable" "g. Unavailable"
   presence required
   help     "This indicates the status of the command center of the hospital.  It is required."
-  pdf      if 22.=Available then circle X 244.74 Y 517.68 R 3.9
-  pdf      if 22.="Not Activated" then circle X 244.74 Y 502.20 R 4
-  pdf      if 22.="Drill or Exercise" then circle X 244.74 Y 486.60 R 4
-  pdf      if 22.=Monitoring then circle X 244.74 Y 470.64 R 4
-  pdf      if 22.="Limited Activation" then circle X 390.24 Y 515.94 R 3.9
-  pdf      if 22.="Full Activation" then circle X 390.18 Y 500.94 R 3.9
-  pdf      if 22.=Unavailable then circle X 390.06 Y 485.34 R 3.9
+  pdf      if 22.=Available then            circle X 244.80 Y 514.92 R 2.72
+  pdf      if 22.="Not Activated" then      circle X 389.76 Y 514.98 R 2.84
+  pdf      if 22.="Drill or Exercise" then  circle X 244.80 Y 499.32 R 2.72
+  pdf      if 22.=Monitoring then           circle X 389.76 Y 499.38 R 2.84
+  pdf      if 22.="Limited Activation" then circle X 244.80 Y 483.72 R 2.84
+  pdf      if 22.="Full Activation" then    circle X 389.76 Y 483.78 R 2.84
+  pdf      if 22.=Unavailable then          circle X 244.80 Y 468.12 R 2.84
 
 field 41.
-  label    "Adult ICU"
+  label    "31. Adult ICU"
   type     cardinalNumber
   presence required
   width    11
   help     "This is the number of available adult beds that can support critical patients, including ventilator support.  It is required."
-  pdf      text L 195.44 R 241.84 B 410.48 T 426.64 BL 414.75
+  pdf      text L 189.76 R 252.32 B 408.80 T 424.96 BL 413.04 A rF
 
 field 52.
-  label    "Adult Telemetry Beds"
+  label    "32. Adult Telemetry Beds"
   type     cardinalNumber
   presence required
   width    11
   help     "This is the number of available adult beds equipped with telemetry monitoring.  It is required."
-  pdf      text L 195.44 R 241.84 B 389.84 T 406.00 BL 394.06
+  pdf      text L 189.76 R 252.32 B 388.16 T 404.32 BL 392.40 A rF
 
 field 43.
-  label    "Adult Medical/Surgical Beds"
+  label    "33. Adult Medical/Surgical Beds"
   type     cardinalNumber
   presence required
   width    11
   help     "This is the number of available adult medical/surgical beds, also known as ward beds.  It is required."
-  pdf      text L 195.44 R 241.84 B 369.08 T 385.36 BL 373.23
+  pdf      text L 189.76 R 252.32 B 367.52 T 383.68 BL 371.76 A rF
 
 field 46.
-  label    "Pediatric ICU Beds"
+  label    "34. Pediatric ICU Beds"
   type     cardinalNumber
   presence required
   width    11
   help     "This is the number of available pediatric beds that can support critical patients, including ventilator support.  It is required."
-  pdf      text L 195.44 R 241.84 B 348.44 T 364.60 BL 352.70
+  pdf      text L 189.76 R 252.32 B 346.88 T 363.04 BL 351.12 A rF
 
 field 53.
-  label    "Neonatal ICU Beds"
+  label    "35. Neonatal ICU Beds"
   type     cardinalNumber
   presence required
   width    11
   help     "This is the number of available neonatal intensive care unit beds.  It is required."
-  pdf      text L 195.44 R 241.84 B 327.80 T 343.96 BL 332.18
+  pdf      text L 189.76 R 252.32 B 326.24 T 342.40 BL 330.48 A rF
 
 field 54.
-  label    "Pediatric Telemetry Beds"
+  label    "36. Pediatric Telemetry Beds"
   type     cardinalNumber
   presence required
   width    11
   help     "This is the number of available pediatric beds equipped with telemetry monitoring.  It is required."
-  pdf      text L 195.44 R 241.84 B 307.16 T 323.32 BL 311.53
+  pdf      text L 189.76 R 252.32 B 305.60 T 321.76 BL 309.84 A rF
 
 field 47.
-  label    "Pediatric Medical/Surgical Beds"
+  label    "37. Pediatric Medical/Surgical Beds"
   type     cardinalNumber
   presence required
   width    11
   help     "This is the number of available pediatric medical/surgical beds, also known as ward beds.  It is required."
-  pdf      text L 195.44 R 241.84 B 286.52 T 302.68 BL 290.96
+  pdf      text L 189.76 R 252.32 B 284.96 T 301.12 BL 289.20 A rF
 
 field 42.
-  label    "Burn ICU Beds"
+  label    "38. Burn ICU Beds"
   type     cardinalNumber
   presence required
   width    11
   help     "This is the number of available burn ICU beds.  It is required.  These beds are not to be included in other ICU bed counts."
-  pdf      text L 195.44 R 241.84 B 265.88 T 282.04 BL 270.43
+  pdf      text L 189.76 R 252.32 B 264.32 T 280.48 BL 268.56 A rF
 
 field 55.
-  label    "OB/GYN Beds"
+  label    "39. OB/GYN Beds"
   type     cardinalNumber
   presence required
   width    11
   help     "This is the number of available beds used during labor, delivery, and postpartum care.  It is required."
-  pdf      text L 195.44 R 241.84 B 245.24 T 261.40 BL 249.53
+  pdf      text L 189.76 R 252.32 B 243.68 T 259.84 BL 247.92 A rF
 
 field 48.
-  label    Psychiatric
+  label    "40. Psychiatric"
   type     cardinalNumber
   presence required
   width    11
   help     "This is the number of available psychiatric unit beds (ward beds on a closed/locked unit with a sitter).  It is required."
-  pdf      text L 195.44 R 241.84 B 224.60 T 240.76 BL 228.92
+  pdf      text L 189.76 R 252.32 B 223.04 T 239.20 BL 227.28 A rF
 
 field 56.
-  label    TOTAL
+  label    "41. TOTAL"
   type     cardinalNumber
   presence required
   width    11
   help     "This is the total number of available beds In the above categories.  It is required."
-  pdf      text L 195.44 R 241.84 B 203.96 T 220.12 BL 208.18
+  pdf      text L 189.76 R 252.32 B 202.40 T 218.56 BL 206.64 A rF
 
 field 45.
-  label    "Operating Room Beds"
+  label    "42. Operating Room Beds"
   type     cardinalNumber
   presence required
   width    11
   help     "This is the number of available operating room beds.  It is required."
-  pdf      text L 195.44 R 241.84 B 183.32 T 199.48 BL 187.70
+  pdf      text L 189.76 R 252.32 B 181.76 T 197.92 BL 186.00 A rF
 
 field 44.
-  label    "Isolation Beds"
+  label    "43. Isolation Beds"
   type     cardinalNumber
   presence required
   width    11
   help     "This is the number of available isolation unit beds.  It is required."
-  pdf      text L 195.44 R 241.84 B 162.68 T 178.84 BL 167.04
+  pdf      text L 189.76 R 252.32 B 160.88 T 177.28 BL 165.12 A rF
 
 field 50.
-  label    "Ventilator Beds"
+  label    "44. Ventilator Beds"
   type     cardinalNumber
   presence required
   width    11
   help     "This is the number of available ventilator-equipped beds.  It is required."
-  pdf      text L 195.44 R 241.84 B 142.04 T 158.20 BL 146.28
+  pdf      text L 189.76 R 252.32 B 140.24 T 156.40 BL 144.48 A rF
 
 field OpRelayRcvd
   label    "Operator: Relay Received"
   width    36
   help     "This is the name of the station from which this message was directly received.  It is filled in for messages that go through a relay station."
-  pdf      text L 110.20 R 321.76 B  88.16 T 102.52 BL 91.53
+  pdf      text L 108.08 R 308.32 B  86.48 T 100.96 BL 90.00
 
 field OpRelaySent
   label    "Operator: Relay Sent"
   width    36
   help     "This is the name of the station to which this message was directly sent.  It is filled in for messages that go through a relay station."
-  pdf      text L 356.32 R 573.76 B  88.16 T 102.52 BL 91.53
+  pdf      text L 340.64 R 551.20 B  86.48 T 100.96 BL 90.00
 
 field OpName operatorName
   label    "Operator: Name"
   presence required
-  pdf      text L  74.68 R 249.76 B  69.32 T  83.68 BL 72.64
+  pdf      text L  72.80 R 227.20 B  67.52 T  82.00 BL 71.04
 
 field OpCall operatorCall
   label    "Operator: Call Sign"
   presence required
-  pdf      text L 302.32 R 366.28 B  69.20 T  83.68 BL 72.64
+  pdf      text L 277.40 R 357.76 B  67.52 T  82.00 BL 71.04
 
 field -
   label    Operator
@@ -293,12 +293,12 @@ field -
 field OpDate operatorDate
   label    "Operator: Date"
   type     date
-  pdf      text L 402.16 R 473.80 B  69.20 T  83.68 BL 72.64
+  pdf      text L 391.28 R 443.20 B  67.52 T  82.00 BL 71.04
 
 field OpTime operatorTime
   label    "Operator: Time"
   type     time
-  pdf      text L 538.96 R 573.28 B  69.20 T  83.68 BL 72.64
+  pdf      text L 505.28 R 551.20 B  67.52 T  82.00 BL 71.04
 
 field -
   label    "Operator: Date/Time"
@@ -306,5 +306,5 @@ field -
   children OpDate OpTime
 
 field -
-  pdf      box L 36 W 91.47 T 46.51 H 10.27 F FFFFFF
-  pdf      box L 526.68 W 60.58 T 46.51 H 10.27 F FFFFFF
+  pdf      box L  34.80 R 119.04 B  36.84 T  47.16 F FFFFFF
+  pdf      box L 524.40 R 574.80 B  36.60 T  47.04 F FFFFFF
