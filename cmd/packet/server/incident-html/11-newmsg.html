@@ -8,7 +8,7 @@
     let keyPrefix = ''
     let newmsgwin = 1
     function startNewMessage(tag) {
-      const params = new URLSearchParams({dir: '{{DIR}}', tag: tag})
+      const params = new URLSearchParams({dir: document.body.dataset.dir, tag: tag})
       window.open('/new-message?' + params.toString(), `new${newmsgwin++}`)
       document.getElementById('nmdlg').close()
     }

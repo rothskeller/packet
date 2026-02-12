@@ -102,15 +102,20 @@ func RenderPlainPDF(m Message, filename, copyname string) (err error) {
 	for body != "" {
 		t := pdf.Text{String: body, Page: page, Rectangle: avail, Font: bodyFont, FontSize: bodyFontSize, Align: "lt", Wrap: true, Clip: true}
 		fits, overflow, _, w := t.WrapText()
-		if w != nil {
-			etr := w.(pdf.ErrTextRendering)
-			warnings.Merge(etr)
+		switch w := w.(type) {
+		case nil: // nothing
+		case pdf.ErrTextRendering:
+			w.DoesntFitY = false // we'll wrap to another page
+			warnings.Merge(w)
+		default:
+			return w
 		}
 		t.String = fits
 		t.Draw(ph)
 		if body = overflow; body != "" {
 			ph.AddPage(pdf.USLetterPortrait)
 			page++
+			avail = pdf.USLetterPortrait
 			avail.LLX, avail.LLY = avail.LLX+margin, avail.LLY+margin
 			avail.URX, avail.URY = avail.URX-margin, avail.URY-margin
 			avail.LLY += 2 * footerFontSize
@@ -126,7 +131,10 @@ func RenderPlainPDF(m Message, filename, copyname string) (err error) {
 	if err = fh.Close(); err != nil {
 		return err
 	}
-	return warnings.AsError()
+	if w := warnings.AsError(); w != nil {
+		return Warning{w}
+	}
+	return nil
 }
 
 // RenderPDFFooters writes a footer on every page of the PDF with a message ID,

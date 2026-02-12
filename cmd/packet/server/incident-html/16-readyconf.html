@@ -6,7 +6,7 @@
     function setupReadyConfirmDialog() {
       document.getElementById('rcsub').addEventListener('click', async () => {
         const dlg = document.getElementById('rcdlg')
-        const params = new URLSearchParams({dir: '{{DIR}}', id: dlg.dataset.ident, force: 'true'})
+        const params = new URLSearchParams({dir: document.body.dataset.dir, id: dlg.dataset.ident, force: 'true'})
         if (dlg.dataset.next === 'manual') {
           const resp = await fetch('/manual-send-command?' + params.toString())
           dlg.close()

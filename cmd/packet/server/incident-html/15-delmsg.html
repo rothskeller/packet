@@ -5,7 +5,7 @@
   <script> // Delete Message Dialog
     function setupDeleteMessageDialog() {
       document.getElementById('dmsub').addEventListener('click', async () => {
-        const params = new URLSearchParams({dir: '{{DIR}}', id: document.getElementById('dmdlg').dataset.ident})
+        const params = new URLSearchParams({dir: document.body.dataset.dir, id: document.getElementById('dmdlg').dataset.ident})
         const resp = await fetch('/delete-message?' + params.toString(), {method: 'POST'})
         document.getElementById('dmdlg').close()
         if (!resp.ok) openErrorDialog('Delete Message', await resp.text())

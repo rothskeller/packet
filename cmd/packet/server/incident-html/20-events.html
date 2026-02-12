@@ -15,14 +15,14 @@
       }
       item.select()
       if (action === 'manual-send') {
-        const params = new URLSearchParams({ dir: '{{DIR}}', id: ident })
+        const params = new URLSearchParams({ dir: document.body.dataset.dir, id: ident })
         const resp = await fetch('/manual-send-command?' + params.toString())
         if (resp.status === 409) openReadyConfirmDialog(item, await resp.text(), 'manual')
         else if (!resp.ok) openErrorDialog('Manual Send Error', await resp.text())
         else openManualSendDialog(ident, await resp.text())
       }
       if (action === 'edit') {
-        const params = new URLSearchParams({ dir: '{{DIR}}', id: ident })
+        const params = new URLSearchParams({ dir: document.body.dataset.dir, id: ident })
         window.open('/edit-message?' + params.toString(), `edit${ident}`)
       }
     }
@@ -71,7 +71,7 @@
       setupMenuItem({
         id: 'm-inc-new', cid: 'm-inc-open',
         clicked: () => {
-          const params = new URLSearchParams({ return: '{{DIR}}' })
+          const params = new URLSearchParams({ return: document.body.dataset.dir })
           location.href = '/incident-open?' + params.toString()
         },
       })
@@ -79,7 +79,7 @@
       setupMenuItem({
         id: 'm-inc-settings',
         clicked: () => {
-          const params = new URLSearchParams({ dir: '{{DIR}}' })
+          const params = new URLSearchParams({ dir: document.body.dataset.dir })
           location.href = '/incident-config?' + params.toString()
         },
       })
@@ -111,7 +111,7 @@
         id: 'm-msg-view', cid: 'cm-msg-view',
         shown: sel => sel.st === 'R' || sel.st === 'S',
         clicked: sel => {
-          const params = new URLSearchParams({ dir: '{{DIR}}', id: sel.ident })
+          const params = new URLSearchParams({ dir: document.body.dataset.dir, id: sel.ident })
           window.open('/view-message?' + params.toString(), `view${sel.ident}`)
         }
       })
@@ -120,7 +120,7 @@
         id: 'm-msg-man-send', cid: 'cm-msg-man-send',
         shown: sel => manualMode && (sel.st === 'D' || sel.st === 'Q'),
         clicked: async sel => {
-          const params = new URLSearchParams({ dir: '{{DIR}}', id: sel.ident })
+          const params = new URLSearchParams({ dir: document.body.dataset.dir, id: sel.ident })
           const resp = await fetch('/manual-send-command?' + params.toString())
           if (resp.status === 409) openReadyConfirmDialog(sel, await resp.text(), 'manual')
           else if (!resp.ok) openErrorDialog('Manual Send Error', await resp.text())
@@ -132,7 +132,7 @@
         id: 'm-msg-man-rcpt', cid: 'cm-msg-man-rcpt',
         shown: sel => manualMode && sel.st === 'R',
         clicked: async sel => {
-          const params = new URLSearchParams({ dir: '{{DIR}}', id: sel.ident })
+          const params = new URLSearchParams({ dir: document.body.dataset.dir, id: sel.ident })
           const resp = await fetch('/make-receipt?' + params.toString(), { method: 'POST' })
           if (resp.ok)
             childAction(resp.headers.get('X-Packet-Action'))
@@ -145,7 +145,7 @@
         id: 'm-msg-print', cid: 'cm-msg-print',
         shown: sel => sel.st !== 'H',
         clicked: sel => {
-          const params = new URLSearchParams({ dir: '{{DIR}}', id: sel.ident })
+          const params = new URLSearchParams({ dir: document.body.dataset.dir, id: sel.ident })
           if (serverCanPrint) {
             fetch('/print-message?' + params.toString(), { method: 'POST' })
           } else {
@@ -159,7 +159,7 @@
         id: 'm-msg-edit', cid: 'cm-msg-edit',
         shown: sel => sel.st === 'D' || sel.st === 'Q',
         clicked: sel => {
-          const params = new URLSearchParams({ dir: '{{DIR}}', id: sel.ident })
+          const params = new URLSearchParams({ dir: document.body.dataset.dir, id: sel.ident })
           window.open('/edit-message?' + params.toString(), `edit${sel.ident}`)
         }
       })
@@ -174,7 +174,7 @@
         id: 'm-msg-resend', cid: 'cm-msg-resend',
         shown: sel => sel.st === 'S',
         clicked: async sel => {
-          const params = new URLSearchParams({ dir: '{{DIR}}', id: sel.ident, action: 'resend' })
+          const params = new URLSearchParams({ dir: document.body.dataset.dir, id: sel.ident, action: 'resend' })
           const resp = await fetch('/new-message-from?' + params.toString(), { method: 'POST' })
           if (!resp.ok) openErrorDialog('Send Copy', await resp.text())
           else childAction(resp.headers.get('X-Packet-Action'))
@@ -185,7 +185,7 @@
         id: 'm-msg-send-copy', cid: 'cm-msg-send-copy',
         shown: sel => sel.st === 'R' || sel.st === 'S',
         clicked: async sel => {
-          const params = new URLSearchParams({ dir: '{{DIR}}', id: sel.ident, action: 'copy' })
+          const params = new URLSearchParams({ dir: document.body.dataset.dir, id: sel.ident, action: 'copy' })
           const resp = await fetch('/new-message-from?' + params.toString(), { method: 'POST' })
           if (!resp.ok) openErrorDialog('Send Copy', await resp.text())
           else childAction(resp.headers.get('X-Packet-Action'))
@@ -196,7 +196,7 @@
         id: 'm-msg-reply', cid: 'cm-msg-reply',
         shown: sel => sel.st === 'R',
         clicked: async sel => {
-          const params = new URLSearchParams({ dir: '{{DIR}}', id: sel.ident, action: 'reply' })
+          const params = new URLSearchParams({ dir: document.body.dataset.dir, id: sel.ident, action: 'reply' })
           const resp = await fetch('/new-message-from?' + params.toString(), { method: 'POST' })
           if (!resp.ok) openErrorDialog('Send Copy', await resp.text())
           else childAction(resp.headers.get('X-Packet-Action'))
@@ -211,7 +211,7 @@
             openDeleteMessageDialog(sel)
             return
           }
-          const params = new URLSearchParams({ dir: '{{DIR}}', id: sel.ident })
+          const params = new URLSearchParams({ dir: document.body.dataset.dir, id: sel.ident })
           const resp = await fetch('/delete-log-entry?' + params.toString(), { method: 'POST' })
           if (!resp.ok) openErrorDialog('Delete Log Entry', await resp.text())
         },
@@ -222,7 +222,7 @@
         shown: sel => sel.st === 'D' || sel.st === 'Q',
         checked: sel => sel.st === 'Q',
         clicked: async sel => {
-          const params = new URLSearchParams({ dir: '{{DIR}}', id: sel.ident, flag: 'Q' })
+          const params = new URLSearchParams({ dir: document.body.dataset.dir, id: sel.ident, flag: 'Q' })
           const resp = await fetch('/toggle-flag?' + params.toString(), { method: 'POST' })
           if (!resp.ok) openErrorDialog('Toggle Ready-to-Send Flag', await resp.text())
           else if (resp.status !== 204) openReadyConfirmDialog(sel, await resp.text(), 'ready')
@@ -234,7 +234,7 @@
         shown: () => true,
         checked: sel => sel.f.includes('F'),
         clicked: async sel => {
-          const params = new URLSearchParams({ dir: '{{DIR}}', id: sel.ident, flag: 'F' })
+          const params = new URLSearchParams({ dir: document.body.dataset.dir, id: sel.ident, flag: 'F' })
           const resp = await fetch('/toggle-flag?' + params.toString(), { method: 'POST' })
           if (!resp.ok) openErrorDialog('Toggle Needs Follow-Up Flag', await resp.text())
         },
@@ -245,7 +245,7 @@
         shown: sel => sel.st === 'S' && !sel.f.includes('+') && !sel.f.includes('R'),
         checked: sel => sel.f.includes('-'),
         clicked: async sel => {
-          const params = new URLSearchParams({ dir: '{{DIR}}', id: sel.ident, flag: '-' })
+          const params = new URLSearchParams({ dir: document.body.dataset.dir, id: sel.ident, flag: '-' })
           const resp = await fetch('/toggle-flag?' + params.toString(), { method: 'POST' })
           if (!resp.ok) openErrorDialog('Toggle Needs Receipt Flag', await resp.text())
         },
@@ -275,22 +275,28 @@
       setupMenuItem({
         id: 'm-conn-sr',
         clicked: async () => {
-          const params = new URLSearchParams({ dir: '{{DIR}}' })
+          const params = new URLSearchParams({ dir: document.body.dataset.dir })
           await fetch('/connect-bbs?' + params.toString(), { method: 'POST' })
-          watchConnection('{{DIR}}')
+          watchConnection(document.body.dataset.dir)
         }
       })
       // Connect: Immediates Only
       setupMenuItem({
         id: 'm-conn-immed',
         clicked: async () => {
-          const params = new URLSearchParams({ dir: '{{DIR}}', immOnly: 'true' })
+          const params = new URLSearchParams({ dir: document.body.dataset.dir, immOnly: 'true' })
           await fetch('/connect-bbs?' + params.toString(), { method: 'POST' })
-          watchConnection('{{DIR}}')
+          watchConnection(document.body.dataset.dir)
         }
       })
-      // TODO:
       // Connect: Abort Connection
+      setupMenuItem({
+        id: 'm-conn-abort',
+        clicked: async () => {
+          const params = new URLSearchParams({ dir: document.body.dataset.dir })
+          fetch('/connect-abort?' + params.toString(), { method: 'POST' })
+        }
+      })
       // TODO:
       // Help: Software Manual
       setupMenuItem({

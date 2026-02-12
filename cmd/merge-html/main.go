@@ -86,6 +86,7 @@ func extractFromHead(head *html.Node) {
 func extractFromBody(body *html.Node) {
 	var next *html.Node
 
+	bodies.Attr = append(bodies.Attr, body.Attr...)
 	for c := body.FirstChild; c != nil; c = next {
 		next = c.NextSibling
 		if c.Type == html.ElementNode && c.DataAtom == atom.Script {

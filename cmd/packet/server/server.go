@@ -239,12 +239,12 @@ func (s *Server) watchForStopFile() {
 	)
 	if watcher, err = fsnotify.NewWatcher(); err != nil {
 		slog.Error("fsnotify.NewWatcher", "err", err)
-		s.stop <- struct{}{}
+		close(s.stop)
 		return
 	}
 	if err = watcher.Add(filepath.Dir(osdep.ServerStopFile)); err != nil {
 		slog.Error("watcher.Add", "f", osdep.ServerStopFile, "err", err)
-		s.stop <- struct{}{}
+		close(s.stop)
 		return
 	}
 	for {
@@ -254,11 +254,11 @@ func (s *Server) watchForStopFile() {
 				break
 			}
 			slog.Info("stopping server: stop file modtime has changed")
-			s.stop <- struct{}{}
+			close(s.stop)
 			return
 		case err := <-watcher.Errors:
 			slog.Error("watcher.Error", "err", err)
-			s.stop <- struct{}{}
+			close(s.stop)
 			return
 		}
 	}
@@ -272,7 +272,7 @@ func (s *Server) watchForInterrupt() {
 	signal.Notify(ch, os.Interrupt)
 	<-ch
 	slog.Info("stopping server: interrupt signal")
-	s.stop <- struct{}{}
+	close(s.stop)
 }
 
 // watchForIdleTimeout watches for an idle timeout, and stops the server when it
@@ -280,7 +280,7 @@ func (s *Server) watchForInterrupt() {
 func (s *Server) watchForIdleTimeout() {
 	<-s.idleTimer.C
 	slog.Info("stopping server: inactivity timeout")
-	s.stop <- struct{}{}
+	close(s.stop)
 }
 
 // handleRequest handles a web request to the server.
@@ -306,7 +306,7 @@ func (s *Server) handleRequest(w http.ResponseWriter, r *http.Request) {
 // handleStop handles the POST /stop request by stopping the server.
 func (s *Server) handleStop(w http.ResponseWriter, r *http.Request) {
 	slog.Info("stopping server: received POST /stop")
-	s.stop <- struct{}{}
+	close(s.stop)
 }
 
 // registerHandlers registers the server handlers.
@@ -342,6 +342,7 @@ func (s *Server) registerHandlers() {
 	s.mux.HandleFunc("/incident-open", s.serveIncidentOpen)
 	s.mux.HandleFunc("GET /county-seal.svg", s.serveGetCountySeal)
 	s.mux.HandleFunc("POST /connect-bbs", s.servePostConnectBBS)
+	s.mux.HandleFunc("POST /connect-abort", s.servePostConnectAbort)
 	s.mux.HandleFunc("GET /connect-progress", s.serveGetConnectProgress)
 	s.mux.HandleFunc("GET /{$}", func(w http.ResponseWriter, r *http.Request) {
 		http.Redirect(w, r, "/incident-open", http.StatusSeeOther)

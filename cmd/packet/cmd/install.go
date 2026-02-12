@@ -126,7 +126,6 @@ func stopServers() {
 	if stopOldServer(pifoExe, "server", "stop") ||
 		stopOldServer(oldPackItForms1, "stop") ||
 		stopOldServer(oldPackItForms2, "stop") {
-		time.Sleep(2 * time.Second)
 	}
 }
 
@@ -171,8 +170,14 @@ func installExecutables() (err error) {
 	// Unconditionally copy our own executable to pifo.exe and mark it to
 	// be a GUI app.  (This is a bit kludgey, but it saves us having to
 	// deliver two large executables that differ by a single byte.)
-	if err = copyFile(selfFile, pifoExe); err != nil {
-		return fmt.Errorf("can't install %s: %s", pifoExe, err)
+	for range 10 {
+		if err = copyFile(selfFile, pifoExe); err == nil {
+			break
+		}
+		time.Sleep(time.Second)
+	}
+	if err != nil {
+		return fmt.Errorf("can't install %s (10 retries): %s", pifoExe, err)
 	}
 	if err = makeGUI(pifoExe); err != nil {
 		os.Remove(pifoExe)

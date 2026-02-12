@@ -86,10 +86,11 @@
 
     log-grid {
       display: grid;
-      grid: auto-flow / repeat(calc(var(--columns) - 2), max-content) 1fr max-content;
+      grid: auto-flow max-content / repeat(calc(var(--columns) - 2), max-content) 1fr max-content;
       margin: calc(-1 * var(--border-width)) 0 0 var(--border-width);
       overflow-y: auto;
       align-content: start;
+      user-select: none;
     }
 
     #full-header,

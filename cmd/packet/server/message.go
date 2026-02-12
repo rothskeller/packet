@@ -221,6 +221,8 @@ func addressIsBulletin(addr *address.Address) bool {
 	return false
 }
 
+var errNoNeedToWrite = errors.New("abort write of Incident due to no change")
+
 func (s *Server) serveGetViewMessage(w http.ResponseWriter, r *http.Request) {
 	var (
 		dir   string
@@ -232,7 +234,7 @@ func (s *Server) serveGetViewMessage(w http.ResponseWriter, r *http.Request) {
 	)
 	dir = r.FormValue("dir")
 	ident, _ = strconv.Atoi(r.FormValue("id"))
-	err = incident.Read(dir, func(i *incident.Incident) (err error) {
+	err = incident.Write(dir, func(i *incident.Incident) (err error) {
 		if le := i.GetLogEntryByIdent(ident); le == nil {
 			slog.Error("no such message", "dir", dir, "id", ident)
 			return fmt.Errorf(" The message with ID %d was not found.", ident)
@@ -243,10 +245,16 @@ func (s *Server) serveGetViewMessage(w http.ResponseWriter, r *http.Request) {
 			return fmt.Errorf(" The message with ID %d was not found.", ident)
 		} else {
 			pdf = incident.ToPDF(le.Filename())
-			return nil
+			if le.Flags&incident.FUnread != 0 {
+				le.Flags &^= incident.FUnread
+				le.Seq = i.Seq
+				return nil
+			} else {
+				return errNoNeedToWrite
+			}
 		}
 	})
-	if err != nil {
+	if err != nil && err != errNoNeedToWrite {
 		ErrPage(w, err.Error(), http.StatusInternalServerError)
 		return
 	}

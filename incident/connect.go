@@ -8,6 +8,7 @@ import (
 	"os"
 	"path/filepath"
 	"regexp"
+	"runtime/debug"
 	"strings"
 	"sync"
 	"time"
@@ -39,6 +40,17 @@ func BBSExchange(ctx context.Context, dir string, immOnly bool, updates BBSExcha
 		done     bool
 		err      error
 	)
+	defer func() {
+		if p := recover(); p != nil {
+			slog.Error("panic in BBSExchange", "err", p, "stack", string(debug.Stack()))
+			updates.Error("A software error occurred.  See log file for details.")
+			if e.conn != nil {
+				e.progress("Closing connection...")
+				e.conn.Close()
+			}
+			updates.Finished()
+		}
+	}()
 	e.dir, e.immOnly, e.updates = dir, immOnly, updates
 	// Read the incident configuration.
 	if err := Read(dir, func(i *Incident) error {
@@ -124,6 +136,7 @@ func BBSExchange(ctx context.Context, dir string, immOnly bool, updates BBSExcha
 	if err2 := e.conn.Close(); err2 != nil && err == nil {
 		updates.Error(err2.Error())
 	}
+	e.conn = nil
 	updates.Finished()
 }
 
@@ -372,10 +385,10 @@ func (e *exchange) readIndex(index int) (err error) {
 		}
 		return nil
 	})
-	if e.area == "" {
+	if err == nil && e.area == "" {
 		e.tokill = index
 	}
-	return nil
+	return err
 }
 
 func (e *exchange) switchArea() (done bool, err error) {

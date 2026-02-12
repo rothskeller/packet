@@ -109,7 +109,9 @@ func replaceLink(to, from string) (err error) {
 	}
 	if err = os.Symlink(to, from); err != nil {
 		slog.Error("os.Symlink", "from", from, "to", to, "err", err)
-		return err
+		// Errors creating symoblic links are logged but do not cause
+		// an abort.  On Windows, base users do not have permission to
+		// create symlinks.
 	}
 	return nil
 }

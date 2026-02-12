@@ -43,6 +43,19 @@ func (s *Server) servePostConnectBBS(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusNoContent)
 }
 
+// servePostConnectAbort handles POST /connect-abort requests, which has a dir=
+// parameter identifying the incident whose connection should be aborted.  It
+// always returns 204.
+func (s *Server) servePostConnectAbort(w http.ResponseWriter, r *http.Request) {
+	var dir = r.FormValue("dir")
+	bbsConnectionsMutex.Lock()
+	if bbsConnections[dir] != nil {
+		bbsConnections[dir].cancel()
+	}
+	bbsConnectionsMutex.Unlock()
+	w.WriteHeader(http.StatusNoContent)
+}
+
 // serveGetConnectProgress handles GET /connect-progress requests, which have a
 // dir= parameter identifying the incident owning the connection and a seq=
 // parameter indicating the sequence number of the last update received.  This
@@ -75,6 +88,8 @@ RESTART:
 	bbsConnectionsMutex.Unlock()
 	if notify != nil {
 		select {
+		case <-s.stop:
+			return
 		case <-r.Context().Done():
 			return
 		case <-notify:

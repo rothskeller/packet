@@ -65,10 +65,12 @@ extension.
 
 ## Message Links
 
-If a message has discernable remote message IDs, symbolic links are created
-from "${RMI}.txt" to "${LMI}.txt" and "${RMI}.pdf" to "${LMI}.pdf". If there
-is a conflict between an RMI and any LMI, the LMI takes precedence and the
-symbolic links that would conflict are not created.
+If a message has discernable remote message IDs, symbolic links are created from
+"${RMI}.txt" to "${LMI}.txt" and "${RMI}.pdf" to "${LMI}.pdf".  If there is a
+conflict between an RMI and any LMI, the LMI takes precedence and the symbolic
+links that would conflict are not created.  Errors creating the symbolic links
+are ignored (such as on Windows systems without base user permissions to create
+symbolic links).
 
 ## ICS-309 Log
 

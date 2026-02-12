@@ -5,7 +5,7 @@
   <script> // Edit Log Entry Dialog
     function setupEditLogEntryDialog() {
       document.getElementById('eledel').addEventListener('click', async () => {
-        const params = new URLSearchParams({dir: '{{DIR}}', id: document.getElementById('eleid').value})
+        const params = new URLSearchParams({dir: document.body.dataset.dir, id: document.getElementById('eleid').value})
         const resp = await fetch('/delete-log-entry?' + params.toString(), {method: 'POST'})
         if (resp.ok)
           document.getElementById('eledlg').close()
@@ -13,7 +13,7 @@
           document.getElementById('eleerr').textContent = await resp.text()
       })
       document.getElementById('elereset').addEventListener('click', async () => {
-        const params = new URLSearchParams({dir: '{{DIR}}', id: document.getElementById('eleid').value})
+        const params = new URLSearchParams({dir: document.body.dataset.dir, id: document.getElementById('eleid').value})
         const resp = await fetch('/reset-log-entry?' + params.toString(), {method: 'POST'})
         if (resp.ok)
           document.getElementById('eledlg').close()

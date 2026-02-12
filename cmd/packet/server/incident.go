@@ -117,7 +117,7 @@ func (s *Server) serveGetIncidentLog(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "seq is missing or invalid", http.StatusBadRequest)
 		return
 	}
-	if err = incident.Watch(r.Context(), dir, seq); err == context.Canceled {
+	if err = incident.Watch(r.Context(), dir, seq, s.stop); err == context.Canceled {
 		return
 	} else if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)

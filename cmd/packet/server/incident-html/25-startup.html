@@ -7,7 +7,7 @@
     async function fetchData() {
       while (true) {
         try {
-          const params = new URLSearchParams({ dir: '{{DIR}}', seq: currentSeq })
+          const params = new URLSearchParams({ dir: document.body.dataset.dir, seq: currentSeq })
           const url = '/incident/log?' + params.toString()
           const resp = await fetch(url)
           if (!resp.ok) throw new Error(resp.statusText)

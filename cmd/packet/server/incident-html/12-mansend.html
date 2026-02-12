@@ -12,7 +12,7 @@
         document.getElementById('msdlg').close()
       })
       document.getElementById('mssent').addEventListener('click', async () => {
-        const params = new URLSearchParams({dir: '{{DIR}}', id: document.getElementById('msdlg').dataset.ident})
+        const params = new URLSearchParams({dir: document.body.dataset.dir, id: document.getElementById('msdlg').dataset.ident})
         try {
           await fetch('/mark-sent?' + params.toString(), {method: 'POST'})
           document.getElementById('msdlg').close()

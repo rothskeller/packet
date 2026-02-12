@@ -28,14 +28,15 @@ var (
 
 // NewDeliveryReceipt creates a new delivery receipt message (in draft state)
 // with the specified parameters.  It returns an error if the parameters are
-// invalid.  rmTo is the destination address for the message being receipted.
-// rmSubject is the encoded subject line of the message being receipted.  lmi
-// is the message ID that we have assigned to the message being receipted (the
-// "local message ID").  deliveryTime is the time that the message being
-// receipted was delivered to us.  extraText is free-form text to be added to
-// the end of the receipt message body.  (This is rarely used since Outpost
-// users will never see it.)
-func NewDeliveryReceipt(rmTo, rmSubject, lmi string, deliveryTime time.Time, extraText string) (m *message.DraftMessage, err error) {
+// invalid.  rmFrom is the from address for the message being receipted.  rmTo
+// is the destination address for the message being receipted.  rmSubject is the
+// encoded subject line of the message being receipted.  lmi is the message ID
+// that we have assigned to the message being receipted (the "local message
+// ID").  deliveryTime is the time that the message being receipted was
+// delivered to us.  extraText is free-form text to be added to the end of the
+// receipt message body.  (This is rarely used since Outpost users will never
+// see it.)
+func NewDeliveryReceipt(rmFrom, rmTo, rmSubject, lmi string, deliveryTime time.Time, extraText string) (m *message.DraftMessage, err error) {
 	var (
 		subj *subject.PlainSubject
 		body *DeliveryReceiptBody
@@ -45,7 +46,7 @@ func NewDeliveryReceipt(rmTo, rmSubject, lmi string, deliveryTime time.Time, ext
 		return nil, err
 	}
 	m = message.NewDraftMessage(DeliveryReceipt, subj, payload.NewOutpostPayload(body), false)
-	m.SetTo(rmTo)
+	m.SetTo(rmFrom)
 	m.SetReadyToSend(true)
 	return m, nil
 }

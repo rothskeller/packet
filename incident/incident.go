@@ -253,10 +253,10 @@ func Write(dir string, fn func(*Incident) error) (err error) {
 }
 
 // Watch monitors the incident in the named directory for changes.  It returns
-// nil when a change is observed or a context error when the supplied context
-// is canceled.  If seq is less than the current sequence number of the
-// incident, Watch returns nil immediately.
-func Watch(ctx context.Context, dir string, seq int) (err error) {
+// nil when a change is observed or the stop channel (if any) is closed, and a
+// context error when the supplied context is canceled.  If seq is less than the
+// current sequence number of the incident, Watch returns nil immediately.
+func Watch(ctx context.Context, dir string, seq int, stop <-chan struct{}) (err error) {
 	var (
 		lockFile string
 		lockFH   *os.File
@@ -313,6 +313,8 @@ func Watch(ctx context.Context, dir string, seq int) (err error) {
 	// Wait for the channel to be closed, indicating a write, or for the
 	// supplied context to be canceled.
 	select {
+	case <-stop:
+		return nil
 	case <-ch:
 		return nil
 	case <-ctx.Done():
