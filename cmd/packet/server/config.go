@@ -34,6 +34,9 @@ func (s *Server) serveGetIncidentConfig(w http.ResponseWriter, r *http.Request) 
 		variables = make(map[string]string)
 		form      = make(url.Values)
 	)
+	if maybeShowREADME(w, r) {
+		return
+	}
 	defs = incident.GetIncDefaults()
 	err = incident.Read(r.FormValue("dir"), func(inc *incident.Incident) error {
 		form.Set("dir", inc.Dir)

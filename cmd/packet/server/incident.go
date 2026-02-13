@@ -40,6 +40,9 @@ func (s *Server) serveGetIncident(w http.ResponseWriter, r *http.Request) {
 		err  error
 		vars = map[string]string{}
 	)
+	if maybeShowREADME(w, r) {
+		return
+	}
 	if dir = r.FormValue("dir"); dir == "" {
 		ErrPage(w, "The GET /incident request is missing the required dir= parameter.", http.StatusBadRequest)
 		return

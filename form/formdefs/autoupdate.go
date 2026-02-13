@@ -3,8 +3,12 @@ package formdefs
 import (
 	"archive/zip"
 	"context"
+	"crypto"
+	"crypto/ed25519"
+	"crypto/sha512"
 	"encoding/json"
 	"fmt"
+	"hash"
 	"io"
 	"log/slog"
 	"net/http"
@@ -29,11 +33,11 @@ type updateInfo struct {
 	LastCheck       time.Time `json:"lastCheck,omitempty"`
 }
 
-// CheckForUpdates fetches new versions of the form bundles from the Internet
-// if appropriate and possible.  If force is true, checks are performed even if
-// they've been done recently.  If readme is true, any README.html file in a
-// new bundle is propagated to the root of the forms directory, which will
-// cause it to be displayed next time there's an appropriate server request.
+// CheckForUpdates fetches new versions of the form bundles from the Internet if
+// appropriate and possible.  If force is true, checks are performed even if
+// they've been done recently.  If readme is true, any README.txt file in a new
+// bundle is propagated to the root of the forms directory, which will cause it
+// to be displayed next time there's an appropriate server request.
 func CheckForUpdates(force, readme bool) (err error) {
 	var (
 		formsDir string
@@ -63,17 +67,17 @@ func CheckForUpdates(force, readme bool) (err error) {
 // checkForBundleUpdate conditionally fetches an update of the specified form
 // bundle.  If force is true, the check is unconditional, otherwise it is
 // checked only if it hasn't recently been checked.  If readme is true, and a
-// new bundle is installed, any README.html file in the new bundle is merged
-// into the README.html file in the root of the forms directory.
+// new bundle is installed, any README.txt file in the new bundle is merged into
+// the README.txt file in the root of the forms directory.
 func checkForBundleUpdate(formsDir, bundle string, force, readme bool) (err error) {
 	var (
-		bundleDir string
-		uiFile    string
-		ui        *updateInfo
-		zipFName  string
-		zipFH     *os.File
-		zipSize   int64
-		bundleNew string
+		bundleDir   string
+		uiFile      string
+		ui          *updateInfo
+		bundleFName string
+		bundleFH    *os.File
+		bundleSize  int64
+		bundleNew   string
 	)
 	// Get the update info for the bundle and determine whether we should
 	// do an update.
@@ -89,18 +93,18 @@ func checkForBundleUpdate(formsDir, bundle string, force, readme bool) (err erro
 		return nil
 	}
 	// Fetch the update, if there is one.
-	zipFName = bundleDir + ".zip"
-	if zipFH, zipSize, err = fetchUpdate(zipFName, ui); err != nil {
+	bundleFName = bundleDir + ".forms"
+	if bundleFH, bundleSize, err = fetchUpdate(bundleFName, ui); err != nil {
 		return err
-	} else if zipFH == nil {
+	} else if bundleFH == nil {
 		slog.Debug("not updating bundle", "b", bundle, "r", "no update available")
 		goto CHECKED
 	}
-	defer os.Remove(zipFName)
-	defer zipFH.Close()
+	defer os.Remove(bundleFName)
+	defer bundleFH.Close()
 	// Unpack the zip file.
 	bundleNew = bundleDir + ".new"
-	if err = unpackZip(zipFH, zipSize, bundleNew); err != nil {
+	if err = unpackBundle(bundleFH, bundleSize, bundleNew); err != nil {
 		return err
 	}
 	// Remove the old bundle and move the new one into place.
@@ -117,7 +121,7 @@ func checkForBundleUpdate(formsDir, bundle string, force, readme bool) (err erro
 	if ui2, err := readUpdateInfo(uiFile); err == nil && ui2 != nil {
 		ui.URL = ui2.URL
 	}
-	// The new bundle may have a README.html.  Check for that.
+	// The new bundle may have a README.txt.  Check for that.
 	if readme {
 		if err = propagateReadme(bundleDir, formsDir); err != nil {
 			return err
@@ -129,8 +133,8 @@ CHECKED:
 	return writeUpdateInfo(ui, uiFile)
 }
 
-// propagateReadme takes the contents of the README.html in the bundle dir, if
-// any, and appends them to the README.html in the formsDir, creating it if
+// propagateReadme takes the contents of the README.txt in the bundle dir, if
+// any, and appends them to the README.txt in the formsDir, creating it if
 // needed.
 func propagateReadme(bundleDir, formsDir string) (err error) {
 	var (
@@ -139,7 +143,7 @@ func propagateReadme(bundleDir, formsDir string) (err error) {
 		fh       *os.File
 	)
 	// Read the README from the bundle dir.
-	filename = filepath.Join(bundleDir, "README.html")
+	filename = filepath.Join(bundleDir, "README.txt")
 	if data, err = os.ReadFile(filename); os.IsNotExist(err) {
 		return nil // no README file
 	} else if err != nil {
@@ -147,7 +151,7 @@ func propagateReadme(bundleDir, formsDir string) (err error) {
 		return err
 	}
 	// Append to the README file in the forms dir.
-	filename = filepath.Join(formsDir, "README.html")
+	filename = filepath.Join(formsDir, "README.txt")
 	if fh, err = os.OpenFile(filename, os.O_WRONLY|os.O_APPEND|os.O_CREATE, 0666); err != nil {
 		slog.Error("os.OpenFile", "f", filename, "err", err)
 		return err
@@ -189,13 +193,13 @@ func writeUpdateInfo(ui *updateInfo, filename string) (err error) {
 	return nil
 }
 
-// fetchUpdate retrieves the update zip file from the update server into the
-// specified file.  If successful, it returns the handle to the open zip file
-// and its size, and sets the IfNoneMatch and IfModifiedSince fields of the
+// fetchUpdate retrieves the update bundle from the update server into the
+// specified file.  If successful, it returns the handle to the open bundle and
+// its size, and sets the IfNoneMatch and IfModifiedSince fields of the
 // updateInfo to match the ETag and Last-Modified headers of the server
 // response.  If there is no update available, it returns (nil, nil).  An error
 // is returned if the server returns an error or the file cannot be saved.
-func fetchUpdate(zipFName string, ui *updateInfo) (fh *os.File, size int64, err error) {
+func fetchUpdate(bundleFName string, ui *updateInfo) (fh *os.File, size int64, err error) {
 	var (
 		ctx    context.Context
 		cancel func()
@@ -229,17 +233,17 @@ func fetchUpdate(zipFName string, ui *updateInfo) (fh *os.File, size int64, err 
 		return nil, 0, fmt.Errorf("http GET %s: %d %s", ui.URL, resp.StatusCode, resp.Status)
 	}
 	// Store the bundle into the specified file.
-	if fh, err = os.OpenFile(zipFName, os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0666); err != nil {
-		slog.Error("os.Create", "f", zipFName, "err", err)
+	if fh, err = os.OpenFile(bundleFName, os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0666); err != nil {
+		slog.Error("os.Create", "f", bundleFName, "err", err)
 		return nil, 0, fmt.Errorf("create zip: %s", err)
 	}
 	if size, err = io.Copy(fh, resp.Body); err != nil {
-		slog.Error("io.Copy", "f", zipFName, "err", err)
-		return nil, 0, fmt.Errorf("copy to %s: %s", zipFName, err)
+		slog.Error("io.Copy", "f", bundleFName, "err", err)
+		return nil, 0, fmt.Errorf("copy to %s: %s", bundleFName, err)
 	}
 	if _, err = fh.Seek(0, io.SeekStart); err != nil {
-		slog.Error("fh.Seek", "f", zipFName, "err", err)
-		return nil, 0, fmt.Errorf("seek in %s: %s", zipFName, err)
+		slog.Error("fh.Seek", "f", bundleFName, "err", err)
+		return nil, 0, fmt.Errorf("seek in %s: %s", bundleFName, err)
 	}
 	// Save the response information.
 	ui.IfModifiedSince = resp.Header.Get("Last-Modified")
@@ -247,9 +251,9 @@ func fetchUpdate(zipFName string, ui *updateInfo) (fh *os.File, size int64, err 
 	return fh, size, nil
 }
 
-// unpackZip unpacks the zip file opened as zipFH, which has size zipSize,
-// into the directory bundleNew.
-func unpackZip(fh *os.File, size int64, bundleNew string) (err error) {
+// unpackBundle unpacks the forms bundle opened as fh, which has the specified
+// size, // into the directory bundleNew.
+func unpackBundle(fh *os.File, size int64, bundleNew string) (err error) {
 	var (
 		z *zip.Reader
 	)
@@ -264,6 +268,11 @@ func unpackZip(fh *os.File, size int64, bundleNew string) (err error) {
 			os.RemoveAll(bundleNew)
 		}
 	}()
+	// Verify the digital signature of the bundle.
+	if !verifySignature(fh, &size) {
+		slog.Error("signature is not valid")
+		return errors.New("invalid forms bundle signature: either this is not a forms bundle or it's intended for a different version of the SCCo packet software")
+	}
 	// Open the zip header.
 	if z, err = zip.NewReader(fh, size); err != nil && err != zip.ErrInsecurePath {
 		slog.Error("zip.NewReader", "err", err)
@@ -297,4 +306,36 @@ func unpackZip(fh *os.File, size int64, bundleNew string) (err error) {
 		}
 	}
 	return nil
+}
+
+// verifySignature verifies that the forms bundle was digitally signed by the
+// key for this version of the packet software.  It assumes the bundle file is
+// opened and rewound.  If the signature is verified, it returns with the file
+// pointer at the beginning of the ZIP contents and the size changed to be the
+// size of just the ZIP contents.
+func verifySignature(fh *os.File, size *int64) bool {
+	var (
+		h   hash.Hash
+		err error
+		sig = make([]byte, ed25519.SignatureSize)
+	)
+	if _, err = fh.Read(sig); err != nil {
+		slog.Error("fh.Read", "err", err)
+		return false
+	}
+	h = sha512.New()
+	if _, err = io.Copy(h, fh); err != nil {
+		slog.Error("io.Copy", "err", err)
+		return false
+	}
+	if err = ed25519.VerifyWithOptions(formsBundlePublicKey, h.Sum(nil), sig, &ed25519.Options{Hash: crypto.SHA512}); err != nil {
+		slog.Error("ed25519.VerifyWithOptions", "err", err)
+		return false
+	}
+	if _, err = fh.Seek(0, ed25519.SignatureSize); err != nil {
+		slog.Error("fh.Seek", "err", err)
+		return false
+	}
+	*size -= ed25519.SignatureSize
+	return true
 }
