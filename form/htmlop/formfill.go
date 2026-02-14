@@ -20,11 +20,11 @@ func FillForm(doc *html.Node, values url.Values) {
 	if doc.Type != html.ElementNode {
 		goto CHILDREN
 	}
-	if name = getAttr(doc, "name"); name == "" {
-		goto CHILDREN
-	}
 	switch doc.DataAtom {
 	case atom.Input:
+		if name = getAttr(doc, "name"); name == "" {
+			break
+		}
 		switch getAttr(doc, "type") {
 		case "submit":
 			// nothing
@@ -56,6 +56,13 @@ func FillForm(doc *html.Node, values url.Values) {
 			}
 		}
 	case atom.Option:
+		var sel = doc.Parent
+		if sel == nil || sel.Type != html.ElementNode || sel.DataAtom != atom.Select {
+			break
+		}
+		if name = getAttr(sel, "name"); name == "" {
+			break
+		}
 		if values.Get(name) == getAttr(doc, "value") {
 			if !hasAttr(doc, "selected") {
 				doc.Attr = append(doc.Attr, html.Attribute{Key: "selected"})
@@ -66,6 +73,9 @@ func FillForm(doc *html.Node, values url.Values) {
 			}
 		}
 	case atom.Textarea:
+		if name = getAttr(doc, "name"); name == "" {
+			break
+		}
 		if val := values.Get(name); val != "" {
 			doc.FirstChild = &html.Node{Type: html.TextNode, Data: val}
 			doc.LastChild = doc.FirstChild

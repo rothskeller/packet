@@ -115,10 +115,20 @@ input[type=button]:focus {
   column-gap: 1rem;
 }
 
+/* class=padlr adds padding on the left and right sides. */
+.padlr {
+  padding-inline: 0.25rem;
+}
+
+/* class=basealign sets baseline alignment. */
+.basealign {
+  align-items: baseline;
+}
+
 /* <div class=pair> defines a subgrid spanning two columns of one row of the
  * parent grid for a label and control, with a standard border around both and
  * a gap between them.  It's equivalent to <div class="subgrid border colgap
- * colspan2", plus baseline alignment. */
+ * colspan2 basealign". */
 .pair {
   grid-column: span 2;
   margin: -1px 0 0 -1px;
@@ -245,12 +255,17 @@ label>input {
   margin-right: 0.375rem;
 }
 
+.label {
+  align-self: baseline;
+}
+
 .annotation {
   font-weight: normal;
   font-size: 0.875rem;
 }
 
-input:not([type]) {
+input:not([type]),
+select {
   min-width: 0;
   margin: 0;
   border: none;
@@ -271,6 +286,7 @@ textarea {
 /* INVALID AREAS */
 
 input:invalid,
+select:invalid,
 textarea:invalid,
 .invalid {
   box-shadow: 0 0 6px 2px #c80000;

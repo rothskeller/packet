@@ -4,31 +4,31 @@ version  2.1
 title    RACES Mutual Aid Request Form
 indef    a RACES mutual aid request form
 subject  RACES-MAR
-pdfFile  XSC_RACES_MA_Req_v20240711_V1_Test76.pdf
+pdfFile  XSC_RACES_MA_Req_v20260212.pdf
 
 field MsgNo originMessageID
   label    "Origin Message Number"
   type     messageID
   presence required
-  pdf      text L 221.96 R 348.52 B 725.96 T 740.68 BL 729.54
-  pdf      if RECEIVED then text P 2 L 420.28 R 573.40 B 744.68 T 790.00 BL 745.35
+  pdf      text L 225.32 R 330.76 B 725.96 T 740.68 BL 729.60
+  pdf      if RECEIVED then text P 2 L 435.12 R 576.12 B 721.44 T 761.40 BL 745.56
 
 field DestMsgNo destinationMessageID
   label    "Destination Message Number"
   type     messageID
-  pdf      text L 451.64 R 575.44 B 725.96 T 740.68 BL 729.54
+  pdf      text L 436.52 R 575.08 B 725.96 T 740.68 BL 729.60
 
 field 1a. messageDate
   label    "Message Date"
   type     date
   presence required
-  pdf      text L  68.24 R 127.12 B 689.12 T 703.84 BL 692.83
+  pdf      text L  81.56 R 136.60 B 689.84 T 704.56 BL 693.48
 
 field 1b. messageTime
   label    "Message Time"
   type     time
   presence required
-  pdf      text L 162.32 R 204.28 B 689.24 T 703.84 BL 692.83
+  pdf      text L 182.36 R 245.32 B 689.84 T 704.56 BL 693.48
 
 field -
   label    "Message Date/Time"
@@ -43,60 +43,60 @@ field 5. handling
   choice   PRIORITY
   choice   ROUTINE
   presence required
-  pdf      if 5.=IMMEDIATE then circle X 273.84 Y 696.42 R 2.7
-  pdf      if 5.=PRIORITY then circle X 386.46 Y 696.78 R 3.0
-  pdf      if 5.=ROUTINE then circle X 492.42 Y 696.30 R 3.0
+  pdf      if 5.=IMMEDIATE then circle X 318.90 Y 697.56 R 2.90
+  pdf      if 5.=PRIORITY then  circle X 415.80 Y 697.50 R 2.84
+  pdf      if 5.=ROUTINE then   circle X 496.92 Y 697.50 R 2.84
 
 field 7a. toICSPosition
   label    "To ICS Position"
   presence required
-  pdf      text L 132.08 R 293.92 B 669.92 T 684.64 BL 673.52
+  pdf      text L 134.72 R 293.20 B 670.64 T 685.36 BL 674.28
 
 field 7b. toLocation
   label    "To Location"
   presence required
-  pdf      text L 132.08 R 293.92 B 650.72 T 665.44 BL 654.26
+  pdf      text L 134.72 R 293.20 B 651.44 T 666.16 BL 655.08
 
 field 7c.
   label    "To Name"
-  pdf      text L 132.08 R 293.92 B 631.52 T 646.24 BL 635.20
+  pdf      text L 134.72 R 293.20 B 632.24 T 646.96 BL 635.88
 
 field 7d.
   label    "To Contact Info"
-  pdf      text L 132.08 R 293.92 B 612.32 T 627.04 BL 615.96
+  pdf      text L 134.72 R 293.20 B 613.04 T 627.76 BL 616.68
 
 field 8a. fromICSPosition
   label    "From ICS Position"
   presence required
-  pdf      text L 383.20 R 574.12 B 669.92 T 684.64 BL 673.52
+  pdf      text L 400.52 R 575.08 B 670.64 T 685.36 BL 674.28
 
 field 8b. fromLocation
   label    "From Location"
   presence required
-  pdf      text L 383.20 R 574.12 B 650.72 T 665.44 BL 654.26
+  pdf      text L 400.52 R 575.08 B 651.44 T 666.16 BL 655.08
 
 field 8c.
   label    "From Name"
-  pdf      text L 383.20 R 574.12 B 631.52 T 646.24 BL 635.20
+  pdf      text L 400.52 R 575.08 B 632.24 T 646.96 BL 635.88
 
 field 8d.
   label    "From Contact Info"
-  pdf      text L 383.20 R 574.12 B 612.32 T 627.04 BL 615.96
+  pdf      text L 400.52 R 575.08 B 613.04 T 627.76 BL 616.68
 
 field 15. messageSummary
   label    "Agency Name"
   presence required
-  pdf      text L 188.84 R 375.40 B 587.36 T 607.84 BL 600.31
-  pdf      if RECEIVED then text P 2 L 169.72 R 375.40 B 677.84 T 698.20 BL 690.81
+  pdf      text L 182.12 R 317.32 B 593.84 T 608.56 BL 600.96
+  pdf      if RECEIVED then text P 2 L 168.32 R 376.72 B 677.84 T 698.20 BL 690.60
 
 field 16a.
   label    "Event Name"
   presence required
-  pdf      text L 189.44 R 420.28 B 568.16 T 582.88 BL 575.20
+  pdf      text L 182.00 R 317.32 B 574.64 T 589.36 BL 581.76
 
 field 16b.
   label    "Event Number"
-  pdf      text L 484.64 R 573.64 B 568.16 T 582.88 BL 575.20
+  pdf      text L 391.88 R 575.08 B 574.64 T 589.36 BL 581.76
 
 field -
   label    "Event Name/Number"
@@ -107,215 +107,220 @@ field 17. defaultBody
   label    Assignment
   type     multiline
   presence required
-  pdf      text L 133.28 R 573.04 B 461.96 T 563.68 A lt
-  pdf      if RECEIVED then text P 2 L 107.00 R 572.44 B 469.16 T 565.00 A lt
+  pdf      text L 141.08 R 575.08 B 479.72 T 570.16 A lt
+  pdf      if RECEIVED then text P 2 L 105.80 R 573.52 B 481.76 T 565.00 A lt
 
 field 18.1a.
   label    "Resource 1 Quantity"
   type     cardinalNumber
   presence required
-  pdf      text L 132.08 R 158.92 B 430.04 T 444.76
-  pdf      if RECEIVED then text P 2 L 137.72 R 163.84 B 338.84 T 350.56
+  pdf      text L 148.40 R 173.32 B 446.60 T 461.32 BL 453.72
+  pdf      if RECEIVED then text P 2 L 137.12 R 164.32 B 351.44 T 363.16
 
 field 18.1b.
   label    "Resource 1 Role/Position"
   presence required
-  pdf      text L 163.40 R 267.16 B 430.04 T 444.76
-  pdf      if RECEIVED then text P 2 L 169.40 R 280.84 B 338.84 T 350.56
+  pdf      text L 185.48 R 432.28 B 446.60 T 461.32 BL 453.72
+  pdf      if RECEIVED then text P 2 L 168.80 R 403.24 B 351.44 T 363.16
 
 field 18.1c.
   label    "Resource 1 Preferred Type"
   presence required
-  pdf      text L 424.40 R 496.36 B 430.04 T 444.76
-  pdf      if RECEIVED then text P 2 L 421.40 R 492.28 B 338.84 T 350.56
+  pdf      text L 455.48 R 510.76 B 446.60 T 461.32 BL 453.72
+  pdf      if RECEIVED then text P 2 L 420.80 R 492.76 B 351.44 T 363.16
 
 field 18.1d.
   label    "Resource 1 Minimum Type"
   presence required
-  pdf      text L 500.96 R 574.12 B 430.04 T 444.76
-  pdf      if RECEIVED then text P 2 L 497.36 R 573.52 B 338.96 T 350.56
+  pdf      text L 522.68 R 575.44 B 446.60 T 461.32 BL 453.72
+  pdf      if RECEIVED then text P 2 L 497.24 R 573.52 B 351.44 T 363.16
 
 field 18.2a.
   label    "Resource 2 Quantity"
   type     cardinalNumber
-  pdf      text L 132.08 R 158.92 B 410.96 T 425.56
-  pdf      if RECEIVED then text P 2 L 137.72 R 163.84 B 322.64 T 334.36
+  pdf      text L 148.40 R 173.32 B 427.40 T 442.12 BL 434.52
+  pdf      if RECEIVED then text P 2 L 137.12 R 164.32 B 335.24 T 346.96
 
 field 18.2b.
   label    "Resource 2 Role/Position"
-  presence if 18.2a. then optional else blocked
-  pdf      text L 163.40 R 267.16 B 410.96 T 425.56
-  pdf      if RECEIVED then text P 2 L 169.40 R 280.84 B 322.64 T 334.36
+  presence if 18.2a. then required else blocked
+  pdf      text L 185.48 R 432.28 B 427.40 T 442.12 BL 434.52
+  pdf      if RECEIVED then text P 2 L 168.80 R 403.24 B 335.24 T 346.96
 
 field 18.2c.
   label    "Resource 2 Preferred Type"
-  presence if 18.2a. then optional else blocked
-  pdf      text L 424.40 R 496.36 B 410.96 T 425.56
-  pdf      if RECEIVED then text P 2 L 421.40 R 492.28 B 322.64 T 334.36
+  presence if 18.2a. then required else blocked
+  pdf      text L 455.48 R 510.76 B 427.40 T 442.12 BL 434.52
+  pdf      if RECEIVED then text P 2 L 420.80 R 492.76 B 335.24 T 346.96
 
 field 18.2d.
   label    "Resource 2 Minimum Type"
-  presence if 18.2a. then optional else blocked
-  pdf      text L 500.96 R 574.12 B 410.96 T 425.56
-  pdf      if RECEIVED then text P 2 L 497.84 R 573.04 B 322.64 T 334.36
+  presence if 18.2a. then required else blocked
+  pdf      text L 522.68 R 575.44 B 427.40 T 442.12 BL 434.52
+  pdf      if RECEIVED then text P 2 L 497.24 R 573.52 B 335.24 T 346.96
 
 field 18.3a.
   label    "Resource 3 Quantity"
   type     cardinalNumber
-  pdf      text L 132.08 R 158.92 B 391.64 T 406.36
-  pdf      if RECEIVED then text P 2 L 137.72 R 163.84 B 306.44 T 318.16
+  pdf      text L 148.40 R 173.32 B 408.20 T 422.92 BL 415.32
+  pdf      if RECEIVED then text P 2 L 137.12 R 164.32 B 319.04 T 330.76
 
 field 18.3b.
   label    "Resource 3 Role/Position"
-  presence if 18.3a. then optional else blocked
-  pdf      text L 163.40 R 267.16 B 391.64 T 406.36
-  pdf      if RECEIVED then text P 2 L 169.40 R 280.84 B 306.44 T 318.16
+  presence if 18.3a. then required else blocked
+  pdf      text L 185.48 R 432.28 B 408.20 T 422.92 BL 415.32
+  pdf      if RECEIVED then text P 2 L 168.80 R 403.36 B 319.04 T 330.76
 
 field 18.3c.
   label    "Resource 3 Preferred Type"
-  presence if 18.3a. then optional else blocked
-  pdf      text L 424.40 R 496.36 B 391.64 T 406.36
-  pdf      if RECEIVED then text P 2 L 421.40 R 492.28 B 306.44 T 318.16
+  presence if 18.3a. then required else blocked
+  pdf      text L 455.48 R 510.76 B 408.20 T 422.92 BL 415.32
+  pdf      if RECEIVED then text P 2 L 420.80 R 492.76 B 319.04 T 330.76
 
 field 18.3d.
   label    "Resource 3 Minimum Type"
-  presence if 18.3a. then optional else blocked
-  pdf      text L 500.96 R 574.12 B 391.64 T 406.36
-  pdf      if RECEIVED then text P 2 L 497.84 R 573.04 B 306.44 T 318.16
+  presence if 18.3a. then required else blocked
+  pdf      text L 522.68 R 575.44 B 408.20 T 422.92 BL 415.32
+  pdf      if RECEIVED then text P 2 L 497.24 R 573.52 B 319.04 T 330.76
 
 field 18.4a.
   label    "Resource 4 Quantity"
   type     cardinalNumber
-  pdf      text L 132.08 R 158.92 B 374.24 T 387.16
-  pdf      if RECEIVED then text P 2 L 137.72 R 163.84 B 290.24 T 301.96
+  pdf      text L 148.40 R 173.32 B 389.00 T 403.72 BL 396.12
+  pdf      if RECEIVED then text P 2 L 137.12 R 164.32 B 302.84 T 314.56
 
 field 18.4b.
   label    "Resource 4 Role/Position"
-  presence if 18.4a. then optional else blocked
-  pdf      text L 163.40 R 267.16 B 372.44 T 387.16
-  pdf      if RECEIVED then text P 2 L 169.40 R 280.84 B 290.24 T 301.96
+  presence if 18.4a. then required else blocked
+  pdf      text L 185.48 R 432.28 B 389.00 T 403.72 BL 396.12
+  pdf      if RECEIVED then text P 2 L 168.80 R 403.36 B 302.84 T 314.56
 
 field 18.4c.
   label    "Resource 4 Preferred Type"
-  presence if 18.4a. then optional else blocked
-  pdf      text L 424.40 R 496.36 B 372.44 T 387.16
-  pdf      if RECEIVED then text P 2 L 421.40 R 492.28 B 290.24 T 301.96
+  presence if 18.4a. then required else blocked
+  pdf      text L 455.48 R 510.76 B 389.00 T 403.72 BL 396.12
+  pdf      if RECEIVED then text P 2 L 420.80 R 492.76 B 302.84 T 314.56
 
 field 18.4d.
   label    "Resource 4 Minimum Type"
-  presence if 18.4a. then optional else blocked
-  pdf      text L 500.96 R 574.12 B 372.44 T 387.16
-  pdf      if RECEIVED then text P 2 L 497.84 R 573.04 B 290.24 T 301.96
+  presence if 18.4a. then required else blocked
+  pdf      text L 522.68 R 575.44 B 389.00 T 403.72 BL 396.12
+  pdf      if RECEIVED then text P 2 L 497.24 R 573.52 B 302.84 T 314.56
 
 field 18.5a.
   label    "Resource 5 Quantity"
   type     cardinalNumber
-  pdf      text L 132.08 R 158.92 B 353.36 T 367.96
-  pdf      if RECEIVED then text P 2 L 137.12 R 164.32 B 275.00 T 285.76
+  pdf      text L 148.40 R 173.32 B 369.80 T 384.52 BL 376.92
+  pdf      if RECEIVED then text P 2 L 137.12 R 164.32 B 287.60 T 298.36
 
 field 18.5b.
   label    "Resource 5 Role/Position"
-  presence if 18.5a. then optional else blocked
-  pdf      text L 163.40 R 267.16 B 353.36 T 367.96
-  pdf      if RECEIVED then text P 2 L 168.80 R 281.32 B 275.00 T 285.76
+  presence if 18.5a. then required else blocked
+  pdf      text L 185.48 R 432.28 B 369.80 T 384.52 BL 376.92
+  pdf      if RECEIVED then text P 2 L 168.80 R 403.24 B 287.60 T 298.36
 
 field 18.5c.
   label    "Resource 5 Preferred Type"
-  presence if 18.5a. then optional else blocked
-  pdf      text L 424.40 R 496.36 B 353.36 T 367.96
-  pdf      if RECEIVED then text P 2 L 420.80 R 492.76 B 275.00 T 285.76
+  presence if 18.5a. then required else blocked
+  pdf      text L 455.48 R 510.76 B 369.80 T 384.52 BL 376.92
+  pdf      if RECEIVED then text P 2 L 420.80 R 492.76 B 287.60 T 298.36
 
 field 18.5d.
   label    "Resource 5 Minimum Type"
-  presence if 18.5a. then optional else blocked
-  pdf      text L 500.96 R 574.12 B 353.36 T 367.96
-  pdf      if RECEIVED then text P 2 L 497.36 R 573.52 B 275.00 T 285.76
+  presence if 18.5a. then required else blocked
+  pdf      text L 522.08 R 575.44 B 369.80 T 384.52 BL 376.92
+  pdf      if RECEIVED then text P 2 L 497.24 R 573.52 B 287.60 T 298.36
 
 field 19a.
   label    "Requested Arrival Dates"
   presence required
-  pdf      text L 160.48 R 388.12 B 309.92 T 323.92 BL 316.40
-  pdf      if RECEIVED then text P 2 L 171.88 R 392.56 B 449.48 T 464.68 BL 457.94
+  pdf      text L 176.96 R 355.96 B 328.88 T 342.88 BL 335.28
+  pdf      if RECEIVED then text P 2 L 137.12 R 392.56 B 461.96 T 477.28 BL 468.84
 
 field 19b.
   label    "Requested Arrival Times"
   presence required
-  pdf      text L 449.08 R 574.12 B 309.92 T 323.92 BL 316.40
-  pdf      if RECEIVED then text P 2 L 432.04 R 573.52 B 449.48 T 464.68 BL 457.94
+  pdf      text L 424.52 R 575.44 B 328.88 T 342.88 BL 335.28
+  pdf      if RECEIVED then text P 2 L 431.00 R 573.52 B 461.96 T 477.28 BL 468.84
 
 field 20a.
   label    "Needed Until Dates"
   presence required
-  pdf      text L 163.36 R 227.08 B 291.44 T 305.44 BL 297.78
-  pdf      if RECEIVED then text P 2 L 212.20 R 290.04 B 429.68 T 444.88 BL 437.59
+  pdf      text L 396.32 R 451.36 B 308.84 T 324.40 BL 316.80
 
 field 20b.
   label    "Needed Until Times"
   presence required
-  pdf      text L 311.56 R 348.52 B 291.44 T 305.44 BL 297.78
-  pdf      if RECEIVED then text P 2 L 295.20 R 344.32 B 429.68 T 444.88 BL 437.59
+  pdf      text L 505.40 R 575.44 B 308.84 T 324.40 BL 316.80
+
+field -
+  label    "Needed Until"
+  type     join
+  children 20a. 20b.
+  presence required
+  pdf      if RECEIVED then text P 2 L 438.44 R 573.52 B 442.16 T 457.48 BL 449.88
 
 field 21.
   label    "Reporting Location"
   type     multiline
   presence required
-  pdf      text L 132.08 R 574.12 B 264.08 T 286.96 A lt
-  pdf      if RECEIVED then text P 2 L 137.12 R 573.52 B 409.88 T 425.08 BL 416.75
+  pdf      text L 141.08 R 575.44 B 285.80 T 304.36 BL 295.92
+  pdf      if RECEIVED then text P 2 L 137.12 R 573.52 B 422.36 T 437.68 BL 429.24
 
 field 22.
   label    "Contact on Arrival"
   type     multiline
   presence required
-  pdf      text L 132.08 R 574.12 B 236.84 T 259.60 A lt
-  pdf      if RECEIVED then text P 2 L 137.12 R 573.52 B 390.08 T 405.28 BL 396.96
+  pdf      text L 141.08 R 575.44 B 263.36 T 281.32 BL 272.88
+  pdf      if RECEIVED then text P 2 L 137.12 R 573.52 B 402.56 T 417.88 BL 409.44
 
 field 23.
   label    "Travel Info"
   type     multiline
   presence required
-  pdf      text L 132.08 R 574.12 B 209.48 T 232.36 A lt
-  pdf      if RECEIVED then text P 2 L 137.12 R 573.52 B 370.28 T 385.48 BL 377.00
+  pdf      text L 141.08 R 575.44 B 243.56 T 258.88 BL 250.44
+  pdf      if RECEIVED then text P 2 L 137.12 R 573.52 B 382.76 T 398.08 BL 389.64
 
 field 24a.
   label    "Requested By Name"
   presence required
-  pdf      text L 165.40 R 388.12 B 190.28 T 205.00 BL 197.58
+  pdf      text L 181.88 R 443.32 B 224.36 T 239.08 BL 231.48
 
 field 24b.
   label    "Requested By Title"
   presence required
-  pdf      text L 419.56 R 574.12 B 190.28 T 205.00 BL 197.58
+  pdf      text L 482.48 R 575.44 B 224.36 T 239.08 BL 231.48
 
 field 24c.
   label    "Requested By Contact"
-  pdf      text L 283.00 R 574.12 B 165.08 T 185.80 BL 178.26
+  pdf      text L 298.88 R 575.44 B 199.16 T 219.88 BL 212.28
 
 field 25a.
   label    "Approved By Name"
   presence required
-  pdf      text L 165.40 R 388.12 B 145.76 T 160.60 BL 153.05
+  pdf      text L 181.88 R 443.32 B 179.84 T 194.68 BL 187.08
 
 field 25b.
   label    "Approved By Title"
   presence required
-  pdf      text L 419.56 R 574.12 B 145.76 T 160.60 BL 153.05
+  pdf      text L 482.48 R 575.44 B 179.84 T 194.68 BL 187.08
 
 field 25c.
   label    "Approved By Contact"
   presence required
-  pdf      text L 237.16 R 574.12 B 124.16 T 141.28 BL 133.85
+  pdf      text L 253.04 R 575.44 B 158.24 T 175.36 BL 167.76
 
 field 26a.
   label    "Approved By Date"
   type     date
   presence required
-  pdf      text L 408.28 R 479.32 B 100.28 T 119.68 BL 112.15
+  pdf      text L 419.84 R 479.08 B 135.68 T 153.76 BL 146.16
 
 field 26b.
   label    "Approved By Time"
   type     time
   presence required
-  pdf      text L 537.28 R 574.12 B 100.28 T 119.68 BL 112.15
+  pdf      text L 514.16 R 575.44 B 135.68 T 153.76 BL 146.16
 
 field -
   label    "Approved Date/Time"
@@ -325,21 +330,21 @@ field -
 
 field OpRelayRcvd
   label    "Operator: Relay Received"
-  pdf      text L 109.36 R 320.92 B  65.00 T  79.36 BL  68.59
+  pdf      text L 106.76 R 320.32 B 100.40 T 114.76 BL 103.92
 
 field OpRelaySent
   label    "Operator: Relay Sent"
-  pdf      text L 355.48 R 575.44 B  65.00 T  79.36 BL  68.59
+  pdf      text L 352.64 R 575.44 B 100.40 T 114.76 BL 103.92
 
 field OpName operatorName
   label    "Operator: Name"
   presence required
-  pdf      text L  75.04 R 248.92 B  46.04 T  60.52 BL  49.60
+  pdf      text L  72.92 R 248.32 B  81.44 T  95.92 BL 84.96
 
 field OpCall operatorCall
   label    "Operator: Call Sign"
   presence required
-  pdf      text L 301.24 R 365.92 B  46.04 T  60.52 BL  49.60
+  pdf      text L 298.64 R 365.32 B  81.44 T  95.92 BL 84.96
 
 field -
   label    Operator
@@ -349,12 +354,12 @@ field -
 field OpDate operatorDate
   label    "Operator: Date"
   type     date
-  pdf      text L 401.68 R 479.32 B  46.04 T  60.52 BL  49.60
+  pdf      text L 398.84 R 479.08 B  81.44 T  95.92 BL 84.96
 
 field OpTime operatorTime
   label    "Operator: Time"
   type     time
-  pdf      text L 543.40 R 575.44 B  46.04 T  60.52 BL  49.60
+  pdf      text L 541.04 R 575.44 B  81.44 T  95.92 BL 84.96
 
 field -
   label    "Operator: Date/Time"
@@ -362,7 +367,7 @@ field -
   children OpDate OpTime
 
 field -
-  pdf      box L 36 W 112.93 T 32.11 H 10.27 F FFFFFF
-  pdf      box L 526.68 W 60.58 T 32.11 H 10.27 F FFFFFF
-  pdf      if RECEIVED then box P 2 L 36 W 112.92 T 32.11 H 10.27 F FFFFFF
-  pdf      if RECEIVED then box P 2 L 526.67 W 60.58 T 32.11 H 10.27 F FFFFFF
+  pdf      box L  35.28 R 138.72 B  22.56 T  32.40 F FFFFFF
+  pdf      box L 526.68 R 576.84 B  22.44 T  32.64 F FFFFFF
+  pdf      if RECEIVED then box P 2 L  35.28 R 138.96 B  23.04 T  33.12 F FFFFFF
+  pdf      if RECEIVED then box P 2 L 526.08 R 576.36 B  21.84 T  32.16 F FFFFFF
