@@ -4,6 +4,7 @@ import (
 	"errors"
 	"log/slog"
 
+	"github.com/rothskeller/packet/cmd/packet/cmd/forms"
 	"github.com/rothskeller/packet/cmd/packet/cmd/outpost"
 	"github.com/rothskeller/packet/cmd/packet/cmd/server"
 	"github.com/spf13/cobra"
@@ -31,6 +32,7 @@ func Execute() error {
 
 func init() {
 	cobra.MousetrapHelpText = "" // running without a console is OK
+	RootCmd.AddCommand(forms.Command)
 	RootCmd.AddCommand(outpost.Command)
 	RootCmd.AddCommand(server.Command)
 }

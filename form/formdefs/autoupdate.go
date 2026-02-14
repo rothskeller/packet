@@ -14,6 +14,7 @@ import (
 	"net/http"
 	"os"
 	"path/filepath"
+	"regexp"
 	"strings"
 	"time"
 
@@ -77,7 +78,7 @@ func checkForBundleUpdate(formsDir, bundle string, force, readme bool) (err erro
 		bundleFName string
 		bundleFH    *os.File
 		bundleSize  int64
-		bundleNew   string
+		readmeText  string
 	)
 	// Get the update info for the bundle and determine whether we should
 	// do an update.
@@ -102,68 +103,152 @@ func checkForBundleUpdate(formsDir, bundle string, force, readme bool) (err erro
 	}
 	defer os.Remove(bundleFName)
 	defer bundleFH.Close()
-	// Unpack the zip file.
-	bundleNew = bundleDir + ".new"
-	if err = unpackBundle(bundleFH, bundleSize, bundleNew); err != nil {
+	// Install the bundle.
+	if _, readmeText, err = installBundle(bundleFName, bundle, bundleFH, bundleSize, formsDir); err != nil {
 		return err
 	}
-	// Remove the old bundle and move the new one into place.
-	// move the new one into place.
-	if err = os.RemoveAll(bundleDir); err != nil {
-		slog.Error("os.RemoveAll", "d", bundleDir, "err", err)
-		return fmt.Errorf("remove old bundle: %s", err)
-	}
-	if err = os.Rename(bundleNew, bundleDir); err != nil {
-		slog.Error("os.Rename", "from", bundleNew, "to", bundleDir, "err", err)
-		return fmt.Errorf("move new bundle into place: %s", err)
-	}
-	// The new bundle may have a new update URL.  Check for that.
-	if ui2, err := readUpdateInfo(uiFile); err == nil && ui2 != nil {
-		ui.URL = ui2.URL
-	}
-	// The new bundle may have a README.txt.  Check for that.
+	// Save the README text if we're supposed to.
 	if readme {
-		if err = propagateReadme(bundleDir, formsDir); err != nil {
+		if err = AppendReadme(readmeText); err != nil {
 			return err
 		}
 	}
-	slog.Info("updated forms bundle", "b", bundle)
+	// Save the update information.
+	if ui2, err := readUpdateInfo(uiFile); err != nil {
+		return err
+	} else {
+		slog.Info("updated forms bundle", "b", bundle)
+		if ui2 == nil { // new bundle doesn't have auto-update
+			return nil
+		} else {
+			ui.URL = ui2.URL // keep the URL from the new bundle
+		}
+	}
 CHECKED:
 	ui.LastCheck = time.Now()
 	return writeUpdateInfo(ui, uiFile)
 }
 
-// propagateReadme takes the contents of the README.txt in the bundle dir, if
-// any, and appends them to the README.txt in the formsDir, creating it if
-// needed.
-func propagateReadme(bundleDir, formsDir string) (err error) {
+// InstallBundle installs a bundle from a specified source, which can be either
+// a filename or an https:// URL.  If successful, it returns the bundle name and
+// any README text from the bundle.  (The caller can either display it or pass
+// it to AppendReadme for later display.)
+func InstallBundle(source string) (bundle, readme string, err error) {
+	var (
+		formsDir string
+		ui       updateInfo
+		fh       *os.File
+		size     int64
+	)
+	if formsDir = FormsDir(); formsDir == "" {
+		slog.Error("no local forms dir")
+		return "", "", errors.New("Forms cannot be installed on this system because there is no local forms directory.")
+	}
+	if err = os.MkdirAll(formsDir, 0777); err != nil {
+		slog.Error("os.MkdirAll", "d", formsDir, "err", err)
+		return "", "", errors.NewF("The forms directory %s could not be created.", formsDir)
+	}
+	if strings.HasPrefix(source, "https://") {
+		var tempfilename = filepath.Join(formsDir, "install-temp.forms")
+		defer os.Remove(tempfilename)
+		ui.URL = source
+		if fh, size, err = fetchUpdate(tempfilename, &ui); err != nil {
+			return "", "", err
+		}
+		source = tempfilename
+	} else if fh, err = os.Open(source); err != nil {
+		slog.Error("os.Open", "f", source, "err", err)
+		return "", "", errors.NewF("The forms bundle file %s could not be opened.", source)
+	} else if stat, err := fh.Stat(); err != nil {
+		slog.Error("fh.Stat", "f", source, "err", err)
+		return "", "", errors.NewF("The forms bundle file %s could not be read.", source)
+	} else {
+		size = stat.Size()
+	}
+	defer fh.Close()
+	// Install the bundle.
+	if bundle, readme, err = installBundle(source, "", fh, size, formsDir); err != nil {
+		return "", "", err
+	}
+	// If we read from a URL, save the update information.
+	if ui.URL != "" {
+		uiFile := filepath.Join(formsDir, bundle, "update.json")
+		if ui2, err := readUpdateInfo(uiFile); err != nil {
+			return "", "", err
+		} else if ui2 != nil && ui.URL == ui2.URL {
+			// Only store the update info if the bundle has auto
+			// update from the same source where we got it.
+			ui.LastCheck = time.Now()
+			if err = writeUpdateInfo(&ui, uiFile); err != nil {
+				return "", "", err
+			}
+		}
+	}
+	slog.Info("Installed bundle", "b", bundle, "source", source)
+	return bundle, readme, nil
+}
+
+// installBundle installs a bundle file with the specified source (for error
+// messages), bundle name (if known, otherwise read from the file), open file
+// handle (rewound to the beginning), and size, into formsDir.  The update info
+// in that bundle is set to the specified modtime and eTag and the current last
+// update time.  It returns the bundle name and the contents of the README.txt
+// file in the bundle, if any.
+func installBundle(source, expect string, fh *os.File, size int64, formsDir string) (bundle, readme string, err error) {
+	var (
+		bundleDir string
+		bundleNew string
+		rmfile    string
+	)
+	if bundle, err = unpackBundle(source, expect, fh, size, formsDir); err != nil {
+		return "", "", err
+	}
+	bundleDir = filepath.Join(formsDir, bundle)
+	bundleNew = bundleDir + ".new"
+	// Remove the old bundle and move the new one into place.
+	// move the new one into place.
+	if err = os.RemoveAll(bundleDir); err != nil {
+		slog.Error("os.RemoveAll", "d", bundleDir, "err", err)
+		return "", "", errors.NewF("The old bundle directory %s could not be removed.", bundleDir)
+	}
+	if err = os.Rename(bundleNew, bundleDir); err != nil {
+		slog.Error("os.Rename", "from", bundleNew, "to", bundleDir, "err", err)
+		return "", "", errors.NewF("The new bundle directory could not be moved to %s.", bundleDir)
+	}
+	// The new bundle may have a README.txt.  Check for that.
+	rmfile = filepath.Join(bundleDir, "README.txt")
+	if rm, err := os.ReadFile(rmfile); err == nil || os.IsNotExist(err) {
+		readme = string(rm)
+	} else {
+		slog.Error("os.ReadFile", "f", rmfile, "err", err)
+		return "", "", errors.New("The README.txt file in the new bundle could not be read.")
+	}
+	return bundle, readme, nil
+}
+
+// AppendReadme appends the supplied text to the README.txt in the forms
+// directory, creating it if needed.
+func AppendReadme(text string) (err error) {
 	var (
 		filename string
-		data     []byte
 		fh       *os.File
 	)
-	// Read the README from the bundle dir.
-	filename = filepath.Join(bundleDir, "README.txt")
-	if data, err = os.ReadFile(filename); os.IsNotExist(err) {
-		return nil // no README file
-	} else if err != nil {
-		slog.Error("os.ReadFile", "f", filename, "err", err)
-		return err
+	if text == "" {
+		return nil
 	}
-	// Append to the README file in the forms dir.
-	filename = filepath.Join(formsDir, "README.txt")
+	filename = filepath.Join(FormsDir(), "README.txt")
 	if fh, err = os.OpenFile(filename, os.O_WRONLY|os.O_APPEND|os.O_CREATE, 0666); err != nil {
 		slog.Error("os.OpenFile", "f", filename, "err", err)
-		return err
+		return errors.NewF("The file %s could not be opened or created.", filename)
 	}
-	if _, err = fh.Write(data); err != nil {
+	if _, err = io.WriteString(fh, text); err != nil {
 		fh.Close()
-		slog.Error("fh.Write", "f", filename, "err", err)
-		return fmt.Errorf("write %s: %s", filename, err)
+		slog.Error("io.WriteString", "f", filename, "err", err)
+		return errors.NewF("The file %s could not be written.", filename)
 	}
 	if err = fh.Close(); err != nil {
 		slog.Error("fh.Close", "f", filename, "err", err)
-		return fmt.Errorf("close %s: %s", filename, err)
+		return errors.NewF("The file %s could not be written.", filename)
 	}
 	return nil
 }
@@ -251,91 +336,114 @@ func fetchUpdate(bundleFName string, ui *updateInfo) (fh *os.File, size int64, e
 	return fh, size, nil
 }
 
-// unpackBundle unpacks the forms bundle opened as fh, which has the specified
-// size, // into the directory bundleNew.
-func unpackBundle(fh *os.File, size int64, bundleNew string) (err error) {
+// unpackBundle unpacks the forms bundle opened from source as fh, which has the
+// specified size, into the formsDir/bundleName.new directory, where bundleName
+// is the bundle name read from the file, and returns the bundle name.  If an
+// expect string is supplied, the bundle name must match it.
+func unpackBundle(source, expect string, fh *os.File, size int64, formsDir string) (bundleName string, err error) {
 	var (
-		z *zip.Reader
+		dir string
+		z   *zip.Reader
 	)
+	// Verify the digital signature of the bundle.
+	if bundleName, err = verifySignature(source, fh, &size, expect); err != nil {
+		return "", err
+	}
+	dir = filepath.Join(formsDir, bundleName+".new")
 	// Remove the target directory if it is left over from a previous op.
 	// Also remove it if this function returns with an error
-	if err = os.RemoveAll(bundleNew); err != nil {
-		slog.Error("os.RemoveAll", "d", bundleNew, "err", err)
-		return err
+	if err = os.RemoveAll(dir); err != nil {
+		slog.Error("os.RemoveAll", "d", dir, "err", err)
+		return "", errors.NewF("The previously existing directory %s could not be removed.", dir)
 	}
 	defer func() {
 		if err != nil {
-			os.RemoveAll(bundleNew)
+			os.RemoveAll(dir)
 		}
 	}()
-	// Verify the digital signature of the bundle.
-	if !verifySignature(fh, &size) {
-		slog.Error("signature is not valid")
-		return errors.New("invalid forms bundle signature: either this is not a forms bundle or it's intended for a different version of the SCCo packet software")
-	}
 	// Open the zip header.
 	if z, err = zip.NewReader(fh, size); err != nil && err != zip.ErrInsecurePath {
 		slog.Error("zip.NewReader", "err", err)
-		return fmt.Errorf("open zip: %s", err)
+		return "", fmt.Errorf("open zip: %s", err)
 	}
 	// Unpack each file.
 	for _, file := range z.File {
 		if strings.HasSuffix(file.Name, "/") {
 			continue // directory entry
 		}
-		fname := filepath.Join(bundleNew, strings.ReplaceAll(file.Name, "/", string(filepath.Separator)))
+		fname := filepath.Join(dir, strings.ReplaceAll(file.Name, "/", string(filepath.Separator)))
 		dname := filepath.Dir(fname)
 		if err = os.MkdirAll(dname, 0777); err != nil {
 			slog.Error("os.MkdirAll", "d", dname, "err", err)
-			return fmt.Errorf("mkdir %s: %s", dname, err)
+			return "", errors.NewF("The directory %s could not be created.", dname)
 		}
 		if out, err := os.Create(fname); err != nil {
 			slog.Error("os.Create", "f", fname, "err", err)
-			return fmt.Errorf("create %s: %s", fname, err)
+			return "", errors.NewF("The file %s could not be created.", fname)
 		} else if in, err := file.Open(); err != nil {
 			out.Close()
 			slog.Error("zip.file.Open", "f", file.Name, "err", err)
-			return fmt.Errorf("open in zip %s: %s", file.Name, err)
+			return "", errors.NewF("The bundle file %s could not be decoded.", source)
 		} else if _, err = io.Copy(out, in); err != nil {
 			out.Close()
 			slog.Error("io.Copy", "f", fname, "err", err)
-			return fmt.Errorf("copy to %s: %s", fname, err)
+			return "", errors.NewF("The file %s could not be written.", fname)
 		} else if err = out.Close(); err != nil {
 			slog.Error("os.Close", "f", fname, "err", err)
-			return fmt.Errorf("close %s: %s", fname, err)
+			return "", errors.NewF("The file %s could not be written.", fname)
 		}
 	}
-	return nil
+	return bundleName, nil
 }
 
 // verifySignature verifies that the forms bundle was digitally signed by the
 // key for this version of the packet software.  It assumes the bundle file is
 // opened and rewound.  If the signature is verified, it returns with the file
 // pointer at the beginning of the ZIP contents and the size changed to be the
-// size of just the ZIP contents.
-func verifySignature(fh *os.File, size *int64) bool {
+// size of just the ZIP contents.  If an expect string is given, it verifies
+// that it matches the bundle name in the file.  It returns the actual bundle
+// name in the file.
+func verifySignature(source string, fh *os.File, size *int64, expect string) (bundle string, err error) {
 	var (
 		h   hash.Hash
-		err error
 		sig = make([]byte, ed25519.SignatureSize)
 	)
+	if _, err = fh.Read(sig[:32]); err != nil {
+		slog.Error("fh.Read 1", "src", source, "err", err)
+		return "", errors.NewF("The bundle file %s could not be read.", source)
+	}
+	if string(sig[:16]) != "PackItFormBundle" {
+		slog.Error("not a form bundle header", "src", source)
+		return "", errors.NewF("The file %s is not a forms bundle file.", source)
+	}
+	if bundle = strings.TrimRight(string(sig[16:32]), " \n"); !ValidBundleNameRE.MatchString(bundle) {
+		slog.Error("contains invalid bundle name", "src", source)
+		return "", errors.NewF("The file %s contains an invalid forms bundle name %q.", source, bundle)
+	} else if expect != "" && bundle != expect {
+		slog.Error("contains wrong bundle name", "src", source, "exp", expect, "act", bundle)
+		return "", errors.NewF("The file %s contains forms bundle %q, not %q.", source, bundle, expect)
+	}
 	if _, err = fh.Read(sig); err != nil {
-		slog.Error("fh.Read", "err", err)
-		return false
+		slog.Error("fh.Read 2", "src", source, "err", err)
+		return "", errors.NewF("The bundle file %s could not be read.", source)
 	}
 	h = sha512.New()
+	io.WriteString(h, bundle)
 	if _, err = io.Copy(h, fh); err != nil {
-		slog.Error("io.Copy", "err", err)
-		return false
+		slog.Error("io.Copy", "src", source, "err", err)
+		return "", errors.NewF("The bundle file %s could not be read.", source)
 	}
 	if err = ed25519.VerifyWithOptions(formsBundlePublicKey, h.Sum(nil), sig, &ed25519.Options{Hash: crypto.SHA512}); err != nil {
-		slog.Error("ed25519.VerifyWithOptions", "err", err)
-		return false
+		slog.Error("ed25519.VerifyWithOptions", "src", source, "err", err)
+		return "", errors.NewF("The signature of the bundle file %s is not correct.  The bundle file has been corrupted, was improperly signed, or is intended for a different version of SCCo Packet software.", source)
 	}
-	if _, err = fh.Seek(0, ed25519.SignatureSize); err != nil {
-		slog.Error("fh.Seek", "err", err)
-		return false
+	if _, err = fh.Seek(0, ed25519.SignatureSize+32); err != nil {
+		slog.Error("fh.Seek", "src", source, "err", err)
+		return "", errors.NewF("The bundle file %s could not be read.", source)
 	}
-	*size -= ed25519.SignatureSize
-	return true
+	*size -= ed25519.SignatureSize + 32
+	return bundle, nil
 }
+
+// ValidBundleNameRE matches a valid bundle name.
+var ValidBundleNameRE = regexp.MustCompile(`^[A-Z][-A-Za-z0-9_]{,14}$`)

@@ -1,4 +1,4 @@
-// usage: sign-forms zip-file
+// usage: sign-forms bundle-name zip-file
 //
 // sign-forms computes a digital signature for the specified zip file and
 // creates the corresponding ".forms" file with the same basename as the
@@ -13,6 +13,8 @@ import (
 	"io"
 	"os"
 	"strings"
+
+	"github.com/rothskeller/packet/form/formdefs"
 )
 
 func main() {
@@ -24,13 +26,16 @@ func main() {
 		sig   []byte
 		err   error
 	)
-	if len(os.Args) != 2 || !strings.HasSuffix(strings.ToLower(os.Args[1]), ".zip") {
-		fmt.Fprintln(os.Stderr, "usage: sign-forms zip-file")
+	if len(os.Args) != 3 ||
+		!formdefs.ValidBundleNameRE.MatchString(os.Args[1]) ||
+		!strings.HasSuffix(strings.ToLower(os.Args[2]), ".zip") {
+		fmt.Fprintln(os.Stderr, "usage: sign-forms bundle-name zip-file")
 		os.Exit(2)
 	}
-	outfn = os.Args[1][:len(os.Args[1])-4] + ".forms"
+	outfn = os.Args[1][:len(os.Args[2])-4] + ".forms"
 	h = sha512.New()
-	if in, err = os.Open(os.Args[1]); err != nil {
+	io.WriteString(h, os.Args[1])
+	if in, err = os.Open(os.Args[2]); err != nil {
 		goto ERROR
 	}
 	defer in.Close()
@@ -44,6 +49,9 @@ func main() {
 		goto ERROR
 	}
 	if out, err = os.Create(outfn); err != nil {
+		goto ERROR
+	}
+	if _, err = fmt.Fprintf(out, "PackItFormBundle%-15s\n", os.Args[1]); err != nil {
 		goto ERROR
 	}
 	if _, err = out.Write(sig); err != nil {
