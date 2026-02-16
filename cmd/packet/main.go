@@ -8,6 +8,7 @@ import (
 	"runtime/debug"
 	"strings"
 
+	"github.com/rothskeller/packet/cmd/packet/cio"
 	"github.com/rothskeller/packet/cmd/packet/cmd"
 	"github.com/rothskeller/packet/cmd/packet/osdep"
 )
@@ -16,7 +17,9 @@ func main() {
 	reopenLogFile()
 	logInvocation()
 	defaultCommands()
-	cmd.Execute()
+	if err := cmd.Execute(); err != nil {
+		cio.Open().Error("%s", err)
+	}
 }
 
 func logInvocation() {

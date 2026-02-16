@@ -1,9 +1,7 @@
 package server
 
 import (
-	"fmt"
-	"os"
-
+	"github.com/rothskeller/packet/cmd/packet/cio"
 	"github.com/rothskeller/packet/cmd/packet/server"
 	"github.com/rothskeller/packet/form/formdefs"
 	"github.com/spf13/cobra"
@@ -20,7 +18,7 @@ server is stopped (by idle timeout, POST /stop request, touch of the stop
 file, or signal).`,
 	Run: func(cmd *cobra.Command, args []string) {
 		if err := formdefs.RegisterForms(); err != nil {
-			fmt.Fprintf(os.Stderr, "WARNING: %s\n", err)
+			cio.Open().Warn("%s", err)
 		}
 		server.Start()
 	},

@@ -65,6 +65,11 @@
       vertical-align: text-top;
     }
 
+    .badge {
+      font-size: 0.875rem;
+      padding: 1px 2px;
+    }
+
     @media (width < 54em) {
       #topleft {
         gap: 0.75rem;
@@ -89,7 +94,7 @@
     </div>
     <div id=topright>Software Manual</div>
   </div>
-  <div style="max-width:40rem">
+  <div style="max-width:50rem; font-size:1.25rem">
     <p>
       The SCCo Packet Messenger software supports Amateur Radio Emergency Service
       (<a target=_blank href=https://arrl.org/ares>ARES<sup>®</sup></a>)
@@ -117,7 +122,20 @@
       It runs on any operating system and has no external dependencies
       other than a browser for the graphical user interface.
     </p>
-    <h2>Outpost Add-On Operation</h2>
+    <h2>Table of Contents</h2>
+    <ul>
+      <li><a href="#outpost">Outpost Add-On Operation</a></li>
+      <li><a href="#standalone">Standalone Packet Messenger Operation</a>
+        <ul>
+          <li><a href="#gui">Graphical Interface</a></li>
+          <li><a href="#cli">Command Line Interface</a></li>
+          <li><a href="#settings">Incident Settings</a></li>
+          <li><a href="#log">Incident Log</a></li>
+          <li><a href="#sending">Sending Messages</a></li>
+        </ul>
+      </li>
+    </ul>
+    <h2 id=outpost>Outpost Add-On Operation</h2>
     <p>
       The SCCo Packet Messenger software is bundled in the county standard packet software installer.
       When installed using that installer, it is automatically connected to Outpost.
@@ -155,7 +173,7 @@
       such as city-specific forms.
       These are independent and not affected by the SCCo Packet Messenger.
     </p>
-    <h2>Standalone Packet Messenger Operation</h2>
+    <h2 id=standalone>Standalone Packet Messenger Operation</h2>
     <p>
       The SCCo Packet Messenger can be used without Outpost, in both graphical
       and command line interfaces.
@@ -165,18 +183,74 @@
       A new "incident" should be created in a new folder whenever you would
       normally start a new ICS-309.
     </p>
+    <h3 id=gui>Graphical Interface</h3>
     <p>
       To start the SCCo Packet Messenger's graphical interface, run the
       <code>packet gui</code> command (or, if installed on Windows through the
-      SCCo standard packet installer, <code>C:\PackItForms\pifo.exe</code>).
-      If you are in an incident folder when you run that command, or you add
-      a folder path on the command line, it will start in that incident.
-      Otherwise, it will ask you to choose or create an incident folder.
-      To use the SCCo Packet Messenger's command line interface, you should be
-      in the desired incident folder before invoking the <code>packet</code>
+      SCCo standard packet installer, <code>C:\PackItForms\pifo.exe</code>,
+      which is usually installed as the "SCCo Packet" desktop shortcut). The
+      graphical interface runs in your system's default browser. Only recent,
+      modern browsers are supported.
+    </p>
+    <p>
+      If you are in an incident folder when you start the graphical interface,
+      or you add a folder path on the command line, the graphical interface will
+      start in that incident. Otherwise, it will ask you to choose or create an
+      incident folder. In the graphical interface, use the Incident → New
+      Incident or Incident → Open Other Incident menu items to change which
+      incident you are working on.
+    </p>
+    <p>
+      The grahical interface maintains no state information in your browser.
+      You may close your browser at any time and start the graphical interface
+      again at a later time to resume where you left off. (However, if you are
+      editing a message in a browser window, any unsaved changes to the message
+      will be lost when you close it.)
+    </p>
+    <h3 id=cli>Command Line Interface</h3>
+    <p>
+      The SCCo Packet Messenger's command line interface is available through
+      the <code>packet</code> command. If you invoke the <code>packet</code>
+      executable with a command on the command line, it will execute that single
+      command and stop. If you invoke it without any arguments, it will open a
+      shell in which you can issue multiple packet commands. The shell
+      continues until you run the <code>quit</code> command.
+    </p>
+    <p>
+      Packet commands are fully spelled out in this manual, but any unambiguous
+      abbreviation of them is accepted (e.g., <code>q</code> for
+      <code>quit</code>). To get help on any command, use the <code>help</code>
       command.
     </p>
-    <h3>Incident Settings</h3>
+    <p>
+      Some packet commands produce different output in "scripted mode", which is
+      when standard input or standard output are not connected to a terminal
+      (e.g., output is redirected to a file).  Specific differences are noted
+      in the command descriptions below.  Generally, in scripted mode:
+    </p>
+    <ul>
+      <li>Confirmation and transient status messages are suppressed.</li>
+      <li>All colorization of the output is suppressed.</li>
+      <li>Commands that normally produce tables will produce CSV output.</li>
+      <li>Error messages are written to standard error instead of standard output.</li>
+    </ul>
+    <p>
+      Packet commands operate on the incident folder that is the current
+      working directory when they are run. To move between, create, and query
+      incident folders, use the <code>chdir</code> (or <code>cd</code>),
+      <code>mkdir</code>, and <code>pwd</code> commands, either in your command
+      shell before invoking <code>packet</code> or from within the packet shell.
+    </p>
+    <p>
+      Many packet commands take a <code>«message»</code> argument identifying a
+      message in the incident. This can be the full local message ID of the
+      message (e.g., <code>AAA-111P</code>), the full remote message ID of the
+      message if it is unambiguous (e.g., <code>XND-2345P</code>), the
+      sequence number part of either message ID if it is unambiguous (e.g.,
+      <code>111</code>), or a number sign followed by the log entry number for a
+      log entry describing the message (e.g., <code>#23</code>).
+    </p>
+    <h3 id=settings>Incident Settings</h3>
     <p>
       Each incident has its own settings that control how its messages are
       handled. Only a few of the settings are required:
@@ -189,7 +263,9 @@
       <li>
         The starting message ID to be assigned to new messages.
         You can assign separate message ID sequences for incoming and outgoing
-        messages, but usually they share the same sequence.
+        messages, but usually they share the same sequence. (The software will
+        guess a likely message ID sequence based on your call sign or the
+        tactical call sign, but you can override this.)
       </li>
       <li>
         The BBS you're connecting to and the method of connecting to it. Three
@@ -199,8 +275,10 @@
             Manual operations. The SCCo Packet Messenger doesn't connect to the
             BBS for you; it just gives you commands you can paste into a
             separate connection that you manage. For this method, you need to
-            provide the BBS name (so the software can use it in message headers)
-            but nothing else.
+            provide the BBS name (so the software can use it in message
+            headers). You can also decide whether the software should
+            automatically generate delivery receipts for received messages
+            (which you would then need to send manually).
           </li>
           <li>
             Serial+TNC connection. The SCCo Packet Messenger will connect to
@@ -229,7 +307,7 @@
       <li>
         Bulletin retrieval settings: you can specify which BBS areas to
         retrieve bulletins (and SCCo notices) from, and how often to check for
-        them.
+        them. (These settings are not available for manual operations.)
       </li>
       <li>
         Defaults for new messages: you can specify default values for the To
@@ -240,12 +318,16 @@
       </li>
     </ul>
     <p>
-      When creating a new incident, you are prompted to supply these incident
-      settings (at minimum the required ones). To change them later, use the
-      Incident → Incident Settings menu item (graphical interface) or the
-      <code>edit config</code> command (command line interface).
+      When creating a new incident it the graphical interface, you are prompted
+      to supply these incident settings (at minimum the required ones). To
+      change them later, use the Incident → Incident Settings menu item
+      (graphical interface). In the command line interface, you supply incident
+      settings with the <code>edit config</code> or <code>set config</code>
+      commands. In interactive mode, you will be prompted for the required ones
+      if you have not set them prior to an operation that needs them. (In
+      batch mode, you'll get an error.)
     </p>
-    <h3>Incident Log</h3>
+    <h3 id=log>Incident Log</h3>
     <p>
       An incident consists of a set of ICS-309 log entries. Most of the time,
       there is one entry per packet message. However, packet messages sent to
@@ -254,13 +336,14 @@
       message, such as shift change notations, voice message log entries, etc.
     </p>
     <p>
-      The log can be formatted in either of two layouts.  When rendered as an
-      PDF ICS-309 form, it uses the traditional 6-column layout of the
-      SCCo-standard printed ICS-309 form.  When rendered on screen in the
-      command line interface, it uses a more compact layout with 5 columns.
-      When rendered on screen in the graphical interface, you can choose either,
-      but the compact layout is the default:
+      The log can be formatted in either of two layouts. When rendered as an PDF
+      ICS-309 form, it uses the traditional 6-column layout of the SCCo-standard
+      printed ICS-309 form. When rendered on screen in the command line
+      interface, it uses a more compact layout with 5 columns, described below.
+      When rendered on screen in the graphical interface, you can choose either
+      layout using the View → Compact menu item toggle.
     </p>
+    <p>The compact layout has the following columns:</p>
     <ul>
       <li>
         The "TIME" column contains the time of day of the log entry. (ICS-309
@@ -270,23 +353,23 @@
       <li>
         For messages that the local station has received, the "FROM" column
         indicates the origin of the message: either its origin message ID, if
-        known, or its origin station call sign.  (For bulletins, it shows the
+        known, or its origin station call sign. (For bulletins, it shows the
         BBS area that the bulletin was retrieved from.)
       </li>
       <li>
-        The "MSG ID" column displays the local message ID of the message.  For
+        The "MSG ID" column displays the local message ID of the message. For
         receipt messages, it displays the local message ID of the message
         described by the receipt.
       </li>
       <li>
         For messages that the local station has sent, the "TO" column indicates
-        one destination of the message:  either its destination message ID, if
+        one destination of the message: either its destination message ID, if
         we've received a receipt for it giving that information, or else the
-        destination station call sign.  (If the local station sends a message to
+        destination station call sign. (If the local station sends a message to
         multiple recipients, there will be a separate log entry for each.)
       </li>
       <li>
-        The "MESSAGE" column contains the subject line of the message.  (In the
+        The "MESSAGE" column contains the subject line of the message. (In the
         compact layout, if the subject line starts with a message ID that is
         displayed in another column, the message ID is omitted here to save
         space.)
@@ -294,52 +377,230 @@
     </ul>
     <p>
       Note: the above descriptions indicate what the software puts in each
-      column when creating, sending, or receiving a packet message.  The
+      column when creating, sending, or receiving a packet message. The
       descriptions may not hold if the user manually adds or edits log entries.
     </p>
     <p>
-      The colors of the log entries indicate the message severity.  Immediate
-      messages are shown in red; priority messages are shown in gold.  Bulletin
-      messages are shown in blue.  Log entries for receipt messages are normally
-      not shown, but when they are requested, they are shown in gray.
+      The colors of the log entries indicate the message severity. Immediate
+      messages are shown <span style="color: #b50000">in red</span>; priority
+      messages are shown <span style="color: #805300">in gold</span>. Bulletin
+      messages are shown <span style="color: blue">in blue</span>. Log entries
+      for receipt messages are normally not shown, but when they are requested,
+      they are shown <span style="color: #888">in gray</span>.
     </p>
     <p>
-      Log entries may be decorated with a number of markers.  These appear only
+      Log entries may be decorated with a number of markers. These appear only
       on screen, not in the generated ICS-309 PDF form.
     </p>
     <ul>
       <li>
-        A <span style="background-color: #ff8080; font-size: 0.875rem">DRAFT</span>
+        A <span class=badge style="background-color: #ff8080">DRAFT</span>
         marker in the "TIME" column indicates that the
         message is being written and is not yet ready to send.
       </li>
       <li>
-        A <span style="background-color: #a8e8a8; font-size: 0.875rem">READY</span>
+        A <span class=badge style="background-color: #a8e8a8">READY</span>
         marker in the "TIME" column indicates that the message
         will be sent the next time the software connects to the BBS, but that
         it has not been sent yet.
       </li>
       <li>
-        A <span style="background-color: #ff8080; font-size: 0.875rem">NO RCPT</span>
+        A <span class=badge style="background-color: #ff8080">NO RCPT</span>
         marker indicates that we have not yet received a
-        delivery receipt for the message (which we sent).  This marker appears
+        delivery receipt for the message (which we sent). This marker appears
         in the "TO Msg #" column in the traditional layout and the "FROM" column
         in the compact layout.
       </li>
       <li>
-        A <span style="background-color: #ff8080; font-size: 0.875rem">NEW</span>
+        A <span class=badge style="background-color: #ff8080">NEW</span>
         marker in the "MESSAGE" column indicates that the message
         (which we received) has not been read yet.
       </li>
       <li>
-        A <span style="background-color: #a8e8a8; font-size: 0.875rem">VOICE</span>
+        A <span class=badge style="background-color: #a8e8a8">VOICE</span>
         marker in the "MESSAGE" column indicates that the log
-        entry is for a voice message, not a packet message.  (When the ICS-309
+        entry is for a voice message, not a packet message. (When the ICS-309
         form is printed, it will appear on a separate form for voice messages.)
       </li>
       <li>
         A red star (<span style="color: #d73b30">★</span>) in the right margin
         indicates that the message needs follow up.
+      </li>
+    </ul>
+    <p>
+      Delivery receipts (other than unsent ones) are normally not shown in the
+      on-screen log (although they are always included in the printed log). To
+      show receipts in the on-screen log, use the View –> Receipts menu item
+      toggle in the graphical interface, or the <code>--receipts</code> (or
+      <code>-r</code>) flag on the <code>list</code> command in the command line
+      interface.
+    </p>
+    <p>
+      To generate the ICS-309 in PDF format, use the Incident → Generate ICS-309
+      menu item in the graphical interface, or the <code>ics309</code> command
+      in the command line interface. (The latter can be abbreviated
+      <code>309</code> if there is no message with that number.) The PDF will
+      be created in the file "ics309.pdf" and "ics309.csv" files in the incident
+      folder, and will be shown in the system default PDF viewer.
+    </p>
+    <h3 id=sending>Sending Messages</h3>
+    <p>To create a draft of an outgoing message:</p>
+    <ul>
+      <li>
+        <b>Graphical Interface:</b> Use the Message → New menu item (or the "N"
+        key), and then choose the message type by clicking on it or typing the
+        letter(s) next to it. This will open a new browser window for the
+        message.
+      </li>
+      <li>
+        <b>Command Line Interface, Interactive Mode:</b> issue the
+        <code>new «type»</code> command, where <code>«type»</code> is the tag or
+        abbreviation of the message type. (Use the <code>forms list</code>
+        command to get the tags and abbreviations of the available types.) You
+        will be put into the command line editor for the new message.
+      </li>
+      <li>
+        <b>Command Line Interface, Scripted Mode:</b> use the <code>new</code>
+        command as above, but no command line editor will start. Instead, the
+        local message ID of the new message will be printed to standard output.
+        You can then use that in subsequent <code>set</code> commands to set the
+        fields of the new message. To override the default assignment of the
+        new message ID, add your desired message ID on the <code>new</code>
+        command line after the message type.
+      </li>
+    </ul>
+    <p>To revise an existing draft message:</p>
+    <ul>
+      <li>
+        <b>Graphical Interface:</b> To open a new browser window to edit a
+        message:
+        <ul>
+          <li>Double-click on its log entry in the incident window,</li>
+          <li>Select its log entry and press Enter,</li>
+          <li>Right-click its log entry and select Edit in the context menu, or</li>
+          <li>Select its log entry and use the Message → Edit menu item</li>
+        </ul>
+      </li>
+      <li>
+        <b>Command Line Interface:</b> use the <code>edit «message»</code>
+        command to start an interactive editor on the message, or the
+        <code>set «message» «field» «value»</code> command to set an individual
+        field's value.
+      </li>
+    </ul>
+    <p>To mark a draft message as being ready to send during the next BBS
+      connection:</p>
+    <ul>
+      <li>
+        <b>Graphical Interface:</b>
+        <ul>
+          <li>Click the "Send Message" button at the top of the message form.
+            (Only available if all message fields are valid.)</li>
+          <li>Right-click its log entry and turn on the Ready to Send item in
+            the context menu.</li>
+          <li>Select its log entry and turn on the Ready to Send item in the
+            Message menu.</li>
+        </ul>
+        For the latter two methods, if the message contents are not valid, you
+        will be prompted to confirm that you want to send it anyway.
+      </li>
+      <li>
+        <b>Command Line Interface:</b> At the completion of interactive editing,
+        if all fields are valid, you will be asked whether it is ready to send,
+        and you can select Yes. In other cases, use the
+        <code>queue «message»</code> command. You will have to add a
+        <code>--force</code> flag if the message contents are not valid.
+      </li>
+    </ul>
+    <p>To mark a draft message as <i><u>not</u></i> ready to send:</p>
+    <ul>
+      <li>
+        <b>Graphical Interface:</b>
+        <ul>
+          <li>Click the "Save as Draft" button at the top of the message form.</li>
+          <li>Right-click its log entry and turn off the Ready to Send item in
+            the context menu.</li>
+          <li>Select its log entry and turn off the Ready to Send item in the
+            Message menu.</li>
+        </ul>
+      </li>
+      <li>
+        <b>Command Line Interface:</b> At the completion of interactive editing,
+        if all fields are valid, you will be asked whether it is ready to send,
+        and you can select No. In other cases, use the
+        <code>draft «message»</code> command.
+      </li>
+    </ul>
+    <p>To display the JNOS command needed to send a message manually:</p>
+    <ul>
+      <li>
+        <b>Graphical Interface</b> (when connection type is Manual): Select its
+        log entry and press "S" or use the Manual Send menu item in the Message
+        or right-click menu. The resulting dialog will show you the send
+        command, and has a button to copy it to your system clipboard so that
+        you can paste it into a terminal emulator. When finished, use the Mark
+        Message as Sent button to tell the packet software that the message has
+        been sent.
+      </li>
+      <li>
+        <b>Command Line Interface:</b> Use the <code>manual send «message»</code>
+        command to display the send command. In interactive mode, it will ask
+        you to confirm that the message has been sent. In batch mode, use the
+        <code>manual mark-sent «message»</code> command to mark the message as
+        sent.
+      </li>
+    </ul>
+    <p>To resend a message (i.e., edit a message that has already been sent and
+      send it again, with the same message number except with an "R" suffix):</p>
+    <ul>
+      <li>
+        <b>Graphical Interface:</b> Select the log entry of the sent message
+        and use the Resend menu item in the Message or right-click menu.
+        This will open a new browser window to edit the new draft message.
+      </li>
+      <li>
+        <b>Command Line Interface:</b> Use the
+        <code>new --resend «message»</code> command.
+      </li>
+    </ul>
+    <p>To send a copy of a message (i.e., send a message with an entirely new
+      message number but the same contents as an existing message):</p>
+    <ul>
+      <li>
+        <b>Graphical Interface:</b> Select the log entry of the message to copy
+        and use the Send Copy menu item in the Message or right-click menu.
+        This will open a new browser window to edit the new draft message.
+      </li>
+      <li>
+        <b>Command Line Interface:</b> Use the
+        <code>new --copy «message»</code> command.
+      </li>
+    </ul>
+    <p>To reply to a received message (i.e., send a new message to the sender of
+      the received message, with the same subject):</p>
+    <ul>
+      <li>
+        <b>Graphical Interface:</b> Select the log entry of the message to copy
+        and use the Reply menu item in the Message or right-click menu. This
+        will open a new browser window to edit the new draft message.
+      </li>
+      <li>
+        <b>Command Line Interface:</b> Use the
+        <code>new --reply «message»</code> command.
+      </li>
+    </ul>
+    <p>Delivery receipts for received messages are generated automatically,
+      unless the incident connection type is Manual and the option for
+      automatic delivery receipts has been turned off. In that case, you can
+      generate a draft delivery receipt manually:</p>
+    <ul>
+      <li>
+        <b>Graphical Interface:</b> Select the log entry of the received message
+        and use the Create Receipt menu item in the Message or right-click menu.
+      </li>
+      <li>
+        <b>Command Line Interface:</b> Use the
+        <code>manual make-receipt «message»</code> command.
       </li>
     </ul>
   </div>

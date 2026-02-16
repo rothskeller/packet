@@ -2,9 +2,9 @@ package forms
 
 import (
 	"cmp"
-	"fmt"
 	"slices"
 
+	"github.com/rothskeller/packet/cmd/packet/cio"
 	"github.com/rothskeller/packet/form"
 	"github.com/rothskeller/packet/form/formdef"
 	"github.com/rothskeller/packet/form/formdefs"
@@ -42,23 +42,17 @@ are identified in PackItForms encoding.`,
 			}
 		}
 		slices.SortFunc(list, compareFormDefs)
-		fmt.Println("* TAG          CT  VER  DESCRIPTION")
-		if verbose {
-			fmt.Println("                        PACKITFORMS")
-		}
+		fl := cio.Open().NewFormsList(all, verbose)
 		for _, fd := range list {
-			var creatable, tag string
+			var tag string
 			if fd.CreateTag != "" {
-				creatable = "*"
 				tag = fd.CreateTag
 			} else {
 				tag = fd.SubjectTag
 			}
-			fmt.Printf("%-1.1s %-12.12s %-2.2s  %-4.4s %s\n", creatable, tag, fd.CreateKey, fd.Version, fd.Title)
-			if verbose {
-				fmt.Printf("                        %-12.12s #T: %s\n", "!"+fd.AddonName+"!", fd.HTMLName)
-			}
+			fl.ShowForm(fd.CreateTag != "", tag, fd.CreateKey, fd.Version, fd.Title, fd.AddonName, fd.HTMLName)
 		}
+		fl.Close()
 		return nil
 	},
 }
