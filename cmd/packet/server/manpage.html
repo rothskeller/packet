@@ -65,6 +65,11 @@
       vertical-align: text-top;
     }
 
+    code {
+      background-color: #ddd;
+      padding-inline: 2px;
+    }
+
     .badge {
       font-size: 0.875rem;
       padding: 1px 2px;
@@ -107,7 +112,7 @@
     <p>
       Most Santa Clara County ARES/RACES packet operations and operators use the
       <a target=_blank href=https://www.scc-ares-races.org/operations/equipment/packet/software/outpost>
-        Outpost Packet Message Manager
+        Outpost Packet logentry Manager
       </a>
       software, which is the county standard packet message manager.
       In these environments, the SCCo Packet Messenger acts as an add-on to Outpost,
@@ -132,8 +137,19 @@
           <li><a href="#settings">Incident Settings</a></li>
           <li><a href="#log">Incident Log</a></li>
           <li><a href="#sending">Sending Messages</a></li>
+          <li><a href="#receiving">Receiving Messages</a></li>
+          <li><a href="#msgops">Other Message Operations</a></li>
+          <li><a href="#logops">Log Entry Operations</a></li>
         </ul>
       </li>
+      <li><a href="#issues">Reporting Issues</a></li>
+      <li><a href="#layout">Folders and Files</a>
+        <ul>
+          <li><a href="#l-incident">Incident Folders</a></li>
+          <li><a href="#l-system">System Files</a></li>
+        </ul>
+      </li>
+      <li><a href="#legal">Copyrights, Licenses, Source Code, etc.</a></li>
     </ul>
     <h2 id=outpost>Outpost Add-On Operation</h2>
     <p>
@@ -225,8 +241,8 @@
     <p>
       Some packet commands produce different output in "scripted mode", which is
       when standard input or standard output are not connected to a terminal
-      (e.g., output is redirected to a file).  Specific differences are noted
-      in the command descriptions below.  Generally, in scripted mode:
+      (e.g., output is redirected to a file). Specific differences are noted
+      in the command descriptions below. Generally, in scripted mode:
     </p>
     <ul>
       <li>Confirmation and transient status messages are suppressed.</li>
@@ -508,7 +524,7 @@
         <b>Command Line Interface:</b> At the completion of interactive editing,
         if all fields are valid, you will be asked whether it is ready to send,
         and you can select Yes. In other cases, use the
-        <code>queue «message»</code> command. You will have to add a
+        <code>mark «message» ready</code> command. You will have to add a
         <code>--force</code> flag if the message contents are not valid.
       </li>
     </ul>
@@ -528,7 +544,20 @@
         <b>Command Line Interface:</b> At the completion of interactive editing,
         if all fields are valid, you will be asked whether it is ready to send,
         and you can select No. In other cases, use the
-        <code>draft «message»</code> command.
+        <code>mark «message» draft</code> command.
+      </li>
+    </ul>
+    <p>To delete a draft message without sending it:</p>
+    <ul>
+      <li>
+        <b>Graphical Interface:</b> Select its log entry and use the Delete
+        menu item in the Message menu or the right-click context menu.
+      </li>
+      <li>
+        <b>Command Line Interface:</b> Use the
+        <code>delete «message»</code> command. Note that this command does not
+        accept abbreviations of the message ID, for safety. Only the full
+        message ID or the <code>#NN</code> log entry identifier are accepted.
       </li>
     </ul>
     <p>To display the JNOS command needed to send a message manually:</p>
@@ -546,8 +575,7 @@
         <b>Command Line Interface:</b> Use the <code>manual send «message»</code>
         command to display the send command. In interactive mode, it will ask
         you to confirm that the message has been sent. In batch mode, use the
-        <code>manual mark-sent «message»</code> command to mark the message as
-        sent.
+        <code>mark «message» sent</code> command to mark the message as sent.
       </li>
     </ul>
     <p>To resend a message (i.e., edit a message that has already been sent and
@@ -603,6 +631,251 @@
         <code>manual make-receipt «message»</code> command.
       </li>
     </ul>
+    <h3 id=receiving>Receiving Messages</h3>
+    <p>
+      To connect to the BBS and receive messages (for "Serial+TNC" and "Telnet"
+      connection types):
+    </p>
+    <ul>
+      <li>
+        <b>Graphical Interface:</b> Press "C" or use the Connect → Send/Receive
+        All menu item. (To transfer immediate messages only, use the Connect →
+        Immediates Only menu item.)
+      </li>
+      <li>
+        <b>Command Line Interface:</b> Run the <code>connect</code> command.
+        (To transfer immediate messages only, add the <code>--immediates</code>
+        flag.)
+      </li>
+    </ul>
+    <p>
+      To receive a message manually (for "Manual" connection type):
+    </p>
+    <ul>
+      <li>
+        <b>Graphical Interface:</b> Press "R" or use the Message →
+        Manual Receive menu item to bring up the Manual Receive dialog.
+        Paste the received message into the box, or use the button to upload a
+        file containing it.
+      </li>
+      <li>
+        <b>Command Line Interface:</b> Run the <code>manual receive</code>
+        command and paste the received message. End it by typing
+        <code>/EX</code> on a line by itself. Alternatively, use
+        <code>manual receive &lt; «filename»</code> to read the received
+        message from a file.
+      </li>
+    </ul>
+    <h3 id=msgops>Other Message Operations</h3>
+    <p>To view a message (sent or received):</p>
+    <ul>
+      <li>
+        <b>Graphical Interface:</b> Double click on the message, select it and
+        hit return, select it and use the Message → View menu item, or
+        right-click on it and use the View menu item in the context menu. The
+        message will be shown in PDF format in a new browser tab.
+      </li>
+      <li>
+        <b>Command Line Interface:</b> Use the <code>show «message»</code>
+        command to display the message contents in the console window, or the
+        <code>pdf «message»</code> command to display the message in PDF format
+        in the system default PDF viewer.
+      </li>
+    </ul>
+    <p>To send a message to the system default printer (MacOS and Linux only):</p>
+    <ul>
+      <li>
+        <b>Graphical Interface:</b> Select the message and press "P", or use
+        the Print menu item in the Message menu or the right-click menu.
+      </li>
+      <li>
+        <b>Command Line Interface:</b> Use the <code>print «message»</code>
+        command.
+      </li>
+    </ul>
+    <h3 id=logops>Log Entry Operations</h3>
+    <p>
+      The software automatically creates one log entry for each received
+      message, and one for each recipient of each sent message. You can edit
+      these, and create additional log entries not associated with a sent or
+      received message.
+    </p>
+    <p>To create a log entry not associated with a packet message:</p>
+    <ul>
+      <li>
+        <b>Graphical Interface:</b> Use the Message → Manual Log Entry menu
+        item. This will give a dialog box for entering the log entry details.
+      </li>
+      <li>
+        <b>Command Line Interface:</b> Use the <code>new logentry</code>
+        command. This works the same way as the <code>new</code> command for a
+        message, giving you a console editor for the new log message in an
+        interactive session or printing the new log entry number to standard
+        output in scripting mode.
+      </li>
+    </ul>
+    <p>To edit a log entry:</p>
+    <ul>
+      <li>
+        <b>Graphical Interface:</b> Select the entry and use the Edit Log Entry
+        menu item in the Message menu or the right-click content menu. This
+        will give a dialog box for changing the log entry details.
+      </li>
+      <li>
+        <b>Command Line Interface:</b> Use the <code>edit log «logentry»</code>
+        command for an interactive editor of the log entry, or the
+        <code>set log «logentry»</code> command to change individual log entry
+        fields.
+      </li>
+    </ul>
+    <p>To delete a manually added log entry (or a draft message):</p>
+    <ul>
+      <li>
+        <b>Graphical Interface:</b> Select the entry and use the Delete menu
+        item in the Message menu or the right-click content menu.
+      </li>
+      <li>
+        <b>Command Line Interface:</b> Use the <code>delete «logentry»</code>
+        command.
+      </li>
+    </ul>
+    <p>
+      The software automatically flags log entries for sent messages for which
+      no delivery receipt has been received. To clear this flag (e.g., because
+      you know the message has been received through some other means):
+    </p>
+    <ul>
+      <li>
+        <b>Graphical Interface:</b> Select the log entry and turn off the Needs
+        Receipt menu item toggle in the Message menu or right-click context
+        menu.
+      </li>
+      <li>
+        <b>Command Line Interface:</b> Use the
+        <code>mark «logentry» received</code> command.
+      </li>
+    </ul>
+    <p>To change whether a log entry is marked as needing follow-up:</p>
+    <ul>
+      <li>
+        <b>Graphical Interface:</b> Select the log entry and toggle the Needs
+        Followupt menu item toggle in the Message menu or right-click context
+        menu.
+      </li>
+      <li>
+        <b>Command Line Interface:</b> Use the
+        <code>mark «logentry» starred</code> or
+        <code>mark «logentry» unstarred</code> command.
+      </li>
+    </ul>
+    <h2 id=issues>Reporting Issues</h2>
+    <p>
+      Issues with this software should be reported to the
+      packet@scc-ares-races.groups.io mailing list. When reporting problems,
+      please include the relevant files:
+    </p>
+    <ul>
+      <li>
+        The log file(s) for the day(s) when the issue occurred. Log files are
+        located in C:\PackItForms\Log on Windows and in
+        $HOME/.local/state/packet/log on other operating systems.
+      </li>
+      <li>
+        If the issue is with standalone operation, include the incident
+        configuration file, which is packet.json in the incident folder.
+      </li>
+      <li>
+        If the issue is with BBS communications, include the BBS communication
+        transcript, which is «BBSname».log in the incident folder.
+      </li>
+    </ul>
+    <h2 id=layout>Folders and Files</h2>
+    <p>
+      This section describes where folders and files are located and how data
+      is stored. It is for background only; this information is not needed to
+      use the software.
+    </p>
+    <h3 id=l-incident>Incident Folders</h3>
+    <p>
+      Incident folders can be located wherever the user decides to create them,
+      although the software will block usage of some unsuitable directories.
+      Within an incident folder, there are four incident-related files:
+    </p>
+    <ul>
+      <li>
+        <code>packet.json</code> contains the incident configuration, log
+        entries, and other associated data.
+      </li>
+      <li>
+        <code>.packet.lock</code> is a lock file ensuring synchronized access to
+        incident data.
+      </li>
+      <li>
+        <code>ics309.pdf</code> and <code>ics309.csv</code> contain the rendered
+        ICS-309 log for the incident.
+      </li>
+    </ul>
+    <p>
+      In addition, there are two files for each message: a <code>.txt</code>
+      file with the message in encoded form, and a <code>.pdf</code> file with
+      the message in PDF format. For sent and received messages other than
+      receipts, the filename is the local message ID. For receipts, the
+      filename is <code>.receiptNN</code>, where <code>NN</code> is the
+      corresponding log entry number. For unsent messages, the filename is
+      <code>.unsentNN</code>.
+    </p>
+    <p>
+      Where the remote message ID of a sent or received message is known, it may
+      be available under that filename as well. (On Windows, this only works if
+      user symbolic link permissions have been enabled, which is not common.)
+    </p>
+    <p>
+      Finally, if the incident has connected to a BBS, there will be a
+      <code>«BBSname».log</code> file containing the transcript of the
+      communications.
+    </p>
+    <h3 id=l-system>System Files</h3>
+    <p>
+      Outside of the incident folders, the packet software stores a number of
+      other files:
+    </p>
+    <ul>
+      <li>
+        Form definitions and related files are stored in C:\PackItForms\Forms
+        on Windows, and in $HOME/.local/share/packet on other operating systems.
+      </li>
+      <li>
+        Log files are stored in C:\PackItForms\Log on Windows, and in
+        $HOME/.local/state/packet/log on other operating systems.
+      </li>
+      <li>
+        Messages transferred between Outpost and the packet software are
+        stored in C:\PackItForms\Spool.
+      </li>
+      <li>
+        Settings that persist across all incidents are stored in
+        %APPDATA%\packet.json on Windows, and in $HOME/.config/packet/packet.json
+        on other operating systems.
+      </li>
+    </ul>
+    <h2 id=legal>Copyrights, Licenses, Source Code, etc.</h2>
+    <p>
+      The current iteration of the SCCo Packet software is Copyright © 2026
+      Steven Roth KC6RSC.  It is available under a BSD 3-clause license, visible
+      in its source code at <a href=https://github.com/rothskeller/packet
+      target=_blank>github.com/rothskeller/packet</a>.
+    </p>
+    <p>
+      The forms installed with it are copyrighted by Santa Clara County
+      ARES®/RACES.  Their source code is at
+      <a href=https://github.com/scc-ares-races/forms target=_blank>github.com/scc-ares-races/forms</a>.
+    </p>
+    <p>
+      We acknowledge with gratitude the work on preceding software that laid
+      the foundations for this project, particularly Phil Henderson KF6ZFQ
+      (author of PacFORMS) and John Kristian W6JMK (author of PackItForms
+      versions 1 through 3).
+    </p>
   </div>
 </body>
 
