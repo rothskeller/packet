@@ -25,6 +25,7 @@ const (
 	colorSelected  = 254*256 + 16  // black on light grey
 	colorHelp      = 30*256 + 254  // light grey on dark green
 	colorHint      = 16*256 + 250  // grey on black
+	colorReceipt   = 16*256 + 250  // grey on black
 )
 
 // print prints the specified string in the specified color.

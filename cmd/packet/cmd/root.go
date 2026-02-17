@@ -11,9 +11,10 @@ import (
 )
 
 var RootCmd = &cobra.Command{
-	Use:   "packet",
-	Short: "Open a shell for packet commands",
-	Long:  `TBD`, // TODO: add help text
+	Use:           "packet",
+	Short:         "Open a shell for packet commands",
+	Long:          `TBD`, // TODO: add help text
+	SilenceErrors: true,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		return errors.New("not implemented") // TODO: implement shell
 	},
