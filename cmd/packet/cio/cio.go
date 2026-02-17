@@ -33,6 +33,7 @@ type CIO struct {
 	lastColor  int
 	hideCursor bool
 	haveStatus bool
+	buf        *screenBuf
 }
 
 // Open opens a new console I/O handle.

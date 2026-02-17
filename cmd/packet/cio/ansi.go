@@ -89,7 +89,39 @@ func (cio *CIO) clearToEOL() {
 	io.WriteString(os.Stdout, "\033[K")
 }
 
-/*
+func (cio *CIO) cleanTerminal() {
+	io.WriteString(os.Stdout, "\r")
+	cio.setColor(colorNormal)
+	io.WriteString(os.Stdout, "\033[J\033[?25h")
+	cio.curX, cio.curY, cio.lastColor, cio.hideCursor, cio.haveStatus, cio.buf = 0, 0, 0, false, false, nil
+}
+
+func (cio *CIO) move(x, y int) {
+	if y > cio.curY {
+		fmt.Printf("\033[%dB", y-cio.curY)
+	} else if y < cio.curY {
+		fmt.Printf("\033[%dA", cio.curY-y)
+	}
+	if x > cio.curX {
+		fmt.Printf("\033[%dC", x-cio.curX)
+	} else if x < cio.curX {
+		fmt.Printf("\033[%dD", cio.curX-x)
+	}
+	cio.curX, cio.curY = x, y
+}
+
+func (cio *CIO) showCursor(show bool) {
+	if show == !cio.hideCursor {
+		return
+	}
+	if show {
+		io.WriteString(os.Stdout, "\033[?25h")
+	} else {
+		io.WriteString(os.Stdout, "\033[?25l")
+	}
+	cio.hideCursor = !show
+}
+
 // Key codes used in this program.  This isn't all possible key codes, but it's
 // the ones that are relevant to us.
 const (
@@ -113,41 +145,6 @@ const (
 	keyF1
 	keyBackTab
 )
-
-var buf *screenBuf
-
-func cleanTerminal() {
-	io.WriteString(os.Stdout, "\r")
-	setColor(colorNormal)
-	io.WriteString(os.Stdout, "\033[J\033[?25h")
-	curX, curY, lastColor, hideCursor, haveStatus, buf = 0, 0, 0, false, false, nil
-}
-
-func move(x, y int) {
-	if y > curY {
-		fmt.Printf("\033[%dB", y-curY)
-	} else if y < curY {
-		fmt.Printf("\033[%dA", curY-y)
-	}
-	if x > curX {
-		fmt.Printf("\033[%dC", x-curX)
-	} else if x < curX {
-		fmt.Printf("\033[%dD", curX-x)
-	}
-	curX, curY = x, y
-}
-
-func showCursor(show bool) {
-	if show == !hideCursor {
-		return
-	}
-	if show {
-		io.WriteString(os.Stdout, "\033[?25h")
-	} else {
-		io.WriteString(os.Stdout, "\033[?25l")
-	}
-	hideCursor = !show
-}
 
 var readKeyBuf [256]byte
 var pendingKeys []byte
@@ -360,4 +357,3 @@ NUMERIC:
 	}
 	return key, buf[1:]
 }
-*/

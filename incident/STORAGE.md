@@ -74,11 +74,10 @@ symbolic links).
 
 ## ICS-309 Log
 
-On demand, the packet software can generate an ICS-309 communications log in
-both CSV and PDF formats. This is stored in `ICS309.csv` and `ICS309.pdf`
-respectively. These files are removed automatically when the incident changes,
-to ensure they are never stale. Note the lack of hyphen in the filenames, so
-that they can't conflict with a message number.
+On demand, the packet software can generate an ICS-309 communications log in PDF
+format. This is stored in `ics309.pdf`. This file is removed automatically when
+the incident changes, to ensure it is never stale.  Note the lack of hyphen in
+the filename, to ensure that it cannot conflict with a message number.
 
 ## Archive Files
 

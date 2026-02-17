@@ -233,7 +233,7 @@ func Write(dir string, fn func(*Incident) error) (err error) {
 	}
 	// Remove the generated ICS-309 file after any successful incident
 	// change.
-	os.Remove(filepath.Join(inc.Dir, "ICS-309.pdf"))
+	os.Remove(filepath.Join(inc.Dir, "ics309.pdf"))
 	if err = inc.writeStateFile(); err != nil {
 		return err
 	}

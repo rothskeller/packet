@@ -24,7 +24,19 @@ var ics309FormFile []byte
 var ics309FormDef *formdef.FormDef
 var ics309FormInit sync.Once
 
-// GenerateICS309 creates ICS-309.pdf in the incident directory.
+// ICS309FormDef returns the form definition for the ICS-309 form.  This is
+// used by other code to determine edit widths for the ICS-309 fields.
+func ICS309FormDef() *formdef.FormDef {
+	ics309FormInit.Do(func() {
+		var err error
+		if ics309FormDef, err = formdef.ReadFH(nil, bytes.NewReader(ics309FormFile), ""); err != nil {
+			panic(err.Error())
+		}
+	})
+	return ics309FormDef
+}
+
+// GenerateICS309 creates ics309.pdf in the incident directory.
 func (i *Incident) GenerateICS309(signature string) (err error) {
 	var (
 		fname string
@@ -38,7 +50,7 @@ func (i *Incident) GenerateICS309(signature string) (err error) {
 			panic(err.Error())
 		}
 	})
-	fname = filepath.Join(i.Dir, "ICS-309.pdf")
+	fname = filepath.Join(i.Dir, "ics309.pdf")
 	if out, err = os.Create(fname); err != nil {
 		slog.Error("os.Create", "f", fname, "err", err)
 		return err

@@ -49,7 +49,7 @@ func (cio *CIO) Confirm(f string, args ...any) {
 			s += "\n"
 		}
 		cio.clearStatus()
-		io.WriteString(os.Stdout, s)
+		cio.print(0, cio.WrapText(s))
 	} // else don't emit
 }
 
