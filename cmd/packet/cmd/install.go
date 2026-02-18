@@ -76,6 +76,7 @@ If an Outpost data directory is given on the command line, "packet install" will
 			return err
 		}
 		cleanupOldPackItForms()
+		slog.Info("Install complete.")
 		return nil
 	},
 }

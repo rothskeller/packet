@@ -1,12 +1,11 @@
 package cmd
 
 import (
-	"fmt"
+	"log/slog"
 	"os"
-	"os/exec"
-	"runtime"
 
 	"github.com/rothskeller/packet/cmd/packet/cio"
+	"github.com/rothskeller/packet/cmd/packet/cmd/cmdutil"
 	"github.com/rothskeller/packet/incident"
 	"github.com/spf13/cobra"
 )
@@ -45,23 +44,11 @@ The signature for the generated log can be provided with the --signature (or -s)
 			}); err != nil {
 				return err
 			}
+			slog.Debug("Generated missing ics309.pdf")
 		} else if err != nil {
 			return err
 		}
-		var showcmd *exec.Cmd
-		switch runtime.GOOS {
-		case "windows":
-			showcmd = exec.Command("cmd.exe", "/C", "ics309.pdf")
-		case "darwin":
-			showcmd = exec.Command("open", "ics309.pdf")
-		default:
-			showcmd = exec.Command("xdg-open", "ics309.pdf")
-		}
-		if err := showcmd.Start(); err != nil {
-			return fmt.Errorf("starting PDF viewer: %s", err)
-		}
-		go func() { showcmd.Wait() }()
-		return nil
+		return cmdutil.ShowPDF("ics309.pdf")
 	},
 }
 

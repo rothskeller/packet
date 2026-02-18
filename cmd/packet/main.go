@@ -18,6 +18,7 @@ func main() {
 	logInvocation()
 	defaultCommands()
 	if err := cmd.Execute(); err != nil {
+		slog.Error("error exit", "err", err)
 		cio.Open().Error("%s", err)
 	}
 }
@@ -37,6 +38,9 @@ func logInvocation() {
 	attrs = append(attrs, slog.String("ver", ver))
 	if osdep.IsAdmin() {
 		attrs = append(attrs, slog.Bool("admin", true))
+	}
+	if wd, err := os.Getwd(); err == nil {
+		attrs = append(attrs, slog.String("dir", wd))
 	}
 	slog.LogAttrs(context.Background(), slog.LevelDebug, "START", attrs...)
 }
