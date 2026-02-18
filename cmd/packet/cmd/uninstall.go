@@ -16,12 +16,9 @@ import (
 )
 
 var uninstallCmd = &cobra.Command{
-	Use:   "uninstall",
-	Short: "Uninstalls the packet software and disconnects from Outpost",
-	Long: `
-The "packet uninstall" command undoes the operations of the "packet install"
-command, removing the packet software and its files from the system.  If the
-packet software was connected to Outpost, that connection is removed.`,
+	Use:                   "uninstall",
+	Short:                 "Uninstalls the packet software and disconnects from Outpost",
+	Long:                  `The "packet uninstall" command undoes the operations of the "packet install" command, removing the packet software and its files from the system.  If the packet software was connected to Outpost, that connection is removed.`,
 	Args:                  cobra.NoArgs,
 	DisableFlagsInUseLine: true,
 	SilenceUsage:          true,

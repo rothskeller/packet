@@ -29,13 +29,13 @@ var newCmd = &cobra.Command{
 	Short: "Start an editor on a new draft message",
 	Long: `Command called by Outpost to start editing a new draft message.  The parameters are:
 
-addon    Name of the Outpost "addon" for this message (e.g., "SCCoPIFO").
-type     Name of the form to create ("form-something.html").
-msgid    Message ID to assign to the new message.
-opcall   FCC call sign of the operator creating the message.
-opname   Name of the operator creating the message.
-taccall  Tactical station call sign if any.
-tacname  Tactical station name if any.`,
+addon    ⇥Name of the Outpost "addon" for this message (e.g., "SCCoPIFO").
+type     ⇥Name of the form to create ("form-something.html").
+msgid    ⇥Message ID to assign to the new message.
+opcall   ⇥FCC call sign of the operator creating the message.
+opname   ⇥Name of the operator creating the message.
+taccall  ⇥Tactical station call sign if any.
+tacname  ⇥Tactical station name if any.`,
 	DisableFlagsInUseLine: true,
 	SilenceUsage:          true,
 	Args: func(cmd *cobra.Command, args []string) error {

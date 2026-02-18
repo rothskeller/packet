@@ -20,6 +20,7 @@ import (
 
 // Message is the interface satisfied by all messages.
 type Message = msgifc.Message
+type ValidateFlags = msgifc.ValidateFlags
 
 // common is the common parts of the message that are the same for all four
 // implementations.

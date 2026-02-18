@@ -40,21 +40,12 @@ const (
 var installCmd = &cobra.Command{
 	Use:   "install [outpost-data-dir]",
 	Short: "Installs the packet software and connects it to Outpost",
-	Long: `
-The "packet install" command connects the packet software to Windows and
-Outpost.  The packet software does not need to be "installed;" it can be run
-from the command line without any installation process.  However, installing it
-makes it easier to invoke and to maintain:
-  - It adds entries for the packet software in the Windows Start menu.
-  - It adds entries for the packet software in the Windows Registry, so that
-    the packet software appears in the list of installed applications and can
-    be uninstalled from there.
-  - It updates the PackItForms 3.x C:\PackItForms\Outpost\SCCo\manual.cmd
-    script, if it exists, to start manual mode operations.
+	Long: `The "packet install" command connects the packet software to Windows and Outpost.  The packet software does not need to be "installed;" it can be run from the command line without any installation process.  However, installing it makes it easier to invoke and to maintain:
+  - ⇥It adds entries for the packet software in the Windows Start menu.
+  - ⇥It adds entries for the packet software in the Windows Registry, so that the packet software appears in the list of installed applications and can be uninstalled from there.
+  - ⇥It updates the PackItForms 3.x C:\PackItForms\Outpost\SCCo\manual.cmd script, if it exists, to start manual mode operations.
 
-If an Outpost data directory is given on the command line, "packet install"
-will also modify the Outpost configuration so that Outpost will use the packet
-software for forms messages.`,
+If an Outpost data directory is given on the command line, "packet install" will also modify the Outpost configuration so that Outpost will use the packet software for forms messages.`,
 	Args:                  cobra.RangeArgs(0, 1),
 	DisableFlagsInUseLine: true,
 	SilenceUsage:          true,

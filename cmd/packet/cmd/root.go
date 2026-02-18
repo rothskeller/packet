@@ -3,10 +3,13 @@ package cmd
 import (
 	"errors"
 	"log/slog"
+	"sync"
 
+	"github.com/rothskeller/packet/cmd/packet/cio"
 	"github.com/rothskeller/packet/cmd/packet/cmd/forms"
 	"github.com/rothskeller/packet/cmd/packet/cmd/outpost"
 	"github.com/rothskeller/packet/cmd/packet/cmd/server"
+	"github.com/rothskeller/packet/form/formdefs"
 	"github.com/spf13/cobra"
 )
 
@@ -36,4 +39,14 @@ func init() {
 	RootCmd.AddCommand(forms.Command)
 	RootCmd.AddCommand(outpost.Command)
 	RootCmd.AddCommand(server.Command)
+}
+
+var registerFormsOnce sync.Once
+
+func registerForms() {
+	registerFormsOnce.Do(func() {
+		if err := formdefs.RegisterForms(); err != nil {
+			cio.Open().Warn("%s", err)
+		}
+	})
 }

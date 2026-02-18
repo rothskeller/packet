@@ -17,22 +17,18 @@ import (
 var convertCmd = &cobra.Command{
 	Use:   "convert msgfile state msgid subject opcall opname opdt spool copies",
 	Short: "Convert a message to PDF for printing",
-	Long: `
-Command called by Outpost to convert a message to PDF for printing.  The
-parameters (all required) are:
+	Long: `Command called by Outpost to convert a message to PDF for printing.  The parameters (all required) are:
 
-msgfile  Filename of the file containing the message
-state    State of the message (new, ready, sent, unread, read, or draft)
-msgid    Local message ID of the message
-opcall   FCC call sign of the local operator
-opname   Name of the local operator
-opdt     Date and time that the message was received
-spool    Directory into which to place the PDFs
-copies   Name(s) to apply to the copies (separated by newlines)
+msgfile  ⇥Filename of the file containing the message
+state    ⇥State of the message (new, ready, sent, unread, read, or draft)
+msgid    ⇥Local message ID of the message
+opcall   ⇥FCC call sign of the local operator
+opname   ⇥Name of the local operator
+opdt     ⇥Date and time that the message was received
+spool    ⇥Directory into which to place the PDFs
+copies   ⇥Name(s) to apply to the copies (separated by newlines)
 
-This will make one PDF in the spool directory for each copy name (or one total,
-if copies is empty).  The PDFs will be named with the subject of the message
-and a sequence number.`,
+This will make one PDF in the spool directory for each copy name (or one total, if copies is empty).  The PDFs will be named with the subject of the message and a sequence number.`,
 	DisableFlagsInUseLine: true,
 	SilenceUsage:          true,
 	Args:                  cobra.ExactArgs(8),

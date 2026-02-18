@@ -14,11 +14,10 @@ import (
 var editCmd = &cobra.Command{
 	Use:   "edit msgfile msgindex",
 	Short: "Start an editor on an existing unsent message",
-	Long: `Command called by Outpost to start editing an existing (unsent) message.
-The parameters are:
+	Long: `Command called by Outpost to start editing an existing (unsent) message. The parameters are:
 
-msgfile   Filename of the file containing the existing message
-msgindex  Index of the message in the Outpost database`,
+msgfile   ⇥Filename of the file containing the existing message
+msgindex  ⇥Index of the message in the Outpost database`,
 	DisableFlagsInUseLine: true,
 	SilenceUsage:          true,
 	Args:                  cobra.ExactArgs(2),

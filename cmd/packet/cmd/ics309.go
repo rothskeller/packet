@@ -15,15 +15,9 @@ var ics309Cmd = &cobra.Command{
 	Use:     "ics309 [-s signature]",
 	Aliases: []string{"309"},
 	Short:   "Show the ICS-309 log for the incident",
-	Long: `
-Creates ics309.pdf in the incident directory, if it does not already exist,
-containing the PDF-rendered ICS-309 communications log for the incident.
-Then, opens that file in the system-default PDF viewer if any.
+	Long: `Creates ics309.pdf in the incident directory, if it does not already exist, containing the PDF-rendered ICS-309 communications log for the incident. Then, opens that file in the system-default PDF viewer if any.
 
-The signature for the generated log can be provided with the --signature
-(or -s) flag.  In interactive mode, the software will prompt for it if not
-provided.  Note that by providing a signature, you are making a legal assertion
-that the log is accurate.  Do not sign it unless you are sure of that. `,
+The signature for the generated log can be provided with the --signature (or -s) flag.  In interactive mode, the software will prompt for it if not provided.  Note that by providing a signature, you are making a legal assertion that the log is accurate.  Do not sign it unless you are sure of that. `,
 	Args:                  cobra.NoArgs,
 	DisableFlagsInUseLine: true,
 	SilenceUsage:          true,
@@ -89,9 +83,7 @@ func askForSignature() (string, error) {
 		}
 		c.Confirm("NOTICE: ⇥By providing a signature, you are making a legal assertion that the ICS-309 log is accurate.  Do not provide a signature unless you are sure of that.")
 		_, sig, err := c.EditField("Signature", 0, "", valueWidth, nil,
-			`This is the signature to be added at the bottom of the ICS-309 form.  Note
-that by providing a signature, you are making a legal assertion that the log
-is accurate.  Do not provide a signature unless you are sure of that.`, "", false, false, nil)
+			`This is the signature to be added at the bottom of the ICS-309 form.`, "", false, false, nil)
 		return sig, err
 	}
 	return "", nil

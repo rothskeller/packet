@@ -26,10 +26,10 @@ msgfile  Filename of the file containing the message
 
 For a received message, additional parameters can be specified (all or none):
 
-msgid    Local message ID of the message
-opcall   FCC call sign of the local operator
-opname   Name of the local operator
-opdt     Date and time that the message was received`,
+msgid    ⇥Local message ID of the message
+opcall   ⇥FCC call sign of the local operator
+opname   ⇥Name of the local operator
+opdt     ⇥Date and time that the message was received`,
 	DisableFlagsInUseLine: true,
 	SilenceUsage:          true,
 	Args: func(cmd *cobra.Command, args []string) error {

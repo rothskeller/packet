@@ -19,19 +19,13 @@ import (
 var guiCmd = &cobra.Command{
 	Use:   "gui [incident-directory]",
 	Short: "Starts a packet GUI",
-	Long: `Opens a browser window for management of packet messages in an incident
-directory.  The incident directory is chosen as follows:
-  - If a directory is given on the command line, it is used.  It will be
-    created if it does not already exist, and initialized as a new incident if
-    it does not already contain incident data.
-  - If the current working directory is an incident directory, it is used.
-  - Otherwise, if the most-recently-used incident directory still exists and
-    contains incident data, it is used.
-  - Otherwise, the user is prompted to choose or create an incident directory.
+	Long: `Opens a browser window for management of packet messages in an incident directory.  The incident directory is chosen as follows:
+  - ⇥If a directory is given on the command line, it is used.  It will be created if it does not already exist, and initialized as a new incident if it does not already contain incident data.
+  - ⇥If the current working directory is an incident directory, it is used.
+  - ⇥Otherwise, if the most-recently-used incident directory still exists and contains incident data, it is used.
+  - ⇥Otherwise, the user is prompted to choose or create an incident directory.
 
-Generally speaking, a new directory should be used for each incident.  In other
-words, any time you would start a new ICS-309 communications log, you should
-work in a new incident directory.`,
+Generally speaking, a new directory should be used for each incident.  In other words, any time you would start a new ICS-309 communications log, you should work in a new incident directory.`,
 	DisableFlagsInUseLine: true,
 	SilenceUsage:          true,
 	Args:                  cobra.RangeArgs(0, 1),

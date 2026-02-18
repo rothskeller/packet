@@ -13,12 +13,9 @@ import (
 )
 
 var listCmd = &cobra.Command{
-	Use:   "list",
-	Short: "Lists installed forms",
-	Long: `Prints a list of the installed forms.  By default, only forms that can be
-created and edited are listed; to list other forms that can be received, add a
---all (-a) flag.  The --verbose (-v) flag adds information about how the forms
-are identified in PackItForms encoding.`,
+	Use:          "list",
+	Short:        "Lists installed forms",
+	Long:         `Prints a list of the installed forms.  By default, only forms that can be created and edited are listed; to list other forms that can be received, add a --all (-a) flag.  The --verbose (-v) flag adds information about how the forms are identified in PackItForms encoding.`,
 	Args:         cobra.NoArgs,
 	SilenceUsage: true,
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
