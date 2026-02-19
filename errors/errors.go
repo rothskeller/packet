@@ -11,10 +11,11 @@ import (
 // Relay to the methods in the standard library package, so callers don't have
 // to import both.
 
-func As(err error, target any) bool { return errors.As(err, target) }
-func Is(err, target error) bool     { return errors.Is(err, target) }
-func New(text string) error         { return errors.New(text) }
-func Unwrap(err error) error        { return errors.Unwrap(err) }
+func As(err error, target any) bool       { return errors.As(err, target) }
+func AsType[E error](err error) (E, bool) { return errors.AsType[E](err) }
+func Is(err, target error) bool           { return errors.Is(err, target) }
+func New(text string) error               { return errors.New(text) }
+func Unwrap(err error) error              { return errors.Unwrap(err) }
 
 func NewF(f string, a ...any) error { return fmt.Errorf(f, a...) }
 
@@ -106,4 +107,11 @@ func AddPrefix(err error, prefix string) error {
 	default:
 		return fmt.Errorf("%s: %w", prefix, err)
 	}
+}
+
+// IsType returns whether the specified error is of the specified type
+// (including after unwrapping).
+func IsType[E error](err error) bool {
+	_, ok := AsType[E](err)
+	return ok
 }

@@ -8,19 +8,29 @@ import (
 	"runtime/debug"
 	"strings"
 
-	"github.com/rothskeller/packet/cmd/packet/cio"
 	"github.com/rothskeller/packet/cmd/packet/cmd"
 	"github.com/rothskeller/packet/cmd/packet/osdep"
+	"github.com/rothskeller/packet/errors"
 )
 
 func main() {
 	reopenLogFile()
 	logInvocation()
 	defaultCommands()
-	if err := cmd.Execute(); err != nil {
-		slog.Error("error exit", "err", err)
-		cio.Open().Error("%s", err)
+	if err := cmd.Run(os.Args[1:]); errors.IsType[cmd.ErrUsage](err) {
+		os.Exit(2)
+	} else if err != nil && err != cmd.ErrQuit {
+		os.Exit(1)
 	}
+	/*
+	   defaultCommands()
+	   defaultCommands()
+
+	   	if err := cmd.Execute(); err != nil {
+	   		slog.Error("error exit", "err", err)
+	   		cio.Open().Error("%s", err)
+	   	}
+	*/
 }
 
 func logInvocation() {
@@ -34,7 +44,6 @@ func logInvocation() {
 	if info, ok := debug.ReadBuildInfo(); ok && info.Main.Version != "" {
 		ver = info.Main.Version
 	}
-	cmd.RootCmd.Version = ver
 	attrs = append(attrs, slog.String("ver", ver))
 	if osdep.IsAdmin() {
 		attrs = append(attrs, slog.Bool("admin", true))

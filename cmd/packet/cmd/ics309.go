@@ -5,56 +5,68 @@ import (
 	"os"
 
 	"github.com/rothskeller/packet/cmd/packet/cio"
-	"github.com/rothskeller/packet/cmd/packet/cmd/cmdutil"
+	"github.com/rothskeller/packet/cmd/packet/osdep"
+	"github.com/rothskeller/packet/errors"
 	"github.com/rothskeller/packet/incident"
-	"github.com/spf13/cobra"
+	"github.com/spf13/pflag"
 )
 
-var ics309Cmd = &cobra.Command{
-	Use:     "ics309 [-s signature]",
-	Aliases: []string{"309"},
-	Short:   "Show the ICS-309 log for the incident",
-	Long: `Creates ics309.pdf in the incident directory, if it does not already exist, containing the PDF-rendered ICS-309 communications log for the incident. Then, opens that file in the system-default PDF viewer if any.
+const (
+	ics309Slug = `Create and show the ICS-309 log for the incident`
+	ics309Help = `
+usage: packet ics309
+       packet 309
 
-The signature for the generated log can be provided with the --signature (or -s) flag.  In interactive mode, the software will prompt for it if not provided.  Note that by providing a signature, you are making a legal assertion that the log is accurate.  Do not sign it unless you are sure of that. `,
-	Args:                  cobra.NoArgs,
-	DisableFlagsInUseLine: true,
-	SilenceUsage:          true,
-	RunE: func(cmd *cobra.Command, args []string) (err error) {
-		var (
-			dir string
-			sig string
-		)
-		if dir, err = os.Getwd(); err != nil {
-			return err
-		}
-		if sig, _ = cmd.Flags().GetString("signature"); sig != "" {
-			// Remove any existing ICS-309 (and thus regenerate it)
-			// because the signature could be different.
-			os.Remove("ics309.pdf")
-		}
-		if _, err = os.Stat("ics309.pdf"); os.IsNotExist(err) {
-			if sig == "" {
-				if sig, err = askForSignature(); err != nil {
-					return err
-				}
-			}
-			if err = incident.Read(dir, func(i *incident.Incident) error {
-				return i.GenerateICS309(sig)
-			}); err != nil {
+The "packet ics309" command shows the ICS-309 communications log for the incident in the system default PDF viewer.  If the ICS-309 PDF has not already been generated for the incident, it will generate it.
+`
+)
+
+func cmdICS309(args []string) (err error) {
+	var (
+		dir string
+		sig string
+	)
+	flags := pflag.NewFlagSet("ics309", pflag.ContinueOnError)
+	flags.StringVarP(&sig, "signature", "s", "", "Signature to add to the generated ICS-309")
+	flags.Usage = func() {} // we do our own
+	if err = flags.Parse(args); err == pflag.ErrHelp {
+		return cmdHelp([]string{"ics309"})
+	} else if err != nil {
+		cio.Open().Error("%s", err.Error())
+		return usage(ics309Help)
+	}
+	if len(args) != 0 {
+		return usage(ics309Help)
+	}
+	if dir, err = os.Getwd(); err != nil {
+		return err
+	}
+	if sig != "" {
+		// Remove any existing ICS-309 (and thus regenerate it)
+		// because the signature could be different.
+		os.Remove("ics309.pdf")
+	}
+	if _, err = os.Stat("ics309.pdf"); os.IsNotExist(err) {
+		if sig == "" {
+			if sig, err = askForSignature(); err != nil {
 				return err
 			}
-			slog.Debug("Generated missing ics309.pdf")
-		} else if err != nil {
+		}
+		if err = incident.Read(dir, func(i *incident.Incident) error {
+			return i.GenerateICS309(sig)
+		}); err != nil {
 			return err
 		}
-		return cmdutil.ShowPDF("ics309.pdf")
-	},
-}
-
-func init() {
-	ics309Cmd.Flags().StringP("signature", "s", "", "Signature to add to the generated ICS-309")
-	RootCmd.AddCommand(ics309Cmd)
+		slog.Debug("Generated missing ics309.pdf")
+	} else if err != nil {
+		return err
+	}
+	var showcmd = osdep.OpenFileCommand("ics309.pdf")
+	if err := showcmd.Start(); err != nil {
+		return errors.NewF("Unable to start PDF viewer: %s", err)
+	}
+	go func() { showcmd.Wait() }()
+	return nil
 }
 
 func askForSignature() (string, error) {
