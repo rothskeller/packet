@@ -217,7 +217,10 @@ var subjectFields = []msgifc.Field{
 	field.NewMessageID("", "Message ID").
 		Common(field.CSubjectMessageID).
 		ValueFunc(func(m msgifc.Message) string { return m.Subject().SubjectMessageID() }).
-		SetValueFunc(func(m msgifc.Message, s string) { m.Subject().SetSubjectMessageID(s) }).
+		SetValueFunc(func(m msgifc.Message, s string) {
+			m.Subject().SetSubjectMessageID(s)
+			m.Subject().MarkDirty("from.SCCoSubject.MessageID")
+		}).
 		VisibleWhen(field.Invisible).
 		ValidateFunc(func(m msgifc.Message, f msgifc.Field, vf msgifc.ValidateFlags) error {
 			if m.Bulletin() && f.Value(m) == "" {
@@ -230,7 +233,10 @@ var subjectFields = []msgifc.Field{
 		Common(field.CSubjectHandling).
 		AllowedValues("ROUTINE", "PRIORITY", "IMMEDIATE").
 		ValueFunc(func(m msgifc.Message) string { return m.Subject().SubjectHandling() }).
-		SetValueFunc(func(m msgifc.Message, s string) { m.Subject().SetSubjectHandling(s) }).
+		SetValueFunc(func(m msgifc.Message, s string) {
+			m.Subject().SetSubjectHandling(s)
+			m.Subject().MarkDirty("from.SCCoSubject.Handling")
+		}).
 		VisibleWhen(field.Invisible).
 		ValidateFunc(func(m msgifc.Message, f msgifc.Field, vf msgifc.ValidateFlags) error {
 			if vf&msgifc.VPIFOOnly != 0 {
@@ -266,7 +272,10 @@ var subjectFields = []msgifc.Field{
 	field.NewField("", "Message Summary").
 		Common(field.CSubjectSummary).
 		ValueFunc(func(m msgifc.Message) string { return m.Subject().SubjectSummary() }).
-		SetValueFunc(func(m msgifc.Message, s string) { m.Subject().SetSubjectSummary(s) }).
+		SetValueFunc(func(m msgifc.Message, s string) {
+			m.Subject().SetSubjectSummary(s)
+			m.Subject().MarkDirty("from.SCCoSubject.Summary")
+		}).
 		VisibleWhen(field.Invisible).
 		ValidateFunc(func(m msgifc.Message, f msgifc.Field, vf msgifc.ValidateFlags) error {
 			if vf&msgifc.VPIFOOnly != 0 {

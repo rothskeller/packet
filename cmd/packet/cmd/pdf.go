@@ -24,7 +24,6 @@ The "packet pdf" command opens the system PDF viewer showing the identified mess
 
 func cmdPDF(args []string) (err error) {
 	var (
-		dir   string
 		msg   message.Message
 		entry *incident.LogEntry
 		pdf   string
@@ -34,28 +33,32 @@ func cmdPDF(args []string) (err error) {
 	if err = flags.Parse(args); err == pflag.ErrHelp {
 		return cmdHelp([]string{"pdf"})
 	} else if err != nil {
-		cio.Open().Error("%s", err.Error())
+		cio.Open().Error(err)
 		return usage(pdfHelp)
 	}
 	if len(args) != 1 {
 		return usage(pdfHelp)
 	}
 	registerForms()
-	if dir, err = os.Getwd(); err != nil {
+	if err = incWrite(false, func(i *incident.Incident) error {
+		if msg, entry, err = matchMessage(i, args[0], MMMessageOnly); err != nil {
+			return err
+		}
+		pdf = filepath.Join(i.Dir, incident.ToPDF(entry.Filename()))
+		if entry.Flags&incident.FUnread != 0 {
+			entry.Flags &^= incident.FUnread
+			return nil
+		} else {
+			return errNoChange
+		}
+	}); err != nil && err != errNoChange {
 		return err
 	}
-	if err = incident.Read(dir, func(i *incident.Incident) error {
-		msg, entry, err = matchMessage(i, args[0], MMMessageOnly)
-		return err
-	}); err != nil {
-		return err
-	}
-	pdf = filepath.Join(dir, incident.ToPDF(entry.Filename()))
 	// It's possible that the PDF doesn't exist yet.  If so we need to
 	// create it.
 	if _, err = os.Stat(pdf); os.IsNotExist(err) {
 		if err = msg.Type().RenderPDF(msg, pdf, ""); err != nil {
-			slog.Error("RenderPDF", "dir", dir, "id", entry.Ident, "err", err)
+			slog.Error("RenderPDF", "f", pdf, "err", err)
 			return errors.NewF("Unable to create PDF: %s", err)
 		}
 		slog.Debug("Rendered missing PDF", "f", pdf)

@@ -1,8 +1,6 @@
 package cmd
 
 import (
-	"os"
-
 	"github.com/rothskeller/packet/cmd/packet/cio"
 	"github.com/rothskeller/packet/incident"
 	"github.com/spf13/pflag"
@@ -45,18 +43,14 @@ func cmdList(args []string) (err error) {
 	if err = flags.Parse(args); err == pflag.ErrHelp {
 		return cmdHelp([]string{"list"})
 	} else if err != nil {
-		cio.Open().Error("%s", err.Error())
+		cio.Open().Error(err)
 		return usage(listHelp)
 	}
 	if flags.NArg() != 0 {
 		return usage(listHelp)
 	}
-	if dir, err := os.Getwd(); err != nil {
-		return err
-	} else {
-		return incident.Read(dir, func(i *incident.Incident) error {
-			cio.Open().EmitLogList(i.Log, full, numbers, receipts)
-			return nil
-		})
-	}
+	return incRead(func(i *incident.Incident) error {
+		cio.Open().EmitLogList(i.Log, full, numbers, receipts)
+		return nil
+	})
 }

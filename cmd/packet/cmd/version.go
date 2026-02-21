@@ -1,5 +1,13 @@
 package cmd
 
+import (
+	"fmt"
+
+	"github.com/rothskeller/packet/cmd/packet/cio"
+	"github.com/rothskeller/packet/packetver"
+	"github.com/spf13/pflag"
+)
+
 const (
 	versionSlug = `Prints the current software version`
 	versionHelp = `
@@ -10,5 +18,17 @@ The "packet version" command displays the current software version number.  (For
 )
 
 func cmdVersion(args []string) (err error) {
-	panic("not implemented")
+	flags := pflag.NewFlagSet("version", pflag.ContinueOnError)
+	flags.Usage = func() {} // we do our own
+	if err = flags.Parse(args); err == pflag.ErrHelp {
+		return cmdHelp([]string{"version"})
+	} else if err != nil {
+		cio.Open().Error(err)
+		return usage(versionHelp)
+	}
+	if len(args) != 0 {
+		return usage(versionHelp)
+	}
+	fmt.Println(packetver.Version)
+	return nil
 }

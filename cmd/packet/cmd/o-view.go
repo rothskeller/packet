@@ -51,7 +51,7 @@ func cmdOutpostView(args []string) (err error) {
 	if err = flags.Parse(args); err == pflag.ErrHelp {
 		return cmdOutpostHelp([]string{"view"})
 	} else if err != nil {
-		cio.Open().Error("%s", err.Error())
+		cio.Open().Error(err)
 		return usage(outpostViewHelp)
 	}
 	if len(args) != 1 && len(args) != 5 {

@@ -24,7 +24,7 @@ func cmdPwd(args []string) (err error) {
 	if err = flags.Parse(args); err == pflag.ErrHelp {
 		return cmdHelp([]string{"pwd"})
 	} else if err != nil {
-		cio.Open().Error("%s", err.Error())
+		cio.Open().Error(err)
 		return usage(pwdHelp)
 	}
 	if len(args) != 0 {

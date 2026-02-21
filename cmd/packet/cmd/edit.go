@@ -62,7 +62,7 @@ func cmdEdit(args []string) (err error) {
 			if err = flags.Parse(args); err == pflag.ErrHelp {
 				return cmdHelp([]string{"edit"})
 			} else if err != nil {
-				cio.Error("%s", err.Error())
+				cio.Error(err)
 				return usage(editHelp)
 			}
 			if flags.NArg() < 1 || flags.NArg() > 2 {

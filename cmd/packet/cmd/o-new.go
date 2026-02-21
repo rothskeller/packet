@@ -56,7 +56,7 @@ func cmdOutpostNew(args []string) (err error) {
 	if err = flags.Parse(args); err == pflag.ErrHelp {
 		return cmdOutpostHelp([]string{"new"})
 	} else if err != nil {
-		cio.Open().Error("%s", err.Error())
+		cio.Open().Error(err)
 		return usage(outpostNewHelp)
 	}
 	if len(args) != 5 && len(args) != 7 {

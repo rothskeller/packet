@@ -90,7 +90,7 @@ func UnwrapJoined(err error) []error {
 	if err, ok := err.(interface{ Unwrap() []error }); ok {
 		return err.Unwrap()
 	}
-	return nil
+	return []error{err}
 }
 
 // AddPrefix adds the specified prefix to the error.  If the error is a join of

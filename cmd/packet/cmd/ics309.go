@@ -22,24 +22,19 @@ The "packet ics309" command shows the ICS-309 communications log for the inciden
 )
 
 func cmdICS309(args []string) (err error) {
-	var (
-		dir string
-		sig string
-	)
+	var sig string
+
 	flags := pflag.NewFlagSet("ics309", pflag.ContinueOnError)
 	flags.StringVarP(&sig, "signature", "s", "", "Signature to add to the generated ICS-309")
 	flags.Usage = func() {} // we do our own
 	if err = flags.Parse(args); err == pflag.ErrHelp {
 		return cmdHelp([]string{"ics309"})
 	} else if err != nil {
-		cio.Open().Error("%s", err.Error())
+		cio.Open().Error(err)
 		return usage(ics309Help)
 	}
 	if len(args) != 0 {
 		return usage(ics309Help)
-	}
-	if dir, err = os.Getwd(); err != nil {
-		return err
 	}
 	if sig != "" {
 		// Remove any existing ICS-309 (and thus regenerate it)
@@ -52,7 +47,7 @@ func cmdICS309(args []string) (err error) {
 				return err
 			}
 		}
-		if err = incident.Read(dir, func(i *incident.Incident) error {
+		if err = incRead(func(i *incident.Incident) error {
 			return i.GenerateICS309(sig)
 		}); err != nil {
 			return err

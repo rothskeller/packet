@@ -5,9 +5,27 @@ import (
 	"io"
 	"os"
 	"strings"
+
+	"github.com/rothskeller/packet/errors"
 )
 
-func (cio *CIO) Error(f string, args ...any) {
+func (cio *CIO) Error(err error) {
+	if cio.OutputIsTerm {
+		cio.clearStatus()
+	}
+	for _, e := range errors.UnwrapJoined(err) {
+		if cio.OutputIsTerm {
+			cio.print(colorError, cio.WrapText("ERROR: ⇥"+e.Error()))
+		} else {
+			io.WriteString(os.Stderr, cio.WrapText("ERROR: ⇥"+e.Error()))
+		}
+	}
+	if cio.OutputIsTerm {
+		cio.setColor(0)
+	}
+}
+
+func (cio *CIO) ErrorF(f string, args ...any) {
 	var s = f
 	if len(args) != 0 {
 		s = fmt.Sprintf(f, args...)

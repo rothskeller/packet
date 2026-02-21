@@ -4,6 +4,7 @@ import (
 	"io"
 	"log/slog"
 	"os"
+	"path/filepath"
 	"runtime/debug"
 	"strings"
 	"sync"
@@ -11,6 +12,7 @@ import (
 	"github.com/rothskeller/packet/cmd/packet/cio"
 	"github.com/rothskeller/packet/errors"
 	"github.com/rothskeller/packet/form/formdefs"
+	"github.com/rothskeller/packet/incident"
 	"github.com/rothskeller/packet/packetver"
 	"github.com/spf13/pflag"
 )
@@ -30,7 +32,7 @@ func Run(args []string) (err error) {
 		err = run(args)
 	}
 	if err != nil && err != ErrQuit {
-		cio.Open().Error("%s", err.Error())
+		cio.Open().Error(err)
 	}
 	return err
 }
@@ -115,7 +117,7 @@ func shell() (err error) {
 			}
 		}
 		if args, in, out, err = parseCommandLine(line); err != nil {
-			c.Error("%s", err.Error())
+			c.Error(err)
 			continue
 		}
 		if len(args) != 0 && args[0] == "packet" {
@@ -148,7 +150,7 @@ func shell() (err error) {
 		c.Detect()
 		// Handle the result of the command.
 		if err != nil && err != ErrQuit {
-			c.Error("%s", err.Error())
+			c.Error(err)
 		}
 		if err == ErrQuit {
 			return nil
@@ -251,6 +253,38 @@ func tokenizeLine(line string) (args []string) {
 		args = append(args, partial)
 	}
 	return args
+}
+
+// incRead performs a read operation on the incident in the current directory,
+// if any.
+func incRead(fn func(*incident.Incident) error) (err error) {
+	var dir string
+
+	if dir, err = os.Getwd(); err != nil {
+		return errors.NewF("Unable to determine current directory: os.Getwd: %s", err)
+	}
+	if dir, err = filepath.EvalSymlinks(dir); err != nil {
+		return errors.NewF("Unable to resolve current directory: filepath.EvalSymLinks: %s", err)
+	}
+	return incident.Read(dir, fn)
+}
+
+func incWrite(create bool, fn func(*incident.Incident) error) (err error) {
+	var dir string
+
+	if dir, err = os.Getwd(); err != nil {
+		return errors.NewF("Unable to determine current directory: os.Getwd: %s", err)
+	}
+	if dir, err = filepath.EvalSymlinks(dir); err != nil {
+		return errors.NewF("Unable to resolve current directory: filepath.EvalSymLinks: %s", err)
+	}
+	if incident.IsIncident(dir) {
+		return incident.Write(dir, fn)
+	}
+	if !create {
+		return errors.NewF("The current directory %s is not an incident directory.", dir)
+	}
+	return incident.Create(dir, fn)
 }
 
 func gaveMutuallyExclusiveFlags(set *pflag.FlagSet, flags ...string) (err error) {

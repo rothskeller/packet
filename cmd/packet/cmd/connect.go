@@ -40,7 +40,7 @@ func cmdConnect(args []string) (err error) {
 			if err = flags.Parse(args); err == pflag.ErrHelp {
 				return cmdHelp([]string{"connect"})
 			} else if err != nil {
-				cio.Error("%s", err.Error())
+				cio.Error(err)
 				return usage(connectHelp)
 			}
 			if flags.NArg() != 0 {

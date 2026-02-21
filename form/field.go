@@ -246,13 +246,27 @@ func (f ff2mf) FromHuman(human string) string {
 		}
 		return human + ext
 	case "restricted":
+		var match string
+		var ambiguous bool
 		for _, c := range f.fd.Choices {
-			if human == c.Human {
+			if strings.EqualFold(human, c.Human) {
 				return c.Raw
+			} else if human != "" && len(human) < len(c.Human) && strings.EqualFold(human, c.Human[:len(human)]) {
+				ambiguous = match != ""
+				match = c.Raw
 			}
+		}
+		if match != "" && !ambiguous {
+			return match
 		}
 	case "time":
 		return canonicalTime(human)
+	default:
+		for _, c := range f.fd.Choices {
+			if strings.EqualFold(human, c.Human) {
+				return c.Raw
+			}
+		}
 	}
 	return human
 }

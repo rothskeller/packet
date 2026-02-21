@@ -43,7 +43,7 @@ func cmdFormsList(args []string) (err error) {
 	if err = flags.Parse(args); err == pflag.ErrHelp {
 		return cmdFormsHelp([]string{"list"})
 	} else if err != nil {
-		cio.Open().Error("%s", err.Error())
+		cio.Open().Error(err)
 		return usage(formsListHelp)
 	}
 	if flags.NArg() != 0 {

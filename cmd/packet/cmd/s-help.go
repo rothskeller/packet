@@ -24,7 +24,7 @@ func cmdServerHelp(args []string) (err error) {
 		case "stop":
 			helpText = serverStopHelp
 		default:
-			c.Error("There is no command or help topic %q.", "server "+args[0])
+			c.ErrorF("There is no command or help topic %q.", "server "+args[0])
 		}
 	}
 	if helpText == "" {

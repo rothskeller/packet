@@ -27,7 +27,7 @@ func cmdManual(args []string) (err error) {
 	if err = flags.Parse(args); err == pflag.ErrHelp {
 		return cmdHelp([]string{"manual"})
 	} else if err != nil {
-		cio.Open().Error("%s", err.Error())
+		cio.Open().Error(err)
 		return usage(manualHelp)
 	}
 	if len(args) == 0 {

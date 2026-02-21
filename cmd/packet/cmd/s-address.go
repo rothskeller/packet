@@ -23,7 +23,7 @@ func cmdServerAddress(args []string) (err error) {
 	if err = flags.Parse(args); err == pflag.ErrHelp {
 		return cmdServerHelp([]string{"address"})
 	} else if err != nil {
-		cio.Open().Error("%s", err.Error())
+		cio.Open().Error(err)
 		return usage(serverAddressHelp)
 	}
 	if len(args) != 0 {

@@ -7,6 +7,7 @@ import (
 	"strings"
 
 	"github.com/rothskeller/packet/cmd/packet/cio"
+	"github.com/rothskeller/packet/cmd/packet/pseudomsg"
 	"github.com/rothskeller/packet/incident"
 	"github.com/rothskeller/packet/message"
 	"github.com/spf13/pflag"
@@ -27,7 +28,6 @@ If a second argument is given, it identifies a field of the item, and only that 
 func cmdShow(args []string) (err error) {
 	var (
 		asMessage bool
-		dir       string
 		msg       message.Message
 	)
 	flags := pflag.NewFlagSet("show", pflag.ContinueOnError)
@@ -36,24 +36,30 @@ func cmdShow(args []string) (err error) {
 	if err = flags.Parse(args); err == pflag.ErrHelp {
 		return cmdHelp([]string{"show"})
 	} else if err != nil {
-		cio.Open().Error("%s", err.Error())
+		cio.Open().Error(err)
 		return usage(showHelp)
 	}
 	if n := flags.NArg(); n < 1 || n > 2 {
 		return usage(showHelp)
 	}
 	registerForms()
-	if dir, err = os.Getwd(); err != nil {
-		return err
-	}
-	if err = incident.Read(dir, func(i *incident.Incident) error {
-		var flags matchMessageFlag
+	if err = incWrite(false, func(i *incident.Incident) error {
+		var (
+			flags matchMessageFlag
+			entry *incident.LogEntry
+		)
 		if asMessage {
 			flags |= MMMessageOnly
 		}
-		msg, _, err = matchMessage(i, args[0], flags)
-		return err
-	}); err != nil {
+		if msg, entry, err = matchMessage(i, args[0], flags); err != nil {
+			return err
+		} else if _, ok := msg.(*pseudomsg.LogEntryMessage); !ok && entry != nil && entry.Flags&incident.FUnread != 0 {
+			entry.Flags &^= incident.FUnread
+			return nil
+		} else {
+			return errNoChange
+		}
+	}); err != nil && err != errNoChange {
 		return err
 	}
 	if len(args) == 2 {

@@ -120,7 +120,7 @@ func cmdHelp(args []string) (err error) {
 		case "version":
 			helpText = versionHelp
 		default:
-			c.Error("There is no command or help topic %q.", args[0])
+			c.ErrorF("There is no command or help topic %q.", args[0])
 		}
 	}
 	if helpText == "" {

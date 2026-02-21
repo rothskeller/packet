@@ -24,7 +24,7 @@ func cmdManualHelp(args []string) (err error) {
 		case "send", "s":
 			helpText = manualSendHelp
 		default:
-			c.Error("There is no command or help topic %q.", "manual "+args[0])
+			c.ErrorF("There is no command or help topic %q.", "manual "+args[0])
 		}
 	}
 	if helpText == "" {

@@ -16,7 +16,7 @@ func cmdDelete(args []string) (err error) {
 		if err = flags.Parse(args); err == pflag.ErrHelp {
 			return cmdHelp([]string{"delete"})
 		} else if err != nil {
-			cio.Error("%s", err.Error())
+			cio.Error(err)
 			return usage(deleteHelp)
 		}
 		if len(args) != 1 {
