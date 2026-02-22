@@ -1,5 +1,19 @@
 package cmd
 
+import (
+	"slices"
+	"strings"
+
+	"github.com/rothskeller/packet/cmd/packet/cio"
+	"github.com/rothskeller/packet/cmd/packet/pseudomsg"
+	"github.com/rothskeller/packet/errors"
+	"github.com/rothskeller/packet/incident"
+	"github.com/rothskeller/packet/message"
+	"github.com/rothskeller/packet/message/field"
+	"github.com/rothskeller/packet/message/msgifc"
+	"github.com/spf13/pflag"
+)
+
 const (
 	editSlug = `Edit an unsent message, log entry, or incident configuration`
 	editHelp = `
@@ -44,235 +58,197 @@ When finished editing a message, if the message is fully valid and not already m
 )
 
 func cmdEdit(args []string) (err error) {
-	panic("not implemented")
-	/*
-			var (
-				errorsOnly bool
-				lmi        string
-				env        *envelope.Envelope
-				msg        message.Message
-				fieldname  string
-				flags      = pflag.NewFlagSet("edit", pflag.ContinueOnError)
-			)
-			if !cio.InputIsTerm || !cio.OutputIsTerm {
-				return errors.New("editing is supported only when stdin/stdout is a terminal")
-			}
-			flags.BoolVarP(&errorsOnly, "errors", "e", false, "edit only fields that have errors")
-			flags.Usage = func() {} // we do our own
-			if err = flags.Parse(args); err == pflag.ErrHelp {
-				return cmdHelp([]string{"edit"})
-			} else if err != nil {
-				cio.Error(err)
-				return usage(editHelp)
-			}
-			if flags.NArg() < 1 || flags.NArg() > 2 {
-				return usage(editHelp)
-			}
-			args = flags.Args()
-			if strings.HasPrefix("config", args[0]) {
-				lmi = "config"
-				env = new(envelope.Envelope)
-				msg = &config.C
-			} else {
-				if lmi, err = expandMessageID(args[0], false); err != nil {
-					return err
-				}
-				if env, msg, err = incident.ReadMessage(lmi); err != nil {
-					return fmt.Errorf("reading %s: %s", lmi, err)
-				}
-				if env.IsReceived() {
-					return errors.New("can't edit a received message")
-				}
-				if env.IsFinal() {
-					return errors.New("message has already been sent")
-				}
-				if !msg.Editable() {
-					return fmt.Errorf("%ss do not support editing", msg.Base().Type.Name)
-				}
-			}
-			if len(args) > 1 {
-				fieldname = args[1]
-			}
-			return doEdit(lmi, env, msg, fieldname, errorsOnly)
+	var (
+		errorsOnly bool
+		asMessage  bool
+		msg        message.Message
+		c          = cio.Open()
+	)
+	if !c.InputIsTerm || !c.OutputIsTerm {
+		return errors.New("Editing is supported only when stdin/stdout is a terminal.")
+	}
+	flags := pflag.NewFlagSet("edit", pflag.ContinueOnError)
+	flags.BoolVarP(&errorsOnly, "errors", "e", false, "Edit only fields with errors")
+	flags.BoolVarP(&asMessage, "message", "m", false, "Change message rather than log entry")
+	flags.Usage = func() {} // we do our own
+	if err = flags.Parse(args); err == pflag.ErrHelp {
+		return cmdHelp([]string{"edit"})
+	} else if err != nil {
+		c.Error(err)
+		return usage(editHelp)
+	}
+	if n := flags.NArg(); n < 1 || n > 2 {
+		return usage(editHelp)
+	}
+	registerForms()
+	if err = incWrite(strings.HasPrefix("configuration", flags.Arg(0)), func(i *incident.Incident) error {
+		var (
+			mmf   matchMessageFlag
+			entry *incident.LogEntry
+			fld   field.Field
+		)
+		// Get the message to be changed, and starting field if any, and
+		// validate them.
+		if asMessage {
+			mmf |= MMMessageOnly
 		}
-
-		// doEdit is the common code between edit, new, reply, and resend.
-		func doEdit(lmi string, env *envelope.Envelope, msg message.Message, startField string, errorsOnly bool) (err error) {
-			var (
-				fields     []*message.Field
-				field      *message.Field
-				saveConfig bool
-				labelWidth = 18 // "Queue for Sending?"
-				wasQueued  = env.ReadyToSend
-			)
-			// Build the list of fields to be edited.
-			if lmi != "config" {
-				fields = append(fields, newToAddressField(&env.To))
-			}
-			for _, f := range msg.Base().Fields {
-				if f.EditHelp != "" {
-					fields = append(fields, f)
-					labelWidth = max(labelWidth, len(f.Label))
-				}
-			}
-			// Determine the starting field.
-			if field, err = expandFieldName(fields, startField, true); err != nil {
+		if msg, entry, err = matchMessage(i, flags.Arg(0), mmf); err != nil {
+			return err
+		}
+		switch msg.(type) {
+		case *pseudomsg.ConfigMessage, *pseudomsg.LogEntryMessage, *message.DraftMessage:
+			// OK
+		case *message.JustReceivedMessage, *message.ReceivedMessage:
+			return errors.NewF("Received messages cannot be edited.")
+		case *message.SentMessage:
+			return errors.NewF("Sent messages cannot be edited.")
+		}
+		if flags.NArg() == 2 {
+			if fld, err = matchField(msg, flags.Arg(1), c.OutputIsTerm); err != nil {
 				return err
 			}
-			if lmi != "config" {
-				fields = append(fields, newSendQueueField(fields, &env.ReadyToSend))
+			if !fld.Editable(msg, true) {
+				return errors.NewF("Field %q is not editable.", fld.Label())
 			}
-			if startField == "" && !errorsOnly {
-				cio.StartEdit()
-			}
-		LOOP: // Run the editor loop.
-			for {
-				var result cio.EditResult
-
-				if result, err = cio.EditField(field, labelWidth); err != nil {
-					return err
-				}
-				switch result {
-				case cio.ResultDone:
-					break LOOP
-				case cio.ResultNext:
-					idx := slices.Index(fields, field) + 1
-					for idx < len(fields) {
-						field = fields[idx]
-						if !field.EditSkip(field) && (!errorsOnly || field.EditValid(field) == "") {
-							break
-						}
-						idx++
-					}
-					if idx >= len(fields) {
-						break LOOP
-					}
-				case cio.ResultPrevious:
-					idx := slices.Index(fields, field) - 1
-					for idx >= 0 {
-						field = fields[idx]
-						if !field.EditSkip(field) && (!errorsOnly || field.EditValid(field) == "") {
-							break
-						}
-						idx--
-					}
-					if idx < 0 {
-						break LOOP
-					}
-				default:
-					panic("unknown result code")
-				}
-			}
-			// If editing the configuration, save it.  Also remove any ICS-309s,
-			// since we may have changed the header information for them.
-			if lmi == "config" {
-				config.SaveConfig()
-				incident.RemoveICS309s()
-				return nil
-			}
-			// Make sure we have a valid LMI.  We have to have one to save the file.
-			var newlmi string
-			if omi := msg.Base().FOriginMsgID; omi != nil {
-				newlmi = *omi
-			}
-			if !incident.MsgIDRE.MatchString(newlmi) {
-				if lmi != "" {
-					newlmi = lmi // restore the one it had when we started
-				} else {
-					newlmi = incident.UniqueMessageID("AAA-001P")
-				}
-				if omi := msg.Base().FOriginMsgID; omi != nil {
-					*msg.Base().FOriginMsgID = newlmi
-				}
-				cio.Confirm("NOTE: The local message ID has been set to %s.", newlmi)
-			}
-			// Notify the user if we took the message out of the queue.
-			if wasQueued && !env.ReadyToSend {
-				cio.Confirm("NOTE: This message has invalid fields and has been removed from the send queue.")
-			}
-			// Check for a change to the LMI.
-			if newlmi != lmi {
-				if unique := incident.UniqueMessageID(newlmi); unique != newlmi {
-					newlmi = unique
-					*msg.Base().FOriginMsgID = newlmi
-					cio.Confirm("NOTE: the local message ID has been changed to %s for uniqueness.", newlmi)
-				}
-				if lmi != "" {
-					incident.RemoveMessage(lmi)
-				}
-				lmi = newlmi
-			}
-			// Save the resulting message.
-			if err = incident.SaveMessage(lmi, "", env, msg, false, false); err != nil {
-				return fmt.Errorf("saving %s: %s", lmi, err)
-			}
-			// Display the result.
-			cio.ListMessage(listItemForMessage(lmi, "", env))
-			if lmi == "config" {
-				return nil
-			}
-			// If the message had any fields that we keep in the configuration,
-			// update the configuration.
-			if msg.Base().FOriginMsgID != nil && *msg.Base().FOriginMsgID != "" {
-				config.C.TxMessageID, saveConfig = *msg.Base().FOriginMsgID, true
-			}
-			if msg.Base().FOpCall != nil && *msg.Base().FOpCall != "" {
-				config.C.OpCall, saveConfig = *msg.Base().FOpCall, true
-			}
-			if msg.Base().FOpName != nil && *msg.Base().FOpName != "" {
-				config.C.OpName, saveConfig = *msg.Base().FOpName, true
-			}
-			if msg.Base().FTacCall != nil && *msg.Base().FTacCall != "" {
-				config.C.TacCall, saveConfig = *msg.Base().FTacCall, true
-			}
-			if msg.Base().FTacName != nil && *msg.Base().FTacName != "" {
-				config.C.TacName, saveConfig = *msg.Base().FTacName, true
-			}
-			if saveConfig {
-				config.SaveConfig()
-			}
-			return nil
-	*/
+		}
+		return doEdit(c, i, entry, msg, fld, errorsOnly)
+	}); err != nil {
+		return err
+	}
+	return nil
 }
 
-/*
-func newToAddressField(to *string) (f *message.Field) {
-	return message.NewAddressListField(&message.Field{
-		Label:    "To",
-		Value:    to,
-		Presence: message.Required,
-		EditHelp: "This is the list of addresses to which the message is sent.  Each address must be a JNOS mailbox name, a JNOS category@distribution bulletin address, a BBS network address, or an email address.  The addresses must be separated by commas.  At least one address is required.",
-	})
+// doEdit is the common code between edit and new.
+func doEdit(c *cio.CIO, i *incident.Incident, entry *incident.LogEntry, msg message.Message, start field.Field, errorsOnly bool) (err error) {
+	var (
+		fields     []field.Field
+		fld        field.Field
+		wasQueued  bool
+		startSeen  = start == nil
+		labelWidth = 14 // "Ready to Send?"
+	)
+	// Build the list of fields to be edited.
+	for f := range msg.Fields() {
+		if f.EditHelp() != "" {
+			fields = append(fields, f)
+			labelWidth = max(labelWidth, len(f.Label()))
+			if f == start {
+				startSeen = true
+			}
+			if fld == nil && startSeen && f.Editable(msg, f == start) && (!errorsOnly || f.Validate(msg, f, msgifc.VPacket) != nil) {
+				fld = f
+			}
+		}
+	}
+	if fld == nil {
+		// Only happens if they said errorsOnly and we didn't find any.
+		return errors.New("There are no fields with errors.")
+	}
+	// Is the message ready to send before editing?
+	if msg, ok := msg.(*message.DraftMessage); ok {
+		wasQueued = msg.ReadyToSend()
+		fields = append(fields, newReadyToSendField())
+	}
+	if start == nil && !errorsOnly {
+		c.StartEdit() // Editor instructions
+	}
+LOOP: // Run the editor loop.
+	for {
+		var (
+			value      string
+			valueWidth int
+			choices    []string
+			result     cio.EditResult
+			newvalue   string
+			first      = true
+		)
+		value = fld.ToHuman(fld.Value(msg))
+		valueWidth, _ = fld.EditSize()
+		for _, c := range fld.Choices(msg) {
+			choices = append(choices, c.Human)
+		}
+		for {
+			if result, newvalue, err = c.EditField(fld.Label(), labelWidth, value, valueWidth, choices, fld.EditHelp(),
+				fld.EditHint(), fld.Multiline(), fld.Obscured(),
+				func(s string) string { return fld.ToHuman(fld.FromHuman(s)) }); err != nil {
+				return err
+			}
+			fld.SetValue(msg, fld.FromHuman(newvalue))
+			if err = fld.Validate(msg, fld, msgifc.VPacket); err == nil {
+				break
+			}
+			if !first && newvalue == value && !errors.IsType[pseudomsg.NoBypassValidationError](err) {
+				err = nil
+				break
+			}
+			first = false
+			c.Error(err)
+		}
+		switch result {
+		case cio.ResultDone:
+			break LOOP
+		case cio.ResultNext:
+			idx := slices.Index(fields, fld) + 1
+			for idx < len(fields) {
+				fld = fields[idx]
+				if fld.Editable(msg, false) && (!errorsOnly || fld.Validate(msg, fld, msgifc.VPacket) != nil) {
+					break
+				}
+				idx++
+			}
+			if idx >= len(fields) {
+				break LOOP
+			}
+		case cio.ResultPrevious:
+			idx := slices.Index(fields, fld) - 1
+			for idx >= 0 {
+				fld = fields[idx]
+				if fld.Editable(msg, false) && (!errorsOnly || fld.Validate(msg, fld, msgifc.VPacket) != nil) {
+					break
+				}
+				idx--
+			}
+			if idx < 0 {
+				break LOOP
+			}
+		default:
+			panic("unknown result code")
+		}
+	}
+	// Save the change
+	switch msg := msg.(type) {
+	case *message.DraftMessage:
+		if err = i.UpdateDraftMessage(entry.Ident, msg); err != nil {
+			return err
+		}
+	case *pseudomsg.LogEntryMessage:
+		i.UpdateLogEntry(entry)
+	case *pseudomsg.ConfigMessage:
+		i.UpdateConfig(msg.Config)
+	}
+	// Notify the user if we took the message out of the queue.
+	if wasQueued && !msg.(*message.DraftMessage).ReadyToSend() {
+		c.Confirm("NOTE: This message has invalid fields and is no longer marked ready to send.")
+	}
+	return nil
 }
 
-func newSendQueueField(fields []*message.Field, ready *bool) (f *message.Field) {
-	return message.NewAggregatorField(&message.Field{
-		Label:    "Queue for Sending?",
-		Choices:  message.Choices{"Yes", "No"},
-		EditHelp: "This indicates whether the message should be sent during the next BBS connection.",
-		EditValue: func(f *message.Field) string {
-			if *ready {
-				return "Yes"
-			} else {
-				return "No"
-			}
-		},
-		EditApply: func(f *message.Field, s string) {
-			*ready = strings.HasPrefix(strings.ToLower(s), "y")
-		},
-		EditSkip: func(*message.Field) bool {
-			for _, f := range fields {
-				if p := f.EditValid(f); p != "" {
-					*ready = false
-					return true
-				}
-			}
-			if *ready {
+func newReadyToSendField() (f field.Field) {
+	f = field.NewField("", "Ready to Send?").
+		AllowedValues("Yes", "No").
+		EditHelp(`This indicates whether the message should be sent during the next BBS connection.`).
+		EditableWhen(func(msg msgifc.Message, _ bool) bool {
+			if message.ValidateMessage(msg, msgifc.VPacket) == nil {
 				return true
+			} else {
+				msg.(*message.DraftMessage).SetReadyToSend(false)
+				return false
 			}
-			*ready = true
-			return false
-		},
-	})
+		}).
+		ValueFunc(func(_ msgifc.Message) string { return "Yes" }).
+		SetValueFunc(func(msg msgifc.Message, s string) {
+			msg.(*message.DraftMessage).SetReadyToSend(f.FromHuman(s) == "Yes")
+		}).
+		MakeField()
+	return f
 }
-*/

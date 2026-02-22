@@ -34,8 +34,8 @@ func (cio *CIO) StartEdit() {
 	if !cio.InputIsTerm || !cio.OutputIsTerm {
 		return
 	}
-	print(colorHelp, setLength(editorHelp, cio.Width-1))
-	print(0, "\n")
+	cio.print(colorHelp, setLength(editorHelp, cio.Width-1))
+	cio.print(0, "\n")
 }
 
 type modefunc func() (modefunc, EditResult, error)

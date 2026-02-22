@@ -104,3 +104,10 @@ func (lem *LogEntryMessage) Body() body.Body              { panic("not implement
 func (lem *LogEntryMessage) RenderPDF(m message.Message, filename string, copyname string) error {
 	panic("not implemented")
 }
+
+// A NoBypassValidationError is a validation error handled specially by the
+// editor: the value cannot be accepted.
+type NoBypassValidationError struct{ err error }
+
+func (ne NoBypassValidationError) Error() string { return ne.err.Error() }
+func (ne NoBypassValidationError) Unwrap() error { return ne.err }
