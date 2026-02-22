@@ -742,6 +742,9 @@ func getColorAttr(attrs map[string]string, key string, def []byte) (color []byte
 			return nil, errors.New("invalid " + key)
 		} else {
 			delete(attrs, key)
+			if len(color) == 3 {
+				color = append(color, 255)
+			}
 			return color, nil
 		}
 	}

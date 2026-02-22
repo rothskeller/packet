@@ -35,7 +35,7 @@ func (lem *LogEntryMessage) Fields() iter.Seq[field.Field] {
 	logEntryFieldsOnce.Do(func() {
 		logEntryFields = []field.Field{
 			field.NewField("", "Time").
-				ToHumanFunc(func(s string) string {
+				ToHumanFunc(func(_ message.Message, s string) string {
 					if t, err := time.ParseInLocation(time.RFC3339, s, time.Local); err == nil {
 						return t.Format("01/02/2006 15:04")
 					} else {

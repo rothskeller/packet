@@ -76,7 +76,7 @@ func showSingleField(msg message.Message, fieldname string) (err error) {
 	if err != nil {
 		return err
 	}
-	value := field.ToHuman(field.Value(msg))
+	value := field.ToHuman(msg, field.Value(msg))
 	if strings.HasSuffix(value, "\n") {
 		io.WriteString(os.Stdout, value)
 	} else if value != "" {
@@ -91,7 +91,7 @@ func showMessage(msg message.Message) {
 		if !f.Visible(msg) {
 			continue
 		}
-		value := f.ToHuman(f.Value(msg))
+		value := f.ToHuman(msg, f.Value(msg))
 		if value == "" {
 			continue
 		}

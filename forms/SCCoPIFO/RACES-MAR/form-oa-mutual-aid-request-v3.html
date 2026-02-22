@@ -20,11 +20,8 @@
 </script>
 <title>Mutual Aid Request</title>
 <packet-form>
-  <form-roo form-title="Santa Clara County RACES — Mutual Aid Request" paper-version="PDF: 20260212"
-    omistyle="width:8.79rem" dmistyle="width:11.55rem" rrstyle="width:17.80rem" rsstyle="width:18.57rem"
-    opstyle="width:14.62rem" ocstyle="width:5.56rem" odstyle="width:6.69rem" otstyle="width:2.87rem">
-    <form-dthtf to-ics-positions="RACES Chief Radio Officer; RACES Unit; Planning" mdstyle="width:4.59rem"
-      mtstyle="width:5.25rem" tostyle="width:13.21rem" frstyle="width:14.55rem"></form-dthtf>
+  <form-roo form-title="Santa Clara County RACES — Mutual Aid Request" paper-version="PDF: 20260212">
+    <form-dthtf to-ics-positions="RACES Chief Radio Officer; RACES Unit; Planning"></form-dthtf>
     <div class="layout-pair basealign">
       <div class="subgrid border">
         <div class="label padlr">20. Agency</div>
@@ -32,19 +29,19 @@
       <div class="rowspan2 layout-grid" style="--columns: max-content 1fr max-content auto auto">
         <div class="pair">
           <label for=15.>a. Name:</label>
-          <input id=15. name=15. required style="width:11.27rem">
+          <input id=15. name=15. required style="{{w-15.}}">
         </div>
         <div class="pair colspan3">
           <label for=15b. class=colspan2>b. If Reauthorization, original msg #:</label>
-          <input id=15b. name=15b. style="width:8.49rem">
+          <input id=15b. name=15b. style="{{w-15b.}}">
         </div>
         <div class="pair">
           <label for=16a.>a. Name:</label>
-          <input id=16a. name=16a. required style="width:11.28rem">
+          <input id=16a. name=16a. required style="{{w-16a.}}">
         </div>
         <div class="pair colspan3">
           <label for=16b.>b. Agency Act. #:</label>
-          <input id=16b. name=16b. class=colspan2 style="width:15.27rem">
+          <input id=16b. name=16b. class=colspan2 style="{{w-16b.}}">
         </div>
       </div>
       <div class="subgrid border">
@@ -53,7 +50,7 @@
       <div class="pair">
         <label for=17.>22. Assignment<br><span class=annotation>(General duties,<br>conditions, equipment<br>needed,
             etc.)</span></label>
-        <textarea id=17. name=17. required style="width:36.17rem;height:7.54rem"></textarea>
+        <textarea id=17. name=17. required style="{{w-17.}}"></textarea>
       </div>
       <div class="subgrid border">
         <div class="label padlr">Amateur Radio<br>Resources<br>Requested,<br><span class=annotation>in order
@@ -82,12 +79,12 @@
           </div>
           <div class="subgrid border padlr">
             <label for="{{pfx}}a.">
-              a. <input id="{{pfx}}a." name="{{pfx}}a." class=cardinal-number style="width:2.08rem" {{required}}>
+              a. <input id="{{pfx}}a." name="{{pfx}}a." class=cardinal-number style="{{w-18.1a.}}" {{required}}>
             </label>
           </div>
           <div class="subgrid border padlr basealign">
             <label for="{{pfx}}b.">
-              b. <select id="{{pfx}}b." name="{{pfx}}b." required-if="{{pfx}}a." else-disallowed style="width:8.74rem">
+              b. <select id="{{pfx}}b." name="{{pfx}}b." required-if="{{pfx}}a." else-disallowed style="{{w-18.1b.}}">
                 <option value="" disabled></option>
                 <option value="Field Communicator">Field Communicator</option>
                 <option value="Net Control Operator">Net Control Operator</option>
@@ -98,13 +95,13 @@
           </div>
           <div class="subgrid border padlr basealign colspan2">
             <label for="{{pfx}}f.">
-              c. <input id="{{pfx}}f." name="{{pfx}}f." required-if="{{pfx}}a." else-disallowed style="width:10.91rem">
+              c. <input id="{{pfx}}f." name="{{pfx}}f." required-if="{{pfx}}a." else-disallowed style="{{w-18.1f.}}">
             </label>
             <input type=checkbox name="{{pfx}}g." value=checked allowed-if="{{pfx}}a.">
           </div>
           <div class="subgrid border padlr">
             <label for="{{pfx}}c.">
-              d. <select id="{{pfx}}c." name="{{pfx}}c." required-if="{{pfx}}a." else-disallowed style="width:4.61rem">
+              d. <select id="{{pfx}}c." name="{{pfx}}c." required-if="{{pfx}}a." else-disallowed style="{{w-18.1c.}}">
                 <option value="" disabled></option>
                 <option value=1>1</option>
                 <option value=2>2</option>
@@ -116,7 +113,7 @@
           </div>
           <div class="subgrid border padlr">
             <label for="{{pfx}}d.">
-              e. <select id="{{pfx}}d." name="{{pfx}}d." required-if="{{pfx}}a." else-disallowed style="width:4.45rem">
+              e. <select id="{{pfx}}d." name="{{pfx}}d." required-if="{{pfx}}a." else-disallowed style="{{w-18.1d.}}">
                 <option value="" disabled></option>
                 <option value=1>1</option>
                 <option value=2>2</option>
@@ -148,27 +145,27 @@
       <div class="rowspan2 layout-grid" style="--columns: repeat(4, max-content 1fr)">
         <div class="pair colspan4">
           <label for=19a.>a. Date:</label>
-          <input id=19a. name=19a. required class="colspan3 date" style="width:14.92rem">
+          <input id=19a. name=19a. required class="colspan3 date" style="{{w-19a.}}">
         </div>
         <div class="pair colspan4">
           <label for=19b.>b. Time:</label>
-          <input id=19b. name=19b. required class="colspan3 time" style="width:12.58rem">
+          <input id=19b. name=19b. required class="colspan3 time" style="{{w-19b.}}">
         </div>
         <div class="pair">
           <label for=20a.>a. From Date:</label>
-          <input id=20a. name=20a. required class=date style="width:2.81rem">
+          <input id=20a. name=20a. required class=date style="{{w-20a.}}">
         </div>
         <div class="pair">
           <label for=20b.>b. From Time:</label>
-          <input id=20b. name=20b. required class=time style="width:3.96rem">
+          <input id=20b. name=20b. required class=time style="{{w-20b.}}">
         </div>
         <div class="pair">
           <label for=20c.>c. To Date:</label>
-          <input id=20c. name=20c. required class=date style="width:4.59rem">
+          <input id=20c. name=20c. required class=date style="{{w-20c.}}">
         </div>
         <div class="pair">
           <label for=20d.>d. To Time:</label>
-          <input id=20d. name=20d. required class=time style="width:5.84rem">
+          <input id=20d. name=20d. required class=time style="{{w-20d.}}">
         </div>
       </div>
       <div class="subgrid border">
@@ -176,15 +173,15 @@
       </div>
       <div class="pair">
         <label for=21.>30. Reporting Loc.</label>
-        <textarea id=21. name=21. required style="width:36.20rem;height:1.55rem"></textarea>
+        <textarea id=21. name=21. required style="{{w-21.}}"></textarea>
       </div>
       <div class="pair">
         <label for=22.>31. Contact on Arrival</label>
-        <textarea id=22. name=22. required style="width:36.20rem;height:1.55rem"></textarea>
+        <textarea id=22. name=22. required style="{{w-22.}}"></textarea>
       </div>
       <div class="pair">
         <label for=23.>32. Travel Info</label>
-        <textarea id=23. name=23. required style="width:36.20rem;height:1.55rem"></textarea>
+        <textarea id=23. name=23. required style="{{w-23.}}"></textarea>
       </div>
       <div class="subgrid border rowspan2">
         <div class="label padlr rowspan2">33. Requested By</div>
@@ -192,17 +189,17 @@
       <div class=layout-grid style="--columns: max-content 1fr max-content 1fr">
         <div class=pair>
           <label for=24a.>a. Name:</label>
-          <input id=24a. name=24a. required style="width:21.79rem">
+          <input id=24a. name=24a. required style="{{w-24a.}}">
         </div>
         <div class=pair>
           <label for=24b.>b. Title:</label>
-          <input id=24b. name=24b. required style="width:7.75rem">
+          <input id=24b. name=24b. required style="{{w-24b.}}">
         </div>
       </div>
       <div class="layout-pair">
         <div class=pair>
           <label for=24c.>c. Contact <span class=annotation>(Email, phone, frequency):</span></label>
-          <input id=24c. name=24c. style="width:23.05rem">
+          <input id=24c. name=24c. style="{{w-24c.}}">
         </div>
       </div>
       <div class="subgrid border rowspan3">
@@ -212,17 +209,17 @@
       <div class=layout-grid style="--columns: max-content 1fr max-content 1fr">
         <div class=pair>
           <label for=25a.>a. Name:</label>
-          <input id=25a. name=25a. required style="width:21.79rem">
+          <input id=25a. name=25a. required style="{{w-25a.}}">
         </div>
         <div class=pair>
           <label for=25b.>b. Title:</label>
-          <input id=25b. name=25b. required style="width:7.75rem">
+          <input id=25b. name=25b. required style="{{w-25b.}}">
         </div>
       </div>
       <div class="layout-pair">
         <div class=pair>
           <label for=25c.>c. Contact <span class=annotation>(Email, phone):</span></label>
-          <input id=25c. name=25c. required style="width:26.87rem">
+          <input id=25c. name=25c. required style="{{w-25c.}}">
         </div>
       </div>
       <div class=layout-grid style="--columns: 1fr max-content max-content max-content auto max-content auto">
@@ -233,11 +230,11 @@
         </div>
         <div class="pair">
           <label for=26a.>e. Date:</label>
-          <input id=26a. name=26a. required class=date style="width:4.94rem">
+          <input id=26a. name=26a. required class=date style="{{w-26a.}}">
         </div>
         <div class="pair">
           <label for=26b.>f. Time:</label>
-          <input id=26b. name=26b. required class=time style="width:5.11rem">
+          <input id=26b. name=26b. required class=time style="{{w-26b.}}">
         </div>
       </div>
     </div>

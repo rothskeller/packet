@@ -108,11 +108,11 @@ func emitField(fh *os.File, fd *FieldDef, deftext *pdf.Text) {
 	}
 	for _, c := range fd.Choices {
 		if c.CondField != "" && c.CondValue != "" {
-			fmt.Fprintf(fh, "  cchoice  if %s=%s then %s %s\n", c.CondField, maybeQuote(c.CondValue), c.Raw, c.Human)
+			fmt.Fprintf(fh, "  cchoice  if %s=%s then %s %s\n", c.CondField, maybeQuote(c.CondValue), maybeQuote(c.Raw), c.Human)
 		} else if c.CondField != "" {
-			fmt.Fprintf(fh, "  cchoice  if %s then %s %s\n", c.CondField, c.Raw, c.Human)
+			fmt.Fprintf(fh, "  cchoice  if %s then %s %s\n", c.CondField, maybeQuote(c.Raw), c.Human)
 		} else if c.Raw != c.Human {
-			fmt.Fprintf(fh, "  mchoice  %s %s\n", c.Raw, c.Human)
+			fmt.Fprintf(fh, "  mchoice  %s %s\n", maybeQuote(c.Raw), c.Human)
 		} else {
 			fmt.Fprintf(fh, "  choice   %s\n", c.Raw)
 		}
@@ -190,7 +190,7 @@ func emitPDFRenderer(fh *os.File, pr PDFFieldRenderer, deftext *pdf.Text) {
 		if r.Page != 1 {
 			fmt.Fprintf(fh, "P %d ", r.Page)
 		}
-		fmt.Fprintf(fh, "X %6.2f Y %6.2f R %.1f", r.Center.X, r.Center.Y, r.Radius)
+		fmt.Fprintf(fh, "X %6.2f Y %6.2f R %.2f", r.Center.X, r.Center.Y, r.Radius)
 		if r.Fill[0] != 0 || r.Fill[1] != 0 || r.Fill[2] != 153 || r.Fill[3] != 255 {
 			fmt.Fprintf(fh, " C %02X%02X%02X", r.Fill[0], r.Fill[1], r.Fill[2])
 			if r.Fill[3] != 255 {
@@ -231,10 +231,10 @@ func emitTextStyles(fh *os.File, ts, deftext *pdf.Text) {
 		fmt.Fprintf(fh, " FS %.1f", ts.FontSize)
 	}
 	if deftext == nil || ts.MinFontSize != deftext.MinFontSize {
-		fmt.Fprintf(fh, " FS %.1f", ts.MinFontSize)
+		fmt.Fprintf(fh, " MS %.1f", ts.MinFontSize)
 	}
 	if deftext == nil || ts.LineHeight != deftext.LineHeight {
-		fmt.Fprintf(fh, " FS %.2f", ts.LineHeight)
+		fmt.Fprintf(fh, " LH %.2f", ts.LineHeight)
 	}
 	if deftext == nil || ts.Align != "" && ts.Align != deftext.Align {
 		fmt.Fprintf(fh, " A %s", ts.Align)

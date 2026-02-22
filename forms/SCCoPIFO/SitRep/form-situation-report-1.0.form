@@ -5,31 +5,32 @@ title    Situation Report Form
 indef    a situation report form
 subject  SitRep
 pdfFile  Situation_Report_v20260207.pdf
+deftext  FT Times-Roman FS 12.0 MS 8.0 LH 1.15 A lF WR f CL t C 000099
 
 field MsgNo originMessageID
   label    "Origin Message Number"
   type     messageID
   presence required
-  pdf      text L 232.40 R 342.16 B 713.00 T 730.96 BL 718.32
-  pdf      text P 2 L 457.44 R 568.56 B 743.52 T 757.92 BL 745.56
-  pdf      text P 3 L 457.56 R 567.96 B 743.28 T 757.68 BL 745.56
+  pdf      text L 234.40 R 342.16 B 713.00 T 730.96 BL 718.32
+  pdf      text P 2 L 459.44 R 568.56 B 743.52 T 757.92 BL 745.56
+  pdf      text P 3 L 459.56 R 567.96 B 743.28 T 757.68 BL 745.56
 
 field DestMsgNo destinationMessageID
   label    "Destination Message Number"
   type     messageID
-  pdf      text L 451.16 R 564.76 B 713.00 T 730.96 BL 718.32
+  pdf      text L 453.16 R 564.76 B 713.00 T 730.96 BL 718.32
 
 field 1a. messageDate
   label    "Message Date"
   type     date
   presence required
-  pdf      text L  79.04 R 132.76 B 658.88 T 678.76 BL 665.04
+  pdf      text L  81.04 R 132.76 B 658.88 T 678.76 BL 665.04
 
 field 1b. messageTime
   label    "Message Time"
   type     time
   presence required
-  pdf      text L 179.12 R 236.32 B 658.88 T 678.76 BL 665.04
+  pdf      text L 181.12 R 236.32 B 658.88 T 678.76 BL 665.04
 
 field -
   label    "Message Date/Time"
@@ -56,51 +57,51 @@ field 7a. toICSPosition
   choice   Common Operating Picture Spec.
   choice   Planning
   presence required
-  pdf      text L 140.12 R 299.32 B 640.88 T 653.92 BL 643.68
+  pdf      text L 142.12 R 299.32 B 640.88 T 653.92 BL 643.68
 
 field 7b. toLocation
   label    "To Location"
   value    "County EOC"
   presence required
-  pdf      text L 140.12 R 299.32 B 622.88 T 635.92 BL 625.68
+  pdf      text L 142.12 R 299.32 B 622.88 T 635.92 BL 625.68
 
 field 7c.
   label    "To Name"
-  pdf      text L 140.12 R 299.32 B 604.88 T 617.92 BL 607.68
+  pdf      text L 142.12 R 299.32 B 604.88 T 617.92 BL 607.68
 
 field 7d.
   label    "To Contact Info"
-  pdf      text L 140.12 R 299.32 B 582.68 T 599.92 BL 587.64
+  pdf      text L 142.12 R 299.32 B 582.68 T 599.92 BL 587.64
 
 field 8a. fromICSPosition
   label    "From ICS Position"
   presence required
-  pdf      text L 401.96 R 563.44 B 640.88 T 653.92 BL 643.68
+  pdf      text L 403.96 R 563.44 B 640.88 T 653.92 BL 643.68
 
 field 8b. fromLocation
   label    "From Location"
   presence required
-  pdf      text L 401.96 R 563.44 B 622.88 T 635.92 BL 625.68
+  pdf      text L 403.96 R 563.44 B 622.88 T 635.92 BL 625.68
 
 field 8c.
   label    "From Name"
-  pdf      text L 401.96 R 563.44 B 604.88 T 617.92 BL 607.68
+  pdf      text L 403.96 R 563.44 B 604.88 T 617.92 BL 607.68
 
 field 8d.
   label    "From Contact Info"
-  pdf      text L 401.96 R 563.44 B 582.68 T 599.92 BL 587.64
+  pdf      text L 403.96 R 563.44 B 582.68 T 599.92 BL 587.64
 
 field 20d. formDate
   label    "Prepared Date"
   type     date
   presence required
-  pdf      text L 129.20 R 294.76 B 545.84 T 559.48 BL 548.88
+  pdf      text L 131.20 R 294.76 B 545.84 T 559.48 BL 548.88
 
 field 20t.
   label    "Prepared Time"
   type     time
   presence required
-  pdf      text L 391.16 R 563.44 B 545.84 T 559.48 BL 548.88
+  pdf      text L 393.16 R 563.44 B 545.84 T 559.48 BL 548.88
 
 field -
   label    "Prepared Date/Time"
@@ -128,12 +129,12 @@ field 21. messageSummary
   choice   Santa Clara County
   choice   County unincorporated
   presence required
-  pdf      text L 129.20 R 294.52 B 527.84 T 540.88 BL 530.64
+  pdf      text L 131.20 R 294.52 B 527.84 T 540.88 BL 530.64
 
 field 22.
   label    "Incident Name"
   presence required
-  pdf      text L 391.16 R 563.44 B 527.84 T 540.88 BL 530.64
+  pdf      text L 393.16 R 563.44 B 527.84 T 540.88 BL 530.64
 
 field 23.
   label    "Emergency Declaration"
@@ -171,16 +172,16 @@ field 26. defaultBody
 
 field 30.
   label    "Prepared By"
-  pdf      text L 118.52 R 294.76 B 309.32 T 322.84 BL 312.36
+  pdf      text L 120.52 R 294.76 B 309.32 T 322.84 BL 312.36
 
 field 31.
   label    "Prepared By Phone"
   type     phoneNumber
-  pdf      text L 398.84 R 563.44 B 309.32 T 322.84 BL 312.36
+  pdf      text L 400.84 R 563.44 B 309.32 T 322.84 BL 312.36
 
 field 32.
   label    "Prepared By Email"
-  pdf      text L 118.52 R 563.44 B 291.32 T 304.84 BL 294.36
+  pdf      text L 120.52 R 563.44 B 291.32 T 304.84 BL 294.36
 
 field 50.
   label    "Government Office Status"
@@ -195,12 +196,12 @@ field 50.
 field 51d.
   label    "Expected to Open Date"
   type     date
-  pdf      text L 167.72 R 294.76 B 236.48 T 253.24 BL 241.08
+  pdf      text L 169.72 R 294.76 B 236.48 T 253.24 BL 241.08
 
 field 51t.
   label    "Expected to Open Time"
   type     time
-  pdf      text L 346.16 R 563.44 B 236.48 T 253.24 BL 241.08
+  pdf      text L 348.16 R 563.44 B 236.48 T 253.24 BL 241.08
 
 field -
   label    "Expected to Open"
@@ -210,12 +211,12 @@ field -
 field 52d.
   label    "Expected to Close Date"
   type     date
-  pdf      text L 167.72 R 294.76 B 215.36 T 232.00 BL 219.96
+  pdf      text L 169.72 R 294.76 B 215.36 T 232.00 BL 219.96
 
 field 52t.
   label    "Expected to Close Time"
   type     time
-  pdf      text L 346.16 R 563.44 B 215.36 T 232.00 BL 219.96
+  pdf      text L 348.16 R 563.44 B 215.36 T 232.00 BL 219.96
 
 field -
   label    "Expected to Close"
@@ -224,19 +225,19 @@ field -
 
 field 60.
   label    "Approved By"
-  pdf      text L 121.28 R 294.76 B 179.24 T 192.88 BL 182.28
+  pdf      text L 123.28 R 294.76 B 179.24 T 192.88 BL 182.28
 
 field 61.
   label    "Approved By Phone"
-  pdf      text L 390.32 R 563.44 B 179.24 T 192.88 BL 182.28
+  pdf      text L 392.32 R 563.44 B 179.24 T 192.88 BL 182.28
 
 field 62.
   label    "Approved By Position"
-  pdf      text L 121.28 R 294.76 B 161.24 T 174.76 BL 164.28
+  pdf      text L 123.28 R 294.76 B 161.24 T 174.76 BL 164.28
 
 field 63.
   label    "Approved By Location"
-  pdf      text L 390.32 R 563.44 B 161.24 T 174.76 BL 164.28
+  pdf      text L 392.32 R 563.44 B 161.24 T 174.76 BL 164.28
 
 field 70a.
   label    "Communications Status"
@@ -253,7 +254,7 @@ field 70a.
 field 70b.
   label    "Communications Comments"
   type     multiline
-  pdf      text P 2 L 243.56 R 563.32 B 672.92 T 697.00 BL 688.56
+  pdf      text P 2 L 245.56 R 563.32 B 672.92 T 697.00 BL 688.56
 
 field 71a.
   label    "Debris Status"
@@ -270,7 +271,7 @@ field 71a.
 field 71b.
   label    "Debris Comments"
   type     multiline
-  pdf      text P 2 L 243.56 R 563.32 B 628.28 T 652.36 BL 643.92
+  pdf      text P 2 L 245.56 R 563.32 B 628.28 T 652.36 BL 643.92
 
 field 72a.
   label    "Flooding Status"
@@ -287,7 +288,7 @@ field 72a.
 field 72b.
   label    "Flooding Comments"
   type     multiline
-  pdf      text P 2 L 243.56 R 563.32 B 583.64 T 607.72 BL 599.28
+  pdf      text P 2 L 245.56 R 563.32 B 583.64 T 607.72 BL 599.28
 
 field 73a.
   label    "HazMat Status"
@@ -304,7 +305,7 @@ field 73a.
 field 73b.
   label    "HazMat Comments"
   type     multiline
-  pdf      text P 2 L 243.56 R 563.32 B 539.12 T 563.20 BL 554.76
+  pdf      text P 2 L 245.56 R 563.32 B 539.12 T 563.20 BL 554.76
 
 field 74a.
   label    "Emergency Services Status"
@@ -321,7 +322,7 @@ field 74a.
 field 74b.
   label    "Emergency Services Comments"
   type     multiline
-  pdf      text P 2 L 243.56 R 563.32 B 494.48 T 518.56 BL 510.12
+  pdf      text P 2 L 245.56 R 563.32 B 494.48 T 518.56 BL 510.12
 
 field 75a.
   label    "Casualties Status"
@@ -338,7 +339,7 @@ field 75a.
 field 75b.
   label    "Casualties Comments"
   type     multiline
-  pdf      text P 2 L 243.56 R 563.32 B 449.84 T 473.92 BL 465.48
+  pdf      text P 2 L 245.56 R 563.32 B 449.84 T 473.92 BL 465.48
 
 field 76a.
   label    "Utilities (Gas) Status"
@@ -355,7 +356,7 @@ field 76a.
 field 76b.
   label    "Utilities (Gas) Comments"
   type     multiline
-  pdf      text P 2 L 243.56 R 563.32 B 405.20 T 429.28 BL 420.84
+  pdf      text P 2 L 245.56 R 563.32 B 405.20 T 429.28 BL 420.84
 
 field 77a.
   label    "Utilities (Electric) Status"
@@ -372,7 +373,7 @@ field 77a.
 field 77b.
   label    "Utilities (Electric) Comments"
   type     multiline
-  pdf      text P 2 L 243.56 R 563.32 B 360.56 T 384.64 BL 376.20
+  pdf      text P 2 L 245.56 R 563.32 B 360.56 T 384.64 BL 376.20
 
 field 78a.
   label    "Infrastructure (Power) Status"
@@ -389,7 +390,7 @@ field 78a.
 field 78b.
   label    "Infrastructure (Power) Comments"
   type     multiline
-  pdf      text P 2 L 243.56 R 563.32 B 316.04 T 340.12 BL 331.68
+  pdf      text P 2 L 245.56 R 563.32 B 316.04 T 340.12 BL 331.68
 
 field 79a.
   label    "Infrastructure (Water) Status"
@@ -406,7 +407,7 @@ field 79a.
 field 79b.
   label    "Infrastructure (Water) Comments"
   type     multiline
-  pdf      text P 2 L 243.56 R 563.32 B 271.40 T 295.48 BL 287.04
+  pdf      text P 2 L 245.56 R 563.32 B 271.40 T 295.48 BL 287.04
 
 field 80a.
   label    "Infrastructure (Sewer) Status"
@@ -423,7 +424,7 @@ field 80a.
 field 80b.
   label    "Infrastructure (Sewer) Comments"
   type     multiline
-  pdf      text P 2 L 243.56 R 563.32 B 226.76 T 250.84 BL 242.40
+  pdf      text P 2 L 245.56 R 563.32 B 226.76 T 250.84 BL 242.40
 
 field 81a.
   label    "Search and Rescue Status"
@@ -440,7 +441,7 @@ field 81a.
 field 81b.
   label    "Search and Rescue Comments"
   type     multiline
-  pdf      text P 2 L 243.56 R 563.32 B 182.12 T 206.20 BL 197.76
+  pdf      text P 2 L 245.56 R 563.32 B 182.12 T 206.20 BL 197.76
 
 field 82a.
   label    "Transportation (Roads) Status"
@@ -457,7 +458,7 @@ field 82a.
 field 82b.
   label    "Transportation (Roads) Comments"
   type     multiline
-  pdf      text P 2 L 243.56 R 563.32 B 137.48 T 161.68 BL 153.12
+  pdf      text P 2 L 245.56 R 563.32 B 137.48 T 161.68 BL 153.12
 
 field 83a.
   label    "Transportation (Bridges) Status"
@@ -474,7 +475,7 @@ field 83a.
 field 83b.
   label    "Transportation (Bridges) Comments"
   type     multiline
-  pdf      text P 2 L 243.44 R 563.32 B  92.84 T 117.04 BL 108.60
+  pdf      text P 2 L 245.44 R 563.32 B  92.84 T 117.04 BL 108.60
 
 field 84a.
   label    "Civil Unrest Status"
@@ -491,7 +492,7 @@ field 84a.
 field 84b.
   label    "Civil Unrest Comments"
   type     multiline
-  pdf      text P 3 L 243.56 R 563.32 B 701.12 T 724.00 BL 715.56
+  pdf      text P 3 L 245.56 R 563.32 B 701.12 T 724.00 BL 715.56
 
 field 85a.
   label    "Animal Issues Status"
@@ -508,7 +509,7 @@ field 85a.
 field 85b.
   label    "Animal Issues Comments"
   type     multiline
-  pdf      text P 3 L 243.56 R 563.32 B 657.68 T 680.56 BL 672.12
+  pdf      text P 3 L 245.56 R 563.32 B 657.68 T 680.56 BL 672.12
 
 field 90.
   label    "Lifeline Status"
@@ -537,21 +538,21 @@ field 92.
 
 field OpRelayRcvd
   label    "Operator: Relay Received"
-  pdf      text P 3 L 106.88 R 319.48 B 360.20 T 374.56 BL 363.60
+  pdf      text P 3 L 108.88 R 319.48 B 360.20 T 374.56 BL 363.60
 
 field OpRelaySent
   label    "Operator: Relay Sent"
-  pdf      text P 3 L 351.92 R 564.76 B 360.20 T 374.56 BL 363.60
+  pdf      text P 3 L 353.92 R 564.76 B 360.20 T 374.56 BL 363.60
 
 field OpName operatorName
   label    "Operator: Name"
   presence required
-  pdf      text P 3 L  72.92 R 247.72 B 341.24 T 355.72 BL 344.76
+  pdf      text P 3 L  74.92 R 247.72 B 341.24 T 355.72 BL 344.76
 
 field OpCall operatorCall
   label    "Operator: Call Sign"
   presence required
-  pdf      text P 3 L 298.16 R 364.24 B 341.24 T 355.72 BL 344.76
+  pdf      text P 3 L 300.16 R 364.24 B 341.24 T 355.72 BL 344.76
 
 field -
   label    Operator
@@ -561,12 +562,12 @@ field -
 field OpDate operatorDate
   label    "Operator: Date"
   type     date
-  pdf      text P 3 L 397.88 R 471.88 B 341.24 T 355.72 BL 344.76
+  pdf      text P 3 L 399.88 R 471.88 B 341.24 T 355.72 BL 344.76
 
 field OpTime operatorTime
   label    "Operator: Time"
   type     time
-  pdf      text P 3 L 533.84 R 564.76 B 341.24 T 355.72 BL 344.76
+  pdf      text P 3 L 535.84 R 564.76 B 341.24 T 355.72 BL 344.76
 
 field -
   label    "Operator: Date/Time"

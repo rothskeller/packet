@@ -12,22 +12,22 @@
     <div class=section-inline>Radio Operator Only:</div>
     <div class=pair>
       <label for=MsgNo>1. Origin Msg #:</label>
-      <input id=MsgNo name=MsgNo class=message-number required style="width:5.40rem">
+      <input id=MsgNo name=MsgNo class=message-number required style="{{w-MsgNo}}">
     </div>
     <div class=pair>
       <label for=DestMsgNo>2. Destination Msg #:</label>
-      <input id=DestMsgNo name=DestMsgNo class=message-number disabled style="width:5.15rem">
+      <input id=DestMsgNo name=DestMsgNo class=message-number disabled style="{{w-DestMsgNo}}">
     </div>
   </div>
   <div class=border-thick>
     <div class=layout-grid style="--columns: max-content max-content 1fr">
       <div class="border subgrid rowspan3" style="padding-inline: 0.25rem">
         <label for=1a. class=rowspan2>1. Date:</label>
-        <div><input id=1a. name=1a. class=date required style="width:4.71rem"></div>
+        <div><input id=1a. name=1a. class=date required style="{{w-1a.}}"></div>
       </div>
       <div class="border subgrid rowspan3" style="padding-inline: 0.25rem">
         <label for=1b. class=rowspan2>Time <span class=annotation>(24hr):</span></label>
-        <div style="text-align: center"><input id=1b. name=1b. class=time required style="width:3.59rem"></div>
+        <div style="text-align: center"><input id=1b. name=1b. class=time required style="{{w-1b.}}"></div>
       </div>
       <div class=layout-pair>
         <div class=pair>
@@ -58,7 +58,7 @@
           <div class=label style="justify-self:end;margin:0">REPLY <span class=annotation>(✓ one):</span></div>
           <div>
             <label for=6b.><input type=radio id=6b. name=6b. value=Yes>Yes,</label>
-            <label for=6d.>by <input id=6d. name=6d. allowed-if="6b.=Yes" style="width:3.44rem"></label>
+            <label for=6d.>by <input id=6d. name=6d. allowed-if="6b.=Yes" style="{{w-6d.}}"></label>
           </div>
           <label><input type=radio name=6b. value=No>No</label>
         </div>
@@ -115,15 +115,15 @@
     <div class=layout-pair>
       <div class=pair>
         <label for=10.>10. Subject:</label>
-        <input id=10. name=10. required style="width:37.66rem">
+        <input id=10. name=10. required style="{{w-10.}}">
       </div>
       <div class=pair>
         <label for=1.>11. Reference:</label>
-        <input id=11. name=11. style="width:25.52rem">
+        <input id=11. name=11. style="{{w-11.}}">
       </div>
       <div class=pair>
         <label for=12.>12. Message:</label>
-        <textarea id=12. name=12. style="width:45.07rem;height:9.93rem"></textarea>
+        <textarea id=12. name=12. style="{{w-12.}}"></textarea>
       </div>
     </div>
   </div>
@@ -133,13 +133,13 @@
     <div class="layout-pair">
       <div class=pair>
         <label for=OpRelayRcvd>Rcvd:</label>
-        <input id=OpRelayRcvd name=OpRelayRcvd style="width:15.29rem">
+        <input id=OpRelayRcvd name=OpRelayRcvd style="{{w-OpRelayRcvd}}">
       </div>
     </div>
     <div class="layout-pair">
       <div class=pair>
         <label for=OpRelaySent>Sent:</label>
-        <input id=OpRelaySent name=OpRelaySent style="width:15.29rem">
+        <input id=OpRelaySent name=OpRelaySent style="{{w-OpRelaySent}}">
       </div>
     </div>
     <div class="subgrid colspan2 rowspan4">
@@ -166,21 +166,21 @@
     <div class=rowspan4 style="display: grid; grid: subgrid / max-content 1fr">
       <div class=pair>
         <label for=OpCall>Operator Call Sign:</label>
-        <input id=OpCall name=OpCall class=call-sign required style="width:13.04rem">
+        <input id=OpCall name=OpCall class=call-sign required style="{{w-OpCall}}">
       </div>
       <div class=pair>
         <label for=OpName>Operator Name:</label>
-        <input id=OpName name=OpName required style="width:13.84rem">
+        <input id=OpName name=OpName required style="{{w-OpName}}">
       </div>
       <div class="border colspan2" style="padding: 0.25rem">&nbsp;</div>
       <div class="layout-grid colspan2" style="--columns: max-content 1fr max-content 1fr">
         <div class=pair>
           <label for=OpDate>Date:</label>
-          <input id=OpDate name=OpDate class=date style="width:4.71rem">
+          <input id=OpDate name=OpDate class=date style="{{w-OpDate}}">
         </div>
         <div class=pair>
           <label for=OpTime>Time <span class=annotation>(24hr)</span>:</label>
-          <input id=OpTime name=OpTime class=time style="width:3.40rem">
+          <input id=OpTime name=OpTime class=time style="{{w-OpTime}}">
         </div>
       </div>
     </div>

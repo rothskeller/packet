@@ -61,7 +61,7 @@ func (ff *FieldFactory) ValueFunc(fn func(msgifc.Message) string) *FieldFactory 
 // ToHumanFunc provides a function that converts the internal form of a value
 // for the field into the human form appropriate for display and editing.  The
 // default is an identity conversion.
-func (ff *FieldFactory) ToHumanFunc(fn func(string) string) *FieldFactory {
+func (ff *FieldFactory) ToHumanFunc(fn func(msgifc.Message, string) string) *FieldFactory {
 	ff.f.toHumanFunc = fn
 	return ff
 }
@@ -69,7 +69,7 @@ func (ff *FieldFactory) ToHumanFunc(fn func(string) string) *FieldFactory {
 // FromHumanFunc provides a function that converts the supplied value from
 // human form to internal form, if possible; otherwise it makes no changes.
 // The default is an identity conversion.
-func (ff *FieldFactory) FromHumanFunc(fn func(string) string) *FieldFactory {
+func (ff *FieldFactory) FromHumanFunc(fn func(msgifc.Message, string) string) *FieldFactory {
 	ff.f.fromHumanFunc = fn
 	return ff
 }

@@ -3,31 +3,28 @@
 <script type=text/javascript src={{assets}}/pack-it-forms.js></script>
 <title>CPOD Commodities Update Form</title>
 <packet-form>
-  <form-roo form-title="CPOD Commodities Update Form" paper-version="PDF: 20260207" omistyle="width:8.65rem"
-    dmistyle="width:9.94rem" rrstyle="width:17.81rem" rsstyle="width:17.65rem" opstyle="width:9.87rem"
-    ocstyle="width:4.81rem" odstyle="width:8.08rem" otstyle="width:6.09rem">
-    <form-dthtf to-ics-positions="CPOD Unit; Mass Care &amp; Emerg. Asst. Branch; Operations" mdstyle="width:4.48rem"
-      mtstyle="width:4.77rem" tostyle="width:13.27rem" frstyle="width:13.46rem"></form-dthtf>
+  <form-roo form-title="CPOD Commodities Update Form" paper-version="PDF: 20260207">
+    <form-dthtf to-ics-positions="CPOD Unit; Mass Care &amp; Emerg. Asst. Branch; Operations"></form-dthtf>
     <div class=section>Overview</div>
     <div class=layout-grid style="--columns: max-content 1fr max-content 1fr">
       <div class="pair colspan4">
         <label for=20.>21. Jurisdiction:</label>
-        <jurisdiction-box name=20. class=colspan3 style="width: 36.19rem"></jurisdiction-box>
+        <jurisdiction-box name=20. class=colspan3 style="{{w-20.}}"></jurisdiction-box>
       </div>
       <div class=pair>
         <label for=21d.>22. Prepared Date:</label>
-        <input id=21d. name=21d. class=date required style="width:14.55rem">
+        <input id=21d. name=21d. class=date required style="{{w-21d.}}">
       </div>
       <div class=pair>
         <label for=21t.>23. Prepared Time:</label>
-        <input id=21t. name=21t. class=time required style="width:13.61rem">
+        <input id=21t. name=21t. class=time required style="{{w-21t.}}">
       </div>
     </div>
     <div class=section>General Site Information</div>
     <div class=layout-pair>
       <div class=pair>
         <label for=30.>31. Site Name:</label>
-        <input id=30. name=30. required style="width:37.83rem">
+        <input id=30. name=30. required style="{{w-30.}}">
       </div>
       <div class=pair>
         <div class=label>32. Status Update:</div>
@@ -49,7 +46,7 @@
         <div class=layout-pair {{hidden-until}}>
           <div class=pair>
             <label for={{tag}}a.>{{fnum}}a. Type of Commodity:</label>
-            <input id={{tag}}a. name={{tag}}a. {{required}} style="width:29.67rem">
+            <input id={{tag}}a. name={{tag}}a. {{required}} style="{{w-70a.}}">
           </div>
         </div>
         <div class=layout-grid style="--columns: max-content 1fr max-content 1fr max-content 1fr" {{hidden-until}}>

@@ -5,33 +5,34 @@ title    Resource Request Form
 indef    a resource request form
 create   ResReq rr
 pdfFile  Resource_Request_v20260207.pdf
+deftext  FT Times-Roman FS 12.0 MS 8.0 LH 1.15 A lF WR f CL t C 000099
 
 field MsgNo originMessageID
   label    "1. Origin Message Number"
   type     messageID
   presence required
   help     "This is the message number assigned to the message by the origin station.  Valid message numbers have the form XXX-###P, where XXX is the three-character message number prefix assigned to the station, ### is a sequence number (any number of digits), and P is an optional suffix letter.  This field is required."
-  pdf      text L 227.00 R 339.76 B 713.00 T 730.96 BL 718.32
-  pdf      text P 2 L 457.56 R 568.44 B 742.56 T 767.64 BL 745.56
+  pdf      text L 229.00 R 339.76 B 713.00 T 730.96 BL 718.32
+  pdf      text P 2 L 459.56 R 568.44 B 742.56 T 767.64 BL 745.56
 
 field DestMsgNo destinationMessageID
   label    "2. Destination Message Number"
   type     messageID
-  pdf      text L 448.76 R 564.76 B 713.00 T 730.96 BL 718.32
+  pdf      text L 450.76 R 564.76 B 713.00 T 730.96 BL 718.32
 
 field 1a. messageDate
   label    "3. Message Date"
   type     date
   presence required
   help     "This is the date the message was written, in MM/DD/YYYY format.  It is required."
-  pdf      text L  79.04 R 132.76 B 656.12 T 676.12 BL 662.40
+  pdf      text L  81.04 R 132.76 B 656.12 T 676.12 BL 662.40
 
 field 1b. messageTime
   label    "4. Message Time"
   type     time
   presence required
   help     "This is the time the message was written, in HH:MM format (24-hour clock).  It is required."
-  pdf      text L 179.12 R 236.32 B 656.12 T 676.12 BL 662.40
+  pdf      text L 181.12 R 236.32 B 656.12 T 676.12 BL 662.40
 
 field -
   label    "Message Date/Time"
@@ -61,7 +62,7 @@ field 7a. toICSPosition
   presence required
   width    30
   help     "This is the ICS position to which the message is addressed.  It is required."
-  pdf      text L 140.12 R 299.32 B 638.12 T 651.28 BL 641.04
+  pdf      text L 142.12 R 299.32 B 638.12 T 651.28 BL 641.04
 
 field 7b. toLocation
   label    "7. To Location"
@@ -69,52 +70,52 @@ field 7b. toLocation
   presence required
   width    32
   help     "This is the location of the recipient ICS position.  It is required."
-  pdf      text L 140.12 R 299.32 B 620.12 T 633.28 BL 623.04
+  pdf      text L 142.12 R 299.32 B 620.12 T 633.28 BL 623.04
 
 field 7c.
   label    "8. To Name"
   width    34
   help     "This is the name of the person holding the recipient ICS position.  It is optional and rarely provided."
-  pdf      text L 140.12 R 299.32 B 602.12 T 615.28 BL 605.04
+  pdf      text L 142.12 R 299.32 B 602.12 T 615.28 BL 605.04
 
 field 7d.
   label    "9. To Contact Info"
   width    29
   help     "This is contact information (phone number, email, etc.) for the receipient.  It is optional and rarely provided."
-  pdf      text L 140.12 R 299.32 B 580.16 T 597.28 BL 585.00
+  pdf      text L 142.12 R 299.32 B 580.16 T 597.28 BL 585.00
 
 field 8a. fromICSPosition
   label    "10. From ICS Position"
   presence required
   width    30
   help     "This is the ICS position of the message author.  It is required."
-  pdf      text L 401.96 R 563.44 B 638.12 T 651.28 BL 641.04
+  pdf      text L 403.96 R 563.44 B 638.12 T 651.28 BL 641.04
 
 field 8b. fromLocation
   label    "11. From Location"
   presence required
   width    32
   help     "This is the location of the message author.  It is required."
-  pdf      text L 401.96 R 563.44 B 620.12 T 633.28 BL 623.04
+  pdf      text L 403.96 R 563.44 B 620.12 T 633.28 BL 623.04
 
 field 8c.
   label    "12. From Name"
   width    34
   help     "This is the name of the message author.  It is optional and rarely provided."
-  pdf      text L 401.96 R 563.44 B 602.12 T 615.28 BL 605.04
+  pdf      text L 403.96 R 563.44 B 602.12 T 615.28 BL 605.04
 
 field 8d.
   label    "13. From Contact Info"
   width    29
   help     "This is contact information (phone number, email, etc.) for the message author.  It is optional and rarely provided."
-  pdf      text L 401.96 R 563.44 B 580.16 T 597.28 BL 585.00
+  pdf      text L 403.96 R 563.44 B 580.16 T 597.28 BL 585.00
 
 field 20. messageSummary
   label    "21. Title"
   presence required
   width    102
   help     "This is the title of the resource request.  It should be unique among all resource requests from the jurisdiction.  It is required."
-  pdf      text L 114.44 R 563.44 B 542.96 T 556.48 BL 546.00
+  pdf      text L 116.44 R 563.44 B 542.96 T 556.48 BL 546.00
 
 field 21.
   label    "22. Jurisdiction"
@@ -137,24 +138,24 @@ field 21.
   choice   County unincorporated
   presence required
   help     "This is the name of the jurisdiction requesting resources.  It is required."
-  pdf      text L 114.44 R 563.44 B 524.36 T 538.00 BL 527.40
+  pdf      text L 116.44 R 563.44 B 524.36 T 538.00 BL 527.40
 
 field 22d. formDate
   label    "23. Date"
   type     date
   presence required
   help     "This is the date of the resource request.  It is required."
-  pdf      text L 114.44 R 302.08 B 505.88 T 519.40 BL 508.92
+  pdf      text L 116.44 R 302.08 B 505.88 T 519.40 BL 508.92
 
 field 22t.
   label    "24. Time"
   type     time
   presence required
   help     "This is the time of day of the resource request.  It is required."
-  pdf      text L 353.96 R 563.44 B 505.88 T 519.40 BL 508.92
+  pdf      text L 355.96 R 563.44 B 505.88 T 519.40 BL 508.92
 
 field -
-  label    Date/Time
+  label    "23-24. Date/Time"
   type     dateTime
   children 22d. 22t.
   presence required
@@ -165,7 +166,7 @@ field 23n.
   presence required
   width    52
   help     "This is the name of the item being requested."
-  pdf      text L 171.92 R 406.60 B 487.40 T 500.92 BL 490.44
+  pdf      text L 173.92 R 406.60 B 487.40 T 500.92 BL 490.44
 
 field 23q.
   label    "31b. Item 1: Quantity Requested"
@@ -173,14 +174,14 @@ field 23q.
   presence required
   width    10
   help     "This is the quantity of the item being requested.  It is required when there is an item name, otherwise not allowed."
-  pdf      text L 532.64 R 563.44 B 487.40 T 500.92 BL 490.44
+  pdf      text L 534.64 R 563.44 B 487.40 T 500.92 BL 490.44
 
 field 23d.
   label    "31c. Item 1: Description"
   type     multiline
   width    85
   help     "This is a description of the item being requested.  It is allowed only when there is an item name."
-  pdf      text L 171.92 R 563.44 B 451.52 T 482.92 BL 474.48
+  pdf      text L 173.92 R 563.44 B 451.52 T 482.92 BL 474.48
 
 field 23i.
   label    "31d. Item 1: Demobilization"
@@ -194,9 +195,10 @@ field 23i.
 
 field 24n.
   label    "32a. Item 2: Item Name"
+  presence if 23n. then optional else blocked
   width    52
   help     "This is the name of the item being requested."
-  pdf      text L 171.92 R 406.60 B 416.48 T 430.00 BL 419.52
+  pdf      text L 173.92 R 406.60 B 416.48 T 430.00 BL 419.52
 
 field 24q.
   label    "32b. Item 2: Quantity Requested"
@@ -204,7 +206,7 @@ field 24q.
   presence if 24n. then required else blocked
   width    10
   help     "This is the quantity of the item being requested.  It is required when there is an item name, otherwise not allowed."
-  pdf      text L 532.64 R 563.44 B 416.48 T 430.00 BL 419.52
+  pdf      text L 534.64 R 563.44 B 416.48 T 430.00 BL 419.52
 
 field 24d.
   label    "32c. Item 2: Description"
@@ -212,7 +214,7 @@ field 24d.
   presence if 24n. then optional else blocked
   width    85
   help     "This is a description of the item being requested.  It is allowed only when there is an item name."
-  pdf      text L 171.92 R 563.44 B 380.60 T 412.00 BL 403.56
+  pdf      text L 173.92 R 563.44 B 380.60 T 412.00 BL 403.56
 
 field 24i.
   label    "32d. Item 2: Demobilization"
@@ -226,9 +228,10 @@ field 24i.
 
 field 25n.
   label    "33a. Item 3: Item Name"
+  presence if 24n. then optional else blocked
   width    52
   help     "This is the name of the item being requested."
-  pdf      text L 171.92 R 406.60 B 343.52 T 357.16 BL 346.56
+  pdf      text L 173.92 R 406.60 B 343.52 T 357.16 BL 346.56
 
 field 25q.
   label    "33b. Item 3: Quantity Requested"
@@ -236,7 +239,7 @@ field 25q.
   presence if 25n. then required else blocked
   width    10
   help     "This is the quantity of the item being requested.  It is required when there is an item name, otherwise not allowed."
-  pdf      text L 532.64 R 563.44 B 343.52 T 357.16 BL 346.56
+  pdf      text L 534.64 R 563.44 B 343.52 T 357.16 BL 346.56
 
 field 25d.
   label    "33c. Item 3: Description"
@@ -244,7 +247,7 @@ field 25d.
   presence if 25n. then optional else blocked
   width    85
   help     "This is a description of the item being requested.  It is allowed only when there is an item name."
-  pdf      text L 171.92 R 563.44 B 307.64 T 339.04 BL 330.60
+  pdf      text L 173.92 R 563.44 B 307.64 T 339.04 BL 330.60
 
 field 25i.
   label    "33d. Item 3: Demobilization"
@@ -258,9 +261,10 @@ field 25i.
 
 field 26n.
   label    "34a. Item 4: Item Name"
+  presence if 25n. then optional else blocked
   width    52
   help     "This is the name of the item being requested."
-  pdf      text L 171.92 R 406.60 B 270.68 T 284.20 BL 273.72
+  pdf      text L 173.92 R 406.60 B 270.68 T 284.20 BL 273.72
 
 field 26q.
   label    "34b. Item 4: Quantity Requested"
@@ -268,7 +272,7 @@ field 26q.
   presence if 26n. then required else blocked
   width    10
   help     "This is the quantity of the item being requested.  It is required when there is an item name, otherwise not allowed."
-  pdf      text L 532.64 R 563.44 B 270.68 T 284.20 BL 273.72
+  pdf      text L 534.64 R 563.44 B 270.68 T 284.20 BL 273.72
 
 field 26d.
   label    "34c. Item 4: Description"
@@ -276,7 +280,7 @@ field 26d.
   presence if 26n. then optional else blocked
   width    85
   help     "This is a description of the item being requested.  It is allowed only when there is an item name."
-  pdf      text L 171.92 R 563.44 B 234.80 T 266.20 BL 257.76
+  pdf      text L 173.92 R 563.44 B 234.80 T 266.20 BL 257.76
 
 field 26i.
   label    "34d. Item 4: Demobilization"
@@ -290,9 +294,10 @@ field 26i.
 
 field 27n.
   label    "35a. Item 5: Item Name"
+  presence if 26n. then optional else blocked
   width    52
   help     "This is the name of the item being requested."
-  pdf      text L 171.92 R 406.60 B 197.72 T 211.36 BL 200.76
+  pdf      text L 173.92 R 406.60 B 197.72 T 211.36 BL 200.76
 
 field 27q.
   label    "35b. Item 5: Quantity Requested"
@@ -300,7 +305,7 @@ field 27q.
   presence if 27n. then required else blocked
   width    10
   help     "This is the quantity of the item being requested.  It is required when there is an item name, otherwise not allowed."
-  pdf      text L 532.64 R 563.44 B 197.72 T 211.36 BL 200.76
+  pdf      text L 534.64 R 563.44 B 197.72 T 211.36 BL 200.76
 
 field 27d.
   label    "35c. Item 5: Description"
@@ -308,7 +313,7 @@ field 27d.
   presence if 27n. then optional else blocked
   width    85
   help     "This is a description of the item being requested.  It is allowed only when there is an item name."
-  pdf      text L 171.92 R 563.44 B 161.84 T 193.24 BL 184.80
+  pdf      text L 173.92 R 563.44 B 161.84 T 193.24 BL 184.80
 
 field 27i.
   label    "35d. Item 5: Demobilization"
@@ -322,9 +327,10 @@ field 27i.
 
 field 28n.
   label    "36a. Item 6: Item Name"
+  presence if 27n. then optional else blocked
   width    52
   help     "This is the name of the item being requested."
-  pdf      text L 171.92 R 406.60 B 124.88 T 138.40 BL 127.92
+  pdf      text L 173.92 R 406.60 B 124.88 T 138.40 BL 127.92
 
 field 28q.
   label    "36b. Item 6: Quantity Requested"
@@ -332,7 +338,7 @@ field 28q.
   presence if 28n. then required else blocked
   width    10
   help     "This is the quantity of the item being requested.  It is required when there is an item name, otherwise not allowed."
-  pdf      text L 532.64 R 563.44 B 124.88 T 138.40 BL 127.92
+  pdf      text L 534.64 R 563.44 B 124.88 T 138.40 BL 127.92
 
 field 28d.
   label    "36c. Item 6: Description"
@@ -340,7 +346,7 @@ field 28d.
   presence if 28n. then optional else blocked
   width    85
   help     "This is a description of the item being requested.  It is allowed only when there is an item name."
-  pdf      text L 171.92 R 563.44 B  89.00 T 120.40 BL 111.96
+  pdf      text L 173.92 R 563.44 B  89.00 T 120.40 BL 111.96
 
 field 28i.
   label    "36d. Item 6: Demobilization"
@@ -370,34 +376,34 @@ field 40.
   presence required
   width    30
   help     "This is the name of the person requesting the resources.  It is required."
-  pdf      text P 2 L 166.52 R 301.84 B 633.80 T 646.84 BL 636.60
+  pdf      text P 2 L 168.52 R 301.84 B 633.80 T 646.84 BL 636.60
 
 field 40s.
   label    "52. with signature"
   type     checkbox
   help     "This indicates whether the original resource request form was signed."
-  pdf      if 40s. then text S "(with signature)" P 2 L 421.40 R 563.44 B 633.80 T 646.84 BL 636.60
+  pdf      if 40s. then text P 2 S "(with signature)" L 423.40 R 563.44 B 633.80 T 646.84 BL 636.60
 
 field 41.
   label    "53. Requested By Phone"
   type     phoneNumber
   presence required
   help     "This is the phone number of the person requesting the resources.  It is required."
-  pdf      text P 2 L 166.52 R 301.84 B 615.80 T 629.32 BL 618.84
+  pdf      text P 2 L 168.52 R 301.84 B 615.80 T 629.32 BL 618.84
 
 field 42.
   label    "54. Requested By Email"
   presence required
   width    32
   help     "This is the email address of the person requesting the resources.  It is required."
-  pdf      text P 2 L 421.40 R 563.44 B 615.80 T 629.32 BL 618.84
+  pdf      text P 2 L 423.40 R 563.44 B 615.80 T 629.32 BL 618.84
 
 field 43.
   label    "55. Requested By Position"
   presence required
   width    85
   help     "This is the position held by the person requesting the resources.  It is required."
-  pdf      text P 2 L 166.52 R 563.44 B 597.80 T 611.32 BL 600.84
+  pdf      text P 2 L 168.52 R 563.44 B 597.80 T 611.32 BL 600.84
 
 field 50.
   type     static
@@ -407,7 +413,7 @@ field 51.
   label    "61. Name of Jurisdiction's Incident"
   width    54
   help     "This is the name of the current jurisdiction incident that this resource request relates to.  It is required if \"Relates to Jurisdiction Incident\" is \"Yes\", otherwise not allowed."
-  pdf      text P 2 L 221.84 R 563.44 B 552.80 T 566.32 BL 555.84
+  pdf      text P 2 L 223.84 R 563.44 B 552.80 T 566.32 BL 555.84
 
 field 52.
   type     static
@@ -417,7 +423,7 @@ field 53.
   label    "62. Name of County's Incident"
   width    54
   help     "This is the name of the current county incident that this resource request relates to.  It is required if \"Relates to County Incident\" is \"Yes\", otherwise not allowed."
-  pdf      text P 2 L 221.84 R 563.44 B 532.52 T 548.32 BL 536.76
+  pdf      text P 2 L 223.84 R 563.44 B 532.52 T 548.32 BL 536.76
 
 field 60. defaultBody
   label    Comments
@@ -430,23 +436,23 @@ field OpRelayRcvd
   label    "Operator: Relay Received"
   width    36
   help     "This is the name of the station from which this message was directly received.  It is filled in for messages that go through a relay station."
-  pdf      text P 2 L 106.88 R 320.56 B 351.20 T 365.68 BL 354.72
+  pdf      text P 2 L 108.88 R 320.56 B 351.20 T 365.68 BL 354.72
 
 field OpRelaySent
   label    "Operator: Relay Sent"
   width    36
   help     "This is the name of the station to which this message was directly sent.  It is filled in for messages that go through a relay station."
-  pdf      text P 2 L 353.00 R 564.76 B 351.20 T 365.68 BL 354.72
+  pdf      text P 2 L 355.00 R 564.76 B 351.20 T 365.68 BL 354.72
 
 field OpName operatorName
   label    "Operator: Name"
   presence required
-  pdf      text P 2 L  72.92 R 195.76 B 332.36 T 346.72 BL 335.88
+  pdf      text P 2 L  74.92 R 195.76 B 332.36 T 346.72 BL 335.88
 
 field OpCall operatorCall
   label    "Operator: Call Sign"
   presence required
-  pdf      text P 2 L 246.20 R 330.76 B 332.36 T 346.72 BL 335.88
+  pdf      text P 2 L 248.20 R 330.76 B 332.36 T 346.72 BL 335.88
 
 field -
   label    Operator
@@ -456,12 +462,12 @@ field -
 field OpDate operatorDate
   label    "Operator: Date"
   type     date
-  pdf      text P 2 L 364.40 R 425.32 B 332.36 T 346.72 BL 335.88
+  pdf      text P 2 L 366.40 R 425.32 B 332.36 T 346.72 BL 335.88
 
 field OpTime operatorTime
   label    "Operator: Time"
   type     time
-  pdf      text P 2 L 487.16 R 564.76 B 332.36 T 346.72 BL 335.88
+  pdf      text P 2 L 489.16 R 564.76 B 332.36 T 346.72 BL 335.88
 
 field -
   label    "Operator: Date/Time"

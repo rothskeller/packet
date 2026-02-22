@@ -23,8 +23,8 @@ type field struct {
 	obscured       bool
 	restricted     bool
 	valueFunc      func(msgifc.Message) string
-	toHumanFunc    func(string) string
-	fromHumanFunc  func(string) string
+	toHumanFunc    func(msgifc.Message, string) string
+	fromHumanFunc  func(msgifc.Message, string) string
 	setValueFunc   func(msgifc.Message, string)
 	visibleFunc    func(msgifc.Message) bool
 	editableFunc   func(msgifc.Message, bool) bool
@@ -61,16 +61,16 @@ func (f *field) Value(m msgifc.Message) string {
 	return ""
 }
 
-func (f *field) ToHuman(s string) string {
+func (f *field) ToHuman(m msgifc.Message, s string) string {
 	if f.toHumanFunc != nil {
-		return f.toHumanFunc(s)
+		return f.toHumanFunc(m, s)
 	}
 	return s
 }
 
-func (f *field) FromHuman(s string) string {
+func (f *field) FromHuman(m msgifc.Message, s string) string {
 	if f.fromHumanFunc != nil {
-		return f.fromHumanFunc(s)
+		return f.fromHumanFunc(m, s)
 	}
 	return strings.TrimSpace(s)
 }

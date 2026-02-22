@@ -162,7 +162,7 @@ LOOP: // Run the editor loop.
 			newvalue   string
 			first      = true
 		)
-		value = fld.ToHuman(fld.Value(msg))
+		value = fld.ToHuman(msg, fld.Value(msg))
 		valueWidth, _ = fld.EditSize()
 		for _, c := range fld.Choices(msg) {
 			choices = append(choices, c.Human)
@@ -170,10 +170,10 @@ LOOP: // Run the editor loop.
 		for {
 			if result, newvalue, err = c.EditField(fld.Label(), labelWidth, value, valueWidth, choices, fld.EditHelp(),
 				fld.EditHint(), fld.Multiline(), fld.Obscured(),
-				func(s string) string { return fld.ToHuman(fld.FromHuman(s)) }); err != nil {
+				func(s string) string { return fld.ToHuman(msg, fld.FromHuman(msg, s)) }); err != nil {
 				return err
 			}
-			fld.SetValue(msg, fld.FromHuman(newvalue))
+			fld.SetValue(msg, fld.FromHuman(msg, newvalue))
 			if err = fld.Validate(msg, fld, msgifc.VPacket); err == nil {
 				break
 			}
@@ -247,7 +247,7 @@ func newReadyToSendField() (f field.Field) {
 		}).
 		ValueFunc(func(_ msgifc.Message) string { return "Yes" }).
 		SetValueFunc(func(msg msgifc.Message, s string) {
-			msg.(*message.DraftMessage).SetReadyToSend(f.FromHuman(s) == "Yes")
+			msg.(*message.DraftMessage).SetReadyToSend(f.FromHuman(msg, s) == "Yes")
 		}).
 		MakeField()
 	return f

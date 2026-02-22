@@ -5,36 +5,37 @@ title    RACES Mutual Aid Request Form
 indef    a RACES mutual aid request form
 create   RACES-MAR rm
 pdfFile  XSC_RACES_MA_Req_v20260212.pdf
+deftext  FT Times-Roman FS 12.0 MS 8.0 LH 1.15 A lF WR f CL t C 000099
 
 field MsgNo originMessageID
   label    "1. Origin Message Number"
   type     messageID
   presence required
   help     "This is the message number assigned to the message by the origin station.  Valid message numbers have the form XXX-###P, where XXX is the three-character message number prefix assigned to the station, ### is a sequence number (any number of digits), and P is an optional suffix letter.  This field is required."
-  pdf      text L 225.32 R 330.76 B 725.96 T 740.68 BL 729.60
-  pdf      if RECEIVED then text P 2 L 435.12 R 576.12 B 721.44 T 761.40 BL 745.56
+  pdf      text L 227.32 R 330.76 B 725.96 T 740.68 BL 729.60
+  pdf      if RECEIVED then text P 2 L 437.12 R 576.12 B 721.44 T 761.40 BL 745.56
 
 field DestMsgNo destinationMessageID
   label    "2. Destination Message Number"
   type     messageID
-  pdf      text L 436.52 R 575.08 B 725.96 T 740.68 BL 729.60
+  pdf      text L 438.52 R 575.08 B 725.96 T 740.68 BL 729.60
 
 field 1a. messageDate
   label    "3. Message Date"
   type     date
   presence required
   help     "This is the date the message was written, in MM/DD/YYYY format.  It is required."
-  pdf      text L  81.56 R 136.60 B 689.84 T 704.56 BL 693.48
+  pdf      text L  83.56 R 136.60 B 689.84 T 704.56 BL 693.48
 
 field 1b. messageTime
   label    "4. Message Time"
   type     time
   presence required
   help     "This is the time the message was written, in HH:MM format (24-hour clock).  It is required."
-  pdf      text L 182.36 R 245.32 B 689.84 T 704.56 BL 693.48
+  pdf      text L 184.36 R 245.32 B 689.84 T 704.56 BL 693.48
 
 field -
-  label    "Message Date/Time"
+  label    "3-4. Message Date/Time"
   type     dateTime
   children 1a. 1b.
   presence required
@@ -50,8 +51,8 @@ field 5. handling
   presence required
   help     "This is the message handling order, which specifies how fast it needs to be delivered.  Allowed values are \"ROUTINE\" (within 2 hours), \"PRIORITY\" (within 1 hour), and \"IMMEDIATE\".  This field is required."
   pdf      if 5.=IMMEDIATE then circle X 318.90 Y 697.56 R 2.90
-  pdf      if 5.=PRIORITY then  circle X 415.80 Y 697.50 R 2.84
-  pdf      if 5.=ROUTINE then   circle X 496.92 Y 697.50 R 2.84
+  pdf      if 5.=PRIORITY then circle X 415.80 Y 697.50 R 2.84
+  pdf      if 5.=ROUTINE then circle X 496.92 Y 697.50 R 2.84
 
 field 7a. toICSPosition
   label    "6. To ICS Position"
@@ -62,7 +63,7 @@ field 7a. toICSPosition
   presence required
   width    30
   help     "This is the ICS position to which the message is addressed.  It is required."
-  pdf      text L 134.72 R 293.20 B 670.64 T 685.36 BL 674.28
+  pdf      text L 136.72 R 293.20 B 670.64 T 685.36 BL 674.28
 
 field 7b. toLocation
   label    "7. To Location"
@@ -70,73 +71,73 @@ field 7b. toLocation
   presence required
   width    32
   help     "This is the location of the recipient ICS position.  It is required."
-  pdf      text L 134.72 R 293.20 B 651.44 T 666.16 BL 655.08
+  pdf      text L 136.72 R 293.20 B 651.44 T 666.16 BL 655.08
 
 field 7c.
   label    "8. To Name"
   width    34
   help     "This is the name of the person holding the recipient ICS position.  It is optional and rarely provided."
-  pdf      text L 134.72 R 293.20 B 632.24 T 646.96 BL 635.88
+  pdf      text L 136.72 R 293.20 B 632.24 T 646.96 BL 635.88
 
 field 7d.
   label    "9. To Contact Info"
   width    29
   help     "This is contact information (phone number, email, etc.) for the receipient.  It is optional and rarely provided."
-  pdf      text L 134.72 R 293.20 B 613.04 T 627.76 BL 616.68
+  pdf      text L 136.72 R 293.20 B 613.04 T 627.76 BL 616.68
 
 field 8a. fromICSPosition
   label    "10. From ICS Position"
   presence required
   width    30
   help     "This is the ICS position of the message author.  It is required."
-  pdf      text L 400.52 R 575.08 B 670.64 T 685.36 BL 674.28
+  pdf      text L 402.52 R 575.08 B 670.64 T 685.36 BL 674.28
 
 field 8b. fromLocation
   label    "11. From Location"
   presence required
   width    32
   help     "This is the location of the message author.  It is required."
-  pdf      text L 400.52 R 575.08 B 651.44 T 666.16 BL 655.08
+  pdf      text L 402.52 R 575.08 B 651.44 T 666.16 BL 655.08
 
 field 8c.
   label    "12. From Name"
   width    34
   help     "This is the name of the message author.  It is optional and rarely provided."
-  pdf      text L 400.52 R 575.08 B 632.24 T 646.96 BL 635.88
+  pdf      text L 402.52 R 575.08 B 632.24 T 646.96 BL 635.88
 
 field 8d.
   label    "13. From Contact Info"
   width    29
   help     "This is contact information (phone number, email, etc.) for the message author.  It is optional and rarely provided."
-  pdf      text L 400.52 R 575.08 B 613.04 T 627.76 BL 616.68
+  pdf      text L 402.52 R 575.08 B 613.04 T 627.76 BL 616.68
 
 field 15. messageSummary
   label    "20a. Agency Name"
   presence required
   width    80
   help     "This is the name of the agency requesting mutual aid.  It is required."
-  pdf      text L 182.12 R 317.32 B 593.84 T 608.56 BL 600.96
-  pdf      if RECEIVED then text P 2 L 168.32 R 376.72 B 677.84 T 698.20 BL 690.60
+  pdf      text L 184.12 R 317.32 B 593.84 T 608.56 BL 600.96
+  pdf      if RECEIVED then text P 2 L 170.32 R 376.72 B 677.84 T 698.20 BL 690.60
 
 field 15b.
   label    "20b. Original Message Number"
   width    80
   help     "If this is a reauthorization, put the message number of the original authorization here."
-  pdf      text L 473.24 R 575.08 B 593.84 T 608.56 BL 600.96
-  pdf      if RECEIVED then text P 2 L 381.20 R 575.44 B 677.84 T 686.92 A lt
+  pdf      text L 475.24 R 575.08 B 593.84 T 608.56 BL 600.96
+  pdf      if RECEIVED then text P 2 L 383.20 R 575.44 B 677.84 T 686.92 A lt
 
 field 16a.
   label    "21a. Event Name"
   presence required
   width    52
   help     "This is the name of the event for which mutual aid is being requested.  It is required."
-  pdf      text L 182.00 R 317.32 B 574.64 T 589.36 BL 581.76
+  pdf      text L 184.00 R 317.32 B 574.64 T 589.36 BL 581.76
 
 field 16b.
   label    "21b. Event Number"
   width    17
   help     "This is the requesting agency's activation number for the event for which mutual aid is being requested."
-  pdf      text L 391.88 R 575.08 B 574.64 T 589.36 BL 581.76
+  pdf      text L 393.88 R 575.08 B 574.64 T 589.36 BL 581.76
 
 field -
   label    "21. Event Name/Number"
@@ -149,8 +150,8 @@ field 17. defaultBody
   presence required
   width    94
   help     "This is a description of the assignment.  Describe the type of duties, conditions, any special equipment needed (other than 12-hour Go Kit). If multiple shifts are involved, give details. Provide enough detail for volunteer to decide if they are willing and able to accept the assignment.  This field is required."
-  pdf      text L 141.08 R 575.08 B 479.72 T 570.16 A lt
-  pdf      if RECEIVED then text P 2 L 105.80 R 573.52 B 481.76 T 565.00 A lt
+  pdf      text L 143.08 R 575.08 B 479.72 T 570.16 A lt
+  pdf      if RECEIVED then text P 2 L 107.80 R 573.52 B 481.76 T 565.00 A lt
 
 field 18.1a.
   label    "23a. Resource 1 Quantity"
@@ -158,8 +159,8 @@ field 18.1a.
   presence required
   width    2
   help     "This is the number of people needed for the role and position requested on this row."
-  pdf      text L 148.40 R 173.32 B 446.60 T 461.32 BL 453.72
-  pdf      if RECEIVED then text P 2 L 137.12 R 164.32 B 351.44 T 363.16
+  pdf      text L 150.40 R 173.32 B 446.60 T 461.32 BL 453.72
+  pdf      if RECEIVED then text P 2 L 139.12 R 164.32 B 351.44 T 363.16
 
 field 18.1b.
   label    "23b. Resource 1 Role"
@@ -170,15 +171,15 @@ field 18.1b.
   choice   Shadow Communicator
   presence required
   help     "This is the role of the people requested on this row.  It is required when there is a quantity on the row."
-  pdf      text L 185.48 R 290.32 B 446.60 T 461.32 BL 453.72
-  pdf      if RECEIVED then text P 2 L 168.80 R 281.32 B 351.44 T 363.16
+  pdf      text L 187.48 R 290.32 B 446.60 T 461.32 BL 453.72
+  pdf      if RECEIVED then text P 2 L 170.80 R 281.32 B 351.44 T 363.16
 
 field 18.1f.
   label    "23c. Resource 1 Position"
   width    31
   help     "This is the position to be held by the people requested on this row."
-  pdf      text L 301.40 R 432.28 B 446.60 T 461.32 BL 453.72
-  pdf      if RECEIVED then text P 2 L 285.80 R 403.24 B 351.44 T 363.16
+  pdf      text L 303.40 R 432.28 B 446.60 T 461.32 BL 453.72
+  pdf      if RECEIVED then text P 2 L 287.80 R 403.24 B 351.44 T 363.16
 
 field 18.1g.
   label    "Resource 1 Together"
@@ -206,34 +207,34 @@ field 18.1c.
   mchoice  5 Type V
   presence required
   help     "This is the preferred resource type (credential) for the people requested on this row.  It is required when there is a quantity on the row."
-  pdf      if 18.1b.="Field Communicator" then if 18.1c.=1 then text S F1 L 455.48 R 510.76 B 446.60 T 461.32 BL 453.72
-  pdf      if 18.1b.="Field Communicator" then if 18.1c.=2 then text S F2 L 455.48 R 510.76 B 446.60 T 461.32 BL 453.72
-  pdf      if 18.1b.="Field Communicator" then if 18.1c.=3 then text S F3 L 455.48 R 510.76 B 446.60 T 461.32 BL 453.72
-  pdf      if 18.1b.="Net Control Operator" then if 18.1c.=1 then text S N1 L 455.48 R 510.76 B 446.60 T 461.32 BL 453.72
-  pdf      if 18.1b.="Net Control Operator" then if 18.1c.=2 then text S N2 L 455.48 R 510.76 B 446.60 T 461.32 BL 453.72
-  pdf      if 18.1b.="Net Control Operator" then if 18.1c.=3 then text S N3 L 455.48 R 510.76 B 446.60 T 461.32 BL 453.72
-  pdf      if 18.1b.="Packet Operator" then if 18.1c.=1 then text S P1 L 455.48 R 510.76 B 446.60 T 461.32 BL 453.72
-  pdf      if 18.1b.="Packet Operator" then if 18.1c.=2 then text S P2 L 455.48 R 510.76 B 446.60 T 461.32 BL 453.72
-  pdf      if 18.1b.="Packet Operator" then if 18.1c.=3 then text S P3 L 455.48 R 510.76 B 446.60 T 461.32 BL 453.72
-  pdf      if 18.1b.="Shadow Communicator" then if 18.1c.=1 then text S S1 L 455.48 R 510.76 B 446.60 T 461.32 BL 453.72
-  pdf      if 18.1b.="Shadow Communicator" then if 18.1c.=2 then text S S2 L 455.48 R 510.76 B 446.60 T 461.32 BL 453.72
-  pdf      if 18.1b.="Shadow Communicator" then if 18.1c.=3 then text S S3 L 455.48 R 510.76 B 446.60 T 461.32 BL 453.72
-  pdf      if 18.1c.=4 then text S "Type IV" L 455.48 R 510.76 B 446.60 T 461.32 BL 453.72
-  pdf      if 18.1c.=5 then text S "Type V" L 455.48 R 510.76 B 446.60 T 461.32 BL 453.72
-  pdf      if RECEIVED then if 18.1b.="Field Communicator" then if 18.1c.=1 then text S F1 P 2 L 420.80 R 492.76 B 351.44 T 363.16
-  pdf      if RECEIVED then if 18.1b.="Field Communicator" then if 18.1c.=2 then text S F2 P 2 L 420.80 R 492.76 B 351.44 T 363.16
-  pdf      if RECEIVED then if 18.1b.="Field Communicator" then if 18.1c.=3 then text S F3 P 2 L 420.80 R 492.76 B 351.44 T 363.16
-  pdf      if RECEIVED then if 18.1b.="Net Control Operator" then if 18.1c.=1 then text S N1 P 2 L 420.80 R 492.76 B 351.44 T 363.16
-  pdf      if RECEIVED then if 18.1b.="Net Control Operator" then if 18.1c.=2 then text S N2 P 2 L 420.80 R 492.76 B 351.44 T 363.16
-  pdf      if RECEIVED then if 18.1b.="Net Control Operator" then if 18.1c.=3 then text S N3 P 2 L 420.80 R 492.76 B 351.44 T 363.16
-  pdf      if RECEIVED then if 18.1b.="Packet Operator" then if 18.1c.=1 then text S P1 P 2 L 420.80 R 492.76 B 351.44 T 363.16
-  pdf      if RECEIVED then if 18.1b.="Packet Operator" then if 18.1c.=2 then text S P2 P 2 L 420.80 R 492.76 B 351.44 T 363.16
-  pdf      if RECEIVED then if 18.1b.="Packet Operator" then if 18.1c.=3 then text S P3 P 2 L 420.80 R 492.76 B 351.44 T 363.16
-  pdf      if RECEIVED then if 18.1b.="Shadow Communicator" then if 18.1c.=1 then text S S1 P 2 L 420.80 R 492.76 B 351.44 T 363.16
-  pdf      if RECEIVED then if 18.1b.="Shadow Communicator" then if 18.1c.=2 then text S S2 P 2 L 420.80 R 492.76 B 351.44 T 363.16
-  pdf      if RECEIVED then if 18.1b.="Shadow Communicator" then if 18.1c.=3 then text S S3 P 2 L 420.80 R 492.76 B 351.44 T 363.16
-  pdf      if RECEIVED then if 18.1c.=4 then text S "Type IV" P 2 L 420.80 R 492.76 B 351.44 T 363.16
-  pdf      if RECEIVED then if 18.1c.=5 then text S "Type V" P 2 L 420.80 R 492.76 B 351.44 T 363.16
+  pdf      if 18.1b.="Field Communicator" then if 18.1c.=1 then text S F1 L 457.48 R 510.76 B 446.60 T 461.32 BL 453.72
+  pdf      if 18.1b.="Field Communicator" then if 18.1c.=2 then text S F2 L 457.48 R 510.76 B 446.60 T 461.32 BL 453.72
+  pdf      if 18.1b.="Field Communicator" then if 18.1c.=3 then text S F3 L 457.48 R 510.76 B 446.60 T 461.32 BL 453.72
+  pdf      if 18.1b.="Net Control Operator" then if 18.1c.=1 then text S N1 L 457.48 R 510.76 B 446.60 T 461.32 BL 453.72
+  pdf      if 18.1b.="Net Control Operator" then if 18.1c.=2 then text S N2 L 457.48 R 510.76 B 446.60 T 461.32 BL 453.72
+  pdf      if 18.1b.="Net Control Operator" then if 18.1c.=3 then text S N3 L 457.48 R 510.76 B 446.60 T 461.32 BL 453.72
+  pdf      if 18.1b.="Packet Operator" then if 18.1c.=1 then text S P1 L 457.48 R 510.76 B 446.60 T 461.32 BL 453.72
+  pdf      if 18.1b.="Packet Operator" then if 18.1c.=2 then text S P2 L 457.48 R 510.76 B 446.60 T 461.32 BL 453.72
+  pdf      if 18.1b.="Packet Operator" then if 18.1c.=3 then text S P3 L 457.48 R 510.76 B 446.60 T 461.32 BL 453.72
+  pdf      if 18.1b.="Shadow Communicator" then if 18.1c.=1 then text S S1 L 457.48 R 510.76 B 446.60 T 461.32 BL 453.72
+  pdf      if 18.1b.="Shadow Communicator" then if 18.1c.=2 then text S S2 L 457.48 R 510.76 B 446.60 T 461.32 BL 453.72
+  pdf      if 18.1b.="Shadow Communicator" then if 18.1c.=3 then text S S3 L 457.48 R 510.76 B 446.60 T 461.32 BL 453.72
+  pdf      if 18.1c.=4 then text L 457.48 R 510.76 B 446.60 T 461.32 BL 453.72
+  pdf      if 18.1c.=5 then text L 457.48 R 510.76 B 446.60 T 461.32 BL 453.72
+  pdf      if RECEIVED then if 18.1b.="Field Communicator" then if 18.1c.=1 then text S F1 P 2 L 422.80 R 492.76 B 351.44 T 363.16
+  pdf      if RECEIVED then if 18.1b.="Field Communicator" then if 18.1c.=2 then text S F2 P 2 L 422.80 R 492.76 B 351.44 T 363.16
+  pdf      if RECEIVED then if 18.1b.="Field Communicator" then if 18.1c.=3 then text S F3 P 2 L 422.80 R 492.76 B 351.44 T 363.16
+  pdf      if RECEIVED then if 18.1b.="Net Control Operator" then if 18.1c.=1 then text S N1 P 2 L 422.80 R 492.76 B 351.44 T 363.16
+  pdf      if RECEIVED then if 18.1b.="Net Control Operator" then if 18.1c.=2 then text S N2 P 2 L 422.80 R 492.76 B 351.44 T 363.16
+  pdf      if RECEIVED then if 18.1b.="Net Control Operator" then if 18.1c.=3 then text S N3 P 2 L 422.80 R 492.76 B 351.44 T 363.16
+  pdf      if RECEIVED then if 18.1b.="Packet Operator" then if 18.1c.=1 then text S P1 P 2 L 422.80 R 492.76 B 351.44 T 363.16
+  pdf      if RECEIVED then if 18.1b.="Packet Operator" then if 18.1c.=2 then text S P2 P 2 L 422.80 R 492.76 B 351.44 T 363.16
+  pdf      if RECEIVED then if 18.1b.="Packet Operator" then if 18.1c.=3 then text S P3 P 2 L 422.80 R 492.76 B 351.44 T 363.16
+  pdf      if RECEIVED then if 18.1b.="Shadow Communicator" then if 18.1c.=1 then text S S1 P 2 L 422.80 R 492.76 B 351.44 T 363.16
+  pdf      if RECEIVED then if 18.1b.="Shadow Communicator" then if 18.1c.=2 then text S S2 P 2 L 422.80 R 492.76 B 351.44 T 363.16
+  pdf      if RECEIVED then if 18.1b.="Shadow Communicator" then if 18.1c.=3 then text S S3 P 2 L 422.80 R 492.76 B 351.44 T 363.16
+  pdf      if RECEIVED then if 18.1c.=4 then text P 2 L 422.80 R 492.76 B 351.44 T 363.16
+  pdf      if RECEIVED then if 18.1c.=5 then text P 2 L 422.80 R 492.76 B 351.44 T 363.16
 
 field 18.1d.
   label    "23e. Resource 1 Minimum Type"
@@ -254,42 +255,43 @@ field 18.1d.
   mchoice  5 Type V
   presence required
   help     "This is the minimum resource type (credential) for the people requested on this row.  It is required when there is a quantity on the row."
-  pdf      if 18.1b.="Field Communicator" then if 18.1d.=1 then text S F1 L 522.68 R 575.44 B 446.60 T 461.32 BL 453.72
-  pdf      if 18.1b.="Field Communicator" then if 18.1d.=2 then text S F2 L 522.68 R 575.44 B 446.60 T 461.32 BL 453.72
-  pdf      if 18.1b.="Field Communicator" then if 18.1d.=3 then text S F3 L 522.68 R 575.44 B 446.60 T 461.32 BL 453.72
-  pdf      if 18.1b.="Net Control Operator" then if 18.1d.=1 then text S N1 L 522.68 R 575.44 B 446.60 T 461.32 BL 453.72
-  pdf      if 18.1b.="Net Control Operator" then if 18.1d.=2 then text S N2 L 522.68 R 575.44 B 446.60 T 461.32 BL 453.72
-  pdf      if 18.1b.="Net Control Operator" then if 18.1d.=3 then text S N3 L 522.68 R 575.44 B 446.60 T 461.32 BL 453.72
-  pdf      if 18.1b.="Packet Operator" then if 18.1d.=1 then text S P1 L 522.68 R 575.44 B 446.60 T 461.32 BL 453.72
-  pdf      if 18.1b.="Packet Operator" then if 18.1d.=2 then text S P2 L 522.68 R 575.44 B 446.60 T 461.32 BL 453.72
-  pdf      if 18.1b.="Packet Operator" then if 18.1d.=3 then text S P3 L 522.68 R 575.44 B 446.60 T 461.32 BL 453.72
-  pdf      if 18.1b.="Shadow Communicator" then if 18.1d.=1 then text S S1 L 522.68 R 575.44 B 446.60 T 461.32 BL 453.72
-  pdf      if 18.1b.="Shadow Communicator" then if 18.1d.=2 then text S S2 L 522.68 R 575.44 B 446.60 T 461.32 BL 453.72
-  pdf      if 18.1b.="Shadow Communicator" then if 18.1d.=3 then text S S3 L 522.68 R 575.44 B 446.60 T 461.32 BL 453.72
-  pdf      if 18.1d.=4 then text S "Type IV" L 522.68 R 575.44 B 446.60 T 461.32 BL 453.72
-  pdf      if 18.1d.=5 then text S "Type V" L 522.68 R 575.44 B 446.60 T 461.32 BL 453.72
-  pdf      if RECEIVED then if 18.1b.="Field Communicator" then if 18.1d.=1 then text S F1 P 2 L 497.24 R 573.52 B 351.44 T 363.16
-  pdf      if RECEIVED then if 18.1b.="Field Communicator" then if 18.1d.=2 then text S F2 P 2 L 497.24 R 573.52 B 351.44 T 363.16
-  pdf      if RECEIVED then if 18.1b.="Field Communicator" then if 18.1d.=3 then text S F3 P 2 L 497.24 R 573.52 B 351.44 T 363.16
-  pdf      if RECEIVED then if 18.1b.="Net Control Operator" then if 18.1d.=1 then text S N1 P 2 L 497.24 R 573.52 B 351.44 T 363.16
-  pdf      if RECEIVED then if 18.1b.="Net Control Operator" then if 18.1d.=2 then text S N2 P 2 L 497.24 R 573.52 B 351.44 T 363.16
-  pdf      if RECEIVED then if 18.1b.="Net Control Operator" then if 18.1d.=3 then text S N3 P 2 L 497.24 R 573.52 B 351.44 T 363.16
-  pdf      if RECEIVED then if 18.1b.="Packet Operator" then if 18.1d.=1 then text S P1 P 2 L 497.24 R 573.52 B 351.44 T 363.16
-  pdf      if RECEIVED then if 18.1b.="Packet Operator" then if 18.1d.=2 then text S P2 P 2 L 497.24 R 573.52 B 351.44 T 363.16
-  pdf      if RECEIVED then if 18.1b.="Packet Operator" then if 18.1d.=3 then text S P3 P 2 L 497.24 R 573.52 B 351.44 T 363.16
-  pdf      if RECEIVED then if 18.1b.="Shadow Communicator" then if 18.1d.=1 then text S S1 P 2 L 497.24 R 573.52 B 351.44 T 363.16
-  pdf      if RECEIVED then if 18.1b.="Shadow Communicator" then if 18.1d.=2 then text S S2 P 2 L 497.24 R 573.52 B 351.44 T 363.16
-  pdf      if RECEIVED then if 18.1b.="Shadow Communicator" then if 18.1d.=3 then text S S3 P 2 L 497.24 R 573.52 B 351.44 T 363.16
-  pdf      if RECEIVED then if 18.1d.=4 then text S "Type IV" P 2 L 497.24 R 573.52 B 351.44 T 363.16
-  pdf      if RECEIVED then if 18.1d.=5 then text S "Type V" P 2 L 497.24 R 573.52 B 351.44 T 363.16
+  pdf      if 18.1b.="Field Communicator" then if 18.1d.=1 then text S F1 L 524.68 R 575.44 B 446.60 T 461.32 BL 453.72
+  pdf      if 18.1b.="Field Communicator" then if 18.1d.=2 then text S F2 L 524.68 R 575.44 B 446.60 T 461.32 BL 453.72
+  pdf      if 18.1b.="Field Communicator" then if 18.1d.=3 then text S F3 L 524.68 R 575.44 B 446.60 T 461.32 BL 453.72
+  pdf      if 18.1b.="Net Control Operator" then if 18.1d.=1 then text S N1 L 524.68 R 575.44 B 446.60 T 461.32 BL 453.72
+  pdf      if 18.1b.="Net Control Operator" then if 18.1d.=2 then text S N2 L 524.68 R 575.44 B 446.60 T 461.32 BL 453.72
+  pdf      if 18.1b.="Net Control Operator" then if 18.1d.=3 then text S N3 L 524.68 R 575.44 B 446.60 T 461.32 BL 453.72
+  pdf      if 18.1b.="Packet Operator" then if 18.1d.=1 then text S P1 L 524.68 R 575.44 B 446.60 T 461.32 BL 453.72
+  pdf      if 18.1b.="Packet Operator" then if 18.1d.=2 then text S P2 L 524.68 R 575.44 B 446.60 T 461.32 BL 453.72
+  pdf      if 18.1b.="Packet Operator" then if 18.1d.=3 then text S P3 L 524.68 R 575.44 B 446.60 T 461.32 BL 453.72
+  pdf      if 18.1b.="Shadow Communicator" then if 18.1d.=1 then text S S1 L 524.68 R 575.44 B 446.60 T 461.32 BL 453.72
+  pdf      if 18.1b.="Shadow Communicator" then if 18.1d.=2 then text S S2 L 524.68 R 575.44 B 446.60 T 461.32 BL 453.72
+  pdf      if 18.1b.="Shadow Communicator" then if 18.1d.=3 then text S S3 L 524.68 R 575.44 B 446.60 T 461.32 BL 453.72
+  pdf      if 18.1d.=4 then text L 524.68 R 575.44 B 446.60 T 461.32 BL 453.72
+  pdf      if 18.1d.=5 then text L 524.68 R 575.44 B 446.60 T 461.32 BL 453.72
+  pdf      if RECEIVED then if 18.1b.="Field Communicator" then if 18.1d.=1 then text S F1 P 2 L 499.24 R 573.52 B 351.44 T 363.16
+  pdf      if RECEIVED then if 18.1b.="Field Communicator" then if 18.1d.=2 then text S F2 P 2 L 499.24 R 573.52 B 351.44 T 363.16
+  pdf      if RECEIVED then if 18.1b.="Field Communicator" then if 18.1d.=3 then text S F3 P 2 L 499.24 R 573.52 B 351.44 T 363.16
+  pdf      if RECEIVED then if 18.1b.="Net Control Operator" then if 18.1d.=1 then text S N1 P 2 L 499.24 R 573.52 B 351.44 T 363.16
+  pdf      if RECEIVED then if 18.1b.="Net Control Operator" then if 18.1d.=2 then text S N2 P 2 L 499.24 R 573.52 B 351.44 T 363.16
+  pdf      if RECEIVED then if 18.1b.="Net Control Operator" then if 18.1d.=3 then text S N3 P 2 L 499.24 R 573.52 B 351.44 T 363.16
+  pdf      if RECEIVED then if 18.1b.="Packet Operator" then if 18.1d.=1 then text S P1 P 2 L 499.24 R 573.52 B 351.44 T 363.16
+  pdf      if RECEIVED then if 18.1b.="Packet Operator" then if 18.1d.=2 then text S P2 P 2 L 499.24 R 573.52 B 351.44 T 363.16
+  pdf      if RECEIVED then if 18.1b.="Packet Operator" then if 18.1d.=3 then text S P3 P 2 L 499.24 R 573.52 B 351.44 T 363.16
+  pdf      if RECEIVED then if 18.1b.="Shadow Communicator" then if 18.1d.=1 then text S S1 P 2 L 499.24 R 573.52 B 351.44 T 363.16
+  pdf      if RECEIVED then if 18.1b.="Shadow Communicator" then if 18.1d.=2 then text S S2 P 2 L 499.24 R 573.52 B 351.44 T 363.16
+  pdf      if RECEIVED then if 18.1b.="Shadow Communicator" then if 18.1d.=3 then text S S3 P 2 L 499.24 R 573.52 B 351.44 T 363.16
+  pdf      if RECEIVED then if 18.1d.=4 then text P 2 L 499.24 R 573.52 B 351.44 T 363.16
+  pdf      if RECEIVED then if 18.1d.=5 then text P 2 L 499.24 R 573.52 B 351.44 T 363.16
 
 field 18.2a.
   label    "24a. Resource 2 Quantity"
   type     cardinalNumber
+  presence if 18.1a. then optional else blocked
   width    2
   help     "This is the number of people needed for the role and position requested on this row."
-  pdf      text L 148.40 R 173.32 B 427.40 T 442.12 BL 434.52
-  pdf      if RECEIVED then text P 2 L 137.12 R 164.32 B 335.24 T 346.96
+  pdf      text L 150.40 R 173.32 B 427.40 T 442.12 BL 434.52
+  pdf      if RECEIVED then text P 2 L 139.12 R 164.32 B 335.24 T 346.96
 
 field 18.2b.
   label    "24b. Resource 2 Role"
@@ -300,16 +302,16 @@ field 18.2b.
   choice   Shadow Communicator
   presence if 18.2a. then required else blocked
   help     "This is the role of the people requested on this row.  It is required when there is a quantity on the row."
-  pdf      text L 185.48 R 290.32 B 427.40 T 442.12 BL 434.52
-  pdf      if RECEIVED then text P 2 L 168.80 R 281.32 B 335.24 T 346.96
+  pdf      text L 187.48 R 290.32 B 427.40 T 442.12 BL 434.52
+  pdf      if RECEIVED then text P 2 L 170.80 R 281.32 B 335.24 T 346.96
 
 field 18.2f.
   label    "24c. Resource 2 Position"
   presence if 18.2a. then optional else blocked
   width    31
   help     "This is the position to be held by the people requested on this row."
-  pdf      text L 301.40 R 432.28 B 427.40 T 442.12 BL 434.52
-  pdf      if RECEIVED then text P 2 L 285.80 R 403.24 B 335.24 T 346.96
+  pdf      text L 303.40 R 432.28 B 427.40 T 442.12 BL 434.52
+  pdf      if RECEIVED then text P 2 L 287.80 R 403.24 B 335.24 T 346.96
 
 field 18.2g.
   label    "Resource 2 Together"
@@ -338,34 +340,34 @@ field 18.2c.
   mchoice  5 Type V
   presence if 18.2a. then required else blocked
   help     "This is the preferred resource type (credential) for the people requested on this row.  It is required when there is a quantity on the row."
-  pdf      if 18.2b.="Field Communicator" then if 18.2c.=1 then text S F1 L 455.48 R 510.76 B 427.40 T 442.12 BL 434.52
-  pdf      if 18.2b.="Field Communicator" then if 18.2c.=2 then text S F2 L 455.48 R 510.76 B 427.40 T 442.12 BL 434.52
-  pdf      if 18.2b.="Field Communicator" then if 18.2c.=3 then text S F3 L 455.48 R 510.76 B 427.40 T 442.12 BL 434.52
-  pdf      if 18.2b.="Net Control Operator" then if 18.2c.=1 then text S N1 L 455.48 R 510.76 B 427.40 T 442.12 BL 434.52
-  pdf      if 18.2b.="Net Control Operator" then if 18.2c.=2 then text S N2 L 455.48 R 510.76 B 427.40 T 442.12 BL 434.52
-  pdf      if 18.2b.="Net Control Operator" then if 18.2c.=3 then text S N3 L 455.48 R 510.76 B 427.40 T 442.12 BL 434.52
-  pdf      if 18.2b.="Packet Operator" then if 18.2c.=1 then text S P1 L 455.48 R 510.76 B 427.40 T 442.12 BL 434.52
-  pdf      if 18.2b.="Packet Operator" then if 18.2c.=2 then text S P2 L 455.48 R 510.76 B 427.40 T 442.12 BL 434.52
-  pdf      if 18.2b.="Packet Operator" then if 18.2c.=3 then text S P3 L 455.48 R 510.76 B 427.40 T 442.12 BL 434.52
-  pdf      if 18.2b.="Shadow Communicator" then if 18.2c.=1 then text S S1 L 455.48 R 510.76 B 427.40 T 442.12 BL 434.52
-  pdf      if 18.2b.="Shadow Communicator" then if 18.2c.=2 then text S S2 L 455.48 R 510.76 B 427.40 T 442.12 BL 434.52
-  pdf      if 18.2b.="Shadow Communicator" then if 18.2c.=3 then text S S3 L 455.48 R 510.76 B 427.40 T 442.12 BL 434.52
-  pdf      if 18.2c.=4 then text S "Type IV" L 455.48 R 510.76 B 427.40 T 442.12 BL 434.52
-  pdf      if 18.2c.=5 then text S "Type V" L 455.48 R 510.76 B 427.40 T 442.12 BL 434.52
-  pdf      if RECEIVED then if 18.2b.="Field Communicator" then if 18.2c.=1 then text S F1 P 2 L 420.80 R 492.76 B 335.24 T 346.96
-  pdf      if RECEIVED then if 18.2b.="Field Communicator" then if 18.2c.=2 then text S F2 P 2 L 420.80 R 492.76 B 335.24 T 346.96
-  pdf      if RECEIVED then if 18.2b.="Field Communicator" then if 18.2c.=3 then text S F3 P 2 L 420.80 R 492.76 B 335.24 T 346.96
-  pdf      if RECEIVED then if 18.2b.="Net Control Operator" then if 18.2c.=1 then text S N1 P 2 L 420.80 R 492.76 B 335.24 T 346.96
-  pdf      if RECEIVED then if 18.2b.="Net Control Operator" then if 18.2c.=2 then text S N2 P 2 L 420.80 R 492.76 B 335.24 T 346.96
-  pdf      if RECEIVED then if 18.2b.="Net Control Operator" then if 18.2c.=3 then text S N3 P 2 L 420.80 R 492.76 B 335.24 T 346.96
-  pdf      if RECEIVED then if 18.2b.="Packet Operator" then if 18.2c.=1 then text S P1 P 2 L 420.80 R 492.76 B 335.24 T 346.96
-  pdf      if RECEIVED then if 18.2b.="Packet Operator" then if 18.2c.=2 then text S P2 P 2 L 420.80 R 492.76 B 335.24 T 346.96
-  pdf      if RECEIVED then if 18.2b.="Packet Operator" then if 18.2c.=3 then text S P3 P 2 L 420.80 R 492.76 B 335.24 T 346.96
-  pdf      if RECEIVED then if 18.2b.="Shadow Communicator" then if 18.2c.=1 then text S S1 P 2 L 420.80 R 492.76 B 335.24 T 346.96
-  pdf      if RECEIVED then if 18.2b.="Shadow Communicator" then if 18.2c.=2 then text S S2 P 2 L 420.80 R 492.76 B 335.24 T 346.96
-  pdf      if RECEIVED then if 18.2b.="Shadow Communicator" then if 18.2c.=3 then text S S3 P 2 L 420.80 R 492.76 B 335.24 T 346.96
-  pdf      if RECEIVED then if 18.2c.=4 then text S "Type IV" P 2 L 420.80 R 492.76 B 335.24 T 346.96
-  pdf      if RECEIVED then if 18.2c.=5 then text S "Type V" P 2 L 420.80 R 492.76 B 335.24 T 346.96
+  pdf      if 18.2b.="Field Communicator" then if 18.2c.=1 then text S F1 L 457.48 R 510.76 B 427.40 T 442.12 BL 434.52
+  pdf      if 18.2b.="Field Communicator" then if 18.2c.=2 then text S F2 L 457.48 R 510.76 B 427.40 T 442.12 BL 434.52
+  pdf      if 18.2b.="Field Communicator" then if 18.2c.=3 then text S F3 L 457.48 R 510.76 B 427.40 T 442.12 BL 434.52
+  pdf      if 18.2b.="Net Control Operator" then if 18.2c.=1 then text S N1 L 457.48 R 510.76 B 427.40 T 442.12 BL 434.52
+  pdf      if 18.2b.="Net Control Operator" then if 18.2c.=2 then text S N2 L 457.48 R 510.76 B 427.40 T 442.12 BL 434.52
+  pdf      if 18.2b.="Net Control Operator" then if 18.2c.=3 then text S N3 L 457.48 R 510.76 B 427.40 T 442.12 BL 434.52
+  pdf      if 18.2b.="Packet Operator" then if 18.2c.=1 then text S P1 L 457.48 R 510.76 B 427.40 T 442.12 BL 434.52
+  pdf      if 18.2b.="Packet Operator" then if 18.2c.=2 then text S P2 L 457.48 R 510.76 B 427.40 T 442.12 BL 434.52
+  pdf      if 18.2b.="Packet Operator" then if 18.2c.=3 then text S P3 L 457.48 R 510.76 B 427.40 T 442.12 BL 434.52
+  pdf      if 18.2b.="Shadow Communicator" then if 18.2c.=1 then text S S1 L 457.48 R 510.76 B 427.40 T 442.12 BL 434.52
+  pdf      if 18.2b.="Shadow Communicator" then if 18.2c.=2 then text S S2 L 457.48 R 510.76 B 427.40 T 442.12 BL 434.52
+  pdf      if 18.2b.="Shadow Communicator" then if 18.2c.=3 then text S S3 L 457.48 R 510.76 B 427.40 T 442.12 BL 434.52
+  pdf      if 18.2c.=4 then text L 457.48 R 510.76 B 427.40 T 442.12 BL 434.52
+  pdf      if 18.2c.=5 then text L 457.48 R 510.76 B 427.40 T 442.12 BL 434.52
+  pdf      if RECEIVED then if 18.2b.="Field Communicator" then if 18.2c.=1 then text S F1 P 2 L 422.80 R 492.76 B 335.24 T 346.96
+  pdf      if RECEIVED then if 18.2b.="Field Communicator" then if 18.2c.=2 then text S F2 P 2 L 422.80 R 492.76 B 335.24 T 346.96
+  pdf      if RECEIVED then if 18.2b.="Field Communicator" then if 18.2c.=3 then text S F3 P 2 L 422.80 R 492.76 B 335.24 T 346.96
+  pdf      if RECEIVED then if 18.2b.="Net Control Operator" then if 18.2c.=1 then text S N1 P 2 L 422.80 R 492.76 B 335.24 T 346.96
+  pdf      if RECEIVED then if 18.2b.="Net Control Operator" then if 18.2c.=2 then text S N2 P 2 L 422.80 R 492.76 B 335.24 T 346.96
+  pdf      if RECEIVED then if 18.2b.="Net Control Operator" then if 18.2c.=3 then text S N3 P 2 L 422.80 R 492.76 B 335.24 T 346.96
+  pdf      if RECEIVED then if 18.2b.="Packet Operator" then if 18.2c.=1 then text S P1 P 2 L 422.80 R 492.76 B 335.24 T 346.96
+  pdf      if RECEIVED then if 18.2b.="Packet Operator" then if 18.2c.=2 then text S P2 P 2 L 422.80 R 492.76 B 335.24 T 346.96
+  pdf      if RECEIVED then if 18.2b.="Packet Operator" then if 18.2c.=3 then text S P3 P 2 L 422.80 R 492.76 B 335.24 T 346.96
+  pdf      if RECEIVED then if 18.2b.="Shadow Communicator" then if 18.2c.=1 then text S S1 P 2 L 422.80 R 492.76 B 335.24 T 346.96
+  pdf      if RECEIVED then if 18.2b.="Shadow Communicator" then if 18.2c.=2 then text S S2 P 2 L 422.80 R 492.76 B 335.24 T 346.96
+  pdf      if RECEIVED then if 18.2b.="Shadow Communicator" then if 18.2c.=3 then text S S3 P 2 L 422.80 R 492.76 B 335.24 T 346.96
+  pdf      if RECEIVED then if 18.2c.=4 then text P 2 L 422.80 R 492.76 B 335.24 T 346.96
+  pdf      if RECEIVED then if 18.2c.=5 then text P 2 L 422.80 R 492.76 B 335.24 T 346.96
 
 field 18.2d.
   label    "24e. Resource 2 Minimum Type"
@@ -386,42 +388,43 @@ field 18.2d.
   mchoice  5 Type V
   presence if 18.2a. then required else blocked
   help     "This is the minimum resource type (credential) for the people requested on this row.  It is required when there is a quantity on the row."
-  pdf      if 18.2b.="Field Communicator" then if 18.2d.=1 then text S F1 L 522.68 R 575.44 B 427.40 T 442.12 BL 434.52
-  pdf      if 18.2b.="Field Communicator" then if 18.2d.=2 then text S F2 L 522.68 R 575.44 B 427.40 T 442.12 BL 434.52
-  pdf      if 18.2b.="Field Communicator" then if 18.2d.=3 then text S F3 L 522.68 R 575.44 B 427.40 T 442.12 BL 434.52
-  pdf      if 18.2b.="Net Control Operator" then if 18.2d.=1 then text S N1 L 522.68 R 575.44 B 427.40 T 442.12 BL 434.52
-  pdf      if 18.2b.="Net Control Operator" then if 18.2d.=2 then text S N2 L 522.68 R 575.44 B 427.40 T 442.12 BL 434.52
-  pdf      if 18.2b.="Net Control Operator" then if 18.2d.=3 then text S N3 L 522.68 R 575.44 B 427.40 T 442.12 BL 434.52
-  pdf      if 18.2b.="Packet Operator" then if 18.2d.=1 then text S P1 L 522.68 R 575.44 B 427.40 T 442.12 BL 434.52
-  pdf      if 18.2b.="Packet Operator" then if 18.2d.=2 then text S P2 L 522.68 R 575.44 B 427.40 T 442.12 BL 434.52
-  pdf      if 18.2b.="Packet Operator" then if 18.2d.=3 then text S P3 L 522.68 R 575.44 B 427.40 T 442.12 BL 434.52
-  pdf      if 18.2b.="Shadow Communicator" then if 18.2d.=1 then text S S1 L 522.68 R 575.44 B 427.40 T 442.12 BL 434.52
-  pdf      if 18.2b.="Shadow Communicator" then if 18.2d.=2 then text S S2 L 522.68 R 575.44 B 427.40 T 442.12 BL 434.52
-  pdf      if 18.2b.="Shadow Communicator" then if 18.2d.=3 then text S S3 L 522.68 R 575.44 B 427.40 T 442.12 BL 434.52
-  pdf      if 18.2d.=4 then text S "Type IV" L 522.68 R 575.44 B 427.40 T 442.12 BL 434.52
-  pdf      if 18.2d.=5 then text S "Type V" L 522.68 R 575.44 B 427.40 T 442.12 BL 434.52
-  pdf      if RECEIVED then if 18.2b.="Field Communicator" then if 18.2d.=1 then text S F1 P 2 L 497.24 R 573.52 B 335.24 T 346.96
-  pdf      if RECEIVED then if 18.2b.="Field Communicator" then if 18.2d.=2 then text S F2 P 2 L 497.24 R 573.52 B 335.24 T 346.96
-  pdf      if RECEIVED then if 18.2b.="Field Communicator" then if 18.2d.=3 then text S F3 P 2 L 497.24 R 573.52 B 335.24 T 346.96
-  pdf      if RECEIVED then if 18.2b.="Net Control Operator" then if 18.2d.=1 then text S N1 P 2 L 497.24 R 573.52 B 335.24 T 346.96
-  pdf      if RECEIVED then if 18.2b.="Net Control Operator" then if 18.2d.=2 then text S N2 P 2 L 497.24 R 573.52 B 335.24 T 346.96
-  pdf      if RECEIVED then if 18.2b.="Net Control Operator" then if 18.2d.=3 then text S N3 P 2 L 497.24 R 573.52 B 335.24 T 346.96
-  pdf      if RECEIVED then if 18.2b.="Packet Operator" then if 18.2d.=1 then text S P1 P 2 L 497.24 R 573.52 B 335.24 T 346.96
-  pdf      if RECEIVED then if 18.2b.="Packet Operator" then if 18.2d.=2 then text S P2 P 2 L 497.24 R 573.52 B 335.24 T 346.96
-  pdf      if RECEIVED then if 18.2b.="Packet Operator" then if 18.2d.=3 then text S P3 P 2 L 497.24 R 573.52 B 335.24 T 346.96
-  pdf      if RECEIVED then if 18.2b.="Shadow Communicator" then if 18.2d.=1 then text S S1 P 2 L 497.24 R 573.52 B 335.24 T 346.96
-  pdf      if RECEIVED then if 18.2b.="Shadow Communicator" then if 18.2d.=2 then text S S2 P 2 L 497.24 R 573.52 B 335.24 T 346.96
-  pdf      if RECEIVED then if 18.2b.="Shadow Communicator" then if 18.2d.=3 then text S S3 P 2 L 497.24 R 573.52 B 335.24 T 346.96
-  pdf      if RECEIVED then if 18.2d.=4 then text S "Type IV" P 2 L 497.24 R 573.52 B 335.24 T 346.96
-  pdf      if RECEIVED then if 18.2d.=5 then text S "Type V" P 2 L 497.24 R 573.52 B 335.24 T 346.96
+  pdf      if 18.2b.="Field Communicator" then if 18.2d.=1 then text S F1 L 524.68 R 575.44 B 427.40 T 442.12 BL 434.52
+  pdf      if 18.2b.="Field Communicator" then if 18.2d.=2 then text S F2 L 524.68 R 575.44 B 427.40 T 442.12 BL 434.52
+  pdf      if 18.2b.="Field Communicator" then if 18.2d.=3 then text S F3 L 524.68 R 575.44 B 427.40 T 442.12 BL 434.52
+  pdf      if 18.2b.="Net Control Operator" then if 18.2d.=1 then text S N1 L 524.68 R 575.44 B 427.40 T 442.12 BL 434.52
+  pdf      if 18.2b.="Net Control Operator" then if 18.2d.=2 then text S N2 L 524.68 R 575.44 B 427.40 T 442.12 BL 434.52
+  pdf      if 18.2b.="Net Control Operator" then if 18.2d.=3 then text S N3 L 524.68 R 575.44 B 427.40 T 442.12 BL 434.52
+  pdf      if 18.2b.="Packet Operator" then if 18.2d.=1 then text S P1 L 524.68 R 575.44 B 427.40 T 442.12 BL 434.52
+  pdf      if 18.2b.="Packet Operator" then if 18.2d.=2 then text S P2 L 524.68 R 575.44 B 427.40 T 442.12 BL 434.52
+  pdf      if 18.2b.="Packet Operator" then if 18.2d.=3 then text S P3 L 524.68 R 575.44 B 427.40 T 442.12 BL 434.52
+  pdf      if 18.2b.="Shadow Communicator" then if 18.2d.=1 then text S S1 L 524.68 R 575.44 B 427.40 T 442.12 BL 434.52
+  pdf      if 18.2b.="Shadow Communicator" then if 18.2d.=2 then text S S2 L 524.68 R 575.44 B 427.40 T 442.12 BL 434.52
+  pdf      if 18.2b.="Shadow Communicator" then if 18.2d.=3 then text S S3 L 524.68 R 575.44 B 427.40 T 442.12 BL 434.52
+  pdf      if 18.2d.=4 then text L 524.68 R 575.44 B 427.40 T 442.12 BL 434.52
+  pdf      if 18.2d.=5 then text L 524.68 R 575.44 B 427.40 T 442.12 BL 434.52
+  pdf      if RECEIVED then if 18.2b.="Field Communicator" then if 18.2d.=1 then text S F1 P 2 L 499.24 R 573.52 B 335.24 T 346.96
+  pdf      if RECEIVED then if 18.2b.="Field Communicator" then if 18.2d.=2 then text S F2 P 2 L 499.24 R 573.52 B 335.24 T 346.96
+  pdf      if RECEIVED then if 18.2b.="Field Communicator" then if 18.2d.=3 then text S F3 P 2 L 499.24 R 573.52 B 335.24 T 346.96
+  pdf      if RECEIVED then if 18.2b.="Net Control Operator" then if 18.2d.=1 then text S N1 P 2 L 499.24 R 573.52 B 335.24 T 346.96
+  pdf      if RECEIVED then if 18.2b.="Net Control Operator" then if 18.2d.=2 then text S N2 P 2 L 499.24 R 573.52 B 335.24 T 346.96
+  pdf      if RECEIVED then if 18.2b.="Net Control Operator" then if 18.2d.=3 then text S N3 P 2 L 499.24 R 573.52 B 335.24 T 346.96
+  pdf      if RECEIVED then if 18.2b.="Packet Operator" then if 18.2d.=1 then text S P1 P 2 L 499.24 R 573.52 B 335.24 T 346.96
+  pdf      if RECEIVED then if 18.2b.="Packet Operator" then if 18.2d.=2 then text S P2 P 2 L 499.24 R 573.52 B 335.24 T 346.96
+  pdf      if RECEIVED then if 18.2b.="Packet Operator" then if 18.2d.=3 then text S P3 P 2 L 499.24 R 573.52 B 335.24 T 346.96
+  pdf      if RECEIVED then if 18.2b.="Shadow Communicator" then if 18.2d.=1 then text S S1 P 2 L 499.24 R 573.52 B 335.24 T 346.96
+  pdf      if RECEIVED then if 18.2b.="Shadow Communicator" then if 18.2d.=2 then text S S2 P 2 L 499.24 R 573.52 B 335.24 T 346.96
+  pdf      if RECEIVED then if 18.2b.="Shadow Communicator" then if 18.2d.=3 then text S S3 P 2 L 499.24 R 573.52 B 335.24 T 346.96
+  pdf      if RECEIVED then if 18.2d.=4 then text P 2 L 499.24 R 573.52 B 335.24 T 346.96
+  pdf      if RECEIVED then if 18.2d.=5 then text P 2 L 499.24 R 573.52 B 335.24 T 346.96
 
 field 18.3a.
   label    "25a. Resource 3 Quantity"
   type     cardinalNumber
+  presence if 18.2a. then optional else blocked
   width    2
   help     "This is the number of people needed for the role and position requested on this row."
-  pdf      text L 148.40 R 173.32 B 408.20 T 422.92 BL 415.32
-  pdf      if RECEIVED then text P 2 L 137.12 R 164.32 B 319.04 T 330.76
+  pdf      text L 150.40 R 173.32 B 408.20 T 422.92 BL 415.32
+  pdf      if RECEIVED then text P 2 L 139.12 R 164.32 B 319.04 T 330.76
 
 field 18.3b.
   label    "25b. Resource 3 Role"
@@ -432,16 +435,16 @@ field 18.3b.
   choice   Shadow Communicator
   presence if 18.3a. then required else blocked
   help     "This is the role of the people requested on this row.  It is required when there is a quantity on the row."
-  pdf      text L 185.48 R 290.32 B 408.20 T 422.92 BL 415.32
-  pdf      if RECEIVED then text P 2 L 168.80 R 281.32 B 319.04 T 330.76
+  pdf      text L 187.48 R 290.32 B 408.20 T 422.92 BL 415.32
+  pdf      if RECEIVED then text P 2 L 170.80 R 281.32 B 319.04 T 330.76
 
 field 18.3f.
   label    "25c. Resource 3 Position"
   presence if 18.3a. then optional else blocked
   width    31
   help     "This is the position to be held by the people requested on this row."
-  pdf      text L 301.40 R 432.28 B 408.20 T 422.92 BL 415.32
-  pdf      if RECEIVED then text P 2 L 285.80 R 403.36 B 319.04 T 330.76
+  pdf      text L 303.40 R 432.28 B 408.20 T 422.92 BL 415.32
+  pdf      if RECEIVED then text P 2 L 287.80 R 403.36 B 319.04 T 330.76
 
 field 18.3g.
   label    "Resource 3 Together"
@@ -470,34 +473,34 @@ field 18.3c.
   mchoice  5 Type V
   presence if 18.3a. then required else blocked
   help     "This is the preferred resource type (credential) for the people requested on this row.  It is required when there is a quantity on the row."
-  pdf      if 18.3b.="Field Communicator" then if 18.3c.=1 then text S F1 L 455.48 R 510.76 B 408.20 T 422.92 BL 415.32
-  pdf      if 18.3b.="Field Communicator" then if 18.3c.=2 then text S F2 L 455.48 R 510.76 B 408.20 T 422.92 BL 415.32
-  pdf      if 18.3b.="Field Communicator" then if 18.3c.=3 then text S F3 L 455.48 R 510.76 B 408.20 T 422.92 BL 415.32
-  pdf      if 18.3b.="Net Control Operator" then if 18.3c.=1 then text S N1 L 455.48 R 510.76 B 408.20 T 422.92 BL 415.32
-  pdf      if 18.3b.="Net Control Operator" then if 18.3c.=2 then text S N2 L 455.48 R 510.76 B 408.20 T 422.92 BL 415.32
-  pdf      if 18.3b.="Net Control Operator" then if 18.3c.=3 then text S N3 L 455.48 R 510.76 B 408.20 T 422.92 BL 415.32
-  pdf      if 18.3b.="Packet Operator" then if 18.3c.=1 then text S P1 L 455.48 R 510.76 B 408.20 T 422.92 BL 415.32
-  pdf      if 18.3b.="Packet Operator" then if 18.3c.=2 then text S P2 L 455.48 R 510.76 B 408.20 T 422.92 BL 415.32
-  pdf      if 18.3b.="Packet Operator" then if 18.3c.=3 then text S P3 L 455.48 R 510.76 B 408.20 T 422.92 BL 415.32
-  pdf      if 18.3b.="Shadow Communicator" then if 18.3c.=1 then text S S1 L 455.48 R 510.76 B 408.20 T 422.92 BL 415.32
-  pdf      if 18.3b.="Shadow Communicator" then if 18.3c.=2 then text S S2 L 455.48 R 510.76 B 408.20 T 422.92 BL 415.32
-  pdf      if 18.3b.="Shadow Communicator" then if 18.3c.=3 then text S S3 L 455.48 R 510.76 B 408.20 T 422.92 BL 415.32
-  pdf      if 18.3c.=4 then text S "Type IV" L 455.48 R 510.76 B 408.20 T 422.92 BL 415.32
-  pdf      if 18.3c.=5 then text S "Type V" L 455.48 R 510.76 B 408.20 T 422.92 BL 415.32
-  pdf      if RECEIVED then if 18.3b.="Field Communicator" then if 18.3c.=1 then text S F1 P 2 L 420.80 R 492.76 B 319.04 T 330.76
-  pdf      if RECEIVED then if 18.3b.="Field Communicator" then if 18.3c.=2 then text S F2 P 2 L 420.80 R 492.76 B 319.04 T 330.76
-  pdf      if RECEIVED then if 18.3b.="Field Communicator" then if 18.3c.=3 then text S F3 P 2 L 420.80 R 492.76 B 319.04 T 330.76
-  pdf      if RECEIVED then if 18.3b.="Net Control Operator" then if 18.3c.=1 then text S N1 P 2 L 420.80 R 492.76 B 319.04 T 330.76
-  pdf      if RECEIVED then if 18.3b.="Net Control Operator" then if 18.3c.=2 then text S N2 P 2 L 420.80 R 492.76 B 319.04 T 330.76
-  pdf      if RECEIVED then if 18.3b.="Net Control Operator" then if 18.3c.=3 then text S N3 P 2 L 420.80 R 492.76 B 319.04 T 330.76
-  pdf      if RECEIVED then if 18.3b.="Packet Operator" then if 18.3c.=1 then text S P1 P 2 L 420.80 R 492.76 B 319.04 T 330.76
-  pdf      if RECEIVED then if 18.3b.="Packet Operator" then if 18.3c.=2 then text S P2 P 2 L 420.80 R 492.76 B 319.04 T 330.76
-  pdf      if RECEIVED then if 18.3b.="Packet Operator" then if 18.3c.=3 then text S P3 P 2 L 420.80 R 492.76 B 319.04 T 330.76
-  pdf      if RECEIVED then if 18.3b.="Shadow Communicator" then if 18.3c.=1 then text S S1 P 2 L 420.80 R 492.76 B 319.04 T 330.76
-  pdf      if RECEIVED then if 18.3b.="Shadow Communicator" then if 18.3c.=2 then text S S2 P 2 L 420.80 R 492.76 B 319.04 T 330.76
-  pdf      if RECEIVED then if 18.3b.="Shadow Communicator" then if 18.3c.=3 then text S S3 P 2 L 420.80 R 492.76 B 319.04 T 330.76
-  pdf      if RECEIVED then if 18.3c.=4 then text S "Type IV" P 2 L 420.80 R 492.76 B 319.04 T 330.76
-  pdf      if RECEIVED then if 18.3c.=5 then text S "Type V" P 2 L 420.80 R 492.76 B 319.04 T 330.76
+  pdf      if 18.3b.="Field Communicator" then if 18.3c.=1 then text S F1 L 457.48 R 510.76 B 408.20 T 422.92 BL 415.32
+  pdf      if 18.3b.="Field Communicator" then if 18.3c.=2 then text S F2 L 457.48 R 510.76 B 408.20 T 422.92 BL 415.32
+  pdf      if 18.3b.="Field Communicator" then if 18.3c.=3 then text S F3 L 457.48 R 510.76 B 408.20 T 422.92 BL 415.32
+  pdf      if 18.3b.="Net Control Operator" then if 18.3c.=1 then text S N1 L 457.48 R 510.76 B 408.20 T 422.92 BL 415.32
+  pdf      if 18.3b.="Net Control Operator" then if 18.3c.=2 then text S N2 L 457.48 R 510.76 B 408.20 T 422.92 BL 415.32
+  pdf      if 18.3b.="Net Control Operator" then if 18.3c.=3 then text S N3 L 457.48 R 510.76 B 408.20 T 422.92 BL 415.32
+  pdf      if 18.3b.="Packet Operator" then if 18.3c.=1 then text S P1 L 457.48 R 510.76 B 408.20 T 422.92 BL 415.32
+  pdf      if 18.3b.="Packet Operator" then if 18.3c.=2 then text S P2 L 457.48 R 510.76 B 408.20 T 422.92 BL 415.32
+  pdf      if 18.3b.="Packet Operator" then if 18.3c.=3 then text S P3 L 457.48 R 510.76 B 408.20 T 422.92 BL 415.32
+  pdf      if 18.3b.="Shadow Communicator" then if 18.3c.=1 then text S S1 L 457.48 R 510.76 B 408.20 T 422.92 BL 415.32
+  pdf      if 18.3b.="Shadow Communicator" then if 18.3c.=2 then text S S2 L 457.48 R 510.76 B 408.20 T 422.92 BL 415.32
+  pdf      if 18.3b.="Shadow Communicator" then if 18.3c.=3 then text S S3 L 457.48 R 510.76 B 408.20 T 422.92 BL 415.32
+  pdf      if 18.3c.=4 then text L 457.48 R 510.76 B 408.20 T 422.92 BL 415.32
+  pdf      if 18.3c.=5 then text L 457.48 R 510.76 B 408.20 T 422.92 BL 415.32
+  pdf      if RECEIVED then if 18.3b.="Field Communicator" then if 18.3c.=1 then text S F1 P 2 L 422.80 R 492.76 B 319.04 T 330.76
+  pdf      if RECEIVED then if 18.3b.="Field Communicator" then if 18.3c.=2 then text S F2 P 2 L 422.80 R 492.76 B 319.04 T 330.76
+  pdf      if RECEIVED then if 18.3b.="Field Communicator" then if 18.3c.=3 then text S F3 P 2 L 422.80 R 492.76 B 319.04 T 330.76
+  pdf      if RECEIVED then if 18.3b.="Net Control Operator" then if 18.3c.=1 then text S N1 P 2 L 422.80 R 492.76 B 319.04 T 330.76
+  pdf      if RECEIVED then if 18.3b.="Net Control Operator" then if 18.3c.=2 then text S N2 P 2 L 422.80 R 492.76 B 319.04 T 330.76
+  pdf      if RECEIVED then if 18.3b.="Net Control Operator" then if 18.3c.=3 then text S N3 P 2 L 422.80 R 492.76 B 319.04 T 330.76
+  pdf      if RECEIVED then if 18.3b.="Packet Operator" then if 18.3c.=1 then text S P1 P 2 L 422.80 R 492.76 B 319.04 T 330.76
+  pdf      if RECEIVED then if 18.3b.="Packet Operator" then if 18.3c.=2 then text S P2 P 2 L 422.80 R 492.76 B 319.04 T 330.76
+  pdf      if RECEIVED then if 18.3b.="Packet Operator" then if 18.3c.=3 then text S P3 P 2 L 422.80 R 492.76 B 319.04 T 330.76
+  pdf      if RECEIVED then if 18.3b.="Shadow Communicator" then if 18.3c.=1 then text S S1 P 2 L 422.80 R 492.76 B 319.04 T 330.76
+  pdf      if RECEIVED then if 18.3b.="Shadow Communicator" then if 18.3c.=2 then text S S2 P 2 L 422.80 R 492.76 B 319.04 T 330.76
+  pdf      if RECEIVED then if 18.3b.="Shadow Communicator" then if 18.3c.=3 then text S S3 P 2 L 422.80 R 492.76 B 319.04 T 330.76
+  pdf      if RECEIVED then if 18.3c.=4 then text P 2 L 422.80 R 492.76 B 319.04 T 330.76
+  pdf      if RECEIVED then if 18.3c.=5 then text P 2 L 422.80 R 492.76 B 319.04 T 330.76
 
 field 18.3d.
   label    "25e. Resource 3 Minimum Type"
@@ -518,42 +521,43 @@ field 18.3d.
   mchoice  5 Type V
   presence if 18.3a. then required else blocked
   help     "This is the minimum resource type (credential) for the people requested on this row.  It is required when there is a quantity on the row."
-  pdf      if 18.3b.="Field Communicator" then if 18.3d.=1 then text S F1 L 522.68 R 575.44 B 408.20 T 422.92 BL 415.32
-  pdf      if 18.3b.="Field Communicator" then if 18.3d.=2 then text S F2 L 522.68 R 575.44 B 408.20 T 422.92 BL 415.32
-  pdf      if 18.3b.="Field Communicator" then if 18.3d.=3 then text S F3 L 522.68 R 575.44 B 408.20 T 422.92 BL 415.32
-  pdf      if 18.3b.="Net Control Operator" then if 18.3d.=1 then text S N1 L 522.68 R 575.44 B 408.20 T 422.92 BL 415.32
-  pdf      if 18.3b.="Net Control Operator" then if 18.3d.=2 then text S N2 L 522.68 R 575.44 B 408.20 T 422.92 BL 415.32
-  pdf      if 18.3b.="Net Control Operator" then if 18.3d.=3 then text S N3 L 522.68 R 575.44 B 408.20 T 422.92 BL 415.32
-  pdf      if 18.3b.="Packet Operator" then if 18.3d.=1 then text S P1 L 522.68 R 575.44 B 408.20 T 422.92 BL 415.32
-  pdf      if 18.3b.="Packet Operator" then if 18.3d.=2 then text S P2 L 522.68 R 575.44 B 408.20 T 422.92 BL 415.32
-  pdf      if 18.3b.="Packet Operator" then if 18.3d.=3 then text S P3 L 522.68 R 575.44 B 408.20 T 422.92 BL 415.32
-  pdf      if 18.3b.="Shadow Communicator" then if 18.3d.=1 then text S S1 L 522.68 R 575.44 B 408.20 T 422.92 BL 415.32
-  pdf      if 18.3b.="Shadow Communicator" then if 18.3d.=2 then text S S2 L 522.68 R 575.44 B 408.20 T 422.92 BL 415.32
-  pdf      if 18.3b.="Shadow Communicator" then if 18.3d.=3 then text S S3 L 522.68 R 575.44 B 408.20 T 422.92 BL 415.32
-  pdf      if 18.3d.=4 then text S "Type IV" L 522.68 R 575.44 B 408.20 T 422.92 BL 415.32
-  pdf      if 18.3d.=5 then text S "Type V" L 522.68 R 575.44 B 408.20 T 422.92 BL 415.32
-  pdf      if RECEIVED then if 18.3b.="Field Communicator" then if 18.3d.=1 then text S F1 P 2 L 497.24 R 573.52 B 319.04 T 330.76
-  pdf      if RECEIVED then if 18.3b.="Field Communicator" then if 18.3d.=2 then text S F2 P 2 L 497.24 R 573.52 B 319.04 T 330.76
-  pdf      if RECEIVED then if 18.3b.="Field Communicator" then if 18.3d.=3 then text S F3 P 2 L 497.24 R 573.52 B 319.04 T 330.76
-  pdf      if RECEIVED then if 18.3b.="Net Control Operator" then if 18.3d.=1 then text S N1 P 2 L 497.24 R 573.52 B 319.04 T 330.76
-  pdf      if RECEIVED then if 18.3b.="Net Control Operator" then if 18.3d.=2 then text S N2 P 2 L 497.24 R 573.52 B 319.04 T 330.76
-  pdf      if RECEIVED then if 18.3b.="Net Control Operator" then if 18.3d.=3 then text S N3 P 2 L 497.24 R 573.52 B 319.04 T 330.76
-  pdf      if RECEIVED then if 18.3b.="Packet Operator" then if 18.3d.=1 then text S P1 P 2 L 497.24 R 573.52 B 319.04 T 330.76
-  pdf      if RECEIVED then if 18.3b.="Packet Operator" then if 18.3d.=2 then text S P2 P 2 L 497.24 R 573.52 B 319.04 T 330.76
-  pdf      if RECEIVED then if 18.3b.="Packet Operator" then if 18.3d.=3 then text S P3 P 2 L 497.24 R 573.52 B 319.04 T 330.76
-  pdf      if RECEIVED then if 18.3b.="Shadow Communicator" then if 18.3d.=1 then text S S1 P 2 L 497.24 R 573.52 B 319.04 T 330.76
-  pdf      if RECEIVED then if 18.3b.="Shadow Communicator" then if 18.3d.=2 then text S S2 P 2 L 497.24 R 573.52 B 319.04 T 330.76
-  pdf      if RECEIVED then if 18.3b.="Shadow Communicator" then if 18.3d.=3 then text S S3 P 2 L 497.24 R 573.52 B 319.04 T 330.76
-  pdf      if RECEIVED then if 18.3d.=4 then text S "Type IV" P 2 L 497.24 R 573.52 B 319.04 T 330.76
-  pdf      if RECEIVED then if 18.3d.=5 then text S "Type V" P 2 L 497.24 R 573.52 B 319.04 T 330.76
+  pdf      if 18.3b.="Field Communicator" then if 18.3d.=1 then text S F1 L 524.68 R 575.44 B 408.20 T 422.92 BL 415.32
+  pdf      if 18.3b.="Field Communicator" then if 18.3d.=2 then text S F2 L 524.68 R 575.44 B 408.20 T 422.92 BL 415.32
+  pdf      if 18.3b.="Field Communicator" then if 18.3d.=3 then text S F3 L 524.68 R 575.44 B 408.20 T 422.92 BL 415.32
+  pdf      if 18.3b.="Net Control Operator" then if 18.3d.=1 then text S N1 L 524.68 R 575.44 B 408.20 T 422.92 BL 415.32
+  pdf      if 18.3b.="Net Control Operator" then if 18.3d.=2 then text S N2 L 524.68 R 575.44 B 408.20 T 422.92 BL 415.32
+  pdf      if 18.3b.="Net Control Operator" then if 18.3d.=3 then text S N3 L 524.68 R 575.44 B 408.20 T 422.92 BL 415.32
+  pdf      if 18.3b.="Packet Operator" then if 18.3d.=1 then text S P1 L 524.68 R 575.44 B 408.20 T 422.92 BL 415.32
+  pdf      if 18.3b.="Packet Operator" then if 18.3d.=2 then text S P2 L 524.68 R 575.44 B 408.20 T 422.92 BL 415.32
+  pdf      if 18.3b.="Packet Operator" then if 18.3d.=3 then text S P3 L 524.68 R 575.44 B 408.20 T 422.92 BL 415.32
+  pdf      if 18.3b.="Shadow Communicator" then if 18.3d.=1 then text S S1 L 524.68 R 575.44 B 408.20 T 422.92 BL 415.32
+  pdf      if 18.3b.="Shadow Communicator" then if 18.3d.=2 then text S S2 L 524.68 R 575.44 B 408.20 T 422.92 BL 415.32
+  pdf      if 18.3b.="Shadow Communicator" then if 18.3d.=3 then text S S3 L 524.68 R 575.44 B 408.20 T 422.92 BL 415.32
+  pdf      if 18.3d.=4 then text L 524.68 R 575.44 B 408.20 T 422.92 BL 415.32
+  pdf      if 18.3d.=5 then text L 524.68 R 575.44 B 408.20 T 422.92 BL 415.32
+  pdf      if RECEIVED then if 18.3b.="Field Communicator" then if 18.3d.=1 then text S F1 P 2 L 499.24 R 573.52 B 319.04 T 330.76
+  pdf      if RECEIVED then if 18.3b.="Field Communicator" then if 18.3d.=2 then text S F2 P 2 L 499.24 R 573.52 B 319.04 T 330.76
+  pdf      if RECEIVED then if 18.3b.="Field Communicator" then if 18.3d.=3 then text S F3 P 2 L 499.24 R 573.52 B 319.04 T 330.76
+  pdf      if RECEIVED then if 18.3b.="Net Control Operator" then if 18.3d.=1 then text S N1 P 2 L 499.24 R 573.52 B 319.04 T 330.76
+  pdf      if RECEIVED then if 18.3b.="Net Control Operator" then if 18.3d.=2 then text S N2 P 2 L 499.24 R 573.52 B 319.04 T 330.76
+  pdf      if RECEIVED then if 18.3b.="Net Control Operator" then if 18.3d.=3 then text S N3 P 2 L 499.24 R 573.52 B 319.04 T 330.76
+  pdf      if RECEIVED then if 18.3b.="Packet Operator" then if 18.3d.=1 then text S P1 P 2 L 499.24 R 573.52 B 319.04 T 330.76
+  pdf      if RECEIVED then if 18.3b.="Packet Operator" then if 18.3d.=2 then text S P2 P 2 L 499.24 R 573.52 B 319.04 T 330.76
+  pdf      if RECEIVED then if 18.3b.="Packet Operator" then if 18.3d.=3 then text S P3 P 2 L 499.24 R 573.52 B 319.04 T 330.76
+  pdf      if RECEIVED then if 18.3b.="Shadow Communicator" then if 18.3d.=1 then text S S1 P 2 L 499.24 R 573.52 B 319.04 T 330.76
+  pdf      if RECEIVED then if 18.3b.="Shadow Communicator" then if 18.3d.=2 then text S S2 P 2 L 499.24 R 573.52 B 319.04 T 330.76
+  pdf      if RECEIVED then if 18.3b.="Shadow Communicator" then if 18.3d.=3 then text S S3 P 2 L 499.24 R 573.52 B 319.04 T 330.76
+  pdf      if RECEIVED then if 18.3d.=4 then text P 2 L 499.24 R 573.52 B 319.04 T 330.76
+  pdf      if RECEIVED then if 18.3d.=5 then text P 2 L 499.24 R 573.52 B 319.04 T 330.76
 
 field 18.4a.
   label    "26a. Resource 4 Quantity"
   type     cardinalNumber
+  presence if 18.3a. then optional else blocked
   width    2
   help     "This is the number of people needed for the role and position requested on this row."
-  pdf      text L 148.40 R 173.32 B 389.00 T 403.72 BL 396.12
-  pdf      if RECEIVED then text P 2 L 137.12 R 164.32 B 302.84 T 314.56
+  pdf      text L 150.40 R 173.32 B 389.00 T 403.72 BL 396.12
+  pdf      if RECEIVED then text P 2 L 139.12 R 164.32 B 302.84 T 314.56
 
 field 18.4b.
   label    "26b. Resource 4 Role"
@@ -564,16 +568,16 @@ field 18.4b.
   choice   Shadow Communicator
   presence if 18.4a. then required else blocked
   help     "This is the role of the people requested on this row.  It is required when there is a quantity on the row."
-  pdf      text L 185.48 R 290.32 B 389.00 T 403.72 BL 396.12
-  pdf      if RECEIVED then text P 2 L 168.80 R 281.32 B 302.84 T 314.56
+  pdf      text L 187.48 R 290.32 B 389.00 T 403.72 BL 396.12
+  pdf      if RECEIVED then text P 2 L 170.80 R 281.32 B 302.84 T 314.56
 
 field 18.4f.
   label    "26c. Resource 4 Position"
   presence if 18.4a. then optional else blocked
   width    31
   help     "This is the position to be held by the people requested on this row."
-  pdf      text L 301.40 R 432.28 B 389.00 T 403.72 BL 396.12
-  pdf      if RECEIVED then text P 2 L 285.80 R 403.36 B 302.84 T 314.56
+  pdf      text L 303.40 R 432.28 B 389.00 T 403.72 BL 396.12
+  pdf      if RECEIVED then text P 2 L 287.80 R 403.36 B 302.84 T 314.56
 
 field 18.4g.
   label    "Resource 4 Together"
@@ -602,34 +606,34 @@ field 18.4c.
   mchoice  5 Type V
   presence if 18.4a. then required else blocked
   help     "This is the preferred resource type (credential) for the people requested on this row.  It is required when there is a quantity on the row."
-  pdf      if 18.4b.="Field Communicator" then if 18.4c.=1 then text S F1 L 455.48 R 510.76 B 389.00 T 403.72 BL 396.12
-  pdf      if 18.4b.="Field Communicator" then if 18.4c.=2 then text S F2 L 455.48 R 510.76 B 389.00 T 403.72 BL 396.12
-  pdf      if 18.4b.="Field Communicator" then if 18.4c.=3 then text S F3 L 455.48 R 510.76 B 389.00 T 403.72 BL 396.12
-  pdf      if 18.4b.="Net Control Operator" then if 18.4c.=1 then text S N1 L 455.48 R 510.76 B 389.00 T 403.72 BL 396.12
-  pdf      if 18.4b.="Net Control Operator" then if 18.4c.=2 then text S N2 L 455.48 R 510.76 B 389.00 T 403.72 BL 396.12
-  pdf      if 18.4b.="Net Control Operator" then if 18.4c.=3 then text S N3 L 455.48 R 510.76 B 389.00 T 403.72 BL 396.12
-  pdf      if 18.4b.="Packet Operator" then if 18.4c.=1 then text S P1 L 455.48 R 510.76 B 389.00 T 403.72 BL 396.12
-  pdf      if 18.4b.="Packet Operator" then if 18.4c.=2 then text S P2 L 455.48 R 510.76 B 389.00 T 403.72 BL 396.12
-  pdf      if 18.4b.="Packet Operator" then if 18.4c.=3 then text S P3 L 455.48 R 510.76 B 389.00 T 403.72 BL 396.12
-  pdf      if 18.4b.="Shadow Communicator" then if 18.4c.=1 then text S S1 L 455.48 R 510.76 B 389.00 T 403.72 BL 396.12
-  pdf      if 18.4b.="Shadow Communicator" then if 18.4c.=2 then text S S2 L 455.48 R 510.76 B 389.00 T 403.72 BL 396.12
-  pdf      if 18.4b.="Shadow Communicator" then if 18.4c.=3 then text S S3 L 455.48 R 510.76 B 389.00 T 403.72 BL 396.12
-  pdf      if 18.4c.=4 then text S "Type IV" L 455.48 R 510.76 B 389.00 T 403.72 BL 396.12
-  pdf      if 18.4c.=5 then text S "Type V" L 455.48 R 510.76 B 389.00 T 403.72 BL 396.12
-  pdf      if RECEIVED then if 18.4b.="Field Communicator" then if 18.4c.=1 then text S F1 P 2 L 420.80 R 492.76 B 302.84 T 314.56
-  pdf      if RECEIVED then if 18.4b.="Field Communicator" then if 18.4c.=2 then text S F2 P 2 L 420.80 R 492.76 B 302.84 T 314.56
-  pdf      if RECEIVED then if 18.4b.="Field Communicator" then if 18.4c.=3 then text S F3 P 2 L 420.80 R 492.76 B 302.84 T 314.56
-  pdf      if RECEIVED then if 18.4b.="Net Control Operator" then if 18.4c.=1 then text S N1 P 2 L 420.80 R 492.76 B 302.84 T 314.56
-  pdf      if RECEIVED then if 18.4b.="Net Control Operator" then if 18.4c.=2 then text S N2 P 2 L 420.80 R 492.76 B 302.84 T 314.56
-  pdf      if RECEIVED then if 18.4b.="Net Control Operator" then if 18.4c.=3 then text S N3 P 2 L 420.80 R 492.76 B 302.84 T 314.56
-  pdf      if RECEIVED then if 18.4b.="Packet Operator" then if 18.4c.=1 then text S P1 P 2 L 420.80 R 492.76 B 302.84 T 314.56
-  pdf      if RECEIVED then if 18.4b.="Packet Operator" then if 18.4c.=2 then text S P2 P 2 L 420.80 R 492.76 B 302.84 T 314.56
-  pdf      if RECEIVED then if 18.4b.="Packet Operator" then if 18.4c.=3 then text S P3 P 2 L 420.80 R 492.76 B 302.84 T 314.56
-  pdf      if RECEIVED then if 18.4b.="Shadow Communicator" then if 18.4c.=1 then text S S1 P 2 L 420.80 R 492.76 B 302.84 T 314.56
-  pdf      if RECEIVED then if 18.4b.="Shadow Communicator" then if 18.4c.=2 then text S S2 P 2 L 420.80 R 492.76 B 302.84 T 314.56
-  pdf      if RECEIVED then if 18.4b.="Shadow Communicator" then if 18.4c.=3 then text S S3 P 2 L 420.80 R 492.76 B 302.84 T 314.56
-  pdf      if RECEIVED then if 18.4c.=4 then text S "Type IV" P 2 L 420.80 R 492.76 B 302.84 T 314.56
-  pdf      if RECEIVED then if 18.4c.=5 then text S "Type V" P 2 L 420.80 R 492.76 B 302.84 T 314.56
+  pdf      if 18.4b.="Field Communicator" then if 18.4c.=1 then text S F1 L 457.48 R 510.76 B 389.00 T 403.72 BL 396.12
+  pdf      if 18.4b.="Field Communicator" then if 18.4c.=2 then text S F2 L 457.48 R 510.76 B 389.00 T 403.72 BL 396.12
+  pdf      if 18.4b.="Field Communicator" then if 18.4c.=3 then text S F3 L 457.48 R 510.76 B 389.00 T 403.72 BL 396.12
+  pdf      if 18.4b.="Net Control Operator" then if 18.4c.=1 then text S N1 L 457.48 R 510.76 B 389.00 T 403.72 BL 396.12
+  pdf      if 18.4b.="Net Control Operator" then if 18.4c.=2 then text S N2 L 457.48 R 510.76 B 389.00 T 403.72 BL 396.12
+  pdf      if 18.4b.="Net Control Operator" then if 18.4c.=3 then text S N3 L 457.48 R 510.76 B 389.00 T 403.72 BL 396.12
+  pdf      if 18.4b.="Packet Operator" then if 18.4c.=1 then text S P1 L 457.48 R 510.76 B 389.00 T 403.72 BL 396.12
+  pdf      if 18.4b.="Packet Operator" then if 18.4c.=2 then text S P2 L 457.48 R 510.76 B 389.00 T 403.72 BL 396.12
+  pdf      if 18.4b.="Packet Operator" then if 18.4c.=3 then text S P3 L 457.48 R 510.76 B 389.00 T 403.72 BL 396.12
+  pdf      if 18.4b.="Shadow Communicator" then if 18.4c.=1 then text S S1 L 457.48 R 510.76 B 389.00 T 403.72 BL 396.12
+  pdf      if 18.4b.="Shadow Communicator" then if 18.4c.=2 then text S S2 L 457.48 R 510.76 B 389.00 T 403.72 BL 396.12
+  pdf      if 18.4b.="Shadow Communicator" then if 18.4c.=3 then text S S3 L 457.48 R 510.76 B 389.00 T 403.72 BL 396.12
+  pdf      if 18.4c.=4 then text L 457.48 R 510.76 B 389.00 T 403.72 BL 396.12
+  pdf      if 18.4c.=5 then text L 457.48 R 510.76 B 389.00 T 403.72 BL 396.12
+  pdf      if RECEIVED then if 18.4b.="Field Communicator" then if 18.4c.=1 then text S F1 P 2 L 422.80 R 492.76 B 302.84 T 314.56
+  pdf      if RECEIVED then if 18.4b.="Field Communicator" then if 18.4c.=2 then text S F2 P 2 L 422.80 R 492.76 B 302.84 T 314.56
+  pdf      if RECEIVED then if 18.4b.="Field Communicator" then if 18.4c.=3 then text S F3 P 2 L 422.80 R 492.76 B 302.84 T 314.56
+  pdf      if RECEIVED then if 18.4b.="Net Control Operator" then if 18.4c.=1 then text S N1 P 2 L 422.80 R 492.76 B 302.84 T 314.56
+  pdf      if RECEIVED then if 18.4b.="Net Control Operator" then if 18.4c.=2 then text S N2 P 2 L 422.80 R 492.76 B 302.84 T 314.56
+  pdf      if RECEIVED then if 18.4b.="Net Control Operator" then if 18.4c.=3 then text S N3 P 2 L 422.80 R 492.76 B 302.84 T 314.56
+  pdf      if RECEIVED then if 18.4b.="Packet Operator" then if 18.4c.=1 then text S P1 P 2 L 422.80 R 492.76 B 302.84 T 314.56
+  pdf      if RECEIVED then if 18.4b.="Packet Operator" then if 18.4c.=2 then text S P2 P 2 L 422.80 R 492.76 B 302.84 T 314.56
+  pdf      if RECEIVED then if 18.4b.="Packet Operator" then if 18.4c.=3 then text S P3 P 2 L 422.80 R 492.76 B 302.84 T 314.56
+  pdf      if RECEIVED then if 18.4b.="Shadow Communicator" then if 18.4c.=1 then text S S1 P 2 L 422.80 R 492.76 B 302.84 T 314.56
+  pdf      if RECEIVED then if 18.4b.="Shadow Communicator" then if 18.4c.=2 then text S S2 P 2 L 422.80 R 492.76 B 302.84 T 314.56
+  pdf      if RECEIVED then if 18.4b.="Shadow Communicator" then if 18.4c.=3 then text S S3 P 2 L 422.80 R 492.76 B 302.84 T 314.56
+  pdf      if RECEIVED then if 18.4c.=4 then text P 2 L 422.80 R 492.76 B 302.84 T 314.56
+  pdf      if RECEIVED then if 18.4c.=5 then text P 2 L 422.80 R 492.76 B 302.84 T 314.56
 
 field 18.4d.
   label    "26e. Resource 4 Minimum Type"
@@ -650,42 +654,43 @@ field 18.4d.
   mchoice  5 Type V
   presence if 18.4a. then required else blocked
   help     "This is the minimum resource type (credential) for the people requested on this row.  It is required when there is a quantity on the row."
-  pdf      if 18.4b.="Field Communicator" then if 18.4d.=1 then text S F1 L 522.68 R 575.44 B 389.00 T 403.72 BL 396.12
-  pdf      if 18.4b.="Field Communicator" then if 18.4d.=2 then text S F2 L 522.68 R 575.44 B 389.00 T 403.72 BL 396.12
-  pdf      if 18.4b.="Field Communicator" then if 18.4d.=3 then text S F3 L 522.68 R 575.44 B 389.00 T 403.72 BL 396.12
-  pdf      if 18.4b.="Net Control Operator" then if 18.4d.=1 then text S N1 L 522.68 R 575.44 B 389.00 T 403.72 BL 396.12
-  pdf      if 18.4b.="Net Control Operator" then if 18.4d.=2 then text S N2 L 522.68 R 575.44 B 389.00 T 403.72 BL 396.12
-  pdf      if 18.4b.="Net Control Operator" then if 18.4d.=3 then text S N3 L 522.68 R 575.44 B 389.00 T 403.72 BL 396.12
-  pdf      if 18.4b.="Packet Operator" then if 18.4d.=1 then text S P1 L 522.68 R 575.44 B 389.00 T 403.72 BL 396.12
-  pdf      if 18.4b.="Packet Operator" then if 18.4d.=2 then text S P2 L 522.68 R 575.44 B 389.00 T 403.72 BL 396.12
-  pdf      if 18.4b.="Packet Operator" then if 18.4d.=3 then text S P3 L 522.68 R 575.44 B 389.00 T 403.72 BL 396.12
-  pdf      if 18.4b.="Shadow Communicator" then if 18.4d.=1 then text S S1 L 522.68 R 575.44 B 389.00 T 403.72 BL 396.12
-  pdf      if 18.4b.="Shadow Communicator" then if 18.4d.=2 then text S S2 L 522.68 R 575.44 B 389.00 T 403.72 BL 396.12
-  pdf      if 18.4b.="Shadow Communicator" then if 18.4d.=3 then text S S3 L 522.68 R 575.44 B 389.00 T 403.72 BL 396.12
-  pdf      if 18.4d.=4 then text S "Type IV" L 522.68 R 575.44 B 389.00 T 403.72 BL 396.12
-  pdf      if 18.4d.=5 then text S "Type V" L 522.68 R 575.44 B 389.00 T 403.72 BL 396.12
-  pdf      if RECEIVED then if 18.4b.="Field Communicator" then if 18.4d.=1 then text S F1 P 2 L 497.24 R 573.52 B 302.84 T 314.56
-  pdf      if RECEIVED then if 18.4b.="Field Communicator" then if 18.4d.=2 then text S F2 P 2 L 497.24 R 573.52 B 302.84 T 314.56
-  pdf      if RECEIVED then if 18.4b.="Field Communicator" then if 18.4d.=3 then text S F3 P 2 L 497.24 R 573.52 B 302.84 T 314.56
-  pdf      if RECEIVED then if 18.4b.="Net Control Operator" then if 18.4d.=1 then text S N1 P 2 L 497.24 R 573.52 B 302.84 T 314.56
-  pdf      if RECEIVED then if 18.4b.="Net Control Operator" then if 18.4d.=2 then text S N2 P 2 L 497.24 R 573.52 B 302.84 T 314.56
-  pdf      if RECEIVED then if 18.4b.="Net Control Operator" then if 18.4d.=3 then text S N3 P 2 L 497.24 R 573.52 B 302.84 T 314.56
-  pdf      if RECEIVED then if 18.4b.="Packet Operator" then if 18.4d.=1 then text S P1 P 2 L 497.24 R 573.52 B 302.84 T 314.56
-  pdf      if RECEIVED then if 18.4b.="Packet Operator" then if 18.4d.=2 then text S P2 P 2 L 497.24 R 573.52 B 302.84 T 314.56
-  pdf      if RECEIVED then if 18.4b.="Packet Operator" then if 18.4d.=3 then text S P3 P 2 L 497.24 R 573.52 B 302.84 T 314.56
-  pdf      if RECEIVED then if 18.4b.="Shadow Communicator" then if 18.4d.=1 then text S S1 P 2 L 497.24 R 573.52 B 302.84 T 314.56
-  pdf      if RECEIVED then if 18.4b.="Shadow Communicator" then if 18.4d.=2 then text S S2 P 2 L 497.24 R 573.52 B 302.84 T 314.56
-  pdf      if RECEIVED then if 18.4b.="Shadow Communicator" then if 18.4d.=3 then text S S3 P 2 L 497.24 R 573.52 B 302.84 T 314.56
-  pdf      if RECEIVED then if 18.4d.=4 then text S "Type IV" P 2 L 497.24 R 573.52 B 302.84 T 314.56
-  pdf      if RECEIVED then if 18.4d.=5 then text S "Type V" P 2 L 497.24 R 573.52 B 302.84 T 314.56
+  pdf      if 18.4b.="Field Communicator" then if 18.4d.=1 then text S F1 L 524.68 R 575.44 B 389.00 T 403.72 BL 396.12
+  pdf      if 18.4b.="Field Communicator" then if 18.4d.=2 then text S F2 L 524.68 R 575.44 B 389.00 T 403.72 BL 396.12
+  pdf      if 18.4b.="Field Communicator" then if 18.4d.=3 then text S F3 L 524.68 R 575.44 B 389.00 T 403.72 BL 396.12
+  pdf      if 18.4b.="Net Control Operator" then if 18.4d.=1 then text S N1 L 524.68 R 575.44 B 389.00 T 403.72 BL 396.12
+  pdf      if 18.4b.="Net Control Operator" then if 18.4d.=2 then text S N2 L 524.68 R 575.44 B 389.00 T 403.72 BL 396.12
+  pdf      if 18.4b.="Net Control Operator" then if 18.4d.=3 then text S N3 L 524.68 R 575.44 B 389.00 T 403.72 BL 396.12
+  pdf      if 18.4b.="Packet Operator" then if 18.4d.=1 then text S P1 L 524.68 R 575.44 B 389.00 T 403.72 BL 396.12
+  pdf      if 18.4b.="Packet Operator" then if 18.4d.=2 then text S P2 L 524.68 R 575.44 B 389.00 T 403.72 BL 396.12
+  pdf      if 18.4b.="Packet Operator" then if 18.4d.=3 then text S P3 L 524.68 R 575.44 B 389.00 T 403.72 BL 396.12
+  pdf      if 18.4b.="Shadow Communicator" then if 18.4d.=1 then text S S1 L 524.68 R 575.44 B 389.00 T 403.72 BL 396.12
+  pdf      if 18.4b.="Shadow Communicator" then if 18.4d.=2 then text S S2 L 524.68 R 575.44 B 389.00 T 403.72 BL 396.12
+  pdf      if 18.4b.="Shadow Communicator" then if 18.4d.=3 then text S S3 L 524.68 R 575.44 B 389.00 T 403.72 BL 396.12
+  pdf      if 18.4d.=4 then text L 524.68 R 575.44 B 389.00 T 403.72 BL 396.12
+  pdf      if 18.4d.=5 then text L 524.68 R 575.44 B 389.00 T 403.72 BL 396.12
+  pdf      if RECEIVED then if 18.4b.="Field Communicator" then if 18.4d.=1 then text S F1 P 2 L 499.24 R 573.52 B 302.84 T 314.56
+  pdf      if RECEIVED then if 18.4b.="Field Communicator" then if 18.4d.=2 then text S F2 P 2 L 499.24 R 573.52 B 302.84 T 314.56
+  pdf      if RECEIVED then if 18.4b.="Field Communicator" then if 18.4d.=3 then text S F3 P 2 L 499.24 R 573.52 B 302.84 T 314.56
+  pdf      if RECEIVED then if 18.4b.="Net Control Operator" then if 18.4d.=1 then text S N1 P 2 L 499.24 R 573.52 B 302.84 T 314.56
+  pdf      if RECEIVED then if 18.4b.="Net Control Operator" then if 18.4d.=2 then text S N2 P 2 L 499.24 R 573.52 B 302.84 T 314.56
+  pdf      if RECEIVED then if 18.4b.="Net Control Operator" then if 18.4d.=3 then text S N3 P 2 L 499.24 R 573.52 B 302.84 T 314.56
+  pdf      if RECEIVED then if 18.4b.="Packet Operator" then if 18.4d.=1 then text S P1 P 2 L 499.24 R 573.52 B 302.84 T 314.56
+  pdf      if RECEIVED then if 18.4b.="Packet Operator" then if 18.4d.=2 then text S P2 P 2 L 499.24 R 573.52 B 302.84 T 314.56
+  pdf      if RECEIVED then if 18.4b.="Packet Operator" then if 18.4d.=3 then text S P3 P 2 L 499.24 R 573.52 B 302.84 T 314.56
+  pdf      if RECEIVED then if 18.4b.="Shadow Communicator" then if 18.4d.=1 then text S S1 P 2 L 499.24 R 573.52 B 302.84 T 314.56
+  pdf      if RECEIVED then if 18.4b.="Shadow Communicator" then if 18.4d.=2 then text S S2 P 2 L 499.24 R 573.52 B 302.84 T 314.56
+  pdf      if RECEIVED then if 18.4b.="Shadow Communicator" then if 18.4d.=3 then text S S3 P 2 L 499.24 R 573.52 B 302.84 T 314.56
+  pdf      if RECEIVED then if 18.4d.=4 then text P 2 L 499.24 R 573.52 B 302.84 T 314.56
+  pdf      if RECEIVED then if 18.4d.=5 then text P 2 L 499.24 R 573.52 B 302.84 T 314.56
 
 field 18.5a.
   label    "27a. Resource 5 Quantity"
   type     cardinalNumber
+  presence if 18.4a. then optional else blocked
   width    2
   help     "This is the number of people needed for the role and position requested on this row."
-  pdf      text L 148.40 R 173.32 B 369.80 T 384.52 BL 376.92
-  pdf      if RECEIVED then text P 2 L 137.12 R 164.32 B 287.60 T 298.36
+  pdf      text L 150.40 R 173.32 B 369.80 T 384.52 BL 376.92
+  pdf      if RECEIVED then text P 2 L 139.12 R 164.32 B 287.60 T 298.36
 
 field 18.5b.
   label    "27b. Resource 5 Role"
@@ -696,16 +701,16 @@ field 18.5b.
   choice   Shadow Communicator
   presence if 18.5a. then required else blocked
   help     "This is the role of the people requested on this row.  It is required when there is a quantity on the row."
-  pdf      text L 185.48 R 290.32 B 369.80 T 384.52 BL 376.92
-  pdf      if RECEIVED then text P 2 L 168.80 R 281.32 B 287.60 T 298.36
+  pdf      text L 187.48 R 290.32 B 369.80 T 384.52 BL 376.92
+  pdf      if RECEIVED then text P 2 L 170.80 R 281.32 B 287.60 T 298.36
 
 field 18.5f.
   label    "27c. Resource 5 Position"
   presence if 18.5a. then optional else blocked
   width    31
   help     "This is the position to be held by the people requested on this row."
-  pdf      text L 301.40 R 432.28 B 369.80 T 384.52 BL 376.92
-  pdf      if RECEIVED then text P 2 L 285.80 R 403.24 B 287.60 T 298.36
+  pdf      text L 303.40 R 432.28 B 369.80 T 384.52 BL 376.92
+  pdf      if RECEIVED then text P 2 L 287.80 R 403.24 B 287.60 T 298.36
 
 field 18.5g.
   label    "Resource 5 Together"
@@ -734,34 +739,34 @@ field 18.5c.
   mchoice  5 Type V
   presence if 18.5a. then required else blocked
   help     "This is the preferred resource type (credential) for the people requested on this row.  It is required when there is a quantity on the row."
-  pdf      if 18.5b.="Field Communicator" then if 18.5c.=1 then text S F1 L 455.48 R 510.76 B 369.80 T 384.52 BL 376.92
-  pdf      if 18.5b.="Field Communicator" then if 18.5c.=2 then text S F2 L 455.48 R 510.76 B 369.80 T 384.52 BL 376.92
-  pdf      if 18.5b.="Field Communicator" then if 18.5c.=3 then text S F3 L 455.48 R 510.76 B 369.80 T 384.52 BL 376.92
-  pdf      if 18.5b.="Net Control Operator" then if 18.5c.=1 then text S N1 L 455.48 R 510.76 B 369.80 T 384.52 BL 376.92
-  pdf      if 18.5b.="Net Control Operator" then if 18.5c.=2 then text S N2 L 455.48 R 510.76 B 369.80 T 384.52 BL 376.92
-  pdf      if 18.5b.="Net Control Operator" then if 18.5c.=3 then text S N3 L 455.48 R 510.76 B 369.80 T 384.52 BL 376.92
-  pdf      if 18.5b.="Packet Operator" then if 18.5c.=1 then text S P1 L 455.48 R 510.76 B 369.80 T 384.52 BL 376.92
-  pdf      if 18.5b.="Packet Operator" then if 18.5c.=2 then text S P2 L 455.48 R 510.76 B 369.80 T 384.52 BL 376.92
-  pdf      if 18.5b.="Packet Operator" then if 18.5c.=3 then text S P3 L 455.48 R 510.76 B 369.80 T 384.52 BL 376.92
-  pdf      if 18.5b.="Shadow Communicator" then if 18.5c.=1 then text S S1 L 455.48 R 510.76 B 369.80 T 384.52 BL 376.92
-  pdf      if 18.5b.="Shadow Communicator" then if 18.5c.=2 then text S S2 L 455.48 R 510.76 B 369.80 T 384.52 BL 376.92
-  pdf      if 18.5b.="Shadow Communicator" then if 18.5c.=3 then text S S3 L 455.48 R 510.76 B 369.80 T 384.52 BL 376.92
-  pdf      if 18.5c.=4 then text S "Type IV" L 455.48 R 510.76 B 369.80 T 384.52 BL 376.92
-  pdf      if 18.5c.=5 then text S "Type V" L 455.48 R 510.76 B 369.80 T 384.52 BL 376.92
-  pdf      if RECEIVED then if 18.5b.="Field Communicator" then if 18.5c.=1 then text S F1 P 2 L 420.80 R 492.76 B 287.60 T 298.36
-  pdf      if RECEIVED then if 18.5b.="Field Communicator" then if 18.5c.=2 then text S F2 P 2 L 420.80 R 492.76 B 287.60 T 298.36
-  pdf      if RECEIVED then if 18.5b.="Field Communicator" then if 18.5c.=3 then text S F3 P 2 L 420.80 R 492.76 B 287.60 T 298.36
-  pdf      if RECEIVED then if 18.5b.="Net Control Operator" then if 18.5c.=1 then text S N1 P 2 L 420.80 R 492.76 B 287.60 T 298.36
-  pdf      if RECEIVED then if 18.5b.="Net Control Operator" then if 18.5c.=2 then text S N2 P 2 L 420.80 R 492.76 B 287.60 T 298.36
-  pdf      if RECEIVED then if 18.5b.="Net Control Operator" then if 18.5c.=3 then text S N3 P 2 L 420.80 R 492.76 B 287.60 T 298.36
-  pdf      if RECEIVED then if 18.5b.="Packet Operator" then if 18.5c.=1 then text S P1 P 2 L 420.80 R 492.76 B 287.60 T 298.36
-  pdf      if RECEIVED then if 18.5b.="Packet Operator" then if 18.5c.=2 then text S P2 P 2 L 420.80 R 492.76 B 287.60 T 298.36
-  pdf      if RECEIVED then if 18.5b.="Packet Operator" then if 18.5c.=3 then text S P3 P 2 L 420.80 R 492.76 B 287.60 T 298.36
-  pdf      if RECEIVED then if 18.5b.="Shadow Communicator" then if 18.5c.=1 then text S S1 P 2 L 420.80 R 492.76 B 287.60 T 298.36
-  pdf      if RECEIVED then if 18.5b.="Shadow Communicator" then if 18.5c.=2 then text S S2 P 2 L 420.80 R 492.76 B 287.60 T 298.36
-  pdf      if RECEIVED then if 18.5b.="Shadow Communicator" then if 18.5c.=3 then text S S3 P 2 L 420.80 R 492.76 B 287.60 T 298.36
-  pdf      if RECEIVED then if 18.5c.=4 then text S "Type IV" P 2 L 420.80 R 492.76 B 287.60 T 298.36
-  pdf      if RECEIVED then if 18.5c.=5 then text S "Type V" P 2 L 420.80 R 492.76 B 287.60 T 298.36
+  pdf      if 18.5b.="Field Communicator" then if 18.5c.=1 then text S F1 L 457.48 R 510.76 B 369.80 T 384.52 BL 376.92
+  pdf      if 18.5b.="Field Communicator" then if 18.5c.=2 then text S F2 L 457.48 R 510.76 B 369.80 T 384.52 BL 376.92
+  pdf      if 18.5b.="Field Communicator" then if 18.5c.=3 then text S F3 L 457.48 R 510.76 B 369.80 T 384.52 BL 376.92
+  pdf      if 18.5b.="Net Control Operator" then if 18.5c.=1 then text S N1 L 457.48 R 510.76 B 369.80 T 384.52 BL 376.92
+  pdf      if 18.5b.="Net Control Operator" then if 18.5c.=2 then text S N2 L 457.48 R 510.76 B 369.80 T 384.52 BL 376.92
+  pdf      if 18.5b.="Net Control Operator" then if 18.5c.=3 then text S N3 L 457.48 R 510.76 B 369.80 T 384.52 BL 376.92
+  pdf      if 18.5b.="Packet Operator" then if 18.5c.=1 then text S P1 L 457.48 R 510.76 B 369.80 T 384.52 BL 376.92
+  pdf      if 18.5b.="Packet Operator" then if 18.5c.=2 then text S P2 L 457.48 R 510.76 B 369.80 T 384.52 BL 376.92
+  pdf      if 18.5b.="Packet Operator" then if 18.5c.=3 then text S P3 L 457.48 R 510.76 B 369.80 T 384.52 BL 376.92
+  pdf      if 18.5b.="Shadow Communicator" then if 18.5c.=1 then text S S1 L 457.48 R 510.76 B 369.80 T 384.52 BL 376.92
+  pdf      if 18.5b.="Shadow Communicator" then if 18.5c.=2 then text S S2 L 457.48 R 510.76 B 369.80 T 384.52 BL 376.92
+  pdf      if 18.5b.="Shadow Communicator" then if 18.5c.=3 then text S S3 L 457.48 R 510.76 B 369.80 T 384.52 BL 376.92
+  pdf      if 18.5c.=4 then text L 457.48 R 510.76 B 369.80 T 384.52 BL 376.92
+  pdf      if 18.5c.=5 then text L 457.48 R 510.76 B 369.80 T 384.52 BL 376.92
+  pdf      if RECEIVED then if 18.5b.="Field Communicator" then if 18.5c.=1 then text S F1 P 2 L 422.80 R 492.76 B 287.60 T 298.36
+  pdf      if RECEIVED then if 18.5b.="Field Communicator" then if 18.5c.=2 then text S F2 P 2 L 422.80 R 492.76 B 287.60 T 298.36
+  pdf      if RECEIVED then if 18.5b.="Field Communicator" then if 18.5c.=3 then text S F3 P 2 L 422.80 R 492.76 B 287.60 T 298.36
+  pdf      if RECEIVED then if 18.5b.="Net Control Operator" then if 18.5c.=1 then text S N1 P 2 L 422.80 R 492.76 B 287.60 T 298.36
+  pdf      if RECEIVED then if 18.5b.="Net Control Operator" then if 18.5c.=2 then text S N2 P 2 L 422.80 R 492.76 B 287.60 T 298.36
+  pdf      if RECEIVED then if 18.5b.="Net Control Operator" then if 18.5c.=3 then text S N3 P 2 L 422.80 R 492.76 B 287.60 T 298.36
+  pdf      if RECEIVED then if 18.5b.="Packet Operator" then if 18.5c.=1 then text S P1 P 2 L 422.80 R 492.76 B 287.60 T 298.36
+  pdf      if RECEIVED then if 18.5b.="Packet Operator" then if 18.5c.=2 then text S P2 P 2 L 422.80 R 492.76 B 287.60 T 298.36
+  pdf      if RECEIVED then if 18.5b.="Packet Operator" then if 18.5c.=3 then text S P3 P 2 L 422.80 R 492.76 B 287.60 T 298.36
+  pdf      if RECEIVED then if 18.5b.="Shadow Communicator" then if 18.5c.=1 then text S S1 P 2 L 422.80 R 492.76 B 287.60 T 298.36
+  pdf      if RECEIVED then if 18.5b.="Shadow Communicator" then if 18.5c.=2 then text S S2 P 2 L 422.80 R 492.76 B 287.60 T 298.36
+  pdf      if RECEIVED then if 18.5b.="Shadow Communicator" then if 18.5c.=3 then text S S3 P 2 L 422.80 R 492.76 B 287.60 T 298.36
+  pdf      if RECEIVED then if 18.5c.=4 then text P 2 L 422.80 R 492.76 B 287.60 T 298.36
+  pdf      if RECEIVED then if 18.5c.=5 then text P 2 L 422.80 R 492.76 B 287.60 T 298.36
 
 field 18.5d.
   label    "27e. Resource 5 Minimum Type"
@@ -782,50 +787,50 @@ field 18.5d.
   mchoice  5 Type V
   presence if 18.5a. then required else blocked
   help     "This is the minimum resource type (credential) for the people requested on this row.  It is required when there is a quantity on the row."
-  pdf      if 18.5b.="Field Communicator" then if 18.5d.=1 then text S F1 L 522.08 R 575.44 B 369.80 T 384.52 BL 376.92
-  pdf      if 18.5b.="Field Communicator" then if 18.5d.=2 then text S F2 L 522.08 R 575.44 B 369.80 T 384.52 BL 376.92
-  pdf      if 18.5b.="Field Communicator" then if 18.5d.=3 then text S F3 L 522.08 R 575.44 B 369.80 T 384.52 BL 376.92
-  pdf      if 18.5b.="Net Control Operator" then if 18.5d.=1 then text S N1 L 522.08 R 575.44 B 369.80 T 384.52 BL 376.92
-  pdf      if 18.5b.="Net Control Operator" then if 18.5d.=2 then text S N2 L 522.08 R 575.44 B 369.80 T 384.52 BL 376.92
-  pdf      if 18.5b.="Net Control Operator" then if 18.5d.=3 then text S N3 L 522.08 R 575.44 B 369.80 T 384.52 BL 376.92
-  pdf      if 18.5b.="Packet Operator" then if 18.5d.=1 then text S P1 L 522.08 R 575.44 B 369.80 T 384.52 BL 376.92
-  pdf      if 18.5b.="Packet Operator" then if 18.5d.=2 then text S P2 L 522.08 R 575.44 B 369.80 T 384.52 BL 376.92
-  pdf      if 18.5b.="Packet Operator" then if 18.5d.=3 then text S P3 L 522.08 R 575.44 B 369.80 T 384.52 BL 376.92
-  pdf      if 18.5b.="Shadow Communicator" then if 18.5d.=1 then text S S1 L 522.08 R 575.44 B 369.80 T 384.52 BL 376.92
-  pdf      if 18.5b.="Shadow Communicator" then if 18.5d.=2 then text S S2 L 522.08 R 575.44 B 369.80 T 384.52 BL 376.92
-  pdf      if 18.5b.="Shadow Communicator" then if 18.5d.=3 then text S S3 L 522.08 R 575.44 B 369.80 T 384.52 BL 376.92
-  pdf      if 18.5d.=4 then text S "Type IV" L 522.08 R 575.44 B 369.80 T 384.52 BL 376.92
-  pdf      if 18.5d.=5 then text S "Type V" L 522.08 R 575.44 B 369.80 T 384.52 BL 376.92
-  pdf      if RECEIVED then if 18.5b.="Field Communicator" then if 18.5d.=1 then text S F1 P 2 L 497.24 R 573.52 B 287.60 T 298.36
-  pdf      if RECEIVED then if 18.5b.="Field Communicator" then if 18.5d.=2 then text S F2 P 2 L 497.24 R 573.52 B 287.60 T 298.36
-  pdf      if RECEIVED then if 18.5b.="Field Communicator" then if 18.5d.=3 then text S F3 P 2 L 497.24 R 573.52 B 287.60 T 298.36
-  pdf      if RECEIVED then if 18.5b.="Net Control Operator" then if 18.5d.=1 then text S N1 P 2 L 497.24 R 573.52 B 287.60 T 298.36
-  pdf      if RECEIVED then if 18.5b.="Net Control Operator" then if 18.5d.=2 then text S N2 P 2 L 497.24 R 573.52 B 287.60 T 298.36
-  pdf      if RECEIVED then if 18.5b.="Net Control Operator" then if 18.5d.=3 then text S N3 P 2 L 497.24 R 573.52 B 287.60 T 298.36
-  pdf      if RECEIVED then if 18.5b.="Packet Operator" then if 18.5d.=1 then text S P1 P 2 L 497.24 R 573.52 B 287.60 T 298.36
-  pdf      if RECEIVED then if 18.5b.="Packet Operator" then if 18.5d.=2 then text S P2 P 2 L 497.24 R 573.52 B 287.60 T 298.36
-  pdf      if RECEIVED then if 18.5b.="Packet Operator" then if 18.5d.=3 then text S P3 P 2 L 497.24 R 573.52 B 287.60 T 298.36
-  pdf      if RECEIVED then if 18.5b.="Shadow Communicator" then if 18.5d.=1 then text S S1 P 2 L 497.24 R 573.52 B 287.60 T 298.36
-  pdf      if RECEIVED then if 18.5b.="Shadow Communicator" then if 18.5d.=2 then text S S2 P 2 L 497.24 R 573.52 B 287.60 T 298.36
-  pdf      if RECEIVED then if 18.5b.="Shadow Communicator" then if 18.5d.=3 then text S S3 P 2 L 497.24 R 573.52 B 287.60 T 298.36
-  pdf      if RECEIVED then if 18.5d.=4 then text S "Type IV" P 2 L 497.24 R 573.52 B 287.60 T 298.36
-  pdf      if RECEIVED then if 18.5d.=5 then text S "Type V" P 2 L 497.24 R 573.52 B 287.60 T 298.36
+  pdf      if 18.5b.="Field Communicator" then if 18.5d.=1 then text S F1 L 524.08 R 575.44 B 369.80 T 384.52 BL 376.92
+  pdf      if 18.5b.="Field Communicator" then if 18.5d.=2 then text S F2 L 524.08 R 575.44 B 369.80 T 384.52 BL 376.92
+  pdf      if 18.5b.="Field Communicator" then if 18.5d.=3 then text S F3 L 524.08 R 575.44 B 369.80 T 384.52 BL 376.92
+  pdf      if 18.5b.="Net Control Operator" then if 18.5d.=1 then text S N1 L 524.08 R 575.44 B 369.80 T 384.52 BL 376.92
+  pdf      if 18.5b.="Net Control Operator" then if 18.5d.=2 then text S N2 L 524.08 R 575.44 B 369.80 T 384.52 BL 376.92
+  pdf      if 18.5b.="Net Control Operator" then if 18.5d.=3 then text S N3 L 524.08 R 575.44 B 369.80 T 384.52 BL 376.92
+  pdf      if 18.5b.="Packet Operator" then if 18.5d.=1 then text S P1 L 524.08 R 575.44 B 369.80 T 384.52 BL 376.92
+  pdf      if 18.5b.="Packet Operator" then if 18.5d.=2 then text S P2 L 524.08 R 575.44 B 369.80 T 384.52 BL 376.92
+  pdf      if 18.5b.="Packet Operator" then if 18.5d.=3 then text S P3 L 524.08 R 575.44 B 369.80 T 384.52 BL 376.92
+  pdf      if 18.5b.="Shadow Communicator" then if 18.5d.=1 then text S S1 L 524.08 R 575.44 B 369.80 T 384.52 BL 376.92
+  pdf      if 18.5b.="Shadow Communicator" then if 18.5d.=2 then text S S2 L 524.08 R 575.44 B 369.80 T 384.52 BL 376.92
+  pdf      if 18.5b.="Shadow Communicator" then if 18.5d.=3 then text S S3 L 524.08 R 575.44 B 369.80 T 384.52 BL 376.92
+  pdf      if 18.5d.=4 then text L 524.08 R 575.44 B 369.80 T 384.52 BL 376.92
+  pdf      if 18.5d.=5 then text L 524.08 R 575.44 B 369.80 T 384.52 BL 376.92
+  pdf      if RECEIVED then if 18.5b.="Field Communicator" then if 18.5d.=1 then text S F1 P 2 L 499.24 R 573.52 B 287.60 T 298.36
+  pdf      if RECEIVED then if 18.5b.="Field Communicator" then if 18.5d.=2 then text S F2 P 2 L 499.24 R 573.52 B 287.60 T 298.36
+  pdf      if RECEIVED then if 18.5b.="Field Communicator" then if 18.5d.=3 then text S F3 P 2 L 499.24 R 573.52 B 287.60 T 298.36
+  pdf      if RECEIVED then if 18.5b.="Net Control Operator" then if 18.5d.=1 then text S N1 P 2 L 499.24 R 573.52 B 287.60 T 298.36
+  pdf      if RECEIVED then if 18.5b.="Net Control Operator" then if 18.5d.=2 then text S N2 P 2 L 499.24 R 573.52 B 287.60 T 298.36
+  pdf      if RECEIVED then if 18.5b.="Net Control Operator" then if 18.5d.=3 then text S N3 P 2 L 499.24 R 573.52 B 287.60 T 298.36
+  pdf      if RECEIVED then if 18.5b.="Packet Operator" then if 18.5d.=1 then text S P1 P 2 L 499.24 R 573.52 B 287.60 T 298.36
+  pdf      if RECEIVED then if 18.5b.="Packet Operator" then if 18.5d.=2 then text S P2 P 2 L 499.24 R 573.52 B 287.60 T 298.36
+  pdf      if RECEIVED then if 18.5b.="Packet Operator" then if 18.5d.=3 then text S P3 P 2 L 499.24 R 573.52 B 287.60 T 298.36
+  pdf      if RECEIVED then if 18.5b.="Shadow Communicator" then if 18.5d.=1 then text S S1 P 2 L 499.24 R 573.52 B 287.60 T 298.36
+  pdf      if RECEIVED then if 18.5b.="Shadow Communicator" then if 18.5d.=2 then text S S2 P 2 L 499.24 R 573.52 B 287.60 T 298.36
+  pdf      if RECEIVED then if 18.5b.="Shadow Communicator" then if 18.5d.=3 then text S S3 P 2 L 499.24 R 573.52 B 287.60 T 298.36
+  pdf      if RECEIVED then if 18.5d.=4 then text P 2 L 499.24 R 573.52 B 287.60 T 298.36
+  pdf      if RECEIVED then if 18.5d.=5 then text P 2 L 499.24 R 573.52 B 287.60 T 298.36
 
 field 19a.
   label    "28a. Requested Arrival Date"
   type     date
   presence required
   help     "This is the date by when the requested people need to arrive.  It is required."
-  pdf      text L 176.96 R 355.96 B 328.88 T 342.88 BL 335.28
-  pdf      if RECEIVED then text P 2 L 137.12 R 392.56 B 461.96 T 477.28 BL 468.84
+  pdf      text L 178.96 R 355.96 B 328.88 T 342.88 BL 335.28
+  pdf      if RECEIVED then text P 2 L 139.12 R 392.56 B 461.96 T 477.28 BL 468.84
 
 field 19b.
   label    "28b. Requested Arrival Time"
   type     time
   presence required
   help     "This is the time by when the requested people need to arrive.  It is required."
-  pdf      text L 424.52 R 575.44 B 328.88 T 342.88 BL 335.28
-  pdf      if RECEIVED then text P 2 L 431.00 R 573.52 B 461.96 T 477.28 BL 468.84
+  pdf      text L 426.52 R 575.44 B 328.88 T 342.88 BL 335.28
+  pdf      if RECEIVED then text P 2 L 433.00 R 573.52 B 461.96 T 477.28 BL 468.84
 
 field -
   label    "28. Requested Arrival"
@@ -839,14 +844,14 @@ field 20a.
   type     date
   presence required
   help     "This is the date when the operational period will start for the requested resources.  It is required."
-  pdf      text L 198.08 R 231.76 B 308.84 T 324.40 BL 316.80
+  pdf      text L 200.08 R 231.76 B 308.84 T 324.40 BL 316.80
 
 field 20b.
   label    "29b. Operational Period Start Time"
   type     time
   presence required
   help     "This is the time when the operational period will start for the requested resources.  It is required."
-  pdf      text L 296.84 R 344.32 B 308.84 T 324.40 BL 316.80
+  pdf      text L 298.84 R 344.32 B 308.84 T 324.40 BL 316.80
 
 field -
   label    "29ab. Operational Period Start"
@@ -854,21 +859,21 @@ field -
   children 20a. 20b.
   presence required
   help     "This is the date and time when the operational period will start for the requested resources, in MM/DD/YYYY HH:MM format (24-hour clock).  It is required."
-  pdf      if RECEIVED then text P 2 L 238.04 R 344.32 B 442.16 T 457.48 BL 449.88
+  pdf      if RECEIVED then text P 2 L 240.04 R 344.32 B 442.16 T 457.48 BL 449.88
 
 field 20c.
   label    "29c. Operational Period End Date"
   type     date
   presence required
   help     "This is the date by when the operational period will end for the requested resources.  It is required."
-  pdf      text L 396.32 R 451.36 B 308.84 T 324.40 BL 316.80
+  pdf      text L 398.32 R 451.36 B 308.84 T 324.40 BL 316.80
 
 field 20d.
   label    "29d. Operational Period End Time"
   type     time
   presence required
   help     "This is the time by when the operational period will end for the requested resources.  It is required."
-  pdf      text L 505.40 R 575.44 B 308.84 T 324.40 BL 316.80
+  pdf      text L 507.40 R 575.44 B 308.84 T 324.40 BL 316.80
 
 field -
   label    "29cd. Operational Period End"
@@ -876,7 +881,7 @@ field -
   children 20c. 20d.
   presence required
   help     "This is the date and time by when the operational period will end for the requested resources, in MM/DD/YYYY HH:MM format (24-hour clock).  It is required."
-  pdf      if RECEIVED then text P 2 L 438.44 R 573.52 B 442.16 T 457.48 BL 449.88
+  pdf      if RECEIVED then text P 2 L 440.44 R 573.52 B 442.16 T 457.48 BL 449.88
 
 field 21.
   label    "30. Reporting Location"
@@ -884,8 +889,8 @@ field 21.
   presence required
   width    94
   help     "This is the location to which the requested people should report.  Include street address, parking info, and entry instructions.  This field is required."
-  pdf      text L 141.08 R 575.44 B 285.80 T 304.36 BL 295.92
-  pdf      if RECEIVED then text P 2 L 137.12 R 573.52 B 422.36 T 437.68 BL 429.24
+  pdf      text L 143.08 R 575.44 B 285.80 T 304.36 BL 295.92
+  pdf      if RECEIVED then text P 2 L 139.12 R 573.52 B 422.36 T 437.68 BL 429.24
 
 field 22.
   label    "31. Contact on Arrival"
@@ -893,8 +898,8 @@ field 22.
   presence required
   width    94
   help     "This is the name, position, and contact info (phone, frequency, ...) for the official that the requested people should contact upon arrival. This is typically a net control on a radio frequency or a specific person or function at a telephone number.  This field is required."
-  pdf      text L 141.08 R 575.44 B 263.36 T 281.32 BL 272.88
-  pdf      if RECEIVED then text P 2 L 137.12 R 573.52 B 402.56 T 417.88 BL 409.44
+  pdf      text L 143.08 R 575.44 B 263.36 T 281.32 BL 272.88
+  pdf      if RECEIVED then text P 2 L 139.12 R 573.52 B 402.56 T 417.88 BL 409.44
 
 field 23.
   label    "32. Travel Info"
@@ -902,49 +907,49 @@ field 23.
   presence required
   width    94
   help     "This field describes how to travel to the reporting location.  Identify preferred routes, road closures, and hazards to be avoided during travel.  If an overnight stay is included, specify how lodging will be provided.  This field is required."
-  pdf      text L 141.08 R 575.44 B 243.56 T 258.88 BL 250.44
-  pdf      if RECEIVED then text P 2 L 137.12 R 573.52 B 382.76 T 398.08 BL 389.64
+  pdf      text L 143.08 R 575.44 B 243.56 T 258.88 BL 250.44
+  pdf      if RECEIVED then text P 2 L 139.12 R 573.52 B 382.76 T 398.08 BL 389.64
 
 field 24a.
   label    "33a. Requested By Name"
   presence required
   width    45
   help     "This is the name of the official requesting mutual aid (typically the Radio Officer of the requesting agency).  It is required."
-  pdf      text L 181.88 R 443.32 B 224.36 T 239.08 BL 231.48
+  pdf      text L 183.88 R 443.32 B 224.36 T 239.08 BL 231.48
 
 field 24b.
   label    "33b. Requested By Title"
   presence required
   width    31
   help     "This is the title of the official requesting mutual aid.  It is required."
-  pdf      text L 482.48 R 575.44 B 224.36 T 239.08 BL 231.48
+  pdf      text L 484.48 R 575.44 B 224.36 T 239.08 BL 231.48
 
 field 24c.
   label    "33c. Requested By Contact"
   width    94
   help     "This is the contact information (email, phone, frequency) of the official requesting mutual aid.  It is required."
-  pdf      text L 298.88 R 575.44 B 199.16 T 219.88 BL 212.28
+  pdf      text L 300.88 R 575.44 B 199.16 T 219.88 BL 212.28
 
 field 25a.
   label    "34a. Approved By Name"
   presence required
   width    45
   help     "This is the name of the agency official approving the mutual aid request.  It is required."
-  pdf      text L 181.88 R 443.32 B 179.84 T 194.68 BL 187.08
+  pdf      text L 183.88 R 443.32 B 179.84 T 194.68 BL 187.08
 
 field 25b.
   label    "34b. Approved By Title"
   presence required
   width    31
   help     "This is the title of the agency official approving the mutual aid request.  It is required."
-  pdf      text L 482.48 R 575.44 B 179.84 T 194.68 BL 187.08
+  pdf      text L 484.48 R 575.44 B 179.84 T 194.68 BL 187.08
 
 field 25c.
   label    "34c. Approved By Contact"
   presence required
   width    94
   help     "This is the contact information (email, phone, frequency) for the agency official approving the mutual aid request.  It is required."
-  pdf      text L 253.04 R 575.44 B 158.24 T 175.36 BL 167.76
+  pdf      text L 255.04 R 575.44 B 158.24 T 175.36 BL 167.76
 
 field 25s.
   label    "34d. With Signature"
@@ -957,14 +962,14 @@ field 26a.
   type     date
   presence required
   help     "This is the date when the mutual aid request was approved by the official listed above, in MM/DD/YYYY format.  It is required."
-  pdf      text L 419.84 R 479.08 B 135.68 T 153.76 BL 146.16
+  pdf      text L 421.84 R 479.08 B 135.68 T 153.76 BL 146.16
 
 field 26b.
   label    "34f. Approved By Time"
   type     time
   presence required
   help     "This is the time when the mutual aid request was approved by the official listed above, in HH:MM format (24-hour clock).  It is required."
-  pdf      text L 514.16 R 575.44 B 135.68 T 153.76 BL 146.16
+  pdf      text L 516.16 R 575.44 B 135.68 T 153.76 BL 146.16
 
 field -
   label    "34ef. Approved Date/Time"
@@ -977,23 +982,23 @@ field OpRelayRcvd
   label    "Operator: Relay Received"
   width    36
   help     "This is the name of the station from which this message was directly received.  It is filled in for messages that go through a relay station."
-  pdf      text L 106.76 R 320.32 B 100.40 T 114.76 BL 103.92
+  pdf      text L 108.76 R 320.32 B 100.40 T 114.76 BL 103.92
 
 field OpRelaySent
   label    "Operator: Relay Sent"
   width    36
   help     "This is the name of the station to which this message was directly sent.  It is filled in for messages that go through a relay station."
-  pdf      text L 352.64 R 575.44 B 100.40 T 114.76 BL 103.92
+  pdf      text L 354.64 R 575.44 B 100.40 T 114.76 BL 103.92
 
 field OpName operatorName
   label    "Operator: Name"
   presence required
-  pdf      text L  72.92 R 248.32 B  81.44 T  95.92 BL 84.96
+  pdf      text L  74.92 R 248.32 B  81.44 T  95.92 BL  84.96
 
 field OpCall operatorCall
   label    "Operator: Call Sign"
   presence required
-  pdf      text L 298.64 R 365.32 B  81.44 T  95.92 BL 84.96
+  pdf      text L 300.64 R 365.32 B  81.44 T  95.92 BL  84.96
 
 field -
   label    Operator
@@ -1003,12 +1008,12 @@ field -
 field OpDate operatorDate
   label    "Operator: Date"
   type     date
-  pdf      text L 398.84 R 479.08 B  81.44 T  95.92 BL 84.96
+  pdf      text L 400.84 R 479.08 B  81.44 T  95.92 BL  84.96
 
 field OpTime operatorTime
   label    "Operator: Time"
   type     time
-  pdf      text L 541.04 R 575.44 B  81.44 T  95.92 BL 84.96
+  pdf      text L 543.04 R 575.44 B  81.44 T  95.92 BL  84.96
 
 field -
   label    "Operator: Date/Time"

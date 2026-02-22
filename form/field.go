@@ -185,8 +185,11 @@ func (f ff2mf) Default() string {
 
 // ToHuman converts the internal form of a value for the field into the
 // human form appropriate for display and editing (often a no-op).
-func (f ff2mf) ToHuman(raw string) string {
+func (f ff2mf) ToHuman(msg message.Message, raw string) string {
 	for _, c := range f.fd.Choices {
+		if !cond(msg, c.CondField, c.CondValue) {
+			continue
+		}
 		if c.Raw == raw {
 			return c.Human
 		}
@@ -197,7 +200,7 @@ func (f ff2mf) ToHuman(raw string) string {
 // FromHuman converts the supplied value from human form to internal
 // form, if possible; otherwise it makes no changes.  Implementations
 // must not change the value if it is already in internal form.
-func (f ff2mf) FromHuman(human string) string {
+func (f ff2mf) FromHuman(msg message.Message, human string) string {
 	if human = strings.TrimSpace(human); human == "" {
 		return human
 	}
@@ -232,7 +235,7 @@ func (f ff2mf) FromHuman(human string) string {
 		ext := phoneExtensionRE.FindString(human)
 		human = strings.TrimSuffix(human, ext)
 		if strings.IndexFunc(human, func(r rune) bool {
-			return r < '0' && r > '9' && r != ' ' && r != '-' && r != '(' && r != ')'
+			return (r < '0' || r > '9') && r != ' ' && r != '-' && r != '(' && r != ')'
 		}) < 0 {
 			trim := strings.Map(func(r rune) rune {
 				if r >= '0' && r <= '9' {
@@ -249,6 +252,9 @@ func (f ff2mf) FromHuman(human string) string {
 		var match string
 		var ambiguous bool
 		for _, c := range f.fd.Choices {
+			if !cond(msg, c.CondField, c.CondValue) {
+				continue
+			}
 			if strings.EqualFold(human, c.Human) {
 				return c.Raw
 			} else if human != "" && len(human) < len(c.Human) && strings.EqualFold(human, c.Human[:len(human)]) {
@@ -263,6 +269,9 @@ func (f ff2mf) FromHuman(human string) string {
 		return canonicalTime(human)
 	default:
 		for _, c := range f.fd.Choices {
+			if !cond(msg, c.CondField, c.CondValue) {
+				continue
+			}
 			if strings.EqualFold(human, c.Human) {
 				return c.Raw
 			}
@@ -422,7 +431,7 @@ func (f ff2mf) Obscured() bool { return f.fd.Type == "password" }
 // values of other fields of the message.
 func (f ff2mf) Choices(m msgifc.Message) (cs []field.ChoicePair) {
 	if f.fd.Type == "checkbox" {
-		return []field.ChoicePair{{PIFO: "", Human: ""}, {PIFO: "checked", Human: "checked"}}
+		return []field.ChoicePair{{PIFO: "checked", Human: "checked"}}
 	}
 	for _, c := range f.fd.Choices {
 		if c.CondField != "" {
@@ -460,7 +469,7 @@ var (
 // Validate validates the value of the field and returns any problems
 // with it.  If pifo is true, it restricts itself to those checks
 // performed by PackItForms.
-func (f ff2mf) Validate(m msgifc.Message, mf msgifc.Field, flags msgifc.ValidateFlags) error {
+func (f ff2mf) Validate(m msgifc.Message, mf msgifc.Field, flags msgifc.ValidateFlags) (err error) {
 	presence, why := evalPresence(m, f.fd)
 	val := f.Value(m)
 	switch {
@@ -487,6 +496,11 @@ func (f ff2mf) Validate(m msgifc.Message, mf msgifc.Field, flags msgifc.Validate
 		if val != "" && !PIFODateRE.MatchString(val) {
 			return errors.NewF(`Field %q does not contain a valid date (MM/DD/YYYY).`, f.fd.Label)
 		}
+	case "dateTime":
+		for _, c := range f.fd.Children {
+			err = errors.Join(err, ff2mf{c}.Validate(m, c.Field, flags))
+		}
+		return err
 	case "fccCallSign":
 		if val != "" && !fccCallSignRE.MatchString(val) {
 			return errors.NewF(`Field %q does not contain a FCC call sign.`, f.fd.Label)
@@ -522,22 +536,23 @@ func (f ff2mf) Validate(m msgifc.Message, mf msgifc.Field, flags msgifc.Validate
 			break
 		}
 		var choices []string
+		var conderr error
 		var found bool
 		for _, c := range f.fd.Choices {
-			if val != c.Raw {
+			if val == c.Raw {
 				if cond(m, c.CondField, c.CondValue) {
-					choices = append(choices, c.Human)
+					found = true
+					break
 				}
-				continue
+				conderr = errors.NewF(`Field %q can only be set to %q when %s.`, f.fd.Label, c.Human, condstr(m, c.CondField, c.CondValue))
+			} else if cond(m, c.CondField, c.CondValue) {
+				choices = append(choices, c.Human)
 			}
-			if !cond(m, c.CondField, c.CondValue) {
-				return errors.NewF(`Field %q can only be set to %q when %s.`, f.fd.Label, c.Human, condstr(m, c.CondField, c.CondValue))
-			}
-			found = true
-			break
 		}
 		if !found {
-			if len(choices) <= 4 {
+			if conderr != nil {
+				return conderr
+			} else if len(choices) <= 4 {
 				return errors.NewF(`%q is not one of the allowed values for field %q ("%s").`, val, f.fd.Label, strings.Join(choices, `", "`))
 			} else {
 				return errors.NewF(`%q is not one of the allowed values for field %q.`, val, f.fd.Label)

@@ -28,7 +28,7 @@ func cmdServerStop(args []string) (err error) {
 		cio.Open().Error(err)
 		return usage(serverStopHelp)
 	}
-	if len(args) != 1 && len(args) != 5 {
+	if len(args) != 0 {
 		return usage(serverStopHelp)
 	}
 	if addr, err := server.GetAddress(false); err != nil {

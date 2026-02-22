@@ -24,11 +24,11 @@ type Field interface {
 	Default() string
 	// ToHuman converts the internal form of a value for the field into the
 	// human form appropriate for display and editing (often a no-op).
-	ToHuman(string) string
+	ToHuman(Message, string) string
 	// FromHuman converts the supplied value from human form to internal
 	// form, if possible; otherwise it makes no changes.  Implementations
 	// must not change the value if it is already in internal form.
-	FromHuman(string) string
+	FromHuman(Message, string) string
 	// SetValue sets the value of the field.  The supplied value must be in
 	// internal form.
 	SetValue(Message, string)

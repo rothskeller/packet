@@ -285,6 +285,20 @@ func (ft EditableFormType) EditHTML(msg message.Message, vars message.EditHTMLVa
 		_, rmbundle, _ := strings.Cut(ft.PDFFile, "/")
 		fields["pdf-url"] = path.Join(vars.AssetBase, rmbundle)
 	}
+	// Define field widths for the HTML fields based on the PDF fields.
+	for f := range ft.AllFields() {
+		if f.Tag != "" && len(f.PDF) != 0 {
+			if pr, ok := f.PDF[0].Renderer.(formdef.TextRenderer); ok {
+				width := (pr.Rectangle.URX - pr.Rectangle.LLX) / (pr.FontSize / 12.0) / 12.0
+				s := fmt.Sprintf("width:%.2frem", width)
+				if f.Type == "multiline" {
+					height := (pr.Rectangle.URY - pr.Rectangle.LLY) / (pr.FontSize / 12.0) / 12.0
+					s += fmt.Sprintf(";height:%.2frem", height)
+				}
+				fields["w-"+f.Tag] = s
+			}
+		}
+	}
 	// Expand the templates in the form HTML, using the supplied fields.
 	htmlop.Expand(formHTML, fields)
 	// Fill in the form using the fields from the message.

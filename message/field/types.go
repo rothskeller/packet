@@ -35,9 +35,9 @@ func (f addressList) Validate(m msgifc.Message, fi msgifc.Field, flags msgifc.Va
 	return f.validateCustom(m, fi, flags)
 }
 
-func (f addressList) FromHuman(s string) string {
+func (f addressList) FromHuman(m msgifc.Message, s string) string {
 	if f.field.fromHumanFunc != nil {
-		return f.field.fromHumanFunc(s)
+		return f.field.fromHumanFunc(m, s)
 	}
 	if addrs, err := address.ParseList(s); err == nil {
 		strs := make([]string, len(addrs))
@@ -71,9 +71,9 @@ func ValidateFCCCallSign(m msgifc.Message, fi msgifc.Field, flags msgifc.Validat
 	return nil
 }
 
-func (f fccCallSign) FromHuman(s string) string {
+func (f fccCallSign) FromHuman(m msgifc.Message, s string) string {
 	if f.field.fromHumanFunc != nil {
-		return f.field.fromHumanFunc(s)
+		return f.field.fromHumanFunc(m, s)
 	}
 	return strings.ToUpper(strings.TrimSpace(s))
 }
@@ -108,9 +108,9 @@ func ValidateMessageID(m msgifc.Message, fi msgifc.Field, flags msgifc.ValidateF
 	return nil
 }
 
-func (f messageID) FromHuman(s string) string {
+func (f messageID) FromHuman(m msgifc.Message, s string) string {
 	if f.field.fromHumanFunc != nil {
-		return f.field.fromHumanFunc(s)
+		return f.field.fromHumanFunc(m, s)
 	}
 	s = strings.TrimSpace(s)
 	if prefix, seq, suffix, err := messageid.Decode(s, true, false); err == nil {
@@ -141,9 +141,9 @@ func ValidateTacticalCallSign(m msgifc.Message, fi msgifc.Field, flags msgifc.Va
 	return nil
 }
 
-func (f tacticalCallSign) FromHuman(s string) string {
+func (f tacticalCallSign) FromHuman(m msgifc.Message, s string) string {
 	if f.field.fromHumanFunc != nil {
-		return f.field.fromHumanFunc(s)
+		return f.field.fromHumanFunc(m, s)
 	}
 	return strings.ToUpper(strings.TrimSpace(s))
 }

@@ -38,7 +38,7 @@ func (lem *ConfigMessage) Fields() iter.Seq[field.Field] {
 					return m.(*ConfigMessage).Config.ActivationNum
 				}).MakeField(),
 			field.NewField("", "Operation Start").
-				ToHumanFunc(func(s string) string {
+				ToHumanFunc(func(_ message.Message, s string) string {
 					if t, err := time.ParseInLocation(time.RFC3339, s, time.Local); err == nil {
 						return t.Format("01/02/2006 15:04")
 					} else {
@@ -50,7 +50,7 @@ func (lem *ConfigMessage) Fields() iter.Seq[field.Field] {
 				}).
 				MakeField(),
 			field.NewField("", "Operation End").
-				ToHumanFunc(func(s string) string {
+				ToHumanFunc(func(_ message.Message, s string) string {
 					if t, err := time.ParseInLocation(time.RFC3339, s, time.Local); err == nil {
 						return t.Format("01/02/2006 15:04")
 					} else {
@@ -86,7 +86,7 @@ func (lem *ConfigMessage) Fields() iter.Seq[field.Field] {
 					return m.(*ConfigMessage).Config.RxMessageID
 				}).MakeField(),
 			field.NewField("", "Connection Type").
-				ToHumanFunc(func(s string) string {
+				ToHumanFunc(func(_ message.Message, s string) string {
 					switch s {
 					case incident.ConnectNone:
 						return "Manual"
@@ -116,7 +116,7 @@ func (lem *ConfigMessage) Fields() iter.Seq[field.Field] {
 					return m.(*ConfigMessage).Config.ConnectType == incident.ConnectNone
 				}).MakeField(),
 			field.NewField("", "TNC Type").
-				ToHumanFunc(func(s string) string {
+				ToHumanFunc(func(_ message.Message, s string) string {
 					switch s {
 					case incident.TNCKPC3Plus:
 						return "Kantronics KPC-3 Plus"

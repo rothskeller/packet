@@ -16,7 +16,7 @@ Available subcommands include:
   install  ⇥` + formsInstallSlug + `
   list     ⇥` + formsListSlug + `
 For help on a subcommand, run "packet forms help «command»".
-`
+` // Note, "reset" is not documented intentionally.
 )
 
 func cmdForms(args []string) (err error) {
@@ -39,6 +39,8 @@ func cmdForms(args []string) (err error) {
 		return cmdFormsInstall(args[1:])
 	case "list", "l":
 		return cmdFormsList(args[1:])
+	case "reset":
+		return cmdFormsReset(args[1:])
 	default:
 		return errors.NewF("No such command %q.", "forms "+args[0])
 	}

@@ -158,6 +158,7 @@ field 22t.
 
 field -
   label    Date/Time
+  type     dateTime
   children 22d. 22t.
   presence required
   help     "This is the date and time of the status report, in MM/DD/YYYY HH:MM format (24-hour clock).  It is required."

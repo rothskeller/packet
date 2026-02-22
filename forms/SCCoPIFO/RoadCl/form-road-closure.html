@@ -3,30 +3,27 @@
 <script type=text/javascript src={{assets}}/pack-it-forms.js></script>
 <title>Road Closure</title>
 <packet-form>
-  <form-roo form-title="Road Closure" paper-version="PDF: 20260207" omistyle="width:7.90rem" dmistyle="width:10.80rem"
-    rrstyle="width:17.72rem" rsstyle="width:17.74rem" opstyle="width:14.57rem" ocstyle="width:5.51rem"
-    odstyle="width:6.17rem" otstyle="width:2.58rem">
-    <form-dthtf to-ics-positions="Public Works Group; Construction &amp; Eng. Branch; Operations"
-      mdstyle="width:4.48rem" mtstyle="width:4.77rem" tostyle="width:13.27rem" frstyle="width:13.46rem"></form-dthtf>
+  <form-roo form-title="Road Closure" paper-version="PDF: 20260207">
+    <form-dthtf to-ics-positions="Public Works Group; Construction &amp; Eng. Branch; Operations"></form-dthtf>
     <div class=section>Initial Information</div>
     <div class="layout-pair">
       <div class=pair>
         <label for=20.>21. Jurisdiction:</label>
-        <jurisdiction-box name=20. style="width:34.83rem"></jurisdiction-box>
+        <jurisdiction-box id=20. name=20. style="{{w-20.}}"></jurisdiction-box>
       </div>
       <div class=pair>
         <label for=21.>22. Road/Intersection:</label>
-        <input id=21. name=21. required style="width:34.83rem">
+        <input id=21. name=21. required style="{{w-21.}}">
       </div>
     </div>
     <div class="layout-pair">
       <div class=pair>
         <label for=22.>23. Location:</label>
-        <textarea id=22. name=22. required style="width:41.67rem;height:5.35rem"></textarea>
+        <textarea id=22. name=22. required style="{{w-22.}}"></textarea>
       </div>
       <div class=pair>
         <label for=23.>24. Details:</label>
-        <textarea id=23. name=23. required style="width:41.67rem;height:5.36rem"></textarea>
+        <textarea id=23. name=23. required style="{{w-23.}}"></textarea>
       </div>
       <div class=pair>
         <div class=label>25. Status:</div>
@@ -41,19 +38,19 @@
     <div class="layout-grid" style="--columns: max-content 1fr max-content 1fr">
       <div class=pair>
         <label for=30d.>31. Closure Start Date:</label>
-        <input id=30d. name=30d. class=date style="width:12.86rem">
+        <input id=30d. name=30d. class=date style="{{w-30d.}}">
       </div>
       <div class=pair>
         <label for=30t.>32. Closure Start Time:</label>
-        <input id=30t. name=30t. class=time required-if=30d. else-disallowed style="width:12.56rem">
+        <input id=30t. name=30t. class=time required-if=30d. else-disallowed style="{{w-30t.}}">
       </div>
       <div class=pair>
         <label for=31d.>33. Closure End Date:</label>
-        <input id=31d. name=31d. class=date style="width:12.86rem">
+        <input id=31d. name=31d. class=date style="{{w-31d.}}">
       </div>
       <div class=pair>
         <label for=31t.>34. Closure End Time:</label>
-        <input id=31t. name=31t. class=time required-if=31d. else-disallowed style="width:12.56rem">
+        <input id=31t. name=31t. class=time required-if=31d. else-disallowed style="{{w-31t.}}">
       </div>
     </div>
   </form-roo>

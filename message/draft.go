@@ -123,7 +123,7 @@ func (m *DraftMessage) Fields() iter.Seq[msgifc.Field] {
 var draftToField = field.NewField("", "To Address").
 	Common(field.CHeaderTo).
 	ValueFunc(func(m Message) string { return m.To() }).
-	FromHumanFunc(func(s string) string {
+	FromHumanFunc(func(_ msgifc.Message, s string) string {
 		if addrs, err := address.ParseList(s); err == nil {
 			trim := make([]string, len(addrs))
 			for i := range addrs {

@@ -3,11 +3,8 @@
 <script type=text/javascript src={{assets}}/pack-it-forms.js></script>
 <title>CPOD Site Information Form</title>
 <packet-form>
-  <form-roo form-title="CPOD Site Information Form" paper-version="PDF: 20260207" omistyle="width:8.15rem"
-    dmistyle="width:11.19rem" rrstyle="width:17.81rem" rsstyle="width:17.67rem" opstyle="width:11.01rem"
-    ocstyle="width:6.33rem" odstyle="width:5.45rem" otstyle="width:6.11rem">
-    <form-dthtf to-ics-positions="CPOD Unit; Mass Care &amp; Emerg. Asst. Branch; Operations" mdstyle="width:4.48rem"
-      mtstyle="width:4.77rem" tostyle="width:13.27rem" frstyle="width:13.46rem"></form-dthtf>
+  <form-roo form-title="CPOD Site Information Form" paper-version="PDF: 20260207">
+    <form-dthtf to-ics-positions="CPOD Unit; Mass Care &amp; Emerg. Asst. Branch; Operations"></form-dthtf>
     <div class=section>Overview</div>
     <div class=layout-grid style="--columns: max-content 1fr max-content 1fr">
       <div class="pair colspan4">
@@ -16,18 +13,18 @@
       </div>
       <div class=pair>
         <label for=21d.>22. Prepared Date:</label>
-        <input id=21d. name=21d. class=date required style="width:14.55rem">
+        <input id=21d. name=21d. class=date required style="{{w-21d.}}">
       </div>
       <div class=pair>
         <label for=21t.>23. Prepared Time:</label>
-        <input id=21t. name=21t. class=time required style="width:13.61rem">
+        <input id=21t. name=21t. class=time required style="{{w-21t.}}">
       </div>
     </div>
     <div class=section>General Site Information</div>
     <div class=layout-grid style="--columns: repeat(3, max-content) 1fr">
       <div class="pair colspan4">
         <label for=22.>31. Site Name:</label>
-        <input id=22. name=22. required class=colspan3 style="width:37.83rem">
+        <input id=22. name=22. required class=colspan3 style="{{w-22.}}">
       </div>
       <div class="pair colspan4">
         <div class=label>32. CPOD Type:</div>
@@ -60,7 +57,7 @@
     <div class=layout-grid style="--columns: max-content 1fr max-content 1fr max-content max-content">
       <div class=pair>
         <label for=25a.>34. Address:</label>
-        <input id=25a. name=25a. required style="width:13.68rem">
+        <input id=25a. name=25a. required style="{{w-25a.}}">
       </div>
       <div class=pair>
         <label for=25c.>35. City:</label>
@@ -71,17 +68,17 @@
       </div>
       <div class=pair>
         <label for=25z.>36. ZIP code:</label>
-        <input id=25z. name=25z. class=zip-code style="width:4.04rem">
+        <input id=25z. name=25z. class=zip-code style="{{w-25z.}}">
       </div>
     </div>
     <div class=layout-pair>
       <div class=pair>
         <label for=26.>37. Police Jurisdiction and Division/Region:</label>
-        <input id=26. name=26. style="width:23.04rem">
+        <input id=26. name=26. style="{{w-26.}}">
       </div>
       <div class=pair>
         <label for=27.>38. Fire Department Jurisdiction and Division/Region:</label>
-        <input id=27. name=27. style="width:23.04rem">
+        <input id=27. name=27. style="{{w-27.}}">
       </div>
     </div>
     <div class=layout-pair>
@@ -95,22 +92,22 @@
       <div class="subgrid colspan4">
         <div class=pair>
           <label for=30.>41. Partner Point of Contact:</label>
-          <input id=30. name=30. style="width:10.87rem">
+          <input id=30. name=30. style="{{w-30.}}">
         </div>
         <div class=pair>
           <label for=31.>42. Site Point of Contact:</label>
-          <input id=31. name=31. style="width:11.43rem">
+          <input id=31. name=31. style="{{w-31.}}">
         </div>
       </div>
       <div class="section colspan4">Site Details</div>
       <div class="subgrid colspan4">
         <div class=pair>
           <label for=40.>51. Dimensions of Site in Feet:</label>
-          <input id=40. name=40. style="width:10.25rem">
+          <input id=40. name=40. style="{{w-40.}}">
         </div>
         <div class=pair>
           <label for=41.>52. Size of Site in Acres:</label>
-          <input id=41. name=41. style="width:11.90rem">
+          <input id=41. name=41. style="{{w-41.}}">
         </div>
       </div>
       <div class="pair colspan4">
@@ -139,7 +136,7 @@
         </div>
         <div class=pair>
           <label for=45.>56. Site Contact if Gate is Closed:</label>
-          <input id=45. name=45. style="width:8.36rem">
+          <input id=45. name=45. style="{{w-45.}}">
         </div>
       </div>
       <div class="pair colspan4">
@@ -195,15 +192,15 @@
     <div class=layout-grid style="--columns: max-content 1fr max-content 1fr">
       <div class=pair>
         <label for=60d.>71. Date Opened:</label>
-        <input id=60d. name=60d. class=date style="width:10.99rem">
+        <input id=60d. name=60d. class=date style="{{w-60d.}}">
       </div>
       <div class=pair>
         <label for=60t.>72. Time Opened:</label>
-        <input id=60t. name=60t. class=time required-if=60d. else-disallowed style="width:17.93rem">
+        <input id=60t. name=60t. class=time required-if=60d. else-disallowed style="{{w-60t.}}">
       </div>
       <div class=pair>
         <label for=61d.>73. Date Closed:</label>
-        <input id=61d. name=61d. class=date style="width:10.99rem">
+        <input id=61d. name=61d. class=date style="{{w-61d.}}">
       </div>
       <div class=pair>
         <label for=61t.>74. Time Closed:</label>
@@ -218,7 +215,7 @@
         <div class=layout-pair {{hidden-until}}>
           <div class=pair>
             <label for={{tag}}a.>{{fnum}}a. Type of Commodity:</label>
-            <input id={{tag}}a. name={{tag}}a. {{required}} style="width:29.67rem">
+            <input id={{tag}}a. name={{tag}}a. {{required}} style="{{w-70a.}}">
           </div>
         </div>
         <div class=layout-grid style="--columns: max-content 1fr max-content 1fr max-content 1fr" {{hidden-until}}>

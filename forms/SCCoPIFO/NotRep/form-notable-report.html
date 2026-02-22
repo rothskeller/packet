@@ -3,19 +3,16 @@
 <script type=text/javascript src={{assets}}/pack-it-forms.js></script>
 <title>Notable Report</title>
 <packet-form>
-  <form-roo form-title="Notable Report" paper-version="PDF: 20260207" omistyle="width:8.67rem" dmistyle="width:10.10rem"
-    rrstyle="width:17.81rem" rsstyle="width:17.67rem" opstyle="width:11.01rem" ocstyle="width:5.96rem"
-    odstyle="width:5.09rem" otstyle="width:6.85rem">
-    <form-dthtf to-ics-positions="Situational Analysis Unit; Common Operating Picture Spec.; Planning"
-      mdstyle="width:4.49rem" mtstyle="width:4.77rem" tostyle="width:12.76rem" frstyle="width:12.92rem"></form-dthtf>
+  <form-roo form-title="Notable Report" paper-version="PDF: 20260207">
+    <form-dthtf to-ics-positions="Situational Analysis Unit; Common Operating Picture Spec.; Planning"></form-dthtf>
     <div class=layout-grid style="--columns: max-content 1fr max-content 1fr">
       <div class=pair>
         <label for=20.>21. Jurisdiction:</label>
-        <jurisdiction-box name=20. style="width:15.42rem"></jurisdiction-box>
+        <jurisdiction-box id=20. name=20. style="{{w-20.}}"></jurisdiction-box>
       </div>
       <div class=pair>
         <label for=21.>22. Originator:</label>
-        <input name=21. required style="width:15.74rem">
+        <input id=21. name=21. required style="{{w-21.}}">
       </div>
     </div>
     <div class=layout-pair>
@@ -36,22 +33,22 @@
       </div>
       <div class=pair hidden-until="23.=Yes">
         <label for=25.>25. Name of the County Incident:</label>
-        <input id=25. name=25. allowed-if="23.=Yes" else-disallowed style="width:30.84rem">
+        <input id=25. name=25. allowed-if="23.=Yes" else-disallowed style="{{w-25.}}">
       </div>
     </div>
     <div class=section>Event Details</div>
     <div class=layout-grid style="--columns: max-content 1fr max-content 1fr">
       <div class="pair colspan4">
         <label for=30.>31. Title:</label>
-        <input id=30. name=30. required class=colspan3 style="width:39.93rem">
+        <input id=30. name=30. required class=colspan3 style="{{w-30.}}">
       </div>
       <div class=pair>
         <label for=31d.>32. Date:</label>
-        <input id=31d. name=31d. class=date required style="width:17.95rem">
+        <input id=31d. name=31d. class=date required style="{{w-31d.}}">
       </div>
       <div class=pair>
         <label for=31t.>33. Time:</label>
-        <input id=31t. name=31t. class=time required style="width:17.73rem">
+        <input id=31t. name=31t. class=time required style="{{w-31t.}}">
       </div>
     </div>
     <div class="border layout-vertical">
@@ -83,22 +80,22 @@
     <div class=layout-pair>
       <div class=pair>
         <label for=33.>35. Details:</label>
-        <textarea id=33. name=33. required style="width:39.11rem;height:3.03rem"></textarea>
+        <textarea id=33. name=33. required style="{{w-33.}}"></textarea>
       </div>
     </div>
     <div class=section>Contact Information</div>
     <div class=layout-grid style="--columns: max-content 1fr max-content 1fr">
       <div class=pair>
         <label for=40.>41. Point of Contact Name:</label>
-        <input id=40. name=40. style="width:11.14rem">
+        <input id=40. name=40. style="{{w-40.}}">
       </div>
       <div class=pair>
         <label for=41.>42. Contact Phone Number:</label>
-        <input id=41. name=41. class=phone-number style="width:10.76rem">
+        <input id=41. name=41. class=phone-number style="{{w-41.}}">
       </div>
       <div class="pair colspan4">
         <label for=42.>43. Contact Email:</label>
-        <input id=42. name=42. class=colspan3 style="width:33.18rem">
+        <input id=42. name=42. class=colspan3 style="{{w-42.}}">
       </div>
     </div>
     <div class=section>Event Expiration</div>
@@ -112,7 +109,7 @@
       </div>
       <div class=pair hidden-until="50.=Yes">
         <label for=51.>52. Date to Expire:</label>
-        <input id=51. name=51. class=date required-if="50.=Yes" else-disallowed style="width:14.25rem">
+        <input id=51. name=51. class=date required-if="50.=Yes" else-disallowed style="{{w-51.}}">
       </div>
     </div>
   </form-roo>

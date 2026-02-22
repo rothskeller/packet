@@ -48,11 +48,11 @@
     <div class=section-inline>Radio Operator Only:</div>
     <div class=pair>
       <label for=MsgNo>1. Origin Msg #:</label>
-      <input id=MsgNo name=MsgNo class=message-number required style={{omistyle}}>
+      <input id=MsgNo name=MsgNo class=message-number required style={{w-MsgNo}}>
     </div>
     <div class=pair>
       <label for=DestMsgNo>2. Destination Msg #:</label>
-      <input id=DestMsgNo name=DestMsgNo class=message-number disabled style={{dmistyle}}>
+      <input id=DestMsgNo name=DestMsgNo class=message-number disabled style={{w-DestMsgNo}}>
     </div>
   </div>
   <div class=border-thick>
@@ -63,29 +63,29 @@
     <div class=section-inline>Relay:</div>
     <div class=pair>
       <label for=OpRelayRcvd>Rcvd:</label>
-      <input id=OpRelayRcvd name=OpRelayRcvd style={{rrstyle}}>
+      <input id=OpRelayRcvd name=OpRelayRcvd style={{w-OpRelayRcvd}}>
     </div>
     <div class=pair>
       <label for=OpRelaySent>Sent:</label>
-      <input id=OpRelaySent name=OpRelaySent style={{rsstyle}}>
+      <input id=OpRelaySent name=OpRelaySent style={{w-OpRelaySent}}>
     </div>
   </div>
   <div id=form-footer-opinfo>
     <div class=pair>
       <label for=OpName>Name:</label>
-      <input id=OpName name=OpName required style={{opstyle}}>
+      <input id=OpName name=OpName required style={{w-OpName}}>
     </div>
     <div class=pair>
       <label for=OpCall>Call Sign:</label>
-      <input id=OpCall name=OpCall class=call-sign required style={{ocstyle}}>
+      <input id=OpCall name=OpCall class=call-sign required style={{w-OpCall}}>
     </div>
     <div class=pair>
       <label for=OpDate>Date:</label>
-      <input id=OpDate name=OpDate class=date style={{odstyle}}>
+      <input id=OpDate name=OpDate class=date style={{w-OpDate}}>
     </div>
     <div class=pair>
       <label for=OpTime>Time <span class=annotation>(24hr)</span>:</label>
-      <input id=OpTime name=OpTime class=time style={{otstyle}}>
+      <input id=OpTime name=OpTime class=time style={{w-OpTime}}>
     </div>
   </div>
 </def:form-roo>
@@ -96,11 +96,11 @@
   <div class=layout-grid style="--columns: max-content 1fr max-content 1fr max-content max-content">
     <div class=pair>
       <label for=1a.>3. Date:</label>
-      <input id=1a. name=1a. class=date required style={{mdstyle}}>
+      <input id=1a. name=1a. class=date required style={{w-1a.}}>
     </div>
     <div class=pair>
       <label for=1b.>4. Time:</label>
-      <input id=1b. name=1b. class=time required style={{mtstyle}}>
+      <input id=1b. name=1b. class=time required style={{w-1b.}}>
     </div>
     <div class=pair>
       <div class=label>5. Handling:</div>
@@ -132,28 +132,28 @@
     <div class=pair style="grid-area:2/2/3/4">
       <label for=7a.>6. ICS Position:</label>
       <if:to-ics-positions>
-        <combo-box name=7a. required options={{to-ics-positions}} style={{tostyle}}></combo-box>
+        <combo-box name=7a. required options={{to-ics-positions}} style={{w-7a.}}></combo-box>
       </if:to-ics-positions>
       <ifnot:to-ics-positions>
-        <input id=7a. name=7a. required style={{tostyle}}>
+        <input id=7a. name=7a. required style={{w-7a.}}>
       </ifnot:to-ics-positions>
     </div>
     <div class=pair style="grid-area:3/2/4/4">
       <label for=7b.>7. Location:</label>
       <if:to-ics-locations>
-        <combo-box name=7b. required options={{to-ics-locations}} style={{tostyle}}></combo-box>
+        <combo-box name=7b. required options={{to-ics-locations}} style={{w-7b.}}></combo-box>
       </if:to-ics-locations>
       <ifnot:to-ics-locations>
-        <input id=7b. name=7b. required style={{tostyle}}>
+        <input id=7b. name=7b. required style={{w-7b.}}>
       </ifnot:to-ics-locations>
     </div>
     <div class=pair style="grid-area:4/2/5/4">
       <label for=7c.>8. Name:</label>
-      <input id=7c. name=7c. style={{tostyle}}>
+      <input id=7c. name=7c. style={{w-7c.}}>
     </div>
     <div class=pair style="grid-area:5/2/6/4">
       <label for=7d.>9. Contact Info:</label>
-      <input id=7d. name=7d. style={{tostyle}}>
+      <input id=7d. name=7d. style={{w-7d.}}>
     </div>
     <if:show-addrs>
       <div class=pair style="grid-area:1/5/2/7">
@@ -163,19 +163,19 @@
     </if:show-addrs>
     <div class=pair style="grid-area:2/5/3/7">
       <label for=8a.>10. ICS Position:</label>
-      <input id=8a. name=8a. required style={{frstyle}}>
+      <input id=8a. name=8a. required style={{w-8a.}}>
     </div>
     <div class=pair style="grid-area:3/5/4/7">
       <label for=8b.>11. Location:</label>
-      <input id=8b. name=8b. required style={{frstyle}}>
+      <input id=8b. name=8b. required style={{w-8b.}}>
     </div>
     <div class=pair style="grid-area:4/5/5/7">
       <label for=8c.>12. Name:</label>
-      <input id=8c. name=8c. style={{frstyle}}>
+      <input id=8c. name=8c. style={{w-8c.}}>
     </div>
     <div class=pair style="grid-area:5/5/6/7">
       <label for=8d.>13. Contact Info:</label>
-      <input id=8d. name=8d. style={{frstyle}}>
+      <input id=8d. name=8d. style={{w-8d.}}>
     </div>
   </div>
 </def:form-dthtf>

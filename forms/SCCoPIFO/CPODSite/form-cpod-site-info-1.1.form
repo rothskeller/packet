@@ -5,19 +5,20 @@ title    CPOD Site Information Form
 indef    a CPOD site information form
 create   CPODSite cs
 pdfFile  CPOD_Site_Information_v20260207.pdf
+deftext  FT Times-Roman FS 12.0 MS 8.0 LH 1.15 A lF WR f CL t C 000099
 
 field MsgNo originMessageID
   label    "1. Origin Message Number"
   type     messageID
   presence required
   help     "This is the message number assigned to the message by the origin station.  Valid message numbers have the form XXX-###P, where XXX is the three-character message number prefix assigned to the station, ### is a sequence number (any number of digits), and P is an optional suffix letter.  This field is required."
-  pdf      text L 227.00 R 324.76 B 713.00 T 730.96 BL 718.32
-  pdf      text P 2 L 444.48 R 565.20 B 711.60 T 752.88 BL 723.11
+  pdf      text L 229.00 R 324.76 B 713.00 T 730.96 BL 718.32
+  pdf      text P 2 L 446.48 R 565.20 B 711.60 T 752.88 BL 723.11
 
 field DestMsgNo destinationMessageID
   label    "2. Destination Message Number"
   type     messageID
-  pdf      text L 430.52 R 564.76 B 713.00 T 730.96 BL 718.32
+  pdf      text L 432.52 R 564.76 B 713.00 T 730.96 BL 718.32
 
 field 1a. messageDate
   label    "3. Message Date"
@@ -31,10 +32,10 @@ field 1b. messageTime
   type     time
   presence required
   help     "This is the time the message was written, in HH:MM format (24-hour clock).  It is required."
-  pdf      text L 179.12 R 236.32 B 658.88 T 678.76 BL 665.04
+  pdf      text L 181.12 R 236.32 B 658.88 T 678.76 BL 665.04
 
 field -
-  label    "Message Date/Time"
+  label    "3-4. Message Date/Time"
   type     dateTime
   children 1a. 1b.
   presence required
@@ -62,7 +63,7 @@ field 7a. toICSPosition
   presence required
   width    30
   help     "This is the ICS position to which the message is addressed.  It is required."
-  pdf      text L 140.12 R 299.32 B 640.88 T 653.92 BL 643.68
+  pdf      text L 142.12 R 299.32 B 640.88 T 653.92 BL 643.68
 
 field 7b. toLocation
   label    "7. To Location"
@@ -70,45 +71,45 @@ field 7b. toLocation
   presence required
   width    32
   help     "This is the location of the recipient ICS position.  It is required."
-  pdf      text L 140.12 R 299.32 B 622.88 T 635.92 BL 625.68
+  pdf      text L 142.12 R 299.32 B 622.88 T 635.92 BL 625.68
 
 field 7c.
   label    "8. To Name"
   width    34
   help     "This is the name of the person holding the recipient ICS position.  It is optional and rarely provided."
-  pdf      text L 140.12 R 299.32 B 604.88 T 617.92 BL 607.68
+  pdf      text L 142.12 R 299.32 B 604.88 T 617.92 BL 607.68
 
 field 7d.
   label    "9. To Contact Info"
   width    29
   help     "This is contact information (phone number, email, etc.) for the receipient.  It is optional and rarely provided."
-  pdf      text L 140.12 R 299.32 B 582.68 T 599.92 BL 587.64
+  pdf      text L 142.12 R 299.32 B 582.68 T 599.92 BL 587.64
 
 field 8a. fromICSPosition
   label    "10. From ICS Position"
   presence required
   width    30
   help     "This is the ICS position of the message author.  It is required."
-  pdf      text L 401.96 R 563.44 B 640.88 T 653.92 BL 643.68
+  pdf      text L 403.96 R 563.44 B 640.88 T 653.92 BL 643.68
 
 field 8b. fromLocation
   label    "11. From Location"
   presence required
   width    32
   help     "This is the location of the message author.  It is required."
-  pdf      text L 401.96 R 563.44 B 622.88 T 635.92 BL 625.68
+  pdf      text L 403.96 R 563.44 B 622.88 T 635.92 BL 625.68
 
 field 8c.
   label    "12. From Name"
   width    34
   help     "This is the name of the message author.  It is optional and rarely provided."
-  pdf      text L 401.96 R 563.44 B 604.88 T 617.92 BL 607.68
+  pdf      text L 403.96 R 563.44 B 604.88 T 617.92 BL 607.68
 
 field 8d.
   label    "13. From Contact Info"
   width    29
   help     "This is contact information (phone number, email, etc.) for the message author.  It is optional and rarely provided."
-  pdf      text L 401.96 R 563.44 B 582.68 T 599.92 BL 587.64
+  pdf      text L 403.96 R 563.44 B 582.68 T 599.92 BL 587.64
 
 field 20.
   label    "21. Jurisdiction"
@@ -131,24 +132,24 @@ field 20.
   choice   County unincorporated
   presence required
   help     "This is the name of the jurisdiction responsible for the CPOD.  It is required."
-  pdf      text L 129.20 R 563.44 B 546.20 T 559.84 BL 549.24
+  pdf      text L 131.20 R 563.44 B 546.20 T 559.84 BL 549.24
 
 field 21d. formDate
   label    "22. Prepared Date"
   type     date
   presence required
   help     "This is the date when the form was prepared.  It is required."
-  pdf      text L 129.20 R 303.76 B 527.72 T 541.24 BL 530.76
+  pdf      text L 131.20 R 303.76 B 527.72 T 541.24 BL 530.76
 
 field 21t.
   label    "23. Prepared Time"
   type     time
   presence required
   help     "This is the time when the form was prepared.  It is required."
-  pdf      text L 400.16 R 563.44 B 527.72 T 541.24 BL 530.76
+  pdf      text L 402.16 R 563.44 B 527.72 T 541.24 BL 530.76
 
 field -
-  label    Prepared
+  label    "22-23. Prepared Date/Time"
   type     dateTime
   children 21d. 21t.
   presence required
@@ -159,16 +160,16 @@ field 22. messageSummary
   presence required
   width    80
   help     "This is the name of the CPOD site.  It is required."
-  pdf      text L 109.52 R 563.44 B 491.60 T 505.24 BL 494.76
+  pdf      text L 111.52 R 563.44 B 491.60 T 505.24 BL 494.76
 
 field 23.
   label    "32. CPOD Type"
   type     restricted
-  mchoice  "Type I" "a. Type I"
-  mchoice  "Type II" "b. Type II"
-  mchoice  "Type III" "c. Type III"
-  mchoice  "LSA" "d. LSA"
-  mchoice  "Non-CPOD Distribution Point" "e. Non-CPOD Distribution Point"
+  mchoice  "Type I" a. Type I
+  mchoice  "Type II" b. Type II
+  mchoice  "Type III" c. Type III
+  mchoice  LSA d. LSA
+  mchoice  "Non-CPOD Distribution Point" e. Non-CPOD Distribution Point
   presence required
   help     "This is the type of CPOD.  It is required."
   pdf      if 23.="Type I" then circle X 119.82 Y 481.20 R 2.90
@@ -180,11 +181,11 @@ field 23.
 field 24.
   label    "33. Status"
   type     restricted
-  mchoice  "Activated" "a. Activated"
-  mchoice  "Pending Activation" "b. Pending Activation"
-  mchoice  "Pending Demobilization" "c. Pending Demobilization"
-  mchoice  "Demobilization" "d. Demobilization"
-  mchoice  "Not Activated" "e. Not Activated"
+  mchoice  Activated a. Activated
+  mchoice  "Pending Activation" b. Pending Activation
+  mchoice  "Pending Demobilization" c. Pending Demobilization
+  mchoice  Demobilization d. Demobilization
+  mchoice  "Not Activated" e. Not Activated
   presence required
   help     "This is the status of the CPOD.  It is required."
   pdf      if 24.=Activated then circle X 263.64 Y 449.10 R 2.84
@@ -198,64 +199,64 @@ field 25a.
   presence required
   width    35
   help     "This is the street address of the CPOD site.  It is required."
-  pdf      text L  99.20 R 263.32 B 409.16 T 422.56 BL 412.20
+  pdf      text L 101.20 R 263.32 B 409.16 T 422.56 BL 412.20
 
 field 25c.
   label    "35. City"
   presence required
   width    31
   help     "This is the city portion of the address of the CPOD site.  It is required."
-  pdf      text L 309.44 R 447.76 B 409.16 T 422.56 BL 412.20
+  pdf      text L 311.44 R 447.76 B 409.16 T 422.56 BL 412.20
 
 field 25z.
   label    "36. ZIP Code"
   type     zipCode
   width    10
   help     "This is the ZIP code of the address of the CPOD site."
-  pdf      text L 515.00 R 563.44 B 409.16 T 422.56 BL 412.20
+  pdf      text L 517.00 R 563.44 B 409.16 T 422.56 BL 412.20
 
 field 26.
   label    "37. Police Jurisdiction"
   width    59
   help     "This is the police department, and division or region if applicable, with jurisdiction over the CPOD site."
-  pdf      text L 287.00 R 563.44 B 390.68 T 404.20 BL 393.72
+  pdf      text L 289.00 R 563.44 B 390.68 T 404.20 BL 393.72
 
 field 27.
   label    "38. Fire Jurisdiction"
   width    59
   help     "This is the fire department, and division or region if applicable, with jurisdiction over the CPOD site."
-  pdf      text L 287.00 R 563.44 B 372.08 T 385.72 BL 375.24
+  pdf      text L 289.00 R 563.44 B 372.08 T 385.72 BL 375.24
 
 field 28. defaultBody
   label    "39. Additional Information"
   type     multiline
   width    80
   help     "This is any additional pertinent information regarding the CPOD and its site."
-  pdf      text L 167.48 R 563.44 B 341.60 T 367.24 BL 357.36
+  pdf      text L 169.48 R 563.44 B 341.60 T 367.24 BL 357.36
 
 field 30.
   label    "41. Partner Point of Contact"
   width    28
   help     "This is the name and contact information of the contact person with the partner operating the CPOD."
-  pdf      text L 173.36 R 303.76 B 305.72 T 319.12 BL 308.64
+  pdf      text L 175.36 R 303.76 B 305.72 T 319.12 BL 308.64
 
 field 31.
   label    "42. Site Point of Contact"
   width    31
   help     "This is the name and contact information of the contact person responsible for the site hosting the CPOD."
-  pdf      text L 426.32 R 563.44 B 305.72 T 319.12 BL 308.64
+  pdf      text L 428.32 R 563.44 B 305.72 T 319.12 BL 308.64
 
 field 40.
   label    "51. Dimensions of Site in Feet"
   width    27
   help     "This is the dimensions of the CPOD site, in feet (e.g. \"200x150\")."
-  pdf      text L 180.80 R 303.76 B 270.08 T 283.12 BL 272.88
+  pdf      text L 182.80 R 303.76 B 270.08 T 283.12 BL 272.88
 
 field 41.
   label    "52. Size of Site in Acres"
   width    32
   help     "This is the size of the CPOD site in acres."
-  pdf      text L 420.68 R 563.44 B 270.08 T 283.12 BL 272.88
+  pdf      text L 422.68 R 563.44 B 270.08 T 283.12 BL 272.88
 
 field 42a.
   label    "53a. Access: Concrete"
@@ -312,13 +313,13 @@ field 45.
   label    "56. Site Contact if Gate is Closed"
   width    23
   help     "This gives the name and contact information of the person to contact for access if the gate is closed."
-  pdf      text L 463.16 R 563.44 B 216.08 T 229.60 BL 219.12
+  pdf      text L 465.16 R 563.44 B 216.08 T 229.60 BL 219.12
 
 field 46.
   label    "57. Location of Driveway(s)"
   width    82
   help     "This gives the locations of all driveways into the site."
-  pdf      text L 170.00 R 563.44 B 198.32 T 211.60 BL 203.16
+  pdf      text L 172.00 R 563.44 B 198.32 T 211.60 BL 203.16
 
 field 47.
   label    "58. Spike Strips at any of the driveways"
@@ -388,7 +389,7 @@ field 51.
   type     multiline
   width    80
   help     "This gives details of the perimeter fencing."
-  pdf      text P 2 L 184.16 R 563.44 B 685.52 T 708.64 BL 700.08
+  pdf      text P 2 L 186.16 R 563.44 B 685.52 T 708.64 BL 700.08
 
 field 52a.
   label    "63a. Accessibility: Wheelchair access"
@@ -420,16 +421,16 @@ field 60d.
   label    "71. Date Opened"
   type     date
   help     "This is the date on which the CPOD site opened or will open."
-  pdf      text P 2 L 127.04 R 258.88 B 601.52 T 615.04 BL 604.56
+  pdf      text P 2 L 129.04 R 258.88 B 601.52 T 615.04 BL 604.56
 
 field 60t.
   label    "72. Time Opened"
   type     time
   help     "This is the time of day when the CPOD site opened or will open."
-  pdf      text P 2 L 348.32 R 563.44 B 601.52 T 615.04 BL 604.56
+  pdf      text P 2 L 350.32 R 563.44 B 601.52 T 615.04 BL 604.56
 
 field -
-  label    "Date/Time Opened"
+  label    "71-72. Date/Time Opened"
   type     dateTime
   children 60d. 60t.
   help     "This is the date and time when the CPOD site opened or will open, in MM/DD/YYYY HH:MM format (24-hour clock).  It is required."
@@ -438,16 +439,16 @@ field 61d.
   label    "73. Date Closed"
   type     date
   help     "This is the date on which the CPOD site closed or will close."
-  pdf      text P 2 L 127.04 R 258.88 B 583.52 T 597.04 BL 586.56
+  pdf      text P 2 L 129.04 R 258.88 B 583.52 T 597.04 BL 586.56
 
 field 61t.
   label    "74. Time Closed"
   type     time
   help     "This is the time of day when the CPOD site closed or will close."
-  pdf      text P 2 L 348.32 R 563.44 B 583.52 T 597.04 BL 586.56
+  pdf      text P 2 L 350.32 R 563.44 B 583.52 T 597.04 BL 586.56
 
 field -
-  label    "Date/Time Closed"
+  label    "73-74. Date/Time Closed"
   type     dateTime
   children 61d. 61t.
   help     "This is the date and time when the CPOD site closed or will close, in MM/DD/YYYY HH:MM format (24-hour clock).  It is required."
@@ -457,7 +458,7 @@ field 70a.
   presence required
   width    999
   help     "This is the type of a commodity distributed at the CPOD site."
-  pdf      text P 2 L 207.44 R 563.44 B 533.12 T 556.00 BL 547.56
+  pdf      text P 2 L 209.44 R 563.44 B 533.12 T 556.00 BL 547.56
 
 field 70b.
   label    "81b. Item 1: Starting Quantity"
@@ -465,7 +466,7 @@ field 70b.
   presence required
   width    4
   help     "This is the quantity of the commodity that the CPOD site had when it opened.  It is required."
-  pdf      text P 2 L 197.12 R 246.64 B 515.12 T 528.64 BL 518.16
+  pdf      text P 2 L 199.12 R 246.64 B 515.12 T 528.64 BL 518.16
 
 field 70c.
   label    "81c. Item 1: Qty Distributed"
@@ -473,7 +474,7 @@ field 70c.
   presence required
   width    4
   help     "This is the quantity of the commodity that the CPOD site has distributed to visitors.  It is required."
-  pdf      text P 2 L 351.20 R 410.08 B 515.12 T 528.64 BL 518.16
+  pdf      text P 2 L 353.20 R 410.08 B 515.12 T 528.64 BL 518.16
 
 field 70d.
   label    "81d. Item 1: Qty Available"
@@ -481,14 +482,14 @@ field 70d.
   presence required
   width    4
   help     "This is the quantity of the commodity that the CPOD site has available for distribution.  It is required."
-  pdf      text P 2 L 506.72 R 563.44 B 515.12 T 528.64 BL 518.16
+  pdf      text P 2 L 508.72 R 563.44 B 515.12 T 528.64 BL 518.16
 
 field 71a.
   label    "82a. Item 2: Type of Commodity"
   presence if 70a. then optional else blocked
   width    999
   help     "This is the type of a commodity distributed at the CPOD site."
-  pdf      text P 2 L 206.72 R 563.44 B 486.80 T 509.68 BL 501.24
+  pdf      text P 2 L 208.72 R 563.44 B 486.80 T 509.68 BL 501.24
 
 field 71b.
   label    "82b. Item 2: Starting Quantity"
@@ -496,7 +497,7 @@ field 71b.
   presence if 71a. then required else blocked
   width    4
   help     "This is the quantity of the commodity that the CPOD site had when it opened.  It is required."
-  pdf      text P 2 L 196.40 R 246.64 B 468.80 T 482.32 BL 471.84
+  pdf      text P 2 L 198.40 R 246.64 B 468.80 T 482.32 BL 471.84
 
 field 71c.
   label    "82c. Item 2: Qty Distributed"
@@ -504,7 +505,7 @@ field 71c.
   presence if 71a. then required else blocked
   width    4
   help     "This is the quantity of the commodity that the CPOD site has distributed to visitors.  It is required."
-  pdf      text P 2 L 350.24 R 410.08 B 468.80 T 482.32 BL 471.84
+  pdf      text P 2 L 352.24 R 410.08 B 468.80 T 482.32 BL 471.84
 
 field 71d.
   label    "82d. Item 2: Qty Available"
@@ -512,14 +513,14 @@ field 71d.
   presence if 71a. then required else blocked
   width    4
   help     "This is the quantity of the commodity that the CPOD site has available for distribution.  It is required."
-  pdf      text P 2 L 506.00 R 563.44 B 468.80 T 482.32 BL 471.84
+  pdf      text P 2 L 508.00 R 563.44 B 468.80 T 482.32 BL 471.84
 
 field 72a.
   label    "83a. Item 3: Type of Commodity"
   presence if 71a. then optional else blocked
   width    999
   help     "This is the type of a commodity distributed at the CPOD site."
-  pdf      text P 2 L 206.72 R 563.44 B 440.48 T 463.36 BL 454.92
+  pdf      text P 2 L 208.72 R 563.44 B 440.48 T 463.36 BL 454.92
 
 field 72b.
   label    "83b. Item 3: Starting Quantity"
@@ -527,7 +528,7 @@ field 72b.
   presence if 72a. then required else blocked
   width    4
   help     "This is the quantity of the commodity that the CPOD site had when it opened.  It is required."
-  pdf      text P 2 L 196.40 R 246.64 B 422.48 T 436.00 BL 425.52
+  pdf      text P 2 L 198.40 R 246.64 B 422.48 T 436.00 BL 425.52
 
 field 72c.
   label    "83c. Item 3: Qty Distributed"
@@ -535,7 +536,7 @@ field 72c.
   presence if 72a. then required else blocked
   width    4
   help     "This is the quantity of the commodity that the CPOD site has distributed to visitors.  It is required."
-  pdf      text P 2 L 350.24 R 410.08 B 422.48 T 436.00 BL 425.52
+  pdf      text P 2 L 352.24 R 410.08 B 422.48 T 436.00 BL 425.52
 
 field 72d.
   label    "83d. Item 3: Qty Available"
@@ -543,14 +544,14 @@ field 72d.
   presence if 72a. then required else blocked
   width    4
   help     "This is the quantity of the commodity that the CPOD site has available for distribution.  It is required."
-  pdf      text P 2 L 506.00 R 563.44 B 422.48 T 436.00 BL 425.52
+  pdf      text P 2 L 508.00 R 563.44 B 422.48 T 436.00 BL 425.52
 
 field 73a.
   label    "84a. Item 4: Type of Commodity"
   presence if 72a. then optional else blocked
   width    999
   help     "This is the type of a commodity distributed at the CPOD site."
-  pdf      text P 2 L 206.72 R 563.44 B 393.92 T 417.04 BL 408.48
+  pdf      text P 2 L 208.72 R 563.44 B 393.92 T 417.04 BL 408.48
 
 field 73b.
   label    "84b. Item 4: Starting Quantity"
@@ -558,7 +559,7 @@ field 73b.
   presence if 73a. then required else blocked
   width    4
   help     "This is the quantity of the commodity that the CPOD site had when it opened.  It is required."
-  pdf      text P 2 L 196.40 R 246.64 B 375.92 T 389.68 BL 379.08
+  pdf      text P 2 L 198.40 R 246.64 B 375.92 T 389.68 BL 379.08
 
 field 73c.
   label    "84c. Item 4: Qty Distributed"
@@ -566,7 +567,7 @@ field 73c.
   presence if 73a. then required else blocked
   width    4
   help     "This is the quantity of the commodity that the CPOD site has distributed to visitors.  It is required."
-  pdf      text P 2 L 350.24 R 410.08 B 375.92 T 389.68 BL 379.08
+  pdf      text P 2 L 352.24 R 410.08 B 375.92 T 389.68 BL 379.08
 
 field 73d.
   label    "84d. Item 4: Qty Available"
@@ -574,14 +575,14 @@ field 73d.
   presence if 73a. then required else blocked
   width    4
   help     "This is the quantity of the commodity that the CPOD site has available for distribution.  It is required."
-  pdf      text P 2 L 506.00 R 563.44 B 375.92 T 389.68 BL 379.08
+  pdf      text P 2 L 508.00 R 563.44 B 375.92 T 389.68 BL 379.08
 
 field 74a.
   label    "85a. Item 5: Type of Commodity"
   presence if 73a. then optional else blocked
   width    999
   help     "This is the type of a commodity distributed at the CPOD site."
-  pdf      text P 2 L 206.72 R 563.44 B 347.60 T 370.72 BL 362.16
+  pdf      text P 2 L 208.72 R 563.44 B 347.60 T 370.72 BL 362.16
 
 field 74b.
   label    "85b. Item 5: Starting Quantity"
@@ -589,7 +590,7 @@ field 74b.
   presence if 74a. then required else blocked
   width    4
   help     "This is the quantity of the commodity that the CPOD site had when it opened.  It is required."
-  pdf      text P 2 L 196.40 R 246.64 B 329.60 T 343.36 BL 332.76
+  pdf      text P 2 L 198.40 R 246.64 B 329.60 T 343.36 BL 332.76
 
 field 74c.
   label    "85c. Item 5: Qty Distributed"
@@ -597,22 +598,22 @@ field 74c.
   presence if 74a. then required else blocked
   width    4
   help     "This is the quantity of the commodity that the CPOD site has distributed to visitors.  It is required."
-  pdf      text P 2 L 350.24 R 410.08 B 329.60 T 343.36 BL 332.76
+  pdf      text P 2 L 352.24 R 410.08 B 329.60 T 343.36 BL 332.76
 
 field 74d.
   label    "85d. Item 5: Qty Available"
   type     cardinalNumber
   presence if 74a. then required else blocked
   width    4
-  pdf      text P 2 L 506.00 R 563.44 B 329.60 T 343.36 BL 332.76
   help     "This is the quantity of the commodity that the CPOD site has available for distribution.  It is required."
+  pdf      text P 2 L 508.00 R 563.44 B 329.60 T 343.36 BL 332.76
 
 field 75a.
   label    "86a. Item 6: Type of Commodity"
   presence if 74a. then optional else blocked
   width    999
   help     "This is the type of a commodity distributed at the CPOD site."
-  pdf      text P 2 L 206.72 R 563.44 B 301.28 T 324.40 BL 315.84
+  pdf      text P 2 L 208.72 R 563.44 B 301.28 T 324.40 BL 315.84
 
 field 75b.
   label    "86b. Item 6: Starting Quantity"
@@ -620,7 +621,7 @@ field 75b.
   presence if 75a. then required else blocked
   width    4
   help     "This is the quantity of the commodity that the CPOD site had when it opened.  It is required."
-  pdf      text P 2 L 193.76 R 246.64 B 283.28 T 297.04 BL 286.44
+  pdf      text P 2 L 195.76 R 246.64 B 283.28 T 297.04 BL 286.44
 
 field 75c.
   label    "86c. Item 6: Qty Distributed"
@@ -628,22 +629,22 @@ field 75c.
   presence if 75a. then required else blocked
   width    4
   help     "This is the quantity of the commodity that the CPOD site has distributed to visitors.  It is required."
-  pdf      text P 2 L 350.24 R 410.08 B 283.28 T 297.04 BL 286.44
+  pdf      text P 2 L 352.24 R 410.08 B 283.28 T 297.04 BL 286.44
 
 field 75d.
   label    "86d. Item 6: Qty Available"
   type     cardinalNumber
   presence if 75a. then required else blocked
   width    4
-  pdf      text P 2 L 506.00 R 563.44 B 283.28 T 297.04 BL 286.44
   help     "This is the quantity of the commodity that the CPOD site has available for distribution.  It is required."
+  pdf      text P 2 L 508.00 R 563.44 B 283.28 T 297.04 BL 286.44
 
 field 76a.
   label    "87a. Item 7: Type of Commodity"
   presence if 75a. then optional else blocked
   width    999
   help     "This is the type of a commodity distributed at the CPOD site."
-  pdf      text P 2 L 206.72 R 563.44 B 254.96 T 278.08 BL 269.40
+  pdf      text P 2 L 208.72 R 563.44 B 254.96 T 278.08 BL 269.40
 
 field 76b.
   label    "87b. Item 7: Starting Quantity"
@@ -651,7 +652,7 @@ field 76b.
   presence if 76a. then required else blocked
   width    4
   help     "This is the quantity of the commodity that the CPOD site had when it opened.  It is required."
-  pdf      text P 2 L 196.40 R 246.64 B 236.96 T 250.72 BL 240.12
+  pdf      text P 2 L 198.40 R 246.64 B 236.96 T 250.72 BL 240.12
 
 field 76c.
   label    "87c. Item 7: Qty Distributed"
@@ -659,7 +660,7 @@ field 76c.
   presence if 76a. then required else blocked
   width    4
   help     "This is the quantity of the commodity that the CPOD site has distributed to visitors.  It is required."
-  pdf      text P 2 L 350.24 R 410.08 B 236.96 T 250.72 BL 240.12
+  pdf      text P 2 L 352.24 R 410.08 B 236.96 T 250.72 BL 240.12
 
 field 76d.
   label    "87d. Item 7: Qty Available"
@@ -667,14 +668,14 @@ field 76d.
   presence if 76a. then required else blocked
   width    4
   help     "This is the quantity of the commodity that the CPOD site has available for distribution.  It is required."
-  pdf      text P 2 L 506.00 R 563.44 B 236.96 T 250.72 BL 240.12
+  pdf      text P 2 L 508.00 R 563.44 B 236.96 T 250.72 BL 240.12
 
 field 77a.
   label    "88a.. Item 8: Type of Commodity"
   presence if 76a. then optional else blocked
   width    999
   help     "This is the type of a commodity distributed at the CPOD site."
-  pdf      text P 2 L 206.72 R 563.44 B 208.64 T 231.76 BL 223.08
+  pdf      text P 2 L 208.72 R 563.44 B 208.64 T 231.76 BL 223.08
 
 field 77b.
   label    "88b. Item 8: Starting Quantity"
@@ -682,7 +683,7 @@ field 77b.
   presence if 77a. then required else blocked
   width    4
   help     "This is the quantity of the commodity that the CPOD site had when it opened.  It is required."
-  pdf      text P 2 L 196.40 R 246.64 B 190.64 T 204.16 BL 193.68
+  pdf      text P 2 L 198.40 R 246.64 B 190.64 T 204.16 BL 193.68
 
 field 77c.
   label    "88c. Item 8: Qty Distributed"
@@ -690,7 +691,7 @@ field 77c.
   presence if 77a. then required else blocked
   width    4
   help     "This is the quantity of the commodity that the CPOD site has distributed to visitors.  It is required."
-  pdf      text P 2 L 350.24 R 410.08 B 190.64 T 204.16 BL 193.68
+  pdf      text P 2 L 352.24 R 410.08 B 190.64 T 204.16 BL 193.68
 
 field 77d.
   label    "88d. Item 8: Qty Available"
@@ -698,29 +699,29 @@ field 77d.
   presence if 77a. then required else blocked
   width    4
   help     "This is the quantity of the commodity that the CPOD site has available for distribution.  It is required."
-  pdf      text P 2 L 506.00 R 563.44 B 190.64 T 204.16 BL 193.68
+  pdf      text P 2 L 508.00 R 563.44 B 190.64 T 204.16 BL 193.68
 
 field OpRelayRcvd
   label    "Operator: Relay Received"
   width    36
   help     "This is the name of the station from which this message was directly received.  It is filled in for messages that go through a relay station."
-  pdf      text P 2 L 106.88 R 320.56 B 146.96 T 161.44 BL 150.48
+  pdf      text P 2 L 108.88 R 320.56 B 146.96 T 161.44 BL 150.48
 
 field OpRelaySent
   label    "Operator: Relay Sent"
   width    36
   help     "This is the name of the station to which this message was directly sent.  It is filled in for messages that go through a relay station."
-  pdf      text P 2 L 352.88 R 564.88 B 146.96 T 161.44 BL 150.48
+  pdf      text P 2 L 354.88 R 564.88 B 146.96 T 161.44 BL 150.48
 
 field OpName operatorName
   label    "Operator: Name"
   presence required
-  pdf      text P 2 L  72.80 R 204.88 B 128.00 T 142.48 BL 131.52
+  pdf      text P 2 L  74.80 R 204.88 B 128.00 T 142.48 BL 131.52
 
 field OpCall operatorCall
   label    "Operator: Call Sign"
   presence required
-  pdf      text P 2 L 254.96 R 330.88 B 128.00 T 142.48 BL 131.52
+  pdf      text P 2 L 256.96 R 330.88 B 128.00 T 142.48 BL 131.52
 
 field -
   label    Operator
@@ -730,12 +731,12 @@ field -
 field OpDate operatorDate
   label    "Operator: Date"
   type     date
-  pdf      text P 2 L 364.40 R 429.76 B 128.00 T 142.48 BL 131.52
+  pdf      text P 2 L 366.40 R 429.76 B 128.00 T 142.48 BL 131.52
 
 field OpTime operatorTime
   label    "Operator: Time"
   type     time
-  pdf      text P 2 L 491.60 R 564.88 B 128.00 T 142.48 BL 131.52
+  pdf      text P 2 L 493.60 R 564.88 B 128.00 T 142.48 BL 131.52
 
 field -
   label    "Operator: Date/Time"

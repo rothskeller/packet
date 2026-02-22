@@ -5,35 +5,36 @@ title    Damage Assessment Form
 indef    a damage assessment form
 create   DmgAsmt d
 pdfFile  Damage_Assessment_v20260207.pdf
+deftext  FT Times-Roman FS 12.0 MS 8.0 LH 1.15 A lF WR f CL t C 000099
 
 field MsgNo originMessageID
   label    "1. Origin Message Number"
   type     messageID
   presence required
   help     "This is the message number assigned to the message by the origin station.  Valid message numbers have the form XXX-###P, where XXX is the three-character message number prefix assigned to the station, ### is a sequence number (any number of digits), and P is an optional suffix letter.  This field is required."
-  pdf      text L 231.20 R 303.76 B 712.88 T 730.96 BL 718.08
+  pdf      text L 233.20 R 303.76 B 712.88 T 730.96 BL 718.08
 
 field DestMsgNo destinationMessageID
   label    "2. Destination Message Number"
   type     messageID
-  pdf      text L 412.04 R 564.88 B 712.88 T 730.96 BL 718.08
+  pdf      text L 414.04 R 564.88 B 712.88 T 730.96 BL 718.08
 
 field 1a. messageDate
   label    "3. Message Date"
   type     date
   presence required
   help     "This is the date the message was written, in MM/DD/YYYY format.  It is required."
-  pdf      text L  79.04 R 132.88 B 658.88 T 678.64 BL 665.04
+  pdf      text L  81.04 R 132.88 B 658.88 T 678.64 BL 665.04
 
 field 1b. messageTime
   label    "4. Message Time"
   type     time
   presence required
   help     "This is the time the message was written, in HH:MM format (24-hour clock).  It is required."
-  pdf      text L 179.12 R 236.32 B 658.88 T 678.64 BL 665.04
+  pdf      text L 181.12 R 236.32 B 658.88 T 678.64 BL 665.04
 
 field -
-  label    "Message Date/Time"
+  label    "3-4. Message Date/Time"
   type     dateTime
   children 1a. 1b.
   presence required
@@ -49,8 +50,8 @@ field 5. handling
   presence required
   help     "This is the message handling order, which specifies how fast it needs to be delivered.  Allowed values are \"ROUTINE\" (within 2 hours), \"PRIORITY\" (within 1 hour), and \"IMMEDIATE\".  This field is required."
   pdf      if 5.=IMMEDIATE then circle X 309.72 Y 669.06 R 2.60
-  pdf      if 5.=PRIORITY then  circle X 406.86 Y 669.06 R 2.66
-  pdf      if 5.=ROUTINE then   circle X 487.92 Y 669.06 R 2.60
+  pdf      if 5.=PRIORITY then circle X 406.86 Y 669.06 R 2.66
+  pdf      if 5.=ROUTINE then circle X 487.92 Y 669.06 R 2.60
 
 field 7a. toICSPosition
   label    "6. To ICS Position"
@@ -61,7 +62,7 @@ field 7a. toICSPosition
   presence required
   width    30
   help     "This is the ICS position to which the message is addressed.  It is required."
-  pdf      text L 146.12 R 299.20 B 640.88 T 653.92 BL 643.20
+  pdf      text L 148.12 R 299.20 B 640.88 T 653.92 BL 643.20
 
 field 7b. toLocation
   label    "7. To Location"
@@ -69,45 +70,45 @@ field 7b. toLocation
   presence required
   width    32
   help     "This is the location of the recipient ICS position.  It is required."
-  pdf      text L 146.12 R 299.20 B 622.88 T 635.92 BL 625.20
+  pdf      text L 148.12 R 299.20 B 622.88 T 635.92 BL 625.20
 
 field 7c.
   label    "8. To Name"
   width    34
   help     "This is the name of the person holding the recipient ICS position.  It is optional and rarely provided."
-  pdf      text L 146.12 R 299.20 B 604.88 T 617.92 BL 607.20
+  pdf      text L 148.12 R 299.20 B 604.88 T 617.92 BL 607.20
 
 field 7d.
   label    "9. To Contact Info"
   width    29
   help     "This is contact information (phone number, email, etc.) for the receipient.  It is optional and rarely provided."
-  pdf      text L 146.12 R 299.20 B 582.80 T 599.92 BL 587.28
+  pdf      text L 148.12 R 299.20 B 582.80 T 599.92 BL 587.28
 
 field 8a. fromICSPosition
   label    "10. From ICS Position"
   presence required
   width    30
   help     "This is the ICS position of the message author.  It is required."
-  pdf      text L 408.68 R 563.68 B 640.88 T 653.92 BL 643.20
+  pdf      text L 410.68 R 563.68 B 640.88 T 653.92 BL 643.20
 
 field 8b. fromLocation
   label    "11. From Location"
   presence required
   width    32
   help     "This is the location of the message author.  It is required."
-  pdf      text L 408.68 R 563.68 B 622.88 T 635.92 BL 625.20
+  pdf      text L 410.68 R 563.68 B 622.88 T 635.92 BL 625.20
 
 field 8c.
   label    "12. From Name"
   width    34
   help     "This is the name of the message author.  It is optional and rarely provided."
-  pdf      text L 408.68 R 563.68 B 604.88 T 617.92 BL 607.20
+  pdf      text L 410.68 R 563.68 B 604.88 T 617.92 BL 607.20
 
 field 8d.
   label    "13. From Contact Info"
   width    29
   help     "This is contact information (phone number, email, etc.) for the message author.  It is optional and rarely provided."
-  pdf      text L 408.68 R 563.68 B 582.80 T 599.92 BL 587.28
+  pdf      text L 410.68 R 563.68 B 582.80 T 599.92 BL 587.28
 
 field 20.
   label    "21. Jurisdiction"
@@ -130,45 +131,45 @@ field 20.
   choice   County unincorporated
   presence required
   help     "This is the name of the jurisdiction originating the damage report.  It is required."
-  pdf      text L 114.20 R 299.92 B 545.84 T 559.36 BL 548.88
+  pdf      text L 116.20 R 299.92 B 545.84 T 559.36 BL 548.88
 
 field 21.
   label    "22. Incident Name"
   presence required
   width    37
   help     "This is the name of the incident that caused the damage being reported.  It is required."
-  pdf      text L 396.08 R 563.68 B 545.84 T 559.36 BL 548.88
+  pdf      text L 398.08 R 563.68 B 545.84 T 559.36 BL 548.88
 
 field 22. messageSummary
   label    "23. Address"
   presence required
   width    22
   help     "This is the street address of the property whose damage is being reported.  It is required."
-  pdf      text L 114.20 R 299.92 B 527.60 T 540.88 BL 532.32
+  pdf      text L 116.20 R 299.92 B 527.60 T 540.88 BL 532.32
 
 field 23.
   label    "24. Unit/Suite"
   width    37
   help     "This is the unit number or suite number of the property whose damage is being reported, if applicable."
-  pdf      text L 396.08 R 563.68 B 527.60 T 540.88 BL 532.32
+  pdf      text L 398.08 R 563.68 B 527.60 T 540.88 BL 532.32
 
 field 24.
   label    "25. Type of Structure"
   type     restricted
-  mchoice  "Single Family" "a. Single Family"
-  mchoice  "Multi-Family" "b. Multi-Family"
-  mchoice  "Mobile Home" "c. Mobile Home"
-  mchoice  "Business" "d. Business"
-  mchoice  "Non-Profit Orgs" "e. Non-Profit Orgs"
-  mchoice  "Outbuilding" "f. Outbuilding"
+  mchoice  "Single Family" a. Single Family
+  mchoice  Multi-Family b. Multi-Family
+  mchoice  "Mobile Home" c. Mobile Home
+  mchoice  Business d. Business
+  mchoice  "Non-Profit Orgs" e. Non-Profit Orgs
+  mchoice  Outbuilding f. Outbuilding
   presence required
   help     "This is the type of structure that sustained damage.  It is required."
-  pdf      if 24.="Single Family" then   circle X 155.46 Y 517.14 R 2.90
-  pdf      if 24.="Mobile Home" then     circle X 263.46 Y 517.14 R 2.90
+  pdf      if 24.="Single Family" then circle X 155.46 Y 517.14 R 2.90
+  pdf      if 24.="Mobile Home" then circle X 263.46 Y 517.14 R 2.90
   pdf      if 24.="Non-Profit Orgs" then circle X 371.46 Y 517.14 R 2.90
-  pdf      if 24.=Multi-Family then      circle X 155.52 Y 501.48 R 2.84
-  pdf      if 24.=Business then          circle X 263.52 Y 501.48 R 2.84
-  pdf      if 24.=Outbuilding then       circle X 371.52 Y 501.48 R 2.84
+  pdf      if 24.=Multi-Family then circle X 155.52 Y 501.48 R 2.84
+  pdf      if 24.=Business then circle X 263.52 Y 501.48 R 2.84
+  pdf      if 24.=Outbuilding then circle X 371.52 Y 501.48 R 2.84
 
 field 25.
   label    "26. Number of Stories"
@@ -176,7 +177,7 @@ field 25.
   presence required
   width    4
   help     "This is the number of stories of the building that sustained damage.  It is required."
-  pdf      text L 146.24 R 563.68 B 464.00 T 477.04 BL 466.80
+  pdf      text L 148.24 R 563.68 B 464.00 T 477.04 BL 466.80
 
 field 26.
   label    "27. Own/Rent"
@@ -184,7 +185,7 @@ field 26.
   choice   Own
   choice   Rent
   help     "This indicates whether the property is owned or rented by its residents."
-  pdf      if 26.=Own then  circle X 155.52 Y 452.76 R 2.84
+  pdf      if 26.=Own then circle X 155.52 Y 452.76 R 2.84
   pdf      if 26.=Rent then circle X 299.52 Y 452.76 R 2.84
 
 field 27a.
@@ -223,42 +224,42 @@ field -
 field 28.
   label    "29. Basement Type"
   type     restricted
-  mchoice  "Basement" "a. Basement"
-  mchoice  "Crawlspace" "b. Crawlspace"
-  mchoice  "Basement and Crawlspace" "c. Basement and Crawlspace"
-  mchoice  "N/A" "d. N/A"
+  mchoice  Basement a. Basement
+  mchoice  Crawlspace b. Crawlspace
+  mchoice  "Basement and Crawlspace" c. Basement and Crawlspace
+  mchoice  N/A d. N/A
   presence required
   help     "This indicates whether the property has a basement and/or crawlspace.  It is required."
-  pdf      if 28.=Basement then                  circle X 155.52 Y 403.32 R 2.84
+  pdf      if 28.=Basement then circle X 155.52 Y 403.32 R 2.84
   pdf      if 28.="Basement and Crawlspace" then circle X 335.52 Y 403.32 R 2.84
-  pdf      if 28.=Crawlspace then                circle X 155.52 Y 387.96 R 2.84
-  pdf      if 28.=N/A then                       circle X 335.52 Y 387.96 R 2.84
+  pdf      if 28.=Crawlspace then circle X 155.52 Y 387.96 R 2.84
+  pdf      if 28.=N/A then circle X 335.52 Y 387.96 R 2.84
 
 field 29.
   label    "30. Damage Classification"
   type     restricted
-  mchoice  "Destroyed" "a. Destroyed"
-  mchoice  "Major" "b. Major"
-  mchoice  "Minor" "c. Minor"
-  mchoice  "Affected" "d. Affected"
-  mchoice  "No Visible Damage" "e. No Visible Damage"
+  mchoice  Destroyed a. Destroyed
+  mchoice  Major b. Major
+  mchoice  Minor c. Minor
+  mchoice  Affected d. Affected
+  mchoice  "No Visible Damage" e. No Visible Damage
   help     "This indicates the level of damage to the property.  It is required."
-  pdf      if 29.=Destroyed then           circle X 119.46 Y 357.96 R 2.66
-  pdf      if 29.=Minor then               circle X 227.46 Y 357.96 R 2.66
+  pdf      if 29.=Destroyed then circle X 119.46 Y 357.96 R 2.66
+  pdf      if 29.=Minor then circle X 227.46 Y 357.96 R 2.66
   pdf      if 29.="No Visible Damage" then circle X 371.46 Y 357.96 R 2.66
-  pdf      if 29.=Major then               circle X 119.46 Y 342.42 R 2.90
-  pdf      if 29.=Affected then            circle X 227.46 Y 342.42 R 2.90
+  pdf      if 29.=Major then circle X 119.46 Y 342.42 R 2.90
+  pdf      if 29.=Affected then circle X 227.46 Y 342.42 R 2.90
 
 field 30.
   label    "31. Tag"
   type     restricted
-  mchoice  "Green" "a. Green Tagged"
-  mchoice  "Yellow" "b. Yellow Tagged"
-  mchoice  "Red" "c. Red Tagged"
+  mchoice  Green a. Green Tagged
+  mchoice  Yellow b. Yellow Tagged
+  mchoice  Red c. Red Tagged
   help     "This indicates what building department occupancy tag has been placed on the property, if any."
-  pdf      if 30.=Green then  circle X 119.46 Y 325.14 R 2.54
+  pdf      if 30.=Green then circle X 119.46 Y 325.14 R 2.54
   pdf      if 30.=Yellow then circle X 227.46 Y 325.14 R 2.54
-  pdf      if 30.=Red then    circle X 371.46 Y 325.14 R 2.54
+  pdf      if 30.=Red then circle X 371.46 Y 325.14 R 2.54
 
 field 31.
   label    "32. Insurance"
@@ -267,57 +268,57 @@ field 31.
   choice   No
   help     "This indicates whether the property damage is insured, if known."
   pdf      if 31.=Yes then circle X 119.46 Y 307.14 R 2.90
-  pdf      if 31.=No then  circle X 191.46 Y 307.14 R 2.90
+  pdf      if 31.=No then circle X 191.46 Y 307.14 R 2.90
 
 field 32.
   label    "33. Estimated Damage"
   type     cardinalNumber
   width    8
   help     "This indicates the estimated damage cost to the property, in dollars, if known."
-  pdf      text L 429.08 R 563.68 B 300.32 T 313.36 BL 302.88
+  pdf      text L 431.08 R 563.68 B 300.32 T 313.36 BL 302.88
 
 field 33. defaultBody
   label    "34. Comments"
   type     multiline
   width    108
   help     "This gives additional comments about the damage to the property."
-  pdf      text L 111.44 R 563.68 B 232.16 T 295.36 BL 286.80
+  pdf      text L 113.44 R 563.68 B 232.16 T 295.36 BL 286.80
 
 field 34.
   label    "35. Contact Name"
   presence required
   width    999
   help     "This gives the name of the contact person for this damage report.  It is required."
-  pdf      text L 127.76 R 304.48 B 204.08 T 227.20 BL 218.64
+  pdf      text L 129.76 R 304.48 B 204.08 T 227.20 BL 218.64
 
 field 35.
   label    "36. Contact Phone"
   type     phoneNumber
   presence required
   help     "This gives the phone number of the contact person for this damage report.  It is required."
-  pdf      text L 400.40 R 563.68 B 204.08 T 227.20 BL 218.64
+  pdf      text L 402.40 R 563.68 B 204.08 T 227.20 BL 218.64
 
 field OpRelayRcvd
   label    "Operator: Relay Received"
   width    36
   help     "This is the name of the station from which this message was directly received.  It is filled in for messages that go through a relay station."
-  pdf      text L 106.88 R 320.56 B 160.40 T 174.88 BL 163.92
+  pdf      text L 108.88 R 320.56 B 160.40 T 174.88 BL 163.92
 
 field OpRelaySent
   label    "Operator: Relay Sent"
   width    36
   help     "This is the name of the station to which this message was directly sent.  It is filled in for messages that go through a relay station."
-  pdf      text L 352.88 R 569.20 B 160.40 T 174.88 BL 163.92
+  pdf      text L 354.88 R 569.20 B 160.40 T 174.88 BL 163.92
 
 field OpName operatorName
   label    "Operator: Name"
   presence required
-  pdf      text L  72.80 R 236.32 B 141.68 T 155.92 BL 144.96
+  pdf      text L  74.80 R 236.32 B 141.68 T 155.92 BL 144.96
 
 field OpCall operatorCall
   label    "Operator: Call Sign"
   presence required
-  pdf      text L 286.28 R 365.44 B 141.68 T 155.92 BL 144.96
+  pdf      text L 288.28 R 365.44 B 141.68 T 155.92 BL 144.96
 
 field -
   label    Operator
@@ -327,12 +328,12 @@ field -
 field OpDate operatorDate
   label    "Operator: Date"
   type     date
-  pdf      text L 399.20 R 447.76 B 141.68 T 155.92 BL 144.96
+  pdf      text L 401.20 R 447.76 B 141.68 T 155.92 BL 144.96
 
 field OpTime operatorTime
   label    "Operator: Time"
   type     time
-  pdf      text L 509.60 R 569.20 B 141.68 T 155.92 BL 144.96
+  pdf      text L 511.60 R 569.20 B 141.68 T 155.92 BL 144.96
 
 field -
   label    "Operator: Date/Time"

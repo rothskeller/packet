@@ -3,28 +3,25 @@
 <script type=text/javascript src={{assets}}/pack-it-forms.js></script>
 <title>Resource Request</title>
 <packet-form>
-  <form-roo form-title="Resource Request" paper-version="PDF: 20260207" omistyle="width:9.40rem"
-    dmistyle="width:9.67rem" rrstyle="width:17.81rem" rsstyle="width:17.65rem" opstyle="width:10.24rem"
-    ocstyle="width:7.05rem" odstyle="width:5.08rem" otstyle="width:6.47rem">
-    <form-dthtf to-ics-positions="Resource Status &amp; Tracking Unit; Supply Branch; Logistics" mdstyle="width:4.48rem"
-      mtstyle="width:4.77rem" tostyle="width:13.57rem" frstyle="width:13.46rem"></form-dthtf>
+  <form-roo form-title="Resource Request" paper-version="PDF: 20260207">
+    <form-dthtf to-ics-positions="Resource Status &amp; Tracking Unit; Supply Branch; Logistics"></form-dthtf>
     <div class=section>Resource Order</div>
     <div class=layout-grid style="--columns: max-content 1fr max-content 1fr">
       <div class="pair colspan4">
         <label for=20.>21. Title:</label>
-        <input id=20. name=20. required class=colspan3 style="width:37.42rem">
+        <input id=20. name=20. required class=colspan3 style="{{w-20.}}">
       </div>
       <div class="pair colspan4">
         <label for=21.>22. Jurisdiction:</label>
-        <jurisdiction-box name=21. class=colspan3 style="width:37.42rem"></jurisdiction-box>
+        <jurisdiction-box id=21. name=21. class=colspan3 style="{{w-21.}}"></jurisdiction-box>
       </div>
       <div class=pair>
         <label for=22d.>23. Date:</label>
-        <input name=22d. class=date required style="width:15.64rem">
+        <input id=22t. name=22d. class=date required style="{{w-22t.}}">
       </div>
       <div class=pair>
         <label for=22t.>24. Time:</label>
-        <input name=22t. class=time required style="width:17.46rem">
+        <input id=22t. name=22t. class=time required style="{{w-22t.}}">
       </div>
     </div>
     <div class=layout-pair>
@@ -35,17 +32,17 @@
             <div class=layout-grid style="--columns: max-content 1fr max-content max-content">
               <div class=pair>
                 <label for={{id}}n.>3{{n}}a. Item Name:</label>
-                <input name={{id}}n. {{required}} style="width:19.56rem">
+                <input name={{id}}n. {{required}} style="{{w-23n.}}">
               </div>
               <div class=pair>
                 <label for={{id}}q.>3{{n}}b. Quantity Requested:</label>
-                <input name={{id}}q. class=cardinal-number required-if={{id}}n. else-disallowed style="width:2.57rem">
+                <input name={{id}}q. class=cardinal-number required-if={{id}}n. else-disallowed style="{{w-23q.}}">
               </div>
             </div>
             <div class=layout-pair>
               <div class=pair>
                 <label for={{id}}d.>3{{n}}c. Description:</label>
-                <textarea name={{id}}d. style="width:32.63rem;height:2.62rem" allowed-if={{id}}n.></textarea>
+                <textarea name={{id}}d. style="{{w-23d.}}" allowed-if={{id}}n.></textarea>
               </div>
             </div>
             <div class=layout-pair>
@@ -83,38 +80,38 @@
     <div class=layout-grid style="--columns: max-content 1fr max-content 1fr">
       <div class=pair>
         <label for=40.>51. Requested By Name:</label>
-        <input id=40. name=40. required style="width:11.28rem">
+        <input id=40. name=40. required style="{{w-40.}}">
       </div>
       <div class="border colspan2">
         <label style="margin-left:0"><input type=checkbox name=40s. value=checked>52. with signature</label>
       </div>
       <div class=pair>
         <label for=41.>53. Requested By Phone:</label>
-        <input id=41. name=41. class=phone-number required style="width:11.28rem">
+        <input id=41. name=41. class=phone-number required style="{{w-41.}}">
       </div>
       <div class=pair>
         <label for=42.>54. Requested By Email:</label>
-        <input id=42. name=42. required style="width:11.84rem">
+        <input id=42. name=42. required style="{{w-42.}}">
       </div>
       <div class="pair colspan4">
         <label for=43.>55. Requested By Position:</label>
-        <input id=43. name=43. class=colspan3 required style="width:33.08rem">
+        <input id=43. name=43. class=colspan3 required style="{{w-43.}}">
       </div>
     </div>
     <div class=section>Incident Details</div>
     <div class=layout-pair>
       <div class=pair>
         <label for=51.>61. Name of the Jurisdiction's incident:</label>
-        <input id=51. name=51. style="width:28.47rem">
+        <input id=51. name=51. style="{{w-51.}}">
       </div>
       <div class=pair>
         <label for=53.>62. Name of the County's incident:</label>
-        <input id=53. name=53. style="width:28.47rem">
+        <input id=53. name=53. style="{{w-53.}}">
       </div>
     </div>
     <div class=section>Comments</div>
     <div class=border>
-      <textarea name=60. style="width:43.57rem;height:8.62rem"></textarea>
+      <textarea name=60. style="{{w-60.}}"></textarea>
     </div>
   </form-roo>
 </packet-form>

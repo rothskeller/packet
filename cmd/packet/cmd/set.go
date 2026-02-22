@@ -111,14 +111,14 @@ func cmdSet(args []string) (err error) {
 			}
 			width, _ = fld.EditSize()
 			_, value, err = c.EditField(
-				fld.Label(), 0, fld.ToHuman(fld.Value(msg)), width, choices, fld.EditHelp(), fld.EditHint(), fld.Multiline(), fld.Obscured(),
-				func(s string) string { return fld.ToHuman(fld.FromHuman(s)) })
+				fld.Label(), 0, fld.ToHuman(msg, fld.Value(msg)), width, choices, fld.EditHelp(), fld.EditHint(), fld.Multiline(), fld.Obscured(),
+				func(s string) string { return fld.ToHuman(msg, fld.FromHuman(msg, s)) })
 			if err != nil {
 				return err
 			}
 		}
 		// Either way, apply the value.
-		fld.SetValue(msg, fld.FromHuman(value))
+		fld.SetValue(msg, fld.FromHuman(msg, value))
 		// Check for any new problems.
 		for f := range msg.Fields() {
 			if err := f.Validate(msg, f, 0); err != nil && err.Error() != problems[f] {
