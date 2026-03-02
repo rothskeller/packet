@@ -20,20 +20,19 @@ import (
 // defaults is true, default values from the incident configuration override
 // values provided in the message; otherwise, it's the other way around.  The
 // function returns the ident of the corresponding new log entry.
-func (i *Incident) AddDraftMessage(msg *message.DraftMessage, defaults bool) (ident int, err error) {
+func (i *Incident) AddDraftMessage(msg *message.DraftMessage, defaults bool) (le *LogEntry, err error) {
 	var (
-		le       LogEntry
 		handling string
 	)
 	// The new message might be a receipt.  Those are handled specially.
 	switch msg.Type() {
 	case receipt.ReadReceipt:
-		return 0, errors.New("This software does not support sending read receipts, only receiving them.")
+		return nil, errors.New("This software does not support sending read receipts, only receiving them.")
 	case receipt.DeliveryReceipt:
 		return i.addDraftDeliveryReceipt(msg)
 	}
 	// Create a log entry and assign a local message ID.
-	le = LogEntry{
+	le = &LogEntry{
 		Ident:  i.nextLogIdent(),
 		Index:  len(i.Log),
 		Seq:    i.Seq,
@@ -75,7 +74,7 @@ func (i *Incident) AddDraftMessage(msg *message.DraftMessage, defaults bool) (id
 		case field.COriginMessageID:
 			if le.LocalMsgID = f.Value(msg); le.LocalMsgID == "" {
 				if le.LocalMsgID, err = i.nextMessageID(true); err != nil {
-					return 0, err
+					return nil, err
 				}
 				f.SetValue(msg, le.LocalMsgID)
 			}
@@ -118,20 +117,20 @@ func (i *Incident) AddDraftMessage(msg *message.DraftMessage, defaults bool) (id
 	// If we still don't have a local message ID, assign one.
 	if le.LocalMsgID == "" {
 		if le.LocalMsgID, err = i.nextMessageID(true); err != nil {
-			return 0, err
+			return nil, err
 		}
 		msg.Subject().SetSubjectMessageID(le.LocalMsgID)
 		le.FromMsgID = le.LocalMsgID
 	}
 	le.Subject = msg.Subject().EncodedSubject()
 	// Save the message.
-	if err = i.saveMessage(msg, &le); err != nil {
-		return 0, err
+	if err = i.saveMessage(msg, le); err != nil {
+		return nil, err
 	}
-	i.Log = append(i.Log, &le)
+	i.Log = append(i.Log, le)
 	i.sortLog()
 	slog.Info("create draft message", "id", le.Ident, "lid", le.LocalMsgID, "s", msg.Subject().EncodedSubject())
-	return le.Ident, nil
+	return le, nil
 }
 
 func maybeSetValue(msg *message.DraftMessage, f field.Field, value string, defaults bool) {
@@ -140,9 +139,9 @@ func maybeSetValue(msg *message.DraftMessage, f field.Field, value string, defau
 	}
 }
 
-func (i *Incident) addDraftDeliveryReceipt(dr *message.DraftMessage) (ident int, err error) {
+func (i *Incident) addDraftDeliveryReceipt(dr *message.DraftMessage) (le *LogEntry, err error) {
 	// Create a log entry and assign a local message ID.
-	var le = LogEntry{
+	le = &LogEntry{
 		Ident:      i.nextLogIdent(),
 		Index:      len(i.Log),
 		Seq:        i.Seq,
@@ -156,13 +155,13 @@ func (i *Incident) addDraftDeliveryReceipt(dr *message.DraftMessage) (ident int,
 		le.ToCall = addressToLogCall(addrs[0])
 	}
 	// Save the message.
-	if err = i.saveMessage(dr, &le); err != nil {
-		return 0, err
+	if err = i.saveMessage(dr, le); err != nil {
+		return nil, err
 	}
-	i.Log = append(i.Log, &le)
+	i.Log = append(i.Log, le)
 	i.sortLog()
 	slog.Info("create draft receipt", "id", le.Ident, "s", dr.Subject().EncodedSubject())
-	return le.Ident, nil
+	return le, nil
 }
 
 // UpdateDraftMessage saves changes to an existing DraftMessage in the incident.

@@ -44,7 +44,7 @@ func (s *Server) servePostManualReceive(w http.ResponseWriter, r *http.Request) 
 			if drid, err := i.AddDraftMessage(dr, false); err != nil {
 				return fmt.Errorf("queueing delivery receipt: %s", err)
 			} else {
-				w.Header().Set("X-Packet-Action", fmt.Sprintf("manual-send:%d", drid))
+				w.Header().Set("X-Packet-Action", fmt.Sprintf("manual-send:%d", drid.Ident))
 			}
 		}
 		return nil
@@ -184,7 +184,7 @@ func (s *Server) servePostMakeReceipt(w http.ResponseWriter, r *http.Request) {
 	var (
 		dir  string
 		id   int
-		drid int
+		drle *incident.LogEntry
 		err  error
 	)
 	// Get the message from the incident and make sure it's proper.
@@ -200,7 +200,7 @@ func (s *Server) servePostMakeReceipt(w http.ResponseWriter, r *http.Request) {
 			return err
 		} else if dr, err := i.MakeDeliveryReceipt(msg, le); err != nil {
 			return err
-		} else if drid, err = i.AddDraftMessage(dr, false); err != nil {
+		} else if drle, err = i.AddDraftMessage(dr, false); err != nil {
 			return err
 		}
 		return nil
@@ -209,6 +209,6 @@ func (s *Server) servePostMakeReceipt(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
-	w.Header().Set("X-Packet-Action", fmt.Sprintf("manual-send:%d", drid))
+	w.Header().Set("X-Packet-Action", fmt.Sprintf("manual-send:%d", drle.Ident))
 	w.WriteHeader(http.StatusNoContent)
 }

@@ -73,13 +73,13 @@ field 7b. toLocation
   help     "This is the location of the recipient ICS position.  It is required."
   pdf      text L 136.72 R 293.20 B 651.44 T 666.16 BL 655.08
 
-field 7c.
+field 7c. toName
   label    "8. To Name"
   width    34
   help     "This is the name of the person holding the recipient ICS position.  It is optional and rarely provided."
   pdf      text L 136.72 R 293.20 B 632.24 T 646.96 BL 635.88
 
-field 7d.
+field 7d. toContact
   label    "9. To Contact Info"
   width    29
   help     "This is contact information (phone number, email, etc.) for the receipient.  It is optional and rarely provided."
@@ -99,13 +99,13 @@ field 8b. fromLocation
   help     "This is the location of the message author.  It is required."
   pdf      text L 402.52 R 575.08 B 651.44 T 666.16 BL 655.08
 
-field 8c.
+field 8c. fromName
   label    "12. From Name"
   width    34
   help     "This is the name of the message author.  It is optional and rarely provided."
   pdf      text L 402.52 R 575.08 B 632.24 T 646.96 BL 635.88
 
-field 8d.
+field 8d. fromContact
   label    "13. From Contact Info"
   width    29
   help     "This is contact information (phone number, email, etc.) for the message author.  It is optional and rarely provided."

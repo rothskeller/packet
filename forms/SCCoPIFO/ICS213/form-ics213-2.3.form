@@ -92,13 +92,13 @@ field 9a. toLocation
   help     "This is the location of the recipient ICS position.  It is required."
   pdf      text L  63.28 R 283.96 B 571.52 T 587.44 BL 575.71
 
-field ToName
+field ToName toName
   label    "To Name"
   width    40
   help     "This is the name of the person holding the recipient ICS position.  It is optional and rarely provided."
   pdf      text L  63.28 R 283.36 B 536.60 T 551.32 BL 540.43
 
-field ToTel
+field ToTel toContact
   label    "To Telephone"
   width    40
   help     "This is the telephone number for the receipient.  It is optional and rarely provided."
@@ -119,13 +119,13 @@ field 9b. fromLocation
   help     "This is the location of the message author.  It is required."
   pdf      text L 341.08 R 565.60 B 571.04 T 587.44 BL 575.71
 
-field FmName
+field FmName fromName
   label    "From Name"
   width    40
   help     "This is the name of the message author.  It is optional and rarely provided."
   pdf      text L 341.08 R 565.60 B 537.08 T 551.32 BL 540.43
 
-field FmTel
+field FmTel fromContact
   label    "From Telephone"
   width    40
   help     "This is the telephone number for the message author.  It is optional and rarely provided."
@@ -227,4 +227,3 @@ field -
   label    "Operator: Date/Time"
   type     dateTime
   children OpDate OpTime
-  presence required

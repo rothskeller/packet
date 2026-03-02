@@ -3,6 +3,7 @@ package cmd
 import (
 	"io"
 	"os"
+	"strings"
 
 	"github.com/rothskeller/packet/cmd/packet/cio"
 	"github.com/rothskeller/packet/errors"
@@ -25,6 +26,7 @@ var errNoChange = errors.New("don't write incident: no change was made")
 func cmdDump(args []string) (err error) {
 	var (
 		msg message.Message
+		txt string
 	)
 	flags := pflag.NewFlagSet("dump", pflag.ContinueOnError)
 	flags.Usage = func() {} // we do our own
@@ -52,6 +54,10 @@ func cmdDump(args []string) (err error) {
 	}); err != nil && err != errNoChange {
 		return err
 	}
-	io.WriteString(os.Stdout, msg.RFC5322())
+	txt = msg.RFC5322()
+	io.WriteString(os.Stdout, txt)
+	if !strings.HasSuffix(txt, "\n") {
+		io.WriteString(os.Stdout, "\n")
+	}
 	return nil
 }

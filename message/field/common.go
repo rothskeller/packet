@@ -7,8 +7,10 @@ const (
 	CDefaultBody          = "defaultBody"
 	CDestinationMessageID = "destinationMessageID"
 	CFormDate             = "formDate"
+	CFromContact          = "fromContact"
 	CFromICSPosition      = "fromICSPosition"
 	CFromLocation         = "fromLocation"
+	CFromName             = "fromName"
 	CHandling             = "handling"
 	CHeaderDate           = "headerDate"
 	CHeaderFrom           = "headerFrom"
@@ -32,8 +34,10 @@ const (
 	CSubjectSummary       = "subjectSummary"
 	CTacticalCall         = "tacticalCall"
 	CTacticalName         = "tacticalName"
+	CToContact            = "toContact"
 	CToICSPosition        = "toICSPosition"
 	CToLocation           = "toLocation"
+	CToName               = "toName"
 	CUseTactical          = "useTactical"
 )
 
@@ -42,8 +46,10 @@ var CommonTags = sets.New(
 	CDefaultBody,
 	CDestinationMessageID,
 	CFormDate,
+	CFromContact,
 	CFromICSPosition,
 	CFromLocation,
+	CFromName,
 	CHandling,
 	CHeaderDate,
 	CHeaderFrom,
@@ -67,7 +73,9 @@ var CommonTags = sets.New(
 	CSubjectSummary,
 	CTacticalCall,
 	CTacticalName,
+	CToContact,
 	CToICSPosition,
 	CToLocation,
+	CToName,
 	CUseTactical,
 )

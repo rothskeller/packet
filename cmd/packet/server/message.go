@@ -35,7 +35,7 @@ func (s *Server) serveGetNewMessage(w http.ResponseWriter, r *http.Request) {
 		tag    string
 		mt     message.EditableMType
 		msg    *message.DraftMessage
-		ident  int
+		le     *incident.LogEntry
 		params url.Values
 		err    error
 	)
@@ -47,7 +47,7 @@ func (s *Server) serveGetNewMessage(w http.ResponseWriter, r *http.Request) {
 	}
 	msg = mt.NewDraft().(*message.DraftMessage)
 	err = incident.Write(dir, func(i *incident.Incident) (err error) {
-		if ident, err = i.AddDraftMessage(msg, true); err != nil {
+		if le, err = i.AddDraftMessage(msg, true); err != nil {
 			return err
 		}
 		return nil
@@ -58,7 +58,7 @@ func (s *Server) serveGetNewMessage(w http.ResponseWriter, r *http.Request) {
 	}
 	params = make(url.Values)
 	params.Set("dir", dir)
-	params.Set("id", strconv.Itoa(ident))
+	params.Set("id", strconv.Itoa(le.Ident))
 	http.Redirect(w, r, "/edit-message?"+params.Encode(), http.StatusSeeOther)
 }
 
@@ -423,10 +423,10 @@ func (s *Server) servePostNewMessageFrom(w http.ResponseWriter, r *http.Request)
 		default:
 			return errors.NewF("%q is not a recognized action for the /new-message-from request.", action)
 		}
-		if ident, err := i.AddDraftMessage(dr, false); err != nil {
+		if le, err := i.AddDraftMessage(dr, false); err != nil {
 			return err
 		} else {
-			w.Header().Set("X-Packet-Action", "edit:"+strconv.Itoa(ident))
+			w.Header().Set("X-Packet-Action", "edit:"+strconv.Itoa(le.Ident))
 		}
 		return nil
 	}, nil)

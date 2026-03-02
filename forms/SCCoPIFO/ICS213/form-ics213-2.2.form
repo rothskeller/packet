@@ -79,11 +79,11 @@ field 9a. toLocation
   presence required
   pdf      text L  63.28 R 283.96 B 571.52 T 587.44 BL 575.71
 
-field ToName
+field ToName toName
   label    "To Name"
   pdf      text L  63.28 R 283.36 B 536.60 T 551.32 BL 540.43
 
-field ToTel
+field ToTel toContact
   label    "To Telephone"
   compare  exact
   pdf      text L  63.28 R 283.96 B 499.88 T 515.68 BL 504.01
@@ -98,11 +98,11 @@ field 9b. fromLocation
   presence required
   pdf      text L 341.08 R 565.60 B 571.04 T 587.44 BL 575.71
 
-field FmName
+field FmName fromName
   label    "From Name"
   pdf      text L 341.08 R 565.60 B 537.08 T 551.32 BL 540.43
 
-field FmTel
+field FmTel fromContact
   label    "From Telephone"
   compare  exact
   pdf      text L 341.08 R 565.60 B 499.88 T 515.68 BL 504.01
@@ -192,4 +192,3 @@ field -
   label    "Operator: Date/Time"
   type     dateTime
   children OpDate OpTime
-  presence required

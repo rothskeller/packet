@@ -63,11 +63,11 @@ field 7b. toLocation
   presence required
   pdf      text L 148.12 R 299.20 B 622.88 T 635.92 BL 625.20
 
-field 7c.
+field 7c. toName
   label    "8. To Name"
   pdf      text L 148.12 R 299.20 B 604.88 T 617.92 BL 607.20
 
-field 7d.
+field 7d. toContact
   label    "9. To Contact Info"
   pdf      text L 148.12 R 299.20 B 582.80 T 599.92 BL 587.28
 
@@ -81,11 +81,11 @@ field 8b. fromLocation
   presence required
   pdf      text L 410.68 R 563.68 B 622.88 T 635.92 BL 625.20
 
-field 8c.
+field 8c. fromName
   label    "12. From Name"
   pdf      text L 410.68 R 563.68 B 604.88 T 617.92 BL 607.20
 
-field 8d.
+field 8d. fromContact
   label    "13. From Contact Info"
   pdf      text L 410.68 R 563.68 B 582.80 T 599.92 BL 587.28
 
