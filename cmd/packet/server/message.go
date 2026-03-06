@@ -18,7 +18,6 @@ import (
 	"github.com/rothskeller/packet/message"
 	"github.com/rothskeller/packet/message/address"
 	"github.com/rothskeller/packet/message/field"
-	"github.com/rothskeller/packet/message/messageid"
 )
 
 // serveGetNewMessage handles GET /new-message requests, which are sent from
@@ -47,7 +46,8 @@ func (s *Server) serveGetNewMessage(w http.ResponseWriter, r *http.Request) {
 	}
 	msg = mt.NewDraft().(*message.DraftMessage)
 	err = incident.Write(dir, func(i *incident.Incident) (err error) {
-		if le, err = i.AddDraftMessage(msg, true); err != nil {
+		i.ApplyDefaults(msg)
+		if le, err = i.AddDraftMessage(msg); err != nil {
 			return err
 		}
 		return nil
@@ -360,102 +360,35 @@ func (s *Server) servePostNewMessageFrom(w http.ResponseWriter, r *http.Request)
 			if _, ok := msg.(*message.SentMessage); !ok {
 				return errors.New(`The "Resend" action can only be used with a sent message.`)
 			}
-			for f := range msg.Fields() {
-				switch f.Common() {
-				case field.CDestinationMessageID: // ignore
-				case field.COriginMessageID:
-					f.SetValue(dr, incrementMsgIDSuffix(i, f.Value(msg)))
-				default:
-					f.SetValue(dr, f.Value(msg))
+			message.CopyFields(msg, dr)
+			if lmi, err := i.ResendMessageID(le.LocalMsgID); err != nil {
+				return err
+			} else {
+				for f := range msg.Fields() {
+					switch f.Common() {
+					case field.COriginMessageID, field.CSubjectMessageID:
+						f.SetValue(dr, lmi)
+					}
 				}
 			}
-			dr.SetTo(msg.To())
 		case "copy":
-			switch msg.(type) {
-			case *message.ReceivedMessage:
-				// OK
-			case *message.SentMessage:
-				dr.SetTo(msg.To())
-			default:
-				return errors.New(`The "Send Copy" action can only be used with a received or sent message.`)
-			}
-			for f := range msg.Fields() {
-				switch f.Common() {
-				case field.CDestinationMessageID, field.COriginMessageID: // ignore
-				default:
-					f.SetValue(dr, f.Value(msg))
-				}
-			}
+			message.CopyFields(msg, dr)
 		case "reply":
-			var fref, ftopos, ftoloc field.Field
-
 			if _, ok := msg.(*message.ReceivedMessage); !ok {
 				return errors.New(`The "Reply" action can only be used with a received message.`)
 			}
-			for f := range msg.Fields() {
-				switch f.Common() {
-				case field.CReference:
-					fref = f
-				case field.CToICSPosition:
-					ftopos = f
-				case field.CToLocation:
-					ftoloc = f
-				case field.CHandling, field.CMessageSummary:
-					f.SetValue(dr, f.Value(msg))
-				}
-			}
-			for f := range msg.Fields() {
-				switch f.Common() {
-				case field.COriginMessageID:
-					if fref != nil {
-						fref.SetValue(dr, f.Value(msg))
-					}
-				case field.CFromICSPosition:
-					if ftopos != nil {
-						ftopos.SetValue(dr, f.Value(msg))
-					}
-				case field.CFromLocation:
-					if ftoloc != nil {
-						ftoloc.SetValue(dr, f.Value(msg))
-					}
-				}
-			}
+			i.ApplyDefaults(dr)
+			message.MakeReply(msg.(*message.ReceivedMessage), dr)
 		default:
 			return errors.NewF("%q is not a recognized action for the /new-message-from request.", action)
 		}
-		if le, err := i.AddDraftMessage(dr, false); err != nil {
+		if le, err := i.AddDraftMessage(dr); err != nil {
 			return err
 		} else {
 			w.Header().Set("X-Packet-Action", "edit:"+strconv.Itoa(le.Ident))
 		}
 		return nil
 	}, nil)
-}
-
-// copyFields copies the values of all fields from the from message to the to
-// message.  The two messages are assumed to be of the same type.
-func copyFields(to *message.DraftMessage, from message.Message) {
-	for f := range from.Fields() {
-		f.SetValue(to, f.Value(from))
-	}
-}
-
-// incrementMsgIDSuffix increments the suffix of the origin message ID of the
-// given message.  If R is an available suffix, it is used; failing that, S, T,
-// etc. until an available suffix is found.
-func incrementMsgIDSuffix(i *incident.Incident, msgid string) string {
-	pfx, seq, suf, err := messageid.Decode(msgid, true, false)
-	if err != nil {
-		return msgid + "R" // best we can do
-	}
-	suf = "R"
-	for {
-		msgid, _ = messageid.Encode(pfx, seq, suf)
-		if !slices.ContainsFunc(i.Log, func(e *incident.LogEntry) bool { return e.LocalMsgID == msgid }) {
-			return msgid
-		}
-		suf = string(suf[0] + 1)
-	}
 }
 
 func (s *Server) servePostDeleteMessage(w http.ResponseWriter, r *http.Request) {

@@ -5,6 +5,7 @@ import (
 	"log/slog"
 	"os"
 	"path/filepath"
+	"slices"
 	"time"
 
 	"github.com/rothskeller/packet/errors"
@@ -16,11 +17,9 @@ import (
 )
 
 // AddDraftMessage takes a DraftMessage and saves it in the incident, assigning
-// it a local message ID along the way unless the message already has one.  If
-// defaults is true, default values from the incident configuration override
-// values provided in the message; otherwise, it's the other way around.  The
+// it a local message ID along the way unless the message already has one.  The
 // function returns the ident of the corresponding new log entry.
-func (i *Incident) AddDraftMessage(msg *message.DraftMessage, defaults bool) (le *LogEntry, err error) {
+func (i *Incident) AddDraftMessage(msg *message.DraftMessage) (le *LogEntry, err error) {
 	var (
 		handling string
 	)
@@ -45,32 +44,13 @@ func (i *Incident) AddDraftMessage(msg *message.DraftMessage, defaults bool) (le
 	if addrs, err := address.ParseList(msg.To()); err == nil && len(addrs) != 0 {
 		le.ToCall = addressToLogCall(addrs[0])
 	}
-	// Put the local message ID, incident defaults, and operator
-	// information into the message fields if it has them.  Also extract
-	// the handling from the message fields, if any, for use in the log
-	// entry.
+	// Put the local message ID into the message field if it has one.  Also
+	// extract the handling from the message field, if any, for use in the
+	// log entry.
 	for f := range msg.Fields() {
 		switch f.Common() {
-		case field.CDefaultBody:
-			maybeSetValue(msg, f, i.Config.DefaultBody, defaults)
-		case field.CFromICSPosition:
-			maybeSetValue(msg, f, i.Config.DefaultFromPos, defaults)
-		case field.CFromLocation:
-			maybeSetValue(msg, f, i.Config.DefaultFromLoc, defaults)
 		case field.CHandling:
 			handling = f.Value(msg)
-		case field.CMessageDate, field.CFormDate:
-			maybeSetValue(msg, f, time.Now().Format("01/02/2006"), defaults)
-		case field.COperatorCall:
-			f.SetValue(msg, i.Config.OpCall)
-		case field.COperatorDate, field.COperatorTime:
-			f.SetValue(msg, "")
-		case field.COperatorMethod:
-			f.SetValue(msg, "Other")
-		case field.COperatorMethodOther:
-			f.SetValue(msg, "Packet")
-		case field.COperatorName:
-			f.SetValue(msg, i.Config.OpName)
 		case field.COriginMessageID:
 			if le.LocalMsgID = f.Value(msg); le.LocalMsgID == "" {
 				if le.LocalMsgID, err = i.nextMessageID(true); err != nil {
@@ -79,24 +59,6 @@ func (i *Incident) AddDraftMessage(msg *message.DraftMessage, defaults bool) (le
 				f.SetValue(msg, le.LocalMsgID)
 			}
 			le.FromMsgID = le.LocalMsgID
-		case field.CReceiverSender:
-			f.SetValue(msg, "sender")
-		case field.CTacticalCall:
-			if i.Config.TacCall != "" {
-				f.SetValue(msg, i.Config.TacCall)
-			}
-		case field.CTacticalName:
-			if i.Config.TacName != "" {
-				f.SetValue(msg, i.Config.TacName)
-			}
-		case field.CToICSPosition:
-			maybeSetValue(msg, f, i.Config.DefaultToPos, defaults)
-		case field.CToLocation:
-			maybeSetValue(msg, f, i.Config.DefaultToLoc, defaults)
-		case field.CUseTactical:
-			if i.Config.TacCall != "" {
-				f.SetValue(msg, "checked")
-			}
 		}
 	}
 	// Check the subject line for info that we didn't get from the
@@ -131,12 +93,6 @@ func (i *Incident) AddDraftMessage(msg *message.DraftMessage, defaults bool) (le
 	i.sortLog()
 	slog.Info("create draft message", "id", le.Ident, "lid", le.LocalMsgID, "s", msg.Subject().EncodedSubject())
 	return le, nil
-}
-
-func maybeSetValue(msg *message.DraftMessage, f field.Field, value string, defaults bool) {
-	if (defaults && value != "") || f.Value(msg) == "" {
-		f.SetValue(msg, value)
-	}
 }
 
 func (i *Incident) addDraftDeliveryReceipt(dr *message.DraftMessage) (le *LogEntry, err error) {
@@ -255,4 +211,75 @@ func (i *Incident) DeleteMessage(le *LogEntry) (err error) {
 	le.Status = StatusDeleted
 	le.FromCall, le.FromMsgID, le.ToCall, le.ToMsgID, le.Subject, le.Flags = "", "", "", "", "", 0
 	return nil
+}
+
+// ApplyDefaults applies the default field values from the incident
+// configuration to the supplied draft message, overriding any values already
+// contained in those fields.
+func (i *Incident) ApplyDefaults(dm *message.DraftMessage) {
+	// Put the local message ID, incident defaults, and operator
+	// information into the message fields if it has them.  Also extract
+	// the handling from the message fields, if any, for use in the log
+	// entry.
+	for f := range dm.Fields() {
+		switch f.Common() {
+		case field.CDefaultBody:
+			maybeSetValue(dm, f, i.Config.DefaultBody)
+		case field.CFromICSPosition:
+			maybeSetValue(dm, f, i.Config.DefaultFromPos)
+		case field.CFromLocation:
+			maybeSetValue(dm, f, i.Config.DefaultFromLoc)
+		case field.CMessageDate, field.CFormDate:
+			maybeSetValue(dm, f, time.Now().Format("01/02/2006"))
+		case field.COperatorCall:
+			f.SetValue(dm, i.Config.OpCall)
+		case field.COperatorDate, field.COperatorTime:
+			f.SetValue(dm, "")
+		case field.COperatorMethod:
+			f.SetValue(dm, "Other")
+		case field.COperatorMethodOther:
+			f.SetValue(dm, "Packet")
+		case field.COperatorName:
+			f.SetValue(dm, i.Config.OpName)
+		case field.CReceiverSender:
+			f.SetValue(dm, "sender")
+		case field.CTacticalCall:
+			if i.Config.TacCall != "" {
+				f.SetValue(dm, i.Config.TacCall)
+			}
+		case field.CTacticalName:
+			if i.Config.TacName != "" {
+				f.SetValue(dm, i.Config.TacName)
+			}
+		case field.CToICSPosition:
+			maybeSetValue(dm, f, i.Config.DefaultToPos)
+		case field.CToLocation:
+			maybeSetValue(dm, f, i.Config.DefaultToLoc)
+		case field.CUseTactical:
+			if i.Config.TacCall != "" {
+				f.SetValue(dm, "checked")
+			}
+		}
+	}
+}
+
+func maybeSetValue(msg *message.DraftMessage, f field.Field, value string) {
+	if value != "" {
+		f.SetValue(msg, value)
+	}
+}
+
+// ResendMessageID sets the local message ID of the supplied draft message to
+// the local message ID of the supplied sent message, with the suffix changed to
+// 'R'.
+func (i *Incident) ResendMessageID(sentID string) (resendID string, err error) {
+	var pfx, seq, _, _ = messageid.Decode(sentID, true, false)
+	resendID, _ = messageid.Encode(pfx, seq, "R")
+
+	if slices.IndexFunc(i.Log, func(le *LogEntry) bool {
+		return le.LocalMsgID == resendID
+	}) >= 0 {
+		return "", errors.NewF("The local message ID %s is already in use.", resendID)
+	}
+	return resendID, nil
 }

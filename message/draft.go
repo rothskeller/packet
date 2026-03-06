@@ -143,3 +143,92 @@ var draftToField = field.NewField("", "To Address").
 	}).
 	EditHelp("This is the comma-separated list of packet addresses to which the message will be sent.  Packet addresses usually have the form callsign@bbsname, and there is usually only one of them.").
 	MakeField()
+
+// CopyFields copies the field values from one message to another.  Message
+// numbers, operator fields, and header info are not copied.  Aside from that,
+// common fields are copied to like common fields, and non-common fields are
+// copied only if the messages are the same type.
+func CopyFields(from Message, to *DraftMessage) {
+	if from.Type() != to.Type() {
+		var cfs = make(map[string]string)
+		for f := range from.Fields() {
+			switch f.Common() {
+			case "", field.COriginMessageID, field.CDestinationMessageID, field.COperatorCall, field.COperatorDate,
+				field.COperatorMethod, field.COperatorMethodOther, field.COperatorName, field.COperatorTime,
+				field.CReceiverSender, field.CHeaderDate, field.CHeaderFrom, field.CHeaderReceived,
+				field.CSubjectFormTag, field.CSubjectMessageID:
+				// ignore
+			default:
+				cfs[f.Common()] = f.Value(from)
+			}
+		}
+		for f := range to.Fields() {
+			if value, ok := cfs[f.Common()]; ok {
+				f.SetValue(to, value)
+			}
+		}
+	} else {
+		for f := range from.Fields() {
+			switch f.Common() {
+			case field.COriginMessageID, field.CDestinationMessageID, field.COperatorCall, field.COperatorDate,
+				field.COperatorMethod, field.COperatorMethodOther, field.COperatorName, field.COperatorTime,
+				field.CReceiverSender, field.CHeaderDate, field.CHeaderFrom, field.CHeaderReceived,
+				field.CSubjectFormTag, field.CSubjectMessageID:
+				// ignore
+			default:
+				f.SetValue(to, f.Value(from))
+			}
+		}
+	}
+}
+
+// MakeReply copies some field values from the first message to the second,
+// appropriate for making the second message a reply to the first.
+func MakeReply(from *ReceivedMessage, to *DraftMessage) {
+	var cfs = make(map[string]string)
+	for f := range from.Fields() {
+		if c := f.Common(); c != "" {
+			cfs[c] = f.Value(from)
+		}
+	}
+	for f := range to.Fields() {
+		switch f.Common() {
+		case field.CDefaultBody:
+			maybeSetValue(to, f, cfs[field.CDefaultBody])
+		case field.CFromContact:
+			maybeSetValue(to, f, cfs[field.CToContact])
+		case field.CFromICSPosition:
+			maybeSetValue(to, f, cfs[field.CToICSPosition])
+		case field.CFromLocation:
+			maybeSetValue(to, f, cfs[field.CToLocation])
+		case field.CFromName:
+			maybeSetValue(to, f, cfs[field.CToName])
+		case field.CHandling:
+			maybeSetValue(to, f, cfs[field.CHandling])
+		case field.CHeaderTo:
+			maybeSetValue(to, f, cfs[field.CHeaderFrom])
+		case field.CMessageSummary:
+			maybeSetValue(to, f, cfs[field.CMessageSummary])
+		case field.CReference:
+			maybeSetValue(to, f, cfs[field.COriginMessageID])
+		case field.CSubjectHandling:
+			maybeSetValue(to, f, cfs[field.CSubjectHandling])
+		case field.CSubjectSummary:
+			maybeSetValue(to, f, cfs[field.CSubjectSummary])
+		case field.CToContact:
+			maybeSetValue(to, f, cfs[field.CFromContact])
+		case field.CToICSPosition:
+			maybeSetValue(to, f, cfs[field.CFromICSPosition])
+		case field.CToLocation:
+			maybeSetValue(to, f, cfs[field.CFromLocation])
+		case field.CToName:
+			maybeSetValue(to, f, cfs[field.CFromName])
+		}
+	}
+}
+
+func maybeSetValue(msg *DraftMessage, f field.Field, value string) {
+	if value != "" {
+		f.SetValue(msg, value)
+	}
+}

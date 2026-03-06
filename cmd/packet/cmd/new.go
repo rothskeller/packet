@@ -177,19 +177,8 @@ func cmdNew(args []string) (err error) {
 				return errors.NewF(`The message ID %s is already in use.`, msgid)
 			}
 		} else if resend != "" {
-			mpfx, mseq, msfx, _ = messageid.Decode(srcle.LocalMsgID, true, false)
-			msfx = "R"
-			for {
-				msgid, _ = messageid.Encode(mpfx, mseq, msfx)
-				if slices.IndexFunc(i.Log, func(le *incident.LogEntry) bool {
-					return le.LocalMsgID == msgid
-				}) < 0 {
-					break
-				}
-				if msfx == "Z" {
-					return errors.NewF(`Message suffixes R through Z are already in use for %s.`, srcle.LocalMsgID)
-				}
-				msfx = string(msfx[0] + 1)
+			if msgid, err = i.ResendMessageID(srcle.LocalMsgID); err != nil {
+				return err
 			}
 		}
 		// If we don't already have a message type, but we have a source
@@ -210,89 +199,23 @@ func cmdNew(args []string) (err error) {
 		// Create a new draft message of that type.
 		newmsg = msgtype.NewDraft().(*message.DraftMessage)
 		// Set the fields of the new message based on the source.
-		for f := range newmsg.Fields() {
-			switch f.Common() {
-			case field.CFromContact:
-				if replyTo != "" {
-					maybeSetValue(newmsg, f, getCommon(srcmsg, field.CToContact))
-				} else if srcmsg != nil {
-					maybeSetValue(newmsg, f, f.Value(srcmsg))
-				}
-			case field.CFromICSPosition:
-				if replyTo != "" {
-					maybeSetValue(newmsg, f, getCommon(srcmsg, field.CToICSPosition))
-				} else if srcmsg != nil {
-					maybeSetValue(newmsg, f, f.Value(srcmsg))
-				}
-			case field.CFromLocation:
-				if replyTo != "" {
-					maybeSetValue(newmsg, f, getCommon(srcmsg, field.CToLocation))
-				} else if srcmsg != nil {
-					maybeSetValue(newmsg, f, f.Value(srcmsg))
-				}
-			case field.CFromName:
-				if replyTo != "" {
-					maybeSetValue(newmsg, f, getCommon(srcmsg, field.CToName))
-				} else if srcmsg != nil {
-					maybeSetValue(newmsg, f, f.Value(srcmsg))
-				}
-			case field.CHeaderTo:
-				if replyTo != "" {
-					maybeSetValue(newmsg, f, getCommon(srcmsg, field.CHeaderFrom))
-				}
-			case field.COriginMessageID, field.CSubjectMessageID:
-				if msgid != "" {
-					maybeSetValue(newmsg, f, msgid)
-				}
-			case field.CReference:
-				if replyTo != "" {
-					var srcid string
-					if srcid = getCommon(srcmsg, field.COriginMessageID); srcid == "" {
-						srcid = getCommon(srcmsg, field.CSubjectMessageID)
-					}
-					if srcid != "" {
-						maybeSetValue(newmsg, f, srcid)
-					}
-				}
-			case field.CToContact:
-				if replyTo != "" {
-					maybeSetValue(newmsg, f, getCommon(srcmsg, field.CFromContact))
-				} else if srcmsg != nil {
-					maybeSetValue(newmsg, f, f.Value(srcmsg))
-				}
-			case field.CToICSPosition:
-				if replyTo != "" {
-					maybeSetValue(newmsg, f, getCommon(srcmsg, field.CFromICSPosition))
-				} else if srcmsg != nil {
-					maybeSetValue(newmsg, f, f.Value(srcmsg))
-				}
-			case field.CToLocation:
-				if replyTo != "" {
-					maybeSetValue(newmsg, f, getCommon(srcmsg, field.CFromLocation))
-				} else if srcmsg != nil {
-					maybeSetValue(newmsg, f, f.Value(srcmsg))
-				}
-			case field.CToName:
-				if replyTo != "" {
-					maybeSetValue(newmsg, f, getCommon(srcmsg, field.CFromName))
-				} else if srcmsg != nil {
-					maybeSetValue(newmsg, f, f.Value(srcmsg))
-				}
-			case field.COperatorCall, field.COperatorDate, field.COperatorMethod, field.COperatorMethodOther, field.COperatorName, field.COperatorTime:
-				// never copy
-			case field.CSubjectHandling, field.CSubjectSummary, field.CHandling, field.CMessageSummary:
-				// copy even for reply
-				if srcmsg != nil {
-					maybeSetValue(newmsg, f, f.Value(srcmsg))
-				}
-			default:
-				// copy only for copy and resend, not reply
-				if copyOf != "" || resend != "" {
-					maybeSetValue(newmsg, f, f.Value(srcmsg))
+		if copyOf != "" {
+			message.CopyFields(srcmsg, newmsg)
+		} else if replyTo != "" {
+			i.ApplyDefaults(newmsg)
+			message.MakeReply(srcmsg.(*message.ReceivedMessage), newmsg)
+		} else if resend != "" {
+			message.CopyFields(srcmsg.(*message.SentMessage), newmsg)
+			for f := range newmsg.Fields() {
+				switch f.Common() {
+				case field.COriginMessageID, field.CSubjectMessageID:
+					f.SetValue(newmsg, msgid)
 				}
 			}
+		} else {
+			i.ApplyDefaults(newmsg)
 		}
-		if newle, err = i.AddDraftMessage(newmsg, false); err != nil {
+		if newle, err = i.AddDraftMessage(newmsg); err != nil {
 			return err
 		}
 		if c.InputIsTerm && c.OutputIsTerm {
@@ -310,19 +233,4 @@ func cmdNew(args []string) (err error) {
 		}
 	}
 	return nil
-}
-
-func getCommon(msg message.Message, cname string) string {
-	for f := range msg.Fields() {
-		if f.Common() == cname {
-			return f.Value(msg)
-		}
-	}
-	return ""
-}
-
-func maybeSetValue(msg *message.DraftMessage, f field.Field, v string) {
-	if v != "" {
-		f.SetValue(msg, v)
-	}
 }

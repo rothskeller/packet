@@ -379,7 +379,7 @@ func (e *exchange) readIndex(index int) (err error) {
 			return err
 		}
 		if dr != nil {
-			if _, err := i.AddDraftMessage(dr, false); err != nil {
+			if _, err := i.AddDraftMessage(dr); err != nil {
 				return fmt.Errorf("queueing delivery receipt: %s", err)
 			}
 		}

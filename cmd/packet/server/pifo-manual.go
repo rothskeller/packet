@@ -41,7 +41,7 @@ func (s *Server) servePostManualReceive(w http.ResponseWriter, r *http.Request) 
 			return err
 		}
 		if dr != nil && makedr {
-			if drid, err := i.AddDraftMessage(dr, false); err != nil {
+			if drid, err := i.AddDraftMessage(dr); err != nil {
 				return fmt.Errorf("queueing delivery receipt: %s", err)
 			} else {
 				w.Header().Set("X-Packet-Action", fmt.Sprintf("manual-send:%d", drid.Ident))
@@ -200,7 +200,7 @@ func (s *Server) servePostMakeReceipt(w http.ResponseWriter, r *http.Request) {
 			return err
 		} else if dr, err := i.MakeDeliveryReceipt(msg, le); err != nil {
 			return err
-		} else if drle, err = i.AddDraftMessage(dr, false); err != nil {
+		} else if drle, err = i.AddDraftMessage(dr); err != nil {
 			return err
 		}
 		return nil
