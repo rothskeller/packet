@@ -1,5 +1,16 @@
 package cmd
 
+import (
+	"fmt"
+	"strings"
+
+	"github.com/rothskeller/packet/cmd/packet/cio"
+	"github.com/rothskeller/packet/errors"
+	"github.com/rothskeller/packet/incident"
+	"github.com/rothskeller/packet/message"
+	"github.com/spf13/pflag"
+)
+
 const (
 	deleteSlug = `Delete an unsent message or manual log entry`
 	deleteHelp = `
@@ -9,37 +20,44 @@ Given a message ID or log entry of an outgoing message that has not been sent, t
 )
 
 func cmdDelete(args []string) (err error) {
-	panic("not implemented")
-	/*
-		flags := pflag.NewFlagSet("delete", pflag.ContinueOnError)
-		flags.Usage = func() {} // we do our own
-		if err = flags.Parse(args); err == pflag.ErrHelp {
-			return cmdHelp([]string{"delete"})
-		} else if err != nil {
-			cio.Error(err)
-			return usage(deleteHelp)
+	var confirm string
+
+	flags := pflag.NewFlagSet("delete", pflag.ContinueOnError)
+	flags.Usage = func() {} // we do our own
+	if err = flags.Parse(args); err == pflag.ErrHelp {
+		return cmdHelp([]string{"delete"})
+	} else if err != nil {
+		cio.Open().Error(err)
+		return usage(deleteHelp)
+	}
+	if len(args) != 1 {
+		return usage(deleteHelp)
+	}
+	if err := incWrite(false, func(i *incident.Incident) error {
+		var msg message.Message
+		var le *incident.LogEntry
+		if msg, le, err = matchMessage(i, args[0], MMNoAbbrev|MMNoRemote); err != nil {
+			return err
 		}
-		if len(args) != 1 {
-			return usage(deleteHelp)
-		}
-		args[0] = strings.ToUpper(args[0])
-		if !incident.MsgIDRE.MatchString(args[0]) {
-			cio.Error(`%q is not a valid, complete message ID`, args[0])
-			return usage(deleteHelp)
-		}
-		env, _, err := incident.ReadMessage(args[0])
-		if err != nil {
-			return fmt.Errorf("read %s: %s", args[0], err)
-		}
-		if env.IsFinal() {
-			if env.IsReceived() {
-				return errors.New("can't delete a received message")
-			} else {
-				return errors.New("message has already been sent")
+		if le.Status == incident.StatusHandEntered {
+			if err = i.DeleteLogEntry(le); err != nil {
+				return err
 			}
+			confirm = fmt.Sprintf("Log entry #%d deleted.", le.Ident)
+		} else if _, ok := msg.(*message.DraftMessage); ok {
+			if err = i.DeleteMessage(le); err != nil {
+				return err
+			}
+			confirm = fmt.Sprintf("Draft message %s deleted.", le.LocalMsgID)
+		} else if strings.HasPrefix(args[0], "#") {
+			return errors.New("cannot delete a log entry for a real message")
+		} else {
+			return errors.New("cannot delete a message once it is sent or received")
 		}
-		incident.RemoveMessage(args[0])
-		cio.Confirm("%s deleted.", args[0])
 		return nil
-	*/
+	}); err != nil {
+		return err
+	}
+	cio.Open().Confirm("%s", confirm)
+	return nil
 }
