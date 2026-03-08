@@ -4,7 +4,7 @@ version  1.1
 title    Resource Request Form
 indef    a resource request form
 create   ResReq rr
-pdfFile  Resource_Request_v20260207.pdf
+pdfFile  Resource_Request_v20260307.pdf
 deftext  FT Times-Roman FS 12.0 MS 8.0 LH 1.15 A lF WR f CL t C 000099
 
 field MsgNo originMessageID
@@ -382,7 +382,7 @@ field 40s.
   label    "52. with signature"
   type     checkbox
   help     "This indicates whether the original resource request form was signed."
-  pdf      if 40s. then text P 2 S "(with signature)" L 423.40 R 563.44 B 633.80 T 646.84 BL 636.60
+  pdf      if 40s. then cross P 2 L 554.88 R 562.56 B 637.20 T 645.72
 
 field 41.
   label    "53. Requested By Phone"
