@@ -89,6 +89,9 @@ type Config struct {
 	// ViewFlags is a bitmask of flags describing how the incident log is
 	// displayed.
 	ViewFlags ViewFlag `json:"viewFlags,omitempty"`
+	// AlLowVoice is a flag indicating that log entries can be marked as
+	// voice messages to be put on a separate ICS-309.
+	AllowVoice bool `json:"allowVoice,omitempty"`
 }
 
 // A ViewFlag is a flag (or bitmask of flags) describing how the incident log

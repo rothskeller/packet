@@ -48,8 +48,11 @@
         document.getElementById('elefu').checked = entry.f.includes('F')
         document.getElementById('elenr').parentElement.style.display = entry.st === 'S' && !entry.f.includes('+') ? null : 'none'
         document.getElementById('elenr').checked = entry.f.includes('-')
-        document.getElementById('elevm').parentElement.style.display = entry.st === 'H' ? null : 'none'
-        document.getElementById('elevm').checked = entry.f.includes('V')
+        const vm = document.getElementById('elevm')
+        if (vm) {
+          document.getElementById('elevm').parentElement.style.display = entry.st === 'H' ? null : 'none'
+          document.getElementById('elevm').checked = entry.f.includes('V')
+        }
         document.getElementById('eledel').style.display = entry.st === 'H' ? null : 'none'
         document.getElementById('elereset').style.display = entry.st === 'H' ? 'none' : null
       } else {
@@ -63,8 +66,11 @@
         document.getElementById('elesumm').value = ''
         document.getElementById('elefu').checked = ''
         document.getElementById('elenr').parentElement.style.display = 'none'
-        document.getElementById('elevm').parentElement.style.display = null
-        document.getElementById('elevm').checked = voice
+        const vm = document.getElementById('elevm')
+        if (vm) {
+          document.getElementById('elevm').parentElement.style.display = null
+          document.getElementById('elevm').checked = !!voice
+        }
         document.getElementById('eledel').style.display = 'none'
         document.getElementById('elereset').style.display = 'none'
       }
@@ -198,7 +204,7 @@
         <div id=eleflags>
           <label><input type=checkbox id=elefu name=fu> Needs Follow-Up</label>
           <label><input type=checkbox id=elenr name=nr> Needs Receipt</label>
-          <label><input type=checkbox id=elevm name=vm> Show on Voice ICS-309</label>
+          <if:allowvoice><label><input type=checkbox id=elevm name=vm> Show on Voice ICS-309</label></if:allowvoice>
         </div>
       </div>
       <div id=elebuttons>

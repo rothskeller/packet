@@ -1,10 +1,17 @@
 Before release:
-  Finish software manual
+  Commands:
+    connect
+    manual dr
+    manual receive
+    manual send
+    mark delivered
+    mark followup
+    print
+  Pseudo-message editing for configuration and log entry
   TESTING
 
 When possible:
   PDF support for Unicode
-  Packet shell functionality
   Update wppsvr, packet-ex
   Forms accept invalid input
   Implement server-side printing on Windows

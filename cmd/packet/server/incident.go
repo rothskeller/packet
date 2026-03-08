@@ -54,6 +54,9 @@ func (s *Server) serveGetIncident(w http.ResponseWriter, r *http.Request) {
 		if i.Config.ConnectType == incident.ConnectNone {
 			vars["manual"] = "true"
 		}
+		if i.Config.AllowVoice {
+			vars["allowvoice"] = "true"
+		}
 		if i.Config.IncidentName != "" {
 			vars["INCNAME"] = i.Config.IncidentName
 		} else if i.Config.ActivationNum != "" {

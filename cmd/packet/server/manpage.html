@@ -349,7 +349,7 @@
       there is one entry per packet message. However, packet messages sent to
       multiple recipients will have a log entry per recipient. Also, log
       entries can be added manually that do not correspond to any packet
-      message, such as shift change notations, voice message log entries, etc.
+      message, such as shift change notations.
     </p>
     <p>
       The log can be formatted in either of two layouts. When rendered as an PDF
@@ -431,12 +431,6 @@
         A <span class=badge style="background-color: #ff8080">NEW</span>
         marker in the "MESSAGE" column indicates that the message
         (which we received) has not been read yet.
-      </li>
-      <li>
-        A <span class=badge style="background-color: #a8e8a8">VOICE</span>
-        marker in the "MESSAGE" column indicates that the log
-        entry is for a voice message, not a packet message. (When the ICS-309
-        form is printed, it will appear on a separate form for voice messages.)
       </li>
       <li>
         A red star (<span style="color: #d73b30">★</span>) in the right margin
@@ -681,7 +675,7 @@
         in the system default PDF viewer.
       </li>
     </ul>
-    <p>To send a message to the system default printer (MacOS and Linux only):</p>
+    <p>To send a message to the system default printer:</p>
     <ul>
       <li>
         <b>Graphical Interface:</b> Select the message and press "P", or use
