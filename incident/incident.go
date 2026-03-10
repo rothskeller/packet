@@ -76,11 +76,12 @@ func IsIncident(dir string) bool {
 
 // IsUnsafeIncidentDir returns whether the named directory is unsafe for use as
 // an incident directory.  Unsafe directories are the root directory of any
-// volume, the user's home directory, or the Desktop or Documents subdirectory
-// of the user's home directory.  These are considered unsafe because they are
-// semantically too global to keep a single incident in.
+// volume, the user's home directory, the Desktop or Documents subdirectory of
+// the user's home directory, or (on Windows) C:\PackItForms.  These are
+// considered unsafe because they are semantically too global to keep a single
+// incident in.
 func IsUnsafeIncidentDir(dir string) bool {
-	if dir == "" || dir == "/" || dir[1:] == `:\` {
+	if dir == "" || dir == "/" || dir[1:] == `:\` || strings.EqualFold(dir[1:], `:\PackItForms`) {
 		return true
 	}
 	home := os.Getenv("HOME")

@@ -65,6 +65,7 @@ func (s *Server) serveGetIncidentConfig(w http.ResponseWriter, r *http.Request) 
 		switch inc.Config.ConnectType {
 		case incident.ConnectNone:
 			form.Set("conntype", "manual")
+			form.Set("bbscall", inc.Config.ConnectBBS)
 			variables["nosaved"] = "true"
 		case incident.ConnectSerialTNC:
 			form.Set("conntype", "serial+tnc")
@@ -190,6 +191,7 @@ func (s *Server) servePostIncidentConfig(w http.ResponseWriter, r *http.Request)
 		switch r.FormValue("conntype") {
 		case "manual":
 			c.ConnectType = incident.ConnectNone
+			c.ConnectBBS = r.FormValue("bbscall")
 			c.NoSendReceipts = r.FormValue("sendrcpts") == ""
 		case "serial+tnc":
 			c.ConnectType = incident.ConnectSerialTNC

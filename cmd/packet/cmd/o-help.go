@@ -32,7 +32,7 @@ func cmdOutpostHelp(args []string) (err error) {
 		case "view":
 			helpText = outpostViewHelp
 		default:
-			c.Error("There is no command or help topic %q.", "outpost "+args[0])
+			c.ErrorF("There is no command or help topic %q.", "outpost "+args[0])
 		}
 	}
 	if helpText == "" {

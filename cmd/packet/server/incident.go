@@ -189,11 +189,11 @@ func (s *Server) servePostViewICS309(w http.ResponseWriter, r *http.Request) {
 		dir = i.Dir
 		return i.GenerateICS309(signature)
 	}, func() error {
-		if fh, err := os.Open(filepath.Join(dir, "ICS-309.pdf")); err != nil {
+		if fh, err := os.Open(filepath.Join(dir, "ics309.pdf")); err != nil {
 			return err
 		} else {
 			w.Header().Set("Content-Type", "application/pdf")
-			http.ServeContent(w, r, "ICS-309.pdf", time.Time{}, fh)
+			http.ServeContent(w, r, "ics309.pdf", time.Time{}, fh)
 			fh.Close()
 			return nil
 		}

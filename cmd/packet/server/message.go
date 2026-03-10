@@ -232,6 +232,9 @@ func (s *Server) serveGetViewMessage(w http.ResponseWriter, r *http.Request) {
 		dpdf  string
 		err   error
 	)
+	if maybeShowREADME(w, r) {
+		return
+	}
 	dir = r.FormValue("dir")
 	ident, _ = strconv.Atoi(r.FormValue("id"))
 	err = incident.Write(dir, func(i *incident.Incident) (err error) {

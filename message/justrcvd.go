@@ -69,6 +69,7 @@ func NewJustReceivedMessage(retrieved, rxBBS, rxArea string) (m *JustReceivedMes
 		headers    textproto.MIMEHeader
 		issues     error
 	)
+	retrieved = strings.ReplaceAll(retrieved, "\r", "")
 	m = &JustReceivedMessage{ReceivedMessage: ReceivedMessage{
 		common: new(common),
 		rxBBS:  rxBBS,

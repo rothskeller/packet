@@ -675,10 +675,20 @@
           </help>
         </div>
       </div>
-      <div id=manual class="form-grid container subgrid2 border tblr cspan5">
-        <div><label>Manual Settings:</label></div>
-        <div class="radio-group cspan4">
-          <label>
+      <div id=manual class="form-grid container subgrid2 border tblr cspan5 rspan2">
+        <div class=rspan2><label>Manual Settings:</label></div>
+        <div class="form-grid container subgrid2 border tblr cspan4">
+          <div><label for=mancall>BBS Call Sign:</label></div>
+          <div><input id=mancall name=bbscall class="fcccall all-caps cspan3" required list=xscbbs
+              placeholder="e.g. W1XSC" style="width:8rem">
+          </div>
+          <help for=mancall>
+            This is the call sign of the BBS you are manually connecting to.  It
+            is used in return addresses and instructions.
+          </help>
+        </div>
+        <div class="form-grid container subgrid2 border tblr radio-group cspan4">
+          <label class=cspan4>
             <input type=checkbox name=sendrcpts>
             Generate delivery receipts automatically
           </label>
@@ -757,12 +767,6 @@
           <help for=bbscall>
             This is the call sign of the BBS to connect to.
           </help>
-          <datalist id=xscbbs>
-            <option value="W1XSC"></option>
-            <option value="W2XSC"></option>
-            <option value="W3XSC"></option>
-            <option value="W4XSC"></option>
-          </datalist>
         </div>
         <div class="form-grid container subgrid2 border tblr cspan2">
           <div><label for=tcpaddr>BBS Address:</label></div>
@@ -807,6 +811,12 @@
         </div>
       </div>
     </div>
+    <datalist id=xscbbs>
+      <option value="W1XSC"></option>
+      <option value="W2XSC"></option>
+      <option value="W3XSC"></option>
+      <option value="W4XSC"></option>
+    </datalist>
     <div id=bulletins class="form-grid borders-inside" style="grid: auto-flow/1fr">
       <div class="border tblr heading">Bulletin Retrieval</div>
       <div class="border tblr">

@@ -36,6 +36,7 @@ func NewReadReceipt(rmTo, rmSubject string, readTime time.Time, extraText string
 		body *ReadReceiptBody
 	)
 	subj, _ = subject.NewPlainSubject("", "", "READ: "+rmSubject)
+	subj.SetNonStandard()
 	if body, err = newReadReceiptBody(rmTo, rmSubject, readTime, extraText); err != nil {
 		return nil, err
 	}
@@ -56,6 +57,7 @@ func init() {
 func (mt readReceipt) Recognize(m message.Message) {
 	if _, ok := m.Body().(*ReadReceiptBody); ok {
 		m.SetType(ReadReceipt)
+		m.Subject().(*subject.PlainSubject).SetNonStandard()
 	}
 }
 

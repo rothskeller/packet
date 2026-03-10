@@ -42,6 +42,7 @@ func NewDeliveryReceipt(rmFrom, rmTo, rmSubject, lmi string, deliveryTime time.T
 		body *DeliveryReceiptBody
 	)
 	subj, _ = subject.NewPlainSubject("", "", "DELIVERED: "+rmSubject)
+	subj.SetNonStandard()
 	if body, err = newDeliveryReceiptBody(rmTo, rmSubject, lmi, deliveryTime, extraText); err != nil {
 		return nil, err
 	}
@@ -65,6 +66,7 @@ func init() {
 func (mt deliveryReceipt) Recognize(m message.Message) {
 	if _, ok := m.Body().(*DeliveryReceiptBody); ok {
 		m.SetType(DeliveryReceipt)
+		m.Subject().(*subject.PlainSubject).SetNonStandard()
 	}
 }
 

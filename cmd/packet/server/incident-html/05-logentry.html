@@ -57,7 +57,7 @@
     //     U: unread: received message has not been read
     //     V: voice: log entry is for a voice message
     //     -: a receipt is needed for this log entry (and has not been received)
-    //     +: a receipt has been received for this log entry
+    //     +: a receipt has been received/sent for this log entry
     //   t: the log entry timestamp in YYYY-MM-DDTHH:MM:SS.sss-07:00 format. [*]
     //   fc: the call sign of the station that sent the message.  Will be empty
     //     for an outgoing message.  Will be the bulletin area name for a
@@ -103,7 +103,7 @@
         this.f = data.f
         this.t = data.t
         if (this.st === 'X') return (this.style.display = 'none')
-        let inbound, outbound
+        let inbound, outbound, comment
         switch (data.st) {
           case 'D':
           case 'Q':
@@ -114,8 +114,9 @@
             inbound = true
             break
           case 'H':
-            if (data.tc === myIdent || (data.ti && !data.tc)) inbound = true
-            else if (data.fc === myIdent || (data.fi && !data.fc)) outbound = true
+            inbound = data.tc === myIdent || (data.ti && !data.tc)
+            outbound = data.fc === myIdent || (data.fi && !data.fc)
+            comment = !data.fc && !data.fi && !data.tc && !data.ti
             break
         }
         this.classList.toggle('bulletin', data.f.includes('B'))
@@ -131,7 +132,7 @@
         this._fromCell.classList.toggle('needs-receipt', data.f.includes('-'))
         this._fromArrCell.textContent = this._fromCell.textContent ? '→' : ''
         this._localIDCell.textContent = data.li
-        this._toCell.textContent = inbound ? '' : (data.ti || data.tc || '??????')
+        this._toCell.textContent = (inbound || comment) ? '' : (data.ti || data.tc || '??????')
         this._toArrCell.textContent = this._toCell.textContent ? '→' : ''
         this._toCallCell.textContent = data.tc
         this._toIDCell.textContent = data.ti
@@ -238,9 +239,12 @@
     }
 
     log-grid .fu:not(:empty) {
-      padding-left: 0.5rem;
+      padding: 0 0.25rem 0 0.5rem;
       color: #d73b30;
       cursor: default;
+      max-height: 1.5rem;
+      display: flexbox;
+      align-items: center;
     }
 
     .bulletin {

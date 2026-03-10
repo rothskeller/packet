@@ -28,6 +28,7 @@ type PlainSubject struct {
 	msgID    string
 	handling string
 	summary  string
+	nonstd   bool
 }
 
 var _ Subject = (*PlainSubject)(nil)
@@ -51,6 +52,13 @@ func NewPlainSubject(msgID, handling, summary string) (s *PlainSubject, err erro
 		)
 	}
 	return s, err
+}
+
+// SetNonStandard marks the subject as not requiring the standard county subject
+// line formatting.  This is used for receipt messages.  It is implied for
+// bulletins.
+func (s *PlainSubject) SetNonStandard() {
+	s.nonstd = true
 }
 
 // EncodedSubject returns the encoded subject line.
@@ -153,6 +161,7 @@ func (s *PlainSubject) SetSubjectSummary(summary string) (err error) {
 // Clone creates a copy of the subject.
 func (s *PlainSubject) Clone() Subject {
 	ns, _ := NewPlainSubject(s.SubjectMessageID(), s.SubjectHandling(), s.SubjectSummary())
+	ns.nonstd = s.nonstd
 	return ns
 }
 
@@ -189,7 +198,7 @@ var subjectFields = []msgifc.Field{
 		SetValueFunc(func(m msgifc.Message, s string) { m.Subject().SetSubjectMessageID(s) }).
 		EditHelp("This is the message ID assigned to the message by the originating station.  It has the form XXX-###P, where XXX is the three-character prefix associated with the originating station, ### is a unique number, and P is a suffix letter.").
 		ValidateFunc(func(m msgifc.Message, f msgifc.Field, vf msgifc.ValidateFlags) error {
-			if m.Bulletin() && f.Value(m) == "" {
+			if f.Value(m) == "" && (m.Bulletin() || m.Subject().(*PlainSubject).nonstd) {
 				return nil
 			}
 			return field.ValidateMessageID(m, f, vf)
@@ -205,7 +214,7 @@ var subjectFields = []msgifc.Field{
 			if vf&msgifc.VPIFOOnly != 0 {
 				return nil
 			}
-			if h := f.Value(m); m.Bulletin() && h == "" {
+			if h := f.Value(m); h == "" && (m.Bulletin() || m.Subject().(*PlainSubject).nonstd) {
 				return nil
 			} else if h == "ROUTINE" || h == "PRIORITY" || h == "IMMEDIATE" {
 				return nil
