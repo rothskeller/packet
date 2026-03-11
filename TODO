@@ -1,20 +1,19 @@
 Before release:
   Commands:
-    connect
     manual dr
     manual receive
     manual send
     mark delivered
     mark followup
-    print
-  Pseudo-message editing for configuration and log entry
+  CLI issues:
+    Pseudo-message editing for configuration and log entry
+    Handling of invocation in non-incident directory
+    Collection of required configuration settings
+  Update incident directory LRU list when switching to a new one
   TESTING
 
 When possible:
   PDF support for Unicode
   Update wppsvr, packet-ex
-  Forms accept invalid input
-  Implement server-side printing on Windows
-  Grid-based HTML for RACES-MAR and HAvBed
   Incident archive
   Field comparisons

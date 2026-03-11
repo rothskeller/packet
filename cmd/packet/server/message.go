@@ -71,6 +71,7 @@ func (s *Server) serveGetEditMessage(w http.ResponseWriter, r *http.Request) {
 		dir    string
 		ident  int
 		msg    message.Message
+		emt    message.EditableMType
 		tag    string
 		vars   message.EditHTMLVars
 		out    []byte
@@ -103,14 +104,19 @@ func (s *Server) serveGetEditMessage(w http.ResponseWriter, r *http.Request) {
 		ErrPage(w, fmt.Sprintf("Message %d is not editable: it is not an unsent outgoing message.", ident), http.StatusBadRequest)
 		return
 	}
-	tag = msg.Type().(message.EditableMType).CreateTag()
+	if emt, _ = msg.Type().(message.EditableMType); emt == nil {
+		slog.Error("message not editable", "dir", dir, "id", ident, "t", fmt.Sprintf("%T", msg))
+		ErrPage(w, fmt.Sprintf("Message %d is not editable: the message type does not support editing.", ident), http.StatusBadRequest)
+		return
+	}
+	tag = emt.CreateTag()
 	params.Set("tag", tag)
 	vars.AssetBase = "/assets/" + url.PathEscape(tag)
 	vars.SaveLabel = "Save as Draft"
 	vars.ShowAddressFields = true
 	vars.SubmitLabel = "Send Message"
 	vars.SubmitURL = "/send-message?" + params.Encode()
-	if out, err = msg.Type().(message.EditableMType).EditHTML(msg.(*message.DraftMessage), vars); err != nil {
+	if out, err = emt.EditHTML(msg.(*message.DraftMessage), vars); err != nil {
 		ErrPage(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
