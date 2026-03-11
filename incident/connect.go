@@ -147,6 +147,9 @@ type BBSExchangeWatcher interface {
 	// Progress is called with messages indicating the progress of the BBS
 	// exchange.
 	Progress(string)
+	// LogEntry is called with the log entry for a received or transmitted
+	// message.
+	LogEntry(*LogEntry)
 	// Error is called if an error occurs during the BBS exchange.
 	Error(string)
 	// Finished is called when the BBS exchange has finished, whether or not
@@ -254,6 +257,8 @@ func (e *exchange) messageToSend() (tosend *message.DraftMessage, logident int, 
 }
 
 func (e *exchange) send(dm *message.DraftMessage, logident int) (err error) {
+	var le *LogEntry
+
 	// First, update the OpDate and OpTime fields if any.
 	now := time.Now()
 	for f := range dm.Fields() {
@@ -286,9 +291,15 @@ func (e *exchange) send(dm *message.DraftMessage, logident int) (err error) {
 	if err != nil {
 		return err
 	}
-	return Write(e.dir, func(i *Incident) error {
-		return i.MarkMessageSent(dm, i.GetLogEntryByIdent(logident))
-	})
+
+	if err = Write(e.dir, func(i *Incident) error {
+		le = i.GetLogEntryByIdent(logident)
+		return i.MarkMessageSent(dm, le)
+	}); err != nil {
+		return err
+	}
+	e.updates.LogEntry(le)
+	return nil
 }
 
 func (e *exchange) killMessage() (err error) {
@@ -357,6 +368,7 @@ func (e *exchange) readIndex(index int) (err error) {
 	var (
 		raw string
 		msg *message.JustReceivedMessage
+		le  *LogEntry
 	)
 
 	if e.mailbox != "" {
@@ -375,7 +387,7 @@ func (e *exchange) readIndex(index int) (err error) {
 	err = Write(e.dir, func(i *Incident) error {
 		var dr *message.DraftMessage
 
-		if dr, err = i.ReceiveMessage(msg); err != nil {
+		if dr, le, err = i.ReceiveMessage(msg); err != nil {
 			return err
 		}
 		if dr != nil {
@@ -387,6 +399,9 @@ func (e *exchange) readIndex(index int) (err error) {
 	})
 	if err == nil && e.area == "" {
 		e.tokill = index
+	}
+	if err == nil {
+		e.updates.LogEntry(le)
 	}
 	return err
 }

@@ -112,6 +112,8 @@ func (c *bbsConnection) Progress(msg string) {
 	c.mutex.Unlock()
 }
 
+func (c *bbsConnection) LogEntry(*incident.LogEntry) {}
+
 func (c *bbsConnection) Error(msg string) {
 	c.mutex.Lock()
 	if c.ErrMsg == "" {

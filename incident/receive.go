@@ -14,21 +14,19 @@ import (
 // ReceiveMessage takes a JustReceivedMessage received from JNOS and saves it
 // in the incident.  ReceiveMessage returns the delivery receipt that should be
 // sent for the message, if any; it is up to the caller to queue the delivery
-// receipt for sending.
-func (i *Incident) ReceiveMessage(msg *message.JustReceivedMessage) (dr *message.DraftMessage, err error) {
-	var (
-		le       LogEntry
-		handling string
-	)
+// receipt for sending.  It also returns the log entry for the received message.
+func (i *Incident) ReceiveMessage(msg *message.JustReceivedMessage) (dr *message.DraftMessage, le *LogEntry, err error) {
+	var handling string
+
 	// The received message might be a receipt.  Those are handled
 	// specially.
 	switch msg.Type() {
 	case receipt.DeliveryReceipt, receipt.ReadReceipt:
 		err = i.receiveReceiptMessage(msg)
-		return nil, err
+		return nil, nil, err
 	}
 	// Create a log entry and assign a local message ID.
-	le = LogEntry{
+	le = &LogEntry{
 		Ident:   i.nextLogIdent(),
 		Index:   len(i.Log),
 		Seq:     i.Seq,
@@ -38,7 +36,7 @@ func (i *Incident) ReceiveMessage(msg *message.JustReceivedMessage) (dr *message
 		Subject: msg.Subject().EncodedSubject(),
 	}
 	if le.LocalMsgID, err = i.nextMessageID(false); err != nil {
-		return nil, err
+		return nil, nil, err
 	}
 	le.ToMsgID = le.LocalMsgID
 	msg.SetLocalID(le.LocalMsgID)
@@ -91,19 +89,19 @@ func (i *Incident) ReceiveMessage(msg *message.JustReceivedMessage) (dr *message
 		le.Flags |= FPriority
 	}
 	// Save the message.
-	if err = i.saveMessage(msg, &le); err != nil {
-		return nil, err
+	if err = i.saveMessage(msg, le); err != nil {
+		return nil, nil, err
 	}
 	// Add the log entry to the log.
-	i.Log = append(i.Log, &le)
+	i.Log = append(i.Log, le)
 	i.sortLog()
 	// Generate a delivery receipt if appropriate.  (It's up to the caller
 	// to send it or not.)
 	if !msg.Bulletin() && !msg.Autoresponse() {
-		dr, _ = i.MakeDeliveryReceipt(msg, &le)
+		dr, _ = i.MakeDeliveryReceipt(msg, le)
 	}
 	slog.Info("received message", "lid", le.LocalMsgID, "s", msg.Subject().EncodedSubject())
-	return dr, nil
+	return dr, le, nil
 }
 
 // MakeDeliveryReceipt makes a delivery receipt for the supplied received

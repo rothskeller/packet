@@ -36,7 +36,7 @@ func (s *Server) servePostManualReceive(w http.ResponseWriter, r *http.Request) 
 	err = incident.Write(r.FormValue("dir"), func(i *incident.Incident) error {
 		var dr *message.DraftMessage
 
-		if dr, err = i.ReceiveMessage(msg); err != nil {
+		if dr, _, err = i.ReceiveMessage(msg); err != nil {
 			slog.Error("ReceiveMessage", "err", err)
 			return err
 		}
