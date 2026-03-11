@@ -9,15 +9,14 @@ import (
 	"log/slog"
 	"net/http"
 	"os"
-	"os/exec"
 	"path/filepath"
 	"regexp"
 	"slices"
 	"strconv"
 	"strings"
-	"sync"
 	"time"
 
+	"github.com/rothskeller/packet/cmd/packet/osdep"
 	"github.com/rothskeller/packet/form/htmlop"
 	"github.com/rothskeller/packet/incident"
 	"github.com/rothskeller/packet/message"
@@ -27,9 +26,6 @@ import (
 
 //go:embed incident.html
 var incidentHTML []byte
-
-var serverPrintCmd string
-var serverPrintOnce sync.Once
 
 // serveGetIncident handles GET /incident requests.  They will have a dir=
 // parameter specifying the incident directory.
@@ -76,8 +72,7 @@ func (s *Server) serveGetIncident(w http.ResponseWriter, r *http.Request) {
 	}
 	vars["VERSION"] = packetver.Version
 	vars["MTYPES"] = newMessageTypeList()
-	serverPrintOnce.Do(setServerCanPrint)
-	if serverPrintCmd != "" {
+	if osdep.PrintPDFCommand("x") != nil {
 		vars["SERVERPRINT"] = "true"
 	}
 	if doc, err = html.Parse(bytes.NewReader(incidentHTML)); err != nil {
@@ -169,16 +164,6 @@ func newMessageTypeList() string {
 		data = append(data, fmt.Sprintf("%s:%s:%s", emt.CreateTag(), emt.CreateKey(), name))
 	}
 	return strings.Join(data, ";")
-}
-
-func setServerCanPrint() {
-	var err error
-
-	if serverPrintCmd, err = exec.LookPath("lpr"); err != nil || serverPrintCmd == "" {
-		if serverPrintCmd, err = exec.LookPath("lp"); err != nil {
-			serverPrintCmd = ""
-		}
-	}
 }
 
 func (s *Server) servePostViewICS309(w http.ResponseWriter, r *http.Request) {

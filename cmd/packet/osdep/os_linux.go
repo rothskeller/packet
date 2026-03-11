@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"os"
 	"os/exec"
+	"sync"
 	"syscall"
 )
 
@@ -77,3 +78,25 @@ func OpenFileCommand(file string) *exec.Cmd {
 
 // IsAdmin returns whether the user is an Administrator.
 func IsAdmin() bool { return false } // only valid on Windows
+
+// PrintPDFCommand is the command to send a PDF file to the system default printer.  It may return nil if no such command is available.
+func PrintPDFCommand(file string) *exec.Cmd {
+	serverPrintOnce.Do(setServerPrintCmd)
+	if serverPrintCmd != "" {
+		return exec.Command(serverPrintCmd, file)
+	}
+	return nil
+}
+
+var serverPrintCmd string
+var serverPrintOnce sync.Once
+
+func setServerPrintCmd() {
+	var err error
+
+	if serverPrintCmd, err = exec.LookPath("lpr"); err != nil || serverPrintCmd == "" {
+		if serverPrintCmd, err = exec.LookPath("lp"); err != nil {
+			serverPrintCmd = ""
+		}
+	}
+}

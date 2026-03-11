@@ -6,6 +6,7 @@ import (
 	"os"
 	"os/exec"
 	"path/filepath"
+	"sync"
 	"syscall"
 
 	"golang.org/x/sys/windows"
@@ -96,4 +97,24 @@ func IsAdmin() bool {
 		return true
 	}
 	return false
+}
+
+// PrintPDFCommand is the command to send a PDF file to the system default printer.  It may return nil if no such command is available.
+func PrintPDFCommand(file string) *exec.Cmd {
+	serverPrintOnce.Do(setServerPrintCmd)
+	if serverPrintCmd != "" {
+		return exec.Command(serverPrintCmd, file)
+	}
+	return nil
+}
+
+var serverPrintCmd string
+var serverPrintOnce sync.Once
+
+func setServerPrintCmd() {
+	const path = `C:\Program Files (x86)\SCCo Packet\PdfToPrinter.exe`
+
+	if _, err := os.Stat(path); err == nil {
+		serverPrintCmd = path
+	}
 }

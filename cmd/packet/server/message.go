@@ -13,6 +13,7 @@ import (
 	"strconv"
 	"strings"
 
+	"github.com/rothskeller/packet/cmd/packet/osdep"
 	"github.com/rothskeller/packet/errors"
 	"github.com/rothskeller/packet/incident"
 	"github.com/rothskeller/packet/message"
@@ -294,12 +295,6 @@ func (s *Server) servePostPrintMessage(w http.ResponseWriter, r *http.Request) {
 		cmd   *exec.Cmd
 		err   error
 	)
-	serverPrintOnce.Do(setServerCanPrint)
-	if serverPrintCmd == "" {
-		slog.Error("server print not supported")
-		http.Error(w, "Server-side printing is not supported on this system.", http.StatusBadRequest)
-		return
-	}
 	dir = r.FormValue("dir")
 	ident, _ = strconv.Atoi(r.FormValue("id"))
 	err = incident.Read(dir, func(i *incident.Incident) (err error) {
@@ -332,7 +327,11 @@ func (s *Server) servePostPrintMessage(w http.ResponseWriter, r *http.Request) {
 	} else if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 	}
-	cmd = exec.Command(serverPrintCmd, dpdf)
+	if cmd = osdep.PrintPDFCommand(dpdf); cmd == nil {
+		slog.Error("server print not supported")
+		http.Error(w, "No command was found on this system that can print PDF files.", http.StatusBadRequest)
+		return
+	}
 	if err = cmd.Start(); err == nil {
 		go cmd.Wait()
 	}
