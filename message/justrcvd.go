@@ -61,13 +61,13 @@ func (m *JustReceivedMessage) SetLocalID(localID string) { m.localID = localID }
 // error if the message cannot be parsed.
 func NewJustReceivedMessage(retrieved, rxBBS, rxArea string) (m *JustReceivedMessage, err error) {
 	var (
-		efrom      string
-		hadMessage bool
-		by         []byte
-		msg        *mail.Message
-		to         []string
-		headers    textproto.MIMEHeader
-		issues     error
+		efrom   string
+		by      []byte
+		msg     *mail.Message
+		to      []string
+		retaddr string
+		headers textproto.MIMEHeader
+		issues  error
 	)
 	retrieved = strings.ReplaceAll(retrieved, "\r", "")
 	m = &JustReceivedMessage{ReceivedMessage: ReceivedMessage{
@@ -78,7 +78,6 @@ func NewJustReceivedMessage(retrieved, rxBBS, rxArea string) (m *JustReceivedMes
 	}}
 	// If there is an envelope From line, remove it from the raw message.
 	if strings.HasPrefix(retrieved, "From ") {
-		hadMessage = true
 		if idx := strings.IndexByte(retrieved, '\n'); idx > 0 {
 			efrom, retrieved = retrieved[5:idx], retrieved[idx+1:]
 		}
@@ -115,22 +114,20 @@ func NewJustReceivedMessage(retrieved, rxBBS, rxArea string) (m *JustReceivedMes
 	if t, err := mail.ParseDate(msg.Header.Get("Date")); err == nil {
 		m.date = t
 	}
-	// Compute the return address if there wasn't an envelope From line.
-	if !hadMessage {
-		var line string
-		if line = msg.Header.Get("Return-Path"); line == "" {
-			if line = msg.Header.Get("Reply-To"); line == "" {
-				if line = msg.Header.Get("Sender"); line == "" {
-					line = msg.Header.Get("From")
-				}
+	// Compute the return address.  If none of these work, fall back to the
+	// address from the envelope From line, above.
+	if retaddr = msg.Header.Get("Return-Path"); retaddr == "" {
+		if retaddr = msg.Header.Get("Reply-To"); retaddr == "" {
+			if retaddr = msg.Header.Get("Sender"); retaddr == "" {
+				retaddr = msg.Header.Get("From")
 			}
 		}
-		// Most of those sources can have a name comment in the
-		// address, which we don't want.  Also, From can have more than
-		// one address in it, and we only want the first.
-		if addrs, err := address.ParseList(line); err == nil && len(addrs) > 0 {
-			m.returnAddr = addrs[0].Address
-		}
+	}
+	// Most of those sources can have a name comment in the
+	// address, which we don't want.  Also, From can have more than
+	// one address in it, and we only want the first.
+	if addrs, err := address.ParseList(retaddr); err == nil && len(addrs) > 0 {
+		m.returnAddr = addrs[0].Address
 	}
 	// If we didn't get a BBS Rx date from the envelope, get it from the
 	// Received header.

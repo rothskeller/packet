@@ -83,7 +83,7 @@ func matchMessage(i *incident.Incident, in string, flags matchMessageFlag) (msg 
 					}
 					return msg, e, nil
 				}
-				return &pseudomsg.LogEntryMessage{LogEntry: e}, e, nil
+				return pseudomsg.NewLogEntryMessage(e), e, nil
 			}
 		}
 		return nil, nil, errors.NewF("There is no log entry #%d.", num)

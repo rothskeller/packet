@@ -4,7 +4,6 @@ import (
 	"context"
 	"os"
 	"os/signal"
-	"path/filepath"
 
 	"github.com/rothskeller/packet/cmd/packet/cio"
 	"github.com/rothskeller/packet/errors"
@@ -32,6 +31,7 @@ func cmdConnect(args []string) (err error) {
 	var (
 		immediate bool
 		dir       string
+		myID      string
 		ctx       context.Context
 		cancel    func()
 		sigintch  chan os.Signal
@@ -51,14 +51,12 @@ func cmdConnect(args []string) (err error) {
 	if flags.NArg() != 0 {
 		return usage(connectHelp)
 	}
-	if dir, err = os.Getwd(); err != nil {
-		return errors.NewF("Unable to determine current directory: os.Getwd: %s", err)
-	}
-	if dir, err = filepath.EvalSymlinks(dir); err != nil {
-		return errors.NewF("Unable to resolve current directory: filepath.EvalSymLinks: %s", err)
-	}
-	if !incident.IsIncident(dir) {
-		return errors.NewF("The current directory is not an incident directory.")
+	if err = incRead(func(i *incident.Incident) error {
+		dir = i.Dir
+		myID = i.Config.ActiveCall()
+		return nil
+	}); err != nil {
+		return err
 	}
 	// We want to stop the connection if we get a control-C, so we need to
 	// run it in a context we can cancel, and then we want to trap
@@ -84,7 +82,7 @@ LOOP:
 		}
 	}
 	if len(updates.log) != 0 {
-		c.EmitLogList(updates.log, false, false, true)
+		c.EmitLogList(updates.log, false, false, true, myID)
 	} else if updates.err == "" {
 		c.Confirm("No messages sent or received.")
 	}

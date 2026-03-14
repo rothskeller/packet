@@ -72,7 +72,7 @@ func askForSignature() (string, error) {
 		var valueWidth int
 		for f := range incident.ICS309FormDef().AllFields() {
 			if f.Tag == "Signature" {
-				valueWidth = f.CharWidth()
+				valueWidth = f.CharWidth(0)
 			}
 		}
 		c.Confirm("NOTICE: ⇥By providing a signature, you are making a legal assertion that the ICS-309 log is accurate.  Do not provide a signature unless you are sure of that.")

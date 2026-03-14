@@ -39,3 +39,8 @@ func GUI() error {
 	mg.Deps(IncidentHTML, UpdateForms, StopOldServer)
 	return sh.Run(mg.GoCmd(), "run", "-tags", "sccopifo", "./cmd/packet", "gui", "2025-11-MPMP")
 }
+
+func Build() error {
+	mg.Deps(IncidentHTML, UpdateForms, StopOldServer)
+	return sh.Run(mg.GoCmd(), "build", "-tags", "sccopifo", "./cmd/packet")
+}

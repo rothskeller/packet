@@ -11,7 +11,7 @@ import (
 )
 
 // EmitLogList emits a list of log entries.
-func (cio *CIO) EmitLogList(entries []*incident.LogEntry, full, numbers, receipts bool) {
+func (cio *CIO) EmitLogList(entries []*incident.LogEntry, full, numbers, receipts bool, myID string) {
 	if !cio.OutputIsTerm {
 		emitLogCSV(entries)
 		return
@@ -32,7 +32,7 @@ func (cio *CIO) EmitLogList(entries []*incident.LogEntry, full, numbers, receipt
 	if full {
 		cio.emitLogFull(toshow, numbers)
 	} else {
-		cio.emitLogCompact(toshow, numbers)
+		cio.emitLogCompact(toshow, numbers, myID)
 	}
 }
 
@@ -145,13 +145,13 @@ func fullLine(e *incident.LogEntry) (columns []string, colors []int) {
 	return columns, colors
 }
 
-func (cio *CIO) emitLogCompact(entries []*incident.LogEntry, numbers bool) {
+func (cio *CIO) emitLogCompact(entries []*incident.LogEntry, numbers bool, myID string) {
 	var (
 		nw, fw, lw, tw, mw = 1, 7, 7, 7, 0
 		fu                 bool
 	)
 	for _, e := range entries {
-		text, _ := compactLine(e)
+		text, _ := compactLine(e, myID)
 		nw = max(nw, len(text[0]))
 		fw = max(fw, len(text[2]))
 		lw = max(lw, len(text[3]))
@@ -176,7 +176,7 @@ func (cio *CIO) emitLogCompact(entries []*incident.LogEntry, numbers bool) {
 	cio.print(colorLabel, setLength("TO", tw)+"  ")
 	cio.print(colorLabel, setMaxLength("MESSAGE", mw)+"\n")
 	for _, e := range entries {
-		text, colors := compactLine(e)
+		text, colors := compactLine(e, myID)
 		if numbers {
 			cio.print(colors[0], setLength(text[0], nw)+"  ")
 		}
@@ -221,7 +221,19 @@ func (cio *CIO) emitLogCompact(entries []*incident.LogEntry, numbers bool) {
 	}
 }
 
-func compactLine(e *incident.LogEntry) (columns []string, colors []int) {
+func compactLine(e *incident.LogEntry, myID string) (columns []string, colors []int) {
+	var inbound, outbound, comment bool
+
+	switch e.Status {
+	case incident.StatusDraft, incident.StatusQueued, incident.StatusSent:
+		outbound = true
+	case incident.StatusReceived:
+		inbound = true
+	case incident.StatusHandEntered:
+		inbound = e.ToCall == myID || (e.ToMsgID != "" && e.ToCall == "")
+		outbound = e.FromCall == myID || (e.FromMsgID != "" && e.FromCall == "")
+		comment = e.FromCall == "" && e.FromMsgID == "" && e.ToCall == "" && e.ToMsgID == ""
+	}
 	columns = make([]string, 6)
 	var color = colorNormal
 	switch {
@@ -246,32 +258,29 @@ func compactLine(e *incident.LogEntry) (columns []string, colors []int) {
 	default:
 		columns[1] = e.Time.Format("15:04")
 	}
-	if e.Status == incident.StatusReceived {
+	if e.Flags&incident.FNeedsReceipt != 0 {
+		columns[2] = "NO RCPT"
+		colors[2] = colorWarningBG
+	} else if !outbound {
 		if e.FromMsgID != "" {
 			columns[2] = e.FromMsgID
 		} else if e.FromCall != "" {
 			columns[2] = e.FromCall
-		} else {
-			columns[2] = "??????"
 		}
-	} else if e.Flags&incident.FNeedsReceipt != 0 {
-		columns[2] = "NO RCPT"
-		colors[2] = colorWarningBG
 	}
 	columns[3] = e.LocalMsgID
-	switch e.Status {
-	case incident.StatusSent, incident.StatusQueued, incident.StatusDraft:
+	if inbound {
+		if e.Flags&incident.FUnread != 0 {
+			columns[4] = "NEW"
+			colors[4] = colorAlertBG
+		}
+	} else if !comment {
 		if e.ToMsgID != "" {
 			columns[4] = e.ToMsgID
 		} else if e.ToCall != "" {
 			columns[4] = e.ToCall
 		} else {
 			columns[4] = "??????"
-		}
-	case incident.StatusReceived:
-		if e.Flags&incident.FUnread != 0 {
-			columns[4] = "NEW"
-			colors[4] = colorAlertBG
 		}
 	}
 	subject := e.Subject

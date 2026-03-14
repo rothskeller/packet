@@ -6,17 +6,16 @@ import "github.com/rothskeller/pdf/v2"
 // in a field based on its PDF rendering.  (It's approximate because PDF
 // rendering usually uses a proportional font.)  The function returns zero if
 // a width cannot be determined.
-func (fd *FieldDef) CharWidth() int {
+func (fd *FieldDef) CharWidth(n int) int {
 	var text TextRenderer
 
-	// Find the first PDF text rendering for the field.
-	for _, r := range fd.PDF {
-		if tr, ok := r.Renderer.(TextRenderer); ok {
-			text = tr
-			break
-		}
+	// If the nth PDF renderer for the field is not a text renderer, skip.
+	if n < 0 || n >= len(fd.PDF) {
+		return 0
 	}
-	if text.Page == 0 { // no text renderer found
+	if tr, ok := fd.PDF[n].Renderer.(TextRenderer); ok {
+		text = tr
+	} else {
 		return 0
 	}
 	// What is the width of a "0" in the font used in that renderer?

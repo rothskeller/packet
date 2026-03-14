@@ -50,7 +50,7 @@ func cmdList(args []string) (err error) {
 		return usage(listHelp)
 	}
 	return incRead(func(i *incident.Incident) error {
-		cio.Open().EmitLogList(i.Log, full, numbers, receipts)
+		cio.Open().EmitLogList(i.Log, full, numbers, receipts, i.Config.ActiveCall())
 		return nil
 	})
 }

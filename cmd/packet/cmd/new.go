@@ -8,6 +8,7 @@ import (
 	"time"
 
 	"github.com/rothskeller/packet/cmd/packet/cio"
+	"github.com/rothskeller/packet/cmd/packet/pseudomsg"
 	"github.com/rothskeller/packet/errors"
 	"github.com/rothskeller/packet/incident"
 	"github.com/rothskeller/packet/message"
@@ -139,7 +140,7 @@ func cmdNew(args []string) (err error) {
 			newle = &incident.LogEntry{Time: time.Now()}
 			i.AddLogEntry(newle)
 			if c.InputIsTerm && c.OutputIsTerm {
-				return doEdit(c, i, newle, nil, nil, false)
+				return doEdit(c, i, newle, pseudomsg.NewLogEntryMessage(newle), nil, false)
 			}
 			return nil
 		}

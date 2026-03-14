@@ -1,6 +1,7 @@
 package pseudomsg
 
 import (
+	"fmt"
 	"iter"
 	"regexp"
 	"slices"
@@ -8,6 +9,7 @@ import (
 	"sync"
 	"time"
 
+	"github.com/rothskeller/packet/errors"
 	"github.com/rothskeller/packet/incident"
 	"github.com/rothskeller/packet/message"
 	"github.com/rothskeller/packet/message/body"
@@ -19,13 +21,22 @@ import (
 
 // A LogEntryMessage is a fake message.Message that implements only Fields, used
 // for manipulating log entries in the command line as if they were messages.
-type LogEntryMessage struct{ LogEntry *incident.LogEntry }
+type LogEntryMessage struct {
+	LogEntry *incident.LogEntry
+	timestr  string
+}
 
 var _ message.Message = (*LogEntryMessage)(nil)
 
+// NewLogEntryMessage constructs a LogEntryMessage for a LogEntry.
+func NewLogEntryMessage(le *incident.LogEntry) (lem *LogEntryMessage) {
+	return &LogEntryMessage{LogEntry: le, timestr: le.Time.Format("01/02/2006 15:04")}
+}
+
 var (
 	dateLooseRE = regexp.MustCompile(`^(0?[1-9]|1[0-2])[-./](0?[1-9]|[12][0-9]|3[01])[-./](?:20)?([0-9][0-9])$`)
-	timeLooseRE = regexp.MustCompile(`^([1-9]:|[01][0-9]:?|2[0-4]:?)([0-5][0-9])$`)
+	timeLooseRE = regexp.MustCompile(`^([1-9]|[01][0-9]|2[0-4]):?([0-5][0-9])$`)
+	dateTimeRE  = regexp.MustCompile(`^(?:0[1-9]|1[0-2])/(?:0[1-9]|[12][0-9]|3[01])/20[0-9][0-9] (?:[01][0-9]|2[0-4]):[0-5][0-9]$`)
 )
 
 var logEntryFields []field.Field
@@ -35,37 +46,96 @@ func (lem *LogEntryMessage) Fields() iter.Seq[field.Field] {
 	logEntryFieldsOnce.Do(func() {
 		logEntryFields = []field.Field{
 			field.NewField("", "Time").
-				ToHumanFunc(func(_ message.Message, s string) string {
-					if t, err := time.ParseInLocation(time.RFC3339, s, time.Local); err == nil {
-						return t.Format("01/02/2006 15:04")
-					} else {
-						return s
+				ValueFunc(func(m message.Message) string { return lem.timestr }).
+				EditHelp(`This is the date and time of the log entry, in MM/DD/YYYY HH:MM format (24-hour clock).  It is required.  (The date is not shown, but affects the sorting of entries.)`).
+				EditWidth(16).
+				FromHumanFunc(func(m msgifc.Message, s string) string {
+					parts := strings.Fields(s)
+					if len(parts) > 0 {
+						if match := dateLooseRE.FindStringSubmatch(parts[0]); match != nil {
+							m, d, y := match[1], match[2], match[3]
+							if len(y) == 2 {
+								y = "20" + y
+							}
+							parts[0] = fmt.Sprintf("%02s/%02s/%s", m, d, y)
+						}
+					}
+					if len(parts) > 1 {
+						if match := timeLooseRE.FindStringSubmatch(parts[1]); match != nil {
+							h, m := match[1], match[2]
+							parts[1] = fmt.Sprintf("%02s:%s", h, m)
+						}
+					}
+					return strings.Join(parts, " ")
+				}).
+				Required().
+				SetValueFunc(func(m msgifc.Message, s string) {
+					m.(*LogEntryMessage).timestr = s
+					if t, err := time.ParseInLocation("01/02/2006 15:04", s, time.Local); err == nil {
+						m.(*LogEntryMessage).LogEntry.Time = t
 					}
 				}).
-				ValueFunc(func(m message.Message) string {
-					return m.(*LogEntryMessage).LogEntry.Time.Format(time.RFC3339)
+				ValidateFunc(func(m msgifc.Message, f msgifc.Field, vf msgifc.ValidateFlags) error {
+					if !dateTimeRE.MatchString(m.(*LogEntryMessage).timestr) {
+						return NoBypassValidationError{errors.New("The date/time string must be in MM/DD/YYYY HH:MM format (24-hour clock).")}
+					}
+					return nil
 				}).
 				MakeField(),
 			field.NewField("", "From Station").
 				ValueFunc(func(m message.Message) string {
 					return m.(*LogEntryMessage).LogEntry.FromCall
-				}).MakeField(),
+				}).
+				FromHumanFunc(func(_ msgifc.Message, s string) string { return strings.ToUpper(strings.TrimSpace(s)) }).
+				SetValueFunc(func(m msgifc.Message, s string) {
+					m.(*LogEntryMessage).LogEntry.FromCall = s
+				}).
+				EditHelp(`This is the call sign of the station that originated the message.`).
+				EditWidth(ics309FieldWidth(1)).
+				MakeField(),
 			field.NewField("", "From Msg #").
 				ValueFunc(func(m message.Message) string {
 					return m.(*LogEntryMessage).LogEntry.FromMsgID
-				}).MakeField(),
+				}).
+				FromHumanFunc(func(_ msgifc.Message, s string) string { return strings.ToUpper(strings.TrimSpace(s)) }).
+				SetValueFunc(func(m msgifc.Message, s string) {
+					m.(*LogEntryMessage).LogEntry.FromMsgID = s
+				}).
+				EditHelp(`This is the message number assigned by the originating station.`).
+				EditWidth(ics309FieldWidth(2)).
+				MakeField(),
 			field.NewField("", "To Station").
 				ValueFunc(func(m message.Message) string {
 					return m.(*LogEntryMessage).LogEntry.ToCall
-				}).MakeField(),
+				}).
+				FromHumanFunc(func(_ msgifc.Message, s string) string { return strings.ToUpper(strings.TrimSpace(s)) }).
+				SetValueFunc(func(m msgifc.Message, s string) {
+					m.(*LogEntryMessage).LogEntry.ToCall = s
+				}).
+				EditHelp(`This is the call sign of the destination station.`).
+				EditWidth(ics309FieldWidth(3)).
+				MakeField(),
 			field.NewField("", "To Msg #").
 				ValueFunc(func(m message.Message) string {
 					return m.(*LogEntryMessage).LogEntry.ToMsgID
-				}).MakeField(),
+				}).
+				FromHumanFunc(func(_ msgifc.Message, s string) string { return strings.ToUpper(strings.TrimSpace(s)) }).
+				SetValueFunc(func(m msgifc.Message, s string) {
+					m.(*LogEntryMessage).LogEntry.ToMsgID = s
+				}).
+				EditHelp(`This is the message number assigned by the destination station.`).
+				EditWidth(ics309FieldWidth(4)).
+				MakeField(),
 			field.NewField("", "Message").
 				ValueFunc(func(m message.Message) string {
 					return m.(*LogEntryMessage).LogEntry.Subject
-				}).MakeField(),
+				}).
+				SetValueFunc(func(m msgifc.Message, s string) {
+					m.(*LogEntryMessage).LogEntry.Subject = s
+				}).
+				EditHelp(`This is the description or subject line of the message.`).
+				EditWidth(ics309FieldWidth(5)).
+				MakeField(),
 			field.NewField("", "Flags").
 				ValueFunc(func(m msgifc.Message) string {
 					var s []string
@@ -81,6 +151,63 @@ func (lem *LogEntryMessage) Fields() iter.Seq[field.Field] {
 					}
 					return strings.Join(s, ", ")
 				}).MakeField(),
+			field.NewField("", "Needs Followup").
+				AllowedValues("checked").
+				EditHelp(`This flag indicates that the message needs human follow-up.`).
+				SetValueFunc(func(m msgifc.Message, s string) {
+					if s != "" {
+						m.(*LogEntryMessage).LogEntry.Flags |= incident.FFollowup
+					} else {
+						m.(*LogEntryMessage).LogEntry.Flags &^= incident.FFollowup
+					}
+				}).
+				ValueFunc(func(m msgifc.Message) string {
+					if m.(*LogEntryMessage).LogEntry.Flags&incident.FFollowup != 0 {
+						return "checked"
+					}
+					return ""
+				}).
+				VisibleWhen(field.Invisible).
+				MakeField(),
+			field.NewField("", "Needs Receipt").
+				AllowedValues("checked").
+				EditHelp(`This flag indicates that a delivery receipt is expected and has not been received.`).
+				EditableWhen(func(m msgifc.Message, _ bool) bool {
+					return m.(*LogEntryMessage).LogEntry.Status == incident.StatusSent
+				}).
+				SetValueFunc(func(m msgifc.Message, s string) {
+					if s != "" {
+						m.(*LogEntryMessage).LogEntry.Flags |= incident.FNeedsReceipt
+					} else {
+						m.(*LogEntryMessage).LogEntry.Flags &^= incident.FNeedsReceipt
+					}
+				}).
+				ValueFunc(func(m msgifc.Message) string {
+					if m.(*LogEntryMessage).LogEntry.Flags&incident.FNeedsReceipt != 0 {
+						return "checked"
+					}
+					return ""
+				}).
+				VisibleWhen(field.Invisible).
+				MakeField(),
+			field.NewField("", "Voice").
+				AllowedValues("checked").
+				EditHelp(`This flag indicates that the message should be logged on a separate "voice" ICS-309 form.`).
+				SetValueFunc(func(m msgifc.Message, s string) {
+					if s != "" {
+						m.(*LogEntryMessage).LogEntry.Flags |= incident.FVoice
+					} else {
+						m.(*LogEntryMessage).LogEntry.Flags &^= incident.FVoice
+					}
+				}).
+				ValueFunc(func(m msgifc.Message) string {
+					if m.(*LogEntryMessage).LogEntry.Flags&incident.FVoice != 0 {
+						return "checked"
+					}
+					return ""
+				}).
+				VisibleWhen(field.Invisible).
+				MakeField(),
 		}
 	})
 	return slices.Values(logEntryFields)
@@ -111,3 +238,13 @@ type NoBypassValidationError struct{ err error }
 
 func (ne NoBypassValidationError) Error() string { return ne.err.Error() }
 func (ne NoBypassValidationError) Unwrap() error { return ne.err }
+
+func ics309FieldWidth(col int) int {
+	for f := range incident.ICS309FormDef().AllFields() {
+		if f.Label != "Line1" {
+			continue
+		}
+		return f.CharWidth(col)
+	}
+	return 0
+}
