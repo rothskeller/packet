@@ -6,7 +6,6 @@ Before release:
     mark delivered
     mark followup
   CLI issues:
-    Pseudo-message editing for configuration and log entry
     Handling of invocation in non-incident directory
     Collection of required configuration settings
   Update incident directory LRU list when switching to a new one

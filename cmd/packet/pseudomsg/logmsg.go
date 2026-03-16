@@ -91,7 +91,7 @@ func (lem *LogEntryMessage) Fields() iter.Seq[field.Field] {
 					m.(*LogEntryMessage).LogEntry.FromCall = s
 				}).
 				EditHelp(`This is the call sign of the station that originated the message.`).
-				EditWidth(ics309FieldWidth(1)).
+				EditWidth(ics309ColumnWidth(1)).
 				MakeField(),
 			field.NewField("", "From Msg #").
 				ValueFunc(func(m message.Message) string {
@@ -102,7 +102,7 @@ func (lem *LogEntryMessage) Fields() iter.Seq[field.Field] {
 					m.(*LogEntryMessage).LogEntry.FromMsgID = s
 				}).
 				EditHelp(`This is the message number assigned by the originating station.`).
-				EditWidth(ics309FieldWidth(2)).
+				EditWidth(ics309ColumnWidth(2)).
 				MakeField(),
 			field.NewField("", "To Station").
 				ValueFunc(func(m message.Message) string {
@@ -113,7 +113,7 @@ func (lem *LogEntryMessage) Fields() iter.Seq[field.Field] {
 					m.(*LogEntryMessage).LogEntry.ToCall = s
 				}).
 				EditHelp(`This is the call sign of the destination station.`).
-				EditWidth(ics309FieldWidth(3)).
+				EditWidth(ics309ColumnWidth(3)).
 				MakeField(),
 			field.NewField("", "To Msg #").
 				ValueFunc(func(m message.Message) string {
@@ -124,7 +124,7 @@ func (lem *LogEntryMessage) Fields() iter.Seq[field.Field] {
 					m.(*LogEntryMessage).LogEntry.ToMsgID = s
 				}).
 				EditHelp(`This is the message number assigned by the destination station.`).
-				EditWidth(ics309FieldWidth(4)).
+				EditWidth(ics309ColumnWidth(4)).
 				MakeField(),
 			field.NewField("", "Message").
 				ValueFunc(func(m message.Message) string {
@@ -134,7 +134,7 @@ func (lem *LogEntryMessage) Fields() iter.Seq[field.Field] {
 					m.(*LogEntryMessage).LogEntry.Subject = s
 				}).
 				EditHelp(`This is the description or subject line of the message.`).
-				EditWidth(ics309FieldWidth(5)).
+				EditWidth(ics309ColumnWidth(5)).
 				MakeField(),
 			field.NewField("", "Flags").
 				ValueFunc(func(m msgifc.Message) string {
@@ -239,7 +239,7 @@ type NoBypassValidationError struct{ err error }
 func (ne NoBypassValidationError) Error() string { return ne.err.Error() }
 func (ne NoBypassValidationError) Unwrap() error { return ne.err }
 
-func ics309FieldWidth(col int) int {
+func ics309ColumnWidth(col int) int {
 	for f := range incident.ICS309FormDef().AllFields() {
 		if f.Label != "Line1" {
 			continue

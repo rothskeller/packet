@@ -62,7 +62,7 @@ const (
 //     pseudo-message for the incident configuration is returned.
 func matchMessage(i *incident.Incident, in string, flags matchMessageFlag) (msg message.Message, le *incident.LogEntry, err error) {
 	if flags&MMMessageOnly == 0 && strings.HasPrefix("configuration", in) {
-		return &pseudomsg.ConfigMessage{Config: i.Config.Clone()}, nil, nil
+		return pseudomsg.NewConfigMessage(i.Config.Clone()), nil, nil
 	}
 	if strings.HasPrefix(in, "#") {
 		var num int

@@ -62,6 +62,7 @@ func cmdEdit(args []string) (err error) {
 		errorsOnly bool
 		asMessage  bool
 		msg        message.Message
+		noBypass   bool
 		c          = cio.Open()
 	)
 	if !c.InputIsTerm || !c.OutputIsTerm {
@@ -96,7 +97,9 @@ func cmdEdit(args []string) (err error) {
 			return err
 		}
 		switch msg.(type) {
-		case *pseudomsg.ConfigMessage, *pseudomsg.LogEntryMessage, *message.DraftMessage:
+		case *pseudomsg.ConfigMessage, *pseudomsg.LogEntryMessage:
+			noBypass = true
+		case *message.DraftMessage:
 			// OK
 		case *message.JustReceivedMessage, *message.ReceivedMessage:
 			return errors.NewF("Received messages cannot be edited.")
@@ -111,7 +114,7 @@ func cmdEdit(args []string) (err error) {
 				return errors.NewF("Field %q is not editable.", fld.Label())
 			}
 		}
-		return doEdit(c, i, entry, msg, fld, errorsOnly)
+		return doEdit(c, i, entry, msg, fld, errorsOnly, noBypass)
 	}); err != nil {
 		return err
 	}
@@ -119,7 +122,7 @@ func cmdEdit(args []string) (err error) {
 }
 
 // doEdit is the common code between edit and new.
-func doEdit(c *cio.CIO, i *incident.Incident, entry *incident.LogEntry, msg message.Message, start field.Field, errorsOnly bool) (err error) {
+func doEdit(c *cio.CIO, i *incident.Incident, entry *incident.LogEntry, msg message.Message, start field.Field, errorsOnly, noBypass bool) (err error) {
 	var (
 		fields     []field.Field
 		fld        field.Field
@@ -177,7 +180,7 @@ LOOP: // Run the editor loop.
 			if err = fld.Validate(msg, fld, msgifc.VPacket); err == nil {
 				break
 			}
-			if !first && newvalue == value && !errors.IsType[pseudomsg.NoBypassValidationError](err) {
+			if !first && newvalue == value && !noBypass && !errors.IsType[pseudomsg.NoBypassValidationError](err) {
 				err = nil
 				break
 			}

@@ -140,7 +140,7 @@ func cmdNew(args []string) (err error) {
 			newle = &incident.LogEntry{Time: time.Now()}
 			i.AddLogEntry(newle)
 			if c.InputIsTerm && c.OutputIsTerm {
-				return doEdit(c, i, newle, pseudomsg.NewLogEntryMessage(newle), nil, false)
+				return doEdit(c, i, newle, pseudomsg.NewLogEntryMessage(newle), nil, false, true)
 			}
 			return nil
 		}
@@ -220,7 +220,7 @@ func cmdNew(args []string) (err error) {
 			return err
 		}
 		if c.InputIsTerm && c.OutputIsTerm {
-			return doEdit(c, i, newle, newmsg, nil, false)
+			return doEdit(c, i, newle, newmsg, nil, false, false)
 		}
 		return nil
 	}); err != nil {

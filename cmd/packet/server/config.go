@@ -10,16 +10,14 @@ import (
 	"net"
 	"net/http"
 	"net/url"
-	"path/filepath"
-	"runtime"
 	"slices"
 	"strconv"
 	"strings"
 	"time"
 
+	"github.com/rothskeller/packet/cmd/packet/pseudomsg"
 	"github.com/rothskeller/packet/form/htmlop"
 	"github.com/rothskeller/packet/incident"
-	"go.bug.st/serial"
 	"golang.org/x/net/html"
 )
 
@@ -89,7 +87,7 @@ func (s *Server) serveGetIncidentConfig(w http.ResponseWriter, r *http.Request) 
 		}
 		form.Set("tnctype", inc.Config.TNCType)
 		form.Set("serport", inc.Config.SerialPort)
-		if ports := guessSerialPorts(); len(ports) != 0 {
+		if ports := pseudomsg.GuessSerialPorts(); len(ports) != 0 {
 			variables["serports"] = strings.Join(ports, ";")
 		}
 		if len(defs.TCPAddresses) != 0 {
@@ -140,26 +138,6 @@ func (s *Server) serveGetIncidentConfig(w http.ResponseWriter, r *http.Request) 
 	return
 ERROR:
 	ErrPage(w, err.Error(), http.StatusInternalServerError)
-}
-
-// guessSerialPorts makes a swag at the possible device files for serial ports.
-func guessSerialPorts() (ports []string) {
-	if names, err := serial.GetPortsList(); err == nil && len(names) > 0 {
-		return names
-	}
-	if runtime.GOOS == "windows" {
-		// Just give a list of COM numbers.
-		return []string{"COM1", "COM2", "COM3", "COM4", "COM5", "COM6"}
-	}
-	// On any other OS, look for /dev/tty* files with USB in the name.
-	ports, _ = filepath.Glob("/dev/tty*usb*")
-	if ports2, _ := filepath.Glob("/dev/tty*USB*"); len(ports2) != 0 {
-		ports = append(ports, ports2...)
-		slices.SortFunc(ports, func(a, b string) int {
-			return cmp.Compare(strings.ToLower(a), strings.ToLower(b))
-		})
-	}
-	return ports
 }
 
 func (s *Server) servePostIncidentConfig(w http.ResponseWriter, r *http.Request) {

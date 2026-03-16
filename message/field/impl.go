@@ -65,6 +65,13 @@ func (f *field) ToHuman(m msgifc.Message, s string) string {
 	if f.toHumanFunc != nil {
 		return f.toHumanFunc(m, s)
 	}
+	if f.choicesFunc != nil {
+		for _, p := range f.choicesFunc(m) {
+			if p.PIFO == s {
+				return p.Human
+			}
+		}
+	}
 	return s
 }
 
@@ -72,7 +79,15 @@ func (f *field) FromHuman(m msgifc.Message, s string) string {
 	if f.fromHumanFunc != nil {
 		return f.fromHumanFunc(m, s)
 	}
-	return strings.TrimSpace(s)
+	s = strings.TrimSpace(s)
+	if f.choicesFunc != nil {
+		for _, p := range f.choicesFunc(m) {
+			if strings.EqualFold(s, p.Human) {
+				return p.PIFO
+			}
+		}
+	}
+	return s
 }
 
 func (f *field) SetValue(m msgifc.Message, val string) {
@@ -83,9 +98,9 @@ func (f *field) SetValue(m msgifc.Message, val string) {
 	}
 	// If any other fields were newly made disallowed, remove their values.
 	for of := range m.Fields() {
-		if of, ok := of.(*field); ok && !of.disallowed && of.disallowedFunc != nil {
-			if of.disallowedFunc(m) {
-				of.SetValue(m, "")
+		if of, ok := of.(*field); ok && of != f && !of.disallowed && of.disallowedFunc != nil {
+			if !of.disallowedFunc(m) && of.setValueFunc != nil {
+				of.setValueFunc(m, "")
 			}
 		}
 	}
@@ -101,6 +116,9 @@ func (f *field) Visible(m msgifc.Message) bool {
 func (f *field) Editable(m msgifc.Message, explicit bool) bool {
 	if f.editableFunc != nil {
 		return f.editableFunc(m, explicit)
+	}
+	if f.disallowedFunc != nil && !f.disallowedFunc(m) {
+		return false
 	}
 	return f.editHelp != ""
 }
