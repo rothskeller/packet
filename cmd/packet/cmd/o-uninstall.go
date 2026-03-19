@@ -69,10 +69,7 @@ func disconnectFromOutpost() (err error) {
 	} else {
 		dir = strings.TrimSpace(string(data))
 	}
-	if err = formdefs.UpdateLaunchFile(filepath.Join(dir, "Launch.ini"), nil, nil, nil, packetRoot); err != nil {
-		return fmt.Errorf("updating %s\\Launch.ini: %s", dir, err)
-	}
-	if err = formdefs.UpdateLaunchFile(filepath.Join(dir, "Launch.local"), nil, nil, nil, packetRoot); err != nil {
+	if err = formdefs.UpdateLaunchLocal(filepath.Join(dir, "Launch.local"), nil, nil, packetRoot); err != nil {
 		return fmt.Errorf("updating %s\\Launch.local: %s", dir, err)
 	}
 	return nil

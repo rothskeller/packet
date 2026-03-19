@@ -59,19 +59,16 @@ var includeLineRE = regexp.MustCompile(`(?i)^INCLUDE\s*(.*)$`)
 // addons that are keys in that map are removed from the configuration.  This
 // function is a no-op if packet is not connected to Outpost.
 func UpdateOutpostConfiguration(datadir string, remove map[string]bool) (err error) {
-	// Old PIFO algorithm:
-	// If reference(s) to our directory are already in Launch.ini, leave it
-	// alone, remove any such references from Launch.local, and we're done.
-	// Otherwise, replace the first line of Launch.local referencing our
-	// directory with references to our launch files, or add them at the end
-	// if there are no existing references.  Remove any other
-	// pre-existing lines referencing our directory, and blank lines.  Add a
-	// blank line at the beginning and the end.
+	// In a fresh install of 164B, the Outpost Launch.ini file contains a
+	// reference to the old SCCoPIFO.launch file, a LINE, and the generic
+	// ICS-213 form, and there is no Outpost Launch.local file.  Earlier
+	// installations could have any random set of entries in either or both
+	// files.  The Launch.ini file gets replaced when Outpost is updated;
+	// the Launch.local file (if any) does not.
 	//
-	// A fresh install of the SCCo packet installer leaves a reference to
-	// SCCoPIFO.launch at the top of Launch.ini (after header comments) and
-	// does not create a Launch.local at all.  That must be how the combined
-	// installer leaves it, because the PIFO installer wouldn't do that.
+	// Our algorithm here is, first, to remove all non-commented entries
+	// from the Launch.ini file.  We don't want any of them.  And then, to
+	// update or add entries in Launch.local, creating it if necessary.
 	var (
 		iniFName    string
 		launchFiles []string
@@ -115,13 +112,13 @@ func UpdateOutpostConfiguration(datadir string, remove map[string]bool) (err err
 	}
 	// Update Launch.ini to update the paths to any that are already
 	// mentioned in it.
-	if err = UpdateLaunchFile(iniFName, nil, addons, remove, oldPIFOPath); err != nil {
+	if err = emptyLaunchINI(iniFName); err != nil {
 		return fmt.Errorf("can't update %s: %s", iniFName, err)
 	}
 	// Update Launch.local to update any remaining paths and/or add
 	// remaining items.
 	localFName = filepath.Join(datadir, "Launch.local")
-	if err = UpdateLaunchFile(localFName, addons, nil, remove, oldPIFOPath); err != nil {
+	if err = UpdateLaunchLocal(localFName, addons, remove, oldPIFOPath); err != nil {
 		return fmt.Errorf("can't update %s: %s", localFName, err)
 	}
 	return nil
@@ -142,14 +139,41 @@ func writeAddonINI(launchFile string) (err error) {
 	return nil
 }
 
-// UpdateLaunchFile modifies the INCLUDE lines in an Outpost launch file.  The
-// entries in "add" are added, unless there are already entries for them, in
-// which case the existing entries for them are replaced.  The entries in "set"
-// are updated if they exist, but not added.  The entries in "remove" are
-// removed if they are found.  All remaining entries matching removePath are
-// removed.  Entries in the "set" map that are matched are removed from the map.
+// emptyLaunchINI removes all non-commented lines from the Outpost Launch.ini
+// file.  (Comments start with a '/'.)
+func emptyLaunchINI(filename string) (err error) {
+	var (
+		fh    *os.File
+		scan  *bufio.Scanner
+		lines []string
+	)
+	if fh, err = os.Open(filename); err != nil && !os.IsNotExist(err) {
+		slog.Error("os.Open", "f", filename, "err", err)
+		return err
+	}
+	if err == nil {
+		scan = bufio.NewScanner(fh)
+		for scan.Scan() {
+			line := scan.Text()
+			if strings.HasPrefix(line, "/") || strings.TrimSpace(line) == "" {
+				lines = append(lines, line)
+			}
+		}
+		fh.Close()
+	}
+	if err = os.WriteFile(filename, []byte(strings.Join(lines, "\r\n")), 0666); err != nil {
+		slog.Error("os.WriteFile", "f", filename, "err", err)
+		return err
+	}
+	return nil
+}
+
+// UpdateLaunchLocal modifies or creates the Launch.local file.  The entries in
+// "add" are added, unless there are already entries for them, in which case the
+// existing entries for them are replaced.  The entries in "remove" are removed
+// if they are found.    All remaining entries matching removePath are removed.
 // An error is returned only if the file cannot be read or written.
-func UpdateLaunchFile(filename string, add, set map[string]string, remove map[string]bool, removePath string) (err error) {
+func UpdateLaunchLocal(filename string, add map[string]string, remove map[string]bool, removePath string) (err error) {
 	var (
 		fh       *os.File
 		scan     *bufio.Scanner
@@ -185,23 +209,11 @@ func UpdateLaunchFile(filename string, add, set map[string]string, remove map[st
 				delete(add, addonName)
 				remove[addonName] = true
 				continue
-			} else if sb := set[addonName]; sb != "" {
-				if !strings.EqualFold(sb, launchfile) {
-					slog.Info("modified include in launch file", "f", filename, "from", launchfile, "to", sb)
-					line = "INCLUDE " + sb
-					modified = true
-				}
-				lines = append(lines, line)
-				delete(set, addonName)
-				remove[addonName] = true
-				continue
 			} else if remove[addonName] {
 				slog.Info("removed include from launch file", "f", filename, "include", launchfile)
 				modified = true
 				continue
 			} else if strings.HasPrefix(launchfile, removePath) {
-				// This directory is deleted during install, so
-				// remove this entry.
 				slog.Info("removed include from launch file", "f", filename, "include", launchfile)
 				modified = true
 				continue
@@ -209,6 +221,9 @@ func UpdateLaunchFile(filename string, add, set map[string]string, remove map[st
 			lines = append(lines, line)
 		}
 		fh.Close()
+	}
+	if len(lines) == 0 {
+		lines = append(lines, "") // file should start with blank line
 	}
 	for addonName, launchfile := range add {
 		slog.Info("added include to launch file", "f", filename, "include", launchfile)
@@ -221,7 +236,7 @@ func UpdateLaunchFile(filename string, add, set map[string]string, remove map[st
 		return nil
 	}
 	if len(lines) != 0 && lines[len(lines)-1] != "" {
-		lines = append(lines, "")
+		lines = append(lines, "") // file should end with blank line
 	}
 	if err = os.WriteFile(filename, []byte(strings.Join(lines, "\r\n")), 0666); err != nil {
 		slog.Error("os.WriteFile", "f", filename, "err", err)
