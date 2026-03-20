@@ -44,8 +44,10 @@
     })
     window.addEventListener('default-action', () => {
       const view = document.getElementById('m-msg-view')
+      const edit = document.getElementById('m-msg-edit')
       if (view.shown()) view.click()
-      else document.getElementById('m-msg-edit').click()
+      else if (edit.shown()) edit.click()
+      else document.getElementById('m-msg-edit-log').click()
     })
     function setupMenuHandlers() { // called by window.onload
       const manualMode = !document.getElementById('m-conn')

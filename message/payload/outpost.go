@@ -21,14 +21,15 @@ type OutpostPayload struct {
 	urgent    bool
 	requestDR bool
 	requestRR bool
+	allowLong bool
 	bbsRoutes string
 }
 
 var _ Payload = (*OutpostPayload)(nil)
 
 // NewOutpostPayload creates a new Payload containing the supplied body.
-func NewOutpostPayload(body body.Body) *OutpostPayload {
-	p := &OutpostPayload{body: body}
+func NewOutpostPayload(body body.Body, allowLong bool) *OutpostPayload {
+	p := &OutpostPayload{body: body, allowLong: allowLong}
 	if body.Dirty() {
 		p.MarkDirty("payload.OutpostPayload.Body")
 	}
@@ -80,9 +81,15 @@ func (p *OutpostPayload) SetRequestRR(requestRR bool) {
 // BBSRoutes returns the BBS routing lines at the top of the body (if any).
 func (p *OutpostPayload) BBSRoutes() string { return p.bbsRoutes }
 
+// SetAllowLong sets the allow-long-lines flag on the payload.  This prevents
+// base64 encoding just because line lengths exceed the JNOS limit.  This flag
+// should be set only when the payload is resilient to having extra line breaks
+// added by JNOS.
+func (p *OutpostPayload) SetAllowLong() { p.allowLong = true }
+
 // Clone returns a copy of the Payload.
 func (p *OutpostPayload) Clone() Payload {
-	np := NewOutpostPayload(p.Body().Clone())
+	np := NewOutpostPayload(p.Body().Clone(), p.allowLong)
 	np.SetRequestDR(p.RequestDR())
 	np.SetRequestRR(p.RequestRR())
 	np.SetUrgent(p.Urgent())
@@ -271,7 +278,7 @@ func (p *OutpostPayload) Encode() (payload string) {
 	}
 	p.MarkClean()
 	// Next, encode the body.
-	if !isJNOSSafe(payload) {
+	if !isJNOSSafe(payload, p.allowLong) {
 		payload = "!B64!" + lineBreakEvery76(base64.StdEncoding.EncodeToString([]byte(payload)))
 	}
 	// If we have BBS routes, add them on top.
@@ -284,11 +291,11 @@ func (p *OutpostPayload) Encode() (payload string) {
 // isJNOSSafe returns whether the body can be sent to JNOS safely.  JNOS does
 // not handle control characters, isn't guaranteed to handle high-bit
 // characters, and silently breaks lines greater than 126 bytes.
-func isJNOSSafe(body string) bool {
+func isJNOSSafe(body string, allowLong bool) bool {
 	if strings.ContainsFunc(body, isNonASCII) {
 		return false
 	}
-	if exceedsLineLength(body, 126, false) {
+	if !allowLong && exceedsLineLength(body, 126, false) {
 		return false
 	}
 	return true

@@ -5,7 +5,9 @@
   <script> // Manual Send Dialog
     function setupManualSendDialog() {
       document.getElementById('mscopy').addEventListener('click', async () => {
-        await navigator.clipboard.writeText(document.getElementById('mscmd').textContent)
+        let command = document.getElementById('mscmd').textContent
+        command = command.replace(/[\r\n]*$/, '') + '\n'
+        await navigator.clipboard.writeText(command)
         document.getElementById('mscopied').textContent = 'Copied'
       })
       document.getElementById('mscan').addEventListener('click', () => {
@@ -23,7 +25,12 @@
       })
     }
     function openManualSendDialog(ident, command) {
+      command = command.replace(/[\r\n]*$/, '') + '\n'
       document.getElementById('mscmd').textContent = command
+      document.getElementById('mscopied').textContent = ''
+      navigator.clipboard.writeText(command).
+        then(() => { document.getElementById('mscopied').textContent = 'Copied' }).
+        catch(() => {})
       const dlg = document.getElementById('msdlg')
       dlg.dataset.ident = ident
       dlg.showModal()

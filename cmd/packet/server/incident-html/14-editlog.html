@@ -76,6 +76,7 @@
       }
       document.getElementById('eledate').value = `0${date.getMonth() + 1}`.substr(-2) + '/' + `0${date.getDate()}`.substr(-2) + '/' + date.getFullYear()
       document.getElementById('eletime').value = `0${date.getHours()}`.substr(-2) + ':' + `0${date.getMinutes()}`.substr(-2)
+      document.getElementById('eleerr').textContent = ''
       document.getElementById('eledlg').showModal()
     }
   </script>

@@ -29,7 +29,7 @@ var _ Message = (*SentMessage)(nil)
 func (m *SentMessage) init() {
 	m.Tracker.OnDirty(func(reason string) {
 		switch reason {
-		case "message.SentMessage.Receipts", "body.FormBody.Field.DestMsgNo":
+		case "envelope.SentMessage.Receipts", "body.FormBody.Field.DestMsgNo":
 			// OK
 		default:
 			panic("SentMessage should not change: " + reason)

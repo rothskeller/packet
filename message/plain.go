@@ -77,7 +77,7 @@ func (m *PlainMessage) Validate(pifo bool) (err error) {
 
 func (mt plainMessage) NewDraft() (msg Message) {
 	s, _ := subject.NewPlainSubject("", "", "")
-	return NewDraftMessage(PlainMessage, s, payload.NewOutpostPayload(body.NewPlainBody("")), false)
+	return NewDraftMessage(PlainMessage, s, payload.NewOutpostPayload(body.NewPlainBody(""), false), false)
 }
 
 //go:embed plain.html
@@ -129,7 +129,7 @@ func (mt plainMessage) FromPOST(r *http.Request) (msg Message, err error) {
 		dm   *DraftMessage
 	)
 	bdy = body.NewPlainBody(r.FormValue("body"))
-	payl = payload.NewOutpostPayload(bdy)
+	payl = payload.NewOutpostPayload(bdy, false)
 	subj, _ = subject.NewPlainSubject(r.FormValue("MsgNo"), r.FormValue("handling"), r.FormValue("subject"))
 	dm = NewDraftMessage(PlainMessage, subj, payl, false)
 	dm.SetTo(r.FormValue("ToAddr"))

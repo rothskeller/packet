@@ -40,7 +40,7 @@ func NewReadReceipt(rmTo, rmSubject string, readTime time.Time, extraText string
 	if body, err = newReadReceiptBody(rmTo, rmSubject, readTime, extraText); err != nil {
 		return nil, err
 	}
-	return message.NewDraftMessage(ReadReceipt, subj, payload.NewOutpostPayload(body), false), nil
+	return message.NewDraftMessage(ReadReceipt, subj, payload.NewOutpostPayload(body, false), false), nil
 }
 
 // --- MTYPE -------------------------------------------------------------------

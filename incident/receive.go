@@ -190,6 +190,7 @@ func (i *Incident) receiveReceiptMessage(rcpt *message.JustReceivedMessage) (err
 				}
 			}
 		}
+		sentle.Seq = i.Seq
 		if err = i.saveMessage(sent, sentle); err != nil {
 			return err
 		}

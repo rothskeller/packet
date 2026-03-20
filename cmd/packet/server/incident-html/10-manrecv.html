@@ -37,8 +37,14 @@
         document.getElementById('mrerr').textContent = err
       })
     }
-    function openManualReceiveDialog() {
-      document.getElementById('mrmsg').value = ''
+    async function openManualReceiveDialog() {
+      let message = ''
+      try {
+        const cb = await navigator.clipboard.readText()
+        if (cb.startsWith('Date: ')) message = cb
+      } catch (e) { }
+      document.getElementById('mrmsg').value = message
+      document.getElementById('mrerr').textContent = ''
       document.getElementById('mrdlg').showModal()
     }
   </script>

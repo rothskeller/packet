@@ -208,6 +208,7 @@ func (ft FormType) Recognize(m message.Message) {
 		m.SetSubject(subj)
 	}
 	m.SetType(ft)
+	m.Payload().(*payload.OutpostPayload).SetAllowLong()
 }
 
 func (ft EditableFormType) Recognize(m message.Message) {
@@ -229,7 +230,7 @@ func (ft EditableFormType) NewDraft() message.Message {
 			}
 		}
 	}
-	pload := payload.NewOutpostPayload(body)
+	pload := payload.NewOutpostPayload(body, true)
 	pload.SetUrgent(urgent)
 	subj, _ := NewFormSubject("", "", ft.SubjectTag, "")
 	return message.NewDraftMessage(ft, subj, pload, false)
@@ -342,7 +343,7 @@ func (ft EditableFormType) FromPOST(r *http.Request) (msg message.Message, err e
 		slog.Error("form.NewFormBody", "err", err)
 		return nil, err
 	}
-	payl = payload.NewOutpostPayload(body)
+	payl = payload.NewOutpostPayload(body, true)
 	subj, _ = NewFormSubject("", "", ft.SubjectTag, "") // will give an error, ignored
 	dm = message.NewDraftMessage(ft, subj, payl, false)
 	for f := range body.Fields() {
@@ -392,7 +393,7 @@ func (ft EditableFormType) renderFromPOST(r *http.Request) (msg message.Message,
 	}
 	// Build the message.
 	b := body.NewPlainBody(bodytext)
-	p := payload.NewOutpostPayload(b)
+	p := payload.NewOutpostPayload(b, true)
 	if handling == "IMMEDIATE" {
 		p.SetUrgent(true)
 	}

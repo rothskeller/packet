@@ -22,15 +22,6 @@ func main() {
 	} else if err != nil && err != cmd.ErrQuit {
 		os.Exit(1)
 	}
-	/*
-	   defaultCommands()
-	   defaultCommands()
-
-	   	if err := cmd.Execute(); err != nil {
-	   		slog.Error("error exit", "err", err)
-	   		cio.Open().Error("%s", err)
-	   	}
-	*/
 }
 
 func logInvocation() {
@@ -55,6 +46,7 @@ func logInvocation() {
 }
 
 func defaultCommands() {
+
 	if len(os.Args) != 1 {
 		return // They specified a command.
 	}
@@ -64,6 +56,6 @@ func defaultCommands() {
 	if exe := strings.ToLower(filepath.Base(os.Args[0])); exe == "pifo" || exe == "pifo.exe" {
 		os.Args = append(os.Args, "gui")
 	} else if strings.Contains(exe, "install") || strings.Contains(exe, "setup") {
-		os.Args = append(os.Args, "install")
+		os.Args = append(os.Args, "outpost", "install")
 	}
 }

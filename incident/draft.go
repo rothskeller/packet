@@ -229,6 +229,8 @@ func (i *Incident) ApplyDefaults(dm *message.DraftMessage) {
 			maybeSetValue(dm, f, i.Config.DefaultFromPos)
 		case field.CFromLocation:
 			maybeSetValue(dm, f, i.Config.DefaultFromLoc)
+		case field.CHeaderTo:
+			f.SetValue(dm, i.Config.DefaultTo)
 		case field.CMessageDate, field.CFormDate:
 			maybeSetValue(dm, f, time.Now().Format("01/02/2006"))
 		case field.COperatorCall:
