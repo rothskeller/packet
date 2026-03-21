@@ -3,8 +3,8 @@ html     form-mhoc-beds-status-v3.html
 version  3.0
 title    Hospital Bed Availability Report
 indef    a hospital bed availability report
-create   HAvBed h
-pdfFile  XSC_HAvBed_Report_v20260307.pdf
+create   HAvBed hb
+pdfFile  XSC_HAvBed_Report_v20260223.pdf
 deftext  FT Times-Roman FS 12.0 MS 8.0 LH 1.15 A lF WR f CL t C 000099
 
 field MsgNo originMessageID
@@ -130,27 +130,7 @@ field 20. messageSummary
   choice   Valley Medical Center
   presence required
   help     "This is the name of the hospital reporting availability.  It is required."
-  pdf      text L 171.53 R 550.00 B 527.12 T 545.20 BL 532.32
-
-field 22.
-  label    "22. Command Center Status"
-  type     restricted
-  mchoice  Available a. Available
-  mchoice  "Not Activated" b. Not Activated
-  mchoice  "Drill or Exercise" c. Drill or Exercise
-  mchoice  Monitoring d. Monitoring
-  mchoice  "Limited Activation" e. Limited Activation
-  mchoice  "Full Activation" f. Full Activation
-  mchoice  Unavailable g. Unavailable
-  presence required
-  help     "This indicates the status of the command center of the hospital.  It is required."
-  pdf      if 22.=Available then circle X 244.80 Y 514.92 R 2.72
-  pdf      if 22.="Not Activated" then circle X 389.76 Y 514.98 R 2.84
-  pdf      if 22.="Drill or Exercise" then circle X 244.80 Y 499.32 R 2.72
-  pdf      if 22.=Monitoring then circle X 389.76 Y 499.38 R 2.84
-  pdf      if 22.="Limited Activation" then circle X 244.80 Y 483.72 R 2.84
-  pdf      if 22.="Full Activation" then circle X 389.76 Y 483.78 R 2.84
-  pdf      if 22.=Unavailable then circle X 244.80 Y 468.12 R 2.84
+  pdf      text L 171.76 R 550.00 B 527.12 T 545.20 BL 532.32
 
 field 41.
   label    "31. Adult ICU"
@@ -158,7 +138,7 @@ field 41.
   presence required
   width    11
   help     "This is the number of available adult beds that can support critical patients, including ventilator support.  It is required."
-  pdf      text L 191.76 R 252.32 B 408.80 T 424.96 BL 413.04 A rF
+  pdf      text L 191.76 R 252.32 B 476.24 T 492.40 BL 480.48 A rF
 
 field 52.
   label    "32. Adult Telemetry Beds"
@@ -166,7 +146,7 @@ field 52.
   presence required
   width    11
   help     "This is the number of available adult beds equipped with telemetry monitoring.  It is required."
-  pdf      text L 191.76 R 252.32 B 388.16 T 404.32 BL 392.40 A rF
+  pdf      text L 191.76 R 252.32 B 455.60 T 471.76 BL 459.84 A rF
 
 field 43.
   label    "33. Adult Medical/Surgical Beds"
@@ -174,7 +154,7 @@ field 43.
   presence required
   width    11
   help     "This is the number of available adult medical/surgical beds, also known as ward beds.  It is required."
-  pdf      text L 191.76 R 252.32 B 367.52 T 383.68 BL 371.76 A rF
+  pdf      text L 191.76 R 252.32 B 434.96 T 451.12 BL 439.20 A rF
 
 field 46.
   label    "34. Pediatric ICU Beds"
@@ -182,7 +162,7 @@ field 46.
   presence required
   width    11
   help     "This is the number of available pediatric beds that can support critical patients, including ventilator support.  It is required."
-  pdf      text L 191.76 R 252.32 B 346.88 T 363.04 BL 351.12 A rF
+  pdf      text L 191.76 R 252.32 B 414.32 T 430.48 BL 418.56 A rF
 
 field 53.
   label    "35. Neonatal ICU Beds"
@@ -190,7 +170,7 @@ field 53.
   presence required
   width    11
   help     "This is the number of available neonatal intensive care unit beds.  It is required."
-  pdf      text L 191.76 R 252.32 B 326.24 T 342.40 BL 330.48 A rF
+  pdf      text L 191.76 R 252.32 B 393.68 T 409.84 BL 397.92 A rF
 
 field 54.
   label    "36. Pediatric Telemetry Beds"
@@ -198,7 +178,7 @@ field 54.
   presence required
   width    11
   help     "This is the number of available pediatric beds equipped with telemetry monitoring.  It is required."
-  pdf      text L 191.76 R 252.32 B 305.60 T 321.76 BL 309.84 A rF
+  pdf      text L 191.76 R 252.32 B 373.04 T 389.20 BL 377.28 A rF
 
 field 47.
   label    "37. Pediatric Medical/Surgical Beds"
@@ -206,7 +186,7 @@ field 47.
   presence required
   width    11
   help     "This is the number of available pediatric medical/surgical beds, also known as ward beds.  It is required."
-  pdf      text L 191.76 R 252.32 B 284.96 T 301.12 BL 289.20 A rF
+  pdf      text L 191.76 R 252.32 B 352.40 T 368.56 BL 356.64 A rF
 
 field 42.
   label    "38. Burn ICU Beds"
@@ -214,7 +194,7 @@ field 42.
   presence required
   width    11
   help     "This is the number of available burn ICU beds.  It is required.  These beds are not to be included in other ICU bed counts."
-  pdf      text L 191.76 R 252.32 B 264.32 T 280.48 BL 268.56 A rF
+  pdf      text L 191.76 R 252.32 B 331.76 T 347.92 BL 336.00 A rF
 
 field 55.
   label    "39. OB/GYN Beds"
@@ -222,7 +202,7 @@ field 55.
   presence required
   width    11
   help     "This is the number of available beds used during labor, delivery, and postpartum care.  It is required."
-  pdf      text L 191.76 R 252.32 B 243.68 T 259.84 BL 247.92 A rF
+  pdf      text L 191.76 R 252.32 B 311.12 T 327.28 BL 315.36 A rF
 
 field 48.
   label    "40. Psychiatric"
@@ -230,7 +210,7 @@ field 48.
   presence required
   width    11
   help     "This is the number of available psychiatric unit beds (ward beds on a closed/locked unit with a sitter).  It is required."
-  pdf      text L 191.76 R 252.32 B 223.04 T 239.20 BL 227.28 A rF
+  pdf      text L 191.76 R 252.32 B 290.48 T 306.64 BL 294.72 A rF
 
 field 56.
   label    "41. TOTAL"
@@ -238,7 +218,7 @@ field 56.
   presence required
   width    11
   help     "This is the total number of available beds In the above categories.  It is required."
-  pdf      text L 191.76 R 252.32 B 202.40 T 218.56 BL 206.64 A rF
+  pdf      text L 191.76 R 252.32 B 269.84 T 286.00 BL 274.08 A rF
 
 field 45.
   label    "42. Operating Room Beds"
@@ -246,7 +226,7 @@ field 45.
   presence required
   width    11
   help     "This is the number of available operating room beds.  It is required."
-  pdf      text L 191.76 R 252.32 B 181.76 T 197.92 BL 186.00 A rF
+  pdf      text L 191.76 R 252.32 B 249.20 T 265.36 BL 253.44 A rF
 
 field 44.
   label    "43. Isolation Beds"
@@ -254,7 +234,7 @@ field 44.
   presence required
   width    11
   help     "This is the number of available isolation unit beds.  It is required."
-  pdf      text L 191.76 R 252.32 B 160.88 T 177.28 BL 165.12 A rF
+  pdf      text L 191.76 R 252.32 B 228.56 T 244.72 BL 232.80 A rF
 
 field 50.
   label    "44. Ventilator Beds"
@@ -262,29 +242,35 @@ field 50.
   presence required
   width    11
   help     "This is the number of available ventilator-equipped beds.  It is required."
-  pdf      text L 191.76 R 252.32 B 140.24 T 156.40 BL 144.48 A rF
+  pdf      text L 191.76 R 252.32 B 207.92 T 224.08 BL 212.16 A rF
+
+field 51.
+  label    "45. Comment"
+  type     multiline
+  help     "This field contains comments about the report."
+  pdf      text L 109.00 R 550.00 B 145.76 T 203.44 BL 194.88
 
 field OpRelayRcvd
   label    "Operator: Relay Received"
   width    36
   help     "This is the name of the station from which this message was directly received.  It is filled in for messages that go through a relay station."
-  pdf      text L 110.08 R 308.32 B  86.48 T 100.96 BL  90.00
+  pdf      text L 110.08 R 308.32 B  86.48 T 100.96 BL  95.28
 
 field OpRelaySent
   label    "Operator: Relay Sent"
   width    36
   help     "This is the name of the station to which this message was directly sent.  It is filled in for messages that go through a relay station."
-  pdf      text L 342.64 R 551.20 B  86.48 T 100.96 BL  90.00
+  pdf      text L 342.64 R 551.20 B  86.48 T 100.96 BL  95.28
 
 field OpName operatorName
   label    "Operator: Name"
   presence required
-  pdf      text L  74.80 R 227.20 B  67.52 T  82.00 BL  71.04
+  pdf      text L  74.80 R 227.20 B  73.04 T  87.52 BL 76.32
 
 field OpCall operatorCall
   label    "Operator: Call Sign"
   presence required
-  pdf      text L 279.40 R 357.76 B  67.52 T  82.00 BL  71.04
+  pdf      text L 279.40 R 344.32 B  73.04 T  87.52 BL 76.32
 
 field -
   label    Operator
@@ -294,12 +280,12 @@ field -
 field OpDate operatorDate
   label    "Operator: Date"
   type     date
-  pdf      text L 393.28 R 443.20 B  67.52 T  82.00 BL  71.04
+  pdf      text L 377.84 R 443.20 B  73.04 T  87.52 BL 76.32
 
 field OpTime operatorTime
   label    "Operator: Time"
   type     time
-  pdf      text L 507.28 R 551.20 B  67.52 T  82.00 BL  71.04
+  pdf      text L 507.28 R 551.20 B  73.04 T  87.52 BL 76.32
 
 field -
   label    "Operator: Date/Time"
@@ -307,5 +293,5 @@ field -
   children OpDate OpTime
 
 field -
-  pdf      box L  34.80 R 119.04 B  36.84 T  47.16 F FFFFFF
-  pdf      box L 524.40 R 574.80 B  36.60 T  47.04 F FFFFFF
+  pdf      box L  32.28 R 120.24 B  36.12 T  49.92 F FFFFFF
+  pdf      box L 521.64 R 579.96 B  36.12 T  49.92 F FFFFFF

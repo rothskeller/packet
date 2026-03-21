@@ -3,25 +3,13 @@
 <script type=text/javascript src={{assets}}/pack-it-forms.js></script>
 <title>HAvBed Poll</title>
 <packet-form>
-  <form-roo form-title="SCCo Medical Health Branch — HAvBed Poll" paper-version="PDF: 20260307">
+  <form-roo form-title="SCCo Medical Health Branch — HAvBed Poll" paper-version="PDF: 20260223">
     <form-dthtf to-ics-positions="EMS Unit; Medical Health Branch; Operations Section" to-locations="PHDOC; County EOC"></form-dthtf>
     <div class=section>Hospital</div>
     <div class=layout-pair>
       <div class=pair>
         <label for=20.>21. Hospital Name:</label>
         <hospital-box id=20. name=20. style="{{w-20.}}"></hospital-box>
-      </div>
-      <div class=pair>
-        <label>22. Command Center Status:</label>
-        <div class="layout-pair colgap required-group">
-          <label style="order:1"><input type=radio name=22. value=Available>a. Available</label>
-          <label style="order:3"><input type=radio name=22. value="Not Activated">b. Not Activated</label>
-          <label style="order:5"><input type=radio name=22. value="Drill or Exercise">c. Drill/Exercise</label>
-          <label style="order:7"><input type=radio name=22. value=Monitoring>d. Monitoring</label>
-          <label style="order:2"><input type=radio name=22. value="Limited Activation">e. Limited Activation</label>
-          <label style="order:4"><input type=radio name=22. value="Full Activation">f. Full Activation</label>
-          <label style="order:6"><input type=radio name=22. value=Unvailable>g. Unvailable</label>
-        </div>
       </div>
     </div>
     <div class=layout-grid style="--columns: max-content max-content 1fr">
@@ -83,6 +71,10 @@
       <div class=pair>
         <label for=50.>44. Vent:</label>
         <input id=50. name=50. class=cardinal-number required style="{{w-50.}}; text-align:right">
+      </div>
+      <div class=pair>
+        <label for=51.>45. Comment:</label>
+        <textarea id=45. name=45. style="{{w-51.}}"></textarea>
       </div>
     </div>
   </form-roo>

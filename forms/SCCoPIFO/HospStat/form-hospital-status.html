@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<link rel=stylesheet href={{assets}}/SCCoPIFO.css>
+<script type=text/javascript src={{assets}}/pack-it-forms.js></script>
+<title>Hospital Status</title>
+<packet-form>
+  <form-roo form-title="Hospital Status" paper-version="PDF: 20260313">
+    <form-dthtf to-ics-positions="EMS Unit; Medical Health Branch; Operations Section"
+      to-locations="PHDOC; County EOC"></form-dthtf>
+    <div class="layout-pair">
+      <div class="pair">
+        <label for=20.>14. Hospital Name:</label>
+        <input id=20. name=20. required>
+      </div>
+    </div>
+    <div class=section>Hospital Status</div>
+    <div class=layout-grid style="--columns: repeat(4, max-content) 1fr">
+      <div class="subsec rowspan3">21. Diversion</div>
+      <div class="border subgrid colspan4 rowspan2 colgap">
+        <div class="rowspan2 annotation">(Pick One)</div>
+        <label><input type=radio name=12.1. value=Unknown>a. Unknown</label>
+        <label><input type=radio name=12.1. value=Open>b. Open</label>
+        <label><input type=radio name=12.1. value="Diverting Ambulances">c. Diverting Ambulances</label>
+        <label><input type=radio name=12.1. value="Internal Disaster">d. Internal Disaster</label>
+        <label><input type=radio name=12.1. value="Specialty Bypass">e. Specialty Bypass</label>
+      </div>
+      <div class="pair colspan4">
+        <label for=12.1c.>f. Comment:</label>
+        <input id=12.1c. name=12.1c. class=colspan3>
+      </div>
+      <div class="subsec rowspan3">22. Decon</div>
+      <div class="border subgrid colspan4 rowspan2 colgap">
+        <div class="rowspan2 annotation">(Pick One)</div>
+        <label><input type=radio name=12.2. value=Unknown>a. Unknown</label>
+        <label><input type=radio name=12.2. value="Not Available">b. Not Available</label>
+        <label><input type=radio name=12.2. value=Active>c. Active</label>
+        <label><input type=radio name=12.2. value=Available>d. Available</label>
+      </div>
+      <div class="pair colspan4">
+        <label for=12.2c.>e. Comment:</label>
+        <input id=12.2c. name=12.2c. class=colspan3>
+      </div>
+      <div class="subsec rowspan2">23. Command Ctr</div>
+      <div class="border subgrid colspan4 colgap">
+        <div class=annotation>(Pick One)</div>
+        <label><input type=radio name=12.3. value=Activated>a. Activated</label>
+        <label><input type=radio name=12.3. value=Monitoring>b. Monitoring</label>
+        <label><input type=radio name=12.3. value="Not Activated">c. Not Activated</label>
+      </div>
+      <div class="pair colspan4">
+        <label for=12.3c.>d. Comment:</label>
+        <input id=12.3c. name=12.3c. class=colspan3>
+      </div>
+      <div class="subsec rowspan2">24. Morgue</div>
+      <div class="border subgrid colspan4 colgap">
+        <div class=annotation>(Pick One)</div>
+        <label><input type=radio name=12.4. value=Unknown>a. Unknown</label>
+        <label><input type=radio name=12.4. value=Open>b. Open</label>
+        <label><input type=radio name=12.4. value=Full>c. Full</label>
+      </div>
+      <div class="pair colspan4">
+        <label for=12.4c.>d. Comment:</label>
+        <input id=12.4c. name=12.4c. class=colspan3>
+      </div>
+      <div class="subsec rowspan4">25. Power</div>
+      <div class="border subgrid colspan4 rowspan2 colgap">
+        <div class="rowspan2 annotation">(Pick One)</div>
+        <label><input type=radio name=12.5. value=Unknown>a. Unknown</label>
+        <label><input type=radio name=12.5. value=Normal>b. Normal</label>
+        <label><input type=radio name=12.5. value=Generator>c. Generator</label>
+        <label><input type=radio name=12.5. value=None>d. None</label>
+      </div>
+      <div class="pair colspan4">
+        <label for=12.5f. class=colspan2>e. Hours of Fuel Remaining:</label>
+        <input id=12.5f. name=12.5f. class=colspan2>
+      </div>
+      <div class="pair colspan4">
+        <label for=12.5c.>f. Comment:</label>
+        <input id=12.5c. name=12.5c. class=colspan3>
+      </div>
+      <div class="subsec rowspan4">26. Building</div>
+      <div class="border subgrid colspan4 rowspan3 colgap">
+        <div class="rowspan3 annotation">(Pick One)</div>
+        <label><input type=radio name=12.6. value=Unknown>a. Unknown</label>
+        <label><input type=radio name=12.6. value="Restricted Use">b. Restricted Use</label>
+        <label><input type=radio name=12.6. value="Unsafe to Occupy">c. Unsafe to Occupy</label>
+        <label><input type=radio name=12.6. value="Not Inspected">d. Not Inspected</label>
+        <label><input type=radio name=12.6. value="Safe to Occupy">e. Safe to Occupy</label>
+        <label><input type=radio name=12.6. value=Normal>f. Normal</label>
+        <label><input type=radio name=12.6. value=Compromised>g. Compromised</label>
+        <label><input type=radio name=12.6. value=Evacuating>h. Evacuating</label>
+        <label><input type=radio name=12.6. value=Closed>i. Closed</label>
+      </div>
+      <div class="pair colspan4">
+        <label for=12.6c.>j. Comment:</label>
+        <input id=12.6c. name=12.6c. class=colspan3>
+      </div>
+      <div class="subsec rowspan3">27. Security</div>
+      <div class="border subgrid colspan4 rowspan2 colgap">
+        <div class="rowspan2 annotation">(Pick One)</div>
+        <label><input type=radio name=12.7. value=Unknown>a. Unknown</label>
+        <label><input type=radio name=12.7. value=Normal>b. Normal</label>
+        <label><input type=radio name=12.7. value=Elevated>c. Elevated</label>
+        <label><input type=radio name=12.7. value="Restricted Access">d. Restricted Access</label>
+        <label><input type=radio name=12.7. value=Lockdown>e. Lockdown</label>
+      </div>
+      <div class="pair colspan4">
+        <label for=12.7c.>f. Comment:</label>
+        <input id=12.7c. name=12.7c. class=colspan3>
+      </div>
+      <div class="subsec rowspan2">28. Staffing</div>
+      <div class="border subgrid colspan4 colgap">
+        <div class=annotation>(Pick One)</div>
+        <label><input type=radio name=12.8. value=Unknown>a. Unknown</label>
+        <label><input type=radio name=12.8. value=Adequate>b. Adequate</label>
+        <label><input type=radio name=12.8. value=Insufficient>c. Insufficient</label>
+      </div>
+      <div class="pair colspan4">
+        <label for=12.8c.>d. Comment:</label>
+        <input id=12.8c. name=12.8c. class=colspan3>
+      </div>
+      <div class="subsec rowspan2">29. Medical Facility<br>Supplies</div>
+      <div class="border subgrid colspan4 colgap">
+        <div class=annotation>(Pick One)</div>
+        <label><input type=radio name=12.9. value=Unknown>a. Unknown</label>
+        <label><input type=radio name=12.9. value=Adequate>b. Adequate</label>
+        <label><input type=radio name=12.9. value=Insufficient>c. Insufficient</label>
+      </div>
+      <div class="pair colspan4">
+        <label for=12.9c.>d. Comment:</label>
+        <input id=12.9c. name=12.9c. class=colspan3>
+      </div>
+      <div class="subsec rowspan2">30. Clinical<br>Supplies</div>
+      <div class="border subgrid colspan4 colgap">
+        <div class=annotation>(Pick One)</div>
+        <label><input type=radio name=12.10. value=Unknown>a. Unknown</label>
+        <label><input type=radio name=12.10. value=Adequate>b. Adequate</label>
+        <label><input type=radio name=12.10. value=Insufficient>c. Insufficient</label>
+      </div>
+      <div class="pair colspan4">
+        <label for=12.10c.>d. Comment:</label>
+        <input id=12.10c. name=12.10c. class=colspan3>
+      </div>
+      <div class=subsec>31. Resource<br>Impacts/Needs:</div>
+      <div class="pair">
+        <label for=13.>a. Comment:</label>
+        <textarea id=13. name=13. class=colspan3></textarea>
+      </div>
+    </div>
+    <div class=section>Patient Flow</div>
+    <div class="layout-pair">
+      <div class="pair">
+        <label for=14.6.>41. Overall Hospital Census (Occupied<br>beds/total staffed beds):</label>
+        <input id=14.6. name=14.6.>
+      </div>
+      <div class="pair">
+        <label for=14.7.>42. Current ED Census (Patients<br>currently in ED):</label>
+        <input id=14.7. name=14.7. class=cardinal-number>
+      </div>
+      <div class="pair">
+        <label for=14.3.>43. Patients Treated and Released:</label>
+        <input id=14.3. name=14.3. class=cardinal-number>
+      </div>
+      <div class="pair">
+        <label for=14.4.>44. Patients Admitted (Last 12 Hours):</label>
+        <input id=14.4. name=14.4. class=cardinal-number>
+      </div>
+      <div class="pair">
+        <label for=14.5.>45. Patients Not Yet Seen:</label>
+        <input id=14.5. name=14.5. class=cardinal-number>
+      </div>
+      <div class="pair">
+        <label for=14.8.>46. Number of patients boarding:</label>
+        <input id=14.8. name=14.8. class=cardinal-number>
+      </div>
+      <div class="pair">
+        <label for=14.9.>47. Longest boarding time (Hrs):</label>
+        <input id=14.9. name=14.9. class=cardinal-number>
+      </div>
+    </div>
+    <div class=section>Clinical Trends / Syndromes:</div>
+    <div class="layout-pair">
+      <div class="pair">
+        <div class=label>51. Are you experiencing any<br>trends or syndromes?</div>
+        <div class="layout-grid colgap" style="--columns: max-content max-content 1fr">
+          <label><input type=checkbox name=17a. value=checked>a. None</label>
+          <label><input type=checkbox name=17b. value=checked>b. Flu-like / RSV</label>
+          <label><input type=checkbox name=17c. value=checked>c. COVID-19</label>
+          <label><input type=checkbox name=17d. value=checked>d. Cardiac</label>
+          <label><input type=checkbox name=17e. value=checked>e. Trauma</label>
+          <label><input type=checkbox name=17f. value=checked>f. Behavioral Health</label>
+          <label><input type=checkbox name=17g. value=checked>g. Other</label>
+        </div>
+      </div>
+    </div>
+    <div class=section>Specialty Service Capabilities:</div>
+    <div class=layout-grid style="--columns: repeat(4, max-content) 1fr max-content max-content">
+    <div class=section-inline>Specialty Service</div>
+    <div class="section-inline colspan2">Available Now?</div>
+    <div class="section-inline colspan2">If No, Reason Closed</div>
+    <div class="section-inline colspan2">Expected<br>Reopening <span class=annotation>(date)</span></div>
+    <div class=subsec>61. Cardiology</div>
+    <div class="pair">
+      <div class=label>a.</div>
+      <div>
+        <label for=15.1.><input type=radio name=15.1. value=Y>Yes</label>
+        <label for=15.1.><input type=radio name=15.1. value=N>No</label>
+      </div>
+    </div>
+    <div class="pair">
+      <label for=15.1c.>b.</label>
+      <input id=15.1c. name=15.1c. allowed-if="15.1.=N">
+    </div>
+    <div class="pair">
+      <label for=15.1d.>c.</label>
+      <input id=15.1d. name=15.1d. class=date allowed-if="15.1.=N">
+    </div>
+    <div class=subsec>62. Dialysis</div>
+    <div class="pair">
+      <div class=label>a.</div>
+      <div>
+        <label for=15.3.><input type=radio name=15.3. value=Y>Yes</label>
+        <label for=15.3.><input type=radio name=15.3. value=N>No</label>
+      </div>
+    </div>
+    <div class="pair">
+      <label for=15.3c.>b.</label>
+      <input id=15.3c. name=15.3c. allowed-if="15.3.=N">
+    </div>
+    <div class="pair">
+      <label for=15.3d.>c.</label>
+      <input id=15.3d. name=15.3d. class=date allowed-if="15.3.=N">
+    </div>
+    <div class=subsec>63. Emergency Department</div>
+    <div class="pair">
+      <div class=label>a.</div>
+      <div>
+        <label for=15.4.><input type=radio name=15.4. value=Y>Yes</label>
+        <label for=15.4.><input type=radio name=15.4. value=N>No</label>
+      </div>
+    </div>
+    <div class="pair">
+      <label for=15.4c.>b.</label>
+      <input id=15.4c. name=15.4c. allowed-if="15.4.=N">
+    </div>
+    <div class="pair">
+      <label for=15.4d.>c.</label>
+      <input id=15.4d. name=15.4d. class=date allowed-if="15.4.=N">
+    </div>
+    <div class=subsec>64. Neurology</div>
+    <div class="pair">
+      <div class=label>a.</div>
+      <div>
+        <label for=15.5.><input type=radio name=15.5. value=Y>Yes</label>
+        <label for=15.5.><input type=radio name=15.5. value=N>No</label>
+      </div>
+    </div>
+    <div class="pair">
+      <label for=15.5c.>b.</label>
+      <input id=15.5c. name=15.5c. allowed-if="15.5.=N">
+    </div>
+    <div class="pair">
+      <label for=15.5d.>c.</label>
+      <input id=15.5d. name=15.5d. class=date allowed-if="15.5.=N">
+    </div>
+    <div class=subsec>65. Obstetrics</div>
+    <div class="pair">
+      <div class=label>a.</div>
+      <div>
+        <label for=15.7.><input type=radio name=15.7. value=Y>Yes</label>
+        <label for=15.7.><input type=radio name=15.7. value=N>No</label>
+      </div>
+    </div>
+    <div class="pair">
+      <label for=15.7c.>b.</label>
+      <input id=15.7c. name=15.7c. allowed-if="15.7.=N">
+    </div>
+    <div class="pair">
+      <label for=15.7d.>c.</label>
+      <input id=15.7d. name=15.7d. class=date allowed-if="15.7.=N">
+    </div>
+    <div class=subsec>66. Obstetrics: Labor & Delivery</div>
+    <div class="pair">
+      <div class=label>a.</div>
+      <div>
+        <label for=15.8.><input type=radio name=15.8. value=Y>Yes</label>
+        <label for=15.8.><input type=radio name=15.8. value=N>No</label>
+      </div>
+    </div>
+    <div class="pair">
+      <label for=15.8c.>b.</label>
+      <input id=15.8c. name=15.8c. allowed-if="15.8.=N">
+    </div>
+    <div class="pair">
+      <label for=15.8d.>c.</label>
+      <input id=15.8d. name=15.8d. class=date allowed-if="15.8.=N">
+    </div>
+    <div class=subsec>67. Ophthalmology</div>
+    <div class="pair">
+      <div class=label>a.</div>
+      <div>
+        <label for=15.9.><input type=radio name=15.9. value=Y>Yes</label>
+        <label for=15.9.><input type=radio name=15.9. value=N>No</label>
+      </div>
+    </div>
+    <div class="pair">
+      <label for=15.9c.>b.</label>
+      <input id=15.9c. name=15.9c. allowed-if="15.9.=N">
+    </div>
+    <div class="pair">
+      <label for=15.9d.>c.</label>
+      <input id=15.9d. name=15.9d. class=date allowed-if="15.9.=N">
+    </div>
+    <div class=subsec>68. Orthopedics</div>
+    <div class="pair">
+      <div class=label>a.</div>
+      <div>
+        <label for=15.10.><input type=radio name=15.10. value=Y>Yes</label>
+        <label for=15.10.><input type=radio name=15.10. value=N>No</label>
+      </div>
+    </div>
+    <div class="pair">
+      <label for=15.10c.>b.</label>
+      <input id=15.10c. name=15.10c. allowed-if="15.10.=N">
+    </div>
+    <div class="pair">
+      <label for=15.10d.>c.</label>
+      <input id=15.10d. name=15.10d. class=date allowed-if="15.10.=N">
+    </div>
+    <div class=subsec>69. Pediatrics</div>
+    <div class="pair">
+      <div class=label>a.</div>
+      <div>
+        <label for=15.11.><input type=radio name=15.11. value=Y>Yes</label>
+        <label for=15.11.><input type=radio name=15.11. value=N>No</label>
+      </div>
+    </div>
+    <div class="pair">
+      <label for=15.11c.>b.</label>
+      <input id=15.11c. name=15.11c. allowed-if="15.11.=N">
+    </div>
+    <div class="pair">
+      <label for=15.11d.>c.</label>
+      <input id=15.11d. name=15.11d. class=date allowed-if="15.11.=N">
+    </div>
+    <div class=subsec>70. Surgery</div>
+    <div class="pair">
+      <div class=label>a.</div>
+      <div>
+        <label for=15.12.><input type=radio name=15.12. value=Y>Yes</label>
+        <label for=15.12.><input type=radio name=15.12. value=N>No</label>
+      </div>
+    </div>
+    <div class="pair">
+      <label for=15.12c.>b.</label>
+      <input id=15.12c. name=15.12c. allowed-if="15.12.=N">
+    </div>
+    <div class="pair">
+      <label for=15.12d.>c.</label>
+      <input id=15.12d. name=15.12d. class=date allowed-if="15.12.=N">
+    </div>
+    </div>
+    <div class=section>Evacuation</div>
+    <div class="layout-pair">
+    <div class="pair">
+      <div class=label>81. Evacuating</div>
+      <div>
+        <label for=16.><input type=radio name=16. value=N>No</label>
+        <label for=16.><input type=radio name=16. value=Y>Yes</label>
+        &nbsp;&nbsp; (If yes, complete below)
+      </div>
+    </div>
+      <div class="pair">
+        <label for=16a.>82. Ambulatory Patients to Evacuate:</label>
+        <input id=16a. name=16a. class=cardinal-number allowed-if="16.=Y">
+      </div>
+      <div class="pair">
+        <label for=16b.>83. Non-Ambulatory Patients to Evacuate:</label>
+        <input id=16b. name=16b. class=cardinal-number allowed-if="16.=Y">
+      </div>
+    </div>
+  </form-roo>
+</packet-form>

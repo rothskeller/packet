@@ -3,7 +3,7 @@
 // make-field-boxes is a tool to help create the PDF rendering specifications
 // in a form file.  To use it, load the PDF form into an editor and make marks
 // on it:  a red (#FF0000FF) mark in each text area, a green (#00FF00FF) mark
-// in each checkbox, a blue (#00FFFFFF) mark in each radio button, and magenta
+// in each checkbox, a blue (#0000FFFF) mark in each radio button, and magenta
 // (#FF00FFFF) rectangles as needed.  Only those exact colors are handled.  The
 // tool will write "pdf text", "pdf circle", "pdf cross", and "pdf box" lines
 // to standard output for each region.  The red and green regions are enlarged
@@ -61,13 +61,13 @@ func main() {
 			r, g, b, a := im.At(x, y).RGBA()
 			switch {
 			case r == 0xffff && g == 0 && b == 0 && a == 0xffff:
-				showRect(im, x, y, color.Black, 2, "text", *pagenum)
+				showRect(im, x, y, color.Black, 2, 2, "text", *pagenum)
 			case r == 0 && g == 0xffff && b == 0 && a == 0xffff:
-				showRect(im, x, y, color.Black, 0, "cross", *pagenum)
+				showRect(im, x, y, color.Black, 0, 0, "cross", *pagenum)
 			case r == 0 && g == 0 && b == 0xffff && a == 0xffff:
 				showCircle(im, x, y, color.Black, 1, 3, *pagenum)
 			case r == 0xffff && g == 0 && b == 0xffff && a == 0xffff:
-				showRect(im, x, y, color.White, 0, "box", *pagenum)
+				showRect(im, x, y, color.White, 0, 0, "box", *pagenum)
 			}
 		}
 	}
@@ -87,7 +87,7 @@ ERROR:
 	os.Exit(1)
 }
 
-func showRect(im image.Image, x, y int, stop color.Color, margin float64, keyword string, pagenum int) {
+func showRect(im image.Image, x, y int, stop color.Color, margin, elm float64, keyword string, pagenum int) {
 	var l, r, b, t = x, x + 1, y, y + 1
 	// Grow the rectangle upward as far as the space remains blank.
 	if isBlankRow(im, l, r, t, stop) {
@@ -117,7 +117,7 @@ func showRect(im image.Image, x, y int, stop color.Color, margin float64, keywor
 	// area.
 	draw.Draw(im.(draw.Image), image.Rect(l, t, r, b), &image.Uniform{color.White}, image.ZP, draw.Src)
 	// Convert to PDF units.
-	pl := float64(l-im.Bounds().Min.X)*612.0/float64(im.Bounds().Dx()) + margin
+	pl := float64(l-im.Bounds().Min.X)*612.0/float64(im.Bounds().Dx()) + margin + elm
 	pr := float64(r-im.Bounds().Min.X)*612.0/float64(im.Bounds().Dx()) - margin
 	pt := 792.0 - float64(t-im.Bounds().Min.Y)*792.0/float64(im.Bounds().Dy()) - margin
 	pb := 792.0 - float64(b-im.Bounds().Min.Y)*792.0/float64(im.Bounds().Dy()) + margin
