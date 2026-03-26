@@ -1,0 +1,3 @@
+[submodule "forms/SCCoPIFO"]
+	path = forms/SCCoPIFO
+	url = github:scc-ares-races/scco-forms
