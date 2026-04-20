@@ -446,4 +446,4 @@ func verifySignature(source string, fh *os.File, size *int64, expect string) (bu
 }
 
 // ValidBundleNameRE matches a valid bundle name.
-var ValidBundleNameRE = regexp.MustCompile(`^[A-Z][-A-Za-z0-9_]{,14}$`)
+var ValidBundleNameRE = regexp.MustCompile(`^[A-Z][-A-Za-z0-9_]{0,14}$`)
