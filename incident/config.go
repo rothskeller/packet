@@ -70,8 +70,7 @@ type Config struct {
 	// Mac or Linux).  It is relevant only when ConnectType is
 	// ConnectSerialTNC.
 	SerialPort string `json:"serialPort,omitempty"`
-	// TNCType is the type of TNC in use.  Currently the only supported
-	// value is TNCKPC3Plus.  Relevant only when ConnectType is
+	// TNCType is the type of TNC in use.  Relevant only when ConnectType is
 	// ConnectSerialTNC.
 	TNCType string `json:"tncType,omitempty"`
 	// TelnetUser is the username to use to log in to the BBS.  Relevant
@@ -170,11 +169,6 @@ const (
 	// ConnectTelnet is connection to a BBS over the Internet using the
 	// Telnet protocol.
 	ConnectTelnet = "telnet"
-)
-
-// Types of TNCs for use with ConnectSerialTNC (i.e., values of Config.TNCType).
-const (
-	TNCKPC3Plus = "KPC3+" // Kantronics KPC-3 Plus
 )
 
 // ActiveCall returns the active call sign in the configuration.

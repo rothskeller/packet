@@ -1,8 +1,7 @@
-// Package kpc3plus provides a transport layer for communicating with a JNOS BBS
-// over RF, by way of a serial connection to a Kantronics KPC 3 Plus TNC.  The
-// Open function, if successful, returns a Transport that can be passed to
-// jnos.Connect.
-package kpc3plus
+// Package serialtnc provides a transport layer for communicating with a JNOS
+// BBS over RF, by way of a serial connection to a TNC.  The Open function, if
+// successful, returns a Transport that can be passed to jnos.Connect.
+package serialtnc
 
 import (
 	"bytes"
@@ -15,6 +14,7 @@ import (
 	"go.bug.st/serial"
 
 	"github.com/rothskeller/packet/jnos"
+	"github.com/rothskeller/packet/jnos/tnc"
 )
 
 // echoTimeout is the amount of time to wait for an echo of data sent.
@@ -28,76 +28,32 @@ const tncTimeout = 500 * time.Millisecond
 // (requiring RF round trip).
 const rfTimeout = time.Minute
 
-// commandPrompt is the TNC command prompt that we wait for between commands.
-const commandPrompt = "cmd:"
-
 // Constant byte slices.
 var (
-	cr                  = []byte{'\r'}
-	crlf                = []byte{'\r', '\n'}
-	lf                  = []byte{'\n'}
-	disconnectedMessage = []byte("*** DISCONNECTED\r\n")
+	cr   = []byte{'\r'}
+	crlf = []byte{'\r', '\n'}
+	lf   = []byte{'\n'}
 )
 
 // ErrBadEcho is returned when the echo of the sent data does not arrive within
 // a reasonable amount of time.
 var ErrBadEcho = errors.New("sent data not echoed correctly")
 
-// preConnectCommands are commands to be sent to the TNC prior to connecting to
-// the BBS.
-var preConnectCommands = []string{
-	"INTFACE TERMINAL",
-	"CD SOFTWARE",
-	"NEWMODE ON",
-	"8BITCONV ON",
-	"BEACON EVERY 0",
-	"SLOTTIME 10",
-	"PERSIST 63",
-	"PACLEN 128",
-	"MAXFRAME 2",
-	"FRACK 6",
-	"RETRY 8",
-	"CHECK 30",
-	"TXDELAY 40",
-	"XFLOW OFF",
-	"SENDPAC $05",
-	"CR OFF",
-	"PACTIME AFTER 2",
-	"CPACTIME ON",
-	"STREAMEV OFF",
-	"STREAMSW $00",
-	"UNPROTO IDENT",
-	"MXMIT ON",
-	"MCON OFF",
-	"MONITOR ON",
-}
-
-// postDisconnectCommands are commands to be sent to the TNC after we disconnect
-// from the BBS.
-var postDisconnectCommands = []string{
-	"SENDPAC $0D",
-	"CR ON",
-	"PACTIME AFTER 10",
-	"CPACTIME OFF",
-	"STREAMSW $7C",
-	"UNPROTO CQ",
-}
-
-// Connect connects to the JNOS BBS at bbsAddress, by way of a Kantronics KPC-3
-// Plus TNC attached to serialPort, and returns an open jnos.Conn for
+// Connect connects to the JNOS BBS at bbsAddress, by way of a TNC of the
+// supplied type attached to serialPort, and returns an open jnos.Conn for
 // interaction with it.  (bbsAddress should consist of a call sign, a dash, and
 // a small integer SSID.)  It logs into the specified BBS mailbox.  If callsign
 // is set and is different from mailbox, it self-identifies periodically using
 // that call sign for FCC compliance.  (callsign should be the licensed FCC call
 // sign of the calling user.)  If log is set, all traffic except echo-backs is
 // logged to it.
-func Connect(serialPort, bbsAddress, mailbox, callsign string, log io.Writer) (c *jnos.Conn, err error) {
+func Connect(tnc *tnc.TNC, serialPort, bbsAddress, mailbox, callsign string, log io.Writer) (c *jnos.Conn, err error) {
 	var t *Transport
 
 	if callsign == mailbox {
 		callsign = "" // no need to ident
 	}
-	if t, err = open(serialPort, bbsAddress, mailbox, callsign, log); err != nil {
+	if t, err = open(tnc, serialPort, bbsAddress, mailbox, callsign, log); err != nil {
 		return nil, err
 	}
 	if c, err = jnos.Connect(t); err != nil {
@@ -110,21 +66,20 @@ func Connect(serialPort, bbsAddress, mailbox, callsign string, log io.Writer) (c
 	return c, nil
 }
 
-// Open opens a transport to the JNOS BBS at bbsAddress, by way of a Kantronics
-// KPC-3 Plus TNC attached to serialPort.  (bbsAddress should consist of a call
+// Open opens a transport to the JNOS BBS at bbsAddress, by way of a TNC of the
+// supplied type attached to serialPort.  (bbsAddress should consist of a call
 // sign, a dash, and a small integer SSID.)  It logs into the mailbox
 // corresponding to the specified callsign, which must be the licensed FCC call
 // sign of the calling user.  (For connecting to other mailboxes, see the
 // Connect function.)  If log is set, all traffic except echo-backs is logged to
 // it.
-func Open(serialPort, bbsAddress, callsign string, log io.Writer) (t *Transport, err error) {
-	return open(serialPort, bbsAddress, callsign, "", log)
+func Open(tnc *tnc.TNC, serialPort, bbsAddress, callsign string, log io.Writer) (t *Transport, err error) {
+	return open(tnc, serialPort, bbsAddress, callsign, "", log)
 }
 
 // open is the common code between Connect and Open.
-func open(serialPort, bbsAddress, mailbox, callsign string, log io.Writer) (t *Transport, err error) {
-	t = new(Transport)
-	t.log = log
+func open(tnc *tnc.TNC, serialPort, bbsAddress, mailbox, callsign string, log io.Writer) (t *Transport, err error) {
+	t = &Transport{tnc: tnc, log: log}
 	if t.serial, err = serial.Open(serialPort, &serial.Mode{}); err != nil {
 		slog.Error("serial.Open", "port", serialPort, "err", err)
 		return nil, fmt.Errorf("serial.Open: %s", err)
@@ -140,7 +95,7 @@ func open(serialPort, bbsAddress, mailbox, callsign string, log io.Writer) (t *T
 			err = fmt.Errorf("send initial newline: %s", err)
 			goto TNCERROR
 		}
-		if _, err = t.readUntil(commandPrompt, tncTimeout); err == nil {
+		if _, err = t.readUntil(tnc.CommandPrompt, tncTimeout); err == nil {
 			break
 		}
 	}
@@ -149,28 +104,28 @@ func open(serialPort, bbsAddress, mailbox, callsign string, log io.Writer) (t *T
 		goto TNCERROR
 	}
 	// Apply the pre-connect settings.
-	for _, c := range preConnectCommands {
+	for _, c := range tnc.PreConnectCommands {
 		if err = t.send(c); err != nil {
 			goto TNCERROR
 		}
-		if _, err = t.readUntil(commandPrompt, tncTimeout); err != nil {
+		if _, err = t.readUntil(tnc.CommandPrompt, tncTimeout); err != nil {
 			goto TNCERROR
 		}
 	}
 	// Set the mailbox we want to connect to as our "call sign".
 	t.callsign = callsign
-	if err = t.send(fmt.Sprintf("MY %s\n", mailbox)); err != nil {
+	if err = t.send(fmt.Sprintf("%s %s\n", tnc.MyCallCommand, mailbox)); err != nil {
 		goto TNCERROR
 	}
-	if _, err = t.readUntil(commandPrompt, tncTimeout); err != nil {
+	if _, err = t.readUntil(tnc.CommandPrompt, tncTimeout); err != nil {
 		goto TNCERROR
 	}
 	// Connect to the BBS.
 	t.wasConnected = true
-	if err = t.send(fmt.Sprintf("CONNECT %s\n", bbsAddress)); err != nil {
+	if err = t.send(fmt.Sprintf("%s %s\n", tnc.ConnectCommand, bbsAddress)); err != nil {
 		goto BBSERROR
 	}
-	if _, err = t.readUntil(commandPrompt, tncTimeout); err != nil {
+	if _, err = t.readUntil(tnc.CommandPrompt, tncTimeout); err != nil {
 		goto BBSERROR
 	}
 	t.connected = true
@@ -185,6 +140,7 @@ BBSERROR:
 
 // Transport is the KPC-3 Plus transport to the JNOS BBS.
 type Transport struct {
+	tnc          *tnc.TNC
 	serial       serial.Port
 	readbuf      []byte
 	pending      []byte
@@ -256,9 +212,9 @@ func (t *Transport) checkDisconnected() (data string, err error) {
 	if !t.connected {
 		return "", nil
 	}
-	if idx := bytes.Index(t.pending, disconnectedMessage); idx >= 0 {
+	if idx := bytes.Index(t.pending, []byte(t.tnc.DisconnectedMessage)); idx >= 0 {
 		data = string(bytes.ReplaceAll(t.pending[:idx], crlf, lf))
-		t.pending = t.pending[idx+len(disconnectedMessage):]
+		t.pending = t.pending[idx+len(t.tnc.DisconnectedMessage):]
 		t.connected = false
 		slog.Error("disconnected")
 		return data, jnos.ErrDisconnected
@@ -360,7 +316,7 @@ func (t *Transport) Close() (err error) {
 			slog.Error("unable to get back to TNC command mode for cleanup")
 			return fmt.Errorf("unable to get back to TNC command mode for cleanup: %s", err)
 		}
-		if _, err = t.readUntil(commandPrompt, tncTimeout); err != nil && err != jnos.ErrDisconnected {
+		if _, err = t.readUntil(t.tnc.CommandPrompt, tncTimeout); err != nil && err != jnos.ErrDisconnected {
 			slog.Error("unable to get back to TNC command mode for cleanup")
 			return fmt.Errorf("unable to get back to TNC command mode for cleanup: %s", err)
 		}
@@ -370,7 +326,7 @@ func (t *Transport) Close() (err error) {
 			slog.Error("can't disconnect")
 			return fmt.Errorf("cleanup: can't disconnect: %s", err)
 		} else if err == nil {
-			if _, err = t.readUntil(string(disconnectedMessage), rfTimeout); err != jnos.ErrDisconnected {
+			if _, err = t.readUntil(string(t.tnc.DisconnectedMessage), rfTimeout); err != jnos.ErrDisconnected {
 				slog.Error("unexpected response", "exp", "disconnect", "act", err)
 				return fmt.Errorf("ERROR: cleanup: expected ErrDisconnected, got %s", err)
 			}
@@ -384,20 +340,20 @@ func (t *Transport) Close() (err error) {
 		}
 	}
 	// Apply all of the post-connect settings.
-	t.readUntil(commandPrompt, tncTimeout) // eat a prompt if there is one
+	t.readUntil(t.tnc.CommandPrompt, tncTimeout) // eat a prompt if there is one
 	if t.callsign != "" {
-		if err2 := t.send(fmt.Sprintf("MY %s\n", t.callsign)); err == nil && err2 != nil {
+		if err2 := t.send(fmt.Sprintf("%s %s\n", t.tnc.MyCallCommand, t.callsign)); err == nil && err2 != nil {
 			err = fmt.Errorf("cleanup: restore TNC settings: %s", err2)
 		}
-		if _, err2 := t.readUntil(commandPrompt, tncTimeout); err == nil && err2 != nil {
+		if _, err2 := t.readUntil(t.tnc.CommandPrompt, tncTimeout); err == nil && err2 != nil {
 			err = fmt.Errorf("cleanup: restore TNC settings: %s", err2)
 		}
 	}
-	for _, c := range postDisconnectCommands {
+	for _, c := range t.tnc.PostDisconnectCommands {
 		if err2 := t.send(c); err == nil && err2 != nil {
 			err = fmt.Errorf("cleanup: restore TNC settings: %s", err2)
 		}
-		if _, err2 := t.readUntil(commandPrompt, tncTimeout); err == nil && err2 != nil {
+		if _, err2 := t.readUntil(t.tnc.CommandPrompt, tncTimeout); err == nil && err2 != nil {
 			err = fmt.Errorf("cleanup: restore TNC settings: %s", err2)
 		}
 	}
@@ -409,9 +365,9 @@ func (t *Transport) Close() (err error) {
 // indicating whether subsequent post-disconnect steps should be aborted.
 func (t *Transport) postIdentify() (abort bool, err error) {
 	// There may be a prompt waiting, which we should eat.  No error if not.
-	t.readUntil(commandPrompt, tncTimeout)
+	t.readUntil(t.tnc.CommandPrompt, tncTimeout)
 	// Enter converse mode.
-	if err = t.send("CONV"); err != nil {
+	if err = t.send(t.tnc.ConverseCommand); err != nil {
 		return false, fmt.Errorf("cleanup: send FCC ID: %s", err)
 	}
 	// Send our call sign identification.

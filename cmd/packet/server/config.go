@@ -18,6 +18,7 @@ import (
 	"github.com/rothskeller/packet/cmd/packet/pseudomsg"
 	"github.com/rothskeller/packet/form/htmlop"
 	"github.com/rothskeller/packet/incident"
+	"github.com/rothskeller/packet/jnos/tnc"
 	"golang.org/x/net/html"
 )
 
@@ -86,6 +87,7 @@ func (s *Server) serveGetIncidentConfig(w http.ResponseWriter, r *http.Request) 
 			form.Set("sendrcpts", "checked")
 		}
 		form.Set("tnctype", inc.Config.TNCType)
+		variables["tnctypes"] = strings.Join(tnc.AllTNCs(), ";")
 		form.Set("serport", inc.Config.SerialPort)
 		if ports := pseudomsg.GuessSerialPorts(); len(ports) != 0 {
 			variables["serports"] = strings.Join(ports, ";")
@@ -128,7 +130,7 @@ func (s *Server) serveGetIncidentConfig(w http.ResponseWriter, r *http.Request) 
 	if err != nil {
 		goto ERROR
 	}
-	if doc, err = html.Parse(bytes.NewReader(configForm)); err != nil {
+	if doc, err = htmlop.Parse(bytes.NewReader(configForm)); err != nil {
 		goto ERROR
 	}
 	htmlop.Expand(doc, variables)

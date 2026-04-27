@@ -19,6 +19,7 @@ import (
 
 	"github.com/rothskeller/packet/errors"
 	"github.com/rothskeller/packet/incident"
+	"github.com/rothskeller/packet/jnos/tnc"
 	"github.com/rothskeller/packet/message"
 	"github.com/rothskeller/packet/message/address"
 	"github.com/rothskeller/packet/message/body"
@@ -286,7 +287,12 @@ func (cm *ConfigMessage) Fields() iter.Seq[field.Field] {
 				ValueFunc(func(m message.Message) string {
 					return m.(*ConfigMessage).Config.TNCType
 				}).
-				AllowedValues(field.ChoicePair{PIFO: incident.TNCKPC3Plus, Human: "Kantronics KPC-3 Plus"}).
+				AllowedValuesFunc(func(_ message.Message) (list []field.ChoicePair) {
+					for _, v := range tnc.AllTNCs() {
+						list = append(list, field.ChoicePair{PIFO: v, Human: v})
+					}
+					return list
+				}).
 				Required().
 				DisallowedUnless(`"Connection Type" is "Serial+TNC"`, func(m message.Message) bool {
 					return m.(*ConfigMessage).Config.ConnectType == incident.ConnectSerialTNC
@@ -294,7 +300,7 @@ func (cm *ConfigMessage) Fields() iter.Seq[field.Field] {
 				VisibleWhen(func(m message.Message) bool {
 					return m.(*ConfigMessage).Config.ConnectType == incident.ConnectSerialTNC
 				}).
-				EditHelp(`This indicates the type of TNC connected to the host computer.  Currently the only supported value is "Kantronics KPC-3 Plus".  It is required when "Connection Type" is "Serial+TNC".`).
+				EditHelp(`This indicates the type of TNC connected to the host computer.  It is required when "Connection Type" is "Serial+TNC".`).
 				SetValueFunc(func(m message.Message, s string) {
 					m.(*ConfigMessage).Config.TNCType = s
 				}).

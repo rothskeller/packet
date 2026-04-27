@@ -14,8 +14,9 @@ import (
 	"time"
 
 	"github.com/rothskeller/packet/jnos"
-	"github.com/rothskeller/packet/jnos/kpc3plus"
+	"github.com/rothskeller/packet/jnos/serialtnc"
 	"github.com/rothskeller/packet/jnos/telnet"
+	"github.com/rothskeller/packet/jnos/tnc"
 	"github.com/rothskeller/packet/message"
 	"github.com/rothskeller/packet/message/address"
 	"github.com/rothskeller/packet/message/field"
@@ -107,8 +108,15 @@ func BBSExchange(ctx context.Context, dir string, immOnly bool, updates BBSExcha
 	// Establish the JNOS connection.
 	switch e.config.ConnectType {
 	case ConnectSerialTNC:
+		tncconf := tnc.Get(e.config.TNCType)
+		if tncconf == nil {
+			slog.Error("no such TNC type", "type", e.config.TNCType)
+			updates.Error(fmt.Sprintf("The configuration specifies a TNC type of %q which is not defined.", e.config.TNCType))
+			updates.Finished()
+			return
+		}
 		e.progress("Connecting to %s@%s...", e.config.ActiveCall(), e.config.ConnectBBS)
-		e.conn, err = kpc3plus.Connect(e.config.SerialPort, e.config.ConnectAddress, e.config.ActiveCall(), e.config.OpCall, logf)
+		e.conn, err = serialtnc.Connect(tncconf, e.config.SerialPort, e.config.ConnectAddress, e.config.ActiveCall(), e.config.OpCall, logf)
 	case ConnectTelnet:
 		e.progress("Connecting to %s@%s...", e.config.TelnetUser, e.config.ConnectBBS)
 		e.conn, err = telnet.Connect(e.config.ConnectAddress, e.config.TelnetUser, e.config.TelnetPassword, logf)

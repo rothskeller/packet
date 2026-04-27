@@ -709,7 +709,8 @@
           <div><label for=tnctype>TNC Type:</label></div>
           <div class=cspan3>
             <select id=tnctype name=tnctype>
-              <option value=KPC3+>Kantronics KPC-3 Plus</option>
+              <option value="" disabled>(select one)</option>
+              <for:tnctypes><option value={{.}}>{{.}}</option></for:tnctypes>
             </select>
           </div>
           <help for=tnctype>
