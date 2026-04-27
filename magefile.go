@@ -14,6 +14,16 @@ import (
 // Default target.
 var Default = GUI
 
+func Forms() {
+	os.Remove("SCCoPIFO.zip")
+	os.Chdir("forms/SCCoPIFO")
+	sh.Run("zip", "-r", "../../SCCoPIFO.zip", ".", "-x", "*.docx", "*.md")
+	os.Chdir("../..")
+	sh.Run(mg.GoCmd(), "run", "./cmd/sign-forms", "SCCoPIFO", "SCCoPIFO.zip")
+	os.Remove("SCCoPIFO.zip")
+	sh.Run("scp", "SCCoPIFO.forms", "sccares:www/www/form-bundles/4.0/SCCoPIFO.forms")
+}
+
 func IncidentHTML() {
 	if newer, err := target.Dir("cmd/packet/server/incident.html", "cmd/packet/server/incident-html"); err != nil || newer {
 		println("Updating incident.html.")

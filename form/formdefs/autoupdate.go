@@ -343,10 +343,11 @@ func fetchUpdate(bundleFName string, ui *updateInfo) (fh *os.File, size int64, e
 func unpackBundle(source, expect string, fh *os.File, size int64, formsDir string) (bundleName string, err error) {
 	var (
 		dir string
+		zr  io.ReaderAt
 		z   *zip.Reader
 	)
 	// Verify the digital signature of the bundle.
-	if bundleName, err = verifySignature(source, fh, &size, expect); err != nil {
+	if zr, bundleName, err = verifySignature(source, fh, size, expect); err != nil {
 		return "", err
 	}
 	dir = filepath.Join(formsDir, bundleName+".new")
@@ -362,7 +363,7 @@ func unpackBundle(source, expect string, fh *os.File, size int64, formsDir strin
 		}
 	}()
 	// Open the zip header.
-	if z, err = zip.NewReader(fh, size); err != nil && err != zip.ErrInsecurePath {
+	if z, err = zip.NewReader(zr, size); err != nil && err != zip.ErrInsecurePath {
 		slog.Error("zip.NewReader", "err", err)
 		return "", fmt.Errorf("open zip: %s", err)
 	}
@@ -398,51 +399,46 @@ func unpackBundle(source, expect string, fh *os.File, size int64, formsDir strin
 
 // verifySignature verifies that the forms bundle was digitally signed by the
 // key for this version of the packet software.  It assumes the bundle file is
-// opened and rewound.  If the signature is verified, it returns with the file
-// pointer at the beginning of the ZIP contents and the size changed to be the
-// size of just the ZIP contents.  If an expect string is given, it verifies
-// that it matches the bundle name in the file.  It returns the actual bundle
-// name in the file.
-func verifySignature(source string, fh *os.File, size *int64, expect string) (bundle string, err error) {
+// opened and rewound.  If an expect string is given, it verifies that it
+// matches the bundle name in the file.  If the signature is verified, it
+// returns an io.ReaderAt that addresses the ZIP part of the file and the actual
+// bundle name in the file.
+func verifySignature(source string, fh *os.File, size int64, expect string) (zr io.ReaderAt, bundle string, err error) {
 	var (
 		h   hash.Hash
 		sig = make([]byte, ed25519.SignatureSize)
 	)
 	if _, err = fh.Read(sig[:32]); err != nil {
 		slog.Error("fh.Read 1", "src", source, "err", err)
-		return "", errors.NewF("The bundle file %s could not be read.", source)
+		return nil, "", errors.NewF("The bundle file %s could not be read.", source)
 	}
 	if string(sig[:16]) != "PackItFormBundle" {
 		slog.Error("not a form bundle header", "src", source)
-		return "", errors.NewF("The file %s is not a forms bundle file.", source)
+		return nil, "", errors.NewF("The file %s is not a forms bundle file.", source)
 	}
 	if bundle = strings.TrimRight(string(sig[16:32]), " \n"); !ValidBundleNameRE.MatchString(bundle) {
 		slog.Error("contains invalid bundle name", "src", source)
-		return "", errors.NewF("The file %s contains an invalid forms bundle name %q.", source, bundle)
+		return nil, "", errors.NewF("The file %s contains an invalid forms bundle name %q.", source, bundle)
 	} else if expect != "" && bundle != expect {
 		slog.Error("contains wrong bundle name", "src", source, "exp", expect, "act", bundle)
-		return "", errors.NewF("The file %s contains forms bundle %q, not %q.", source, bundle, expect)
+		return nil, "", errors.NewF("The file %s contains forms bundle %q, not %q.", source, bundle, expect)
 	}
 	if _, err = fh.Read(sig); err != nil {
 		slog.Error("fh.Read 2", "src", source, "err", err)
-		return "", errors.NewF("The bundle file %s could not be read.", source)
+		return nil, "", errors.NewF("The bundle file %s could not be read.", source)
 	}
 	h = sha512.New()
 	io.WriteString(h, bundle)
 	if _, err = io.Copy(h, fh); err != nil {
 		slog.Error("io.Copy", "src", source, "err", err)
-		return "", errors.NewF("The bundle file %s could not be read.", source)
+		return nil, "", errors.NewF("The bundle file %s could not be read.", source)
 	}
 	if err = ed25519.VerifyWithOptions(formsBundlePublicKey, h.Sum(nil), sig, &ed25519.Options{Hash: crypto.SHA512}); err != nil {
 		slog.Error("ed25519.VerifyWithOptions", "src", source, "err", err)
-		return "", errors.NewF("The signature of the bundle file %s is not correct.  The bundle file has been corrupted, was improperly signed, or is intended for a different version of SCCo Packet software.", source)
+		return nil, "", errors.NewF("The signature of the bundle file %s is not correct.  The bundle file has been corrupted, was improperly signed, or is intended for a different version of SCCo Packet software.", source)
 	}
-	if _, err = fh.Seek(0, ed25519.SignatureSize+32); err != nil {
-		slog.Error("fh.Seek", "src", source, "err", err)
-		return "", errors.NewF("The bundle file %s could not be read.", source)
-	}
-	*size -= ed25519.SignatureSize + 32
-	return bundle, nil
+	zr = io.NewSectionReader(fh, ed25519.SignatureSize+32, size-ed25519.SignatureSize-32)
+	return zr, bundle, nil
 }
 
 // ValidBundleNameRE matches a valid bundle name.
