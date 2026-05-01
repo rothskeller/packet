@@ -1,6 +1,5 @@
 Before release:
   CLI issues:
-    Handling of invocation in non-incident directory
     Collection of required configuration settings
     Auto-update forms when using CLI
 

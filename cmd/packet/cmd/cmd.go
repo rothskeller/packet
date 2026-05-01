@@ -266,6 +266,9 @@ func incRead(fn func(*incident.Incident) error) (err error) {
 	if dir, err = filepath.EvalSymlinks(dir); err != nil {
 		return errors.NewF("Unable to resolve current directory: filepath.EvalSymLinks: %s", err)
 	}
+	if !incident.IsIncident(dir) {
+		return errors.NewF("The current directory %s is not an incident directory.", dir)
+	}
 	return incident.Read(dir, fn)
 }
 
@@ -283,6 +286,9 @@ func incWrite(create bool, fn func(*incident.Incident) error) (err error) {
 	}
 	if !create {
 		return errors.NewF("The current directory %s is not an incident directory.", dir)
+	}
+	if incident.IsUnsafeIncidentDir(dir) {
+		return errors.NewF("The current directory %s is not a proper directory to create an incident in.  Make a subdirectory with an incident-specific name instead.", dir)
 	}
 	return incident.Create(dir, fn)
 }
