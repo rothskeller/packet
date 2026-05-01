@@ -23,3 +23,5 @@ func FormsDir() string {
 
 // only applies to Windows
 func UpdateOutpostConfiguration() (err error) { return nil }
+
+func writeAddonINI(_ string) error { return nil }

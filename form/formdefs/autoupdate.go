@@ -26,6 +26,9 @@ const (
 	requestTimeout  = 5 * time.Second
 )
 
+// ValidBundleNameRE matches a valid bundle name.
+var ValidBundleNameRE = regexp.MustCompile(`^[A-Z][-A-Za-z0-9_]{0,14}$`)
+
 // updateInfo is the structure stored in update.json in the root of a bundle.
 type updateInfo struct {
 	URL             string    `json:"url,omitempty"`
@@ -188,96 +191,6 @@ func InstallBundle(source string) (bundle, readme string, err error) {
 	return bundle, readme, nil
 }
 
-// installBundle installs a bundle file with the specified source (for error
-// messages), bundle name (if known, otherwise read from the file), open file
-// handle (rewound to the beginning), and size, into formsDir.  The update info
-// in that bundle is set to the specified modtime and eTag and the current last
-// update time.  It returns the bundle name and the contents of the README.txt
-// file in the bundle, if any.
-func installBundle(source, expect string, fh *os.File, size int64, formsDir string) (bundle, readme string, err error) {
-	var (
-		bundleDir string
-		bundleNew string
-		rmfile    string
-	)
-	if bundle, err = unpackBundle(source, expect, fh, size, formsDir); err != nil {
-		return "", "", err
-	}
-	bundleDir = filepath.Join(formsDir, bundle)
-	bundleNew = bundleDir + ".new"
-	// Remove the old bundle and move the new one into place.
-	// move the new one into place.
-	if err = os.RemoveAll(bundleDir); err != nil {
-		slog.Error("os.RemoveAll", "d", bundleDir, "err", err)
-		return "", "", errors.NewF("The old bundle directory %s could not be removed.", bundleDir)
-	}
-	if err = os.Rename(bundleNew, bundleDir); err != nil {
-		slog.Error("os.Rename", "from", bundleNew, "to", bundleDir, "err", err)
-		return "", "", errors.NewF("The new bundle directory could not be moved to %s.", bundleDir)
-	}
-	// The new bundle may have a README.txt.  Check for that.
-	rmfile = filepath.Join(bundleDir, "README.txt")
-	if rm, err := os.ReadFile(rmfile); err == nil || os.IsNotExist(err) {
-		readme = string(rm)
-	} else {
-		slog.Error("os.ReadFile", "f", rmfile, "err", err)
-		return "", "", errors.New("The README.txt file in the new bundle could not be read.")
-	}
-	return bundle, readme, nil
-}
-
-// AppendReadme appends the supplied text to the README.txt in the forms
-// directory, creating it if needed.
-func AppendReadme(text string) (err error) {
-	var (
-		filename string
-		fh       *os.File
-	)
-	if text == "" {
-		return nil
-	}
-	filename = filepath.Join(FormsDir(), "README.txt")
-	if fh, err = os.OpenFile(filename, os.O_WRONLY|os.O_APPEND|os.O_CREATE, 0666); err != nil {
-		slog.Error("os.OpenFile", "f", filename, "err", err)
-		return errors.NewF("The file %s could not be opened or created.", filename)
-	}
-	if _, err = io.WriteString(fh, text); err != nil {
-		fh.Close()
-		slog.Error("io.WriteString", "f", filename, "err", err)
-		return errors.NewF("The file %s could not be written.", filename)
-	}
-	if err = fh.Close(); err != nil {
-		slog.Error("fh.Close", "f", filename, "err", err)
-		return errors.NewF("The file %s could not be written.", filename)
-	}
-	return nil
-}
-
-// readUpdateInfo reads the update.json file at the specified filename.
-func readUpdateInfo(filename string) (ui *updateInfo, err error) {
-	if data, err := os.ReadFile(filename); os.IsNotExist(err) {
-		return nil, nil
-	} else if err != nil {
-		return nil, err
-	} else {
-		ui = new(updateInfo)
-		if err = json.Unmarshal(data, ui); err != nil {
-			return nil, fmt.Errorf("json decode %s: %s", filename, err)
-		}
-		return ui, nil
-	}
-}
-
-// writeUpdateInfo writes the update.json file.
-func writeUpdateInfo(ui *updateInfo, filename string) (err error) {
-	data, _ := json.Marshal(ui)
-	if err = os.WriteFile(filename, data, 0666); err != nil {
-		slog.Error("os.WriteFile", "f", filename, "err", err)
-		return fmt.Errorf("can't write update info: %s", err)
-	}
-	return nil
-}
-
 // fetchUpdate retrieves the update bundle from the update server into the
 // specified file.  If successful, it returns the handle to the open bundle and
 // its size, and sets the IfNoneMatch and IfModifiedSince fields of the
@@ -334,6 +247,53 @@ func fetchUpdate(bundleFName string, ui *updateInfo) (fh *os.File, size int64, e
 	ui.IfModifiedSince = resp.Header.Get("Last-Modified")
 	ui.IfNoneMatch = resp.Header.Get("ETag")
 	return fh, size, nil
+}
+
+// installBundle installs a bundle file with the specified source (for error
+// messages), bundle name (if known, otherwise read from the file), open file
+// handle (rewound to the beginning), and size, into formsDir.  It returns the
+// bundle name and the contents of the README.txt file in the bundle, if any.
+func installBundle(source, expect string, fh *os.File, size int64, formsDir string) (bundle, readme string, err error) {
+	var (
+		bundleDir  string
+		bundleNew  string
+		launchFile string
+		rmfile     string
+	)
+	if bundle, err = unpackBundle(source, expect, fh, size, formsDir); err != nil {
+		return "", "", err
+	}
+	bundleDir = filepath.Join(formsDir, bundle)
+	bundleNew = bundleDir + ".new"
+	// There should be a $bundle.launch file in that directory.  Check for
+	// that.
+	launchFile = filepath.Join(bundleNew, bundle+".launch")
+	if _, err = os.Stat(launchFile); err != nil {
+		return "", "", errors.NewF("The new forms bundle does not contain a %s.launch file.", bundle)
+	}
+	// Generate the associated $bundle.ini file.
+	if err = writeAddonINI(launchFile); err != nil {
+		return "", "", errors.NewF("%s.ini could not be added to the forms bundle: %s", bundle, err)
+	}
+	// Remove the old bundle and move the new one into place.
+	// move the new one into place.
+	if err = os.RemoveAll(bundleDir); err != nil {
+		slog.Error("os.RemoveAll", "d", bundleDir, "err", err)
+		return "", "", errors.NewF("The old bundle directory %s could not be removed.", bundleDir)
+	}
+	if err = os.Rename(bundleNew, bundleDir); err != nil {
+		slog.Error("os.Rename", "from", bundleNew, "to", bundleDir, "err", err)
+		return "", "", errors.NewF("The new bundle directory could not be moved to %s.", bundleDir)
+	}
+	// The new bundle may have a README.txt.  Check for that.
+	rmfile = filepath.Join(bundleDir, "README.txt")
+	if rm, err := os.ReadFile(rmfile); err == nil || os.IsNotExist(err) {
+		readme = string(rm)
+	} else {
+		slog.Error("os.ReadFile", "f", rmfile, "err", err)
+		return "", "", errors.New("The README.txt file in the new bundle could not be read.")
+	}
+	return bundle, readme, nil
 }
 
 // unpackBundle unpacks the forms bundle opened from source as fh, which has the
@@ -441,5 +401,54 @@ func verifySignature(source string, fh *os.File, size int64, expect string) (zr 
 	return zr, bundle, nil
 }
 
-// ValidBundleNameRE matches a valid bundle name.
-var ValidBundleNameRE = regexp.MustCompile(`^[A-Z][-A-Za-z0-9_]{0,14}$`)
+// readUpdateInfo reads the update.json file at the specified filename.
+func readUpdateInfo(filename string) (ui *updateInfo, err error) {
+	if data, err := os.ReadFile(filename); os.IsNotExist(err) {
+		return nil, nil
+	} else if err != nil {
+		return nil, err
+	} else {
+		ui = new(updateInfo)
+		if err = json.Unmarshal(data, ui); err != nil {
+			return nil, fmt.Errorf("json decode %s: %s", filename, err)
+		}
+		return ui, nil
+	}
+}
+
+// writeUpdateInfo writes the update.json file.
+func writeUpdateInfo(ui *updateInfo, filename string) (err error) {
+	data, _ := json.Marshal(ui)
+	if err = os.WriteFile(filename, data, 0666); err != nil {
+		slog.Error("os.WriteFile", "f", filename, "err", err)
+		return fmt.Errorf("can't write update info: %s", err)
+	}
+	return nil
+}
+
+// AppendReadme appends the supplied text to the README.txt in the forms
+// directory, creating it if needed.
+func AppendReadme(text string) (err error) {
+	var (
+		filename string
+		fh       *os.File
+	)
+	if text == "" {
+		return nil
+	}
+	filename = filepath.Join(FormsDir(), "README.txt")
+	if fh, err = os.OpenFile(filename, os.O_WRONLY|os.O_APPEND|os.O_CREATE, 0666); err != nil {
+		slog.Error("os.OpenFile", "f", filename, "err", err)
+		return errors.NewF("The file %s could not be opened or created.", filename)
+	}
+	if _, err = io.WriteString(fh, text); err != nil {
+		fh.Close()
+		slog.Error("io.WriteString", "f", filename, "err", err)
+		return errors.NewF("The file %s could not be written.", filename)
+	}
+	if err = fh.Close(); err != nil {
+		slog.Error("fh.Close", "f", filename, "err", err)
+		return errors.NewF("The file %s could not be written.", filename)
+	}
+	return nil
+}
