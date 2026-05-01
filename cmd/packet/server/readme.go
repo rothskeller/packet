@@ -30,7 +30,7 @@ func maybeShowREADME(w http.ResponseWriter, r *http.Request) bool {
 	os.Remove(rmfile)
 	w.Header().Set("Cache-Control", "no-store, private")
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")
-	fmt.Fprintf(w, `<!DOCTYPE html><title>Updated Forms</title><h1>Updated Forms</h1><pre>%s</pre><div style="margin-top:2rem"><button onclick="location.href='%s'">continue</button></div>`,
+	fmt.Fprintf(w, `<!DOCTYPE html><title>Updated Forms</title><h1>Updated Forms</h1><pre>%s</pre><div style="margin-top:2rem"><button onclick="location.href='%s'">Continue</button></div>`,
 		html.EscapeString(string(data)), html.EscapeString(r.URL.String()))
 	return true
 }
