@@ -20,7 +20,7 @@ func (cio *CIO) EmitLogList(entries []*incident.LogEntry, full, numbers, receipt
 	for _, e := range entries {
 		switch {
 		case e.Status == incident.StatusDeleted: // never show
-		case e.Flags&incident.FIsReceipt != 0 && !receipts: // hide receipts
+		case e.Flags&incident.FIsReceipt != 0 && !receipts && (e.Status == incident.StatusReceived || e.Status == incident.StatusSent): // hide receipts
 		default:
 			toshow = append(toshow, e)
 		}

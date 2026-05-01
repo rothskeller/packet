@@ -97,7 +97,7 @@ func (i *Incident) ReceiveMessage(msg *message.JustReceivedMessage) (dr *message
 	i.sortLog()
 	// Generate a delivery receipt if appropriate.  (It's up to the caller
 	// to send it or not.)
-	if !msg.Bulletin() && !msg.Autoresponse() {
+	if !msg.Bulletin() && !msg.Autoresponse() && !i.Config.NoSendReceipts {
 		dr, _ = i.MakeDeliveryReceipt(msg, le)
 	}
 	slog.Info("received message", "lid", le.LocalMsgID, "s", msg.Subject().EncodedSubject())

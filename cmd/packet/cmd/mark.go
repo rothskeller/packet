@@ -115,8 +115,51 @@ func cmdMark(args []string) (err error) {
 					c.Confirm("%s marked ready to send.", entry.LocalMsgID)
 				}
 			}
-		default:
-			panic("not implemented")
+		case 'd':
+			if les, err := matchLogEntries(i, flags.Arg(0)); err != nil {
+				return err
+			} else {
+				for _, le := range les {
+					if le.Status != incident.StatusSent {
+						return errors.NewF("%s is not a sent message.", le.LocalMsgID)
+					}
+					if not && le.Flags&incident.FHasReceipt != 0 {
+						return errors.NewF("A delivery receipt has been received for %s, so it cannot be marked 'not delivered.'", le.LocalMsgID)
+					}
+					if not {
+						le.Flags |= incident.FNeedsReceipt
+					} else {
+						le.Flags &^= incident.FNeedsReceipt
+					}
+					i.UpdateLogEntry(le)
+				}
+			}
+			if not {
+				c.Confirm("%q marked not delivered.", flags.Arg(0))
+			} else {
+				c.Confirm("%q marked delivered.", flags.Arg(0))
+			}
+			return nil
+		case 'f':
+			if les, err := matchLogEntries(i, flags.Arg(0)); err != nil {
+				return err
+			} else {
+				for _, le := range les {
+					if not {
+						le.Flags &^= incident.FFollowup
+					} else {
+						le.Flags |= incident.FFollowup
+					}
+					i.UpdateLogEntry(le)
+				}
+			}
+			if not {
+				c.Confirm("%q marked as not needing followup.", flags.Arg(0))
+			} else {
+				c.Confirm("%q marked as needing followup.", flags.Arg(0))
+			}
+			return nil
+
 		}
 		return nil
 	}); err != nil {

@@ -2,6 +2,7 @@ package cmd
 
 import (
 	"regexp"
+	"slices"
 	"strconv"
 	"strings"
 
@@ -141,6 +142,72 @@ func matchMessage(i *incident.Incident, in string, flags matchMessageFlag) (msg 
 	} else {
 		return msg, entry, nil
 	}
+}
+
+// matchLogEntries finds the log entry or entries identified by the input
+// string.  The input can be:
+//   - A local message ID, in which case the corresponding log entries are
+//     returned.
+//   - An unambiguous remote message ID, in which case the corresponding log
+//     entry is returned.
+//   - An integer that is unambiguously the sequence number of a local or remote
+//     message ID, in which case the corresponding log entries are returned.
+//   - A pound sign followed by an integer, in which case the log entry with
+//     that number is returned.
+func matchLogEntries(i *incident.Incident, in string) (les []*incident.LogEntry, err error) {
+	if strings.HasPrefix(in, "#") {
+		var num int
+		if num, err = strconv.Atoi(in[1:]); err != nil || num < 1 {
+			return nil, errors.NewF("%q is not a valid log entry number", in)
+		}
+		for _, e := range i.Log {
+			if e.Ident == num {
+				if e.Status == incident.StatusDeleted {
+					return nil, errors.NewF("Log entry #%d has been deleted and is not recoverable.", num)
+				}
+				return []*incident.LogEntry{e}, nil
+			}
+		}
+		return nil, errors.NewF("There is no log entry #%d.", num)
+	}
+	var (
+		lmid string
+		num  int
+	)
+	num, _ = strconv.Atoi(in)
+	for _, e := range i.Log {
+		var local string
+
+		if e.Status == incident.StatusDeleted || e.Status == incident.StatusHandEntered {
+			continue
+		}
+		if local = e.LocalMsgID; e.Flags&incident.FIsReceipt != 0 {
+			local = ""
+		}
+		if strings.EqualFold(local, in) || strings.EqualFold(e.FromMsgID, in) || strings.EqualFold(e.ToMsgID, in) {
+			les = append(les, e)
+			continue
+		}
+		if num != 0 {
+			if _, n, _, err := messageid.Decode(local, true, false); err == nil && n == num {
+				les = append(les, e)
+			} else if _, n, _, err = messageid.Decode(e.FromMsgID, true, false); err == nil && n == num {
+				les = append(les, e)
+			} else if _, n, _, err = messageid.Decode(e.ToMsgID, true, false); err == nil && n == num {
+				les = append(les, e)
+			}
+		}
+	}
+	if len(les) == 0 {
+		return nil, errors.NewF("There is no message %q.", in)
+	}
+	lmid = les[0].LocalMsgID
+	if slices.IndexFunc(les, func(le *incident.LogEntry) bool {
+		return le.LocalMsgID != lmid
+	}) >= 0 {
+		return nil, errors.NewF("The string %q is ambiguous: it identifies multiple messages.", in)
+	}
+	return les, nil
 }
 
 var fieldNumberRE = regexp.MustCompile(`^\d+(?:[A-Za-z])?\.$`)

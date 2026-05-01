@@ -76,6 +76,7 @@ func (m *ReceivedMessage) RFC5322() string {
 		rcvd += " FOR " + m.rxArea
 	}
 	rcvd += ";\n\t" + m.rxDate.Format(time.RFC1123Z)
+	hdr.Set("Received", rcvd)
 	if m.from != "" {
 		hdr.Set("From", m.from)
 	}

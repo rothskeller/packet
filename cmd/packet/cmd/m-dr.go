@@ -1,5 +1,14 @@
 package cmd
 
+import (
+	"fmt"
+
+	"github.com/rothskeller/packet/cmd/packet/cio"
+	"github.com/rothskeller/packet/incident"
+	"github.com/rothskeller/packet/message"
+	"github.com/spf13/pflag"
+)
+
 const (
 	manualDRSlug = `Generate a draft delivery receipt for a received message`
 	manualDRHelp = `
@@ -11,5 +20,44 @@ The "packet manual dr" (or "receipt") command generates a draft delivery receipt
 )
 
 func cmdManualDR(args []string) (err error) {
-	panic("not implemented")
+	var (
+		msg  message.Message
+		le   *incident.LogEntry
+		dr   *message.DraftMessage
+		drle *incident.LogEntry
+		c    = cio.Open()
+	)
+	flags := pflag.NewFlagSet("m-dr", pflag.ContinueOnError)
+	flags.Usage = func() {} // we do our own
+	if err = flags.Parse(args); err == pflag.ErrHelp {
+		return cmdManualHelp([]string{"dr"})
+	} else if err != nil {
+		c.Error(err)
+		return usage(manualDRHelp)
+	}
+	if len(args) != 1 {
+		return usage(manualDRHelp)
+	}
+	registerForms()
+	if err = incWrite(false, func(i *incident.Incident) error {
+		if msg, le, err = matchMessage(i, args[0], MMMessageOnly); err != nil {
+			return err
+		}
+		if dr, err = i.MakeDeliveryReceipt(msg, le); err != nil {
+			return err
+		}
+		dr.SetReadyToSend(true)
+		if drle, err = i.AddDraftMessage(dr); err != nil {
+			return err
+		}
+		return nil
+	}); err != nil && err != errNoChange {
+		return err
+	}
+	if c.OutputIsTerm {
+		c.Confirm(`Delivery receipt queued.  Use "packet manual send #%d" to send it.`, drle.Ident)
+	} else {
+		fmt.Printf("#%d\n", drle.Ident)
+	}
+	return nil
 }

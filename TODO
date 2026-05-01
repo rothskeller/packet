@@ -1,10 +1,4 @@
 Before release:
-  Commands:
-    manual dr
-    manual receive
-    manual send
-    mark delivered
-    mark followup
   CLI issues:
     Handling of invocation in non-incident directory
     Collection of required configuration settings
