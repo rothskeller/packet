@@ -18,6 +18,9 @@ type TNC struct {
 	// CommandPrompt is the TNC command prompt that we wait for between
 	// commands.
 	CommandPrompt string
+	// ConnectedMessage is the message from the TNC that indicates it is
+	// connected to a BBS.
+	ConnectedMessage string
 	// DisconnectedMessage is the message from the TNC that indicates it has
 	// lost its connection to the BBS.
 	DisconnectedMessage string

@@ -4,7 +4,8 @@ var tncs = map[string]*TNC{
 	"Kantronics KPC-3": {
 		Name:                "Kantronics KPC-3",
 		CommandPrompt:       "cmd:",
-		DisconnectedMessage: "*** DISCONNECTED\r\n",
+		ConnectedMessage:    "*** CONNECTED",
+		DisconnectedMessage: "*** DISCONNECTED",
 		PreConnectCommands: []string{
 			"INTFACE TERMINAL",
 			"CD SOFTWARE",
@@ -46,7 +47,8 @@ var tncs = map[string]*TNC{
 	"Kantronics KPC-3 Plus": {
 		Name:                "Kantronics KPC-3 Plus",
 		CommandPrompt:       "cmd:",
-		DisconnectedMessage: "*** DISCONNECTED\r\n",
+		ConnectedMessage:    "*** CONNECTED",
+		DisconnectedMessage: "*** DISCONNECTED",
 		PreConnectCommands: []string{
 			"INTFACE TERMINAL",
 			"CD SOFTWARE",
@@ -88,7 +90,8 @@ var tncs = map[string]*TNC{
 	"Kenwood TH-D72A": {
 		Name:                "Kenwood TH-D72A",
 		CommandPrompt:       "cmd:",
-		DisconnectedMessage: "*** DISCONNECTED\r\n",
+		ConnectedMessage:    "*** CONNECTED",
+		DisconnectedMessage: "*** DISCONNECTED",
 		PreConnectCommands: []string{
 			"NEWMODE ON",
 			"8BITCONV ON",
@@ -127,7 +130,8 @@ var tncs = map[string]*TNC{
 	"Kenwood TM-D710A": {
 		Name:                "Kenwood TM-D710A",
 		CommandPrompt:       "cmd:",
-		DisconnectedMessage: "*** DISCONNECTED\r\n",
+		ConnectedMessage:    "*** CONNECTED",
+		DisconnectedMessage: "*** DISCONNECTED",
 		PreConnectCommands: []string{
 			"NEWMODE ON",
 			"8BITCONV ON",
@@ -167,7 +171,8 @@ var tncs = map[string]*TNC{
 	"MFJ-1270C": {
 		Name:                "MFJ-1270C",
 		CommandPrompt:       "cmd:",
-		DisconnectedMessage: "*** DISCONNECTED\r\n",
+		ConnectedMessage:    "*** CONNECTED",
+		DisconnectedMessage: "*** DISCONNECTED",
 		PreConnectCommands: []string{
 			"NEWMODE ON",
 			"AWLEN 8",
@@ -206,7 +211,8 @@ var tncs = map[string]*TNC{
 	"MFJ-1274C": {
 		Name:                "MFJ-1274C",
 		CommandPrompt:       "cmd:",
-		DisconnectedMessage: "*** DISCONNECTED\r\n",
+		ConnectedMessage:    "*** CONNECTED",
+		DisconnectedMessage: "*** DISCONNECTED",
 		PreConnectCommands: []string{
 			"NEWMODE ON",
 			"AWLEN 8",
@@ -245,7 +251,8 @@ var tncs = map[string]*TNC{
 	"TAPR TNC2": {
 		Name:                "TAPR TNC2",
 		CommandPrompt:       "cmd:",
-		DisconnectedMessage: "*** DISCONNECTED\r\n",
+		ConnectedMessage:    "*** CONNECTED",
+		DisconnectedMessage: "*** DISCONNECTED",
 		PreConnectCommands: []string{
 			"NEWMODE ON",
 			"AWLEN 8",
@@ -284,7 +291,8 @@ var tncs = map[string]*TNC{
 	"Timewave PK-96": {
 		Name:                "Timewave PK-96",
 		CommandPrompt:       "cmd:",
-		DisconnectedMessage: "*** DISCONNECTED\r\n",
+		ConnectedMessage:    "*** CONNECTED",
+		DisconnectedMessage: "*** DISCONNECTED",
 		PreConnectCommands: []string{
 			"EXPERT ON",
 			"NEWMODE ON",

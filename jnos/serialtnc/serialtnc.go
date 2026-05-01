@@ -125,7 +125,7 @@ func open(tnc *tnc.TNC, serialPort, bbsAddress, mailbox, callsign string, log io
 	if err = t.send(fmt.Sprintf("%s %s\n", tnc.ConnectCommand, bbsAddress)); err != nil {
 		goto BBSERROR
 	}
-	if _, err = t.readUntil(tnc.CommandPrompt, tncTimeout); err != nil {
+	if _, err = t.readUntil(tnc.ConnectedMessage, rfTimeout); err != nil {
 		goto BBSERROR
 	}
 	t.connected = true
