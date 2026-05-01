@@ -8,8 +8,7 @@ Before release:
   CLI issues:
     Handling of invocation in non-incident directory
     Collection of required configuration settings
-  Update incident directory LRU list when switching to a new one
-  TESTING
+    Auto-update forms when using CLI
 
 When possible:
   PDF support for Unicode

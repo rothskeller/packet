@@ -43,7 +43,8 @@ func (s *Server) serveGetIncident(w http.ResponseWriter, r *http.Request) {
 		ErrPage(w, "The GET /incident request is missing the required dir= parameter.", http.StatusBadRequest)
 		return
 	}
-	err = incident.Read(dir, func(i *incident.Incident) error {
+	err = incident.Write(dir, func(i *incident.Incident) error {
+		i.UpdateIncDefaults() // marks incident as recently used
 		vars["DIR"] = dir
 		vars["IDENT"] = i.Config.ActiveCall()
 		vars["BBS"] = i.Config.ConnectBBS
