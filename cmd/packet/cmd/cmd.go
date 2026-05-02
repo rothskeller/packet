@@ -315,8 +315,17 @@ var registerFormsOnce sync.Once
 
 func registerForms() {
 	registerFormsOnce.Do(func() {
+		var c = cio.Open()
+
+		if err := formdefs.CheckForUpdates(false, true); err != nil {
+			c.Warn("%s", err)
+		} else if c.OutputIsTerm {
+			if readme := formdefs.GetFlushREADME(); readme != "" {
+				c.Confirm("***** NEW FORMS INSTALLED *****\n%s\n*******************************\n", readme)
+			}
+		}
 		if err := formdefs.RegisterForms(); err != nil {
-			cio.Open().Warn("%s", err)
+			c.Warn("%s", err)
 		}
 	})
 }

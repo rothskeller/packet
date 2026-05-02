@@ -452,3 +452,22 @@ func AppendReadme(text string) (err error) {
 	}
 	return nil
 }
+
+// GetFlushREADME retrieves the contents of the README.txt in the forms
+// directory, if any, and removes it.
+func GetFlushREADME() (readme string) {
+	var (
+		rmfile string
+		data   []byte
+		err    error
+	)
+	rmfile = filepath.Join(FormsDir(), "README.txt")
+	if data, err = os.ReadFile(rmfile); os.IsNotExist(err) {
+		return ""
+	} else if err != nil {
+		slog.Error("os.ReadFile", "f", rmfile, "err", err)
+		return ""
+	}
+	os.Remove(rmfile)
+	return string(data)
+}

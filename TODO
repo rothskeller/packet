@@ -1,10 +1,4 @@
-Before release:
-  CLI issues:
-    Collection of required configuration settings
-    Auto-update forms when using CLI
-
-When possible:
-  PDF support for Unicode
-  Update wppsvr, packet-ex
-  Incident archive
-  Field comparisons
+PDF support for Unicode
+Update wppsvr, packet-ex
+Incident archive
+Field comparisons
