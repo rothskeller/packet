@@ -51,7 +51,10 @@ func cmdConnect(args []string) (err error) {
 	if flags.NArg() != 0 {
 		return usage(connectHelp)
 	}
-	if err = incRead(func(i *incident.Incident) error {
+	if err = incWrite(true, func(i *incident.Incident) error {
+		if err = requiredConfig(i, "OpCall", "OpName", "Rx Message ID", "Connect*"); err != nil {
+			return err
+		}
 		dir = i.Dir
 		myID = i.Config.ActiveCall()
 		return nil

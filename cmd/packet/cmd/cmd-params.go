@@ -6,6 +6,7 @@ import (
 	"strconv"
 	"strings"
 
+	"github.com/rothskeller/packet/cmd/packet/cio"
 	"github.com/rothskeller/packet/cmd/packet/pseudomsg"
 	"github.com/rothskeller/packet/errors"
 	"github.com/rothskeller/packet/incident"
@@ -338,4 +339,84 @@ func downcase(b byte) byte {
 		return b + 'A' - 'a'
 	}
 	return b
+}
+
+// requiredConfig ensures that required configuration settings are set.  The
+// incident must be opened for writing.  If required settings are missing and
+// we are running interactively, we prompt for them.  If required settings are
+// missing in a noninteractive session, we throw an error.
+func requiredConfig(i *incident.Incident, needed ...string) (err error) {
+	var (
+		start string
+		pass2 bool
+	)
+RETRY:
+	if i.Config.IncidentName == "" && !pass2 && slices.Contains(needed, "IncidentName") {
+		start = "Incident Name"
+		goto MISSING
+	}
+	if i.Config.OpStart.IsZero() && !pass2 && slices.Contains(needed, "OpStart") {
+		start = "Operation Start"
+		goto MISSING
+	}
+	if i.Config.OpEnd.IsZero() && !pass2 && slices.Contains(needed, "OpEnd") {
+		start = "Operation End"
+		goto MISSING
+	}
+	if i.Config.OpCall == "" && slices.Contains(needed, "OpCall") {
+		start = "Operator Call Sign"
+		goto MISSING
+	}
+	if i.Config.OpName == "" && slices.Contains(needed, "OpName") {
+		start = "Operator Name"
+		goto MISSING
+	}
+	if i.Config.TxMessageID == "" && slices.Contains(needed, "TxMessageID") {
+		start = "Tx Message ID"
+		goto MISSING
+	}
+	if i.Config.RxMessageID == "" && slices.Contains(needed, "RxMessageID") {
+		start = "Rx Message ID"
+		goto MISSING
+	}
+	if slices.Contains(needed, "Connect*") {
+		var ok bool
+		switch i.Config.ConnectType {
+		case incident.ConnectNone:
+			ok = i.Config.ConnectBBS != ""
+		case incident.ConnectSerialTNC:
+			ok = i.Config.ConnectAddress != "" && i.Config.SerialPort != "" && i.Config.TNCType != ""
+		case incident.ConnectTelnet:
+			ok = i.Config.ConnectAddress != "" && i.Config.TelnetUser != "" && i.Config.TelnetPassword != ""
+		}
+		if !ok {
+			start = "Connection Type"
+			goto MISSING
+		}
+	} else if i.Config.ConnectBBS == "" && slices.Contains(needed, "ConnectBBS") {
+		start = "Connection Type"
+		goto MISSING
+	}
+	return nil
+
+MISSING:
+	c := cio.Open()
+	if !c.OutputIsTerm || !c.InputIsTerm {
+		return errors.NewF("The %s is not set in the incident configuration.  It is required for this operation.", start)
+	}
+	msg := pseudomsg.NewConfigMessage(i.Config.Clone())
+	var startf field.Field
+	for f := range msg.Fields() {
+		if f.Label() == start {
+			startf = f
+			break
+		}
+	}
+	c.Confirm("Please provide required incident configuration parameters:")
+	if err = doEdit(c, i, nil, msg, startf, false, true); err != nil {
+		return err
+	}
+	i.UpdateConfig(msg.Config)
+	pass2 = true
+	goto RETRY
 }

@@ -42,6 +42,11 @@ func cmdICS309(args []string) (err error) {
 		os.Remove("ics309.pdf")
 	}
 	if _, err = os.Stat("ics309.pdf"); os.IsNotExist(err) {
+		if err = incWrite(false, func(i *incident.Incident) error {
+			return requiredConfig(i, "IncidentName", "OpStart", "OpEnd", "OpCall", "OpName")
+		}); err != nil {
+			return err
+		}
 		if sig == "" {
 			if sig, err = askForSignature(); err != nil {
 				return err

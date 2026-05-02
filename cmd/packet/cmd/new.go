@@ -130,7 +130,7 @@ func cmdNew(args []string) (err error) {
 			}
 		}
 	}
-	if err = incWrite(false, func(i *incident.Incident) error {
+	if err = incWrite(true, func(i *incident.Incident) error {
 		var (
 			srcmsg message.Message
 			srcle  *incident.LogEntry
@@ -143,6 +143,10 @@ func cmdNew(args []string) (err error) {
 				return doEdit(c, i, newle, pseudomsg.NewLogEntryMessage(newle), nil, false, true)
 			}
 			return nil
+		}
+		// For real messages, we need some config.
+		if err = requiredConfig(i, "OpCall", "OpName", "TxMessageID"); err != nil {
+			return err
 		}
 		// Get the message we're supposed to copy, reply to, or resend,
 		// if any.

@@ -60,6 +60,9 @@ func cmdManualReceive(args []string) (err error) {
 		return err
 	}
 	err = incWrite(false, func(i *incident.Incident) error {
+		if err = requiredConfig(i, "OpCall", "OpName", "Rx Message ID", "ConnectBBS"); err != nil {
+			return err
+		}
 		if msg, err = message.NewJustReceivedMessage(sb.String(), i.Config.ConnectBBS, ""); err != nil {
 			return err
 		}
