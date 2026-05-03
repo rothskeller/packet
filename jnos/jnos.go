@@ -118,7 +118,7 @@ func (c *Conn) Send(subject, body string, to ...string) (err error) {
 		if _, err = c.t.ReadUntil("Cc: "); err != nil {
 			return err
 		}
-		if err = c.t.Send(strings.Join(to[1:], " ") + "\n"); err != nil {
+		if err = c.t.Send(strings.Join(to[1:], ", ") + "\n"); err != nil {
 			return err
 		}
 	}
