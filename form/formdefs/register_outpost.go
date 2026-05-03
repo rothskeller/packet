@@ -29,7 +29,7 @@ launch-convert=always
 msg-dir=C:\PackItForms\Spool
 cmd-new=C:\PackItForms\pifo.exe outpost new "$ADDON$" "{{ADDON_MSG_TYPE}}"
   "{{SETUP_NEW_MSG_NUMBER}}" "{{SETUP_ID_LEGAL_CALL}}" "{{SETUP_ID_LEGAL_NAME}}"
-  "{{SETUP_ID_TAC_CALL}}" "{{SETUP_ID_TAC_NAME}}"
+  "{{SETUP_ID_TAC_CALL}}" "{{SETUP_ID_TAC_NAME}}" "{{SETUP_ID_ACTIVE_CALL}}"
 cmd-draft=C:\PackItForms\pifo.exe outpost edit "{{MSG_FILENAME}}" "{{MSG_INDEX}}"
 cmd-ready=C:\PackItForms\pifo.exe outpost edit "{{MSG_FILENAME}}" "{{MSG_INDEX}}"
 cmd-sent=C:\PackItForms\pifo.exe outpost view "{{MSG_FILENAME}}"

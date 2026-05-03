@@ -21,7 +21,7 @@ import (
 const (
 	outpostNewSlug = `Start an editor on a new draft message`
 	outpostNewHelp = `
-usage: packet outpost new ⇥addon type msgid opcall opname [taccall tacname]
+usage: packet outpost new ⇥addon type msgid opcall opname [taccall tacname actcall]
 
 Command called by Outpost to start editing a new draft message.  The parameters are:
 
@@ -32,6 +32,7 @@ opcall   ⇥FCC call sign of the operator creating the message.
 opname   ⇥Name of the operator creating the message.
 taccall  ⇥Tactical station call sign if any.
 tacname  ⇥Tactical station name if any.
+actcall  ⇥Active call sign (opcall or taccall).
 `
 )
 
@@ -59,7 +60,7 @@ func cmdOutpostNew(args []string) (err error) {
 		cio.Open().Error(err)
 		return usage(outpostNewHelp)
 	}
-	if len(args) != 5 && len(args) != 7 {
+	if len(args) != 5 && len(args) != 8 {
 		return usage(outpostNewHelp)
 	}
 	registerForms()
@@ -90,16 +91,15 @@ func cmdOutpostNew(args []string) (err error) {
 	}
 	// Store operator name.
 	values.Set("opName", decodeOutpostArg(args[4]))
-	if len(args) == 7 && (args[5] != "" || args[6] != "") {
+	if len(args) == 8 && (args[5] != "" || args[6] != "") {
 		// Check tactical call syntax.
 		if tacCall := decodeOutpostArg(args[5]); !tacCallRE.MatchString(tacCall) {
 			slog.Error("invalid taccall", "taccall", tacCall)
 			return fmt.Errorf("invalid tactical call sign %q", tacCall)
-		} else {
+		} else if decodeOutpostArg(args[7]) == tacCall {
 			values.Set("tacCall", tacCall)
-		}
-		// Store tactical name.
-		values.Set("tacName", decodeOutpostArg(args[6]))
+			values.Set("tacName", decodeOutpostArg(args[6]))
+		} // otherwise the tac call isn't active, so ignore it
 	}
 	if mtype = message.FindType(func(mt message.MType) bool {
 		if mt, ok := mt.(form.EditableFormType); ok {
