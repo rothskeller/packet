@@ -104,8 +104,10 @@ func endTag(n *html.Node) string {
 		return ""
 	}
 	if ns := nextSiblingSkipWS(n); ns != nil && startImpliesClose.Has(elementPair{n.DataAtom, ns.DataAtom}) {
+		removeWSAfter(n)
 		return ""
 	} else if ns == nil && n.Parent != nil && closeImpliesClose.Has(elementPair{n.DataAtom, n.Parent.DataAtom}) {
+		removeWSAfter(n)
 		return ""
 	}
 	return "</" + n.Data + ">"
@@ -121,6 +123,14 @@ func nextSiblingSkipWS(n *html.Node) *html.Node {
 		}
 	}
 	return nil
+}
+
+// removeWSAfter removes text nodes containing only whitespace that occur
+// immediately after the supplied node.
+func removeWSAfter(n *html.Node) {
+	for n.NextSibling != nil && n.NextSibling.Type == html.TextNode && strings.TrimSpace(n.NextSibling.Data) == "" {
+		n.Parent.RemoveChild(n.NextSibling)
+	}
 }
 
 // voidElements are the elements that have no end tag (unless they have content,
