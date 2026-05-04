@@ -168,17 +168,33 @@ func newMessageTypeList() string {
 }
 
 func (s *Server) servePostViewICS309(w http.ResponseWriter, r *http.Request) {
-	var dir string
-
+	var (
+		dir   string
+		fname string
+	)
 	signature := r.FormValue("signature")
 	serveIncident(w, r, false, func(i *incident.Incident) (err error) {
 		dir = i.Dir
+		fname = "ICS-309"
+		if i.Config.ActivationNum != "" {
+			fname += " " + i.Config.ActivationNum
+		}
+		if i.Config.TacCall != "" {
+			fname += " " + i.Config.TacCall
+		} else if i.Config.OpCall != "" {
+			fname += " " + i.Config.OpCall
+		}
+		if !i.Config.OpStart.IsZero() {
+			fname += i.Config.OpStart.Format(" 2006-01-02")
+		}
+		fname += ".pdf"
 		return i.GenerateICS309(signature)
 	}, func() error {
 		if fh, err := os.Open(filepath.Join(dir, "ics309.pdf")); err != nil {
 			return err
 		} else {
 			w.Header().Set("Content-Type", "application/pdf")
+			w.Header().Set("Content-Disposition", fmt.Sprintf("inline; filename=%q", fname))
 			http.ServeContent(w, r, "ics309.pdf", time.Time{}, fh)
 			fh.Close()
 			return nil
