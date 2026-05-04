@@ -11,13 +11,15 @@ import (
 )
 
 type bbsConnection struct {
-	mutex   sync.Mutex
-	dir     string
-	ProgMsg string `json:"progress"`
-	ErrMsg  string `json:"error"`
-	Seq     int    `json:"seq"`
-	cancel  func()
-	notify  chan struct{}
+	mutex            sync.Mutex
+	dir              string
+	ProgMsg          string `json:"progress"`
+	ErrMsg           string `json:"error"`
+	Seq              int    `json:"seq"`
+	unsentErr        bool
+	closeAfterUpdate bool
+	cancel           func()
+	notify           chan struct{}
 }
 
 var bbsConnections = map[string]*bbsConnection{}
@@ -79,6 +81,10 @@ RESTART:
 		return
 	} else if c.Seq > seq {
 		update, _ = json.Marshal(c)
+		c.unsentErr = false
+		if c.closeAfterUpdate {
+			bbsConnections[dir] = nil
+		}
 	} else {
 		if c.notify == nil {
 			c.notify = make(chan struct{})
@@ -118,6 +124,7 @@ func (c *bbsConnection) Error(msg string) {
 	c.mutex.Lock()
 	if c.ErrMsg == "" {
 		c.ErrMsg = msg
+		c.unsentErr = true
 		c.Seq++
 		if c.notify != nil {
 			close(c.notify)
@@ -132,6 +139,10 @@ func (c *bbsConnection) Finished() {
 	if c.notify != nil {
 		close(c.notify)
 	}
-	bbsConnections[c.dir] = nil
+	if c.unsentErr {
+		c.closeAfterUpdate = true
+	} else {
+		bbsConnections[c.dir] = nil
+	}
 	bbsConnectionsMutex.Unlock()
 }
