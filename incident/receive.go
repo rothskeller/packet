@@ -44,7 +44,7 @@ func (i *Incident) ReceiveMessage(msg *message.JustReceivedMessage) (dr *message
 		le.Flags |= FBulletin
 		le.FromCall = strings.ToUpper(msg.RxArea())
 	} else {
-		le.FromCall, _, _ = strings.Cut(msg.To(), "@")
+		le.FromCall, _, _ = strings.Cut(msg.From(), "@")
 		le.FromCall = strings.ToUpper(strings.TrimSpace(le.FromCall))
 	}
 	// Put the local message ID and the operator information into the
