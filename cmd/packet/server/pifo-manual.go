@@ -7,6 +7,7 @@ import (
 	"io"
 	"log/slog"
 	"net/http"
+	"runtime"
 	"strconv"
 	"strings"
 
@@ -69,6 +70,7 @@ func (s *Server) serveGetManualSendCommand(w http.ResponseWriter, r *http.Reques
 		to    []string
 		cmd   strings.Builder
 		eb    string
+		nl    []byte
 		err   error
 	)
 	// Get the message from the incident and make sure it's proper.
@@ -112,6 +114,11 @@ func (s *Server) serveGetManualSendCommand(w http.ResponseWriter, r *http.Reques
 		}
 	}
 	// Generate the actual send command.
+	if runtime.GOOS == "windows" {
+		nl = []byte{'\r', '\n'}
+	} else {
+		nl = []byte{'\n'}
+	}
 	if msg.Bulletin() {
 		cmd.WriteString("SB ")
 	} else if len(to) > 1 {
@@ -120,21 +127,26 @@ func (s *Server) serveGetManualSendCommand(w http.ResponseWriter, r *http.Reques
 		cmd.WriteString("SP ")
 	}
 	cmd.WriteString(to[0])
-	cmd.WriteByte('\n')
+	cmd.Write(nl)
 	if len(to) > 1 {
 		cmd.WriteString(strings.Join(to[1:], ","))
-		cmd.WriteByte('\n')
+		cmd.Write(nl)
 	}
 	cmd.WriteString(msg.Subject().EncodedSubject())
-	cmd.WriteByte('\n')
+	cmd.Write(nl)
 	eb = msg.Payload().Encode()
+	if runtime.GOOS == "windows" {
+		eb = strings.ReplaceAll(eb, "\n", "\r\n")
+	}
 	cmd.WriteString(eb)
 	if !strings.HasSuffix(eb, "\n") {
-		cmd.WriteByte('\n')
+		cmd.Write(nl)
 	}
-	cmd.WriteString("/EX\n")
+	cmd.WriteString("/EX")
+	cmd.Write(nl)
 	if ident != "" {
-		fmt.Fprintf(&cmd, "# DE %s\n", ident)
+		fmt.Fprintf(&cmd, "# DE %s", ident)
+		cmd.Write(nl)
 	}
 	w.Header().Set("Content-Type", "text/plain; charset=utf-8")
 	io.WriteString(w, cmd.String())
