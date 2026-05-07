@@ -116,12 +116,14 @@ func registerFSForms() (err error) {
 			var ft = form.FormType{FormDef: def}
 			var mt = message.MType(ft)
 			if def.CreateTag != "" {
-				mt = form.EditableFormType{FormType: ft}
+				mt = form.EditableFormType{FormType: &ft}
 			}
 			if derr = message.RegisterType(mt); derr != nil {
 				slog.Warn("form registration error", "f", ff, "err", derr)
 				err = errors.Join(err, derr)
 			}
+			// Keep track of the highest minor version number for
+			// each major version of each form.
 			if match := form.VersionRE.FindStringSubmatch(def.Version); match != nil {
 				if highest[def.AddonName] == nil {
 					highest[def.AddonName] = make(map[string]map[int]*form.FormType)

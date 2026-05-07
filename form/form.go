@@ -33,7 +33,7 @@ type FormType struct {
 var _ message.MType = (*FormType)(nil)
 
 type EditableFormType struct {
-	FormType
+	*FormType
 }
 
 var _ message.EditableMType = EditableFormType{}
