@@ -93,13 +93,15 @@ func cmdOutpostNew(args []string) (err error) {
 	values.Set("opName", decodeOutpostArg(args[4]))
 	if len(args) == 8 && (args[5] != "" || args[6] != "") {
 		// Check tactical call syntax.
-		if tacCall := decodeOutpostArg(args[5]); !tacCallRE.MatchString(tacCall) {
-			slog.Error("invalid taccall", "taccall", tacCall)
-			return fmt.Errorf("invalid tactical call sign %q", tacCall)
-		} else if decodeOutpostArg(args[7]) == tacCall {
-			values.Set("tacCall", tacCall)
-			values.Set("tacName", decodeOutpostArg(args[6]))
-		} // otherwise the tac call isn't active, so ignore it
+		if tacCall, actCall := decodeOutpostArg(args[5]), decodeOutpostArg(args[7]); tacCall == actCall {
+			if !tacCallRE.MatchString(tacCall) {
+				slog.Error("invalid taccall", "taccall", tacCall)
+				return fmt.Errorf("invalid tactical call sign %q", tacCall)
+			} else {
+				values.Set("tacCall", tacCall)
+				values.Set("tacName", decodeOutpostArg(args[6]))
+			}
+		}
 	}
 	if mtype = message.FindType(func(mt message.MType) bool {
 		if mt, ok := mt.(form.EditableFormType); ok {
