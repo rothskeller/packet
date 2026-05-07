@@ -9,6 +9,8 @@ import (
 	"net/url"
 	"os"
 	"path"
+	"regexp"
+	"strconv"
 	"strings"
 
 	"github.com/rothskeller/packet/errors"
@@ -25,6 +27,7 @@ import (
 
 type FormType struct {
 	*formdef.FormDef
+	AcceptNewer bool
 }
 
 var _ message.MType = (*FormType)(nil)
@@ -181,9 +184,23 @@ func (ft FormType) Recognize(m message.Message) {
 	if body, _ = m.Body().(*FormBody); body == nil {
 		return
 	}
-	// Check the addon, filename, and version number.
-	if body.addonName != ft.AddonName || body.formHTML != ft.HTMLName || body.formVersion != ft.Version {
+	// Check the addon and filename.
+	if body.addonName != ft.AddonName || body.formHTML != ft.HTMLName {
 		return
+	}
+	// Check the version number.
+	if body.formVersion == ft.Version {
+		// Match, do nothing.
+	} else if ft.AcceptNewer && IsNewer(body.formVersion, ft.Version) {
+		// It's a newer version.  We'll accept it, but we need to
+		// manufacture a new form type that has the correct version
+		// number in it.  This new type won't be an EditableFormType,
+		// but that's OK; we're only using it to display anyway.
+		var newFD = *ft.FormDef
+		newFD.Version = body.formVersion
+		ft = FormType{FormDef: &newFD}
+	} else {
+		return // not ours
 	}
 	// It's our form.
 	body.def = ft.FormDef
@@ -211,8 +228,28 @@ func (ft FormType) Recognize(m message.Message) {
 	m.Payload().(*payload.OutpostPayload).SetAllowLong()
 }
 
+// VersionRE is a regular expression that matches a major.minor form version
+// number.
+var VersionRE = regexp.MustCompile(`^(\d+)\.(\d+)$`)
+
+// IsNewer returns whether the candidate version number can be accepted as a
+// compatible newer version of the base version number.  That means it has the
+// same major number and an (equal or) greater minor number.
+func IsNewer(candidate, base string) bool {
+	if cmatch := VersionRE.FindStringSubmatch(candidate); cmatch != nil {
+		if bmatch := VersionRE.FindStringSubmatch(base); bmatch != nil {
+			cmaj, _ := strconv.Atoi(cmatch[1])
+			cmin, _ := strconv.Atoi(cmatch[2])
+			bmaj, _ := strconv.Atoi(bmatch[1])
+			bmin, _ := strconv.Atoi(bmatch[2])
+			return cmaj == bmaj && cmin >= bmin
+		}
+	}
+	return false
+}
+
 func (ft EditableFormType) Recognize(m message.Message) {
-	if ft.FormType.Recognize(m); m.Type() != nil {
+	if ft.FormType.Recognize(m); m.Type() == ft.FormType {
 		m.SetType(ft)
 	}
 }

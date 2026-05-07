@@ -7,6 +7,7 @@ import (
 	"log/slog"
 	"os"
 	"path/filepath"
+	"strconv"
 	"strings"
 	"sync"
 
@@ -92,8 +93,10 @@ func getFormsFileSystem() (formsFS FormsFSI, err error) {
 }
 
 func registerFSForms() (err error) {
-	var forms []string
-
+	var (
+		forms   []string
+		highest = make(map[string]map[string]map[int]*form.FormType)
+	)
 	fs.WalkDir(FormsFS, ".", func(path string, d fs.DirEntry, werr error) error {
 		err = errors.Join(err, werr)
 		if strings.HasSuffix(path, ".form") && !d.IsDir() {
@@ -110,13 +113,37 @@ func registerFSForms() (err error) {
 			slog.Warn("form definition error", "f", ff, "err", derr)
 			err = errors.Join(err, derr)
 		} else {
-			var ft message.MType = form.FormType{FormDef: def}
+			var ft = form.FormType{FormDef: def}
+			var mt = message.MType(ft)
 			if def.CreateTag != "" {
-				ft = form.EditableFormType{FormType: ft.(form.FormType)}
+				mt = form.EditableFormType{FormType: ft}
 			}
-			if derr = message.RegisterType(ft); derr != nil {
+			if derr = message.RegisterType(mt); derr != nil {
 				slog.Warn("form registration error", "f", ff, "err", derr)
 				err = errors.Join(err, derr)
+			}
+			if match := form.VersionRE.FindStringSubmatch(def.Version); match != nil {
+				if highest[def.AddonName] == nil {
+					highest[def.AddonName] = make(map[string]map[int]*form.FormType)
+				}
+				if highest[def.AddonName][def.HTMLName] == nil {
+					highest[def.AddonName][def.HTMLName] = make(map[int]*form.FormType)
+				}
+				major, _ := strconv.Atoi(match[1])
+				if highest[def.AddonName][def.HTMLName][major] == nil {
+					highest[def.AddonName][def.HTMLName][major] = &ft
+				} else if form.IsNewer(def.Version, highest[def.AddonName][def.HTMLName][major].Version) {
+					highest[def.AddonName][def.HTMLName][major] = &ft
+				}
+			}
+		}
+	}
+	// Mark the highest minor number of each major number of each form to
+	// accept newer versions.
+	for _, addons := range highest {
+		for _, htmls := range addons {
+			for _, major := range htmls {
+				major.AcceptNewer = true
 			}
 		}
 	}
