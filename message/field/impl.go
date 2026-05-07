@@ -90,6 +90,7 @@ func (f *field) FromHuman(m msgifc.Message, s string) string {
 	return s
 }
 
+func (f *field) Settable() bool { return f.setValueFunc != nil }
 func (f *field) SetValue(m msgifc.Message, val string) {
 	if f.setValueFunc != nil {
 		f.setValueFunc(m, val)

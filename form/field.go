@@ -302,6 +302,9 @@ func canonicalTime(s string) string {
 	return s
 }
 
+// Settable returns whether the field is settable.
+func (f ff2mf) Settable() bool { return f.fd.Tag != "" || f.fd.Type == "dateTime" }
+
 // SetValue sets the value of the field.  The supplied value must be in
 // internal form.
 func (f ff2mf) SetValue(msg msgifc.Message, val string) {

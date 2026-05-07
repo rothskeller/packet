@@ -29,6 +29,8 @@ type Field interface {
 	// form, if possible; otherwise it makes no changes.  Implementations
 	// must not change the value if it is already in internal form.
 	FromHuman(Message, string) string
+	// Settable returns whether the field is settable.
+	Settable() bool
 	// SetValue sets the value of the field.  The supplied value must be in
 	// internal form.
 	SetValue(Message, string)
