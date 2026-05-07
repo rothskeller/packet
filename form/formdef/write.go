@@ -211,6 +211,9 @@ func emitPDFRenderer(fh *os.File, pr PDFFieldRenderer, deftext *pdf.Text) {
 		}
 	case TextRenderer:
 		fmt.Fprint(fh, "text ")
+		if r.String != "" {
+			fmt.Fprintf(fh, "S %s ", maybeQuote(r.String))
+		}
 		if r.Page != 1 {
 			fmt.Fprintf(fh, "P %d ", r.Page)
 		}
@@ -240,10 +243,10 @@ func emitTextStyles(fh *os.File, ts, deftext *pdf.Text) {
 		fmt.Fprintf(fh, " A %s", ts.Align)
 	}
 	if deftext == nil || ts.Wrap != deftext.Wrap {
-		fmt.Fprint(fh, " WR f")
+		fmt.Fprintf(fh, " WR %v", ts.Wrap)
 	}
 	if deftext == nil || ts.Clip != deftext.Clip {
-		fmt.Fprint(fh, " CL t")
+		fmt.Fprintf(fh, " CL %v", ts.Clip)
 	}
 	if deftext == nil || ts.Color[0] != deftext.Color[0] || ts.Color[1] != deftext.Color[1] || ts.Color[2] != deftext.Color[2] {
 		fmt.Fprintf(fh, " C %02X%02X%02X", ts.Color[0], ts.Color[1], ts.Color[2])
