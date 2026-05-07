@@ -29,6 +29,9 @@ func (s *Server) servePostManualReceive(w http.ResponseWriter, r *http.Request) 
 	// Check parameters.
 	makedr = r.FormValue("mrdr") != ""
 	mtext = strings.ReplaceAll(r.FormValue("mrmsg"), "\r\n", "\n")
+	if !strings.HasSuffix(mtext, "\n") {
+		mtext += "\n"
+	}
 	if msg, err = message.NewJustReceivedMessage(mtext, r.FormValue("mrbbs"), ""); err != nil {
 		slog.Error("NewJustReceivedMessage", "err", err)
 		http.Error(w, err.Error(), http.StatusBadRequest)
