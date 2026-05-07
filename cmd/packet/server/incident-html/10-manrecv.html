@@ -38,12 +38,7 @@
       })
     }
     async function openManualReceiveDialog() {
-      let message = ''
-      try {
-        const cb = await navigator.clipboard.readText()
-        if (cb.startsWith('Date: ')) message = cb
-      } catch (e) { }
-      document.getElementById('mrmsg').value = message
+      document.getElementById('mrmsg').value = ''
       document.getElementById('mrerr').textContent = ''
       document.getElementById('mrdlg').showModal()
     }
