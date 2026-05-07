@@ -1,0 +1,18 @@
+form.form {
+  margin-top: 0.5rem;
+}
+#startTime, #endTime {
+  margin-left: 0.5rem;
+}
+.modelimage {
+  width: 10rem;
+}
+@media (min-width: 32.5rem) {
+  .imagelabel {
+    align-self: start;
+  }
+  .textareaLabel {
+    align-self: start;
+    margin-top: calc(1.375rem + 1px) !important; /* baseline of first line in box */
+  }
+}

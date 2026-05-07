@@ -42,12 +42,7 @@ func ReadNoHeader(filename string) (m Message, err error) {
 
 func read(filename string, noHeaderOK bool) (m Message, err error) {
 	var (
-		by     []byte
-		msg    *mail.Message
-		to     []string
-		c      common
-		issues error
-		parser func(string, mail.Header, *common) (Message, error)
+		by []byte
 	)
 	if by, err = os.ReadFile(filename); err != nil {
 		slog.Error("os.ReadFile", "f", filename, "err", err)
@@ -60,8 +55,24 @@ func read(filename string, noHeaderOK bool) (m Message, err error) {
 		copy(nby[6:], by)
 		by = nby
 	}
-	if msg, err = mail.ReadMessage(bytes.NewReader(by)); err != nil {
-		slog.Error("mail.ReadMessage", "msg", string(by), "err", err)
+	return Parse(string(by), filename)
+}
+
+// Parse parses a message in RFC-5322 format and returns the corresponding
+// Message and any associated non-fatal decoding issues.  The supplied filename
+// is used only in error messages.  Parse returns nil and an error if the
+// message cannot be decoded.
+func Parse(str, filename string) (m Message, err error) {
+	var (
+		by     []byte
+		msg    *mail.Message
+		to     []string
+		c      common
+		issues error
+		parser func(string, mail.Header, *common) (Message, error)
+	)
+	if msg, err = mail.ReadMessage(strings.NewReader(str)); err != nil {
+		slog.Error("mail.ReadMessage", "msg", string(str), "err", err)
 		return nil, fmt.Errorf("%s: %w", filename, err)
 	}
 	to = msg.Header["To"]

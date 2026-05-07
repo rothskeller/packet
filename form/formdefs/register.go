@@ -33,6 +33,10 @@ var (
 var once sync.Once
 var FormsFS FormsFSI
 
+// UseInternalForms can be set to true prior to calling RegisterForms, by
+// clients that want to force usage of the embedded forms.
+var UseInternalForms bool
+
 // RegisterForms locates all form definitions, performs any necessary updates,
 // and registers message types for all known forms.  The returned error gives
 // any problems; they are always non-fatal.
@@ -41,7 +45,11 @@ func RegisterForms() (err error) {
 	return err
 }
 func registerForms() (err error) {
-	FormsFS, err = getFormsFileSystem()
+	if UseInternalForms {
+		FormsFS = forms.EmbeddedForms
+	} else {
+		FormsFS, err = getFormsFileSystem()
+	}
 	err = errors.Join(err, registerFSForms())
 	return err
 }

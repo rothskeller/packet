@@ -20,7 +20,7 @@ import (
 
 var (
 	fieldLineRE           = regexp.MustCompile(`(?i)^([A-Z0-9][-A-Z0-9.]*): \[`)
-	formRecognizeRE       = regexp.MustCompile(`(?s)^\n*!([A-Z][A-Za-z0-9_]*)!\n#T:.*\n!/ADDON!\n`)
+	formRecognizeRE       = regexp.MustCompile(`(?s)^\n*!([A-Z][A-Za-z0-9_]*)!\n#T:.*\n!/ADDON!(\n|$)`)
 	headerRE              = regexp.MustCompile(`^#T: ([a-z][-a-z0-9]+\.html)\n#V: (\d+(?:\.\d+)*[A-Za-z]?)-(\d+(?:\.\d+)*[A-Za-z]*)\n`)
 	quoteSCCoPIFO         = strings.NewReplacer(`\`, `\\`, "\n", `\n`, "]", "`]")
 	ErrInvalidAddonName   = errors.New("The form addon name must start with an uppercase letter and contain only letters, digits, and underscores.")

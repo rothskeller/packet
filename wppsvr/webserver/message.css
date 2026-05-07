@@ -1,0 +1,64 @@
+#results {
+  max-width: 40rem;
+  width: 100%;
+}
+#lr {
+  display: grid;
+  grid: auto-flow / 1fr max-content;
+  font-size: 1.5rem;
+  font-weight: bold;
+  margin: 0.75rem 0;
+}
+#msgid {
+  overflow-wrap: anywhere;
+}
+#rawmsg {
+  white-space: pre;
+  overflow-x: auto;
+  font-family: ui-monospace, SFMono-Regular, Consolas, 'Liberation Mono', Menlo, monospace;
+}
+.comparison {
+  display: grid;
+  grid: auto-flow / 2rem 1fr 1fr;
+  column-gap: 0.5rem;
+}
+.label {
+  grid-column: 1 / 4;
+}
+.head {
+  display: contents;
+  font-weight: bold;
+}
+.field {
+  display: contents;
+}
+.field .label {
+  color: #888;
+  font-weight: bold;
+}
+.vmodel {
+  grid-column: 2;
+  overflow-wrap: anywhere;
+  white-space: pre-wrap;
+}
+.vrecv {
+  overflow-wrap: anywhere;
+  white-space: pre-wrap;
+}
+.minor {
+  background-color: yellow;
+}
+.major {
+  background-color: orange;
+}
+.recroute {
+  background-color: #ccc;
+}
+@media (min-width: 30em) {
+  .comparison {
+    grid: auto-flow / auto 1fr 1fr;
+  }
+  .label {
+    grid-column: 1;
+  }
+}
