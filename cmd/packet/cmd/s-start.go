@@ -1,6 +1,8 @@
 package cmd
 
 import (
+	"os"
+
 	"github.com/rothskeller/packet/cmd/packet/cio"
 	"github.com/rothskeller/packet/cmd/packet/server"
 	"github.com/spf13/pflag"
@@ -28,6 +30,6 @@ func cmdServerStart(args []string) (err error) {
 		return usage(serverStartHelp)
 	}
 	registerForms()
-	server.Start()
+	server.Start(os.Stdout)
 	return nil // not reachable
 }

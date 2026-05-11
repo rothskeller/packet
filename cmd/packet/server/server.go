@@ -134,8 +134,9 @@ func GetAddress(start bool) (address string, err error) {
 // already running, it returns immediately and silently.  Otherwise, it stops
 // the server and returns after an hour of inactivity, on receipt of a POST
 // /stop request, on receipt of an interrupt signal, or on creation/change of
-// /tmp/packet-stop (Windows: C:\PackItForms\stop).
-func Start() {
+// /tmp/packet-stop (Windows: C:\PackItForms\stop).  In either case, if writeURL
+// is non-nil, the server address is written to the writer.
+func Start(writeURL io.Writer) {
 	var (
 		addressDir string
 		addrFH     *os.File
@@ -176,8 +177,11 @@ func Start() {
 			resp.Body.Close()
 		}
 		if err == nil && resp.StatusCode == http.StatusNoContent {
-			// Yes, it's running happily.  Exit silently.
+			// Yes, it's running happily.  Exit.
 			slog.Debug("server already running", "url", address)
+			if writeURL != nil {
+				fmt.Fprintln(writeURL, address)
+			}
 			osdep.Unlock(addrFH)
 			addrFH.Close()
 			return
@@ -201,6 +205,9 @@ func Start() {
 	// Start a webserver on the port we're listening to.
 	go hserver.Serve(listener)
 	slog.Info("server listening", "url", server.address)
+	if writeURL != nil {
+		fmt.Fprintln(writeURL, server.address)
+	}
 	// Write the server address to the address file.
 	addrFH.Seek(0, 0)
 	addrFH.Truncate(0)
