@@ -21,7 +21,7 @@ func RenderPlainPDF(m Message, filename, copyname string) (err error) {
 		metadataLabelFont   = "Helvetica-Bold"
 		metadataLabelWidth  = 60
 		bodyFont            = "Courier"
-		bodyFontSize        = 12
+		bodyFontSize        = 10.5 // allows 80 columns to fit
 		footerFont          = "Helvetica"
 		footerFontSize      = 12
 		timestampFormat     = "Monday, January 2, 2006 at 15:04:05"
