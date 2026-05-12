@@ -72,8 +72,8 @@ func cmdOutpostView(args []string) (err error) {
 		// details to put into a ReceivedMessage.)
 		var ft *form.FormType
 		switch t := msg.Type().(type) {
-		case form.FormType:
-			ft = &t
+		case *form.FormType:
+			ft = t
 		case form.EditableFormType:
 			ft = t.FormType
 		}
