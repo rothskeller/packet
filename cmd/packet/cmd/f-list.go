@@ -56,7 +56,7 @@ func cmdFormsList(args []string) (err error) {
 	}
 	for t := range message.AllTypes() {
 		switch t := t.(type) {
-		case form.FormType:
+		case *form.FormType:
 			if !all {
 				continue
 			}

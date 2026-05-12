@@ -177,7 +177,7 @@ func (ft FormType) RenderPDF(m message.Message, filename, copyname string) (err 
 // recognize examines a message to see if it belongs to this form type, and if
 // so, sets its MType to this form type and returns true.  Otherwise it returns
 // false.
-func (ft FormType) Recognize(m message.Message) {
+func (ft *FormType) Recognize(m message.Message) {
 	var body *FormBody
 
 	// If it doesn't have a form body, it's clearly not our form.
@@ -198,7 +198,7 @@ func (ft FormType) Recognize(m message.Message) {
 		// but that's OK; we're only using it to display anyway.
 		var newFD = *ft.FormDef
 		newFD.Version = body.formVersion
-		ft = FormType{FormDef: &newFD}
+		ft = &FormType{FormDef: &newFD}
 	} else {
 		return // not ours
 	}
@@ -234,7 +234,7 @@ var VersionRE = regexp.MustCompile(`^(\d+)\.(\d+)$`)
 
 // IsNewer returns whether the candidate version number can be accepted as a
 // compatible newer version of the base version number.  That means it has the
-// same major number and an (equal or) greater minor number.
+// same major number and a greater minor number.
 func IsNewer(candidate, base string) bool {
 	if cmatch := VersionRE.FindStringSubmatch(candidate); cmatch != nil {
 		if bmatch := VersionRE.FindStringSubmatch(base); bmatch != nil {
@@ -242,7 +242,7 @@ func IsNewer(candidate, base string) bool {
 			cmin, _ := strconv.Atoi(cmatch[2])
 			bmaj, _ := strconv.Atoi(bmatch[1])
 			bmin, _ := strconv.Atoi(bmatch[2])
-			return cmaj == bmaj && cmin >= bmin
+			return cmaj == bmaj && cmin > bmin
 		}
 	}
 	return false

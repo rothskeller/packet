@@ -105,7 +105,7 @@ func (s *Server) serveGetEditMessage(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	if emt, _ = msg.Type().(message.EditableMType); emt == nil {
-		slog.Error("message not editable", "dir", dir, "id", ident, "t", fmt.Sprintf("%T", msg))
+		slog.Error("message not editable", "dir", dir, "id", ident, "t", fmt.Sprintf("%T", msg.Type()))
 		ErrPage(w, fmt.Sprintf("Message %d is not editable: the message type does not support editing.", ident), http.StatusBadRequest)
 		return
 	}
