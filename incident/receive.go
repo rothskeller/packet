@@ -206,6 +206,7 @@ func (i *Incident) receiveReceiptMessage(rcpt *message.JustReceivedMessage) (err
 			sentle.ToMsgID = smr.ReceiverMessageID
 			sentle.Flags |= FHasReceipt
 			sentle.Flags &^= FNeedsReceipt
+			sentle.Seq = i.Seq
 			break
 		}
 		if idx < 0 {
