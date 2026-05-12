@@ -375,13 +375,19 @@ func (t *Transport) postIdentify() (abort bool, err error) {
 	if err = t.send(ident); err != nil {
 		err = fmt.Errorf("cleanup: send FCC ID: %s", err)
 	} else {
-		// Wait until we get the monitor message saying that the ident has gone
-		// out on the air.  (If we don't wait, it stays in the transmit queue
-		// until the next time we connect, and winds up being sent as input to
-		// the next BBS we connect to!)
-		if _, err = t.readUntil(ident, rfTimeout); err != nil {
-			err = fmt.Errorf("cleanup: send FCC ID: %s", err)
-		}
+		// Some TNCs (particularly KPC-3+) behave weirdly if we exit
+		// CONVERSE mode immediately:  they don't send the above packet,
+		// but rather save it and send it next time a connection is
+		// established.  To work around this, we add a delay before
+		// leaving CONVERSE mode.  I have no idea how long we need to
+		// wait, but this is longer than Outpost waits, so it should be
+		// good.
+		time.Sleep(time.Second)
+		// Note: previous code used to turn on MONITOR and MXMIT and
+		// wait to see the monitor report of the sent packet.  That
+		// worked on KPC3+ but failed on other TNCs that don't have
+		// MXMIT command or behavior (particularly the embedded TNCs in
+		// the Kenwood and Alinco radios).
 	}
 	// Return to command mode.
 	if err2 := t.sendRaw([]byte{3}); err2 != nil {

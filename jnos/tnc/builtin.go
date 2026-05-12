@@ -29,8 +29,7 @@ var tncs = map[string]*TNC{
 			"STREAMEV OFF",
 			"STREAMSW $00",
 			"UNPROTO IDENT",
-			"MCON OFF",
-			"MONITOR ON",
+			"MONITOR OFF",
 		},
 		PostDisconnectCommands: []string{
 			"SENDPAC $0D",
@@ -72,8 +71,7 @@ var tncs = map[string]*TNC{
 			"STREAMSW $00",
 			"UNPROTO IDENT",
 			"MXMIT ON",
-			"MCON OFF",
-			"MONITOR ON",
+			"MONITOR OFF",
 		},
 		PostDisconnectCommands: []string{
 			"SENDPAC $0D",
@@ -113,8 +111,7 @@ var tncs = map[string]*TNC{
 			"CPACTIME ON",
 			"LOCATION EVERY 0",
 			"UNPROTO IDENT",
-			"MCON OFF",
-			"MONITOR ON",
+			"MONITOR OFF",
 		},
 		PostDisconnectCommands: []string{
 			"SENDPAC $0D",
@@ -153,8 +150,7 @@ var tncs = map[string]*TNC{
 			"CPACTIME ON",
 			"STREAMSW $00",
 			"UNPROTO IDENT",
-			"MCON OFF",
-			"MONITOR ON",
+			"MONITOR OFF",
 		},
 		PostDisconnectCommands: []string{
 			"SENDPAC $0D",
@@ -193,8 +189,7 @@ var tncs = map[string]*TNC{
 			"CPACTIME ON",
 			"STREAMSW $00",
 			"UNPROTO IDENT",
-			"MCON OFF",
-			"MONITOR ON",
+			"MONITOR OFF",
 		},
 		PostDisconnectCommands: []string{
 			"SENDPAC $0D",
@@ -233,8 +228,7 @@ var tncs = map[string]*TNC{
 			"CPACTIME ON",
 			"STREAMSW $00",
 			"UNPROTO IDENT",
-			"MCON OFF",
-			"MONITOR ON",
+			"MONITOR OFF",
 		},
 		PostDisconnectCommands: []string{
 			"SENDPAC $0D",
@@ -273,8 +267,7 @@ var tncs = map[string]*TNC{
 			"CPACTIME ON",
 			"STREAMSW $00",
 			"UNPROTO IDENT",
-			"MCON OFF",
-			"MONITOR ON",
+			"MONITOR OFF",
 		},
 		PostDisconnectCommands: []string{
 			"SENDPAC $0D",
