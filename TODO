@@ -4,6 +4,7 @@ Debug launch file interactions with MTV form
 Add a View Source or similar command
 Better error reporting in UI (panics, lack of response from server, bad data
   from Outpost, etc.)
+Rename server.url to a more benign extension
 
 PDF support for Unicode
 Update wppsvr, packet-ex

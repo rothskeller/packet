@@ -7,7 +7,6 @@ import (
 	_ "embed"
 	"fmt"
 	"io"
-	"log"
 	"log/slog"
 	"net"
 	"net/http"
@@ -130,13 +129,16 @@ func GetAddress(start bool) (address string, err error) {
 	return "", err
 }
 
-// Start starts serving web requests.  If it finds that another server is
-// already running, it returns immediately and silently.  Otherwise, it stops
-// the server and returns after an hour of inactivity, on receipt of a POST
-// /stop request, on receipt of an interrupt signal, or on creation/change of
-// /tmp/packet-stop (Windows: C:\PackItForms\stop).  In either case, if writeURL
-// is non-nil, the server address is written to the writer.
-func Start(writeURL io.Writer) {
+// Start starts serving web requests on the specified port (or a random port if
+// the specified port is zero).  If it finds that another server is already
+// running (on any port), it writes that server's address to writeURL (if not
+// nil) returns nil immediately.  Otherwise, it starts a new server and writes
+// its address to writeURL (if not nil).  The new server will stop, and the
+// function will return, after an hour of inactivity, on receipt of a POST /stop
+// request, on receipt of an interrupt signal, or on creation/change of
+// /tmp/packet-stop (Windows: C:\PackItForms\stop).  The function returns an
+// error only if a new server fails to start.
+func Start(port int, writeURL io.Writer) (err error) {
 	var (
 		addressDir string
 		addrFH     *os.File
@@ -144,25 +146,24 @@ func Start(writeURL io.Writer) {
 		listener   net.Listener
 		server     Server
 		hserver    http.Server
-		err        error
 	)
 	// Open and read the address file with a write lock.
 	addressDir = filepath.Dir(osdep.AddressFile)
 	if err = os.MkdirAll(addressDir, 0777); err != nil {
 		slog.Error("os.MkdirAll", "d", addressDir, "err", err)
-		os.Exit(1)
+		return errors.New("unable to create server address file")
 	} else if addrFH, err = os.OpenFile(osdep.AddressFile, os.O_RDWR|os.O_CREATE, 0644); err != nil {
 		slog.Error("os.OpenFile", "f", osdep.AddressFile, "err", err)
-		os.Exit(1)
+		return errors.New("unable to create server address file")
 	} else if err = osdep.WriteLock(addrFH); err != nil {
 		slog.Error("WriteLock", "f", osdep.AddressFile, "err", err)
 		addrFH.Close()
-		os.Exit(1)
+		return errors.New("unable to create server address file")
 	} else if buf, err := io.ReadAll(addrFH); err != nil {
 		slog.Error("io.ReadAll", "f", osdep.AddressFile, "err", err)
 		osdep.Unlock(addrFH)
 		addrFH.Close()
-		os.Exit(1)
+		return errors.New("unable to create server address file")
 	} else {
 		address = strings.TrimSpace(string(buf))
 	}
@@ -184,12 +185,14 @@ func Start(writeURL io.Writer) {
 			}
 			osdep.Unlock(addrFH)
 			addrFH.Close()
-			return
+			return nil
 		}
 	}
 	// Open a listening port.
-	if listener, err = net.Listen("tcp4", "127.0.0.1:0"); err != nil {
-		log.Fatalf("ERROR: listen: %s", err)
+	server.address = fmt.Sprintf("127.0.0.1:%d", port)
+	if listener, err = net.Listen("tcp4", server.address); err != nil {
+		slog.Error("net.Listen", "a", server.address, "err", err)
+		return err
 	}
 	server.address = "http://" + listener.Addr().String()
 	// Send a stop signal when the packet-stop file is touched.
@@ -226,6 +229,7 @@ func Start(writeURL io.Writer) {
 	// Shut down the server and exit.
 	hserver.Shutdown(context.Background())
 	slog.Info("server exited", "url", server.address)
+	return nil
 }
 
 // Server represents the packet HTTP server.
