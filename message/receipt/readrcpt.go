@@ -50,7 +50,7 @@ type readReceipt struct{ *message.BaseMType }
 var ReadReceipt readReceipt
 
 func init() {
-	ReadReceipt.BaseMType = message.NewBaseMType("a read receipt")
+	ReadReceipt.BaseMType = message.NewBaseMType("READ", "a read receipt")
 	message.RegisterType(ReadReceipt)
 }
 

@@ -27,7 +27,7 @@ type UnrecognizedForm struct{ *message.BaseMType }
 func init() {
 	var ft UnrecognizedForm
 
-	ft.BaseMType = message.NewBaseMType("an unrecognized form message")
+	ft.BaseMType = message.NewBaseMType("UNKNOWN", "an unrecognized form message")
 	message.RegisterFallbackType(ft)
 }
 
@@ -46,6 +46,11 @@ func (ft UnrecognizedForm) Recognize(m message.Message) {
 		HTMLName:  body.formHTML,
 		Version:   body.formVersion,
 		IndefName: fmt.Sprintf("an unknown form %s version %s", body.formHTML, body.formVersion),
+	}
+	if fs, _ := m.Subject().(*FormSubject); fs != nil && fs.SubjectFormTag() != "" {
+		body.def.SubjectTag = fs.SubjectFormTag()
+	} else {
+		body.def.SubjectTag = "UNKNOWN"
 	}
 	for _, f := range body.FieldList() {
 		body.def.Fields = append(body.def.Fields, &formdef.FieldDef{

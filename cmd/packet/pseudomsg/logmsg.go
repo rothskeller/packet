@@ -218,6 +218,7 @@ func (lem *LogEntryMessage) MarkDirty(_ string)           { panic("not implement
 func (lem *LogEntryMessage) MarkClean()                   { panic("not implemented") }
 func (lem *LogEntryMessage) OnDirty(_ func(string))       { panic("not implemented") }
 func (lem *LogEntryMessage) Recognize(_ message.Message)  { panic("not implemented") }
+func (lem *LogEntryMessage) Tag() string                  { panic("not implemented") }
 func (lem *LogEntryMessage) Name() string                 { panic("not implemented") }
 func (lem *LogEntryMessage) Type() message.MType          { panic("not implemented") }
 func (lem *LogEntryMessage) SetType(_ message.MType)      { panic("not implemented") }

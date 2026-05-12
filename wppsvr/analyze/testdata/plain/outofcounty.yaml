@@ -1,0 +1,34 @@
+# Plain text when form expected: should be OK because comes from out of county.
+
+# Expect ICS213 forms for session:
+session:
+  messageTypes:
+    - ICS213
+
+# Message being analyzed:
+message: |
+  From: kc6rsc@aa9aaa.ampr.org
+  To: pkttue@w4xsc.ampr.org
+  Date: Sun, 09 Jan 2022 20:00:00 -0800
+  Subject: RSC-100P_R_Hello
+
+  Test message
+
+# Analysis that should be stored:
+stored:
+  deliveryTime: 2022-01-09T20:00:00-08:00
+  fromAddress: kc6rsc@aa9aaa.ampr.org
+  fromCallSign: KC6RSC
+  fromBBS: AA9AAA
+  jurisdiction: SNY
+  messageType: plain
+  summary: OK
+  score: 100
+
+# Messages that should be sent in response:
+responses:
+  - localID: TUE-101P
+    to: kc6rsc@aa9aaa.ampr.org
+    subject: 'DELIVERED: RSC-100P_R_Hello'
+    bodyREs:
+      - ^!LMI!TUE-100P!DR!01/11/2022 20:00:01\n

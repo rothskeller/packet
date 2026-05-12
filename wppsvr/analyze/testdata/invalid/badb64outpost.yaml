@@ -1,0 +1,19 @@
+# Message with ill-formed base64 outpost encoding.
+
+# Message being analyzed:
+message: |
+  From: kc6rsc@w1xsc.ampr.org
+  To: pkttue@w4xsc.ampr.org
+  Date: Sun, 09 Jan 2022 20:00:00 -0800
+  Subject: RSC-100P_R_Hello
+
+  !B64!~~~~
+
+# Analysis that should be stored:
+stored:
+  deliveryTime: 2022-01-09T20:00:00-08:00
+  fromAddress: kc6rsc@w1xsc.ampr.org
+  summary: message could not be parsed
+analysisREs:
+  - RFC-5322
+  - illegal base64 data at input byte 0

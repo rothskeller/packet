@@ -120,9 +120,9 @@ func FindType(pred func(MType) bool) MType {
 	return nil
 }
 
-// FindTypeTag returns the registered message type with the specified
+// FindCreateTag returns the registered message type with the specified
 // CreateTag, or nil if none exists.
-func FindTypeTag(tag string) EditableMType {
+func FindCreateTag(tag string) EditableMType {
 	for mt := range AllTypes() {
 		if emt, ok := mt.(EditableMType); ok && emt.CreateTag() == tag {
 			return emt
@@ -150,14 +150,16 @@ func CompareTypes(a, b MType) int {
 
 // BaseMType is a common core implementation for some message types.
 type BaseMType struct {
+	tag  string
 	name string
 }
 
 // NewBaseMType returns a new BaseMType with the specified name.
-func NewBaseMType(name string) *BaseMType {
-	return &BaseMType{name: name}
+func NewBaseMType(tag, name string) *BaseMType {
+	return &BaseMType{tag: tag, name: name}
 }
 
+func (t *BaseMType) Tag() string  { return t.tag }
 func (t *BaseMType) Name() string { return t.name }
 
 // RenderPDF creates a PDF representation of the message in the specified file.
@@ -179,7 +181,7 @@ type BaseEditableMType struct {
 // NewBaseEditableMType returns a new BaseEditableMType with the specified
 // details to be returned by Name and CreateTag methods.
 func NewBaseEditableMType(name, createTag, createKey string) *BaseEditableMType {
-	return &BaseEditableMType{BaseMType: BaseMType{name: name}, createTag: createTag, createKey: createKey}
+	return &BaseEditableMType{BaseMType: BaseMType{tag: createTag, name: name}, createTag: createTag, createKey: createKey}
 }
 
 func (t *BaseEditableMType) CreateTag() string { return t.createTag }

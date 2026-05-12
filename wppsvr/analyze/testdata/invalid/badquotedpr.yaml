@@ -1,0 +1,13 @@
+# Message with ill-formed quoted-printable content transfer encoding.
+
+# Message being analyzed:
+message: "From: kc6rsc@w1xsc.ampr.org\nTo: pkttue@w4xsc.ampr.org\nDate: Sun, 09 Jan 2022 20:00:00 -0800\nSubject: RSC-100P_R_Hello\nContent-Transfer-Encoding: quoted-printable\n\nThis line contains a ^C\x03 character, which is illegal in quoted-printable.\n"
+
+# Analysis that should be stored:
+stored:
+  deliveryTime: 2022-01-09T20:00:00-08:00
+  fromAddress: kc6rsc@w1xsc.ampr.org
+  summary: message could not be parsed
+analysisREs:
+  - RFC-5322
+  - "quotedprintable: invalid"

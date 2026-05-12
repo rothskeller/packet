@@ -12,6 +12,8 @@ type MType interface {
 	// assign this MType to it.  (It may also call the SetSubject method to
 	// change the Subject implementation in use by the message.)
 	Recognize(Message)
+	// Tag returns a word identifying the message type.
+	Tag() string
 	// Name returns the name of the message type, as a phrase in lower case
 	// (other than acronyms) starting with "a " or "an ".
 	Name() string

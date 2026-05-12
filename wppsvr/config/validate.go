@@ -77,7 +77,7 @@ func (c *Config) Validate() (valid bool) {
 		valid = false
 	} else {
 		for tag, mtc := range c.MessageTypes {
-			if message.FindTypeTag(tag) == nil {
+			if message.FindCreateTag(tag) == nil {
 				log.Printf("ERROR: config.messageTypes has entry for unknown message type %q", tag)
 				valid = false
 				continue

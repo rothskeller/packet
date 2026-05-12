@@ -1,0 +1,29 @@
+# Correct plain text practice message.
+
+# Message being analyzed:
+message: |
+  From: taccal@w1xsc.ampr.org
+  To: pkttue@w4xsc.ampr.org
+  Date: Sun, 09 Jan 2022 20:00:00 -0800
+  Subject: RSC-100P_R_Hello
+
+  Test message
+
+# Analysis that should be stored:
+stored:
+  deliveryTime: 2022-01-09T20:00:00-08:00
+  fromAddress: taccal@w1xsc.ampr.org
+  fromCallSign: TACCAL
+  fromBBS: W1XSC
+  jurisdiction: TAC
+  messageType: plain
+  score: 100
+  summary: OK
+
+# Messages that should be sent in response:
+responses:
+  - localID: TUE-101P
+    to: taccal@w1xsc.ampr.org
+    subject: 'DELIVERED: RSC-100P_R_Hello'
+    bodyREs:
+      - ^!LMI!TUE-100P!DR!01/11/2022 20:00:01\n

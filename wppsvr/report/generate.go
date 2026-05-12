@@ -64,7 +64,7 @@ func generateParams(r *Report, session *store.Session) {
 		r.MessageTypes = []string{session.ModelMsg.Type().Name()}
 	} else {
 		for _, id := range session.MessageTypes {
-			if mt := message.FindTypeTag(id); mt != nil {
+			if mt := message.FindCreateTag(id); mt != nil {
 				r.MessageTypes = append(r.MessageTypes, mt.Name())
 			} else {
 				r.MessageTypes = append(r.MessageTypes, id)

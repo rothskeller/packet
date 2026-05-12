@@ -1,0 +1,12 @@
+# Message with no headers.
+
+# Message being analyzed:
+message: |
+  Message has no headers.
+
+# Analysis that should be stored:
+stored:
+  summary: message could not be parsed
+analysisREs:
+  - RFC-5322
+  - malformed header line

@@ -1,0 +1,34 @@
+# Message sent to wrong BBS.
+
+# Message being analyzed:
+toBBS: W3XSC
+message: |
+  From: kc6rsc@w1xsc.ampr.org
+  To: pkttue@w3xsc.ampr.org
+  Date: Sun, 09 Jan 2022 20:00:00 -0800
+  Subject: RSC-100P_R_Hello
+
+  Test message
+
+# Analysis that should be stored:
+stored:
+  deliveryTime: 2022-01-09T20:00:00-08:00
+  fromAddress: kc6rsc@w1xsc.ampr.org
+  fromCallSign: KC6RSC
+  fromBBS: W1XSC
+  toBBS: W3XSC
+  jurisdiction: SNY
+  messageType: plain
+  summary: message to incorrect BBS
+analysisREs:
+  - PKTTUE at W3XSC
+  - not be counted
+
+# Messages that should be sent in response:
+responses:
+  - localID: TUE-101P
+    to: kc6rsc@w1xsc.ampr.org
+    senderBBS: W3XSC
+    subject: 'DELIVERED: RSC-100P_R_Hello'
+    bodyREs:
+      - ^!LMI!TUE-100P!DR!01/11/2022 20:00:01\n

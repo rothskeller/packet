@@ -44,6 +44,12 @@ func (ft EditableFormType) CreateTag() string { return ft.FormDef.CreateTag }
 // CreateKey returns the key for creating the form.
 func (ft EditableFormType) CreateKey() string { return ft.FormDef.CreateKey }
 
+// IsForm is a sentinel method for identifying form messages.
+func (ft FormType) IsForm() bool { return true }
+
+// Tag returns the tag word identifying the message type.
+func (ft FormType) Tag() string { return ft.SubjectTag }
+
 // Name returns the name of the message type, as a phrase in lower case (other
 // than acronyms) starting with "a " or "an ".
 func (ft FormType) Name() string { return ft.IndefName }

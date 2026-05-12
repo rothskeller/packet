@@ -55,7 +55,7 @@ func (ws *webserver) serveInstructions(w http.ResponseWriter, r *http.Request) {
 			} else {
 				needHandling, needDestination = true, true
 			}
-			if mt := message.FindTypeTag(tag); mt != nil {
+			if mt := message.FindCreateTag(tag); mt != nil {
 				words := strings.Fields(mt.Name())
 				if i == 0 {
 					article = words[0]

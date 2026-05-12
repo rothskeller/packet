@@ -59,7 +59,7 @@ type deliveryReceipt struct{ *message.BaseMType }
 var DeliveryReceipt deliveryReceipt
 
 func init() {
-	DeliveryReceipt.BaseMType = message.NewBaseMType("a delivery receipt")
+	DeliveryReceipt.BaseMType = message.NewBaseMType("DELIVERED", "a delivery receipt")
 	message.RegisterType(DeliveryReceipt)
 }
 

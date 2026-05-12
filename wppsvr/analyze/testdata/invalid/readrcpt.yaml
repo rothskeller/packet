@@ -1,0 +1,26 @@
+# Read receipt message.
+
+# Message being analyzed:
+message: |
+  From: kc6rsc@w1xsc.ampr.org
+  To: pkttue@w4xsc.ampr.org
+  Date: Sun, 09 Jan 2022 20:00:00 -0800
+  Subject: READ: RSC-100P_R_Hello
+
+  !RR!timestamp!
+  Your Message
+
+  To: kc6rsc@w1xsc.ampr.org
+  Subject: RSC-100P_R_Hello
+
+  was read on timestamp
+
+# Analysis that should be stored:
+stored:
+  deliveryTime: 2022-01-09T20:00:00-08:00
+  fromAddress: kc6rsc@w1xsc.ampr.org
+  messageType: READ
+  summary: unexpected READ receipt message
+analysisREs:
+  - read receipt
+  - Outpost Configuration Instructions

@@ -1,0 +1,103 @@
+# Configuration for packet-checkins
+
+# This section defines the configuration for each BBS.
+bbses:
+  W1XSC:
+    transport: kpc3plus
+    ax25: W1XSC-1
+  W2XSC:
+    transport: kpc3plus
+    ax25: W2XSC-1
+  W3XSC:
+    transport: kpc3plus
+    ax25: W3XSC-1
+  W4XSC:
+    transport: kpc3plus
+    ax25: W4XSC-1
+
+# This is the minimum acceptable version of PackItForms.
+minPIFOVersion: 3.2 # 161G: 3.9
+
+# This section defines the characteristics of the message types.  All message
+# types must be defined except "plain", which is optional.  Each message type
+# has the following keys:
+#   - minimumVersion: the minimum acceptable version of the form (required)
+#   - noPracticeInfo: set to true if messages of this type aren't expected to
+#     have "Practice ..." information in their subject line.
+#   - handlingOrder: expected handling order for messages of this type
+#     (optional).  Possible values are "computed" (for ICS213 and EOC213RR
+#     only), "IMMEDIATE", "PRIORITY", or "ROUTINE".
+#   - toICSPosition and toLocation: expected destination for messages of this
+#     type (optional list of acceptable values).
+messageTypes:
+  AHFacStat:
+    minimumVersion: 2.2 # 161G: 2.3
+    handlingOrder: ROUTINE
+    toICSPosition:
+      - EMS Unit
+      - Public Health Unit
+      - Medical Health Branch
+      - Operations Section
+    toLocation:
+      - MHJOC
+      - County EOC
+  Check-In:
+    minimumVersion: n/a
+  Check-Out:
+    minimumVersion: n/a
+  DELIVERED:
+    minimumVersion: n/a
+  EOC213RR:
+    minimumVersion: 2.3 # 161G: 2.3
+    handlingOrder: computed # based on priority in form
+    toICSPosition:
+      - Planning Section
+    toLocation:
+      - County EOC
+  ICS213:
+    minimumVersion: 2.1 # 161G: 2.2
+    handlingOrder: computed # based on severity in form
+  JurisStat:
+    minimumVersion: 2.1 # 161G: 2.2
+    handlingOrder: IMMEDIATE
+    toICSPosition:
+      - Situation Analysis Unit
+      - Planning Section
+    toLocation:
+      - County EOC
+  MuniStat:
+    minimumVersion: 2.1 # 161G: gone
+    handlingOrder: IMMEDIATE
+    toICSPosition:
+      - Situation Analysis Unit
+      - Planning Section
+    toLocation:
+      - County EOC
+  RACES-MAR:
+    minimumVersion: 2.1 # 161G: 2.3
+    handlingOrder: ROUTINE
+    toICSPosition:
+      - RACES Chief Radio Officer
+      - RACES Unit
+      - Operations Section
+    toLocation:
+      - County EOC
+  READ:
+    minimumVersion: n/a
+  SheltStat:
+    minimumVersion: 2.1 # 161G: 2.2
+    handlingOrder: PRIORITY
+    toICSPosition:
+      - Mass Care and Shelter Unit
+      - Care and Shelter Branch
+      - Operations Section
+
+serverURL: https://none
+listenAddr: none
+
+# These are the details for sending email messages via SMTP (e.g. for reports).
+smtp:
+  from: x@x.com
+  server: x:25
+  username: x
+  password: x

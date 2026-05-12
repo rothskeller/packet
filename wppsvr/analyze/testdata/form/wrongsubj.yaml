@@ -1,0 +1,56 @@
+# Form message with wrong subject.
+
+# Allow ICS213 forms for session:
+session:
+  messageTypes:
+    - ICS213
+
+# Message being analyzed:
+message: |
+  From: kc6rsc@w1xsc.ampr.org
+  To: pkttue@w4xsc.ampr.org
+  Date: Sun, 09 Jan 2022 20:00:00 -0800
+  Subject: RSC-100P_R_ICS213_XXX
+
+  !SCCoPIFO!
+  #T: form-ics213.html
+  #V: 3.2-2.1
+  MsgNo: [RSC-100P]
+  1a.: [01/09/2022]
+  4.: [OTHER]
+  5.: [ROUTINE]
+  1b.: [2000]
+  7.: [A]
+  8.: [B]
+  9a.: [A]
+  9b.: [B]
+  10.: [Hello]
+  12.: [Test Message]
+  OpCall: [KC6RSC]
+  Method: [Other]
+  OpName: [Steve Roth]
+  Other: [Packet]
+  OpDate: [01/09/2022]
+  OpTime: [20:00]
+  !/ADDON!
+
+# Analysis that should be stored:
+stored:
+  deliveryTime: 2022-01-09T20:00:00-08:00
+  fromAddress: kc6rsc@w1xsc.ampr.org
+  fromCallSign: KC6RSC
+  fromBBS: W1XSC
+  messageType: ICS213
+  jurisdiction: SNY
+  score: 50
+  summary: message subject doesn't agree with form contents
+analysisREs:
+  - PackItForms automatically generates
+
+# Messages that should be sent in response:
+responses:
+  - localID: TUE-101P
+    to: kc6rsc@w1xsc.ampr.org
+    subject: 'DELIVERED: RSC-100P_R_ICS213_XXX'
+    bodyREs:
+      - ^!LMI!TUE-100P!DR!01/11/2022 20:00:01\n

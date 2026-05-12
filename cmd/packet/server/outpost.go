@@ -47,7 +47,7 @@ func (s *Server) outpostNewRequest(w http.ResponseWriter, r *http.Request) {
 	}
 	// Find the definition of the form.
 	formtag = r.FormValue("formtag")
-	if mtype = message.FindTypeTag(formtag); mtype == nil {
+	if mtype = message.FindCreateTag(formtag); mtype == nil {
 		slog.Error("no form definition", "formtag", formtag)
 		ErrPage(w, fmt.Sprintf("No editable form definition was found for %q.  Please report this to the author.", formtag), http.StatusInternalServerError)
 		return
@@ -168,7 +168,7 @@ func (s *Server) outpostSubmit(w http.ResponseWriter, r *http.Request) {
 		err     error
 	)
 	formtag = r.FormValue("formtag")
-	if mtype = message.FindTypeTag(formtag); mtype == nil {
+	if mtype = message.FindCreateTag(formtag); mtype == nil {
 		slog.Error("form not found", "formtag", formtag)
 		ErrPage(w, fmt.Sprintf("The form with tag=%q was not found.  Please report this error to the author.", formtag), http.StatusInternalServerError)
 		return

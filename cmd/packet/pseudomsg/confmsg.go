@@ -530,6 +530,7 @@ func (cm *ConfigMessage) MarkDirty(_ string)           { panic("not implemented"
 func (cm *ConfigMessage) MarkClean()                   { panic("not implemented") }
 func (cm *ConfigMessage) OnDirty(_ func(string))       { panic("not implemented") }
 func (cm *ConfigMessage) Recognize(_ message.Message)  { panic("not implemented") }
+func (cm *ConfigMessage) Tag() string                  { panic("not implemented") }
 func (cm *ConfigMessage) Name() string                 { panic("not implemented") }
 func (cm *ConfigMessage) Type() message.MType          { panic("not implemented") }
 func (cm *ConfigMessage) SetType(_ message.MType)      { panic("not implemented") }

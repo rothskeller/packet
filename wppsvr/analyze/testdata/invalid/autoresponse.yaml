@@ -1,0 +1,19 @@
+# Auto-response message.
+
+# Message being analyzed:
+# The important part is that it has an envelope "From " line, and that line has
+# no return address on it.
+message: |
+  From  Sun Jan  9 20:00:00 2022
+  To: pkttue@w4xsc.ampr.org
+  Date: Sun, 09 Jan 2022 20:00:00 -0800
+  Subject: RSC-100P_R_Hello
+
+  Test message
+
+# Analysis that should be stored:
+stored:
+  deliveryTime: 2022-01-09T20:00:00-08:00
+  summary: message has no return address (probably auto-response)
+analysisREs:
+  - no return address

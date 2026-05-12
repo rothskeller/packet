@@ -75,7 +75,7 @@ func cmdOutpostView(args []string) (err error) {
 		case form.FormType:
 			ft = &t
 		case form.EditableFormType:
-			ft = &t.FormType
+			ft = t.FormType
 		}
 		if ft != nil {
 			body := msg.Body().(*form.FormBody)

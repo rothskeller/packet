@@ -1,7 +1,6 @@
 package config
 
 import (
-	"github.com/rothskeller/packet/form"
 	"github.com/rothskeller/packet/message"
 )
 
@@ -20,14 +19,7 @@ func HasComputedHandlingOrder(tag string) bool {
 // message.  Only message types with computed (non-static) recommended handling
 // orders are handled by this function.
 func ComputeRecommendedHandlingOrder(msg message.Message) string {
-	var tag string
-
-	if emt, ok := msg.Type().(message.EditableMType); ok {
-		tag = emt.CreateTag()
-	} else if fs, ok := msg.Subject().(*form.FormSubject); ok {
-		tag = fs.SubjectFormTag()
-	}
-	switch tag {
+	switch msg.Type().Tag() {
 	case "NotRep":
 		for f := range msg.Fields() {
 			if f.Tag() == "22." {

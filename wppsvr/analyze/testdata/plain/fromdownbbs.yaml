@@ -1,0 +1,31 @@
+# Message sent from "down" BBS.
+
+# Message being analyzed:
+message: |
+  From: kc6rsc@w2xsc.ampr.org
+  To: pkttue@w4xsc.ampr.org
+  Date: Sun, 09 Jan 2022 20:00:00 -0800
+  Subject: RSC-100P_R_Hello
+
+  Test message
+
+# Analysis that should be stored:
+stored:
+  deliveryTime: 2022-01-09T20:00:00-08:00
+  fromAddress: kc6rsc@w2xsc.ampr.org
+  fromCallSign: KC6RSC
+  fromBBS: W2XSC
+  jurisdiction: SNY
+  messageType: plain
+  score: 50
+  summary: message from incorrect BBS (simulated outage)
+analysisREs:
+  - simulated outage
+
+# Messages that should be sent in response:
+responses:
+  - localID: TUE-101P
+    to: kc6rsc@w2xsc.ampr.org
+    subject: 'DELIVERED: RSC-100P_R_Hello'
+    bodyREs:
+      - ^!LMI!TUE-100P!DR!01/11/2022 20:00:01\n

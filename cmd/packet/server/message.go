@@ -40,7 +40,7 @@ func (s *Server) serveGetNewMessage(w http.ResponseWriter, r *http.Request) {
 		err    error
 	)
 	dir, tag = r.FormValue("dir"), r.FormValue("tag")
-	if mt = message.FindTypeTag(tag); mt == nil {
+	if mt = message.FindCreateTag(tag); mt == nil {
 		slog.Error("no such message tag", "tag", tag)
 		ErrPage(w, fmt.Sprintf("The message type tag %q is not recognized.  Please report this error to the author.", tag), http.StatusInternalServerError)
 		return
@@ -134,7 +134,7 @@ func (s *Server) serveGetAsset(w http.ResponseWriter, r *http.Request) {
 		afs fs.FS
 	)
 	tag = r.PathValue("tag")
-	if mt = message.FindTypeTag(tag); mt == nil {
+	if mt = message.FindCreateTag(tag); mt == nil {
 		slog.Error("no such message type", "tag", tag)
 		http.Error(w, "Not Found", http.StatusNotFound)
 		return
@@ -170,7 +170,7 @@ func (s *Server) servePostSendMessage(w http.ResponseWriter, r *http.Request) {
 	)
 	dir, tag = r.FormValue("dir"), r.FormValue("tag")
 	ident, _ = strconv.Atoi(r.FormValue("id"))
-	if mt = message.FindTypeTag(tag); mt == nil {
+	if mt = message.FindCreateTag(tag); mt == nil {
 		slog.Error("no such message type", "tag", tag)
 		http.Error(w, fmt.Sprintf("no such message type %q", tag), http.StatusBadRequest)
 		return
