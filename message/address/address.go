@@ -68,14 +68,16 @@ func quoteString(s string) string {
 
 /*
 This is the grammar we are parsing.  It is exactly as described in RFC-5322
-except for one enhancement
+except for two enhancements
   (1) addr-spec can have a local-part without a domain
+  (2) address-list can use a comma or semicolon as separator
 and two limitations
   (1) no group list syntax
   (2) no obsolete syntax options
-The enhancement allows us to send packet messages to other mailboxes on the
-same BBS without an @bbs suffix.  This style of addressing is discouraged but
-common.
+The first enhancement allows us to send packet messages to other mailboxes on
+the same BBS without an @bbs suffix.  This style of addressing is discouraged
+but common.  The second enhancement is for compatibility with Outpost (and
+Outlook, for that matter).
 
    address-list    =   (address *("," address))
 
@@ -166,7 +168,7 @@ func ParseList(s string) (addrs []*Address, err error) {
 		s = rest
 	}
 	for s != "" {
-		if s[0] != ',' {
+		if s[0] != ',' && s[0] != ';' {
 			return nil, ErrInvalidAddressList
 		}
 		s = s[1:]

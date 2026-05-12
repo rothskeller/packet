@@ -48,6 +48,14 @@ func TestParseList(t *testing.T) {
 				{Address: "beta"},
 			},
 		},
+		{
+			name: "semicolon separated list",
+			arg:  "alpha; beta",
+			wantAddrs: []*Address{
+				{Address: "alpha"},
+				{Address: "beta"},
+			},
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
