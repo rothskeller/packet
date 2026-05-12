@@ -42,7 +42,7 @@ func init() {
 	if ad := os.Getenv("APPDATA"); ad != "" {
 		DefaultsFile = filepath.Join(ad, "packet.json")
 	}
-	AddressFile = `C:\PackItForms\server.url`
+	AddressFile = `C:\PackItForms\server-url.txt`
 	LogsDir = `C:\PackItForms\Log`
 }
 

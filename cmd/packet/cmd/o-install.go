@@ -10,6 +10,7 @@ import (
 	"os"
 	"os/exec"
 	"path/filepath"
+	"runtime"
 	"strings"
 	"syscall"
 	"time"
@@ -124,6 +125,11 @@ func checkRunningAsAdmin() (err error) {
 // stopServers stops any running servers so that we can replace or remove their
 // files.
 func stopServers() {
+	if runtime.GOOS == "windows" {
+		// Temporary, can remove after 4.0.6 and earlier no longer in
+		// use.
+		os.Rename(`C:\PackItForms\server.url`, `C:\PackItForms\server-url.txt`)
+	}
 	if stopOldServer(pifoExe, "server", "stop") ||
 		stopOldServer(oldPackItForms1, "stop") ||
 		stopOldServer(oldPackItForms2, "stop") {
