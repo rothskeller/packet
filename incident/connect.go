@@ -322,8 +322,8 @@ var immediateRE = regexp.MustCompile(`^[^ _]{5,10}_I_`)
 func (e *exchange) getImmediateIndexes() (done bool, err error) {
 	var list *jnos.MessageList
 
-	if list, err = e.conn.List(""); err != nil {
-		return false, err
+	if list, err = e.conn.List(""); err != nil || list == nil {
+		return true, err
 	}
 	for _, item := range list.Messages {
 		if immediateRE.MatchString(item.SubjectPrefix) {
