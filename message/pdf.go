@@ -99,6 +99,7 @@ func RenderPlainPDF(m Message, filename, copyname string) (err error) {
 	}
 	avail.URY -= metadataLineSpacing
 	body = m.Body().EncodedBody()
+	body = strings.ReplaceAll(body, "\r", "")
 	for body != "" {
 		t := pdf.Text{String: body, Page: page, Rectangle: avail, Font: bodyFont, FontSize: bodyFontSize, Align: "lt", Wrap: true, Clip: true}
 		fits, overflow, _, w := t.WrapText()
