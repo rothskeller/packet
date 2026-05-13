@@ -8,13 +8,13 @@
         const dlg = document.getElementById('rcdlg')
         const params = new URLSearchParams({dir: document.body.dataset.dir, id: dlg.dataset.ident, force: 'true'})
         if (dlg.dataset.next === 'manual') {
-          const resp = await fetch('/manual-send-command?' + params.toString())
+          const resp = fetch2('/manual-send-command?' + params.toString())
           dlg.close()
           if (!resp.ok) openErrorDialog('Manual Send Error', await resp.text())
           else openManualSendDialog(dlg.dataset.ident, await resp.text())
         } else {
           params.set('flag', 'Q')
-          const resp = await fetch('/toggle-flag?' + params.toString(), {method: 'POST'})
+          const resp = fetch2('/toggle-flag?' + params.toString(), {method: 'POST'})
           dlg.close()
           if (!resp.ok) openErrorDialog('Send Message', await resp.text())
         }
