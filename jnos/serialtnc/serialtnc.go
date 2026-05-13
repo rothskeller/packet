@@ -380,9 +380,8 @@ func (t *Transport) postIdentify() (abort bool, err error) {
 		// but rather save it and send it next time a connection is
 		// established.  To work around this, we add a delay before
 		// leaving CONVERSE mode.  I have no idea how long we need to
-		// wait, but this is longer than Outpost waits, so it should be
-		// good.
-		time.Sleep(time.Second)
+		// wait.
+		time.Sleep(500 * time.Millisecond)
 		// Note: previous code used to turn on MONITOR and MXMIT and
 		// wait to see the monitor report of the sent packet.  That
 		// worked on KPC3+ but failed on other TNCs that don't have
@@ -392,6 +391,15 @@ func (t *Transport) postIdentify() (abort bool, err error) {
 	// Return to command mode.
 	if err2 := t.sendRaw([]byte{3}); err2 != nil {
 		return true, fmt.Errorf("cleanup: send FCC ID: exit CONVERS mode: %s", err2)
+	}
+	// Some TNCs (particularly the Kenwood and Alinco radios with the
+	// embedded Tasco TNC chipset) behave weirdly if we start issuing
+	// commands right away before they have a chance to send the CONVERSE
+	// mode packet.  They seem to execute some of those commands before
+	// sending it, which causes no end of confusion.  To alleviate that,
+	// I'm adding a delay between the control-C and the commands.
+	if err == nil {
+		time.Sleep(500 * time.Millisecond)
 	}
 	return false, err
 }
