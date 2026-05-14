@@ -14,7 +14,7 @@
       })
       document.getElementById('elereset').addEventListener('click', async () => {
         const params = new URLSearchParams({dir: document.body.dataset.dir, id: document.getElementById('eleid').value})
-        const resp = fetch2('/reset-log-entry?' + params.toString(), {method: 'POST'})
+        const resp =await  fetch2('/reset-log-entry?' + params.toString(), {method: 'POST'})
         if (resp.ok)
           document.getElementById('eledlg').close()
         else
@@ -25,7 +25,7 @@
       })
       document.getElementById('elesub').addEventListener('click', async () => {
         const fd = new FormData(document.getElementById('eleform'))
-        const resp = fetch2('/edit-log-entry', {method: 'POST', body: fd})
+        const resp = await fetch2('/edit-log-entry', {method: 'POST', body: fd})
         if (resp.ok) {
           childAction(resp.headers.get('X-Packet-Action'))
           document.getElementById('eledlg').close()
