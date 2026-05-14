@@ -41,6 +41,10 @@ var PlainMessage = plainMessage{NewBaseEditableMType("a plain text message", "pl
 // SetType when nothing else matches.
 func (mt plainMessage) Recognize(m Message) {}
 
+// CanCompareAgainst allows comparison of plain messages only with other
+// plain messages.
+func (mt plainMessage) CanCompareAgainst(other MType) bool { return other == PlainMessage }
+
 /*
 // Validate validates a plain message.
 func (m *PlainMessage) Validate(pifo bool) (err error) {

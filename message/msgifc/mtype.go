@@ -22,6 +22,9 @@ type MType interface {
 	// footer of each page.  The returned error may be a Warning, showing a
 	// non-fatal rendering issue.
 	RenderPDF(m Message, filename, copyname string) error
+	// CanCompareAgainst returns whether the receiver type can be compared
+	// against the argument type.
+	CanCompareAgainst(other MType) bool
 }
 
 // EditableMType is the interface satisfied by a message type that allows

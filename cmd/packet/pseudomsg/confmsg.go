@@ -544,6 +544,7 @@ func (cm *ConfigMessage) Body() body.Body              { panic("not implemented"
 func (cm *ConfigMessage) RenderPDF(m message.Message, filename string, copyname string) error {
 	panic("not implemented")
 }
+func (cm *ConfigMessage) CanCompareAgainst(_ message.MType) bool { return false }
 
 func fmtCheckFrequency(cf incident.CheckFrequency) (s string) {
 	dur := cf.Duration

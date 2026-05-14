@@ -232,8 +232,9 @@ func (ff *FieldFactory) ValidateFunc(fn func(msgifc.Message, msgifc.Field, msgif
 
 // CompareFunc provides a function to compare the actual value of the field
 // from one message to the expected value in another message.
-func (ff *FieldFactory) CompareFunc(fn func(expected, actual msgifc.Message) *ComparedField) *FieldFactory {
-	panic("not implemented") // TODO:
+func (ff *FieldFactory) CompareFunc(fn func(label, exp, act string) *ComparedField) *FieldFactory {
+	ff.f.compareFunc = fn
+	return ff
 }
 
 // MakeField resolves the factory and returns the constructed Field.

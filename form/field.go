@@ -577,6 +577,53 @@ func (f ff2mf) Validate(m msgifc.Message, mf msgifc.Field, flags msgifc.Validate
 	return nil
 }
 
+// Compare compares the value of the field in two messages.
+func (f ff2mf) Compare(label, expected, actual string) (cmp *msgifc.ComparedField) {
+	var cmpType string
+
+	switch f.fd.Type {
+	case "addressList", "checkboxGroup", "dateTime", "join", "static":
+		cmpType = "none"
+	case "checkbox":
+		cmpType = "checkbox"
+	case "password", "restricted", "zipCode":
+		cmpType = "exact"
+	case "fccCallSign", "messageID", "tacticalCallSign":
+		cmpType = "exact-ci"
+	case "frequency", "frequencyOffset":
+		cmpType = "realNumber"
+	case "multiline":
+		cmpType = "text"
+	case "cardinalNumber", "date", "phoneNumber", "realNumber", "text", "time":
+		cmpType = f.fd.Type
+	}
+	if f.fd.CompareMethod != "" {
+		cmpType = f.fd.CompareMethod
+	}
+	switch cmpType {
+	case "none":
+		return nil
+	case "cardinalNumber":
+		return field.CompareCardinal(label, expected, actual)
+	case "checkbox":
+		return field.CompareCheckbox(label, expected, actual)
+	case "date":
+		return field.CompareDate(label, expected, actual)
+	case "exact-ci":
+		return field.CompareExactCI(label, expected, actual)
+	case "phoneNumber":
+		return field.ComparePhoneNumber(label, expected, actual)
+	case "realNumber":
+		return field.CompareReal(label, expected, actual)
+	case "text":
+		return field.CompareText(label, expected, actual)
+	case "time":
+		return field.CompareTime(label, expected, actual)
+	default:
+		return field.CompareExact(label, expected, actual)
+	}
+}
+
 // evalPresence evaluates the presence state of a field based on the values of
 // other message fields.  It also returns the reason string for the conditional
 // if any.

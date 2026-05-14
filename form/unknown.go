@@ -5,6 +5,7 @@ import (
 
 	"github.com/rothskeller/packet/form/formdef"
 	"github.com/rothskeller/packet/message"
+	"github.com/rothskeller/packet/message/msgifc"
 )
 
 type ErrUnrecognizedForm string
@@ -61,6 +62,8 @@ func (ft UnrecognizedForm) Recognize(m message.Message) {
 	}
 	m.SetType(&FormType{body.def, true})
 }
+
+func (ft UnrecognizedForm) CanCompareAgainst(_ msgifc.MType) bool { return false }
 
 /*
 // Validate validates an unrecognized form message.

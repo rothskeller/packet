@@ -17,6 +17,12 @@ import (
 
 	"github.com/rothskeller/packet/message/field"
 	"github.com/rothskeller/pdf/v2"
+	"k8s.io/apimachinery/pkg/util/sets"
+)
+
+var knownCompareMethods = sets.New(
+	"cardinalNumber", "checkbox", "date", "exact", "exact-ci", "none",
+	"phoneNumber", "realNumber", "text", "time",
 )
 
 var markupColor = []byte{0, 0, 153, 255}
@@ -218,6 +224,9 @@ TOPLEVEL:
 				fd.EditHelp = strings.Join(fields[1:], " ")
 			case "compare":
 				fd.CompareMethod = strings.Join(fields[1:], " ")
+				if !knownCompareMethods.Has(fd.CompareMethod) {
+					return nil, fmt.Errorf("%s:%d: unknown comparison method %q", filename, linenum, fd.CompareMethod)
+				}
 			case "pdf":
 				if err = parsePDFRender(fd, fields[1:], form.DefaultTextStyle); err != nil {
 					return nil, fmt.Errorf("%s:%d: %s", filename, linenum, err)

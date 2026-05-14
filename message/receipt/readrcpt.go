@@ -12,6 +12,7 @@ import (
 	"github.com/rothskeller/packet/message/body"
 	"github.com/rothskeller/packet/message/cachetrack"
 	"github.com/rothskeller/packet/message/field"
+	"github.com/rothskeller/packet/message/msgifc"
 	"github.com/rothskeller/packet/message/payload"
 	"github.com/rothskeller/packet/message/subject"
 )
@@ -60,6 +61,8 @@ func (mt readReceipt) Recognize(m message.Message) {
 		m.Subject().(*subject.PlainSubject).SetNonStandard()
 	}
 }
+
+func (mt readReceipt) CanCompareAgainst(other msgifc.MType) bool { return mt == ReadReceipt }
 
 //--- BODY --------------------------------------------------------------------
 

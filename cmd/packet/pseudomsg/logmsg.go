@@ -232,6 +232,7 @@ func (lem *LogEntryMessage) Body() body.Body              { panic("not implement
 func (lem *LogEntryMessage) RenderPDF(m message.Message, filename string, copyname string) error {
 	panic("not implemented")
 }
+func (lem *LogEntryMessage) CanCompareAgainst(_ message.MType) bool { return false }
 
 // A NoBypassValidationError is a validation error handled specially by the
 // editor: the value cannot be accepted.

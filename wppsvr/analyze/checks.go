@@ -437,7 +437,7 @@ func (a *Analysis) compareAgainstModel() {
 		return
 	}
 	// Compare the message against the model.
-	score, outOf, fields := a.session.ModelMsg.Compare(a.msg)
+	score, outOf, fields := message.Compare(a.session.ModelMsg, a.msg)
 	// The model may have left destination or handling blank, as an exercise
 	// for the operator to look them up in the recommended routing cheat
 	// sheet.  If so, we need to fix up the results of the comparison for
@@ -473,7 +473,7 @@ func (a *Analysis) compareAgainstModel() {
 // fixupRecRouteFields modifies the comparison of the fields covered by the
 // recommended routing cheat sheet, to address the possibility that they weren't
 // supplied in the model message.
-func (a *Analysis) fixupRecRouteFields(score int, fields []*message.CompareField, mtc *config.MessageTypeConfig) (_ int, mismatches []string) {
+func (a *Analysis) fixupRecRouteFields(score int, fields []*field.ComparedField, mtc *config.MessageTypeConfig) (_ int, mismatches []string) {
 	for _, f := range fields {
 		switch f.Label {
 		case "To ICS Position":

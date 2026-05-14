@@ -70,6 +70,8 @@ func (mt deliveryReceipt) Recognize(m message.Message) {
 	}
 }
 
+func (mt deliveryReceipt) CanCompareAgainst(other msgifc.MType) bool { return mt == DeliveryReceipt }
+
 //--- BODY --------------------------------------------------------------------
 
 // A DeliveryReceiptBody is a body of a delivery receipt message.

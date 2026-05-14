@@ -19,6 +19,7 @@ import (
 	"github.com/rothskeller/packet/message"
 	"github.com/rothskeller/packet/message/body"
 	"github.com/rothskeller/packet/message/field"
+	"github.com/rothskeller/packet/message/msgifc"
 	"github.com/rothskeller/packet/message/payload"
 	"github.com/rothskeller/packet/message/subject"
 	"github.com/rothskeller/pdf/v2"
@@ -232,6 +233,30 @@ func (ft *FormType) Recognize(m message.Message) {
 	}
 	m.SetType(ft)
 	m.Payload().(*payload.OutpostPayload).SetAllowLong()
+}
+
+// CanCompareAgainst returns whether two forms are comparable.
+func (ft *FormType) CanCompareAgainst(other msgifc.MType) bool {
+	var oft *FormType
+	switch o := other.(type) {
+	case *FormType:
+		oft = o
+	case EditableFormType:
+		oft = o.FormType
+	default:
+		return false
+	}
+	if ft.Tag() != oft.Tag() {
+		return false
+	}
+	m1 := VersionRE.FindStringSubmatch(ft.Version)
+	m2 := VersionRE.FindStringSubmatch(oft.Version)
+	if m1 == nil || m2 == nil {
+		return false
+	}
+	bmaj, _ := strconv.Atoi(m1[1])
+	cmaj, _ := strconv.Atoi(m2[1])
+	return bmaj != 0 && cmaj != 0 && bmaj == cmaj
 }
 
 // VersionRE is a regular expression that matches a major.minor form version

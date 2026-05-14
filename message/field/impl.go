@@ -34,6 +34,7 @@ type field struct {
 	disallowedFunc func(msgifc.Message) bool
 	disallowedDesc string
 	validateFunc   func(msgifc.Message, msgifc.Field, msgifc.ValidateFlags) error
+	compareFunc    func(string, string, string) *msgifc.ComparedField
 
 	// internal transient data
 	disallowed bool
@@ -200,6 +201,9 @@ func (f *field) validateCustom(m msgifc.Message, fi msgifc.Field, flags msgifc.V
 // Compare compares the value of the field in the actual message to
 // the corresponding value in the expected message, and returns the
 // results of the comparison.
-func (f *field) Compare(expected msgifc.Message, actual msgifc.Message) *ComparedField {
-	panic("not implemented") // TODO: Implement
+func (f *field) Compare(label, expected, actual string) *ComparedField {
+	if f.compareFunc != nil {
+		return f.compareFunc(label, expected, actual)
+	}
+	return CompareExact(label, expected, actual)
 }

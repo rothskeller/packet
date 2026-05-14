@@ -18,6 +18,7 @@ func NewAddressList(label string) (ff *FieldFactory) {
 	ff = NewField("", label)
 	ff.tf = addressList{&ff.f}
 	ff.f.editHeight = 1
+	ff.f.compareFunc = CompareNone
 	return ff
 }
 
@@ -58,6 +59,7 @@ func NewFCCCallSign(tag, label string) (ff *FieldFactory) {
 	ff.f.editWidth = 6
 	ff.f.editHeight = 1
 	ff.f.validateFunc = ValidateFCCCallSign
+	ff.f.compareFunc = CompareExactCI
 	ff.tf = fccCallSign{&ff.f}
 	return ff
 }
@@ -87,6 +89,7 @@ func NewMessageID(tag, label string) (ff *FieldFactory) {
 	ff.f.editHeight = 1
 	ff.f.editHint = "XXX-###P"
 	ff.f.validateFunc = ValidateMessageID
+	ff.f.compareFunc = CompareExactCI
 	ff.tf = messageID{&ff.f}
 	return ff
 }
@@ -128,6 +131,7 @@ func NewTacticalCallSign(tag, label string) (ff *FieldFactory) {
 	ff.f.editWidth = 6
 	ff.f.editHeight = 1
 	ff.f.validateFunc = ValidateTacticalCallSign
+	ff.f.compareFunc = CompareExactCI
 	ff.tf = tacticalCallSign{&ff.f}
 	return ff
 }
