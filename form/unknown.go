@@ -59,7 +59,7 @@ func (ft UnrecognizedForm) Recognize(m message.Message) {
 			Type:  "text",
 		})
 	}
-	m.SetType(FormType{body.def, true})
+	m.SetType(&FormType{body.def, true})
 }
 
 /*

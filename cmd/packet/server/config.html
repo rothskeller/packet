@@ -12,13 +12,15 @@
     function setupAutoValue(src, tgt, fn) {
       function autoValue() {
         if (tgt.value && !tgt.hasAttribute('x-auto')) return
-        const shouldbe = fn(src.value)
+        const shouldbe = fn(src.value, tgt.value)
         setValue(tgt, shouldbe)
         if (shouldbe)
           tgt.setAttribute('x-auto', '')
         else
           tgt.removeAttribute('x-auto')
       }
+      if (tgt.value && tgt.value === fn(src.value, tgt.value))
+        tgt.setAttribute('x-auto', '')
       src.addEventListener('input', autoValue)
       src.addEventListener('change', autoValue)
       src.addEventListener('i-change', autoValue)
@@ -119,7 +121,7 @@
           break
       }
     }
-    function propagateCallSign() {
+    function propagateCallSign(src, dest) {
       const oc = form.opcall
       const tc = form.taccall
       let prefix
@@ -130,7 +132,13 @@
       } else if (oc.value.length >= 3) {
         prefix = oc.value.substring(oc.value.length - 3)
       }
-      return prefix ? prefix + '-100P' : ''
+      if (prefix)
+        if (/^...-\d+[A-Za-z]?$/.test(dest))
+          return prefix + dest.substring(3)
+        else
+          return prefix + '-100P'
+      else
+        return dest || ''
     }
     function setPasswordFields() {
       if (!form.usesaved || !form.usesaved.dataset.saved) return
@@ -201,9 +209,6 @@
         let value = evt.target.value.replace(/[^0-9]/g, '')
         if (value !== evt.target.value) setValue(evt.target, value)
       }
-      if (evt.target.name === 'opcall' || evt.target.name === 'taccall') propagateCallSign()
-      if (evt.target.name === 'rxmsgid')
-        evt.target.removeAttribute('x-auto')
       setRequiredIf()
       checkFormValidity()
     })

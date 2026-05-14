@@ -121,10 +121,10 @@ func registerFSForms() (err error) {
 			slog.Warn("form definition error", "f", ff, "err", derr)
 			err = errors.Join(err, derr)
 		} else {
-			var ft = form.FormType{FormDef: def}
+			var ft = &form.FormType{FormDef: def}
 			var mt = message.MType(ft)
 			if def.CreateTag != "" {
-				mt = form.EditableFormType{FormType: &ft}
+				mt = form.EditableFormType{FormType: ft}
 			}
 			if derr = message.RegisterType(mt); derr != nil {
 				slog.Warn("form registration error", "f", ff, "err", derr)
@@ -141,9 +141,9 @@ func registerFSForms() (err error) {
 				}
 				major, _ := strconv.Atoi(match[1])
 				if highest[def.AddonName][def.HTMLName][major] == nil {
-					highest[def.AddonName][def.HTMLName][major] = &ft
+					highest[def.AddonName][def.HTMLName][major] = ft
 				} else if form.IsNewer(def.Version, highest[def.AddonName][def.HTMLName][major].Version) {
-					highest[def.AddonName][def.HTMLName][major] = &ft
+					highest[def.AddonName][def.HTMLName][major] = ft
 				}
 			}
 		}

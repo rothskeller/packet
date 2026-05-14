@@ -35,9 +35,6 @@ type TNC struct {
 	MyCallCommand string
 	// ConnectCommand is the command to establish a connection.
 	ConnectCommand string
-	// ConverseCommand is the command to enter converse mode (for FCC
-	// identification after a BBS session using a tactical call).
-	ConverseCommand string
 }
 
 var fetchOnce sync.Once

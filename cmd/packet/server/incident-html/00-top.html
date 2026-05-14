@@ -121,6 +121,20 @@
       }
     }
   </style>
+  <script>
+    function fetch2(a, b) {
+      return fetch(a, b).catch(e => {
+        return Promise.resolve({
+          ok: false,
+          status: 500,
+          statusText: `PackItForms Server Error`,
+          text: () => {
+            return Promise.resolve(`This window was unable to communicate with the PackItForms server.  The error was "${e.toString()}".  If it has been a while since last use, the server may have stopped running due to inactivity.  Close this window, start PackItForms again, and retry your operation in a new window.`)
+          },
+        })
+      })
+    }
+  </script>
 </head>
 
 <body data-dir="{{DIR}}">

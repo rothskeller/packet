@@ -15,13 +15,9 @@
       })
       document.getElementById('mssent').addEventListener('click', async () => {
         const params = new URLSearchParams({dir: document.body.dataset.dir, id: document.getElementById('msdlg').dataset.ident})
-        try {
-          await fetch('/mark-sent?' + params.toString(), {method: 'POST'})
-          document.getElementById('msdlg').close()
-        } catch (err) {
-          document.getElementById('msdlg').close()
-          openErrorDialog('Manual Send Error', err.toString())
-        }
+        const resp = await fetch2('/mark-sent?' + params.toString(), {method: 'POST'})
+        document.getElementById('msdlg').close()
+        if (!resp.ok) openErrorDialog('Manual Send Error', await resp.text())
       })
     }
     function openManualSendDialog(ident, command) {

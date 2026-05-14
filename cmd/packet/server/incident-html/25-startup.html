@@ -6,43 +6,39 @@
     let currentSeq = 0
     async function fetchData() {
       while (true) {
-        try {
-          const params = new URLSearchParams({ dir: document.body.dataset.dir, seq: currentSeq })
-          const url = '/incident/log?' + params.toString()
-          const resp = await fetch(url)
-          if (!resp.ok) throw new Error(resp.statusText)
-          const data = await resp.json()
-          currentSeq = data.seq
-          window.dispatchEvent(new CustomEvent('new-data', { detail: data.log }))
-          if (delayedChildAction) {
-            childAction(delayedChildAction, true)
-            delayedChildAction = null
-          }
-        } catch (e) {
-          console.error(e)
-          await new Promise(resolve => setTimeout(resolve, 5000))
+        const params = new URLSearchParams({ dir: document.body.dataset.dir, seq: currentSeq })
+        const url = '/incident/log?' + params.toString()
+        const resp = await fetch2(url)
+        if (!resp.ok) {
+          openErrorDialog('Server Error', (await resp.text()) || resp.statusText)
+          return
+        }
+        const data = await resp.json()
+        currentSeq = data.seq
+        window.dispatchEvent(new CustomEvent('new-data', { detail: data.log }))
+        if (delayedChildAction) {
+          childAction(delayedChildAction, true)
+          delayedChildAction = null
         }
       }
     }
     async function watchConnection(dir) {
       let connSeq = 0
       while (true) {
-        try {
-          const params = new URLSearchParams({ dir: dir, seq: connSeq })
-          const url = '/connect-progress?' + params.toString()
-          const resp = await fetch(url)
-          if (resp.status === 410) {
-            window.dispatchEvent(new CustomEvent('conn-progress', { detail: null }))
-            return
-          }
-          if (!resp.ok) throw new Error(resp.statusText)
-          const data = await resp.json()
-          connSeq = data.seq
-          window.dispatchEvent(new CustomEvent('conn-progress', { detail: data }))
-        } catch (e) {
-          console.error(e)
+        const params = new URLSearchParams({ dir: dir, seq: connSeq })
+        const url = '/connect-progress?' + params.toString()
+        const resp = await fetch2(url)
+        if (resp.status === 410) {
+          window.dispatchEvent(new CustomEvent('conn-progress', { detail: null }))
           return
         }
+        if (!resp.ok) {
+          openErrorDialog('Server Error', (await resp.text() || resp.statusText))
+          return
+        }
+        const data = await resp.json()
+        connSeq = data.seq
+        window.dispatchEvent(new CustomEvent('conn-progress', { detail: data }))
       }
     }
     function setViewFlags() {

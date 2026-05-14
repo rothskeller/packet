@@ -152,6 +152,8 @@ func (i *Incident) receiveReceiptMessage(rcpt *message.JustReceivedMessage) (err
 		Time:    rcpt.RxDate(),
 		Subject: rcpt.Subject().EncodedSubject(),
 	}
+	rcptle.FromCall, _, _ = strings.Cut(rcpt.From(), "@")
+	rcptle.FromCall = strings.ToUpper(strings.TrimSpace(rcptle.FromCall))
 	var smr = message.SentMessageReceipt{ReceiverAddress: rcpt.From()}
 	var subject string
 	if rcpt.MType == receipt.DeliveryReceipt {
@@ -206,6 +208,7 @@ func (i *Incident) receiveReceiptMessage(rcpt *message.JustReceivedMessage) (err
 			sentle.ToMsgID = smr.ReceiverMessageID
 			sentle.Flags |= FHasReceipt
 			sentle.Flags &^= FNeedsReceipt
+			sentle.Seq = i.Seq
 			break
 		}
 		if idx < 0 {

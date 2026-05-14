@@ -5,9 +5,7 @@ PackItForms 4.0 introduces these changes:
 - **PDF Rendering:**  When viewing an existing message, or after submitting a
   new or edited message to Outpost, the message is now rendered in PDF format
   and displayed as a PDF.  This ensures exact compatibility with the paper
-  forms, as well as proper pagination and footers.  For messages whose forms
-  don't contain routing fields (primarily, the Allied Health Facility Status
-  form), the PDF rendering will start with an SCCo-standard Radio Routing Slip.
+  forms, as well as proper pagination and footers.
 
 - **Automatic Form Updates:**  Once each day, PackItForms will check with the
   county ARES/RACES website to see if any forms have changed.  If so, it will
@@ -15,13 +13,15 @@ PackItForms 4.0 introduces these changes:
   are not required for these forms updates.  Manual installs will still be
   needed when there are changes to the PackItForms software.
 
-- **Merged Hospital Forms:**  There is no longer a separate installer for the
+- **New Hospital Forms:**  All of the medical forms have been rewritten: Allied
+  Health Status, Hospital Bed Availability (HAvBed), and Hospital Status
+  (formerly Medical Facility Status).  Also, they are now included in the
+  standard distribution.  There is no longer a separate installer for the
   Hospital Net.  All operators now get all county forms, including the hospital
   forms.
 
-- **New Hospital Bed Availability Form:**  The hospital bed availability form
-  (HAvBed) has been substantially changed.  PackItForms can still receive and
-  print the old form, but will only create messages with the new one.
+- **New ICS-213 Form:**  The ICS-213 form has been rewritten to match all of the
+  other forms in styling and behavior.
 
 - **Updates to Veoci Forms:**  Minor changes have been made to the Veoci forms
   that were rolled out in August.  In particular:
@@ -38,8 +38,8 @@ PackItForms 4.0 introduces these changes:
 
 Under the covers, PackItForms 4.0 has been completely rewritten.  It is now
 written in Go and built on the same Go packet library as the weekly packet
-practice server and the unofficial alternative packet shell.  As a result, it
-is much smaller than its predecessor (22MB vs. 207MB) and faster as well.
+practice server and the packet shell.  As a result, it is much smaller than its
+predecessor (22MB vs. 207MB) and faster as well.
 
 Source code and maintenance documentation for PackItForms 4.0 is at
 github.com/rothskeller/packet, and is freely licensed (BSD).  The forms and

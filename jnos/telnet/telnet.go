@@ -46,7 +46,7 @@ func Connect(bbsAddress, mailbox, password string, log io.Writer) (c *jnos.Conn,
 	if t, err = Open(bbsAddress, mailbox, password, log); err != nil {
 		return nil, err
 	}
-	if c, err = jnos.Connect(t); err != nil {
+	if c, err = jnos.Connect(t, ""); err != nil {
 		t.Close()
 		return nil, fmt.Errorf("BBS connect: %s", err)
 	}

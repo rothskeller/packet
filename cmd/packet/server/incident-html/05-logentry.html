@@ -140,7 +140,12 @@
         this._sFullCell.textContent = data.s
         this._sFullCell.classList.toggle('unread', data.f.includes('U'))
         this._sFullCell.classList.toggle('voice', data.f.includes('V'))
-        this._sTrimCell.textContent = (data.fi && data.s && data.s.startsWith(data.fi + '_')) ? data.s.substring(data.fi.length + 1) : (data.ti && data.s.startsWith(data.ti + '_')) ? data.s.substring(data.ti.length + 1) : data.s
+        if (data.fi && data.s && data.s.startsWith(data.fi + '_'))
+          this._sTrimCell.textContent = data.s.substring(data.fi.length+1)
+        else if (data.ti && data.s && data.s.startsWith(data.ti + '_'))
+          this._sTrimCell.textContent = data.s.substring(data.ti.length + 1)
+        else
+          this._sTrimCell.textContent = data.s || ''
         this._sTrimCell.classList.toggle('unread', data.f.includes('U'))
         this._sTrimCell.classList.toggle('voice', data.f.includes('V'))
         this._fuCell.textContent = data.f.includes('F') ? '★' : ''

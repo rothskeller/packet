@@ -5,9 +5,11 @@
   <script>
     window.addEventListener('conn-progress', evt => {
       if (evt.detail) {
+        document.getElementById('m-conn-abort').show(true)
         document.getElementById('conn-err').textContent = evt.detail.error
         document.getElementById('conn-progress').textContent = evt.detail.progress
       } else {
+        document.getElementById('m-conn-abort').show(false)
         document.getElementById('conn-progress').textContent = ''
       }
     })

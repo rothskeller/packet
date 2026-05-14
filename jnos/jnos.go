@@ -69,13 +69,20 @@ type Conn struct {
 // jnosPromptRE is a regular expression matching the JNOS prompt.
 var jnosPromptRE = regexp.MustCompile(`^(?:Area: [A-Za-z0-9]+ )?\(#\d+\) >$`)
 
-// Connect connects to the JNOS BBS over the supplied open Transport.
-func Connect(t Transport) (c *Conn, err error) {
-	c = &Conn{t: t}
+// Connect connects to the JNOS BBS over the supplied open Transport.  If an
+// ident is supplied, it is sent as a JSON comment when connected, periodically
+// during the connection, and before closing the connection.
+func Connect(t Transport, ident string) (c *Conn, err error) {
+	c = &Conn{t: t, ident: ident}
 
 	// Read and discard the connection message.
 	if err = c.skipLinesUntilPrompt(); err != nil {
 		return nil, err
+	}
+	// Send the ident if any.
+	if ident != "" {
+		c.identEvery = 8 * time.Minute
+		c.maybeIdent()
 	}
 	// Turn off paging.
 	if err = c.t.Send("XM 0\n"); err != nil {
@@ -85,16 +92,6 @@ func Connect(t Transport) (c *Conn, err error) {
 		return nil, err
 	}
 	return c, nil
-}
-
-// IdentEvery causes the JNOS handler to send a comment with an identification
-// every so often.  This can be used to send an FCC call sign if we're connected
-// over the air with a tactical call and we're connected for longer than 10
-// minutes.
-func (c *Conn) IdentEvery(interval time.Duration, ident string) {
-	c.ident = ident
-	c.identEvery = interval
-	c.nextIdent = time.Now().Add(interval)
 }
 
 // Send sends a private message.  Note that the "to" addresses must be bare
@@ -432,11 +429,11 @@ func (c *Conn) Kill(msgnums ...int) (err error) {
 // maybeIdent checks for whether we should send an ident string, and if so, does
 // so.  Errors are ignored.
 func (c *Conn) maybeIdent() {
-	if c.nextIdent.IsZero() || time.Now().Before(c.nextIdent) {
+	if time.Now().Before(c.nextIdent) {
 		return
 	}
 	c.nextIdent = time.Now().Add(c.identEvery)
-	if err := c.t.Send(fmt.Sprintf("# %s\n", c.ident)); err != nil {
+	if err := c.t.Send(fmt.Sprintf("# DE %s\n", c.ident)); err != nil {
 		return
 	}
 	c.skipLinesUntilPrompt()
@@ -447,6 +444,11 @@ func (c *Conn) maybeIdent() {
 func (c *Conn) Close() (err error) {
 	var line string
 
+	// Send an ident if needed.
+	if c.ident != "" {
+		c.nextIdent = time.Time{}
+		c.maybeIdent()
+	}
 	// Send the BYE command to the BBS.
 	if err = c.t.Send("B\r"); err != nil {
 		c.t.Close()

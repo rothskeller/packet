@@ -98,13 +98,17 @@ type ilogUpdate struct {
 // specifying the sequence number of the data already held by the client.  This
 // is a long polling request; it will wait until there is data available for
 // a higher sequence number for the incident and then return the list of log
-// entries with a higher sequence number.
+// entries with a higher sequence number.  However, it will wait for at most
+// five minutes, so that the client sends a new request at least that often, so
+// that the idle timeout doesn't trigger.
 func (s *Server) serveGetIncidentLog(w http.ResponseWriter, r *http.Request) {
 	var (
-		dir string
-		seq int
-		upd ilogUpdate
-		err error
+		dir    string
+		seq    int
+		ctx    context.Context
+		cancel func()
+		upd    ilogUpdate
+		err    error
 	)
 	if dir = r.FormValue("dir"); dir == "" {
 		slog.Error("no incident dir")
@@ -120,9 +124,11 @@ func (s *Server) serveGetIncidentLog(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "seq is missing or invalid", http.StatusBadRequest)
 		return
 	}
-	if err = incident.Watch(r.Context(), dir, seq, s.stop); err == context.Canceled {
+	ctx, cancel = context.WithTimeout(r.Context(), 5*time.Minute)
+	defer cancel()
+	if err = incident.Watch(ctx, dir, seq, s.stop); err == context.Canceled {
 		return
-	} else if err != nil {
+	} else if err != nil && err != context.DeadlineExceeded {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}

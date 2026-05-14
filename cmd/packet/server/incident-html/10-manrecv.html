@@ -27,7 +27,7 @@
       document.getElementById('mrform').addEventListener('submit', async evt => {
         evt.preventDefault()
         const data = new FormData(evt.target)
-        const resp = await fetch('/manual-receive', {method: 'POST', body: data})
+        const resp = await fetch2('/manual-receive', {method: 'POST', body: data})
         if (resp.ok) {
           document.getElementById('mrdlg').close()
           childAction(resp.headers.get('X-Packet-Action'))
@@ -37,7 +37,7 @@
         document.getElementById('mrerr').textContent = err
       })
     }
-    async function openManualReceiveDialog() {
+    function openManualReceiveDialog() {
       document.getElementById('mrmsg').value = ''
       document.getElementById('mrerr').textContent = ''
       document.getElementById('mrdlg').showModal()
