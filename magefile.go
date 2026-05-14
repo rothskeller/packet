@@ -4,11 +4,13 @@
 package main
 
 import (
+	"fmt"
 	"os"
 
 	"github.com/magefile/mage/mg"
 	"github.com/magefile/mage/sh"
 	"github.com/magefile/mage/target"
+	"github.com/rothskeller/packet/packetver"
 )
 
 // Default target.
@@ -53,4 +55,14 @@ func GUI() error {
 func Build() error {
 	mg.Deps(IncidentHTML, UpdateForms, StopOldServer)
 	return sh.Run(mg.GoCmd(), "build", "-tags", "sccopifo", "./cmd/packet")
+}
+
+func A315() error {
+	mg.Deps(IncidentHTML)
+	if _, err := os.Stat("/Volumes/str-a315"); err != nil {
+		if err = sh.Run("osascript", "-e", `mount server "smb://str-a315/c"`); err != nil {
+			return err
+		}
+	}
+	return sh.RunWith(map[string]string{"GOOS": "windows"}, mg.GoCmd(), "build", "-tags", "sccopifo", "-o", fmt.Sprintf("/Volumes/str-a315/PackItForms/pifo-%s-setup.exe", packetver.Version), "./cmd/packet")
 }

@@ -53,15 +53,12 @@ func Connect(tnc *tnc.TNC, serialPort, bbsAddress, mailbox, callsign string, log
 	if callsign == mailbox {
 		callsign = "" // no need to ident
 	}
-	if t, err = open(tnc, serialPort, bbsAddress, mailbox, callsign, log); err != nil {
+	if t, err = open(tnc, serialPort, bbsAddress, mailbox, log); err != nil {
 		return nil, err
 	}
-	if c, err = jnos.Connect(t); err != nil {
+	if c, err = jnos.Connect(t, callsign); err != nil {
 		t.Close()
 		return nil, fmt.Errorf("BBS connect: %s", err)
-	}
-	if callsign != "" {
-		c.IdentEvery(10*time.Minute-30*time.Second, fmt.Sprintf("DE %s", callsign))
 	}
 	return c, nil
 }
@@ -73,12 +70,12 @@ func Connect(tnc *tnc.TNC, serialPort, bbsAddress, mailbox, callsign string, log
 // sign of the calling user.  (For connecting to other mailboxes, see the
 // Connect function.)  If log is set, all traffic except echo-backs is logged to
 // it.
-func Open(tnc *tnc.TNC, serialPort, bbsAddress, callsign string, log io.Writer) (t *Transport, err error) {
-	return open(tnc, serialPort, bbsAddress, callsign, "", log)
+func Open(tnc *tnc.TNC, serialPort, bbsAddress string, log io.Writer) (t *Transport, err error) {
+	return open(tnc, serialPort, bbsAddress, "", log)
 }
 
 // open is the common code between Connect and Open.
-func open(tnc *tnc.TNC, serialPort, bbsAddress, mailbox, callsign string, log io.Writer) (t *Transport, err error) {
+func open(tnc *tnc.TNC, serialPort, bbsAddress, mailbox string, log io.Writer) (t *Transport, err error) {
 	t = &Transport{tnc: tnc, log: log}
 	if t.serial, err = serial.Open(serialPort, &serial.Mode{}); err != nil {
 		slog.Error("serial.Open", "port", serialPort, "err", err)
@@ -113,7 +110,6 @@ func open(tnc *tnc.TNC, serialPort, bbsAddress, mailbox, callsign string, log io
 		}
 	}
 	// Set the mailbox we want to connect to as our "call sign".
-	t.callsign = callsign
 	if err = t.send(fmt.Sprintf("%s %s\n", tnc.MyCallCommand, mailbox)); err != nil {
 		goto TNCERROR
 	}
@@ -146,7 +142,6 @@ type Transport struct {
 	pending      []byte
 	connected    bool
 	wasConnected bool
-	callsign     string
 	log          io.Writer
 }
 
@@ -332,23 +327,16 @@ func (t *Transport) Close() (err error) {
 			}
 		}
 	}
-	// Send our FCC identification if needed.
-	if t.wasConnected && t.callsign != "" {
-		var abort bool
-		if abort, err = t.postIdentify(); abort {
-			return err
-		}
-	}
 	// Apply all of the post-connect settings.
 	t.readUntil(t.tnc.CommandPrompt, tncTimeout) // eat a prompt if there is one
-	if t.callsign != "" {
-		if err2 := t.send(fmt.Sprintf("%s %s\n", t.tnc.MyCallCommand, t.callsign)); err == nil && err2 != nil {
-			err = fmt.Errorf("cleanup: restore TNC settings: %s", err2)
-		}
-		if _, err2 := t.readUntil(t.tnc.CommandPrompt, tncTimeout); err == nil && err2 != nil {
-			err = fmt.Errorf("cleanup: restore TNC settings: %s", err2)
-		}
-	}
+	// Note: we used to MYCALL back to the FCC call sign at this point, but
+	// some TNCs (Kenwood and Alinco embeddeds, primarily) had a problem
+	// with doing it that soon (while they were still handling the
+	// disconnect).  They'd send the disconnect ack with the changed call
+	// sign!  Which would then leave JNOS thinking we're still connected,
+	// and it would reject the next connection attempt (if right away) with
+	// a "busy" message.  To avoid all that, we're leaving the call sign
+	// unchanged.``
 	for _, c := range t.tnc.PostDisconnectCommands {
 		if err2 := t.send(c); err == nil && err2 != nil {
 			err = fmt.Errorf("cleanup: restore TNC settings: %s", err2)
@@ -358,50 +346,6 @@ func (t *Transport) Close() (err error) {
 		}
 	}
 	return err
-}
-
-// postIdentify sends the FCC callsign in CONVERS mode after disconnecting from
-// the BBS.  If it hits an error, it returns the error and also a flag
-// indicating whether subsequent post-disconnect steps should be aborted.
-func (t *Transport) postIdentify() (abort bool, err error) {
-	// There may be a prompt waiting, which we should eat.  No error if not.
-	t.readUntil(t.tnc.CommandPrompt, tncTimeout)
-	// Enter converse mode.
-	if err = t.send(t.tnc.ConverseCommand); err != nil {
-		return false, fmt.Errorf("cleanup: send FCC ID: %s", err)
-	}
-	// Send our call sign identification.
-	var ident = fmt.Sprintf("DE %s\n", t.callsign)
-	if err = t.send(ident); err != nil {
-		err = fmt.Errorf("cleanup: send FCC ID: %s", err)
-	} else {
-		// Some TNCs (particularly KPC-3+) behave weirdly if we exit
-		// CONVERSE mode immediately:  they don't send the above packet,
-		// but rather save it and send it next time a connection is
-		// established.  To work around this, we add a delay before
-		// leaving CONVERSE mode.  I have no idea how long we need to
-		// wait.
-		time.Sleep(500 * time.Millisecond)
-		// Note: previous code used to turn on MONITOR and MXMIT and
-		// wait to see the monitor report of the sent packet.  That
-		// worked on KPC3+ but failed on other TNCs that don't have
-		// MXMIT command or behavior (particularly the embedded TNCs in
-		// the Kenwood and Alinco radios).
-	}
-	// Return to command mode.
-	if err2 := t.sendRaw([]byte{3}); err2 != nil {
-		return true, fmt.Errorf("cleanup: send FCC ID: exit CONVERS mode: %s", err2)
-	}
-	// Some TNCs (particularly the Kenwood and Alinco radios with the
-	// embedded Tasco TNC chipset) behave weirdly if we start issuing
-	// commands right away before they have a chance to send the CONVERSE
-	// mode packet.  They seem to execute some of those commands before
-	// sending it, which causes no end of confusion.  To alleviate that,
-	// I'm adding a delay between the control-C and the commands.
-	if err == nil {
-		time.Sleep(500 * time.Millisecond)
-	}
-	return false, err
 }
 
 // UseVerboseReads returns whether it's appropriate to use verbose reads
