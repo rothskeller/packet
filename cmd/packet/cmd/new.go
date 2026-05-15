@@ -211,6 +211,7 @@ func cmdNew(args []string) (err error) {
 			message.MakeReply(srcmsg.(*message.ReceivedMessage), newmsg)
 		} else if resend != "" {
 			message.CopyFields(srcmsg.(*message.SentMessage), newmsg)
+			newmsg.SetTo(srcmsg.To())
 			for f := range newmsg.Fields() {
 				switch f.Common() {
 				case field.COriginMessageID, field.CSubjectMessageID:

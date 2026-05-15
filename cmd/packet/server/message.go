@@ -369,6 +369,7 @@ func (s *Server) servePostNewMessageFrom(w http.ResponseWriter, r *http.Request)
 				return errors.New(`The "Resend" action can only be used with a sent message.`)
 			}
 			message.CopyFields(msg, dr)
+			dr.SetTo(msg.To())
 			if lmi, err := i.ResendMessageID(le.LocalMsgID); err != nil {
 				return err
 			} else {
