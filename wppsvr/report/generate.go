@@ -3,12 +3,12 @@ package report
 
 import (
 	"fmt"
-	"runtime/debug"
 	"sort"
 	"strings"
 	"time"
 
 	"github.com/rothskeller/packet/message"
+	"github.com/rothskeller/packet/packetver"
 	"github.com/rothskeller/packet/wppsvr/english"
 	"github.com/rothskeller/packet/wppsvr/store"
 )
@@ -61,7 +61,8 @@ func generateTitle(r *Report, session *store.Session) {
 func generateParams(r *Report, session *store.Session) {
 	if session.ModelMsg != nil {
 		r.HasModel = true
-		r.MessageTypes = []string{session.ModelMsg.Type().Name()}
+		_, mtype, _ := strings.Cut(session.ModelMsg.Type().Name(), " ")
+		r.MessageTypes = []string{mtype}
 	} else {
 		for _, id := range session.MessageTypes {
 			if mt := message.FindCreateTag(id); mt != nil {
@@ -332,13 +333,8 @@ func generateGenInfo(r *Report, session *store.Session) {
 			stamp = ret.LastRun
 		}
 	}
-	if bi, ok := debug.ReadBuildInfo(); ok && bi.Main.Version != "" && bi.Main.Version != "(devel)" {
-		r.GenerationInfo = fmt.Sprintf("This report was generated on %s by wppsvr version %s.",
-			stamp.Format("Monday, January 2, 2006 at 15:04"), bi.Main.Version)
-	} else {
-		r.GenerationInfo = fmt.Sprintf("This report was generated on %s by wppsvr.",
-			stamp.Format("Monday, January 2, 2006 at 15:04"))
-	}
+	r.GenerationInfo = fmt.Sprintf("This report was generated on %s by wppsvr version %s.",
+		stamp.Format("Monday, January 2, 2006 at 15:04"), packetver.Version)
 }
 
 // generateParticipants returns a de-duplicated list of all from addresses of the

@@ -72,7 +72,7 @@ func formSubjectFromPlainSubject(ps *subject.PlainSubject) (fs *FormSubject) {
 // EncodedSubject returns the encoded subject line.
 func (s *FormSubject) EncodedSubject() string {
 	if s.Dirty() {
-		s.encoded = fmt.Sprintf("%s_%s_%s_%s", s.msgID, s.handling, s.formtag, s.summary)
+		s.encoded = strings.TrimSpace(fmt.Sprintf("%s_%s_%s_%s", s.msgID, s.handling, s.formtag, s.summary))
 		s.MarkClean()
 	}
 	return s.encoded
@@ -182,8 +182,9 @@ func (s *FormSubject) SetSubjectSummary(summary string) (err error) {
 
 // Clone creates a copy of the subject.
 func (s *FormSubject) Clone() msgifc.Subject {
-	ns, _ := NewFormSubject(s.SubjectMessageID(), s.SubjectHandling(), s.SubjectFormTag(), s.SubjectSummary())
-	return ns
+	ns := *s
+	ns.Tracker = cachetrack.Tracker{}
+	return &ns
 }
 
 func (s *FormSubject) Fields() iter.Seq[msgifc.Field] {
@@ -228,6 +229,7 @@ var subjectFields = []msgifc.Field{
 			}
 			return errors.AddPrefix(field.ValidateMessageID(m, f, vf), "On the subject line: ")
 		}).
+		CompareFunc(field.CompareNone).
 		MakeField(),
 	field.NewField("", "Handling").
 		Common(field.CSubjectHandling).
@@ -254,6 +256,7 @@ var subjectFields = []msgifc.Field{
 				return errors.NewF("The handling order on the subject line (%q) is not one of the standard handling order codes (I, P, or R).", h)
 			}
 		}).
+		CompareFunc(field.CompareNone).
 		MakeField(),
 	field.NewField("", "Form Tag").
 		Common(field.CSubjectFormTag).
@@ -268,6 +271,7 @@ var subjectFields = []msgifc.Field{
 			}
 			return nil
 		}).
+		CompareFunc(field.CompareNone).
 		MakeField(),
 	field.NewField("", "Message Summary").
 		Common(field.CSubjectSummary).
@@ -286,6 +290,7 @@ var subjectFields = []msgifc.Field{
 			}
 			return nil
 		}).
+		CompareFunc(field.CompareNone).
 		MakeField(),
 }
 

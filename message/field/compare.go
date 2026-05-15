@@ -282,8 +282,9 @@ func ComparePhoneNumber(label, exp, act string) (c *ComparedField) {
 		// specifically the punctuation that's different, rather than
 		// the whole string — but it's probably not worth the effort.
 		c.ExpectedMask, c.ActualMask, c.Score = "~", "~", 1
+	} else {
+		c.ExpectedMask, c.ActualMask, c.Score = " ", " ", 2
 	}
-	c.ExpectedMask, c.ActualMask, c.Score = " ", " ", 2
 	return c
 }
 func digitsOnly(r rune) rune {

@@ -121,7 +121,7 @@ func (p *OutpostPayload) encodedOutpostFlags() (encoded string) {
 // of a part of a MIME multipart message.
 func decodeOutpostPayload(headers mail.Header, payload string) (_ Payload, err error) {
 	switch cte := headers.Get("Content-Transfer-Encoding"); cte {
-	case "":
+	case "", "7bit", "8bit":
 		// No Content-Transfer-Encoding.  If the message came from
 		// WinLink and looks like it has quoted-printable encoding,
 		// we'll decode that; otherwise, assume no encoding at all.
@@ -354,5 +354,5 @@ func lineBreakEvery76(s string) string {
 			lines2 = append(lines2, line)
 		}
 	}
-	return strings.Join(lines2, "\r\n") + "\r\n"
+	return strings.Join(lines2, "\n") + "\n"
 }

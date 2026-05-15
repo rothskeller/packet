@@ -152,7 +152,7 @@ func (a *Analysis) checkCorrectness() {
 	}
 	// Make sure the message has only ASCII characters.
 	a.outOf++
-	if strings.IndexFunc(a.msg.Payload().Encode(), nonASCII) >= 0 {
+	if strings.IndexFunc(a.msg.Body().EncodedBody(), nonASCII) >= 0 {
 		a.setSummary("message has non-ASCII characters")
 		a.analysis.WriteString("<h2>Message Has Non-ASCII Characters</h2><p>This message contains characters that are not in the standard ASCII character set (i.e., not on a standard keyboard). Non-standard characters should be avoided in packet messages, because the receiving system may not know how to render them.  Note that some software may introduce undesired non-standard characters (e.g., Microsoft Word’s “smart quotes” feature). If you use message text composed in such software, make sure those features are disabled.</p>")
 	} else {
@@ -225,7 +225,7 @@ func (a *Analysis) checkCorrectness() {
 		}
 		// Make sure the form didn't have any spurious fields.
 		a.outOf++
-		haveFields := sets.New[string](fb.FieldList()...)
+		haveFields := sets.New(fb.FieldList()...)
 		for f := range a.msg.Fields() {
 			haveFields.Delete(f.Tag())
 		}
@@ -237,7 +237,7 @@ func (a *Analysis) checkCorrectness() {
 					field, fb.FormVersion(), html.EscapeString(a.msg.Type().Name()))
 			} else {
 				fmt.Fprintf(a.analysis, "<h2>Form Has Extra Fields</h2><p>This message contains extra fields (%s) which are not expected in version %s of %s.",
-					strings.Join(haveFields.UnsortedList(), ", "), fb.FormVersion, html.EscapeString(a.msg.Type().Name()))
+					strings.Join(haveFields.UnsortedList(), ", "), fb.FormVersion(), html.EscapeString(a.msg.Type().Name()))
 			}
 		} else {
 			a.score++
@@ -311,7 +311,6 @@ func (a *Analysis) checkNonModel() {
 			handling string
 			topos    string
 			toloc    string
-			mtc      *config.MessageTypeConfig
 			badpos   bool
 			badloc   bool
 			exppos   string
@@ -415,7 +414,7 @@ func (a *Analysis) checkNonModel() {
 			allowed = append(allowed, name)
 		}
 		a.setSummary("incorrect message type")
-		fmt.Fprintf(a.analysis, "<h2>Incorrect Message Type</h2><p>This message is %s.  For the %s on %s, %s %s is expected.</p>",
+		fmt.Fprintf(a.analysis, "<h2>Incorrect Message Type</h2><p>This message is %s.  For the %s on %s, %s is expected.</p>",
 			html.EscapeString(a.msg.Type().Name()), html.EscapeString(a.session.Name),
 			a.session.End.Format("January 2"), english.Conjoin(allowed, "or"))
 	} else {

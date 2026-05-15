@@ -141,13 +141,10 @@ func NewJustReceivedMessage(retrieved, rxBBS, rxArea string) (m *JustReceivedMes
 	if by, err = io.ReadAll(msg.Body); err != nil {
 		return nil, fmt.Errorf("body: %w", err)
 	}
-	if by, headers, m.isMultipart, err = extractPlainText(textproto.MIMEHeader(msg.Header), by); err != nil {
-		return m, err
-	}
-	// Unwrap and parse the payload.
-	if m.payload, issues = payload.Decode(mail.Header(headers), string(by)); m.payload == nil {
+	if by, headers, m.isMultipart, issues = extractPlainText(textproto.MIMEHeader(msg.Header), by); issues != nil {
 		m.payload, _ = payload.Decode(nil, "")
-		return m, issues
+	} else if m.payload, issues = payload.Decode(mail.Header(headers), string(by)); m.payload == nil {
+		m.payload, _ = payload.Decode(nil, "")
 	}
 	// Handle the Subject header.
 	m.subject = subject.DecodePlainSubject(msg.Header.Get("Subject"))

@@ -65,9 +65,9 @@ func (s *PlainSubject) SetNonStandard() {
 func (s *PlainSubject) EncodedSubject() string {
 	if s.Dirty() {
 		if s.msgID == "" && s.handling == "" {
-			s.encoded = s.summary
+			s.encoded = strings.TrimSpace(s.summary)
 		} else {
-			s.encoded = fmt.Sprintf("%s_%s_%s", s.msgID, s.handling, s.summary)
+			s.encoded = strings.TrimSpace(fmt.Sprintf("%s_%s_%s", s.msgID, s.handling, s.summary))
 		}
 		s.MarkClean()
 	}
@@ -84,7 +84,7 @@ func (s *PlainSubject) SetSubjectMessageID(msgID string) (err error) {
 		msgID = trim
 	} else {
 		if msgID, err = messageid.Cleanup(msgID, false); err != nil {
-			err = errors.AddPrefix(err, "On the subject line: ")
+			err = errors.AddPrefix(err, "On the subject line")
 		}
 	}
 	if s.msgID != msgID {
@@ -160,9 +160,9 @@ func (s *PlainSubject) SetSubjectSummary(summary string) (err error) {
 
 // Clone creates a copy of the subject.
 func (s *PlainSubject) Clone() Subject {
-	ns, _ := NewPlainSubject(s.SubjectMessageID(), s.SubjectHandling(), s.SubjectSummary())
-	ns.nonstd = s.nonstd
-	return ns
+	var ns = *s
+	ns.Tracker = cachetrack.Tracker{}
+	return &ns
 }
 
 func (s *PlainSubject) Fields() iter.Seq[msgifc.Field] {
@@ -203,6 +203,7 @@ var subjectFields = []msgifc.Field{
 			}
 			return field.ValidateMessageID(m, f, vf)
 		}).
+		CompareFunc(field.CompareNone).
 		MakeField(),
 	field.NewField("", "Handling").
 		Common(field.CSubjectHandling).
@@ -226,6 +227,7 @@ var subjectFields = []msgifc.Field{
 				return errors.NewF("The handling order on the subject line (%q) is not one of the standard handling order codes (I, P, or R).", h)
 			}
 		}).
+		CompareFunc(field.CompareExact).
 		MakeField(),
 	field.NewField("", "Message Summary").
 		Common(field.CSubjectSummary).
@@ -241,6 +243,7 @@ var subjectFields = []msgifc.Field{
 			}
 			return nil
 		}).
+		CompareFunc(field.CompareText).
 		MakeField(),
 }
 

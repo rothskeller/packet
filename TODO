@@ -6,6 +6,6 @@ Better error reporting in UI (panics, lack of response from server, bad data
   from Outpost, etc.)
 
 PDF support for Unicode
-Update wppsvr, packet-ex
+Update packet-ex
 Incident archive
 Field comparisons

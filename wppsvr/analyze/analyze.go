@@ -53,8 +53,9 @@ func Analyze(st astore, session *store.Session, bbs, raw string) *Analysis {
 	sum = sha1.Sum([]byte(raw))
 	a.sm.Hash = hex.EncodeToString(sum[:])
 	// Log receipt of the message.
-	if a.msg, err = message.NewJustReceivedMessage(raw, bbs, ""); err != nil {
+	if a.msg, err = message.NewJustReceivedMessage(raw, bbs, ""); a.msg == nil {
 		log.Printf("Received at %s:%s: [UNPARSEABLE with hash %s]", session.CallSign, bbs, a.sm.Hash)
+		log.Printf("=> ERROR %s", err)
 	} else {
 		log.Printf("Received at %s:%s: from %q subject %q", session.CallSign, bbs, a.msg.ReturnAddr(), a.msg.Subject().EncodedSubject())
 		a.sm.DeliveryTime = a.msg.Date()

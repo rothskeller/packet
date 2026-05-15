@@ -4,6 +4,7 @@ import (
 	"slices"
 
 	"github.com/rothskeller/packet/message/field"
+	"k8s.io/apimachinery/pkg/util/sets"
 )
 
 // Compare compares the actual message to the expected message.  It returns a
@@ -26,6 +27,10 @@ func Compare(exp, act Message) (score, outOf int, fields []*field.ComparedField)
 	for expf := range exp.Fields() {
 		var actf field.Field
 
+		// Some common fields are never compared.
+		if neverCompare.Has(expf.Common()) {
+			continue
+		}
 		// If the expected field is a common one, look for the same
 		// common field in the actual.
 		if expf.Common() != "" {
@@ -67,3 +72,20 @@ func Compare(exp, act Message) (score, outOf int, fields []*field.ComparedField)
 	}
 	return score, outOf, fields
 }
+
+var neverCompare = sets.New(
+	field.CDestinationMessageID,
+	field.CHeaderDate,
+	field.CHeaderFrom,
+	field.CHeaderReceived,
+	field.CHeaderTo,
+	field.COperatorCall,
+	field.COperatorDate,
+	field.COperatorMethod,
+	field.COperatorMethodOther,
+	field.COperatorName,
+	field.COperatorTime,
+	field.COriginMessageID,
+	field.CReceiverSender,
+	field.CSubjectMessageID,
+)

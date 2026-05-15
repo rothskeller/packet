@@ -52,4 +52,5 @@ var plainBodyField = field.NewField("", "Body").
 	Required().
 	EditHelp("This is the body of the message.").
 	Multiline().
+	CompareFunc(field.CompareText).
 	MakeField()
