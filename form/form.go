@@ -23,6 +23,7 @@ import (
 	"github.com/rothskeller/packet/message/payload"
 	"github.com/rothskeller/packet/message/subject"
 	"github.com/rothskeller/pdf/v2"
+	"golang.org/x/image/font/gofont/goregular"
 	"golang.org/x/net/html"
 )
 
@@ -58,15 +59,16 @@ func (ft FormType) Name() string { return ft.IndefName }
 // RenderPDF renders the form in PDF format.
 func (ft FormType) RenderPDF(m message.Message, filename, copyname string) (err error) {
 	var (
-		srcFH    fs.File
-		outFH    *os.File
-		src      *pdf.PDF
-		out      *pdf.PDF
-		imp      *pdf.Importer
-		warnings error
-		maxPage  int
-		msgID    string
-		body     = m.Body().(*FormBody)
+		srcFH     fs.File
+		outFH     *os.File
+		src       *pdf.PDF
+		out       *pdf.PDF
+		imp       *pdf.Importer
+		warnings  error
+		maxPage   int
+		msgID     string
+		hasGoFont bool
+		body      = m.Body().(*FormBody)
 	)
 	if ft.PDFFile == "" {
 		return message.RenderPlainPDF(m, filename, copyname)
@@ -149,6 +151,13 @@ func (ft FormType) RenderPDF(m message.Message, filename, copyname string) (err 
 			}
 			// Compute the value to be displayed.
 			value = ff2mf{fd}.Value(m)
+			// Should we load the Go font?
+			if tr, ok := pr.Renderer.(formdef.TextRenderer); ok && tr.Font == "GoRegular" && !hasGoFont {
+				if err := pdf.AddTrueTypeFont(goregular.TTF); err != nil {
+					return err
+				}
+				hasGoFont = true
+			}
 			// Apply the renderer.
 			err = pr.Renderer.Draw(out, value)
 			if errors.As(err, &etr) {

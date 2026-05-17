@@ -272,12 +272,13 @@ func (s *Server) serveGetViewMessage(w http.ResponseWriter, r *http.Request) {
 	// create it.
 	dpdf = filepath.Join(dir, pdf)
 	if _, err := os.Stat(dpdf); os.IsNotExist(err) {
-		if err = msg.Type().RenderPDF(msg, dpdf, ""); err != nil {
+		if err = msg.Type().RenderPDF(msg, dpdf, ""); errors.IsType[message.Warning](err) {
+			slog.Warn("RenderPDF", "dir", dir, "id", ident, "warn", err)
+		} else if err != nil {
 			slog.Error("RenderPDF", "dir", dir, "id", ident, "err", err)
 			ErrPage(w, fmt.Sprintf("Unable to create PDF: %s", err), http.StatusInternalServerError)
 			return
 		}
-
 	} else if err != nil {
 		ErrPage(w, err.Error(), http.StatusInternalServerError)
 	}
@@ -325,8 +326,9 @@ func (s *Server) servePostPrintMessage(w http.ResponseWriter, r *http.Request) {
 	// create it.
 	dpdf = filepath.Join(dir, pdf)
 	if _, err := os.Stat(dpdf); os.IsNotExist(err) {
-		if err = msg.Type().RenderPDF(msg, dpdf, ""); err != nil {
-			slog.Error("RenderPDF", "dir", dir, "id", ident, "err", err)
+		if err = msg.Type().RenderPDF(msg, dpdf, ""); errors.IsType[message.Warning](err) {
+			slog.Warn("RenderPDF", "dir", dir, "id", ident, "warn", err)
+		} else if err != nil {
 			http.Error(w, fmt.Sprintf("Unable to create PDF: %s", err), http.StatusInternalServerError)
 			return
 		}

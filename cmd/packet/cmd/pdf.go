@@ -57,7 +57,10 @@ func cmdPDF(args []string) (err error) {
 	// It's possible that the PDF doesn't exist yet.  If so we need to
 	// create it.
 	if _, err = os.Stat(pdf); os.IsNotExist(err) {
-		if err = msg.Type().RenderPDF(msg, pdf, ""); err != nil {
+		if err = msg.Type().RenderPDF(msg, pdf, ""); errors.IsType[message.Warning](err) {
+			cio.Open().Warn("pdf rendering issue: %s", err)
+			slog.Warn("RenderPDF", "f", pdf, "warn", err)
+		} else if err != nil {
 			slog.Error("RenderPDF", "f", pdf, "err", err)
 			return errors.NewF("Unable to create PDF: %s", err)
 		}

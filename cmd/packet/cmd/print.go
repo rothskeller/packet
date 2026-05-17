@@ -62,7 +62,10 @@ func cmdPrint(args []string) (err error) {
 	// create it.
 	pdf = filepath.Join(dir, pdf)
 	if _, err := os.Stat(pdf); os.IsNotExist(err) {
-		if err = msg.Type().RenderPDF(msg, pdf, ""); err != nil {
+		if err = msg.Type().RenderPDF(msg, pdf, ""); errors.IsType[message.Warning](err) {
+			cio.Open().Warn("pdf rendering issue: %s", err)
+			slog.Warn("RenderPDF", "dir", dir, "id", le.Ident, "warn", err)
+		} else if err != nil {
 			slog.Error("RenderPDF", "dir", dir, "id", le.Ident, "err", err)
 			return errors.NewF("Unable to create PDF: %s", err)
 		}

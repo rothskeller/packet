@@ -23,7 +23,7 @@ func Forms() {
 	os.Chdir("../..")
 	sh.Run(mg.GoCmd(), "run", "./cmd/sign-forms", "SCCoPIFO", "SCCoPIFO.zip")
 	os.Remove("SCCoPIFO.zip")
-	sh.Run("scp", "SCCoPIFO.forms", "sccares:www/www/form-bundles/4.0/SCCoPIFO.forms")
+	sh.Run("scp", "SCCoPIFO.forms", "sccares:www/www/form-bundles/4.0.9/SCCoPIFO.forms")
 }
 
 func IncidentHTML() {

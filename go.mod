@@ -1,6 +1,6 @@
 module github.com/rothskeller/packet
 
-go 1.26
+go 1.26.0
 
 require (
 	github.com/fsnotify/fsnotify v1.9.0
@@ -10,6 +10,7 @@ require (
 	github.com/spf13/pflag v1.0.9
 	github.com/tdewolff/minify/v2 v2.24.8
 	go.bug.st/serial v1.6.4
+	golang.org/x/image v0.40.0
 	golang.org/x/net v0.43.0
 	golang.org/x/sys v0.41.0
 	golang.org/x/term v0.40.0
@@ -27,7 +28,7 @@ require (
 	github.com/remyoudompheng/bigfft v0.0.0-20230129092748-24d4a6f8daec // indirect
 	github.com/tdewolff/parse/v2 v2.8.5 // indirect
 	golang.org/x/exp v0.0.0-20250408133849-7e4ce0ab07d0 // indirect
-	golang.org/x/text v0.29.0 // indirect
+	golang.org/x/text v0.37.0 // indirect
 	modernc.org/libc v1.65.7 // indirect
 	modernc.org/mathutil v1.7.1 // indirect
 	modernc.org/memory v1.11.0 // indirect
