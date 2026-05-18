@@ -7,22 +7,25 @@ import (
 
 	"github.com/rothskeller/packet/message/field"
 	"github.com/rothskeller/pdf/v2"
+	"golang.org/x/image/font/gofont/gobold"
+	"golang.org/x/image/font/gofont/gomono"
+	"golang.org/x/image/font/gofont/goregular"
 )
 
 // RenderPlainPDF creates a PDF representation of a message as plain text.
 func RenderPlainPDF(m Message, filename, copyname string) (err error) {
 	const (
 		margin              = 48
-		headingFont         = "Helvetica-Bold"
+		headingFont         = "Go-Bold"
 		headingFontSize     = 14
-		metadataFont        = "Helvetica"
+		metadataFont        = "GoRegular"
 		metadataFontSize    = 12
 		metadataLineSpacing = 14
-		metadataLabelFont   = "Helvetica-Bold"
+		metadataLabelFont   = "Go-Bold"
 		metadataLabelWidth  = 60
-		bodyFont            = "Courier"
+		bodyFont            = "GoMono"
 		bodyFontSize        = 10.5 // allows 80 columns to fit
-		footerFont          = "Helvetica"
+		footerFont          = "GoRegular"
 		footerFontSize      = 12
 		timestampFormat     = "Monday, January 2, 2006 at 15:04:05"
 	)
@@ -43,6 +46,9 @@ func RenderPlainPDF(m Message, filename, copyname string) (err error) {
 		return err
 	}
 	ph = pdf.New(fh)
+	pdf.AddTrueTypeFont(goregular.TTF)
+	pdf.AddTrueTypeFont(gomono.TTF)
+	pdf.AddTrueTypeFont(gobold.TTF)
 	ph.Info["Title"] = m.Subject().EncodedSubject()
 	ph.Info["Producer"] = "https://github.com/rothskeller/packet"
 	ph.AddPage(pdf.USLetterPortrait)
@@ -142,7 +148,7 @@ func RenderPlainPDF(m Message, filename, copyname string) (err error) {
 // a copy name, and the page number.
 func RenderPDFFooters(out *pdf.PDF, msgID, copyname string) (err error) {
 	const (
-		footerFont     = "Helvetica"
+		footerFont     = "GoRegular"
 		footerFontSize = 12
 	)
 	var (
