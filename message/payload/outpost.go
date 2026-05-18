@@ -17,19 +17,20 @@ import (
 // OutpostPayload is a message payload interchangeable with Outpost.
 type OutpostPayload struct {
 	cachetrack.Tracker
-	body      body.Body
-	urgent    bool
-	requestDR bool
-	requestRR bool
-	allowLong bool
-	bbsRoutes string
+	body          body.Body
+	urgent        bool
+	requestDR     bool
+	requestRR     bool
+	allowLong     bool
+	allowNonASCII bool
+	bbsRoutes     string
 }
 
 var _ Payload = (*OutpostPayload)(nil)
 
 // NewOutpostPayload creates a new Payload containing the supplied body.
-func NewOutpostPayload(body body.Body, allowLong bool) *OutpostPayload {
-	p := &OutpostPayload{body: body, allowLong: allowLong}
+func NewOutpostPayload(body body.Body, allowLong, allowNonASCII bool) *OutpostPayload {
+	p := &OutpostPayload{body: body, allowLong: allowLong, allowNonASCII: allowNonASCII}
 	if body.Dirty() {
 		p.MarkDirty("payload.OutpostPayload.Body")
 	}
@@ -87,9 +88,13 @@ func (p *OutpostPayload) BBSRoutes() string { return p.bbsRoutes }
 // added by JNOS.
 func (p *OutpostPayload) SetAllowLong() { p.allowLong = true }
 
+// SetAllowNonASCII sets the allow-non-ASCII flag on the payload.  This prevents
+// base64 encoding just because the body contains non-ASCII characters.
+func (p *OutpostPayload) SetAllowNonASCII() { p.allowNonASCII = true }
+
 // Clone returns a copy of the Payload.
 func (p *OutpostPayload) Clone() Payload {
-	np := NewOutpostPayload(p.Body().Clone(), p.allowLong)
+	np := NewOutpostPayload(p.Body().Clone(), p.allowLong, p.allowNonASCII)
 	np.SetRequestDR(p.RequestDR())
 	np.SetRequestRR(p.RequestRR())
 	np.SetUrgent(p.Urgent())
@@ -278,7 +283,7 @@ func (p *OutpostPayload) Encode() (payload string) {
 	}
 	p.MarkClean()
 	// Next, encode the body.
-	if !isJNOSSafe(payload, p.allowLong) {
+	if !isJNOSSafe(payload, p.allowLong, p.allowNonASCII) {
 		payload = "!B64!" + lineBreakEvery76(base64.StdEncoding.EncodeToString([]byte(payload)))
 	}
 	// If we have BBS routes, add them on top.
@@ -291,8 +296,8 @@ func (p *OutpostPayload) Encode() (payload string) {
 // isJNOSSafe returns whether the body can be sent to JNOS safely.  JNOS does
 // not handle control characters, isn't guaranteed to handle high-bit
 // characters, and silently breaks lines greater than 126 bytes.
-func isJNOSSafe(body string, allowLong bool) bool {
-	if strings.ContainsFunc(body, isNonASCII) {
+func isJNOSSafe(body string, allowLong, allowNonASCII bool) bool {
+	if !allowNonASCII && strings.ContainsFunc(body, isNonASCII) {
 		return false
 	}
 	if !allowLong && exceedsLineLength(body, 126, false) {

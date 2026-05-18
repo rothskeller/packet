@@ -46,7 +46,7 @@ func NewDeliveryReceipt(rmFrom, rmTo, rmSubject, lmi string, deliveryTime time.T
 	if body, err = newDeliveryReceiptBody(rmTo, rmSubject, lmi, deliveryTime, extraText); err != nil {
 		return nil, err
 	}
-	m = message.NewDraftMessage(DeliveryReceipt, subj, payload.NewOutpostPayload(body, false), false)
+	m = message.NewDraftMessage(DeliveryReceipt, subj, payload.NewOutpostPayload(body, false, false), false)
 	m.SetTo(rmFrom)
 	m.SetReadyToSend(true)
 	return m, nil

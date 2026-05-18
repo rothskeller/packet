@@ -60,7 +60,7 @@ func Build() error {
 func A315() error {
 	mg.Deps(IncidentHTML)
 	if _, err := os.Stat("/Volumes/str-a315"); err != nil {
-		if err = sh.Run("osascript", "-e", `mount server "smb://str-a315/c"`); err != nil {
+		if err = sh.Run("osascript", "-e", `mount volume "smb://str-a315/c"`); err != nil {
 			return err
 		}
 	}
