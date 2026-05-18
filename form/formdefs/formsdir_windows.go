@@ -11,5 +11,5 @@ import (
 // FormsDir returns the pathname of the directory that should contain the local
 // forms cache.
 func FormsDir() string {
-	return filepath.Join(`C:\PackItForms\Forms`, pifover.PIFOVersion)
+	return filepath.Join(`C:\PackItForms\Forms`, pifover.FormsDirVersion)
 }

@@ -18,4 +18,5 @@ const (
 	PIFOVersion      = "4.0"
 	PIFOVersionMajor = 4
 	PIFOVersionMinor = 0
+	FormsDirVersion  = "4.0.9"
 )

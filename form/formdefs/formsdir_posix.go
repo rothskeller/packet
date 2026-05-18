@@ -18,7 +18,7 @@ func FormsDir() string {
 	if home == "" {
 		return ""
 	}
-	return filepath.Join(home, ".local", "share", "packet", pifover.PIFOVersion)
+	return filepath.Join(home, ".local", "share", "packet", pifover.FormsDirVersion)
 }
 
 // only applies to Windows
