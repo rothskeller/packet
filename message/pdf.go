@@ -20,7 +20,7 @@ func RenderPlainPDF(m Message, filename, copyname string) (err error) {
 		headingFontSize     = 14
 		metadataFont        = "GoRegular"
 		metadataFontSize    = 12
-		metadataLineSpacing = 14
+		metadataLineSpacing = 6
 		metadataLabelFont   = "Go-Bold"
 		metadataLabelWidth  = 60
 		bodyFont            = "GoMono"
@@ -76,34 +76,34 @@ func RenderPlainPDF(m Message, filename, copyname string) (err error) {
 	if from != "" {
 		(pdf.Text{String: "From", Rectangle: avail, Font: metadataLabelFont, FontSize: metadataFontSize, Align: "lT"}).Draw(ph)
 		avail.LLX += metadataLabelWidth // temporarily
-		(pdf.Text{String: from, Rectangle: avail, Font: metadataFont, FontSize: metadataFontSize, Align: "lT"}).Draw(ph)
-		avail.LLX, avail.URY = avail.LLX-metadataLabelWidth, avail.URY-metadataLineSpacing
+		c, _ := (pdf.Text{String: from, Rectangle: avail, Font: metadataFont, FontSize: metadataFontSize, Align: "lT", Wrap: true}).DrawRect(ph)
+		avail.LLX, avail.URY = avail.LLX-metadataLabelWidth, c.LLY-metadataLineSpacing
 	}
 	if to != "" {
 		(pdf.Text{String: "To", Rectangle: avail, Font: metadataLabelFont, FontSize: metadataFontSize, Align: "lT"}).Draw(ph)
 		avail.LLX += metadataLabelWidth // temporarily
-		(pdf.Text{String: m.To(), Rectangle: avail, Font: metadataFont, FontSize: metadataFontSize, Align: "lT"}).Draw(ph)
-		avail.LLX, avail.URY = avail.LLX-metadataLabelWidth, avail.URY-metadataLineSpacing
+		c, _ := (pdf.Text{String: m.To(), Rectangle: avail, Font: metadataFont, FontSize: metadataFontSize, Align: "lT", Wrap: true}).DrawRect(ph)
+		avail.LLX, avail.URY = avail.LLX-metadataLabelWidth, c.LLY-metadataLineSpacing
 	}
 	if sub := m.Subject().EncodedSubject(); sub != "" {
 		(pdf.Text{String: "Subject", Rectangle: avail, Font: metadataLabelFont, FontSize: metadataFontSize, Align: "lT"}).Draw(ph)
 		avail.LLX += metadataLabelWidth // temporarily
-		(pdf.Text{String: sub, Rectangle: avail, Font: metadataFont, FontSize: metadataFontSize, Align: "lT"}).Draw(ph)
-		avail.LLX, avail.URY = avail.LLX-metadataLabelWidth, avail.URY-metadataLineSpacing
+		c, _ := (pdf.Text{String: sub, Rectangle: avail, Font: metadataFont, FontSize: metadataFontSize, Align: "lT", Wrap: true}).DrawRect(ph)
+		avail.LLX, avail.URY = avail.LLX-metadataLabelWidth, c.LLY-metadataLineSpacing
 	}
 	if date != "" {
 		(pdf.Text{String: "Date", Rectangle: avail, Font: metadataLabelFont, FontSize: metadataFontSize, Align: "lT"}).Draw(ph)
 		avail.LLX += metadataLabelWidth // temporarily
-		(pdf.Text{String: date, Rectangle: avail, Font: metadataFont, FontSize: metadataFontSize, Align: "lT"}).Draw(ph)
-		avail.LLX, avail.URY = avail.LLX-metadataLabelWidth, avail.URY-metadataLineSpacing
+		c, _ := (pdf.Text{String: date, Rectangle: avail, Font: metadataFont, FontSize: metadataFontSize, Align: "lT", Wrap: true}).DrawRect(ph)
+		avail.LLX, avail.URY = avail.LLX-metadataLabelWidth, c.LLY-metadataLineSpacing
 	}
 	if rcvd != "" {
 		(pdf.Text{String: "Received", Rectangle: avail, Font: metadataLabelFont, FontSize: metadataFontSize, Align: "lT"}).Draw(ph)
 		avail.LLX += metadataLabelWidth // temporarily
-		(pdf.Text{String: rcvd, Rectangle: avail, Font: metadataFont, FontSize: metadataFontSize, Align: "lT"}).Draw(ph)
-		avail.LLX, avail.URY = avail.LLX-metadataLabelWidth, avail.URY-metadataLineSpacing
+		c, _ := (pdf.Text{String: rcvd, Rectangle: avail, Font: metadataFont, FontSize: metadataFontSize, Align: "lT", Wrap: true}).DrawRect(ph)
+		avail.LLX, avail.URY = avail.LLX-metadataLabelWidth, c.LLY-metadataLineSpacing
 	}
-	avail.URY -= metadataLineSpacing
+	avail.URY -= metadataFontSize + metadataLineSpacing
 	body = m.Body().EncodedBody()
 	body = strings.ReplaceAll(body, "\r", "")
 	for body != "" {
