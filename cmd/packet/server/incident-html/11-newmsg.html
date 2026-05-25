@@ -3,26 +3,24 @@
 
 <head>
   <script> // New Message Dialog
-    const messageTypeData = '{{MTYPES}}'
     const messageTypes = []
     let keyPrefix = ''
     let newmsgwin = 1
     function startNewMessage(tag) {
-      const params = new URLSearchParams({dir: document.body.dataset.dir, tag: tag})
+      const params = new URLSearchParams({dir: incident.dir, tag: tag})
       window.open('/new-message?' + params.toString(), `new${newmsgwin++}`)
       document.getElementById('nmdlg').close()
     }
     function setupNewMessageDialog() {
       const listDiv = document.getElementById('nmtypes')
       const listItemTemplate = document.getElementById('nmtypetmpl')
-      messageTypeData.split(';').forEach(triplet => {
-        const [tag, key, name] = triplet.split(':', 3)
+      incident.msgtypes.forEach(mtype => {
         const tdiv = document.importNode(listItemTemplate.content, true).firstElementChild
-        tdiv.dataset.tag = tag
-        tdiv.dataset.key = key
-        tdiv.querySelector('.nmkey').textContent = key
-        tdiv.querySelector('.nmname').textContent = name
-        tdiv.addEventListener('click', () => {startNewMessage(tag)})
+        tdiv.dataset.tag = mtype.tag
+        tdiv.dataset.key = mtype.key
+        tdiv.querySelector('.nmkey').textContent = mtype.key
+        tdiv.querySelector('.nmname').textContent = mtype.name
+        tdiv.addEventListener('click', () => {startNewMessage(mtype.tag)})
         listDiv.appendChild(tdiv)
         messageTypes.push(tdiv)
       })

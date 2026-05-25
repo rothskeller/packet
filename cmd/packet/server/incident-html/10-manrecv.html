@@ -26,8 +26,10 @@
       })
       document.getElementById('mrform').addEventListener('submit', async evt => {
         evt.preventDefault()
+        mrform.dir.value = incident.dir
+        mrform.mrbbs.value = incident.bbs
         const data = new FormData(evt.target)
-        const resp = await fetch2('/manual-receive', {method: 'POST', body: data})
+        const resp = await efetch('/manual-receive', {method: 'POST', body: data})
         if (resp.ok) {
           document.getElementById('mrdlg').close()
           childAction(resp.headers.get('X-Packet-Action'))
@@ -40,6 +42,7 @@
     function openManualReceiveDialog() {
       document.getElementById('mrmsg').value = ''
       document.getElementById('mrerr').textContent = ''
+      document.getElementById('mrdr').checked = incident.genDRs
       document.getElementById('mrdlg').showModal()
     }
   </script>
@@ -93,8 +96,8 @@
 <body>
   <dialog id=mrdlg>
     <form id=mrform>
-      <input type=hidden name=dir value="{{DIR}}">
-      <input type=hidden name=mrbbs value="{{BBS}}">
+      <input type=hidden name=dir>
+      <input type=hidden name=mrbbs>
       <h1>Manual Receive Message</h1>
       <p>
         Paste the received message, including the From, Subject, and other headers.
@@ -107,7 +110,7 @@
       <input type=file id=mrfile style="display:none;">
       <div id=mrerr></div>
       <div id=mrsubrow>
-        <label><input id=mrdr name=mrdr type=checkbox checked={{GENDRS}}> Generate delivery receipt</label>
+        <label><input id=mrdr name=mrdr type=checkbox> Generate delivery receipt</label>
         <div id=mrbuttons>
           <button id=mrcan type=button>Cancel</button>
           <input id=mrsub type=submit value="Receive Message">

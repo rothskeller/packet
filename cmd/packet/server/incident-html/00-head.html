@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>Packet Messaging</title>
+  <style>
+    :root {
+      --border-width: 1px;
+    }
+
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+    }
+
+    :root,
+    button,
+    input,
+    select,
+    textarea {
+      font-family: sans-serif;
+      font-size: 1em;
+    }
+
+    button,
+    input,
+    select,
+    textarea {
+      border: var(--border-width) solid #ccc;
+    }
+
+    body {
+      margin: 0;
+      display: grid;
+      grid: max-content max-content 1fr max-content max-content / auto;
+      height: 100vh;
+    }
+  </style>
+  <script>
+    // Retrieve the incident data provided by the server when launching this
+    // file.  Keys are bbs, dir, genDRs, ident, manual, msgtypes[].{tag, key,
+    // name}, name, serverPrint, version, and viewFlags.{full, large, receipts}.
+    const incidentData = `{{INCIDENTDATA}}`
+    const incident = JSON.parse(incidentData)
+
+    // efetch is like fetch, except that any errors result in a fake 500 error
+    // return.
+    function efetch(a, b) {
+      return fetch(a, b).catch(e => {
+        return Promise.resolve({
+          ok: false,
+          status: 500,
+          statusText: `PackItForms Server Error`,
+          text: () => {
+            return Promise.resolve(`This window was unable to communicate with the PackItForms server.  The error was "${e.toString()}".  If it has been a while since last use, the server may have stopped running due to inactivity.  Close this window, start PackItForms again, and retry your operation in a new window.`)
+          },
+        })
+      })
+    }
+  </script>
+</head>
+
+</html>
