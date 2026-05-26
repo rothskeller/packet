@@ -355,6 +355,7 @@ func (s *Server) registerHandlers() {
 	s.mux.HandleFunc("GET /Go-Regular.woff2", s.serveGetGoRegular)
 	s.mux.HandleFunc("GET /Go-Bold.woff2", s.serveGetGoBold)
 	s.mux.HandleFunc("GET /Go-Italic.woff2", s.serveGetGoItalic)
+	s.mux.HandleFunc("GET /Go-Mono.woff2", s.serveGetGoMono)
 	s.mux.HandleFunc("POST /connect-bbs", s.servePostConnectBBS)
 	s.mux.HandleFunc("POST /connect-abort", s.servePostConnectAbort)
 	s.mux.HandleFunc("GET /connect-progress", s.serveGetConnectProgress)
@@ -408,6 +409,14 @@ var goItalicWOFF2 []byte
 func (s *Server) serveGetGoItalic(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "font/woff2")
 	w.Write(goItalicWOFF2)
+}
+
+//go:embed Go-Mono.woff2
+var goMonoWOFF2 []byte
+
+func (s *Server) serveGetGoMono(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "font/woff2")
+	w.Write(goMonoWOFF2)
 }
 
 // serveIncident is a helper function for handlers that take a dir= parameter

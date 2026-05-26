@@ -32,6 +32,13 @@
         url("/Go-Italic.woff2") format("woff2");
     }
 
+    @font-face {
+      font-family: Go-Mono;
+      src: local("Go Mono"),
+        local("Go-Mono"),
+        url("/Go-Mono.woff2") format("woff2");
+    }
+
     :root {
       --border-width: 1px;
       font-family: Go, sans-serif;
@@ -46,6 +53,10 @@
 
     body {
       margin: 0 0.75rem 1.5rem;
+    }
+
+    code {
+      font-family: Go-Mono, monospace;
     }
 
     #topbar {
@@ -135,12 +146,12 @@
       It is the successor to PacFORMS (by Phil Henderson KF6ZFQ), PackItForms
       (by John Kristian W6JMK), and packet shell (by Steve Roth KC6RSC).
       The Packet Messenger software operates in two modes: as an Outpost
-      add-on, and as standalone packet messaging software.
+      add-on and as standalone packet messaging software.
     </p>
     <p>
       Most Santa Clara County ARES/RACES packet operations and operators use the
       <a target=_blank href=https://www.scc-ares-races.org/operations/equipment/packet/software/outpost>
-        Outpost Packet logentry Manager
+        Outpost Packet Manager
       </a>
       software, which is the county standard packet message manager.
       In these environments, the SCCo Packet Messenger acts as an add-on to Outpost,
@@ -245,7 +256,7 @@
       incident you are working on.
     </p>
     <p>
-      The grahical interface maintains no state information in your browser.
+      The graphical interface maintains no state information in your browser.
       You may close your browser at any time and start the graphical interface
       again at a later time to resume where you left off. (However, if you are
       editing a message in a browser window, any unsaved changes to the message
@@ -257,14 +268,9 @@
       the <code>packet</code> command. If you invoke the <code>packet</code>
       executable with a command on the command line, it will execute that single
       command and stop. If you invoke it without any arguments, it will open a
-      shell in which you can issue multiple packet commands. The shell
-      continues until you run the <code>quit</code> command.
-    </p>
-    <p>
-      Packet commands are fully spelled out in this manual, but any unambiguous
-      abbreviation of them is accepted (e.g., <code>q</code> for
-      <code>quit</code>). To get help on any command, use the <code>help</code>
-      command.
+      shell in which you can issue multiple packet commands. The shell continues
+      until you run the <code>quit</code> (or <code>q</code>) command. To get
+      help on any command, use the <code>help</code> command.
     </p>
     <p>
       Some packet commands produce different output in "scripted mode", which is
@@ -330,11 +336,11 @@
             a type you specify) through a serial port (that you specify).
           </li>
           <li>
-            Telnet connection. The SCCo Packet Messenger will connect to the
-            BBS (that you specify by name, hostname or IP address, and port
-            number), logging in with your tactical or FCC call sign and the
-            password you specify. (Note: SCCo ARES/RACES issues passwords for
-            telnet access only to network maintenance staff and others with
+            Telnet connection. The SCCo Packet Messenger will connect to the BBS
+            (that you specify by name, hostname or IP address, and port number),
+            logging in with your tactical or FCC call sign and the password you
+            specify. (Note: SCCo ARES/RACES issues passwords for telnet access
+            to the W*XSC BBSes only to network maintenance staff and others with
             demonstrated need.)
           </li>
         </ul>
@@ -679,9 +685,7 @@
         <b>Graphical Interface:</b> Press "R" or use the Message →
         Manual Receive menu item to bring up the Manual Receive dialog.
         Paste the received message into the box, or use the button to upload a
-        file containing it. (If your clipboard contains something that looks
-        like a message and your browser is configured to allow it, it will be
-        pasted into the box automatically.)
+        file containing it.
       </li>
       <li>
         <b>Command Line Interface:</b> Run the <code>manual receive</code>
@@ -892,7 +896,7 @@
     </p>
     <p>
       The forms installed with it are copyrighted by Santa Clara County
-      ARES®/RACES. Their source code is at
+      ARES<sup>®</sup>/RACES. Their source code is at
       <a href=https://github.com/scc-ares-races/forms target=_blank>github.com/scc-ares-races/forms</a>.
     </p>
     <p>
