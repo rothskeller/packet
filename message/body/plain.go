@@ -2,6 +2,7 @@ package body
 
 import (
 	"iter"
+	"strings"
 
 	"github.com/rothskeller/packet/message/cachetrack"
 	"github.com/rothskeller/packet/message/field"
@@ -19,7 +20,7 @@ var _ Body = (*PlainBody)(nil)
 // NewPlainBody creates a new plain text message body with the specified
 // contents.
 func NewPlainBody(body string) (b *PlainBody) {
-	return &PlainBody{body: body}
+	return &PlainBody{body: strings.ReplaceAll(body, "\r", "")}
 }
 
 // EncodedBody returns the message body.
@@ -27,6 +28,7 @@ func (b *PlainBody) EncodedBody() string { return b.body }
 
 // SetBody sets the plain text message body.
 func (b *PlainBody) SetBody(body string) {
+	body = strings.ReplaceAll(body, "\r", "")
 	if b.body != body {
 		b.body = body
 		b.MarkDirty("body.PlainBody.Body")
