@@ -4,9 +4,37 @@
 <head>
   <title>SCCo Packet Software</title>
   <style>
+    @font-face {
+      font-family: Go;
+      font-style: normal;
+      font-weight: 1 500;
+      src: local("Go"),
+        local("Go-Regular"),
+        local("Go Regular"),
+        url("/Go-Regular.woff2") format("woff2");
+    }
+
+    @font-face {
+      font-family: Go;
+      font-style: normal;
+      font-weight: 600 1000;
+      src: local("Go Bold"),
+        local("Go-Bold"),
+        url("/Go-Bold.woff2") format("woff2");
+    }
+
+    @font-face {
+      font-family: Go;
+      font-style: italic;
+      font-weight: 1 500;
+      src: local("Go Italic"),
+        local("Go-Italic"),
+        url("/Go-Italic.woff2") format("woff2");
+    }
+
     :root {
       --border-width: 1px;
-      font-family: sans-serif;
+      font-family: Go, sans-serif;
       font-size: 1em;
     }
 
@@ -448,7 +476,7 @@
     <p>
       To generate the ICS-309 in PDF format, use the Incident → Generate ICS-309
       menu item in the graphical interface, or the <code>ics309</code> command
-      in the command line interface.  The PDF will be created in the file
+      in the command line interface. The PDF will be created in the file
       "ics309.pdf" in the incident folder, and will be shown in the system
       default PDF viewer.
     </p>
@@ -560,9 +588,9 @@
         log entry and press "S" or use the Manual Send menu item in the Message
         or right-click menu. The resulting dialog will show you the send
         command, and has a button to copy it to your system clipboard so that
-        you can paste it into a terminal emulator.   (It will copy it to your
+        you can paste it into a terminal emulator. (It will copy it to your
         clipboard automatically, without your needing to press the button, if
-        your browser is configured to allow that.)  When finished, use the Mark
+        your browser is configured to allow that.) When finished, use the Mark
         Message as Sent button to tell the packet software that the message has
         been sent.
       </li>
@@ -651,7 +679,7 @@
         <b>Graphical Interface:</b> Press "R" or use the Message →
         Manual Receive menu item to bring up the Manual Receive dialog.
         Paste the received message into the box, or use the button to upload a
-        file containing it.  (If your clipboard contains something that looks
+        file containing it. (If your clipboard contains something that looks
         like a message and your browser is configured to allow it, it will be
         pasted into the box automatically.)
       </li>
@@ -858,13 +886,13 @@
     <h2 id=legal>Copyrights, Licenses, Source Code, etc.</h2>
     <p>
       The current iteration of the SCCo Packet software is Copyright © 2026
-      Steven Roth KC6RSC.  It is available under a BSD 3-clause license, visible
+      Steven Roth KC6RSC. It is available under a BSD 3-clause license, visible
       in its source code at <a href=https://github.com/rothskeller/packet
-      target=_blank>github.com/rothskeller/packet</a>.
+        target=_blank>github.com/rothskeller/packet</a>.
     </p>
     <p>
       The forms installed with it are copyrighted by Santa Clara County
-      ARES®/RACES.  Their source code is at
+      ARES®/RACES. Their source code is at
       <a href=https://github.com/scc-ares-races/forms target=_blank>github.com/scc-ares-races/forms</a>.
     </p>
     <p>

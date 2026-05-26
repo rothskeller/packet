@@ -5,10 +5,18 @@
   <title>Open/Create Incident - SCCo Packet</title>
   <script>
     window.addEventListener('load', function () {
-      document.getElementById('subdirs').addEventListener('dblclick', function () {this.form.submit()})
+      document.getElementById('subdirs').addEventListener('dblclick', function () { this.form.submit() })
     })
   </script>
   <style>
+    @font-face {
+      font-family: Go;
+      src: local("Go"),
+        local("Go-Regular"),
+        local("Go Regular"),
+        url("/Go-Regular.woff2") format("woff2");
+    }
+
     *,
     *::before,
     *::after {
@@ -18,7 +26,7 @@
     :root,
     input,
     select {
-      font-family: sans-serif;
+      font-family: Go, sans-serif;
       font-size: 1rem;
     }
 

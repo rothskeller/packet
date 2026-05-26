@@ -352,6 +352,9 @@ func (s *Server) registerHandlers() {
 	s.mux.HandleFunc("GET /manpage.html", s.serveGetManPage)
 	s.mux.HandleFunc("/incident-open", s.serveIncidentOpen)
 	s.mux.HandleFunc("GET /county-seal.svg", s.serveGetCountySeal)
+	s.mux.HandleFunc("GET /Go-Regular.woff2", s.serveGetGoRegular)
+	s.mux.HandleFunc("GET /Go-Bold.woff2", s.serveGetGoBold)
+	s.mux.HandleFunc("GET /Go-Italic.woff2", s.serveGetGoItalic)
 	s.mux.HandleFunc("POST /connect-bbs", s.servePostConnectBBS)
 	s.mux.HandleFunc("POST /connect-abort", s.servePostConnectAbort)
 	s.mux.HandleFunc("GET /connect-progress", s.serveGetConnectProgress)
@@ -381,6 +384,30 @@ var countySealSVG []byte
 func (s *Server) serveGetCountySeal(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "image/svg+xml")
 	w.Write(countySealSVG)
+}
+
+//go:embed Go-Regular.woff2
+var goRegularWOFF2 []byte
+
+func (s *Server) serveGetGoRegular(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "font/woff2")
+	w.Write(goRegularWOFF2)
+}
+
+//go:embed Go-Bold.woff2
+var goBoldWOFF2 []byte
+
+func (s *Server) serveGetGoBold(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "font/woff2")
+	w.Write(goBoldWOFF2)
+}
+
+//go:embed Go-Italic.woff2
+var goItalicWOFF2 []byte
+
+func (s *Server) serveGetGoItalic(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "font/woff2")
+	w.Write(goItalicWOFF2)
 }
 
 // serveIncident is a helper function for handlers that take a dir= parameter

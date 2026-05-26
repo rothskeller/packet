@@ -6,7 +6,7 @@
     function setupReadyConfirmDialog() {
       document.getElementById('rcsub').addEventListener('click', async () => {
         const dlg = document.getElementById('rcdlg')
-        const params = new URLSearchParams({dir: document.body.dataset.dir, id: dlg.dataset.ident, force: 'true'})
+        const params = new URLSearchParams({ dir: document.body.dataset.dir, id: dlg.dataset.ident, force: 'true' })
         if (dlg.dataset.next === 'manual') {
           const resp = await fetch2('/manual-send-command?' + params.toString())
           dlg.close()
@@ -14,7 +14,7 @@
           else openManualSendDialog(dlg.dataset.ident, await resp.text())
         } else {
           params.set('flag', 'Q')
-          const resp = await fetch2('/toggle-flag?' + params.toString(), {method: 'POST'})
+          const resp = await fetch2('/toggle-flag?' + params.toString(), { method: 'POST' })
           dlg.close()
           if (!resp.ok) openErrorDialog('Send Message', await resp.text())
         }
@@ -57,7 +57,6 @@
     #rcwarn {
       max-width: 40rem;
       margin-top: 0.75rem;
-      font-family: 'Courier New', Courier, monospace;
       white-space: pre-wrap;
     }
 
