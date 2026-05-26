@@ -429,7 +429,7 @@ func (c *Conn) Kill(msgnums ...int) (err error) {
 // maybeIdent checks for whether we should send an ident string, and if so, does
 // so.  Errors are ignored.
 func (c *Conn) maybeIdent() {
-	if time.Now().Before(c.nextIdent) {
+	if c.ident == "" || time.Now().Before(c.nextIdent) {
 		return
 	}
 	c.nextIdent = time.Now().Add(c.identEvery)
