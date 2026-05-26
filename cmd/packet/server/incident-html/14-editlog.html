@@ -5,16 +5,16 @@
   <script> // Edit Log Entry Dialog
     function setupEditLogEntryDialog() {
       document.getElementById('eledel').addEventListener('click', async () => {
-        const params = new URLSearchParams({dir: incident.dir, id: document.getElementById('eleid').value})
-        const resp = await efetch('/delete-log-entry?' + params.toString(), {method: 'POST'})
+        const params = new URLSearchParams({dir: document.body.dataset.dir, id: document.getElementById('eleid').value})
+        const resp = await fetch2('/delete-log-entry?' + params.toString(), {method: 'POST'})
         if (resp.ok)
           document.getElementById('eledlg').close()
         else
           document.getElementById('eleerr').textContent = await resp.text()
       })
       document.getElementById('elereset').addEventListener('click', async () => {
-        const params = new URLSearchParams({dir: incident.dir, id: document.getElementById('eleid').value})
-        const resp =await  efetch('/reset-log-entry?' + params.toString(), {method: 'POST'})
+        const params = new URLSearchParams({dir: document.body.dataset.dir, id: document.getElementById('eleid').value})
+        const resp =await  fetch2('/reset-log-entry?' + params.toString(), {method: 'POST'})
         if (resp.ok)
           document.getElementById('eledlg').close()
         else
@@ -24,10 +24,8 @@
         document.getElementById('eledlg').close()
       })
       document.getElementById('elesub').addEventListener('click', async () => {
-        const form = document.getElementById('eleform')
-        eleform.dir.value = incident.dir
-        const fd = new FormData(form)
-        const resp = await efetch('/edit-log-entry', {method: 'POST', body: fd})
+        const fd = new FormData(document.getElementById('eleform'))
+        const resp = await fetch2('/edit-log-entry', {method: 'POST', body: fd})
         if (resp.ok) {
           childAction(resp.headers.get('X-Packet-Action'))
           document.getElementById('eledlg').close()
@@ -177,7 +175,7 @@
     <h1 id=eletitle></h1>
     <div id=eleerr></div>
     <form id=eleform>
-      <input type=hidden name=dir>
+      <input type=hidden name=dir value={{DIR}}>
       <input type=hidden id=eleid name=id>
       <div id=elegrid>
         <div class=elelabel>Log Entry</div>

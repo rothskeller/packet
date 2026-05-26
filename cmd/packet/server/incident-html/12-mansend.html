@@ -14,8 +14,8 @@
         document.getElementById('msdlg').close()
       })
       document.getElementById('mssent').addEventListener('click', async () => {
-        const params = new URLSearchParams({dir: incident.dir, id: document.getElementById('msdlg').dataset.ident})
-        const resp = await efetch('/mark-sent?' + params.toString(), {method: 'POST'})
+        const params = new URLSearchParams({dir: document.body.dataset.dir, id: document.getElementById('msdlg').dataset.ident})
+        const resp = await fetch2('/mark-sent?' + params.toString(), {method: 'POST'})
         document.getElementById('msdlg').close()
         if (!resp.ok) openErrorDialog('Manual Send Error', await resp.text())
       })
@@ -24,8 +24,6 @@
       command = command.replace(/[\r\n]*$/, '') + '\n'
       document.getElementById('mscmd').textContent = command
       document.getElementById('mscopied').textContent = ''
-      document.querySelectorAll('.msident').forEach(elm => { elm.textContent = incident.ident })
-      document.querySelectorAll('.msbbs').forEach(elm => { elm.textContent = incident.bbs })
       navigator.clipboard.writeText(command).
         then(() => { document.getElementById('mscopied').textContent = 'Copied' }).
         catch(() => {})
@@ -96,14 +94,14 @@
     <div id=msinstr>
       <p>To send this message manually, using a terminal emulator to talk to a TNC:
       <ol>
-        <li>Ensure your radio is on the correct frequency for <span class=msbbs></span>. See the
+        <li>Ensure your radio is on the correct frequency for {{BBS}}. See the
           <a href="https://scc-ares-races.org/operations/packet/bbs" target=_blank>SCCo ARES/RACES Packet BBSes</a>
           page for the proper frequencies.
         <li>Ensure your TNC has the county standard settings. See the
           <a href="https://scc-ares-races.org/packet/stc-tnc" target=_blank>Standard TNC Settings</a>
           page for details.
-        <li>Ensure your TNC is identifying as <span class=msident></span>. On most TNCs, this is a <code>MY <span class=msident></span></code> command.
-        <li>Tell your TNC to connect to <span class=msbbs></span>. On most TNCs, this is a <code>C <span class=msbbs></span>-1</code> command.
+        <li>Ensure your TNC is identifying as {{IDENT}}. On most TNCs, this is a <code>MY {{IDENT}}</code> command.
+        <li>Tell your TNC to connect to {{BBS}}. On most TNCs, this is a <code>C {{BBS}}-1</code> command.
         <li>Once connected, copy the message below (using the "Copy" button) and paste it into your terminal emulator.
       </ol>
       <p id=msupsell>Note: if your TNC is a supported type, this software can handle the TNC for

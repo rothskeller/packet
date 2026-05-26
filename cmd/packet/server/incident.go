@@ -27,29 +27,6 @@ import (
 //go:embed incident.html
 var incidentHTML []byte
 
-type incidentData struct {
-	BBS         string        `json:"bbs"`
-	Dir         string        `json:"dir"`
-	GenDRs      bool          `json:"genDRs"`
-	Ident       string        `json:"ident"`
-	Manual      bool          `json:"manual"`
-	MsgTypes    []messageType `json:"msgtypes"`
-	Name        string        `json:"name"`
-	ServerPrint bool          `json:"serverPrint"`
-	Version     string        `json:"version"`
-	ViewFlags   viewFlags     `json:"viewFlags"`
-}
-type messageType struct {
-	Tag  string `json:"tag"`
-	Key  string `json:"key"`
-	Name string `json:"name"`
-}
-type viewFlags struct {
-	Full     bool `json:"full"`
-	Large    bool `json:"large"`
-	Receipts bool `json:"receipts"`
-}
-
 // serveGetIncident handles GET /incident requests.  They will have a dir=
 // parameter specifying the incident directory.
 func (s *Server) serveGetIncident(w http.ResponseWriter, r *http.Request) {
@@ -57,7 +34,6 @@ func (s *Server) serveGetIncident(w http.ResponseWriter, r *http.Request) {
 		dir  string
 		doc  *html.Node
 		err  error
-		data incidentData
 		vars = map[string]string{}
 	)
 	if maybeShowREADME(w, r) {
@@ -69,38 +45,36 @@ func (s *Server) serveGetIncident(w http.ResponseWriter, r *http.Request) {
 	}
 	err = incident.Write(dir, func(i *incident.Incident) error {
 		i.UpdateIncDefaults() // marks incident as recently used
-		data.Dir = dir
-		data.Ident = i.Config.ActiveCall()
-		data.BBS = i.Config.ConnectBBS
+		vars["DIR"] = dir
+		vars["IDENT"] = i.Config.ActiveCall()
+		vars["BBS"] = i.Config.ConnectBBS
 		if i.Config.ConnectType == incident.ConnectNone {
-			data.Manual = true
 			vars["manual"] = "true"
 		}
 		if i.Config.AllowVoice {
 			vars["allowvoice"] = "true"
 		}
 		if i.Config.IncidentName != "" {
-			data.Name = i.Config.IncidentName
+			vars["INCNAME"] = i.Config.IncidentName
 		} else if i.Config.ActivationNum != "" {
-			data.Name = i.Config.ActivationNum
+			vars["INCNAME"] = i.Config.ActivationNum
 		} else {
-			data.Name = dir
+			vars["INCNAME"] = dir
 		}
-		data.GenDRs = !i.Config.NoSendReceipts
-		data.ViewFlags.Full = i.Config.ViewFlags&incident.ViewFull != 0
-		data.ViewFlags.Large = i.Config.ViewFlags&incident.ViewLarge != 0
-		data.ViewFlags.Receipts = i.Config.ViewFlags&incident.ViewReceipts != 0
+		if !i.Config.NoSendReceipts {
+			vars["GENDRS"] = "checked"
+		}
+		vars["VIEWFLAGS"] = i.Config.ViewFlags.String()
 		return nil
 	})
 	if err != nil {
 		ErrPage(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
-	data.Version = packetver.Version
-	data.MsgTypes = newMessageTypeList()
-	data.ServerPrint = osdep.PrintPDFCommand("x") != nil
-	if by, _ := json.Marshal(data); true {
-		vars["INCIDENTDATA"] = string(by)
+	vars["VERSION"] = packetver.Version
+	vars["MTYPES"] = newMessageTypeList()
+	if osdep.PrintPDFCommand("x") != nil {
+		vars["SERVERPRINT"] = "true"
 	}
 	if doc, err = html.Parse(bytes.NewReader(incidentHTML)); err != nil {
 		slog.Error("parse incident HTML", "err", err)
@@ -181,7 +155,7 @@ var titleCaseRE = regexp.MustCompile(`(?:^|[- ])[a-z]`)
 // newMessageTypeList returns a semicolon-separated string of creatable message
 // types.  Each element is a colon-separated string of tag, key, and name in
 // title case.
-func newMessageTypeList() (types []messageType) {
+func newMessageTypeList() string {
 	var list []message.MType
 	for mt := range message.AllTypes() {
 		if _, ok := mt.(message.EditableMType); ok {
@@ -189,13 +163,14 @@ func newMessageTypeList() (types []messageType) {
 		}
 	}
 	slices.SortFunc(list, message.CompareTypes)
+	var data []string
 	for _, mt := range list {
 		emt := mt.(message.EditableMType)
 		_, name, _ := strings.Cut(mt.Name(), " ") // drop "a" or "an"
 		name = titleCaseRE.ReplaceAllStringFunc(name, strings.ToUpper)
-		types = append(types, messageType{Tag: emt.CreateTag(), Key: emt.CreateKey(), Name: name})
+		data = append(data, fmt.Sprintf("%s:%s:%s", emt.CreateTag(), emt.CreateKey(), name))
 	}
-	return types
+	return strings.Join(data, ";")
 }
 
 func (s *Server) servePostViewICS309(w http.ResponseWriter, r *http.Request) {

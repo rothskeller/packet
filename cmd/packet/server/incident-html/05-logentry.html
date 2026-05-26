@@ -3,6 +3,7 @@
 
 <head>
   <script> // LogEntry
+    const myIdent = '{{IDENT}}'
     // A <log-entry> represents a single line in the message log.  It is not
     // the same as a message:  a message can have more than one line if it has
     // multiple recipients, and log entries can exist without an underlying
@@ -113,8 +114,8 @@
             inbound = true
             break
           case 'H':
-            inbound = data.tc === incident.ident || (data.ti && !data.tc)
-            outbound = data.fc === incident.ident || (data.fi && !data.fc)
+            inbound = data.tc === myIdent || (data.ti && !data.tc)
+            outbound = data.fc === myIdent || (data.fi && !data.fc)
             comment = !data.fc && !data.fi && !data.tc && !data.ti
             break
         }

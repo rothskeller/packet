@@ -6,9 +6,9 @@
     let currentSeq = 0
     async function fetchData() {
       while (true) {
-        const params = new URLSearchParams({ dir: incident.dir, seq: currentSeq })
+        const params = new URLSearchParams({ dir: document.body.dataset.dir, seq: currentSeq })
         const url = '/incident/log?' + params.toString()
-        const resp = await efetch(url)
+        const resp = await fetch2(url)
         if (!resp.ok) {
           openErrorDialog('Server Error', (await resp.text()) || resp.statusText)
           return
@@ -27,7 +27,7 @@
       while (true) {
         const params = new URLSearchParams({ dir: dir, seq: connSeq })
         const url = '/connect-progress?' + params.toString()
-        const resp = await efetch(url)
+        const resp = await fetch2(url)
         if (resp.status === 410) {
           window.dispatchEvent(new CustomEvent('conn-progress', { detail: null }))
           return
@@ -42,15 +42,16 @@
       }
     }
     function setViewFlags() {
-      grid.classList.add(incident.viewFlags.full ? 'full' : 'compact')
-      document.getElementById('m-view-compact').setChecked(!incident.viewFlags.full)
-      if (incident.viewFlags.large) {
+      const vf = document.body.dataset.viewFlags
+      grid.classList.add(vf.includes('F') ? 'full' : 'compact')
+      document.getElementById('m-view-compact').setChecked(!vf.includes('F'))
+      if (vf.includes('L')) {
         document.documentElement.style.fontSize = '1.25em'
         document.querySelector('menu-bar').adjustSubmenuPositions()
       }
-      document.getElementById('m-view-large').setChecked(incident.viewFlags.large)
-      grid.showReceipts(incident.viewFlags.receipts)
-      document.getElementById('m-view-receipts').setChecked(incident.viewFlags.receipts)
+      document.getElementById('m-view-large').setChecked(vf.includes('L'))
+      grid.showReceipts(vf.includes('R'))
+      document.getElementById('m-view-receipts').setChecked(vf.includes('R'))
     }
   </script>
   <script> // window.onload
@@ -71,5 +72,5 @@
   </script>
 </head>
 
-<body></body>
+<body data-view-flags=".{{VIEWFLAGS}}"></body>
 </html>
