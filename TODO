@@ -1,12 +1,10 @@
 Make empty space in field boxes be part of <label>
-Debug launch file interactions with MTV form
-  https://www.k6mtv.org/resources/pacforms-update
 Add a View Source or similar command
 Context menu extend upward when near bottom
 Allow sorting of log grid columns
-CRs in plain text messages forcing Base64 encoding
 Suggestion: address book
-Go font for incident page and settings page
+Fav Icon
+Don't remove incident folders in uninstall
 
 Update packet-ex
 Incident archive

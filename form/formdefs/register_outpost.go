@@ -110,8 +110,7 @@ func UpdateOutpostConfiguration(datadir string, remove map[string]bool) (err err
 			return err
 		}
 	}
-	// Update Launch.ini to update the paths to any that are already
-	// mentioned in it.
+	// Update Launch.ini to remove all non-commented lines from it.
 	if err = emptyLaunchINI(iniFName); err != nil {
 		return fmt.Errorf("can't update %s: %s", iniFName, err)
 	}
@@ -169,10 +168,11 @@ func emptyLaunchINI(filename string) (err error) {
 }
 
 // UpdateLaunchLocal modifies or creates the Launch.local file.  The entries in
-// "add" are added, unless there are already entries for them, in which case the
-// existing entries for them are replaced.  The entries in "remove" are removed
-// if they are found.    All remaining entries matching removePath are removed.
-// An error is returned only if the file cannot be read or written.
+// "remove" or matching "removePath" are removed.  Leading and trailing LINE
+// lines are removed.  Any entries in "add" that already exist in the file are
+// updated.  If there are remaining entries in "add", they are added at the end
+// of the file, with a LINE separator before each unless the file was otherwise
+// empty.  An error is returned only if the file cannot be read or written.
 func UpdateLaunchLocal(filename string, add map[string]string, remove map[string]bool, removePath string) (err error) {
 	var (
 		fh       *os.File
@@ -222,11 +222,25 @@ func UpdateLaunchLocal(filename string, add map[string]string, remove map[string
 		}
 		fh.Close()
 	}
-	if len(lines) == 0 {
-		lines = append(lines, "") // file should start with blank line
+	// Ensure the file starts with a single blank line and no LINE entries.
+	// However, don't set the modified flag; we won't write a new file based
+	// only on that change.
+	for len(lines) != 0 && (lines[0] == "" || lines[0] == "LINE") {
+		lines = lines[1:]
 	}
+	lines = append([]string{""}, lines...)
+	// Ensure the file has no trailing LINE entries or blank lines (other
+	// than the initial blank line).
+	for len(lines) > 1 && (lines[len(lines)-1] == "" || lines[len(lines)-1] == "LINE") {
+		lines = lines[:len(lines)-1]
+	}
+	// Add any remaining "add" entries to the file.  Put a LINE entry before
+	// each, unless the file has only a blank line.
 	for addonName, launchfile := range add {
 		slog.Info("added include to launch file", "f", filename, "include", launchfile)
+		if len(lines) != 1 {
+			lines = append(lines, "LINE")
+		}
 		lines = append(lines, "INCLUDE "+launchfile)
 		modified = true
 		delete(add, addonName)
