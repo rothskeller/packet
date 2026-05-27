@@ -172,7 +172,10 @@ func emptyLaunchINI(filename string) (err error) {
 // lines are removed.  Any entries in "add" that already exist in the file are
 // updated.  If there are remaining entries in "add", they are added at the end
 // of the file, with a LINE separator before each unless the file was otherwise
-// empty.  An error is returned only if the file cannot be read or written.
+// empty.  The file is always left starting and ending with a blank line (to
+// work around a legacy Outpost bug).  If the file would otherwise be left
+// empty, a single LINE entry is included (to work around another Outpost bug).
+// An error is returned only if the file cannot be read or written.
 func UpdateLaunchLocal(filename string, add map[string]string, remove map[string]bool, removePath string) (err error) {
 	var (
 		fh       *os.File
@@ -249,9 +252,12 @@ func UpdateLaunchLocal(filename string, add map[string]string, remove map[string
 		slog.Debug("no changes to launch file", "f", filename)
 		return nil
 	}
-	if len(lines) != 0 && lines[len(lines)-1] != "" {
-		lines = append(lines, "") // file should end with blank line
+	if len(lines) == 1 {
+		// Outpost will hang on startup if there's nothing in the file
+		// at all, so we'll manufacture a LINE line.
+		lines = append(lines, "LINE")
 	}
+	lines = append(lines, "", "") // file should end with blank line
 	if err = os.WriteFile(filename, []byte(strings.Join(lines, "\r\n")), 0666); err != nil {
 		slog.Error("os.WriteFile", "f", filename, "err", err)
 		return err
