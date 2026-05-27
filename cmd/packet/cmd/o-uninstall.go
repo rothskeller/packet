@@ -5,12 +5,14 @@ package cmd
 import (
 	"fmt"
 	"log/slog"
+	"net/http"
 	"os"
 	"os/exec"
 	"path/filepath"
 	"strings"
 
 	"github.com/rothskeller/packet/cmd/packet/cio"
+	"github.com/rothskeller/packet/cmd/packet/server"
 	"github.com/rothskeller/packet/form/formdefs"
 	"github.com/spf13/pflag"
 	"golang.org/x/sys/windows/registry"
@@ -37,6 +39,9 @@ func cmdOutpostUninstall(args []string) (err error) {
 	if len(args) != 0 {
 		return usage(outpostUninstallHelp)
 	}
+	if err = stopServer(); err != nil {
+		return err
+	}
 	if err = checkRunningAsAdmin(); err != nil {
 		return err
 	}
@@ -49,9 +54,28 @@ func cmdOutpostUninstall(args []string) (err error) {
 	if err = removeFromRegistry(); err != nil {
 		return err
 	}
-	removeFileTree()
 	removeSelf()
 	return nil
+}
+
+// stopServer stops the running server if any.
+func stopServer() (err error) {
+	if addr, err := server.GetAddress(false); err != nil {
+		return err
+	} else if addr == "" {
+		return nil
+	} else if resp, err := http.Post(addr+"/stop", "text/plain", nil); err != nil {
+		slog.Error("POST /stop", "url", addr, "err", err)
+		return err
+	} else if resp.StatusCode >= 400 {
+		slog.Error("POST /stop", "url", addr, "code", resp.StatusCode, "status", resp.Status)
+		resp.Body.Close()
+		return fmt.Errorf("stop request: %s", resp.Status)
+	} else {
+		slog.Info("sent /stop to server")
+		resp.Body.Close()
+		return nil
+	}
 }
 
 // disconnectFromOutpost removes any references to this Packet installation
@@ -72,6 +96,7 @@ func disconnectFromOutpost() (err error) {
 	if err = formdefs.UpdateLaunchLocal(filepath.Join(dir, "Launch.local"), nil, nil, packetRoot); err != nil {
 		return fmt.Errorf("updating %s\\Launch.local: %s", dir, err)
 	}
+	os.Remove(outpostDataDirFile)
 	return nil
 }
 
@@ -96,24 +121,6 @@ func removeFromRegistry() (err error) {
 
 }
 
-// removeFileTree removes as much of the C:\PackItForms tree as possible.
-func removeFileTree() {
-	// We're not going to be able to remove the whole thing, because our
-	// own executable is in there and is in use.  And os.RemoveAll would
-	// quit when it got to that and leave other stuff around that shouldn't
-	// be.  So we'll remove each item in the directory separately.
-	ents, _ := filepath.Glob(filepath.Join(packetRoot, "*"))
-	for _, ent := range ents {
-		if err := os.RemoveAll(ent); err != nil {
-			slog.Warn("os.RemoveAll", "d", ent, "err", err)
-		}
-	}
-	// And we will try to remove the directory too, just in case we're
-	// running from somewhere else.
-	os.RemoveAll(packetRoot)
-	slog.Info("removed most/all of packet files", "d", packetRoot)
-}
-
 // removeSelf tries to remove our own executable and the residual directory.
 func removeSelf() {
 	var (
@@ -127,8 +134,7 @@ func removeSelf() {
 		slog.Warn("os.CreateTemp", "err", err)
 		return
 	}
-	exe, _ := os.Executable()
-	fmt.Fprintf(fh, "SLEEP 2\r\nDEL %s\r\nRMDIR %s\r\n", exe, packetRoot)
+	fmt.Fprintf(fh, "SLEEP 2\r\nDEL %s\r\nDEL %s\r\n", packetExe, pifoExe)
 	fh.Close()
 	if err = exec.Command(fh.Name()).Start(); err != nil {
 		slog.Warn("cmd.Start", "err", err)
