@@ -30,8 +30,6 @@
     //   'visibility-change':  when the item's visibility changes.
     //
     // Methods:
-    //   adjustSubmenuPosition: sets the left offset of the submenu, if any, to
-    //     match the left offset of the item.
     //   checkable:  returns whether the item supports being checked.
     //   checked:  returns whether the item is checked.
     //   click: act as if the item has been clicked.
@@ -72,14 +70,13 @@
         this._button.addEventListener('click', this._onClick.bind(this))
         this.appendChild(this._button)
         this._submenu = this.querySelector('sub-menu')
-        if (this._submenu) this._submenu.addEventListener('submenu-open', this._onSubmenuOpen.bind(this))
+        if (this._submenu) {
+          this._submenu.addEventListener('submenu-open', this._onSubmenuOpen.bind(this))
+          this.classList.add('has-submenu')
+        }
       }
-      adjustSubmenuPosition() {
-        if (!this._submenu) return
-        this._submenu.style.left = `${this._button.getBoundingClientRect().left}px`
-      }
-      checkable() {return this.hasAttribute('checkable')}
-      checked() {return this.classList.contains('checked')}
+      checkable() { return this.hasAttribute('checkable') }
+      checked() { return this.classList.contains('checked') }
       click() {
         if (this._submenu) {
           this._submenu.open()
@@ -88,23 +85,23 @@
         if (this.hasAttribute('checkable')) this.classList.toggle('checked')
         this.dispatchEvent(new CustomEvent('item-click', {
           bubbles: true,
-          detail: {checked: this.classList.contains('checked')},
+          detail: { checked: this.classList.contains('checked') },
         }))
       }
-      focus() {this._button.focus()}
-      isSubmenuOpen() {return this._submenu && this._submenu.isOpen()}
+      focus() { this._button.focus() }
+      isSubmenuOpen() { return this._submenu && this._submenu.isOpen() }
       openSubmenu() {
         if (this._submenu) this._submenu.open()
         else this.focus()
       }
-      setChecked(checked) {this.classList.toggle('checked', checked)}
+      setChecked(checked) { this.classList.toggle('checked', checked) }
       show(shouldShow) {
         if (shouldShow === this.shown()) return
         if (shouldShow) this.removeAttribute('hidden')
         else this.setAttribute('hidden', '')
         this.dispatchEvent(new CustomEvent('visibility-change'))
       }
-      shown() {return !this.hasAttribute('hidden')}
+      shown() { return !this.hasAttribute('hidden') }
       _checkShortcut(evt) {
         if (this.hasAttribute('hidden')) return
         if (evt.target.closest('dialog')) return
@@ -118,7 +115,7 @@
         evt.stopImmediatePropagation()
         this.click()
       }
-      _onSubmenuOpen(evt) {this.classList.toggle('open', evt.detail)}
+      _onSubmenuOpen(evt) { this.classList.toggle('open', evt.detail) }
     }
   </script>
   <style>
@@ -128,6 +125,10 @@
       background-color: #dff6df;
       font-size: 1rem;
       padding: 0.5rem 0.75rem;
+    }
+
+    menu-item.has-submenu>button {
+      border-inline: var(--border-width) solid transparent;
     }
 
     menu-item button.with-shortcut {
@@ -161,6 +162,10 @@
     menu-item.open>button {
       background-color: #a8e8a8;
       outline: none;
+    }
+
+    menu-item.open>button {
+      border-inline-color: #888;
     }
   </style>
 </head>

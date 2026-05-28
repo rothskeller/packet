@@ -18,24 +18,19 @@
       connectedCallback() {
         this._items = Array.from(this.children).filter(elm => elm.matches('menu-item'))
         this._items.forEach(item => {
-          item.addEventListener('visibility-change', this.adjustSubmenuPositions.bind(this))
           item.addEventListener('menu-move', this._onMenuMove.bind(this))
         })
-        this.adjustSubmenuPositions()
         this.addEventListener('keydown', this._onKeyDown.bind(this))
-      }
-      adjustSubmenuPositions() {
-        this._items.forEach(item => item.adjustSubmenuPosition())
       }
       _onKeyDown(evt) {
         const items = Array.from(this.children).filter(elm => elm.matches('menu-item') && elm.shown())
         const item = evt.target.closest('menu-item')
         let idx = items.findIndex(i => i === item)
         switch (evt.key) {
-          case 'ArrowLeft': idx--; break;
-          case 'ArrowRight': idx++; break;
-          case 'Home': idx = 0; break;
-          case 'End': idx = items.length - 1; break;
+          case 'ArrowLeft': idx--; break
+          case 'ArrowRight': idx++; break
+          case 'Home': idx = 0; break
+          case 'End': idx = items.length - 1; break
           case 'ArrowDown':
             item.openSubmenu()
             break
@@ -91,7 +86,8 @@
         <hr>
         <menu-item id=m-msg-view shortcut=⏎ hidden>View</menu-item>
         <if:manual><menu-item id=m-msg-man-send shortcut=S hidden>Manual Send</menu-item>
-        <menu-item id=m-msg-man-rcpt hidden>Create Receipt</menu-item></if:manual>
+          <menu-item id=m-msg-man-rcpt hidden>Create Receipt</menu-item>
+        </if:manual>
         <menu-item id=m-msg-print shortcut=P hidden>Print</menu-item>
         <menu-item id=m-msg-edit shortcut=⏎ hidden>Edit</menu-item>
         <menu-item id=m-msg-edit-log hidden>Edit Log Entry</menu-item>
