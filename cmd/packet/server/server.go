@@ -365,7 +365,7 @@ func (s *Server) registerHandlers() {
 	})
 }
 
-//go:embed manpage.html
+//go:embed assets/manpage.html
 var manpageHTML []byte
 
 func (s *Server) serveGetManPage(w http.ResponseWriter, r *http.Request) {
@@ -379,7 +379,7 @@ func (s *Server) serveGetManPage(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-//go:embed county-seal.svg
+//go:embed assets/county-seal.svg
 var countySealSVG []byte
 
 func (s *Server) serveGetCountySeal(w http.ResponseWriter, r *http.Request) {
@@ -387,7 +387,7 @@ func (s *Server) serveGetCountySeal(w http.ResponseWriter, r *http.Request) {
 	w.Write(countySealSVG)
 }
 
-//go:embed Go-Regular.woff2
+//go:embed assets/Go-Regular.woff2
 var goRegularWOFF2 []byte
 
 func (s *Server) serveGetGoRegular(w http.ResponseWriter, r *http.Request) {
@@ -395,7 +395,7 @@ func (s *Server) serveGetGoRegular(w http.ResponseWriter, r *http.Request) {
 	w.Write(goRegularWOFF2)
 }
 
-//go:embed Go-Bold.woff2
+//go:embed assets/Go-Bold.woff2
 var goBoldWOFF2 []byte
 
 func (s *Server) serveGetGoBold(w http.ResponseWriter, r *http.Request) {
@@ -403,7 +403,7 @@ func (s *Server) serveGetGoBold(w http.ResponseWriter, r *http.Request) {
 	w.Write(goBoldWOFF2)
 }
 
-//go:embed Go-Italic.woff2
+//go:embed assets/Go-Italic.woff2
 var goItalicWOFF2 []byte
 
 func (s *Server) serveGetGoItalic(w http.ResponseWriter, r *http.Request) {
@@ -411,7 +411,7 @@ func (s *Server) serveGetGoItalic(w http.ResponseWriter, r *http.Request) {
 	w.Write(goItalicWOFF2)
 }
 
-//go:embed Go-Mono.woff2
+//go:embed assets/Go-Mono.woff2
 var goMonoWOFF2 []byte
 
 func (s *Server) serveGetGoMono(w http.ResponseWriter, r *http.Request) {
