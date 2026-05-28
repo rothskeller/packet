@@ -356,6 +356,10 @@ func (s *Server) registerHandlers() {
 	s.mux.HandleFunc("GET /Go-Bold.woff2", s.serveGetGoBold)
 	s.mux.HandleFunc("GET /Go-Italic.woff2", s.serveGetGoItalic)
 	s.mux.HandleFunc("GET /Go-Mono.woff2", s.serveGetGoMono)
+	s.mux.HandleFunc("GET /favicon.ico", s.serveGetFavicon)
+	s.mux.HandleFunc("GET /favicon-16x16.png", s.serveGetFavicon16)
+	s.mux.HandleFunc("GET /favicon-32x32.png", s.serveGetFavicon32)
+	s.mux.HandleFunc("GET /apple-touch-icon.png", s.serveGetAppleTouchIcon)
 	s.mux.HandleFunc("POST /connect-bbs", s.servePostConnectBBS)
 	s.mux.HandleFunc("POST /connect-abort", s.servePostConnectAbort)
 	s.mux.HandleFunc("GET /connect-progress", s.serveGetConnectProgress)
@@ -417,6 +421,38 @@ var goMonoWOFF2 []byte
 func (s *Server) serveGetGoMono(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "font/woff2")
 	w.Write(goMonoWOFF2)
+}
+
+//go:embed assets/apple-touch-icon.png
+var appleTouchIcon []byte
+
+func (s *Server) serveGetAppleTouchIcon(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "image/png")
+	w.Write(appleTouchIcon)
+}
+
+//go:embed assets/favicon.ico
+var favicon []byte
+
+func (s *Server) serveGetFavicon(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "image/vnd.microsoft.icon")
+	w.Write(favicon)
+}
+
+//go:embed assets/favicon-16x16.png
+var favicon16 []byte
+
+func (s *Server) serveGetFavicon16(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "image/png")
+	w.Write(favicon16)
+}
+
+//go:embed assets/favicon-32x32.png
+var favicon32 []byte
+
+func (s *Server) serveGetFavicon32(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "image/png")
+	w.Write(favicon32)
 }
 
 // serveIncident is a helper function for handlers that take a dir= parameter
