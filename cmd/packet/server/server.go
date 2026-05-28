@@ -16,6 +16,7 @@ import (
 	"path/filepath"
 	"strconv"
 	"strings"
+	"syscall"
 	"time"
 
 	"github.com/fsnotify/fsnotify"
@@ -146,6 +147,7 @@ func Start(port int, writeURL io.Writer) (err error) {
 		listener   net.Listener
 		server     Server
 		hserver    http.Server
+		defPort    bool
 	)
 	// Open and read the address file with a write lock.
 	addressDir = filepath.Dir(osdep.AddressFile)
@@ -188,9 +190,19 @@ func Start(port int, writeURL io.Writer) (err error) {
 			return nil
 		}
 	}
+	// If the caller didn't specify a port, try our default port first.
+	if port == 0 {
+		port, defPort = 45674, true
+	}
 	// Open a listening port.
 	server.address = fmt.Sprintf("127.0.0.1:%d", port)
-	if listener, err = net.Listen("tcp4", server.address); err != nil {
+	if listener, err = net.Listen("tcp4", server.address); defPort && isBusyPortError(err) {
+		// If that was an attempt at our default port and it failed
+		// because the port was in use, use a random port instead.
+		server.address = "127.0.0.1:0"
+		listener, err = net.Listen("tcp4", server.address)
+	}
+	if err != nil {
 		slog.Error("net.Listen", "a", server.address, "err", err)
 		return err
 	}
@@ -531,4 +543,24 @@ func serveMessage(w http.ResponseWriter, r *http.Request, write bool, act func(*
 			return act(i, le, msg)
 		}
 	}, finish)
+}
+
+// Defining this here allows us to avoid putting the isBusyPortError function is
+// OS-dependent code.
+const WSAEADDRINUSE syscall.Errno = 10048
+
+// isBusyPortError returns whether the error indicates an attempt to bind to a
+// port already in use.
+func isBusyPortError(err error) bool {
+	switch err := err.(type) {
+	case *net.OpError:
+		switch e2 := err.Err.(type) {
+		case *os.SyscallError:
+			switch e3 := e2.Err.(type) {
+			case syscall.Errno:
+				return e3 == syscall.EADDRINUSE || e3 == /*windows.*/ WSAEADDRINUSE
+			}
+		}
+	}
+	return false
 }
