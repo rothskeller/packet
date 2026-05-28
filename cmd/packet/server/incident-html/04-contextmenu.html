@@ -28,23 +28,24 @@
         this._items = this._items.filter(item => item.shown())
         this.setAttribute('popover', 'auto')
         this.addEventListener('keydown', this._onKeyDown.bind(this))
-        this.addEventListener('toggle', evt => {console.log(evt)})
       }
       open(evt) {
         this.style.left = `${evt.pageX - 5}px`
         this.style.top = `${evt.pageY - 5}px`
         this.togglePopover(true)
+        const bottom = window.innerHeight + this.parentElement.parentElement.scrollTop - this.getBoundingClientRect().bottom
+        if (bottom < 0) this.style.top = `${evt.pageY + bottom - 5}px`
         this._items[0].focus()
       }
-      _onItemClick() {this.togglePopover(false)}
+      _onItemClick() { this.togglePopover(false) }
       _onKeyDown(evt) {
         const item = evt.target.closest('menu-item')
         let idx = this._items.findIndex(i => i === item)
         switch (evt.key) {
-          case 'ArrowUp': idx--; break;
-          case 'ArrowDown': idx++; break;
-          case 'Home': idx = 0; break;
-          case 'End': idx = this._items.length - 1; break;
+          case 'ArrowUp': idx--; break
+          case 'ArrowDown': idx++; break
+          case 'Home': idx = 0; break
+          case 'End': idx = this._items.length - 1; break
           default:
             return
         }
@@ -80,7 +81,8 @@
   <context-menu id=cm-msg>
     <menu-item id=cm-msg-view shortcut=⏎>View</menu-item>
     <if:manual><menu-item id=cm-msg-man-send shortcut=S>Manual Send</menu-item>
-    <menu-item id=cm-msg-man-rcpt>Create Receipt</menu-item></if:manual>
+      <menu-item id=cm-msg-man-rcpt>Create Receipt</menu-item>
+    </if:manual>
     <menu-item id=cm-msg-print shortcut=P>Print</menu-item>
     <menu-item id=cm-msg-edit shortcut=⏎>Edit</menu-item>
     <menu-item id=cm-msg-edit-log>Edit Log Entry</menu-item>
