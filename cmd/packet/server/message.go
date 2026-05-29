@@ -39,12 +39,14 @@ func (s *Server) serveGetNewMessage(w http.ResponseWriter, r *http.Request) {
 		params url.Values
 		err    error
 	)
+	s.outpost = false
 	dir, tag = r.FormValue("dir"), r.FormValue("tag")
 	if mt = message.FindCreateTag(tag); mt == nil {
 		slog.Error("no such message tag", "tag", tag)
-		ErrPage(w, fmt.Sprintf("The message type tag %q is not recognized.  Please report this error to the author.", tag), http.StatusInternalServerError)
+		s.ErrPage(w, fmt.Sprintf("The message type tag %q is not recognized.  Please report this error to the author.", tag), http.StatusInternalServerError)
 		return
 	}
+	s.log.Printf("create new %s", tag)
 	msg = mt.NewDraft().(*message.DraftMessage)
 	err = incident.Write(dir, func(i *incident.Incident) (err error) {
 		i.ApplyDefaults(msg)
@@ -54,7 +56,7 @@ func (s *Server) serveGetNewMessage(w http.ResponseWriter, r *http.Request) {
 		return nil
 	})
 	if err != nil {
-		ErrPage(w, err.Error(), http.StatusInternalServerError)
+		s.ErrPage(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 	params = make(url.Values)
@@ -78,6 +80,7 @@ func (s *Server) serveGetEditMessage(w http.ResponseWriter, r *http.Request) {
 		err    error
 		params = url.Values{}
 	)
+	s.outpost = false
 	dir = r.FormValue("dir")
 	ident, _ = strconv.Atoi(r.FormValue("id"))
 	params.Set("dir", dir)
@@ -96,17 +99,17 @@ func (s *Server) serveGetEditMessage(w http.ResponseWriter, r *http.Request) {
 			return nil
 		}
 	}); err != nil {
-		ErrPage(w, err.Error(), http.StatusInternalServerError)
+		s.ErrPage(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 	if _, ok := msg.(*message.DraftMessage); !ok {
 		slog.Error("message not editable", "dir", dir, "id", ident, "t", fmt.Sprintf("%T", msg))
-		ErrPage(w, fmt.Sprintf("Message %d is not editable: it is not an unsent outgoing message.", ident), http.StatusBadRequest)
+		s.ErrPage(w, fmt.Sprintf("Message %d is not editable: it is not an unsent outgoing message.", ident), http.StatusBadRequest)
 		return
 	}
 	if emt, _ = msg.Type().(message.EditableMType); emt == nil {
 		slog.Error("message not editable", "dir", dir, "id", ident, "t", fmt.Sprintf("%T", msg.Type()))
-		ErrPage(w, fmt.Sprintf("Message %d is not editable: the message type does not support editing.", ident), http.StatusBadRequest)
+		s.ErrPage(w, fmt.Sprintf("Message %d is not editable: the message type does not support editing.", ident), http.StatusBadRequest)
 		return
 	}
 	tag = emt.CreateTag()
@@ -117,7 +120,7 @@ func (s *Server) serveGetEditMessage(w http.ResponseWriter, r *http.Request) {
 	vars.SubmitLabel = "Send Message"
 	vars.SubmitURL = "/send-message?" + params.Encode()
 	if out, err = emt.EditHTML(msg.(*message.DraftMessage), vars); err != nil {
-		ErrPage(w, err.Error(), http.StatusInternalServerError)
+		s.ErrPage(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")
@@ -168,6 +171,7 @@ func (s *Server) servePostSendMessage(w http.ResponseWriter, r *http.Request) {
 		manual bool
 		err    error
 	)
+	s.outpost = false
 	dir, tag = r.FormValue("dir"), r.FormValue("tag")
 	ident, _ = strconv.Atoi(r.FormValue("id"))
 	if mt = message.FindCreateTag(tag); mt == nil {
@@ -175,6 +179,7 @@ func (s *Server) servePostSendMessage(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, fmt.Sprintf("no such message type %q", tag), http.StatusBadRequest)
 		return
 	}
+	s.log.Printf("submit message #%d %s", ident, tag)
 	if m, err := mt.FromPOST(r); err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
@@ -239,6 +244,7 @@ func (s *Server) serveGetViewMessage(w http.ResponseWriter, r *http.Request) {
 		dpdf  string
 		err   error
 	)
+	s.outpost = false
 	if maybeShowREADME(w, r) {
 		return
 	}
@@ -265,7 +271,7 @@ func (s *Server) serveGetViewMessage(w http.ResponseWriter, r *http.Request) {
 		}
 	})
 	if err != nil && err != errNoNeedToWrite {
-		ErrPage(w, err.Error(), http.StatusInternalServerError)
+		s.ErrPage(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 	// It's possible that the PDF doesn't exist yet.  If so we need to
@@ -276,11 +282,11 @@ func (s *Server) serveGetViewMessage(w http.ResponseWriter, r *http.Request) {
 			slog.Warn("RenderPDF", "dir", dir, "id", ident, "warn", err)
 		} else if err != nil {
 			slog.Error("RenderPDF", "dir", dir, "id", ident, "err", err)
-			ErrPage(w, fmt.Sprintf("Unable to create PDF: %s", err), http.StatusInternalServerError)
+			s.ErrPage(w, fmt.Sprintf("Unable to create PDF: %s", err), http.StatusInternalServerError)
 			return
 		}
 	} else if err != nil {
-		ErrPage(w, err.Error(), http.StatusInternalServerError)
+		s.ErrPage(w, err.Error(), http.StatusInternalServerError)
 	}
 	w.Header().Set("Content-Type", "application/pdf")
 	w.Header().Set("Content-Disposition", "inline; filename="+pdf)
@@ -302,8 +308,10 @@ func (s *Server) servePostPrintMessage(w http.ResponseWriter, r *http.Request) {
 		cmd   *exec.Cmd
 		err   error
 	)
+	s.outpost = false
 	dir = r.FormValue("dir")
 	ident, _ = strconv.Atoi(r.FormValue("id"))
+	s.log.Printf("print message #%d", ident)
 	err = incident.Read(dir, func(i *incident.Incident) (err error) {
 		if le := i.GetLogEntryByIdent(ident); le == nil {
 			slog.Error("no such message", "dir", dir, "id", ident)
@@ -356,7 +364,9 @@ func (s *Server) servePostPrintMessage(w http.ResponseWriter, r *http.Request) {
 func (s *Server) servePostNewMessageFrom(w http.ResponseWriter, r *http.Request) {
 	var action = r.FormValue("action")
 
-	serveMessage(w, r, true, func(i *incident.Incident, le *incident.LogEntry, msg message.Message) error {
+	s.outpost = false
+	s.log.Printf("create new message (%s) from #%s", action, r.FormValue("id"))
+	s.serveMessage(w, r, true, func(i *incident.Incident, le *incident.LogEntry, msg message.Message) error {
 		var dr *message.DraftMessage
 
 		if emt, ok := msg.Type().(message.EditableMType); !ok {
@@ -403,7 +413,9 @@ func (s *Server) servePostNewMessageFrom(w http.ResponseWriter, r *http.Request)
 }
 
 func (s *Server) servePostDeleteMessage(w http.ResponseWriter, r *http.Request) {
-	serveLogIdent(w, r, true, func(i *incident.Incident, le *incident.LogEntry) error {
+	s.outpost = false
+	s.log.Printf("delete message #%s", r.FormValue("id"))
+	s.serveLogIdent(w, r, true, func(i *incident.Incident, le *incident.LogEntry) error {
 		return i.DeleteMessage(le)
 	}, nil)
 }

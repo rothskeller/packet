@@ -31,6 +31,7 @@ func (s *Server) serveIncidentOpen(w http.ResponseWriter, r *http.Request) {
 		vars    = make(map[string]string)
 		dir     = r.FormValue("dir")
 	)
+	s.outpost = false
 	if maybeShowREADME(w, r) {
 		return
 	}
@@ -91,7 +92,7 @@ func (s *Server) serveIncidentOpen(w http.ResponseWriter, r *http.Request) {
 		vars["mkdir"] = "true"
 	}
 	if doc, err = htmlop.Parse(bytes.NewReader(incOpenHTML)); err != nil {
-		ErrPage(w, err.Error(), http.StatusInternalServerError)
+		s.ErrPage(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 	htmlop.Expand(doc, vars)

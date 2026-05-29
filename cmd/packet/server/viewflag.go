@@ -11,6 +11,7 @@ import (
 // parameter set to a boolean value.  It stores the updated flag value and
 // returns 204 on success, or an error with text/plain error message on failure.
 func (s *Server) servePostSetViewFlag(w http.ResponseWriter, r *http.Request) {
+	s.outpost = false
 	dir := r.FormValue("dir")
 	err := incident.Write(dir, func(i *incident.Incident) error {
 		switch r.FormValue("compact") {

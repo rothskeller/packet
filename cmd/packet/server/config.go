@@ -33,6 +33,7 @@ func (s *Server) serveGetIncidentConfig(w http.ResponseWriter, r *http.Request) 
 		variables = make(map[string]string)
 		form      = make(url.Values)
 	)
+	s.outpost = false
 	if maybeShowREADME(w, r) {
 		return
 	}
@@ -139,12 +140,14 @@ func (s *Server) serveGetIncidentConfig(w http.ResponseWriter, r *http.Request) 
 	html.Render(w, doc)
 	return
 ERROR:
-	ErrPage(w, err.Error(), http.StatusInternalServerError)
+	s.ErrPage(w, err.Error(), http.StatusInternalServerError)
 }
 
 func (s *Server) servePostIncidentConfig(w http.ResponseWriter, r *http.Request) {
 	var err error
 
+	s.outpost = false
+	s.log.Printf("save incident settings for %s", r.FormValue("dir"))
 	err = incident.Write(r.FormValue("dir"), func(inc *incident.Incident) error {
 		var c = inc.Config.Clone()
 
@@ -219,5 +222,5 @@ func (s *Server) servePostIncidentConfig(w http.ResponseWriter, r *http.Request)
 	http.Redirect(w, r, strings.Replace(r.URL.String(), "-config", "", 1), http.StatusSeeOther)
 	return
 ERROR:
-	ErrPage(w, err.Error(), http.StatusInternalServerError)
+	s.ErrPage(w, err.Error(), http.StatusInternalServerError)
 }

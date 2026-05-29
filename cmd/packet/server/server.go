@@ -7,6 +7,7 @@ import (
 	_ "embed"
 	"fmt"
 	"io"
+	"log"
 	"log/slog"
 	"net"
 	"net/http"
@@ -130,16 +131,16 @@ func GetAddress(start bool) (address string, err error) {
 	return "", err
 }
 
-// Start starts serving web requests on the specified port (or a random port if
-// the specified port is zero).  If it finds that another server is already
-// running (on any port), it writes that server's address to writeURL (if not
-// nil) returns nil immediately.  Otherwise, it starts a new server and writes
-// its address to writeURL (if not nil).  The new server will stop, and the
-// function will return, after an hour of inactivity, on receipt of a POST /stop
-// request, on receipt of an interrupt signal, or on creation/change of
-// /tmp/packet-stop (Windows: C:\PackItForms\stop).  The function returns an
-// error only if a new server fails to start.
-func Start(port int, writeURL io.Writer) (err error) {
+// Start starts serving web requests on the specified port (or the default port
+// or a random port if the specified port is zero).  If it finds that another
+// server is already running (on any port), it writes that server's address to
+// stdout and returns nil immediately.  Otherwise, it starts a new server.  The
+// new server will stop, and the function will return, after an hour of
+// inactivity, on receipt of a POST /stop request, on receipt of an interrupt
+// signal, on creation/change of /tmp/packet-stop (Windows:
+// C:\PackItForms\stop), or when the supplied stop channel (if non-nil) is
+// closed.  The function returns an error only if a new server fails to start.
+func Start(port int, outpost bool) (err error) {
 	var (
 		addressDir string
 		addrFH     *os.File
@@ -182,9 +183,7 @@ func Start(port int, writeURL io.Writer) (err error) {
 		if err == nil && resp.StatusCode == http.StatusNoContent {
 			// Yes, it's running happily.  Exit.
 			slog.Debug("server already running", "url", address)
-			if writeURL != nil {
-				fmt.Fprintln(writeURL, address)
-			}
+			fmt.Printf("A packet server is already running at %s .\n", address)
 			osdep.Unlock(addrFH)
 			addrFH.Close()
 			return nil
@@ -195,6 +194,7 @@ func Start(port int, writeURL io.Writer) (err error) {
 		port, defPort = 45674, true
 	}
 	// Open a listening port.
+	server.log = log.New(os.Stdout, "", log.LstdFlags)
 	server.address = fmt.Sprintf("127.0.0.1:%d", port)
 	if listener, err = net.Listen("tcp4", server.address); defPort && isBusyPortError(err) {
 		// If that was an attempt at our default port and it failed
@@ -204,6 +204,7 @@ func Start(port int, writeURL io.Writer) (err error) {
 	}
 	if err != nil {
 		slog.Error("net.Listen", "a", server.address, "err", err)
+		server.log.Printf("ERROR: net.Listen(%s): %s", server.address, err)
 		return err
 	}
 	server.address = "http://" + listener.Addr().String()
@@ -212,17 +213,26 @@ func Start(port int, writeURL io.Writer) (err error) {
 	go server.watchForStopFile()
 	// Send a stop signal with the idle timer fires.
 	server.idleTimer = time.NewTimer(serverTimeout)
-	// Send a stop signal when the user hits Ctrl-C.
+	// Send a stop signal when the user hits Ctrl-C or the window is closed.
 	go server.watchForInterrupt()
+	// Send a stop signal if Outpost is closed.
+	if outpost {
+		server.outpost = true
+		go server.watchForOutpostClose()
+	}
 	// Set the server up to handle requests.
 	server.registerHandlers()
 	hserver.Handler = http.HandlerFunc(server.handleRequest)
+	// Start a logger writing to standard output.
 	// Start a webserver on the port we're listening to.
 	go hserver.Serve(listener)
 	slog.Info("server listening", "url", server.address)
-	if writeURL != nil {
-		fmt.Fprintln(writeURL, server.address)
-	}
+	fmt.Printf(`
+PACKET SERVER v%s at %s
+Keep this window open until all packet-related browser tabs are closed.
+=======================================================================
+
+`, packetver.Version, server.address)
 	// Write the server address to the address file.
 	addrFH.Seek(0, 0)
 	addrFH.Truncate(0)
@@ -250,7 +260,8 @@ type Server struct {
 	stop      chan struct{}
 	idleTimer *time.Timer
 	mux       http.ServeMux
-	// manual    manualData
+	outpost   bool
+	log       *log.Logger
 }
 
 // watchForStopFile watches for the creation or update of the "packet-stop"
@@ -262,11 +273,13 @@ func (s *Server) watchForStopFile() {
 	)
 	if watcher, err = fsnotify.NewWatcher(); err != nil {
 		slog.Error("fsnotify.NewWatcher", "err", err)
+		s.log.Printf("ERROR: watchForStopFile: fsnotify.NewWatcher: %s", err)
 		close(s.stop)
 		return
 	}
 	if err = watcher.Add(filepath.Dir(osdep.ServerStopFile)); err != nil {
 		slog.Error("watcher.Add", "f", osdep.ServerStopFile, "err", err)
+		s.log.Printf("ERROR: watchForStopFile: watcher.Add(%s): %s", osdep.ServerStopFile, err)
 		close(s.stop)
 		return
 	}
@@ -277,13 +290,41 @@ func (s *Server) watchForStopFile() {
 				break
 			}
 			slog.Info("stopping server: stop file modtime has changed")
+			s.log.Print("stopping server: stop file modtime has changed")
 			close(s.stop)
 			return
 		case err := <-watcher.Errors:
 			slog.Error("watcher.Error", "err", err)
+			s.log.Printf("ERROR: watchForStopFile: watcher.Error: %s", err)
 			close(s.stop)
 			return
 		}
+	}
+}
+
+// watchForOutpostClose opens a connection to opdirect.  When the connection is
+// closed (meaning Outpost is closed), it stops the server, unless the server
+// has been used for non-Outpost requests.
+func (s *Server) watchForOutpostClose() {
+	var (
+		conn net.Conn
+		err  error
+		buf  = make([]byte, 1)
+	)
+	if conn, err = net.Dial("tcp4", "127.0.0.1:9334"); err != nil {
+		slog.Error("net.Dial (opdirect)", "err", err)
+		s.log.Printf("ERROR: watchForOutpostClose: net.Dial(opdirect): %s", err)
+		close(s.stop)
+		return
+	}
+	conn.Read(buf)
+	if s.outpost {
+		slog.Info("stopping server: connection to opdirect has been closed")
+		s.log.Print("stopping server: connection to Outpost has been closed")
+		close(s.stop)
+	} else {
+		slog.Info("opdirect connection closed; not stopping server due to non-Outpost usage")
+		s.log.Print("connection to Outpost closed; not stopping server due to non-Outpost usage")
 	}
 }
 
@@ -292,9 +333,10 @@ func (s *Server) watchForStopFile() {
 func (s *Server) watchForInterrupt() {
 	var ch = make(chan os.Signal, 1)
 
-	signal.Notify(ch, os.Interrupt)
+	signal.Notify(ch, os.Interrupt, syscall.SIGTERM)
 	<-ch
 	slog.Info("stopping server: interrupt signal")
+	s.log.Print("stopping server: interrupt signal")
 	close(s.stop)
 }
 
@@ -303,6 +345,7 @@ func (s *Server) watchForInterrupt() {
 func (s *Server) watchForIdleTimeout() {
 	<-s.idleTimer.C
 	slog.Info("stopping server: inactivity timeout")
+	s.log.Print("stopping server: inactivity timeout")
 	close(s.stop)
 }
 
@@ -329,6 +372,7 @@ func (s *Server) handleRequest(w http.ResponseWriter, r *http.Request) {
 // handleStop handles the POST /stop request by stopping the server.
 func (s *Server) handleStop(w http.ResponseWriter, r *http.Request) {
 	slog.Info("stopping server: received POST /stop")
+	s.log.Print("stopping server: received HTTP stop request")
 	close(s.stop)
 }
 
@@ -385,8 +429,9 @@ func (s *Server) registerHandlers() {
 var manpageHTML []byte
 
 func (s *Server) serveGetManPage(w http.ResponseWriter, r *http.Request) {
+	s.outpost = false
 	if doc, err := htmlop.Parse(bytes.NewReader(manpageHTML)); err != nil {
-		ErrPage(w, err.Error(), http.StatusInternalServerError)
+		s.ErrPage(w, err.Error(), http.StatusInternalServerError)
 		return
 	} else {
 		htmlop.Expand(doc, map[string]string{"VERSION": packetver.Version})
@@ -476,7 +521,7 @@ func (s *Server) serveGetFavicon32(w http.ResponseWriter, r *http.Request) {
 // (invalid dir, act or finish return non-nil), serveIncident issues an error
 // response to the client.  This will be either an HTML error page or a
 // text/plain body, depending on the request's Accept header.
-func serveIncident(w http.ResponseWriter, r *http.Request, write bool, act func(*incident.Incident) error, finish func() error) {
+func (s *Server) serveIncident(w http.ResponseWriter, r *http.Request, write bool, act func(*incident.Incident) error, finish func() error) {
 	var err error
 
 	operate := func(i *incident.Incident) (err error) {
@@ -496,7 +541,7 @@ func serveIncident(w http.ResponseWriter, r *http.Request, write bool, act func(
 	}
 	if err != nil {
 		if strings.Contains(r.Header.Get("Accept"), "html") {
-			ErrPage(w, err.Error(), http.StatusBadRequest)
+			s.ErrPage(w, err.Error(), http.StatusBadRequest)
 		} else {
 			http.Error(w, err.Error(), http.StatusBadRequest)
 		}
@@ -512,8 +557,8 @@ func serveIncident(w http.ResponseWriter, r *http.Request, write bool, act func(
 // {w.WriteHeader(http.StatusNoContent); return nil}.  If any error occurs
 // (invalid dir or id, or act or finish return non-nil), serveLogIdent issues
 // an error response to the client.
-func serveLogIdent(w http.ResponseWriter, r *http.Request, write bool, act func(*incident.Incident, *incident.LogEntry) error, finish func() error) {
-	serveIncident(w, r, write, func(i *incident.Incident) (err error) {
+func (s *Server) serveLogIdent(w http.ResponseWriter, r *http.Request, write bool, act func(*incident.Incident, *incident.LogEntry) error, finish func() error) {
+	s.serveIncident(w, r, write, func(i *incident.Incident) (err error) {
 		ident, _ := strconv.Atoi(r.FormValue("id"))
 		if le := i.GetLogEntryByIdent(ident); le == nil {
 			return errors.NewF("There is no message with LEID %q in this incident.", r.FormValue("id"))
@@ -533,8 +578,8 @@ func serveLogIdent(w http.ResponseWriter, r *http.Request, write bool, act func(
 // {w.WriteHeader(http.StatusNoContent); return nil}.  If any error occurs
 // (invalid dir or id, or act or finish return non-nil), serveLogIdent issues
 // an error response to the client.
-func serveMessage(w http.ResponseWriter, r *http.Request, write bool, act func(*incident.Incident, *incident.LogEntry, message.Message) error, finish func() error) {
-	serveLogIdent(w, r, write, func(i *incident.Incident, le *incident.LogEntry) (err error) {
+func (s *Server) serveMessage(w http.ResponseWriter, r *http.Request, write bool, act func(*incident.Incident, *incident.LogEntry, message.Message) error, finish func() error) {
+	s.serveLogIdent(w, r, write, func(i *incident.Incident, le *incident.LogEntry) (err error) {
 		if msg, err := i.GetMessageFromLogEntry(le); msg == nil && err != nil {
 			return err
 		} else if msg == nil {

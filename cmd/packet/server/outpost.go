@@ -49,9 +49,10 @@ func (s *Server) outpostNewRequest(w http.ResponseWriter, r *http.Request) {
 	formtag = r.FormValue("formtag")
 	if mtype = message.FindCreateTag(formtag); mtype == nil {
 		slog.Error("no form definition", "formtag", formtag)
-		ErrPage(w, fmt.Sprintf("No editable form definition was found for %q.  Please report this to the author.", formtag), http.StatusInternalServerError)
+		s.ErrPage(w, fmt.Sprintf("No editable form definition was found for %q.  Please report this to the author.", formtag), http.StatusInternalServerError)
 		return
 	}
+	s.log.Printf("create new %s", formtag)
 	msg = mtype.NewDraft()
 	// Walk through the fields of the form, setting fields.
 	for f := range msg.Fields() {
@@ -103,19 +104,20 @@ func (s *Server) outpostEditRequest(w http.ResponseWriter, r *http.Request) {
 	// Get the Outpost message index.
 	if _, err = strconv.Atoi(r.FormValue("index")); err != nil {
 		slog.Error("missing/invalid index")
-		ErrPage(w, "The GET /outpost-edit request is missing the required index parameter.  Please report this error to the author.", http.StatusInternalServerError)
+		s.ErrPage(w, "The GET /outpost-edit request is missing the required index parameter.  Please report this error to the author.", http.StatusInternalServerError)
 	} else {
 		index = r.FormValue("index")
 		delete(r.Form, "index")
 	}
+	s.log.Printf("edit Outpost message %s", index)
 	// Open, read, and parse the message.
 	if msg, err = message.ReadNoHeader(r.FormValue("msgfile")); msg == nil {
 		slog.Error("read message from Outpost", "f", r.FormValue("msgfile"), "err", err)
-		ErrPage(w, "The message provided by Outpost was not in a valid format.  Please report this error to the author.", http.StatusInternalServerError)
+		s.ErrPage(w, "The message provided by Outpost was not in a valid format.  Please report this error to the author.", http.StatusInternalServerError)
 		return
 	} else if _, ok := msg.Type().(form.EditableFormType); !ok {
 		slog.Error("message from Outpost is not a form", "f", r.FormValue("msgfile"), "type", fmt.Sprintf("%T", msg.Type()))
-		ErrPage(w, "The message provided by Outpost was not in a valid format.  Please report this error to the author.", http.StatusInternalServerError)
+		s.ErrPage(w, "The message provided by Outpost was not in a valid format.  Please report this error to the author.", http.StatusInternalServerError)
 		return
 	}
 	for f := range msg.Fields() {
@@ -145,7 +147,7 @@ func (s *Server) outpostEditCommon(w http.ResponseWriter, msg message.Message, i
 	vars.SubmitLabel = "Submit to Outpost"
 	vars.SubmitURL = "/outpost-submit?" + params.Encode()
 	if out, err = msg.Type().(message.EditableMType).EditHTML(msg.(*message.DraftMessage), vars); err != nil {
-		ErrPage(w, err.Error(), http.StatusInternalServerError)
+		s.ErrPage(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")
@@ -170,11 +172,12 @@ func (s *Server) outpostSubmit(w http.ResponseWriter, r *http.Request) {
 	formtag = r.FormValue("formtag")
 	if mtype = message.FindCreateTag(formtag); mtype == nil {
 		slog.Error("form not found", "formtag", formtag)
-		ErrPage(w, fmt.Sprintf("The form with tag=%q was not found.  Please report this error to the author.", formtag), http.StatusInternalServerError)
+		s.ErrPage(w, fmt.Sprintf("The form with tag=%q was not found.  Please report this error to the author.", formtag), http.StatusInternalServerError)
 		return
 	}
+	s.log.Printf("submit %s to Outpost", formtag)
 	if msg, err = mtype.FromPOST(r); err != nil {
-		ErrPage(w, fmt.Sprintf("The form could not be read (%s).  Please report this error to the author.", err), http.StatusInternalServerError)
+		s.ErrPage(w, fmt.Sprintf("The form could not be read (%s).  Please report this error to the author.", err), http.StatusInternalServerError)
 		return
 	}
 	addon = mtype.(form.EditableFormType).AddonName
@@ -216,15 +219,15 @@ func (s *Server) outpostSubmit(w http.ResponseWriter, r *http.Request) {
 	// Then we add the desired EOF marker.  Yes, all of this.
 	body += "&4VAO=%0D%0A%23EOF"
 	msgID = msg.Subject().SubjectMessageID()
-	if sendToOpdirect(w, r, body, msgID) {
-		serveMessagePDF(w, r, msg)
+	if s.sendToOpdirect(w, r, body, msgID) {
+		s.serveMessagePDF(w, r, msg)
 	}
 }
 
 // sendToOpdirect sends the submitted message to Opdirect, and handles its
 // various possible responses.  It returns true if successful (and nothing
-// emitted); false if an error occurs (and an ErrPage has been emitted).
-func sendToOpdirect(w http.ResponseWriter, r *http.Request, body, msgID string) bool {
+// emitted); false if an error occurs (and an s.ErrPage has been emitted).
+func (s *Server) sendToOpdirect(w http.ResponseWriter, r *http.Request, body, msgID string) bool {
 	var (
 		ctx      context.Context
 		cancel   func()
@@ -246,7 +249,7 @@ func sendToOpdirect(w http.ResponseWriter, r *http.Request, body, msgID string) 
 	req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
 	if resp, err = http.DefaultClient.Do(req); err != nil {
 		slog.Error("post to opdirect", "url", opdirectURL, "err", err)
-		ErrPage(w, "The packet software was unable to communicate with Outpost.  Are Outpost and Opdirect running?", http.StatusBadRequest)
+		s.ErrPage(w, "The packet software was unable to communicate with Outpost.  Are Outpost and Opdirect running?", http.StatusBadRequest)
 		return false
 	}
 	// Check the result from Opdirect.
@@ -256,15 +259,15 @@ func sendToOpdirect(w http.ResponseWriter, r *http.Request, body, msgID string) 
 	resp.Body.Close()
 	if resp.StatusCode < 200 || resp.StatusCode >= 300 {
 		slog.Error("post to opdirect", "url", opdirectURL, "code", resp.StatusCode, "status", resp.Status)
-		ErrPage(w, "Outpost returned an error and did not accept the message.  Please report this problem to the author.", http.StatusInternalServerError)
+		s.ErrPage(w, "Outpost returned an error and did not accept the message.  Please report this problem to the author.", http.StatusInternalServerError)
 		return false
 	} else if err = opdirectReturnCode(response); err != nil {
 		slog.Error("post to opdirect", "url", opdirectURL, "err", err)
-		ErrPage(w, "Outpost returned an error and did not accept the message.  Please report this problem to the author.", http.StatusInternalServerError)
+		s.ErrPage(w, "Outpost returned an error and did not accept the message.  Please report this problem to the author.", http.StatusInternalServerError)
 		return false
 	} else if strings.Contains(response, "Your PacFORMS submission was successful!") {
 		slog.Error("PacFORMS response from opdirect")
-		ErrPage(w, "It appears you are running an obsolete version of Outpost.  Please upgrade Outpost to a current version.", http.StatusInternalServerError)
+		s.ErrPage(w, "It appears you are running an obsolete version of Outpost.  Please upgrade Outpost to a current version.", http.StatusInternalServerError)
 		return false
 	}
 	slog.Info("message accepted by opdirect", "msgID", msgID)
@@ -292,14 +295,14 @@ func opdirectReturnCode(response string) (err error) {
 // serveMessagePDF generates a PDF with the message contents and serves it as
 // the response to the current request.  If something goes wrong it may serve an
 // error page instead.
-func serveMessagePDF(w http.ResponseWriter, r *http.Request, msg message.Message) {
+func (s *Server) serveMessagePDF(w http.ResponseWriter, r *http.Request, msg message.Message) {
 	var (
 		fname string
 		err   error
 	)
 	// Create a temp file for the PDF.
 	if fname, err = CreateTempPDF(msg); err != nil {
-		ErrPage(w, "The software was unable to create a PDF file for this message.  Please report this error to the author.", http.StatusInternalServerError)
+		s.ErrPage(w, "The software was unable to create a PDF file for this message.  Please report this error to the author.", http.StatusInternalServerError)
 		return
 	}
 	// Tell the client to redirect to fetch that file.  We can't serve the

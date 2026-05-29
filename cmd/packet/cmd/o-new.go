@@ -130,7 +130,7 @@ func outpostNECommon(values url.Values, path string) (err error) {
 	)
 	// Get the server address.  This also starts the server if not already
 	// running.
-	if address, err = server.GetAddress(true); err != nil {
+	if address, err = server.OutpostGetAddress(); err != nil {
 		return fmt.Errorf("starting server: %s", err)
 	}
 	// Build the request URL.

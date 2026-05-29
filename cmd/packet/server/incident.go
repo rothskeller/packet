@@ -36,13 +36,15 @@ func (s *Server) serveGetIncident(w http.ResponseWriter, r *http.Request) {
 		err  error
 		vars = map[string]string{}
 	)
+	s.outpost = false
 	if maybeShowREADME(w, r) {
 		return
 	}
 	if dir = r.FormValue("dir"); dir == "" {
-		ErrPage(w, "The GET /incident request is missing the required dir= parameter.", http.StatusBadRequest)
+		s.ErrPage(w, "The GET /incident request is missing the required dir= parameter.", http.StatusBadRequest)
 		return
 	}
+	s.log.Printf("open incident %s", dir)
 	err = incident.Write(dir, func(i *incident.Incident) error {
 		i.UpdateIncDefaults() // marks incident as recently used
 		vars["DIR"] = dir
@@ -68,7 +70,7 @@ func (s *Server) serveGetIncident(w http.ResponseWriter, r *http.Request) {
 		return nil
 	})
 	if err != nil {
-		ErrPage(w, err.Error(), http.StatusInternalServerError)
+		s.ErrPage(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 	vars["VERSION"] = packetver.Version
@@ -78,7 +80,7 @@ func (s *Server) serveGetIncident(w http.ResponseWriter, r *http.Request) {
 	}
 	if doc, err = html.Parse(bytes.NewReader(incidentHTML)); err != nil {
 		slog.Error("parse incident HTML", "err", err)
-		ErrPage(w, "The incident.html page could not be parsed.  Please report this error to the author.", http.StatusInternalServerError)
+		s.ErrPage(w, "The incident.html page could not be parsed.  Please report this error to the author.", http.StatusInternalServerError)
 		return
 	}
 	htmlop.Expand(doc, vars)
@@ -110,6 +112,7 @@ func (s *Server) serveGetIncidentLog(w http.ResponseWriter, r *http.Request) {
 		upd    ilogUpdate
 		err    error
 	)
+	s.outpost = false
 	if dir = r.FormValue("dir"); dir == "" {
 		slog.Error("no incident dir")
 		http.Error(w, "dir is required", http.StatusBadRequest)
@@ -178,8 +181,10 @@ func (s *Server) servePostViewICS309(w http.ResponseWriter, r *http.Request) {
 		dir   string
 		fname string
 	)
+	s.outpost = false
+	s.log.Print("generate ICS-309")
 	signature := r.FormValue("signature")
-	serveIncident(w, r, false, func(i *incident.Incident) (err error) {
+	s.serveIncident(w, r, false, func(i *incident.Incident) (err error) {
 		dir = i.Dir
 		fname = "ICS-309"
 		if i.Config.ActivationNum != "" {
