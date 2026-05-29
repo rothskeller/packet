@@ -4,13 +4,11 @@
 package main
 
 import (
-	"fmt"
 	"os"
 
 	"github.com/magefile/mage/mg"
 	"github.com/magefile/mage/sh"
 	"github.com/magefile/mage/target"
-	"github.com/rothskeller/packet/packetver"
 )
 
 // Default target.
@@ -60,9 +58,16 @@ func Build() error {
 func A315() error {
 	mg.Deps(IncidentHTML)
 	if _, err := os.Stat("/Volumes/str-a315"); err != nil {
+		println("Mounting STR-A315.")
 		if err = sh.Run("osascript", "-e", `mount volume "smb://str-a315/c"`); err != nil {
 			return err
 		}
 	}
-	return sh.RunWith(map[string]string{"GOOS": "windows"}, mg.GoCmd(), "build", "-tags", "sccopifo", "-o", fmt.Sprintf("/Volumes/str-a315/PackItForms/pifo-%s-setup.exe", packetver.Version), "./cmd/packet")
+	if err := sh.RunWith(map[string]string{"GOOS": "windows"}, mg.GoCmd(), "build", "-tags", "sccopifo", "-o", "/Volumes/str-a315/PackItForms/packet.exe", "./cmd/packet"); err != nil {
+		return err
+	}
+	if err := sh.RunWith(map[string]string{"GOOS": "windows"}, mg.GoCmd(), "build", "-ldflags", "-H=windowsgui", "-tags", "sccopifo", "-o", "/Volumes/str-a315/PackItForms/pifo.exe", "./cmd/packet"); err != nil {
+		return err
+	}
+	return nil
 }

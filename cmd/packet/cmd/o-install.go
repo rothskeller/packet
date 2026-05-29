@@ -3,7 +3,6 @@
 package cmd
 
 import (
-	"encoding/binary"
 	"fmt"
 	"io"
 	"log/slog"
@@ -32,11 +31,11 @@ const (
 usage: packet outpost install [outpost-data-dir]
 
 The "packet outpost install" command connects the packet software to Windows and Outpost.  The packet software does not need to be "installed;" it can be run from the command line without any installation process.  However, installing it makes it easier to invoke and to maintain:
+  - ⇥It puts the software in the expected location (C:\PackItForms).
   - ⇥It adds entries for the packet software in the Windows Start menu.
   - ⇥It adds entries for the packet software in the Windows Registry, so that the packet software appears in the list of installed applications and can be uninstalled from there.
-  - ⇥It updates the PackItForms 3.x C:\PackItForms\Outpost\SCCo\manual.cmd script, if it exists, to start manual mode operations.
 
-If an Outpost data directory is given on the command line, "packet outpost install" will also modify the Outpost configuration so that Outpost will use the packet software for forms messages.
+If an Outpost data directory is given on the command line, or exists in the standard place (C:\SCCo Packet), "packet outpost install" will also modify the Outpost configuration so that Outpost will use the packet software for forms messages.
 `
 )
 
@@ -147,8 +146,11 @@ func stopOldServer(exeFile string, args ...string) bool {
 }
 
 // installExecutables makes sure that the packet executable is installed at
-// C:\PackItForms\packet.exe (console mode) and C:\PackItForms\pifo.exe (GUI
-// mode).
+// C:\PackItForms\packet.exe and C:\PackItForms\pifo.exe.  In an ideal
+// installation (e.g., by the SCCo combined packet installer), the first of
+// those is console mode and the second of those is windowed mode.  However, if
+// we find those don't exist or are out of date, we'll put copies of our own
+// executable in those locations.
 func installExecutables() (err error) {
 	var selfFile string
 
@@ -157,32 +159,64 @@ func installExecutables() (err error) {
 		slog.Error("os.MkdirAll "+packetRoot, "err", err)
 		return fmt.Errorf("can't create %s: %s", packetRoot, err)
 	}
-	// If that isn't the location we're running from, copy our own
-	// executable there.
+	// Where are we running from?
 	if selfFile, err = os.Executable(); err != nil {
 		slog.Error("os.Executable", "err", err)
 		return fmt.Errorf("can't locate installer executable: %s", err)
 	}
+	// The most common case is that we're running from the pifoExe.  That's
+	// what the SCCo combined installer does.  If so, all we need to do is
+	// check that packetExe has the same mod time (within a few minutes).
+	// If it doesn't, we'll copy ourselves there.  That may be problematic,
+	// because pifoExe may be a windowed app and packetExe must not be, but
+	// it's the best we can do.
+	if !strings.EqualFold(pifoExe, selfFile) {
+		if pifoStat, err := os.Stat(pifoExe); err == nil {
+			if packetStat, err := os.Stat(packetExe); err == nil {
+				if delta := pifoStat.ModTime().Sub(packetStat.ModTime()); delta > -5*time.Minute && delta < 5*time.Minute {
+					slog.Debug("packet.exe is current with running pifo.exe")
+					return nil
+				}
+			}
+		}
+		// We retry the copy for a while because it may be running as a
+		// server that we just told to stop.
+		for range 10 {
+			if err = copyFile(selfFile, packetExe); err == nil {
+				break
+			}
+			time.Sleep(time.Second)
+		}
+		if err != nil {
+			return fmt.Errorf("can't install %s (10 retries): %s", packetExe, err)
+		}
+		return nil
+	}
+	// Another possibility is that we're running as packetExe.  In that case
+	// we do the same thing in reverse.  If we wind up installing a console
+	// app as pifo.exe, we'll get black window flashes when we don't want
+	// them, but that's not a huge issue.
 	if !strings.EqualFold(packetExe, selfFile) {
-		if err = copyFile(selfFile, packetExe); err != nil {
-			return fmt.Errorf("can't install %s: %s", packetExe, err)
+		if packetStat, err := os.Stat(packetExe); err == nil {
+			if pifoStat, err := os.Stat(pifoExe); err == nil {
+				if delta := pifoStat.ModTime().Sub(packetStat.ModTime()); delta > -5*time.Minute && delta < 5*time.Minute {
+					slog.Debug("pifo.exe is current with running packet.exe")
+					return nil
+				}
+			}
 		}
-	}
-	// Unconditionally copy our own executable to pifo.exe and mark it to
-	// be a GUI app.  (This is a bit kludgey, but it saves us having to
-	// deliver two large executables that differ by a single byte.)
-	for range 10 {
-		if err = copyFile(selfFile, pifoExe); err == nil {
-			break
+		if err = copyFile(selfFile, pifoExe); err != nil {
+			return fmt.Errorf("can't install %s: %s", pifoExe, err)
 		}
-		time.Sleep(time.Second)
+		return nil
 	}
-	if err != nil {
-		return fmt.Errorf("can't install %s (10 retries): %s", pifoExe, err)
+	// The last case is that we're not running as either packetExe or
+	// pifoExe.  In that case we copy ourself to both locations.
+	if err = copyFile(selfFile, packetExe); err != nil {
+		return fmt.Errorf("can't install %s: %s", packetExe, err)
 	}
-	if err = makeGUI(pifoExe); err != nil {
-		os.Remove(pifoExe)
-		return fmt.Errorf("can't mark %s as GUI app: %s", pifoExe, err)
+	if err = copyFile(selfFile, pifoExe); err != nil {
+		return fmt.Errorf("can't install %s: %s", pifoExe, err)
 	}
 	return nil
 }
@@ -214,46 +248,6 @@ func copyFile(src, dest string) (err error) {
 		return fmt.Errorf("%s: %s", dest, err)
 	}
 	slog.Info("copied", "src", src, "dest", dest)
-	return nil
-}
-
-// makeGUI marks a Windows executable as using the GUI rather than CUI
-// subsystem, i.e., it doesn't open a console window when invoked.
-func makeGUI(exeFile string) (err error) {
-	var (
-		ef     *os.File
-		buf    [4]byte
-		offset uint32
-	)
-	if ef, err = os.OpenFile(exeFile, os.O_RDWR, 0666); err != nil {
-		slog.Error("os.Open", "f", exeFile, "err", err)
-		return err
-	}
-	defer ef.Close()
-	if _, err = ef.ReadAt(buf[:], 0x3c); err != nil {
-		slog.Error("fh.ReadAt", "f", exeFile, "off", 0x3c, "err", err)
-		return err
-	}
-	offset = binary.LittleEndian.Uint32(buf[:])
-	offset += 0x5c
-	if _, err = ef.ReadAt(buf[:1], int64(offset)); err != nil {
-		slog.Error("fh.ReadAt", "f", exeFile, "off", offset, "err", err)
-		return err
-	}
-	if buf[0] != 3 {
-		slog.Error("wrong exe subsystem", "f", exeFile, "subsys", buf[0])
-		return fmt.Errorf("subsystem is %d, expected 3", buf[0])
-	}
-	buf[0] = 2
-	if _, err = ef.WriteAt(buf[:1], int64(offset)); err != nil {
-		slog.Error("fh.WriteAt", "f", exeFile, "off", offset, "err", err)
-		return err
-	}
-	if err = ef.Close(); err != nil {
-		slog.Error("fh.Close", "f", exeFile, "err", err)
-		return err
-	}
-	slog.Info("marked as GUI application", "f", exeFile)
 	return nil
 }
 
