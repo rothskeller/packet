@@ -4,11 +4,13 @@
 package main
 
 import (
+	"fmt"
 	"os"
 
 	"github.com/magefile/mage/mg"
 	"github.com/magefile/mage/sh"
 	"github.com/magefile/mage/target"
+	"github.com/rothskeller/packet/packetver"
 )
 
 // Default target.
@@ -22,6 +24,19 @@ func Forms() {
 	sh.Run(mg.GoCmd(), "run", "./cmd/sign-forms", "SCCoPIFO", "SCCoPIFO.zip")
 	os.Remove("SCCoPIFO.zip")
 	sh.Run("scp", "SCCoPIFO.forms", "sccares:www/www/form-bundles/4.0.9/SCCoPIFO.forms")
+}
+
+func Dist() {
+	mg.Deps(IncidentHTML, WindowsResources)
+	os.MkdirAll("dist", 0777)
+	sh.RunWith(map[string]string{"GOOS": "darwin", "GOARCH": "amd64"},
+		mg.GoCmd(), "build", "-tags", "sccopifo", "-o", fmt.Sprintf("./dist/packet-v%s_darwin_amd64", packetver.Version), "./cmd/packet")
+	sh.RunWith(map[string]string{"GOOS": "linux", "GOARCH": "amd64"},
+		mg.GoCmd(), "build", "-tags", "sccopifo", "-o", fmt.Sprintf("./dist/packet-v%s_linux_amd64", packetver.Version), "./cmd/packet")
+	sh.RunWith(map[string]string{"GOOS": "windows", "GOARCH": "amd64"},
+		mg.GoCmd(), "build", "-tags", "sccopifo", "-o", fmt.Sprintf("./dist/packet-v%s_windows_amd64_console.exe", packetver.Version), "./cmd/packet")
+	sh.RunWith(map[string]string{"GOOS": "windows", "GOARCH": "amd64"},
+		mg.GoCmd(), "build", "-ldflags", "-H=windowsgui", "-tags", "sccopifo", "-o", fmt.Sprintf("./dist/packet-v%s_windows_amd64_gui.exe", packetver.Version), "./cmd/packet")
 }
 
 func IncidentHTML() {
