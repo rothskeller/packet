@@ -14,6 +14,7 @@ import (
 	"github.com/rothskeller/packet/cmd/packet/server"
 	"github.com/rothskeller/packet/errors"
 	"github.com/rothskeller/packet/form"
+	"github.com/rothskeller/packet/form/formdefs"
 	"github.com/rothskeller/packet/message"
 	"github.com/spf13/pflag"
 )
@@ -128,10 +129,18 @@ func outpostNECommon(values url.Values, path string) (err error) {
 		u       *url.URL
 		cmd     *exec.Cmd
 	)
-	// Get the server address.  This also starts the server if not already
-	// running.
-	if address, err = server.OutpostGetAddress(); err != nil {
-		return fmt.Errorf("starting server: %s", err)
+	// Get the server address.
+	if address, err = server.GetAddress(false); err != nil {
+		return fmt.Errorf("finding server: %s", err)
+	}
+	if address == "" {
+		// There's no server running; we need to start one.  But first,
+		// before starting the server is the proper time to check for
+		// forms updates.  Errors are logged but not returned.
+		_ = formdefs.CheckForUpdates(false, true)
+		if address, err = guiStartServerProcess(); err != nil {
+			return fmt.Errorf("starting server: %s", err)
+		}
 	}
 	// Build the request URL.
 	if u, err = url.Parse(address); err != nil {

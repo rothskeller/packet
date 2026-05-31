@@ -11,7 +11,6 @@ import (
 	"net"
 	"net/http"
 	"os"
-	"os/exec"
 	"os/signal"
 	"path/filepath"
 	"strconv"
@@ -22,7 +21,6 @@ import (
 	"github.com/fsnotify/fsnotify"
 	"github.com/rothskeller/packet/cmd/packet/osdep"
 	"github.com/rothskeller/packet/errors"
-	"github.com/rothskeller/packet/form/formdefs"
 	"github.com/rothskeller/packet/form/htmlop"
 	"github.com/rothskeller/packet/incident"
 	"github.com/rothskeller/packet/message"
@@ -38,110 +36,88 @@ const (
 	// attemptDelay specifies how long to wait between attempts to reach a
 	// newly started server.
 	attemptDelay = time.Second
-	// maxAttempts specifies how many attempts to make to reach a newly
+	// waitAttempts specifies how many attempts to make to reach a newly
 	// started server before giving up on it.
-	maxAttempts = 5
-	// serverTimeout specifies how long the server can run without receiving
-	// any requests.
-	serverTimeout = time.Hour
+	waitAttempts = 5
 )
 
 // Logpath is the path to the log file, set by main.
 var Logpath string
 
-// GetAddress returns the URL of the currently running server.  If there is no
-// server running and start is true, GetAddress invokes the server, waits for it
-// to start up, and then returns its address.
-func GetAddress(start bool) (address string, err error) {
-	var (
-		attempts     int
-		ctx          context.Context
-		cancel       func()
-		req          *http.Request
-		resp         *http.Response
-		cmd          *exec.Cmd
-		attemptLimit = 1
-	)
-	for attempts < attemptLimit {
-		attempts++
-		// Read the address file.
-		if fh, err := os.Open(osdep.AddressFile); os.IsNotExist(err) {
-			err = nil
-			goto START
-		} else if err != nil {
-			slog.Error("os.Open", "f", osdep.AddressFile, "err", err)
-			return "", err
-		} else if err = osdep.ReadLock(fh); err != nil {
-			slog.Error("osdep.ReadLock", "f", osdep.AddressFile, "err", err)
-			return "", fmt.Errorf("locking %s: %w", osdep.AddressFile, err)
-		} else if buf, err := io.ReadAll(fh); err != nil {
-			slog.Error("io.ReadAll", "f", osdep.AddressFile, "err", err)
-			osdep.Unlock(fh)
-			fh.Close()
-			return "", fmt.Errorf("reading %s: %w", osdep.AddressFile, err)
-		} else {
-			osdep.Unlock(fh)
-			fh.Close()
-			address = strings.TrimSpace(string(buf))
-		}
-		// Ping the server to see if it is still running.
-		ctx, cancel = context.WithTimeout(context.Background(), pingTimeout)
-		req, _ = http.NewRequestWithContext(ctx, http.MethodGet, address+"/ping", nil)
-		resp, err = http.DefaultClient.Do(req)
-		cancel()
-		if err != nil {
-			slog.Debug("ping server", "url", address, "err", err)
-			err = fmt.Errorf("%s/ping: %w", address, err)
-		} else {
-			resp.Body.Close()
-			if resp.StatusCode == http.StatusNoContent {
-				// We pinged the server successfully, so we have
-				// the correct address.
-				slog.Debug("server is running", "url", address)
-				return address, nil
-			} else {
-				slog.Warn("ping server", "url", address, "code", resp.StatusCode, "status", resp.Status)
-				err = fmt.Errorf("%s/ping responded with %d %s", address, resp.StatusCode, resp.Status)
-			}
-		}
-	START:
-		// We weren't able to contact a running server.
-		if start {
-			// We should try to start one.  But first, just before
-			// starting the server is the proper time to check for
-			// forms updates.  Errors will get logged but need not
-			// be returned.
-			_ = formdefs.CheckForUpdates(false, true)
-			// Now that that's done, start the server.
-			cmd = exec.Command(os.Args[0], "server", "start")
-			cmd.SysProcAttr = osdep.DetachChild
-			if err = cmd.Start(); err != nil {
-				slog.Error("exec server start", "err", err)
-				return "", fmt.Errorf("start %s serve: %w", os.Args[0], err)
-			} else {
-				slog.Debug("started server")
-			}
-			// Don't try again, but do wait a while for it to start up.
-			start = false
-			attemptLimit = maxAttempts
-		}
-		if attempts < attemptLimit {
-			time.Sleep(attemptDelay)
-		}
+// GetAddress returns the URL of the currently running server.  If wait is true
+// (i.e., we just started a server and are waiting for it to start responding to
+// pings), GetAddress will try repeatedly for a while before returning.
+func GetAddress(wait bool) (address string, err error) {
+	maxAttempts := 1
+	if wait {
+		maxAttempts = waitAttempts
 	}
-	slog.Debug("server is not running")
-	return "", err
+	for range maxAttempts {
+		if address, err = addressAttempt(); err != nil || address != "" {
+			return address, err
+		}
+		time.Sleep(attemptDelay)
+	}
+	return "", nil
+}
+
+// addressAttempt tries to ping the server identified in the server
+// address file, if any, and returns the server address if the ping was
+// successful.  It returns an empty address and no error if there is no server
+// address file or the addressed server is not pingable.  It returns an error if
+// something went wrong that isn't just a "server not running".
+func addressAttempt() (address string, err error) {
+	var (
+		ctx    context.Context
+		cancel func()
+		req    *http.Request
+		resp   *http.Response
+	)
+	// Read the address file.
+	if fh, err := os.Open(osdep.AddressFile); os.IsNotExist(err) {
+		return "", nil
+	} else if err != nil {
+		slog.Error("os.Open", "f", osdep.AddressFile, "err", err)
+		return "", errors.NewF("The packet server address file could not be opened: %s", err)
+	} else if err = osdep.ReadLock(fh); err != nil {
+		slog.Error("osdep.ReadLock", "f", osdep.AddressFile, "err", err)
+		return "", errors.NewF("The packet server address file could not be locked: %s", err)
+	} else if buf, err := io.ReadAll(fh); err != nil {
+		slog.Error("io.ReadAll", "f", osdep.AddressFile, "err", err)
+		osdep.Unlock(fh)
+		fh.Close()
+		return "", errors.NewF("The packet server address file could not be read: %s", err)
+	} else {
+		osdep.Unlock(fh)
+		fh.Close()
+		address = strings.TrimSpace(string(buf))
+	}
+	// Ping the server to see if it is still running.
+	ctx, cancel = context.WithTimeout(context.Background(), pingTimeout)
+	req, _ = http.NewRequestWithContext(ctx, http.MethodGet, address+"/ping", nil)
+	resp, err = http.DefaultClient.Do(req)
+	cancel()
+	if err != nil {
+		slog.Debug("ping server", "url", address, "err", err)
+		return "", nil
+	}
+	resp.Body.Close()
+	if resp.StatusCode != http.StatusNoContent {
+		slog.Error("ping server", "url", address, "code", resp.StatusCode, "status", resp.Status)
+		return "", errors.NewF("The packet server responded to a ping request with an unexpected response %d.", resp.StatusCode)
+	}
+	slog.Debug("server is running", "url", address)
+	return address, nil
 }
 
 // Start starts serving web requests on the specified port (or the default port
 // or a random port if the specified port is zero).  If it finds that another
-// server is already running (on any port), it writes that server's address to
-// stdout and returns nil immediately.  Otherwise, it starts a new server.  The
-// new server will stop, and the function will return, after an hour of
-// inactivity, on receipt of a POST /stop request, on receipt of an interrupt
-// signal, on creation/change of /tmp/packet-stop (Windows:
-// C:\PackItForms\stop), or when the supplied stop channel (if non-nil) is
-// closed.  The function returns an error only if a new server fails to start.
+// server is already running (on any port), it returns nil immediately.
+// Otherwise, it starts a new server.  The new server will stop, and the
+// function will return, on receipt of a POST /stop request, on receipt of an
+// interrupt signal, or on creation/change of /tmp/packet-stop (Windows:
+// C:\PackItForms\stop).  The function returns an error only if a new server
+// fails to start.
 func Start(port int, outpost bool) (err error) {
 	var (
 		addressDir string
@@ -211,8 +187,6 @@ func Start(port int, outpost bool) (err error) {
 	// Send a stop signal when the packet-stop file is touched.
 	server.stop = make(chan struct{}, 1)
 	go server.watchForStopFile()
-	// Send a stop signal with the idle timer fires.
-	server.idleTimer = time.NewTimer(serverTimeout)
 	// Send a stop signal when the user hits Ctrl-C or the window is closed.
 	go server.watchForInterrupt()
 	// Send a stop signal if Outpost is closed.
@@ -223,7 +197,6 @@ func Start(port int, outpost bool) (err error) {
 	// Set the server up to handle requests.
 	server.registerHandlers()
 	hserver.Handler = http.HandlerFunc(server.handleRequest)
-	// Start a logger writing to standard output.
 	// Start a webserver on the port we're listening to.
 	go hserver.Serve(listener)
 	slog.Info("server listening", "url", server.address)
@@ -239,9 +212,6 @@ Activity is being logged to %s.
 	fmt.Fprintln(addrFH, server.address)
 	osdep.Unlock(addrFH)
 	addrFH.Close()
-	// Send a stop signal when we haven't received any server requests in a
-	// long time.
-	go server.watchForIdleTimeout()
 	// Wait until (a) we've been idle for a long time, (b) the stop file is
 	// touched, or (c) we've received a POST /stop request.
 	<-server.stop
@@ -256,11 +226,10 @@ Activity is being logged to %s.
 
 // Server represents the packet HTTP server.
 type Server struct {
-	address   string
-	stop      chan struct{}
-	idleTimer *time.Timer
-	mux       http.ServeMux
-	outpost   bool
+	address string
+	stop    chan struct{}
+	mux     http.ServeMux
+	outpost bool
 }
 
 // watchForStopFile watches for the creation or update of the "packet-stop"
@@ -331,20 +300,10 @@ func (s *Server) watchForInterrupt() {
 	close(s.stop)
 }
 
-// watchForIdleTimeout watches for an idle timeout, and stops the server when it
-// happens.
-func (s *Server) watchForIdleTimeout() {
-	<-s.idleTimer.C
-	slog.Info("stopping server: inactivity timeout")
-	close(s.stop)
-}
-
 // handleRequest handles a web request to the server.
 func (s *Server) handleRequest(w http.ResponseWriter, r *http.Request) {
 	var attrs []slog.Attr
 
-	// Reset the idle timer on any request.
-	s.idleTimer.Reset(serverTimeout)
 	// Log the request.
 	r.FormValue("x") // force the form to be parsed
 	for k, vs := range r.Form {

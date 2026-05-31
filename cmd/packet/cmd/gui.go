@@ -8,10 +8,12 @@ import (
 	"os"
 	"os/exec"
 	"path/filepath"
+	"sync"
 
 	"github.com/rothskeller/packet/cmd/packet/cio"
 	"github.com/rothskeller/packet/cmd/packet/osdep"
 	"github.com/rothskeller/packet/cmd/packet/server"
+	"github.com/rothskeller/packet/form/formdefs"
 	"github.com/rothskeller/packet/incident"
 	"github.com/spf13/pflag"
 )
@@ -34,6 +36,7 @@ func cmdGUI(args []string) (err error) {
 		created bool
 		address string
 		cmd     *exec.Cmd
+		wg      *sync.WaitGroup
 	)
 	flags := pflag.NewFlagSet("gui", pflag.ContinueOnError)
 	flags.Usage = func() {} // we do our own
@@ -90,8 +93,17 @@ func cmdGUI(args []string) (err error) {
 	}
 	// Get the server address.  This also starts the server if not already
 	// running.
-	if address, err = server.GetAddress(true); err != nil {
-		return fmt.Errorf("starting server: %s", err)
+	if address, err = server.GetAddress(false); err != nil {
+		return fmt.Errorf("finding server: %s", err)
+	}
+	if address == "" {
+		// There's no server running; we need to start one.  But first,
+		// before starting the server is the proper time to check for
+		// forms updates.  Errors are logged but not returned.
+		_ = formdefs.CheckForUpdates(false, true)
+		if address, wg, err = guiStartServer(); err != nil {
+			return fmt.Errorf("starting server: %s", err)
+		}
 	}
 	// Build the request URL.
 	if dir == "" {
@@ -109,5 +121,25 @@ func cmdGUI(args []string) (err error) {
 		return fmt.Errorf("open GUI mode in browser: %s", err)
 	}
 	slog.Info("opened browser for GUI mode", "inc", dir)
+	if wg != nil {
+		wg.Wait()
+	}
 	return nil
+}
+
+// guiStartServerGoroutine starts the packet server in a goroutine of the
+// current process, with a WaitGroup that waits for it to exit.
+func guiStartServerGoroutine() (address string, wg *sync.WaitGroup, err error) {
+	wg = new(sync.WaitGroup)
+	wg.Add(1)
+	go func() {
+		server.Start(0, false)
+		wg.Done()
+	}()
+	if address, err = server.GetAddress(true); err != nil {
+		return "", wg, err
+	} else if address == "" {
+		return "", wg, errors.New("The packet server did not start up within the expected time.")
+	}
+	return address, wg, nil
 }
