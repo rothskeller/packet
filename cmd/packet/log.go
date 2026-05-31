@@ -10,6 +10,7 @@ import (
 	"time"
 
 	"github.com/rothskeller/packet/cmd/packet/osdep"
+	"github.com/rothskeller/packet/cmd/packet/server"
 )
 
 var logFH *os.File
@@ -26,6 +27,7 @@ func reopenLogFile() {
 	)
 	nextLog = time.Now()
 	logpath = filepath.Join(osdep.LogsDir, nextLog.Format("2006-01-02")+".log")
+	server.Logpath = logpath
 	if err = os.MkdirAll(osdep.LogsDir, 0777); err != nil {
 		newFH = os.Stderr
 	} else if newFH, err = os.OpenFile(logpath, os.O_WRONLY|os.O_APPEND|os.O_CREATE, 0666); err != nil {

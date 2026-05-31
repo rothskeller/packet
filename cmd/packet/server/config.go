@@ -147,7 +147,6 @@ func (s *Server) servePostIncidentConfig(w http.ResponseWriter, r *http.Request)
 	var err error
 
 	s.outpost = false
-	s.log.Printf("save incident settings for %s", r.FormValue("dir"))
 	err = incident.Write(r.FormValue("dir"), func(inc *incident.Incident) error {
 		var c = inc.Config.Clone()
 

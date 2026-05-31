@@ -52,7 +52,6 @@ func (s *Server) outpostNewRequest(w http.ResponseWriter, r *http.Request) {
 		s.ErrPage(w, fmt.Sprintf("No editable form definition was found for %q.  Please report this to the author.", formtag), http.StatusInternalServerError)
 		return
 	}
-	s.log.Printf("create new %s", formtag)
 	msg = mtype.NewDraft()
 	// Walk through the fields of the form, setting fields.
 	for f := range msg.Fields() {
@@ -109,7 +108,6 @@ func (s *Server) outpostEditRequest(w http.ResponseWriter, r *http.Request) {
 		index = r.FormValue("index")
 		delete(r.Form, "index")
 	}
-	s.log.Printf("edit Outpost message %s", index)
 	// Open, read, and parse the message.
 	if msg, err = message.ReadNoHeader(r.FormValue("msgfile")); msg == nil {
 		slog.Error("read message from Outpost", "f", r.FormValue("msgfile"), "err", err)
@@ -175,7 +173,6 @@ func (s *Server) outpostSubmit(w http.ResponseWriter, r *http.Request) {
 		s.ErrPage(w, fmt.Sprintf("The form with tag=%q was not found.  Please report this error to the author.", formtag), http.StatusInternalServerError)
 		return
 	}
-	s.log.Printf("submit %s to Outpost", formtag)
 	if msg, err = mtype.FromPOST(r); err != nil {
 		s.ErrPage(w, fmt.Sprintf("The form could not be read (%s).  Please report this error to the author.", err), http.StatusInternalServerError)
 		return

@@ -46,7 +46,6 @@ func (s *Server) serveGetNewMessage(w http.ResponseWriter, r *http.Request) {
 		s.ErrPage(w, fmt.Sprintf("The message type tag %q is not recognized.  Please report this error to the author.", tag), http.StatusInternalServerError)
 		return
 	}
-	s.log.Printf("create new %s", tag)
 	msg = mt.NewDraft().(*message.DraftMessage)
 	err = incident.Write(dir, func(i *incident.Incident) (err error) {
 		i.ApplyDefaults(msg)
@@ -179,7 +178,6 @@ func (s *Server) servePostSendMessage(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, fmt.Sprintf("no such message type %q", tag), http.StatusBadRequest)
 		return
 	}
-	s.log.Printf("submit message #%d %s", ident, tag)
 	if m, err := mt.FromPOST(r); err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
@@ -311,7 +309,6 @@ func (s *Server) servePostPrintMessage(w http.ResponseWriter, r *http.Request) {
 	s.outpost = false
 	dir = r.FormValue("dir")
 	ident, _ = strconv.Atoi(r.FormValue("id"))
-	s.log.Printf("print message #%d", ident)
 	err = incident.Read(dir, func(i *incident.Incident) (err error) {
 		if le := i.GetLogEntryByIdent(ident); le == nil {
 			slog.Error("no such message", "dir", dir, "id", ident)
@@ -365,7 +362,6 @@ func (s *Server) servePostNewMessageFrom(w http.ResponseWriter, r *http.Request)
 	var action = r.FormValue("action")
 
 	s.outpost = false
-	s.log.Printf("create new message (%s) from #%s", action, r.FormValue("id"))
 	s.serveMessage(w, r, true, func(i *incident.Incident, le *incident.LogEntry, msg message.Message) error {
 		var dr *message.DraftMessage
 
@@ -414,7 +410,6 @@ func (s *Server) servePostNewMessageFrom(w http.ResponseWriter, r *http.Request)
 
 func (s *Server) servePostDeleteMessage(w http.ResponseWriter, r *http.Request) {
 	s.outpost = false
-	s.log.Printf("delete message #%s", r.FormValue("id"))
 	s.serveLogIdent(w, r, true, func(i *incident.Incident, le *incident.LogEntry) error {
 		return i.DeleteMessage(le)
 	}, nil)

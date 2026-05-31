@@ -27,7 +27,6 @@ func (s *Server) servePostManualReceive(w http.ResponseWriter, r *http.Request) 
 		err    error
 	)
 	s.outpost = false
-	s.log.Printf("manual receive message")
 	// Check parameters.
 	makedr = r.FormValue("mrdr") != ""
 	mtext = strings.ReplaceAll(r.FormValue("mrmsg"), "\r\n", "\n")
@@ -85,7 +84,6 @@ func (s *Server) serveGetManualSendCommand(w http.ResponseWriter, r *http.Reques
 		http.Error(w, fmt.Sprintf("invalid message ident %q", r.FormValue("id")), http.StatusBadRequest)
 		return
 	}
-	s.log.Printf("manual send message #%d", id)
 	err = incident.Read(dir, func(i *incident.Incident) (err error) {
 		if i.Config.TacCall != "" {
 			ident = i.Config.OpCall
@@ -177,7 +175,6 @@ func (s *Server) servePostMarkSent(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, fmt.Sprintf("invalid message ident %q", r.FormValue("id")), http.StatusBadRequest)
 		return
 	}
-	s.log.Printf("mark message #%d manually sent", id)
 	err = incident.Write(dir, func(i *incident.Incident) (err error) {
 		if le := i.GetLogEntryByIdent(id); le == nil {
 			return fmt.Errorf("invalid message ident %q", r.FormValue("id"))
@@ -215,7 +212,6 @@ func (s *Server) servePostMakeReceipt(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, fmt.Sprintf("invalid message ident %q", r.FormValue("id")), http.StatusBadRequest)
 		return
 	}
-	s.log.Printf("create receipt for message #%d", id)
 	err = incident.Write(dir, func(i *incident.Incident) (err error) {
 		if le := i.GetLogEntryByIdent(id); le == nil {
 			return fmt.Errorf("invalid message ident %q", r.FormValue("id"))

@@ -7,7 +7,6 @@ import (
 	_ "embed"
 	"fmt"
 	"io"
-	"log"
 	"log/slog"
 	"net"
 	"net/http"
@@ -46,6 +45,9 @@ const (
 	// any requests.
 	serverTimeout = time.Hour
 )
+
+// Logpath is the path to the log file, set by main.
+var Logpath string
 
 // GetAddress returns the URL of the currently running server.  If there is no
 // server running and start is true, GetAddress invokes the server, waits for it
@@ -194,7 +196,6 @@ func Start(port int, outpost bool) (err error) {
 		port, defPort = 45674, true
 	}
 	// Open a listening port.
-	server.log = log.New(os.Stdout, "", log.LstdFlags)
 	server.address = fmt.Sprintf("127.0.0.1:%d", port)
 	if listener, err = net.Listen("tcp4", server.address); defPort && isBusyPortError(err) {
 		// If that was an attempt at our default port and it failed
@@ -204,7 +205,6 @@ func Start(port int, outpost bool) (err error) {
 	}
 	if err != nil {
 		slog.Error("net.Listen", "a", server.address, "err", err)
-		server.log.Printf("ERROR: net.Listen(%s): %s", server.address, err)
 		return err
 	}
 	server.address = "http://" + listener.Addr().String()
@@ -230,9 +230,9 @@ func Start(port int, outpost bool) (err error) {
 	fmt.Printf(`
 PACKET SERVER v%s at %s
 Keep this window open until all packet-related browser tabs are closed.
-=======================================================================
 
-`, packetver.Version, server.address)
+Activity is being logged to %s.
+`, packetver.Version, server.address, Logpath)
 	// Write the server address to the address file.
 	addrFH.Seek(0, 0)
 	addrFH.Truncate(0)
@@ -261,7 +261,6 @@ type Server struct {
 	idleTimer *time.Timer
 	mux       http.ServeMux
 	outpost   bool
-	log       *log.Logger
 }
 
 // watchForStopFile watches for the creation or update of the "packet-stop"
@@ -273,13 +272,11 @@ func (s *Server) watchForStopFile() {
 	)
 	if watcher, err = fsnotify.NewWatcher(); err != nil {
 		slog.Error("fsnotify.NewWatcher", "err", err)
-		s.log.Printf("ERROR: watchForStopFile: fsnotify.NewWatcher: %s", err)
 		close(s.stop)
 		return
 	}
 	if err = watcher.Add(filepath.Dir(osdep.ServerStopFile)); err != nil {
 		slog.Error("watcher.Add", "f", osdep.ServerStopFile, "err", err)
-		s.log.Printf("ERROR: watchForStopFile: watcher.Add(%s): %s", osdep.ServerStopFile, err)
 		close(s.stop)
 		return
 	}
@@ -290,12 +287,10 @@ func (s *Server) watchForStopFile() {
 				break
 			}
 			slog.Info("stopping server: stop file modtime has changed")
-			s.log.Print("stopping server: stop file modtime has changed")
 			close(s.stop)
 			return
 		case err := <-watcher.Errors:
 			slog.Error("watcher.Error", "err", err)
-			s.log.Printf("ERROR: watchForStopFile: watcher.Error: %s", err)
 			close(s.stop)
 			return
 		}
@@ -313,18 +308,15 @@ func (s *Server) watchForOutpostClose() {
 	)
 	if conn, err = net.Dial("tcp4", "127.0.0.1:9334"); err != nil {
 		slog.Error("net.Dial (opdirect)", "err", err)
-		s.log.Printf("ERROR: watchForOutpostClose: net.Dial(opdirect): %s", err)
 		close(s.stop)
 		return
 	}
 	conn.Read(buf)
 	if s.outpost {
 		slog.Info("stopping server: connection to opdirect has been closed")
-		s.log.Print("stopping server: connection to Outpost has been closed")
 		close(s.stop)
 	} else {
 		slog.Info("opdirect connection closed; not stopping server due to non-Outpost usage")
-		s.log.Print("connection to Outpost closed; not stopping server due to non-Outpost usage")
 	}
 }
 
@@ -336,7 +328,6 @@ func (s *Server) watchForInterrupt() {
 	signal.Notify(ch, os.Interrupt, syscall.SIGTERM)
 	<-ch
 	slog.Info("stopping server: interrupt signal")
-	s.log.Print("stopping server: interrupt signal")
 	close(s.stop)
 }
 
@@ -345,7 +336,6 @@ func (s *Server) watchForInterrupt() {
 func (s *Server) watchForIdleTimeout() {
 	<-s.idleTimer.C
 	slog.Info("stopping server: inactivity timeout")
-	s.log.Print("stopping server: inactivity timeout")
 	close(s.stop)
 }
 
@@ -372,7 +362,6 @@ func (s *Server) handleRequest(w http.ResponseWriter, r *http.Request) {
 // handleStop handles the POST /stop request by stopping the server.
 func (s *Server) handleStop(w http.ResponseWriter, r *http.Request) {
 	slog.Info("stopping server: received POST /stop")
-	s.log.Print("stopping server: received HTTP stop request")
 	close(s.stop)
 }
 

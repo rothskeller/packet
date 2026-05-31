@@ -9,7 +9,6 @@ import (
 
 // ErrPage emits an error page with the specified HTTP status and error message.
 func (s *Server) ErrPage(w http.ResponseWriter, err string, httpStatus int) {
-	s.log.Printf("returning error %d %s", httpStatus, err)
 	err = html.EscapeString(err)
 	err = strings.ReplaceAll(err, "\n", "<br/>")
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")

@@ -46,7 +46,6 @@ func logInvocation() {
 }
 
 func defaultCommands() {
-
 	if len(os.Args) != 1 {
 		return // They specified a command.
 	}

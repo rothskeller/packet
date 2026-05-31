@@ -32,7 +32,6 @@ func (s *Server) servePostEditLogEntry(w http.ResponseWriter, r *http.Request) {
 	// Get the message from the incident and make sure it's proper.
 	dir, idstr = r.FormValue("dir"), r.FormValue("id")
 	if idstr != "NEW" {
-		s.log.Print("create new log entry")
 		if id, err = strconv.Atoi(idstr); err != nil || id <= 0 {
 			http.Error(w, fmt.Sprintf("invalid message ident %q", r.FormValue("id")), http.StatusBadRequest)
 			return
@@ -77,7 +76,6 @@ func (s *Server) servePostEditLogEntry(w http.ResponseWriter, r *http.Request) {
 	} else {
 		var le incident.LogEntry
 
-		s.log.Printf("edit log entry #%d", id)
 		if le.Time, err = time.ParseInLocation("01/02/2006 15:04", r.FormValue("date")+" "+r.FormValue("time"), time.Local); err != nil {
 			slog.Error("invalid date/time")
 			http.Error(w, "The date and/or time does not have the proper MM/DD/YYYY HH:MM format.", http.StatusBadRequest)
@@ -125,7 +123,6 @@ func (s *Server) servePostResetLogEntry(w http.ResponseWriter, r *http.Request) 
 		http.Error(w, fmt.Sprintf("invalid message ident %q", r.FormValue("id")), http.StatusBadRequest)
 		return
 	}
-	s.log.Printf("reset log entry #%d", id)
 	err = incident.Write(dir, func(i *incident.Incident) (err error) {
 		if le := i.GetLogEntryByIdent(id); le == nil {
 			return fmt.Errorf("invalid message ident %q", r.FormValue("id"))
@@ -157,7 +154,6 @@ func (s *Server) servePostDeleteLogEntry(w http.ResponseWriter, r *http.Request)
 		http.Error(w, fmt.Sprintf("invalid message ident %q", r.FormValue("id")), http.StatusBadRequest)
 		return
 	}
-	s.log.Printf("delete log entry #%d", id)
 	err = incident.Write(dir, func(i *incident.Incident) (err error) {
 		if le := i.GetLogEntryByIdent(id); le == nil {
 			return fmt.Errorf("invalid message ident %q", r.FormValue("id"))
@@ -196,7 +192,6 @@ func (s *Server) servePostToggleFlag(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, fmt.Sprintf("invalid message ident %q", r.FormValue("id")), http.StatusBadRequest)
 		return
 	}
-	s.log.Printf("toggle flag %s for log entry #%d", flag, id)
 	err = incident.Write(dir, func(i *incident.Incident) (err error) {
 		if le := i.GetLogEntryByIdent(id); le == nil {
 			return fmt.Errorf("invalid message ident %q", r.FormValue("id"))

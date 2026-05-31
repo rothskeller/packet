@@ -44,7 +44,6 @@ func (s *Server) serveGetIncident(w http.ResponseWriter, r *http.Request) {
 		s.ErrPage(w, "The GET /incident request is missing the required dir= parameter.", http.StatusBadRequest)
 		return
 	}
-	s.log.Printf("open incident %s", dir)
 	err = incident.Write(dir, func(i *incident.Incident) error {
 		i.UpdateIncDefaults() // marks incident as recently used
 		vars["DIR"] = dir
@@ -182,7 +181,6 @@ func (s *Server) servePostViewICS309(w http.ResponseWriter, r *http.Request) {
 		fname string
 	)
 	s.outpost = false
-	s.log.Print("generate ICS-309")
 	signature := r.FormValue("signature")
 	s.serveIncident(w, r, false, func(i *incident.Incident) (err error) {
 		dir = i.Dir

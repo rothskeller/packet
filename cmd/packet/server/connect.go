@@ -31,7 +31,6 @@ var bbsConnectionsMutex sync.Mutex
 // always returns with 204.
 func (s *Server) servePostConnectBBS(w http.ResponseWriter, r *http.Request) {
 	s.outpost = false
-	s.log.Print("connecting to BBS")
 	var dir = r.FormValue("dir")
 	bbsConnectionsMutex.Lock()
 	if bbsConnections[dir] != nil { // connection already running
@@ -52,7 +51,6 @@ func (s *Server) servePostConnectBBS(w http.ResponseWriter, r *http.Request) {
 // always returns 204.
 func (s *Server) servePostConnectAbort(w http.ResponseWriter, r *http.Request) {
 	var dir = r.FormValue("dir")
-	s.log.Print("aborting connection to BBS")
 	bbsConnectionsMutex.Lock()
 	if bbsConnections[dir] != nil {
 		bbsConnections[dir].cancel()
