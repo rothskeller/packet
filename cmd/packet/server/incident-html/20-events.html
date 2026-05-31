@@ -208,9 +208,9 @@
       // Message: Delete
       setupMenuItem({
         id: 'm-msg-delete', cid: 'cm-msg-delete',
-        shown: sel => sel.st === 'D' || sel.st === 'Q' || sel.st === 'M',
+        shown: sel => sel.st === 'D' || sel.st === 'Q' || sel.st === 'H',
         clicked: async sel => {
-          if (sel.st !== 'M') {
+          if (sel.st !== 'H') {
             openDeleteMessageDialog(sel)
             return
           }
@@ -218,6 +218,15 @@
           const resp = await fetch2('/delete-log-entry?' + params.toString(), { method: 'POST' })
           if (!resp.ok) openErrorDialog('Delete Log Entry', await resp.text())
         },
+      })
+      // Message: View Encoded
+      setupMenuItem({
+        id: 'm-msg-view-enc', cid: 'cm-msg-view-enc',
+        shown: sel => sel.st !== 'H',
+        clicked: sel => {
+          const params = new URLSearchParams({ dir: document.body.dataset.dir, id: sel.ident })
+          window.open('/view-encoded?' + params.toString(), `venc${sel.ident}`)
+        }
       })
       // Message: Ready to Send
       setupMenuItem({

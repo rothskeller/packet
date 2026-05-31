@@ -1,6 +1,8 @@
 package server
 
 import (
+	"bytes"
+	_ "embed"
 	"fmt"
 	"io/fs"
 	"log/slog"
@@ -15,10 +17,12 @@ import (
 
 	"github.com/rothskeller/packet/cmd/packet/osdep"
 	"github.com/rothskeller/packet/errors"
+	"github.com/rothskeller/packet/form/htmlop"
 	"github.com/rothskeller/packet/incident"
 	"github.com/rothskeller/packet/message"
 	"github.com/rothskeller/packet/message/address"
 	"github.com/rothskeller/packet/message/field"
+	"golang.org/x/net/html"
 )
 
 // serveGetNewMessage handles GET /new-message requests, which are sent from
@@ -289,6 +293,58 @@ func (s *Server) serveGetViewMessage(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/pdf")
 	w.Header().Set("Content-Disposition", "inline; filename="+pdf)
 	http.ServeFile(w, r, dpdf)
+}
+
+//go:embed encoded.html
+var encodedHTML []byte
+
+func (s *Server) serveGetViewEncoded(w http.ResponseWriter, r *http.Request) {
+	var (
+		dir      string
+		ident    int
+		le       *incident.LogEntry
+		filename string
+		by       []byte
+		doc      *html.Node
+		err      error
+		vars     = map[string]string{}
+	)
+	s.outpost = false
+	if maybeShowREADME(w, r) {
+		return
+	}
+	dir = r.FormValue("dir")
+	ident, _ = strconv.Atoi(r.FormValue("id"))
+	err = incident.Read(dir, func(i *incident.Incident) (err error) {
+		if le = i.GetLogEntryByIdent(ident); le == nil {
+			slog.Error("no such message", "dir", dir, "id", ident)
+			return fmt.Errorf(" The message with ID %d was not found.", ident)
+		} else if le.Status == incident.StatusDeleted || le.Status == incident.StatusHandEntered {
+			return fmt.Errorf(" Log entry %d does not have an associated message.", ident)
+		} else {
+			filename = filepath.Join(dir, le.Filename())
+			if by, err = os.ReadFile(filename); err != nil {
+				slog.Error("os.ReadFile", "f", filename, "err", err)
+				return fmt.Errorf(" The message with ID %d could not be read.", ident)
+			}
+		}
+		return nil
+	})
+	if err != nil {
+		s.ErrPage(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+	if doc, err = html.Parse(bytes.NewReader(encodedHTML)); err != nil {
+		slog.Error("parse encoded message HTML", "err", err)
+		s.ErrPage(w, "The encoded.html page could not be parsed.  Please report this error to the author.", http.StatusInternalServerError)
+		return
+	}
+	vars["TITLE"] = le.LocalMsgID
+	vars["FILENAME"] = filename
+	vars["MESSAGE"] = string(by)
+	htmlop.Expand(doc, vars)
+	w.Header().Set("Content-Type", "text/html; charset=utf-8")
+	html.Render(w, doc)
 }
 
 // servePostPrintMessage handles POST /print-message requests, asking for a

@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>{{TITLE}}</title>
+  <style>
+    @font-face {
+      font-family: Go;
+      src: local("Go"),
+        local("Go-Regular"),
+        local("Go Regular"),
+        url("/Go-Regular.woff2") format("woff2");
+    }
+
+    @font-face {
+      font-family: Go;
+      src: local("Go Bold"),
+        local("Go-Bold"),
+        url("/Go-Bold.woff2") format("woff2");
+    }
+
+    @font-face {
+      font-family: Go-Mono;
+      src: local("Go Mono"),
+        local("Go-Mono"),
+        url("/Go-Mono.woff2") format("woff2");
+    }
+
+    h1 {
+      font-family: Go, sans-serif;
+      font-weight: bold;
+      font-size: 1.5rem;
+      margin: 0;
+      padding: 0;
+    }
+
+    #filename {
+      font-family: Go, sans-serif;
+      color: #888;
+    }
+
+    pre {
+      margin-top: 1.5rem;
+      font-family: Go-Mono;
+      white-space: pre-wrap;
+    }
+  </style>
+</head>
+
+<body>
+  <h1>ENCODED MESSAGE</h1>
+  <div id=filename>{{FILENAME}}</div>
+  <pre>{{MESSAGE}}</pre>
+</body>
+
+</html>
