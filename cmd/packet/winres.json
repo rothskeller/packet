@@ -1,0 +1,44 @@
+{
+  "RT_GROUP_ICON": {
+    "APP": {
+      "0000": [
+        "server/assets/favicon-256x256.png",
+        "server/assets/favicon-32x32.png",
+        "server/assets/favicon-16x16.png"
+      ]
+    }
+  },
+  "RT_MANIFEST": {
+    "#1": {
+      "0409": {
+        "identity": {
+          "name": "rothskeller.packet",
+          "version": "4.0.10.0"
+        },
+        "description": "SCCo Packet Messenger",
+        "minimum-os": "win10",
+        "execution-level": "as invoker"
+      }
+    }
+  },
+  "RT_VERSION": {
+    "#1": {
+      "0000": {
+        "fixed": {
+          "file_version": "4.0.10.0",
+          "product_version": "4.0.10.0"
+        },
+        "info": {
+          "0409": {
+            "CompanyName": "Steve Roth KC6RSC",
+            "FileDescription": "SCCo Packet Messenger",
+            "FileVersion": "4.0.10",
+            "LegalCopyright": "(C) Copyright 2026 Steven Roth",
+            "ProductName": "SCCo Packet Messenger",
+            "ProductVersion": "4.0.10"
+          }
+        }
+      }
+    }
+  }
+}

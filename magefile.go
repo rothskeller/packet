@@ -31,6 +31,13 @@ func IncidentHTML() {
 	}
 }
 
+func WindowsResources() {
+	if newer, err := target.Path("cmd/packet/rsrc_windows_amd64.syso", "cmd/packet/winres/winres.json"); err != nil || newer {
+		println("Building Windows resources.")
+		sh.Run("go-winres", "make", "--in", "cmd/packet/winres.json", "--arch", "amd64", "--out", "cmd/packet/rsrc")
+	}
+}
+
 func UpdateForms() {
 	if stat, err := os.Stat("/Users/stever/.local/share/packet/4.0/SCCoPIFO"); err != nil {
 		return
@@ -56,7 +63,7 @@ func Build() error {
 }
 
 func A315() error {
-	mg.Deps(IncidentHTML)
+	mg.Deps(IncidentHTML, WindowsResources)
 	if _, err := os.Stat("/Volumes/str-a315"); err != nil {
 		println("Mounting STR-A315.")
 		if err = sh.Run("osascript", "-e", `mount volume "smb://str-a315/c"`); err != nil {

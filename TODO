@@ -1,9 +1,6 @@
 Make empty space in field boxes be part of <label>
-Add a View Source or similar command
 Allow sorting of log grid columns
 Suggestion: address book
-Add manifest, icon, etc.:  github.com/tc-hib/go-winres
-Check ICS-309 e-sign
 
 Update packet-ex
 Incident archive
