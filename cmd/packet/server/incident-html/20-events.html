@@ -286,7 +286,6 @@
         id: 'm-view-large',
         clicked: (sel, item) => {
           document.documentElement.style.fontSize = item.checked() ? '1.25em' : null
-          document.querySelector('menu-bar').adjustSubmenuPositions()
           const params = new URLSearchParams({ dir: document.body.dataset.dir, large: item.checked() })
           fetch2(`/set-view-flag?` + params.toString(), { method: 'POST' })
         }

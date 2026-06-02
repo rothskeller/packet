@@ -45,10 +45,7 @@
       const vf = document.body.dataset.viewFlags
       grid.classList.add(vf.includes('F') ? 'full' : 'compact')
       document.getElementById('m-view-compact').setChecked(!vf.includes('F'))
-      if (vf.includes('L')) {
-        document.documentElement.style.fontSize = '1.25em'
-        document.querySelector('menu-bar').adjustSubmenuPositions()
-      }
+      if (vf.includes('L')) document.documentElement.style.fontSize = '1.25em'
       document.getElementById('m-view-large').setChecked(vf.includes('L'))
       grid.showReceipts(vf.includes('R'))
       document.getElementById('m-view-receipts').setChecked(vf.includes('R'))
@@ -73,4 +70,5 @@
 </head>
 
 <body data-view-flags=".{{VIEWFLAGS}}"></body>
+
 </html>
