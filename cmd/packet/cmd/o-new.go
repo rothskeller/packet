@@ -138,7 +138,7 @@ func outpostNECommon(values url.Values, path string) (err error) {
 		// before starting the server is the proper time to check for
 		// forms updates.  Errors are logged but not returned.
 		_ = formdefs.CheckForUpdates(false, true)
-		if address, err = guiStartServerProcess(); err != nil {
+		if address, err = guiStartServerProcess(true); err != nil {
 			return fmt.Errorf("starting server: %s", err)
 		}
 	}

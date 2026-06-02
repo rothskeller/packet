@@ -25,19 +25,23 @@ func guiStartServer() (address string, wg *sync.WaitGroup, err error) {
 	}
 	// We don't have a console window, so we'll start the server in its own
 	// minimized console window.
-	address, err = guiStartServerProcess()
+	address, err = guiStartServerProcess(false)
 	return address, nil, err
 }
 
 // guiStartServerProcess starts the server in a separate process with its own
 // minimized console window.
-func guiStartServerProcess() (address string, err error) {
+func guiStartServerProcess(outpost bool) (address string, err error) {
 	// We can't use the Go standard library exec.Command.Start method,
 	// because it doesn't allow access to the flags that would let us start
 	// the process the way we want.  So we have to do it by calling the
 	// Windows CreateProcess syscall directly.
 	appName, _ := windows.UTF16PtrFromString(`C:\PackItForms\packet.exe`)
-	commandLine, _ := windows.UTF16PtrFromString(`C:\PackItForms\packet.exe server start`)
+	command := `C:\PackItForms\packet.exe server start`
+	if outpost {
+		command += " --outpost"
+	}
+	commandLine, _ := windows.UTF16PtrFromString(command)
 	creationFlags := windows.CREATE_NEW_CONSOLE | windows.CREATE_NEW_PROCESS_GROUP
 	startupInfo := new(windows.StartupInfo)
 	startupInfo.Cb = uint32(unsafe.Sizeof(*startupInfo))
