@@ -37,7 +37,7 @@ func guiStartServerProcess() (address string, err error) {
 	// the process the way we want.  So we have to do it by calling the
 	// Windows CreateProcess syscall directly.
 	appName, _ := windows.UTF16PtrFromString(`C:\PackItForms\packet.exe`)
-	commandLine, _ := windows.UTF16PtrFromString(`C:\PackItForms\packet.exe server start --outpost`)
+	commandLine, _ := windows.UTF16PtrFromString(`C:\PackItForms\packet.exe server start`)
 	creationFlags := windows.CREATE_NEW_CONSOLE | windows.CREATE_NEW_PROCESS_GROUP
 	startupInfo := new(windows.StartupInfo)
 	startupInfo.Cb = uint32(unsafe.Sizeof(*startupInfo))
