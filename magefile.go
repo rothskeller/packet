@@ -54,11 +54,11 @@ func WindowsResources() {
 }
 
 func UpdateForms() {
-	if stat, err := os.Stat("/Users/stever/.local/share/packet/4.0/SCCoPIFO"); err != nil {
+	if stat, err := os.Stat("/Users/stever/.local/share/packet/4.0.9/SCCoPIFO"); err != nil {
 		return
 	} else if newer, err := target.DirNewer(stat.ModTime(), "forms/SCCoPIFO"); err != nil || newer {
 		println("Removing old forms.")
-		os.RemoveAll("/Users/stever/.local/share/packet/4.0/SCCoPIFO")
+		os.RemoveAll("/Users/stever/.local/share/packet/4.0.9/SCCoPIFO")
 	}
 }
 

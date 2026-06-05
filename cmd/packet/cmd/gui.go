@@ -130,6 +130,9 @@ func cmdGUI(args []string) (err error) {
 // guiStartServerGoroutine starts the packet server in a goroutine of the
 // current process, with a WaitGroup that waits for it to exit.
 func guiStartServerGoroutine() (address string, wg *sync.WaitGroup, err error) {
+	if err = formdefs.RegisterForms(); err != nil {
+		return "", nil, err
+	}
 	wg = new(sync.WaitGroup)
 	wg.Add(1)
 	go func() {
