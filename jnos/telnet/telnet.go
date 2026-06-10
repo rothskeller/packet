@@ -141,7 +141,6 @@ func (t *Transport) ReadUntilT(until string, timeout time.Duration) (data string
 		case read, ok := <-t.readch:
 			if !ok {
 				if err = <-t.errch; err == io.EOF {
-					slog.Error("disconnected")
 					err = jnos.ErrDisconnected
 				}
 			} else {
@@ -254,8 +253,10 @@ func (t *Transport) reader(readch chan<- []byte, errch chan<- error) {
 			}
 			readch <- out
 		}
-		if err != nil {
+		if err != nil && err != io.EOF {
 			slog.Error("telnet.Read", "err", err)
+		}
+		if err != nil {
 			close(readch)
 			errch <- err
 			return
