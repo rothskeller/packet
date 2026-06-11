@@ -295,9 +295,16 @@ func (p *OutpostPayload) Encode() (payload string) {
 
 // isJNOSSafe returns whether the body can be sent to JNOS safely.  JNOS does
 // not handle control characters, isn't guaranteed to handle high-bit
-// characters, and silently breaks lines greater than 126 bytes.
-func isJNOSSafe(body string, allowLong, allowNonASCII bool) bool {
-	if !allowNonASCII && strings.ContainsFunc(body, isNonASCII) {
+// characters, and silently breaks lines greater than 126 bytes.  We also flag
+// messages containing strings that will confuse the software.
+func isJNOSSafe(body string, allowLong, allowHigh bool) bool {
+	if strings.Contains(body, "*** DISCONNECTED") || strings.Contains(body, "\n/EX") {
+		return false
+	}
+	if strings.ContainsFunc(body, isControl) {
+		return false
+	}
+	if !allowHigh && strings.ContainsFunc(body, isHighBit) {
 		return false
 	}
 	if !allowLong && exceedsLineLength(body, 126, false) {
@@ -306,8 +313,12 @@ func isJNOSSafe(body string, allowLong, allowNonASCII bool) bool {
 	return true
 }
 
-func isNonASCII(r rune) bool {
-	return r > 126 || (r < 32 && r != '\t' && r != '\n')
+func isControl(r rune) bool {
+	return r < 32 && r != '\t' && r != '\n'
+}
+
+func isHighBit(r rune) bool {
+	return r > 126
 }
 
 // exceedsLineLength returns whether any line of the string has a length
