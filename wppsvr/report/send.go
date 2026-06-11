@@ -29,7 +29,7 @@ func Send(st Store, conn *jnos.Conn, session *store.Session) {
 	st.UpdateSession(session)
 	subj, _ := subject.NewPlainSubject(st.NextMessageID(session.Prefix), "ROUTINE", "SCCo Packet Practice Report")
 	pb := body.NewPlainBody(session.Report)
-	pay := payload.NewOutpostPayload(pb, true)
+	pay := payload.NewOutpostPayload(pb, true, true)
 	// To avoid potential problems with JNOS line length limits, we
 	// send to each recipient separately.
 	for _, addr := range sendTo {
