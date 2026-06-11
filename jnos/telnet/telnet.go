@@ -118,25 +118,18 @@ type Transport struct {
 // timeout occurs.  It returns the data that was read (even if it returns an
 // error.)
 func (t *Transport) ReadUntil(until string) (data string, err error) {
-	return t.ReadUntilT(until, bbsTimeout)
-}
-
-// ReadUntilT reads data from the BBS until the specified string is seen, or the
-// specifiedtimeout occurs.  It returns the data that was read (even if it
-// returns an error.)
-func (t *Transport) ReadUntilT(until string, timeout time.Duration) (data string, err error) {
 	var (
 		untilb []byte
 		timer  *time.Timer
 	)
 	untilb = bytes.ReplaceAll([]byte(until), lf, crlf)
-	timer = time.NewTimer(timeout)
+	timer = time.NewTimer(bbsTimeout)
 	timer.Stop()
 	for err == nil {
 		if data = t.checkPending(untilb); data != "" {
 			return data, nil
 		}
-		timer.Reset(timeout)
+		timer.Reset(bbsTimeout)
 		select {
 		case read, ok := <-t.readch:
 			if !ok {

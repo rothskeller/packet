@@ -5,6 +5,7 @@ package serialtnc
 
 import (
 	"bytes"
+	"encoding/hex"
 	"errors"
 	"fmt"
 	"io"
@@ -17,10 +18,13 @@ import (
 	"github.com/rothskeller/packet/jnos/tnc"
 )
 
-// echoTimeout is the amount of time to wait for an echo of data sent.
+// echoTimeout is the default amount of time to wait for an echo of data sent.
 const echoTimeout = 200 * time.Millisecond
 
-// tncTimeout is the amount of time to wait for response from the TNC
+// sendBlockSize is the maximum size of data to send before waiting for echoes.
+const sendBlockSize = 256
+
+// tncTimeout is the default amount of time to wait for response from the TNC
 // (not involving RF traffic).
 const tncTimeout = 500 * time.Millisecond
 
@@ -77,6 +81,16 @@ func Open(tnc *tnc.TNC, serialPort, bbsAddress string, log io.Writer) (t *Transp
 // open is the common code between Connect and Open.
 func open(tnc *tnc.TNC, serialPort, bbsAddress, mailbox string, log io.Writer) (t *Transport, err error) {
 	t = &Transport{tnc: tnc, log: log}
+	if tnc.EchoTimeout == 0 {
+		t.echoTimeout = echoTimeout
+	} else {
+		t.echoTimeout = time.Duration(tnc.EchoTimeout) * time.Millisecond
+	}
+	if tnc.ReplyTimeout == 0 {
+		t.replyTimeout = tncTimeout
+	} else {
+		t.replyTimeout = time.Duration(tnc.ReplyTimeout) * time.Millisecond
+	}
 	if t.serial, err = serial.Open(serialPort, &serial.Mode{}); err != nil {
 		slog.Error("serial.Open", "port", serialPort, "err", err)
 		return nil, fmt.Errorf("serial.Open: %s", err)
@@ -92,7 +106,7 @@ func open(tnc *tnc.TNC, serialPort, bbsAddress, mailbox string, log io.Writer) (
 			err = fmt.Errorf("send initial newline: %s", err)
 			goto TNCERROR
 		}
-		if _, err = t.readUntil(tnc.CommandPrompt, tncTimeout); err == nil {
+		if _, err = t.readUntil(tnc.CommandPrompt, t.replyTimeout); err == nil {
 			break
 		}
 	}
@@ -105,7 +119,7 @@ func open(tnc *tnc.TNC, serialPort, bbsAddress, mailbox string, log io.Writer) (
 		if err = t.send(c); err != nil {
 			goto TNCERROR
 		}
-		if _, err = t.readUntil(tnc.CommandPrompt, tncTimeout); err != nil {
+		if _, err = t.readUntil(tnc.CommandPrompt, t.replyTimeout); err != nil {
 			goto TNCERROR
 		}
 	}
@@ -113,7 +127,7 @@ func open(tnc *tnc.TNC, serialPort, bbsAddress, mailbox string, log io.Writer) (
 	if err = t.send(fmt.Sprintf("%s %s\n", tnc.MyCallCommand, mailbox)); err != nil {
 		goto TNCERROR
 	}
-	if _, err = t.readUntil(tnc.CommandPrompt, tncTimeout); err != nil {
+	if _, err = t.readUntil(tnc.CommandPrompt, t.replyTimeout); err != nil {
 		goto TNCERROR
 	}
 	// Connect to the BBS.
@@ -143,6 +157,9 @@ type Transport struct {
 	connected    bool
 	wasConnected bool
 	log          io.Writer
+	echoTimeout  time.Duration
+	replyTimeout time.Duration
+	sendTimeout  time.Duration
 }
 
 // ReadUntil reads data from the BBS until the specified string is seen, or a
@@ -152,16 +169,10 @@ func (t *Transport) ReadUntil(until string) (s string, err error) {
 	if !t.connected {
 		return "", jnos.ErrDisconnected
 	}
-	return t.readUntil(until, rfTimeout)
-}
-
-// ReadUntilT reads data from the BBS until the specified string is seen, or the
-// specified timeout occurs.  It returns the data that was read (even if it
-// returns an error).
-func (t *Transport) ReadUntilT(until string, timeout time.Duration) (s string, err error) {
-	if !t.connected {
-		return "", jnos.ErrDisconnected
-	}
+	// For a timeout, use the rough amount of time needed to send the data
+	// in the preceding Send call, if any, plus our usual overhead timeout.
+	timeout := t.sendTimeout + rfTimeout
+	t.sendTimeout = 0
 	return t.readUntil(until, timeout)
 }
 
@@ -244,15 +255,39 @@ func (t *Transport) Send(s string) (err error) {
 // echoed by the TNC, or after a timeout or other error.
 func (t *Transport) send(data string) (err error) {
 	var (
-		tosend  []byte
-		echo    []byte
-		plogoff int
+		tosend []byte
 	)
-	plogoff = len(t.pending) // pending bytes already logged
 	tosend = bytes.ReplaceAll([]byte(data), lf, cr)
 	if len(tosend) == 0 || tosend[len(tosend)-1] != '\r' {
 		tosend = append(tosend, '\r')
 	}
+	for len(tosend) != 0 {
+		if len(tosend) > sendBlockSize {
+			err = t.sendBlock(tosend[:sendBlockSize])
+			tosend = tosend[sendBlockSize:]
+		} else {
+			err = t.sendBlock(tosend)
+			tosend = nil
+		}
+		if err != nil {
+			return err
+		}
+	}
+	// The next ReadUntil should have an extra long timeout based on the
+	// amount of time it takes to send this data.  We compute this very
+	// roughly as 2½ seconds per packet.
+	t.sendTimeout = 2500 * time.Millisecond * time.Duration(len(data)/128)
+	return nil
+}
+
+// send sends a string to the TNC.  The method returns when the string has been
+// echoed by the TNC, or after a timeout or other error.
+func (t *Transport) sendBlock(tosend []byte) (err error) {
+	var (
+		echo    []byte
+		plogoff int
+	)
+	plogoff = len(t.pending) // pending bytes already logged
 	if err = t.sendRaw(tosend); err != nil {
 		return err
 	}
@@ -270,12 +305,12 @@ func (t *Transport) send(data string) (err error) {
 			}
 			return nil
 		}
-		t.serial.SetReadTimeout(echoTimeout)
+		t.serial.SetReadTimeout(t.echoTimeout)
 		count, err = t.serial.Read(t.readbuf)
 		if count != 0 {
 			t.pending = append(t.pending, t.readbuf[:count]...)
 		} else if err == nil {
-			slog.Error("bad echo")
+			slog.Error("bad echo", "exp", hex.EncodeToString(echo), "act", hex.EncodeToString(t.pending))
 			err = ErrBadEcho
 		}
 	}
@@ -311,7 +346,7 @@ func (t *Transport) Close() (err error) {
 			slog.Error("unable to get back to TNC command mode for cleanup")
 			return fmt.Errorf("unable to get back to TNC command mode for cleanup: %s", err)
 		}
-		if _, err = t.readUntil(t.tnc.CommandPrompt, tncTimeout); err != nil && err != jnos.ErrDisconnected {
+		if _, err = t.readUntil(t.tnc.CommandPrompt, t.replyTimeout); err != nil && err != jnos.ErrDisconnected {
 			slog.Error("unable to get back to TNC command mode for cleanup")
 			return fmt.Errorf("unable to get back to TNC command mode for cleanup: %s", err)
 		}
@@ -328,7 +363,7 @@ func (t *Transport) Close() (err error) {
 		}
 	}
 	// Apply all of the post-connect settings.
-	t.readUntil(t.tnc.CommandPrompt, tncTimeout) // eat a prompt if there is one
+	t.readUntil(t.tnc.CommandPrompt, t.replyTimeout) // eat a prompt if there is one
 	// Note: we used to MYCALL back to the FCC call sign at this point, but
 	// some TNCs (Kenwood and Alinco embeddeds, primarily) had a problem
 	// with doing it that soon (while they were still handling the
@@ -341,7 +376,7 @@ func (t *Transport) Close() (err error) {
 		if err2 := t.send(c); err == nil && err2 != nil {
 			err = fmt.Errorf("cleanup: restore TNC settings: %s", err2)
 		}
-		if _, err2 := t.readUntil(t.tnc.CommandPrompt, tncTimeout); err == nil && err2 != nil {
+		if _, err2 := t.readUntil(t.tnc.CommandPrompt, t.replyTimeout); err == nil && err2 != nil {
 			err = fmt.Errorf("cleanup: restore TNC settings: %s", err2)
 		}
 	}

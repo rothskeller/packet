@@ -35,6 +35,12 @@ type TNC struct {
 	MyCallCommand string
 	// ConnectCommand is the command to establish a connection.
 	ConnectCommand string
+	// EchoTimeout is the number of milliseconds to wait for the TNC to echo
+	// data sent to it.
+	EchoTimeout int
+	// ReplyTimeout is the number of milliseconds to wait for the TNC to
+	// reply to commands sent to it (not involving RF).
+	ReplyTimeout int
 }
 
 var fetchOnce sync.Once
