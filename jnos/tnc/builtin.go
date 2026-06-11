@@ -327,5 +327,6 @@ var tncs = map[string]*TNC{
 		},
 		MyCallCommand:  "MY",
 		ConnectCommand: "C",
+		EchoTimeout:    800,
 	},
 }
