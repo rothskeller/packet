@@ -93,3 +93,21 @@ func A315() error {
 	}
 	return nil
 }
+
+func WPP() error {
+	if err := sh.RunWith(map[string]string{"GOOS": "linux"}, mg.GoCmd(), "build", "-tags", "sccopifo", "./cmd/wppcgi"); err != nil {
+		return err
+	}
+	if err := sh.RunWith(map[string]string{"GOOS": "linux"}, mg.GoCmd(), "build", "-tags", "sccopifo", "./cmd/wppcron"); err != nil {
+		return err
+	}
+	if err := sh.Run("scp", "wppcgi", "sccares:www/wpp/index.cgi"); err != nil {
+		return err
+	}
+	if err := sh.Run("scp", "wppcron", "sccares:private/bin/wppcron"); err != nil {
+		return err
+	}
+	os.Remove("wppcgi")
+	os.Remove("wppcron")
+	return nil
+}

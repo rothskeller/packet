@@ -1,7 +1,10 @@
-Make empty space in field boxes be part of <label>
 Allow sorting of log grid columns
 Suggestion: address book
 
 Update packet-ex
 Incident archive
 Field comparisons
+CLI edit field honor bracketed escape mode
+Poison message containing DISCONNECTED string
+Need more reliable way to locate Outpost data directory
+Need an import command to add a message in a text file to an incident (e.g. for WPP).
