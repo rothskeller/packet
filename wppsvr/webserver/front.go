@@ -4,9 +4,9 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/rothskeller/packet/wppsvr/htmlb"
-	"github.com/rothskeller/packet/wppsvr/report"
-	"github.com/rothskeller/packet/wppsvr/store"
+	"github.com/rothskeller/packet/v4/wppsvr/htmlb"
+	"github.com/rothskeller/packet/v4/wppsvr/report"
+	"github.com/rothskeller/packet/v4/wppsvr/store"
 )
 
 // serveFrontPage handles GET / requests.  These could be either page requests,

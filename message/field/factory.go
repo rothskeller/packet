@@ -1,7 +1,7 @@
 package field
 
 import (
-	"github.com/rothskeller/packet/message/msgifc"
+	"github.com/rothskeller/packet/v4/message/msgifc"
 )
 
 // A FieldFactory is used to create a Field implementation customized for a

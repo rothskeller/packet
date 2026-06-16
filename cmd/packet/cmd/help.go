@@ -5,7 +5,7 @@ import (
 	"os"
 	"strings"
 
-	"github.com/rothskeller/packet/cmd/packet/cio"
+	"github.com/rothskeller/packet/v4/cmd/packet/cio"
 )
 
 const helpSlug = `Print help for packet commands or topics`

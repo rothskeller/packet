@@ -17,9 +17,9 @@ import (
 	"strings"
 	"time"
 
-	"github.com/rothskeller/packet/message"
-	"github.com/rothskeller/packet/wppsvr/db"
-	"github.com/rothskeller/packet/wppsvr/interval"
+	"github.com/rothskeller/packet/v4/message"
+	"github.com/rothskeller/packet/v4/wppsvr/db"
+	"github.com/rothskeller/packet/v4/wppsvr/interval"
 )
 
 // A Session defines the parameters of a single session instance.

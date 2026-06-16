@@ -9,13 +9,13 @@ import (
 	"strings"
 	"time"
 
-	"github.com/rothskeller/packet/errors"
-	"github.com/rothskeller/packet/form/formdef"
-	"github.com/rothskeller/packet/message"
-	"github.com/rothskeller/packet/message/field"
-	"github.com/rothskeller/packet/message/messageid"
-	"github.com/rothskeller/packet/message/msgifc"
-	"github.com/rothskeller/packet/message/payload"
+	"github.com/rothskeller/packet/v4/errors"
+	"github.com/rothskeller/packet/v4/form/formdef"
+	"github.com/rothskeller/packet/v4/message"
+	"github.com/rothskeller/packet/v4/message/field"
+	"github.com/rothskeller/packet/v4/message/messageid"
+	"github.com/rothskeller/packet/v4/message/msgifc"
+	"github.com/rothskeller/packet/v4/message/payload"
 )
 
 // ff2mf is an adapter that implements the message.Field interface for a

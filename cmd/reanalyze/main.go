@@ -10,11 +10,11 @@ import (
 	"os"
 	"time"
 
-	"github.com/rothskeller/packet/form/formdefs"
-	"github.com/rothskeller/packet/wppsvr/analyze"
-	"github.com/rothskeller/packet/wppsvr/config"
-	"github.com/rothskeller/packet/wppsvr/report"
-	"github.com/rothskeller/packet/wppsvr/store"
+	"github.com/rothskeller/packet/v4/form/formdefs"
+	"github.com/rothskeller/packet/v4/wppsvr/analyze"
+	"github.com/rothskeller/packet/v4/wppsvr/config"
+	"github.com/rothskeller/packet/v4/wppsvr/report"
+	"github.com/rothskeller/packet/v4/wppsvr/store"
 )
 
 func main() {

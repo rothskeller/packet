@@ -5,11 +5,11 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/rothskeller/packet/message"
-	"github.com/rothskeller/packet/message/field"
-	"github.com/rothskeller/packet/wppsvr/english"
-	"github.com/rothskeller/packet/wppsvr/htmlb"
-	"github.com/rothskeller/packet/wppsvr/store"
+	"github.com/rothskeller/packet/v4/message"
+	"github.com/rothskeller/packet/v4/message/field"
+	"github.com/rothskeller/packet/v4/wppsvr/english"
+	"github.com/rothskeller/packet/v4/wppsvr/htmlb"
+	"github.com/rothskeller/packet/v4/wppsvr/store"
 )
 
 var plainModelReplacer = strings.NewReplacer("¡", "", "-", "‑")

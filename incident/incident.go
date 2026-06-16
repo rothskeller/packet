@@ -20,7 +20,7 @@ import (
 	"time"
 
 	"github.com/fsnotify/fsnotify"
-	"github.com/rothskeller/packet/cmd/packet/osdep"
+	"github.com/rothskeller/packet/v4/cmd/packet/osdep"
 )
 
 const (

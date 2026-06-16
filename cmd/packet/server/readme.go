@@ -5,7 +5,7 @@ import (
 	"html"
 	"net/http"
 
-	"github.com/rothskeller/packet/form/formdefs"
+	"github.com/rothskeller/packet/v4/form/formdefs"
 )
 
 // maybeShowREADME looks to see if there is a README.txt in the root of the

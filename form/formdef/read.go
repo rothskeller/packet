@@ -15,7 +15,7 @@ import (
 	"strings"
 	"unicode"
 
-	"github.com/rothskeller/packet/message/field"
+	"github.com/rothskeller/packet/v4/message/field"
 	"github.com/rothskeller/pdf/v2"
 	"k8s.io/apimachinery/pkg/util/sets"
 )

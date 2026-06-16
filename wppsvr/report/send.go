@@ -8,12 +8,12 @@ import (
 	"net/smtp"
 	"strings"
 
-	"github.com/rothskeller/packet/jnos"
-	"github.com/rothskeller/packet/message/body"
-	"github.com/rothskeller/packet/message/payload"
-	"github.com/rothskeller/packet/message/subject"
-	"github.com/rothskeller/packet/wppsvr/config"
-	"github.com/rothskeller/packet/wppsvr/store"
+	"github.com/rothskeller/packet/v4/jnos"
+	"github.com/rothskeller/packet/v4/message/body"
+	"github.com/rothskeller/packet/v4/message/payload"
+	"github.com/rothskeller/packet/v4/message/subject"
+	"github.com/rothskeller/packet/v4/wppsvr/config"
+	"github.com/rothskeller/packet/v4/wppsvr/store"
 )
 
 // Send generates the report for the session and sends it to all designated

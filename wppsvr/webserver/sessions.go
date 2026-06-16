@@ -6,7 +6,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/rothskeller/packet/wppsvr/htmlb"
+	"github.com/rothskeller/packet/v4/wppsvr/htmlb"
 )
 
 // serveSessionList displays the list of defined sessions and allows them to be

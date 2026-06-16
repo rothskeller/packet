@@ -1,7 +1,7 @@
 package field
 
 import (
-	"github.com/rothskeller/packet/message/msgifc"
+	"github.com/rothskeller/packet/v4/message/msgifc"
 )
 
 // Field is the interface satisfied by all message fields.  Note that this is

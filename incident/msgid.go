@@ -5,7 +5,7 @@ import (
 	"os"
 	"path/filepath"
 
-	"github.com/rothskeller/packet/message/messageid"
+	"github.com/rothskeller/packet/v4/message/messageid"
 )
 
 // nextMessageID returns the next local message ID in sequence (and marks it

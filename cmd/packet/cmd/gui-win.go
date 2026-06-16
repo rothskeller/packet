@@ -6,8 +6,8 @@ import (
 	"sync"
 	"unsafe"
 
-	"github.com/rothskeller/packet/cmd/packet/server"
-	"github.com/rothskeller/packet/errors"
+	"github.com/rothskeller/packet/v4/cmd/packet/server"
+	"github.com/rothskeller/packet/v4/errors"
 	"golang.org/x/sys/windows"
 )
 

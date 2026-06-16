@@ -10,7 +10,7 @@ import (
 	"github.com/magefile/mage/mg"
 	"github.com/magefile/mage/sh"
 	"github.com/magefile/mage/target"
-	"github.com/rothskeller/packet/packetver"
+	"github.com/rothskeller/packet/v4/packetver"
 )
 
 // Default target.

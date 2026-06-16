@@ -11,9 +11,9 @@ import (
 	"slices"
 	"strings"
 
-	"github.com/rothskeller/packet/cmd/packet/osdep"
-	"github.com/rothskeller/packet/form/htmlop"
-	"github.com/rothskeller/packet/incident"
+	"github.com/rothskeller/packet/v4/cmd/packet/osdep"
+	"github.com/rothskeller/packet/v4/form/htmlop"
+	"github.com/rothskeller/packet/v4/incident"
 	"golang.org/x/net/html"
 )
 

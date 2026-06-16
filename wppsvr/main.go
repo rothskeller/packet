@@ -18,10 +18,10 @@ import (
 	"syscall"
 	"time"
 
-	"github.com/rothskeller/packet/form/formdefs"
-	"github.com/rothskeller/packet/wppsvr/config"
-	"github.com/rothskeller/packet/wppsvr/store"
-	"github.com/rothskeller/packet/wppsvr/webserver"
+	"github.com/rothskeller/packet/v4/form/formdefs"
+	"github.com/rothskeller/packet/v4/wppsvr/config"
+	"github.com/rothskeller/packet/v4/wppsvr/store"
+	"github.com/rothskeller/packet/v4/wppsvr/webserver"
 )
 
 func main() {

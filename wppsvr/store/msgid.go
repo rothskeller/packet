@@ -3,7 +3,7 @@ package store
 import (
 	"fmt"
 
-	"github.com/rothskeller/packet/wppsvr/db"
+	"github.com/rothskeller/packet/v4/wppsvr/db"
 )
 
 // NextMessageID returns the next message ID in the sequence with the specified

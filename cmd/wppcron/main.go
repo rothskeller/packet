@@ -10,10 +10,10 @@ import (
 	"os"
 	"runtime/debug"
 
-	"github.com/rothskeller/packet/form/formdefs"
-	"github.com/rothskeller/packet/wppsvr/config"
-	"github.com/rothskeller/packet/wppsvr/retrieve"
-	"github.com/rothskeller/packet/wppsvr/store"
+	"github.com/rothskeller/packet/v4/form/formdefs"
+	"github.com/rothskeller/packet/v4/wppsvr/config"
+	"github.com/rothskeller/packet/v4/wppsvr/retrieve"
+	"github.com/rothskeller/packet/v4/wppsvr/store"
 )
 
 func main() {

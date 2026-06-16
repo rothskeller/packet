@@ -5,10 +5,10 @@ import (
 	"strings"
 	"time"
 
-	"github.com/rothskeller/packet/errors"
-	"github.com/rothskeller/packet/message"
-	"github.com/rothskeller/packet/message/field"
-	"github.com/rothskeller/packet/message/receipt"
+	"github.com/rothskeller/packet/v4/errors"
+	"github.com/rothskeller/packet/v4/message"
+	"github.com/rothskeller/packet/v4/message/field"
+	"github.com/rothskeller/packet/v4/message/receipt"
 )
 
 // ReceiveMessage takes a JustReceivedMessage received from JNOS and saves it

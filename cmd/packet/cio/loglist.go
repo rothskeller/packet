@@ -7,7 +7,7 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/rothskeller/packet/incident"
+	"github.com/rothskeller/packet/v4/incident"
 )
 
 // EmitLogList emits a list of log entries.

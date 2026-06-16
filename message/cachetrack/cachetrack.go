@@ -2,7 +2,7 @@
 // implementation that track when a cache has been invalidated.
 package cachetrack
 
-import "github.com/rothskeller/packet/message/msgifc"
+import "github.com/rothskeller/packet/v4/message/msgifc"
 
 // CacheTracker is an interface satisfied by an object with cache tracking.
 type CacheTracker = msgifc.CacheTracker

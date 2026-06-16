@@ -5,8 +5,8 @@ import (
 	"os"
 	"path/filepath"
 
-	"github.com/rothskeller/packet/message"
-	"github.com/rothskeller/packet/message/receipt"
+	"github.com/rothskeller/packet/v4/message"
+	"github.com/rothskeller/packet/v4/message/receipt"
 )
 
 // GetLogEntryByIdent returns the log entry with the specified ident, if any.

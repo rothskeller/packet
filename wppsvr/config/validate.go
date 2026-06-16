@@ -8,7 +8,7 @@ import (
 	"regexp"
 	"strings"
 
-	"github.com/rothskeller/packet/message"
+	"github.com/rothskeller/packet/v4/message"
 )
 
 var fccCallRE = regexp.MustCompile(`^(?:A[A-L]|[KNW][A-Z]?)[0-9][A-Z]{1,3}$`)

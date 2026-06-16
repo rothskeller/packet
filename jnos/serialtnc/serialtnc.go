@@ -14,8 +14,8 @@ import (
 
 	"go.bug.st/serial"
 
-	"github.com/rothskeller/packet/jnos"
-	"github.com/rothskeller/packet/jnos/tnc"
+	"github.com/rothskeller/packet/v4/jnos"
+	"github.com/rothskeller/packet/v4/jnos/tnc"
 )
 
 // echoTimeout is the default amount of time to wait for an echo of data sent.

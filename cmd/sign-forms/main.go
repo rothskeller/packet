@@ -14,7 +14,7 @@ import (
 	"os"
 	"strings"
 
-	"github.com/rothskeller/packet/form/formdefs"
+	"github.com/rothskeller/packet/v4/form/formdefs"
 )
 
 func main() {

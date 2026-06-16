@@ -2,7 +2,7 @@
 // receipt messages.
 package receipt
 
-import "github.com/rothskeller/packet/errors"
+import "github.com/rothskeller/packet/v4/errors"
 
 var (
 	ErrNewlineInRMSubject = errors.New("The received-message subject must not contain newlines.")

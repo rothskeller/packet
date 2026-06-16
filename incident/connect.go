@@ -13,14 +13,14 @@ import (
 	"sync"
 	"time"
 
-	"github.com/rothskeller/packet/jnos"
-	"github.com/rothskeller/packet/jnos/serialtnc"
-	"github.com/rothskeller/packet/jnos/telnet"
-	"github.com/rothskeller/packet/jnos/tnc"
-	"github.com/rothskeller/packet/message"
-	"github.com/rothskeller/packet/message/address"
-	"github.com/rothskeller/packet/message/field"
-	"github.com/rothskeller/packet/message/receipt"
+	"github.com/rothskeller/packet/v4/jnos"
+	"github.com/rothskeller/packet/v4/jnos/serialtnc"
+	"github.com/rothskeller/packet/v4/jnos/telnet"
+	"github.com/rothskeller/packet/v4/jnos/tnc"
+	"github.com/rothskeller/packet/v4/message"
+	"github.com/rothskeller/packet/v4/message/address"
+	"github.com/rothskeller/packet/v4/message/field"
+	"github.com/rothskeller/packet/v4/message/receipt"
 	"k8s.io/apimachinery/pkg/util/sets"
 )
 

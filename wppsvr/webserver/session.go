@@ -13,13 +13,13 @@ import (
 	"strings"
 	"time"
 
-	"github.com/rothskeller/packet/form"
-	"github.com/rothskeller/packet/message"
-	"github.com/rothskeller/packet/message/subject"
-	"github.com/rothskeller/packet/wppsvr/config"
-	"github.com/rothskeller/packet/wppsvr/htmlb"
-	"github.com/rothskeller/packet/wppsvr/interval"
-	"github.com/rothskeller/packet/wppsvr/store"
+	"github.com/rothskeller/packet/v4/form"
+	"github.com/rothskeller/packet/v4/message"
+	"github.com/rothskeller/packet/v4/message/subject"
+	"github.com/rothskeller/packet/v4/wppsvr/config"
+	"github.com/rothskeller/packet/v4/wppsvr/htmlb"
+	"github.com/rothskeller/packet/v4/wppsvr/interval"
+	"github.com/rothskeller/packet/v4/wppsvr/store"
 )
 
 var removeCR = strings.NewReplacer("\r\n", "\n", "\r", "\n")

@@ -8,8 +8,8 @@ import (
 	"log"
 	"strings"
 
-	"github.com/rothskeller/packet/message"
-	"github.com/rothskeller/packet/wppsvr/store"
+	"github.com/rothskeller/packet/v4/message"
+	"github.com/rothskeller/packet/v4/wppsvr/store"
 )
 
 // An Analysis contains the analysis of a received message.

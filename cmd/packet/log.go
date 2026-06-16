@@ -9,8 +9,8 @@ import (
 	"runtime"
 	"time"
 
-	"github.com/rothskeller/packet/cmd/packet/osdep"
-	"github.com/rothskeller/packet/cmd/packet/server"
+	"github.com/rothskeller/packet/v4/cmd/packet/osdep"
+	"github.com/rothskeller/packet/v4/cmd/packet/server"
 )
 
 var logFH *os.File

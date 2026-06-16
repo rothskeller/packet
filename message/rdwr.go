@@ -13,8 +13,8 @@ import (
 	"runtime"
 	"strings"
 
-	"github.com/rothskeller/packet/message/payload"
-	"github.com/rothskeller/packet/message/subject"
+	"github.com/rothskeller/packet/v4/message/payload"
+	"github.com/rothskeller/packet/v4/message/subject"
 )
 
 var (

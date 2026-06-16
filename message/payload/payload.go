@@ -6,8 +6,8 @@ package payload
 import (
 	"net/mail"
 
-	"github.com/rothskeller/packet/errors"
-	"github.com/rothskeller/packet/message/msgifc"
+	"github.com/rothskeller/packet/v4/errors"
+	"github.com/rothskeller/packet/v4/message/msgifc"
 )
 
 // Payload is the interface satisfied by all payload implementations.

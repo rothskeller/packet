@@ -12,7 +12,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/rothskeller/packet/message/field"
+	"github.com/rothskeller/packet/v4/message/field"
 )
 
 // A SentMessage is for a message that the local system sent to a BBS.

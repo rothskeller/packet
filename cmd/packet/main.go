@@ -8,9 +8,9 @@ import (
 	"runtime/debug"
 	"strings"
 
-	"github.com/rothskeller/packet/cmd/packet/cmd"
-	"github.com/rothskeller/packet/cmd/packet/osdep"
-	"github.com/rothskeller/packet/errors"
+	"github.com/rothskeller/packet/v4/cmd/packet/cmd"
+	"github.com/rothskeller/packet/v4/cmd/packet/osdep"
+	"github.com/rothskeller/packet/v4/errors"
 )
 
 func main() {

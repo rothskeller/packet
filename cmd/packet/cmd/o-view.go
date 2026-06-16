@@ -10,13 +10,13 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/rothskeller/packet/cmd/packet/cio"
-	"github.com/rothskeller/packet/cmd/packet/osdep"
-	"github.com/rothskeller/packet/cmd/packet/server"
-	"github.com/rothskeller/packet/form"
-	"github.com/rothskeller/packet/form/formdefs"
-	"github.com/rothskeller/packet/message"
-	"github.com/rothskeller/packet/message/field"
+	"github.com/rothskeller/packet/v4/cmd/packet/cio"
+	"github.com/rothskeller/packet/v4/cmd/packet/osdep"
+	"github.com/rothskeller/packet/v4/cmd/packet/server"
+	"github.com/rothskeller/packet/v4/form"
+	"github.com/rothskeller/packet/v4/form/formdefs"
+	"github.com/rothskeller/packet/v4/message"
+	"github.com/rothskeller/packet/v4/message/field"
 	"github.com/spf13/pflag"
 )
 

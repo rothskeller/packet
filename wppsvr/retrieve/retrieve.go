@@ -6,13 +6,13 @@ import (
 	"log"
 	"time"
 
-	"github.com/rothskeller/packet/jnos"
-	"github.com/rothskeller/packet/jnos/serialtnc"
-	"github.com/rothskeller/packet/jnos/telnet"
-	"github.com/rothskeller/packet/jnos/tnc"
-	"github.com/rothskeller/packet/wppsvr/analyze"
-	"github.com/rothskeller/packet/wppsvr/config"
-	"github.com/rothskeller/packet/wppsvr/store"
+	"github.com/rothskeller/packet/v4/jnos"
+	"github.com/rothskeller/packet/v4/jnos/serialtnc"
+	"github.com/rothskeller/packet/v4/jnos/telnet"
+	"github.com/rothskeller/packet/v4/jnos/tnc"
+	"github.com/rothskeller/packet/v4/wppsvr/analyze"
+	"github.com/rothskeller/packet/v4/wppsvr/config"
+	"github.com/rothskeller/packet/v4/wppsvr/store"
 )
 
 // ForRunningSessions retrieves and responds to new messages in all running

@@ -15,9 +15,9 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/rothskeller/packet/cmd/packet/osdep"
-	"github.com/rothskeller/packet/errors"
-	"github.com/rothskeller/packet/form/formdef"
+	"github.com/rothskeller/packet/v4/cmd/packet/osdep"
+	"github.com/rothskeller/packet/v4/errors"
+	"github.com/rothskeller/packet/v4/form/formdef"
 	"github.com/rothskeller/pdf/v2"
 )
 

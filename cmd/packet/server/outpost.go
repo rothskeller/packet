@@ -16,10 +16,10 @@ import (
 	"strings"
 	"time"
 
-	"github.com/rothskeller/packet/form"
-	"github.com/rothskeller/packet/message"
-	"github.com/rothskeller/packet/message/field"
-	"github.com/rothskeller/packet/message/payload"
+	"github.com/rothskeller/packet/v4/form"
+	"github.com/rothskeller/packet/v4/message"
+	"github.com/rothskeller/packet/v4/message/field"
+	"github.com/rothskeller/packet/v4/message/payload"
 )
 
 const (

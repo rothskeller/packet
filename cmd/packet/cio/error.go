@@ -6,7 +6,7 @@ import (
 	"os"
 	"strings"
 
-	"github.com/rothskeller/packet/errors"
+	"github.com/rothskeller/packet/v4/errors"
 )
 
 func (cio *CIO) Error(err error) {

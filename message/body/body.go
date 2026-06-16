@@ -4,8 +4,8 @@
 package body
 
 import (
-	"github.com/rothskeller/packet/errors"
-	"github.com/rothskeller/packet/message/msgifc"
+	"github.com/rothskeller/packet/v4/errors"
+	"github.com/rothskeller/packet/v4/message/msgifc"
 )
 
 type Body = msgifc.Body

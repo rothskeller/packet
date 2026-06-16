@@ -1,7 +1,7 @@
 package config
 
 import (
-	"github.com/rothskeller/packet/message"
+	"github.com/rothskeller/packet/v4/message"
 )
 
 // HasComputedHandlingOrder returns whether the message type with the specified

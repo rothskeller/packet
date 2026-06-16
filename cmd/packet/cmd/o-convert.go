@@ -10,9 +10,9 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/rothskeller/packet/cmd/packet/cio"
-	"github.com/rothskeller/packet/message"
-	"github.com/rothskeller/packet/message/field"
+	"github.com/rothskeller/packet/v4/cmd/packet/cio"
+	"github.com/rothskeller/packet/v4/message"
+	"github.com/rothskeller/packet/v4/message/field"
 	"github.com/spf13/pflag"
 )
 

@@ -5,7 +5,7 @@ import (
 	"os"
 	"strings"
 
-	"github.com/rothskeller/packet/message/field"
+	"github.com/rothskeller/packet/v4/message/field"
 	"github.com/rothskeller/pdf/v2"
 	"golang.org/x/image/font/gofont/gobold"
 	"golang.org/x/image/font/gofont/gomono"

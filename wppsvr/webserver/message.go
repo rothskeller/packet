@@ -5,8 +5,8 @@ import (
 	"net/http"
 	"strings"
 
-	"github.com/rothskeller/packet/wppsvr/htmlb"
-	"github.com/rothskeller/packet/wppsvr/store"
+	"github.com/rothskeller/packet/v4/wppsvr/htmlb"
+	"github.com/rothskeller/packet/v4/wppsvr/store"
 )
 
 func (ws *webserver) serveMessage(w http.ResponseWriter, r *http.Request) {

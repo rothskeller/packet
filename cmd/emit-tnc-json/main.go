@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"os"
 
-	"github.com/rothskeller/packet/jnos/tnc"
+	"github.com/rothskeller/packet/v4/jnos/tnc"
 )
 
 func main() {

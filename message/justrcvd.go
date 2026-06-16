@@ -11,10 +11,10 @@ import (
 	"strings"
 	"time"
 
-	"github.com/rothskeller/packet/errors"
-	"github.com/rothskeller/packet/message/address"
-	"github.com/rothskeller/packet/message/payload"
-	"github.com/rothskeller/packet/message/subject"
+	"github.com/rothskeller/packet/v4/errors"
+	"github.com/rothskeller/packet/v4/message/address"
+	"github.com/rothskeller/packet/v4/message/payload"
+	"github.com/rothskeller/packet/v4/message/subject"
 )
 
 // A JustReceivedMessage is for a message that the local system received from a

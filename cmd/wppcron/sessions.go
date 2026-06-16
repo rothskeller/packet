@@ -4,9 +4,9 @@ import (
 	"log"
 	"time"
 
-	"github.com/rothskeller/packet/wppsvr/report"
-	"github.com/rothskeller/packet/wppsvr/retrieve"
-	"github.com/rothskeller/packet/wppsvr/store"
+	"github.com/rothskeller/packet/v4/wppsvr/report"
+	"github.com/rothskeller/packet/v4/wppsvr/retrieve"
+	"github.com/rothskeller/packet/v4/wppsvr/store"
 )
 
 // closeSessions closes any sessions that are past their end time and sends

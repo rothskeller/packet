@@ -3,8 +3,8 @@ package cmd
 import (
 	"flag"
 
-	"github.com/rothskeller/packet/cmd/packet/cio"
-	"github.com/rothskeller/packet/cmd/packet/server"
+	"github.com/rothskeller/packet/v4/cmd/packet/cio"
+	"github.com/rothskeller/packet/v4/cmd/packet/server"
 	"github.com/spf13/pflag"
 )
 

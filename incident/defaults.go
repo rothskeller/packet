@@ -9,7 +9,7 @@ import (
 	"path/filepath"
 	"slices"
 
-	"github.com/rothskeller/packet/cmd/packet/osdep"
+	"github.com/rothskeller/packet/v4/cmd/packet/osdep"
 )
 
 // maxIncidentDirs is the maximum number of incident directories to keep in

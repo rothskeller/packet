@@ -6,8 +6,8 @@ import (
 	"strings"
 	"time"
 
-	"github.com/rothskeller/packet/message/receipt"
-	"github.com/rothskeller/packet/wppsvr/store"
+	"github.com/rothskeller/packet/v4/message/receipt"
+	"github.com/rothskeller/packet/v4/wppsvr/store"
 )
 
 // The time.Now function can be overridden by tests.

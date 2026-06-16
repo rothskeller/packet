@@ -4,8 +4,8 @@ import (
 	"io"
 	"os"
 
-	"github.com/rothskeller/packet/cmd/packet/cio"
-	"github.com/rothskeller/packet/form/formdefs"
+	"github.com/rothskeller/packet/v4/cmd/packet/cio"
+	"github.com/rothskeller/packet/v4/form/formdefs"
 	"github.com/spf13/pflag"
 )
 

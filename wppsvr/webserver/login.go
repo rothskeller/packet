@@ -9,7 +9,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/rothskeller/packet/wppsvr/config"
+	"github.com/rothskeller/packet/v4/wppsvr/config"
 )
 
 // serveLogin responds to POST /login requests.

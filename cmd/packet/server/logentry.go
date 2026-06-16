@@ -10,10 +10,10 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/rothskeller/packet/incident"
-	"github.com/rothskeller/packet/message"
-	"github.com/rothskeller/packet/message/address"
-	"github.com/rothskeller/packet/message/msgifc"
+	"github.com/rothskeller/packet/v4/incident"
+	"github.com/rothskeller/packet/v4/message"
+	"github.com/rothskeller/packet/v4/message/address"
+	"github.com/rothskeller/packet/v4/message/msgifc"
 )
 
 // servePostEditLogEntry handles POST /edit-log-entry requests, which edit or

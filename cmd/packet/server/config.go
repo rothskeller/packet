@@ -15,10 +15,10 @@ import (
 	"strings"
 	"time"
 
-	"github.com/rothskeller/packet/cmd/packet/pseudomsg"
-	"github.com/rothskeller/packet/form/htmlop"
-	"github.com/rothskeller/packet/incident"
-	"github.com/rothskeller/packet/jnos/tnc"
+	"github.com/rothskeller/packet/v4/cmd/packet/pseudomsg"
+	"github.com/rothskeller/packet/v4/form/htmlop"
+	"github.com/rothskeller/packet/v4/incident"
+	"github.com/rothskeller/packet/v4/jnos/tnc"
 	"golang.org/x/net/html"
 )
 

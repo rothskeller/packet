@@ -9,11 +9,11 @@ import (
 	"net/http"
 	"net/url"
 
-	"github.com/rothskeller/packet/errors"
-	"github.com/rothskeller/packet/form/htmlop"
-	"github.com/rothskeller/packet/message/body"
-	"github.com/rothskeller/packet/message/payload"
-	"github.com/rothskeller/packet/message/subject"
+	"github.com/rothskeller/packet/v4/errors"
+	"github.com/rothskeller/packet/v4/form/htmlop"
+	"github.com/rothskeller/packet/v4/message/body"
+	"github.com/rothskeller/packet/v4/message/payload"
+	"github.com/rothskeller/packet/v4/message/subject"
 	"golang.org/x/net/html"
 )
 

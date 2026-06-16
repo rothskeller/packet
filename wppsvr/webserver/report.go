@@ -7,8 +7,8 @@ import (
 	"strings"
 	"time"
 
-	"github.com/rothskeller/packet/wppsvr/report"
-	"github.com/rothskeller/packet/wppsvr/store"
+	"github.com/rothskeller/packet/v4/wppsvr/report"
+	"github.com/rothskeller/packet/v4/wppsvr/store"
 )
 
 func (ws *webserver) serveReport(w http.ResponseWriter, r *http.Request) {

@@ -4,7 +4,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/rothskeller/packet/wppsvr/htmlb"
+	"github.com/rothskeller/packet/v4/wppsvr/htmlb"
 )
 
 const expected = `<!DOCTYPE html><html><div a1=v1 a2 a3=v&lt;3&gt; a4=/foo/4 a5="v5 x" a6=6 class="foo bar">bar<li>baz<li a=b>&lt;br&gt;<div>q</div></div>`

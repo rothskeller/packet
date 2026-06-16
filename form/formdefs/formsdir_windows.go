@@ -5,7 +5,7 @@ package formdefs
 import (
 	"path/filepath"
 
-	"github.com/rothskeller/packet/form/pifover"
+	"github.com/rothskeller/packet/v4/form/pifover"
 )
 
 // FormsDir returns the pathname of the directory that should contain the local

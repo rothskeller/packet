@@ -18,7 +18,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/rothskeller/packet/errors"
+	"github.com/rothskeller/packet/v4/errors"
 )
 
 const (

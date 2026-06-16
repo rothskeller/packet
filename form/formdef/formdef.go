@@ -6,7 +6,7 @@ import (
 	"io/fs"
 	"iter"
 
-	"github.com/rothskeller/packet/message/msgifc"
+	"github.com/rothskeller/packet/v4/message/msgifc"
 	"github.com/rothskeller/pdf/v2"
 )
 

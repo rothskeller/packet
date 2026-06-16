@@ -19,7 +19,7 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/rothskeller/packet/form/formdef"
+	"github.com/rothskeller/packet/v4/form/formdef"
 	"github.com/rothskeller/pdf/v2"
 )
 

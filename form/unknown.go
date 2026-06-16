@@ -3,9 +3,9 @@ package form
 import (
 	"fmt"
 
-	"github.com/rothskeller/packet/form/formdef"
-	"github.com/rothskeller/packet/message"
-	"github.com/rothskeller/packet/message/msgifc"
+	"github.com/rothskeller/packet/v4/form/formdef"
+	"github.com/rothskeller/packet/v4/message"
+	"github.com/rothskeller/packet/v4/message/msgifc"
 )
 
 type ErrUnrecognizedForm string

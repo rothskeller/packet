@@ -3,7 +3,7 @@ package message
 import (
 	"slices"
 
-	"github.com/rothskeller/packet/message/field"
+	"github.com/rothskeller/packet/v4/message/field"
 	"k8s.io/apimachinery/pkg/util/sets"
 )
 

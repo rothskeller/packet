@@ -9,7 +9,7 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/rothskeller/packet/form/formdef"
+	"github.com/rothskeller/packet/v4/form/formdef"
 )
 
 func main() {

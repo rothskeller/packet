@@ -7,14 +7,14 @@ import (
 	"strings"
 	"time"
 
-	"github.com/rothskeller/packet/errors"
-	"github.com/rothskeller/packet/message"
-	"github.com/rothskeller/packet/message/body"
-	"github.com/rothskeller/packet/message/cachetrack"
-	"github.com/rothskeller/packet/message/field"
-	"github.com/rothskeller/packet/message/msgifc"
-	"github.com/rothskeller/packet/message/payload"
-	"github.com/rothskeller/packet/message/subject"
+	"github.com/rothskeller/packet/v4/errors"
+	"github.com/rothskeller/packet/v4/message"
+	"github.com/rothskeller/packet/v4/message/body"
+	"github.com/rothskeller/packet/v4/message/cachetrack"
+	"github.com/rothskeller/packet/v4/message/field"
+	"github.com/rothskeller/packet/v4/message/msgifc"
+	"github.com/rothskeller/packet/v4/message/payload"
+	"github.com/rothskeller/packet/v4/message/subject"
 )
 
 var (

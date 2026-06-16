@@ -9,9 +9,9 @@ import (
 	"regexp"
 	"strings"
 
-	"github.com/rothskeller/packet/errors"
-	"github.com/rothskeller/packet/message/body"
-	"github.com/rothskeller/packet/message/cachetrack"
+	"github.com/rothskeller/packet/v4/errors"
+	"github.com/rothskeller/packet/v4/message/body"
+	"github.com/rothskeller/packet/v4/message/cachetrack"
 )
 
 // OutpostPayload is a message payload interchangeable with Outpost.

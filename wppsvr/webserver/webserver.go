@@ -5,8 +5,8 @@ import (
 	"net/http"
 	"net/http/cgi"
 
-	"github.com/rothskeller/packet/wppsvr/config"
-	"github.com/rothskeller/packet/wppsvr/store"
+	"github.com/rothskeller/packet/v4/wppsvr/config"
+	"github.com/rothskeller/packet/v4/wppsvr/store"
 )
 
 //go:embed *.css *.js

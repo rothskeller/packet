@@ -8,9 +8,9 @@ import (
 	"strings"
 	"time"
 
-	"github.com/rothskeller/packet/wppsvr/htmlb"
-	"github.com/rothskeller/packet/wppsvr/report"
-	"github.com/rothskeller/packet/wppsvr/store"
+	"github.com/rothskeller/packet/v4/wppsvr/htmlb"
+	"github.com/rothskeller/packet/v4/wppsvr/report"
+	"github.com/rothskeller/packet/v4/wppsvr/store"
 )
 
 var callsignRE = regexp.MustCompile(`(?i)^(?:A[A-L][0-9][A-Z]{1,3}|[KNW][A-Z][0-9][A-Z]{1,3}|[KNW][0-9][A-Z]{2,3})$`)

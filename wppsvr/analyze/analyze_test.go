@@ -24,9 +24,9 @@ import (
 	"github.com/go-test/deep"
 	"gopkg.in/yaml.v3"
 
-	"github.com/rothskeller/packet/envelope"
-	"github.com/rothskeller/packet/message"
-	"github.com/rothskeller/packet/xscmsg"
+	"github.com/rothskeller/packet/v4/envelope"
+	"github.com/rothskeller/packet/v4/message"
+	"github.com/rothskeller/packet/v4/xscmsg"
 	"github.com/rothskeller/wppsvr/config"
 	"github.com/rothskeller/wppsvr/store"
 )

@@ -4,10 +4,10 @@ import (
 	"regexp"
 	"strings"
 
-	"github.com/rothskeller/packet/errors"
-	"github.com/rothskeller/packet/message/address"
-	"github.com/rothskeller/packet/message/messageid"
-	"github.com/rothskeller/packet/message/msgifc"
+	"github.com/rothskeller/packet/v4/errors"
+	"github.com/rothskeller/packet/v4/message/address"
+	"github.com/rothskeller/packet/v4/message/messageid"
+	"github.com/rothskeller/packet/v4/message/msgifc"
 )
 
 //------------------------------------------------------------------------------

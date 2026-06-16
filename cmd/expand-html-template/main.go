@@ -6,7 +6,7 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/rothskeller/packet/form/htmlop"
+	"github.com/rothskeller/packet/v4/form/htmlop"
 	"golang.org/x/net/html"
 	"golang.org/x/net/html/atom"
 )

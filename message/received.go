@@ -11,7 +11,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/rothskeller/packet/message/field"
+	"github.com/rothskeller/packet/v4/message/field"
 )
 
 // receivedRE is the regular expression for the "Received: " line that this

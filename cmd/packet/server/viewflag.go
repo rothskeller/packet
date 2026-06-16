@@ -3,7 +3,7 @@ package server
 import (
 	"net/http"
 
-	"github.com/rothskeller/packet/incident"
+	"github.com/rothskeller/packet/v4/incident"
 )
 
 // servePostSetViewFlag handles POST /set-view-flag requests, which carry a

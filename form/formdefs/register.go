@@ -11,11 +11,11 @@ import (
 	"strings"
 	"sync"
 
-	"github.com/rothskeller/packet/errors"
-	"github.com/rothskeller/packet/form"
-	"github.com/rothskeller/packet/form/formdef"
-	"github.com/rothskeller/packet/forms"
-	"github.com/rothskeller/packet/message"
+	"github.com/rothskeller/packet/v4/errors"
+	"github.com/rothskeller/packet/v4/form"
+	"github.com/rothskeller/packet/v4/form/formdef"
+	"github.com/rothskeller/packet/v4/forms"
+	"github.com/rothskeller/packet/v4/message"
 )
 
 type FormsFSI interface {

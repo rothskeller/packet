@@ -5,7 +5,7 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/rothskeller/packet/wppsvr/english"
+	"github.com/rothskeller/packet/v4/wppsvr/english"
 )
 
 const spaces = "                                                                                "

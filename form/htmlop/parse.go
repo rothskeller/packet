@@ -3,7 +3,7 @@ package htmlop
 import (
 	"io"
 
-	"github.com/rothskeller/packet/errors"
+	"github.com/rothskeller/packet/v4/errors"
 	"golang.org/x/net/html"
 )
 

@@ -3,7 +3,7 @@ package store
 import (
 	"time"
 
-	"github.com/rothskeller/packet/wppsvr/db"
+	"github.com/rothskeller/packet/v4/wppsvr/db"
 )
 
 const expiresFormat = "2006-01-02 15:04:05-07:00"

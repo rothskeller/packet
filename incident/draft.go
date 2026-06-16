@@ -8,12 +8,12 @@ import (
 	"slices"
 	"time"
 
-	"github.com/rothskeller/packet/errors"
-	"github.com/rothskeller/packet/message"
-	"github.com/rothskeller/packet/message/address"
-	"github.com/rothskeller/packet/message/field"
-	"github.com/rothskeller/packet/message/messageid"
-	"github.com/rothskeller/packet/message/receipt"
+	"github.com/rothskeller/packet/v4/errors"
+	"github.com/rothskeller/packet/v4/message"
+	"github.com/rothskeller/packet/v4/message/address"
+	"github.com/rothskeller/packet/v4/message/field"
+	"github.com/rothskeller/packet/v4/message/messageid"
+	"github.com/rothskeller/packet/v4/message/receipt"
 )
 
 // AddDraftMessage takes a DraftMessage and saves it in the incident, assigning

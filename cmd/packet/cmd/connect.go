@@ -5,9 +5,9 @@ import (
 	"os"
 	"os/signal"
 
-	"github.com/rothskeller/packet/cmd/packet/cio"
-	"github.com/rothskeller/packet/errors"
-	"github.com/rothskeller/packet/incident"
+	"github.com/rothskeller/packet/v4/cmd/packet/cio"
+	"github.com/rothskeller/packet/v4/errors"
+	"github.com/rothskeller/packet/v4/incident"
 	"github.com/spf13/pflag"
 )
 

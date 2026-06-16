@@ -7,8 +7,8 @@ import (
 	"mime/quotedprintable"
 	"strings"
 
-	"github.com/rothskeller/packet/wppsvr/config"
-	"github.com/rothskeller/packet/wppsvr/english"
+	"github.com/rothskeller/packet/v4/wppsvr/config"
+	"github.com/rothskeller/packet/v4/wppsvr/english"
 )
 
 // RenderEmail renders the receiver report in a form suitable for emailing.  The

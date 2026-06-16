@@ -7,10 +7,10 @@ import (
 	"strings"
 	"time"
 
-	"github.com/rothskeller/packet/message"
-	"github.com/rothskeller/packet/packetver"
-	"github.com/rothskeller/packet/wppsvr/english"
-	"github.com/rothskeller/packet/wppsvr/store"
+	"github.com/rothskeller/packet/v4/message"
+	"github.com/rothskeller/packet/v4/packetver"
+	"github.com/rothskeller/packet/v4/wppsvr/english"
+	"github.com/rothskeller/packet/v4/wppsvr/store"
 )
 
 // Generate generates the report for the specified session.

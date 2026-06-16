@@ -7,7 +7,7 @@ import (
 	"strconv"
 	"sync"
 
-	"github.com/rothskeller/packet/incident"
+	"github.com/rothskeller/packet/v4/incident"
 )
 
 type bbsConnection struct {

@@ -15,13 +15,13 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/rothskeller/packet/cmd/packet/osdep"
-	"github.com/rothskeller/packet/errors"
-	"github.com/rothskeller/packet/form/htmlop"
-	"github.com/rothskeller/packet/incident"
-	"github.com/rothskeller/packet/message"
-	"github.com/rothskeller/packet/message/address"
-	"github.com/rothskeller/packet/message/field"
+	"github.com/rothskeller/packet/v4/cmd/packet/osdep"
+	"github.com/rothskeller/packet/v4/errors"
+	"github.com/rothskeller/packet/v4/form/htmlop"
+	"github.com/rothskeller/packet/v4/incident"
+	"github.com/rothskeller/packet/v4/message"
+	"github.com/rothskeller/packet/v4/message/address"
+	"github.com/rothskeller/packet/v4/message/field"
 	"golang.org/x/net/html"
 )
 

@@ -6,9 +6,9 @@ import (
 	"strings"
 	"time"
 
-	"github.com/rothskeller/packet/message"
-	"github.com/rothskeller/packet/message/address"
-	"github.com/rothskeller/packet/message/field"
+	"github.com/rothskeller/packet/v4/message"
+	"github.com/rothskeller/packet/v4/message/address"
+	"github.com/rothskeller/packet/v4/message/field"
 )
 
 // MarkMessageSent marks a draft message as having been sent.  The parameters
