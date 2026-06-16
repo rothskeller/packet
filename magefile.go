@@ -16,6 +16,10 @@ import (
 // Default target.
 var Default = GUI
 
+func init() {
+	os.Setenv("GOEXPERIMENT", "jsonv2")
+}
+
 func Forms() {
 	os.Remove("SCCoPIFO.zip")
 	os.Chdir("forms/SCCoPIFO")
