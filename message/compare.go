@@ -59,7 +59,7 @@ func Compare(exp, act Message) (score, outOf int, fields []*field.ComparedField)
 		// Compare the fields.
 		eval := expf.Value(exp)
 		aval := actf.Value(act)
-		if eval == "" && aval == "" {
+		if (eval == "" && aval == "") || eval == "¡" {
 			continue
 		}
 		cmp := expf.Compare(expf.Label(), eval, aval)

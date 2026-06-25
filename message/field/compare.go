@@ -296,7 +296,6 @@ func digitsOnly(r rune) rune {
 
 // CompareText compares two values for a textual field.  Textual fields use a
 // somewhat loose comparison, as follows:
-//   - If the expected value is "¡" alone, any actual value is accepted.
 //   - If a group starts with "¡", a case-sensitive comparison is used for that
 //     group (without the "¡").  Otherwise, a group matches if the actual has
 //     the same case as the expected, is in all caps, or is in all lowercase.
@@ -312,11 +311,6 @@ func CompareText(label, exp, act string) (c *ComparedField) {
 
 	c = &ComparedField{
 		Label: label, Expected: strings.ReplaceAll(exp, "¡", ""), Actual: act,
-	}
-	if exp == "¡" {
-		c.Score, c.OutOf = 2, 2
-		c.ExpectedMask, c.ActualMask = " ", " "
-		return c
 	}
 	// First, we split both "exp" and "act" into tokens.
 	et = textCompareSplit(exp, true)
