@@ -73,7 +73,7 @@ func (ws *webserver) serveInstructions(w http.ResponseWriter, r *http.Request) {
 		plainText = true
 		var handling string
 		for f := range session.ModelMsg.Fields() {
-			if f.Common() == field.CHandling {
+			if f.Common() == field.CSubjectHandling {
 				handling = f.Value(session.ModelMsg)
 				break
 			}
