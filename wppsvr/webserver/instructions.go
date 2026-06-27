@@ -118,8 +118,8 @@ func (ws *webserver) serveInstructions(w http.ResponseWriter, r *http.Request) {
 	}
 	if session.ModelMsg != nil && session.ModelMsg.Type() == message.PlainMessage {
 		grid := main.E("div id=plainmodel")
-		grid.E("div>Subject:")
-		grid.E("div>%s", plainModelReplacer.Replace(session.ModelMsg.Subject().EncodedSubject()))
+		grid.E("div>Summary:")
+		grid.E("div>%s", plainModelReplacer.Replace(session.ModelMsg.Subject().SubjectSummary()))
 		grid.E("div>Message:")
 		grid.E("div>%s", plainModelReplacer.Replace(session.ModelMsg.Body().EncodedBody()))
 	}
