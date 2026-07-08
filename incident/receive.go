@@ -22,8 +22,8 @@ func (i *Incident) ReceiveMessage(msg *message.JustReceivedMessage) (dr *message
 	// specially.
 	switch msg.Type() {
 	case receipt.DeliveryReceipt, receipt.ReadReceipt:
-		err = i.receiveReceiptMessage(msg)
-		return nil, nil, err
+		le, err = i.receiveReceiptMessage(msg)
+		return nil, le, err
 	}
 	// Create a log entry and assign a local message ID.
 	le = &LogEntry{
@@ -141,7 +141,7 @@ func (i *Incident) MakeDeliveryReceipt(msg message.Message, le *LogEntry) (dr *m
 	return dr, nil
 }
 
-func (i *Incident) receiveReceiptMessage(rcpt *message.JustReceivedMessage) (err error) {
+func (i *Incident) receiveReceiptMessage(rcpt *message.JustReceivedMessage) (le *LogEntry, err error) {
 	// Create a log entry.
 	var rcptle = LogEntry{
 		Ident:   i.nextLogIdent(),
@@ -177,7 +177,7 @@ func (i *Incident) receiveReceiptMessage(rcpt *message.JustReceivedMessage) (err
 		// Read the message.
 		sent, err := i.GetMessageFromLogEntry(sentle)
 		if err != nil {
-			return err
+			return nil, err
 		}
 		// Add the receipt information to the header.
 		sent.(*message.SentMessage).AddReceipt(smr)
@@ -194,7 +194,7 @@ func (i *Incident) receiveReceiptMessage(rcpt *message.JustReceivedMessage) (err
 		}
 		sentle.Seq = i.Seq
 		if err = i.saveMessage(sent, sentle); err != nil {
-			return err
+			return nil, err
 		}
 		slog.Info("added receipt info to sent message", "lmi", sentle.LocalMsgID)
 		// Find the log entry matching this particular recipient.
@@ -221,11 +221,11 @@ func (i *Incident) receiveReceiptMessage(rcpt *message.JustReceivedMessage) (err
 	}
 	// Save the receipt message.
 	if err = i.saveMessage(rcpt, &rcptle); err != nil {
-		return err
+		return nil, err
 	}
 	// Add the log entry to the log.
 	i.Log = append(i.Log, &rcptle)
 	i.sortLog()
 	slog.Info("received receipt", "s", rcpt.Subject().EncodedSubject())
-	return nil
+	return &rcptle, nil
 }
