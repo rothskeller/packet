@@ -13,7 +13,7 @@
       "0409": {
         "identity": {
           "name": "rothskeller.packet",
-          "version": "4.0.15.0"
+          "version": "4.0.16.0"
         },
         "description": "SCCo Packet Messenger",
         "minimum-os": "win10",
@@ -25,17 +25,17 @@
     "#1": {
       "0000": {
         "fixed": {
-          "file_version": "4.0.15.0",
-          "product_version": "4.0.15.0"
+          "file_version": "4.0.16.0",
+          "product_version": "4.0.16.0"
         },
         "info": {
           "0409": {
             "CompanyName": "Steve Roth KC6RSC",
             "FileDescription": "SCCo Packet Messenger",
-            "FileVersion": "4.0.15",
+            "FileVersion": "4.0.16",
             "LegalCopyright": "(C) Copyright 2026 Steven Roth",
             "ProductName": "SCCo Packet Messenger",
-            "ProductVersion": "4.0.15"
+            "ProductVersion": "4.0.16"
           }
         }
       }
