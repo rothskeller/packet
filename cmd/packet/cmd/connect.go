@@ -52,7 +52,7 @@ func cmdConnect(args []string) (err error) {
 		return usage(connectHelp)
 	}
 	if err = incWrite(true, func(i *incident.Incident) error {
-		if err = requiredConfig(i, "OpCall", "OpName", "Rx Message ID", "Connect*"); err != nil {
+		if err = requiredConfig(i, "OpCall", "OpName", "RxMessageID", "Connect*"); err != nil {
 			return err
 		}
 		dir = i.Dir
