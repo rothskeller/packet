@@ -2,6 +2,8 @@ package incident
 
 import (
 	"log/slog"
+	"os"
+	"path/filepath"
 	"strings"
 	"time"
 
@@ -22,7 +24,7 @@ func (i *Incident) ReceiveMessage(msg *message.JustReceivedMessage) (dr *message
 	// specially.
 	switch msg.Type() {
 	case receipt.DeliveryReceipt, receipt.ReadReceipt:
-		le, err = i.receiveReceiptMessage(msg)
+		le, err = i.receiveReceiptMessage(&msg.ReceivedMessage)
 		return nil, le, err
 	}
 	// Create a log entry and assign a local message ID.
@@ -141,7 +143,7 @@ func (i *Incident) MakeDeliveryReceipt(msg message.Message, le *LogEntry) (dr *m
 	return dr, nil
 }
 
-func (i *Incident) receiveReceiptMessage(rcpt *message.JustReceivedMessage) (le *LogEntry, err error) {
+func (i *Incident) receiveReceiptMessage(rcpt *message.ReceivedMessage) (le *LogEntry, err error) {
 	// Create a log entry.
 	var rcptle = LogEntry{
 		Ident:   i.nextLogIdent(),
@@ -228,4 +230,85 @@ func (i *Incident) receiveReceiptMessage(rcpt *message.JustReceivedMessage) (le 
 	i.sortLog()
 	slog.Info("received receipt", "s", rcpt.Subject().EncodedSubject())
 	return &rcptle, nil
+}
+
+// AddReceivedMessage takes a ReceivedMessage read from a file and adds it to
+// the incident.  If unless overwriteOK is true, the filename derived from the
+// message's local ID must not exist.
+func (i *Incident) AddReceivedMessage(msg *message.ReceivedMessage, overwriteOK bool) (err error) {
+	var (
+		le       *LogEntry
+		handling string
+	)
+	// The received message might be a receipt.  Those are handled specially.
+	switch msg.Type() {
+	case receipt.DeliveryReceipt, receipt.ReadReceipt:
+		_, err = i.receiveReceiptMessage(msg)
+		return err
+	}
+	// Create a log entry and assign a local message ID.
+	le = &LogEntry{
+		Ident:   i.nextLogIdent(),
+		Index:   len(i.Log),
+		Seq:     i.Seq,
+		Status:  StatusReceived,
+		Flags:   FUnread,
+		Time:    msg.RxDate(),
+		Subject: msg.Subject().EncodedSubject(),
+	}
+	if msg.LocalID() != "" {
+		le.LocalMsgID = msg.LocalID()
+		if !overwriteOK {
+			fname := filepath.Join(i.Dir, le.LocalMsgID+".txt")
+			if _, err := os.Stat(fname); !os.IsNotExist(err) {
+				return errors.NewF("imported message has local ID %s which is already in use", le.LocalMsgID)
+			}
+		}
+	} else if le.LocalMsgID, err = i.nextMessageID(false); err != nil {
+		return err
+	}
+	le.ToMsgID = le.LocalMsgID
+	if msg.Bulletin() {
+		le.Flags |= FBulletin
+		le.FromCall = strings.ToUpper(msg.RxArea())
+	} else {
+		le.FromCall, _, _ = strings.Cut(msg.From(), "@")
+		le.FromCall = strings.ToUpper(strings.TrimSpace(le.FromCall))
+	}
+	// Put the local message ID into the
+	// message fields if it has them.  Also extract the OMI and handling
+	// from the message fields, if any, for use in the log entry.
+	for f := range msg.Fields() {
+		switch f.Common() {
+		case "originMessageID":
+			le.FromMsgID = f.Value(msg)
+		case "destinationMessageID":
+			f.SetValue(msg, le.LocalMsgID)
+		case "handling":
+			handling = f.Value(msg)
+		}
+	}
+	// Check the subject line for OMI and handling that we didn't get from
+	// the message body.  Then set log flags for the handling.
+	if le.FromMsgID == "" {
+		le.FromMsgID = msg.Subject().SubjectMessageID()
+	}
+	if handling == "" {
+		handling = msg.Subject().SubjectHandling()
+	}
+	switch handling {
+	case "IMMEDIATE":
+		le.Flags |= FImmediate
+	case "PRIORITY":
+		le.Flags |= FPriority
+	}
+	// Save the message.
+	if err = i.saveMessage(msg, le); err != nil {
+		return err
+	}
+	// Add the log entry to the log.
+	i.Log = append(i.Log, le)
+	i.sortLog()
+	slog.Info("import received message", "lid", le.LocalMsgID, "s", msg.Subject().EncodedSubject())
+	return nil
 }

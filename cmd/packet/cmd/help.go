@@ -22,6 +22,7 @@ Available commands include:
   gui      ⇥` + guiSlug + `
   help     ⇥` + helpSlug + `
   ics309   ⇥` + ics309Slug + `
+  import   ⇥` + importSlug + `
   list     ⇥` + listSlug + `
   manual   ⇥` + manualSlug + `
   mark     ⇥` + markSlug + `
@@ -78,6 +79,8 @@ func cmdHelp(args []string) (err error) {
 			helpText = guiHelp
 		case "ics309", "309":
 			helpText = ics309Help
+		case "import":
+			helpText = importHelp
 		case "list", "l", "ls", "log":
 			helpText = listHelp
 		case "manual", "man":

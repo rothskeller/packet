@@ -57,6 +57,8 @@ func run(args []string) (err error) {
 		return cmdHelp(args[1:])
 	case "ics309", "309":
 		return cmdICS309(args[1:])
+	case "import":
+		return cmdImport(args[1:])
 	case "list", "l", "ls", "log":
 		return cmdList(args[1:])
 	case "manual", "man":
@@ -98,7 +100,7 @@ func shell() (err error) {
 	if !c.InputIsTerm || !c.OutputIsTerm {
 		return ErrUsage("usage: packet «command»\n       packet help\n")
 	}
-	c.Welcome(`Packet Shell v%s.  Type "help" for help.`, packetver.Version)
+	c.Welcome(`SCCo Packet Messenger v%s.  Type "help" for help.`, packetver.Version)
 	for {
 		var (
 			line    string

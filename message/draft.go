@@ -176,7 +176,7 @@ func CopyFields(from Message, to *DraftMessage) {
 				field.CSubjectFormTag, field.CSubjectMessageID:
 				// ignore
 			default:
-				if f.Settable() {
+				if f.Settable() && len(f.Children()) == 0 {
 					f.SetValue(to, f.Value(from))
 				}
 			}
