@@ -175,7 +175,7 @@ func newMessageTypeList() string {
 	return strings.Join(data, ";")
 }
 
-func (s *Server) servePostViewICS309(w http.ResponseWriter, r *http.Request) {
+func (s *Server) serveViewICS309(w http.ResponseWriter, r *http.Request) {
 	var (
 		dir   string
 		fname string
