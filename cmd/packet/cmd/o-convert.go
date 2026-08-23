@@ -11,6 +11,7 @@ import (
 	"strings"
 
 	"github.com/rothskeller/packet/v4/cmd/packet/cio"
+	"github.com/rothskeller/packet/v4/form"
 	"github.com/rothskeller/packet/v4/message"
 	"github.com/rothskeller/packet/v4/message/field"
 	"github.com/spf13/pflag"
@@ -83,6 +84,10 @@ func cmdOutpostConvert(args []string) (err error) {
 				_, time, _ := strings.Cut(decodeOutpostArg(args[5]), " ")
 				fd.SetValue(msg, time)
 			}
+		}
+		if fb, ok := msg.Body().(*form.FormBody); ok {
+			// Mark received so that page 2 of RACES-MAR prints.
+			fb.SetField("RECEIVED", "RECEIVED")
 		}
 	}
 	// Compute the base filename based on the subject.
