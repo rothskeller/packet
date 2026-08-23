@@ -97,7 +97,8 @@ func (ft FormType) RenderPDF(m message.Message, filename, copyname string) (err 
 	out = pdf.New(outFH)
 	// If the message was received, set that in a body field so that we
 	// print received-only pages.
-	if _, ok := m.(*message.ReceivedMessage); ok {
+	switch m := m.(type) {
+	case *message.ReceivedMessage, *message.JustReceivedMessage:
 		m.Body().(*FormBody).SetField("RECEIVED", "RECEIVED")
 	}
 	// Set the title of the PDF to the subject line of the message.
