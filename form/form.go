@@ -418,11 +418,6 @@ func (ft EditableFormType) FromPOST(r *http.Request) (msg message.Message, err e
 		payl *payload.OutpostPayload
 		dm   *message.DraftMessage
 	)
-	if ft.RenderBody != "" {
-		// This is a message that is edited as a form but rendered as
-		// plain text, e.g. a check-in message.  Handled separately.
-		return ft.renderFromPOST(r)
-	}
 	if body, err = NewFormBody(ft.FormDef); err != nil {
 		slog.Error("form.NewFormBody", "err", err)
 		return nil, err
@@ -445,7 +440,48 @@ func (ft EditableFormType) FromPOST(r *http.Request) (msg message.Message, err e
 		body.SetField(fd.Tag, value)
 	}
 	dm.SetTo(r.FormValue("ToAddr"))
+	dm = ft.ConvertToPlain(dm)
 	return dm, nil
+}
+
+// ConvertToPlain translates message into plain text if it's one of the
+// quasi-form-quasi-plain types (check-in and check-out).  It's a no-op
+// otherwise.
+func (ft EditableFormType) ConvertToPlain(dm *message.DraftMessage) *message.DraftMessage {
+	if ft.RenderSummary == "" {
+		return dm
+	}
+	// For both the subject summary and the body, we use the form fields as
+	// variables to substitute into the rendering templates.
+	var variables = make(map[string]string)
+	var msgID, handling, toaddr string
+	for f := range dm.Fields() {
+		if f.Tag() != "" {
+			if val := f.Value(dm); val != "" {
+				variables[f.Tag()] = val
+			}
+		}
+		switch f.Common() {
+		case field.COriginMessageID:
+			msgID = f.Value(dm)
+		case field.CHandling:
+			handling = f.Value(dm)
+		case field.CHeaderTo:
+			toaddr = f.Value(dm)
+		}
+	}
+	summary := renderString(ft.RenderSummary, variables)
+	bodytext := renderString(ft.RenderBody, variables)
+	// Build the message.
+	b := body.NewPlainBody(bodytext)
+	p := payload.NewOutpostPayload(b, true, true)
+	if handling == "IMMEDIATE" {
+		p.SetUrgent(true)
+	}
+	s, _ := subject.NewPlainSubject(msgID, handling, summary)
+	newdm := message.NewDraftMessage(message.PlainMessage, s, p, false)
+	newdm.SetTo(toaddr)
+	return newdm
 }
 
 // renderFromPOST translates the HTML response into a plain text DraftMessage.

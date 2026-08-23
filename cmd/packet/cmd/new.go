@@ -221,6 +221,13 @@ func cmdNew(args []string) (err error) {
 		} else {
 			i.ApplyDefaults(newmsg)
 		}
+		// Special case for forms that render as plain text:  convert
+		// them to a plain text message now.
+		if mt, ok := msgtype.(interface {
+			ConvertToPlain(*message.DraftMessage) *message.DraftMessage
+		}); ok {
+			newmsg = mt.ConvertToPlain(newmsg)
+		}
 		if newle, err = i.AddDraftMessage(newmsg); err != nil {
 			return err
 		}
