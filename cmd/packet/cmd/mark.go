@@ -65,6 +65,8 @@ func cmdMark(args []string) (err error) {
 			usage(markHelp)
 		}
 		f, not = flags.Arg(2)[0], true
+	default:
+		usage(markHelp)
 	}
 	registerForms()
 	if err = incWrite(false, func(i *incident.Incident) error {
