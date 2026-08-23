@@ -77,6 +77,7 @@ func (ft FormType) RenderPDF(m message.Message, filename, copyname string) (err 
 		return err
 	}
 	defer func() {
+		m.Body().(*FormBody).SetField("RECEIVED", "")
 		switch err.(type) {
 		case nil, message.Warning:
 			// nothing
@@ -94,6 +95,11 @@ func (ft FormType) RenderPDF(m message.Message, filename, copyname string) (err 
 		return err
 	}
 	out = pdf.New(outFH)
+	// If the message was received, set that in a body field so that we
+	// print received-only pages.
+	if _, ok := m.(*message.ReceivedMessage); ok {
+		m.Body().(*FormBody).SetField("RECEIVED", "RECEIVED")
+	}
 	// Set the title of the PDF to the subject line of the message.
 	out.Info["Title"] = m.Subject().EncodedSubject()
 	out.Info["Producer"] = "https://github.com/rothskeller/packet"
