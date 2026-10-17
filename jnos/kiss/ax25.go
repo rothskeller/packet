@@ -94,9 +94,13 @@ type frame struct {
 	dest, src address
 	// command is true for command frames and false for response frames.
 	command bool
-	// digis is true if the frame has a digipeater path.
+	// digis is true if the frame has a digipeater path, and via lists it
+	// (in monitor style: "N6XYZ-2*" for a digipeater that has repeated
+	// the frame).
 	digis   bool
+	via     []string
 	control byte
+	pid     byte // protocol ID, for frames with an information field
 	info    []byte
 }
 
@@ -115,7 +119,11 @@ func (f *frame) hasInfo() bool { return f.isI() || f.isUI() }
 func (f *frame) String() string {
 	var sb strings.Builder
 
-	fmt.Fprintf(&sb, "%s>%s <", f.src, f.dest)
+	fmt.Fprintf(&sb, "%s>%s", f.src, f.dest)
+	for _, digi := range f.via {
+		sb.WriteString("," + digi)
+	}
+	sb.WriteString(" <")
 	switch {
 	case f.isI():
 		sb.WriteString("I")
@@ -179,8 +187,17 @@ func decodeFrame(b []byte) (f *frame, err error) {
 		if len(b) < 8 {
 			return nil, errBadFrame
 		}
+		var (
+			digi     address
+			repeated bool
+		)
 		f.digis = true
-		_, _, last = decodeAddress(b[0:7])
+		digi, repeated, last = decodeAddress(b[0:7])
+		if repeated {
+			f.via = append(f.via, digi.String()+"*")
+		} else {
+			f.via = append(f.via, digi.String())
+		}
 		b = b[7:]
 	}
 	// AX.25 2.0 marks commands with the C bit set in the destination
@@ -193,7 +210,7 @@ func decodeFrame(b []byte) (f *frame, err error) {
 		if len(b) < 1 {
 			return nil, errBadFrame
 		}
-		f.info = b[1:] // skip the PID
+		f.pid, f.info = b[0], b[1:]
 	}
 	return f, nil
 }

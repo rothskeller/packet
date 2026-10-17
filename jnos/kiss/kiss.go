@@ -20,6 +20,8 @@ import (
 	"sync"
 	"sync/atomic"
 	"time"
+	"unicode"
+	"unicode/utf8"
 
 	"go.bug.st/serial"
 
@@ -871,6 +873,52 @@ func (t *Transport) monitorFrame(direction byte, f *frame) {
 	})
 }
 
+// monitorOther reports a frame that isn't part of our link (another station's,
+// or one that couldn't be decoded, in which case f is nil and size is its
+// length) to the packet monitor, if there is one, marked as other traffic.
+// Seeing the other traffic on the channel explains much: a BBS that is busy
+// with other stations is slow to answer us, and frames we send while the
+// channel is busy wait in the TNC.
+func (t *Transport) monitorOther(f *frame, size int) {
+	if t.monitor == nil {
+		return
+	}
+	prefix := time.Now().Format("15:04:05") + " (other) "
+	if f == nil {
+		line := fmt.Sprintf("%sundecodable frame, %d bytes", prefix, size)
+		t.output(func() { t.monitor(line) })
+		return
+	}
+	lines := []string{prefix + f.String()}
+	if f.hasInfo() && len(f.info) != 0 {
+		if f.pid == pidNoL3 {
+			text := strings.TrimRight(strings.ReplaceAll(strings.ReplaceAll(string(f.info), "\r\n", "\n"), "\r", "\n"), "\n")
+			for line := range strings.SplitSeq(text, "\n") {
+				lines = append(lines, printable(line))
+			}
+		} else {
+			// Not text (e.g., NET/ROM or IP): just describe it.
+			lines = append(lines, fmt.Sprintf("(%d bytes of protocol %02X data)", len(f.info), f.pid))
+		}
+	}
+	t.output(func() {
+		for _, line := range lines {
+			t.monitor(line)
+		}
+	})
+}
+
+// printable returns s with any control characters and invalid UTF-8 replaced
+// by dots, so that another station's binary data can't garble the monitor.
+func printable(s string) string {
+	return strings.Map(func(r rune) rune {
+		if r == utf8.RuneError || unicode.IsControl(r) {
+			return '.'
+		}
+		return r
+	}, strings.ToValidUTF8(s, "."))
+}
+
 // setState changes the link state, recording err as the reason if the link is
 // going down.
 func (t *Transport) setState(state int, err error) {
@@ -1063,7 +1111,8 @@ func (t *Transport) sampleRTT(rtt time.Duration) {
 func (t *Transport) receive(raw []byte) {
 	f, err := decodeFrame(raw)
 	if err != nil || f.digis || f.src != t.remote || f.dest != t.local {
-		return // not for us
+		t.monitorOther(f, len(raw)) // not for us: other traffic
+		return
 	}
 	if trace {
 		slog.Debug("AX.25 recv", "control", fmt.Sprintf("%02X", f.control), "command", f.command, "len", len(f.info))
