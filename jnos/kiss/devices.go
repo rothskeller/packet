@@ -48,8 +48,9 @@ type Device struct {
 	// clear.)  Packets sent sooner than this are lost: on W3XSC, packets
 	// sent within a second of its own were never heard.  It also keeps us
 	// from transmitting into a burst: W3XSC sometimes sends two or three
-	// frames up to a second apart (an RR, then the data it carries).  This
-	// is the equivalent of a TNC's DWAIT or RESPTIME setting.
+	// frames up to a second apart (an RR, then the data it carries).  With
+	// FullDuplex, it is all that keeps us off the BBS's transmissions.
+	// This is the equivalent of a TNC's DWAIT or RESPTIME setting.
 	Turnaround time.Duration
 	// TXDelay, Persist and SlotTime are sent to the TNC at connect time
 	// (as KISS commands), to control how it decides when to transmit.  The
@@ -61,6 +62,11 @@ type Device struct {
 	TXDelay  time.Duration
 	Persist  int
 	SlotTime time.Duration
+	// FullDuplex makes the TNC transmit as soon as it has a frame, without
+	// waiting for its carrier detect to show the channel clear (KISS
+	// command 05).  We still wait out Turnaround after the BBS's frames.
+	// It is restored to half duplex when the session ends.
+	FullDuplex bool
 }
 
 var devices = map[string]*Device{
@@ -68,7 +74,17 @@ var devices = map[string]*Device{
 	// connections.  It is reached over USB or Bluetooth, whichever is
 	// selected in the radio's KISS interface menu setting.
 	//
-	// Its settings suit a slow, lossy path to W3XSC: one frame at a
+	// Its TNC must be in full-duplex mode (ignoring its carrier detect).
+	// In half duplex, it often held our frames for seconds, or until our
+	// next write, though the channel was quiet (its BUSY light off): the
+	// BBS got our first copy together with our retransmission, and
+	// rejected the duplicate, or nothing at all (the radio stuck showing
+	// STA).  Idle, it transmitted within a second either way.  In full
+	// duplex, a whole session with W3XSC went without a single retry.  We
+	// still wait out Turnaround after the BBS's frames, so we don't
+	// transmit over it.
+	//
+	// The other settings suit a slow, lossy path to W3XSC: one frame at a
 	// time (so a lost frame doesn't take the next one with it), and
 	// patient: T1 starts at 15 seconds, then adapts to the measured answer
 	// time (but no lower than 8 seconds), backing off for each retry, up to
@@ -86,6 +102,7 @@ var devices = map[string]*Device{
 		TXDelay:      400 * time.Millisecond,
 		Persist:      63,
 		SlotTime:     100 * time.Millisecond,
+		FullDuplex:   true,
 	},
 	"Generic KISS TNC": {
 		Name:     "Generic KISS TNC",

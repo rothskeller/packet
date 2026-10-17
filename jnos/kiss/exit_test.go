@@ -268,3 +268,60 @@ func TestStaleFrameWhileConnecting(t *testing.T) {
 		t.Error("connected on a stale frame")
 	}
 }
+
+// TestFullDuplex checks that a FullDuplex device has full duplex turned on at
+// connect time and back off when the session ends (cleanly or not), and that
+// other devices never touch it.
+func TestFullDuplex(t *testing.T) {
+	for _, tc := range []struct {
+		name        string
+		fullDuplex  bool
+		clean       bool
+		want, wantN []string
+	}{
+		{"full duplex, clean end", true, true, []string{"cmd 05 01", "cmd 05 00"}, nil},
+		{"full duplex, aborted", true, false, []string{"cmd 05 01", "cmd 05 00"}, nil},
+		{"half duplex", false, true, nil, []string{"cmd 05"}},
+	} {
+		t.Run(tc.name, func(t *testing.T) {
+			dev := *testDevice
+			dev.FullDuplex = tc.fullDuplex
+			client, server := net.Pipe()
+			defer server.Close()
+			b := newFakeBBS(t, server)
+			go func() {
+				b.accept()
+				for f := range b.frames {
+					if isU(f, ctlDISC) {
+						b.send(&frame{control: ctlUA | pfBit})
+					}
+				}
+			}()
+			tr, err := open(client, &dev, testClient, testBBS, nil, nil)
+			if err != nil {
+				t.Fatal(err)
+			}
+			if !tc.clean {
+				tr.Abort()
+			}
+			within(t, 3*time.Second, "Close", func() { tr.Close() })
+			time.Sleep(50 * time.Millisecond) // let the fake BBS decode the last bytes
+			b.mu.Lock()
+			events := strings.Join(b.events, "|")
+			b.mu.Unlock()
+			last := -1
+			for _, want := range tc.want {
+				i := strings.Index(events, want)
+				if i <= last {
+					t.Errorf("events %q lack %q (in order)", events, want)
+				}
+				last = i
+			}
+			for _, not := range tc.wantN {
+				if strings.Contains(events, not) {
+					t.Errorf("events %q include %q", events, not)
+				}
+			}
+		})
+	}
+}

@@ -519,6 +519,20 @@ func (t *Transport) finalDISC() {
 	}
 }
 
+// restoreTNC is called as the link goroutine exits.  It undoes any TNC setting
+// that shouldn't outlast the session: full duplex (see Device.FullDuplex),
+// which would make the TNC transmit over others for whatever program uses it
+// next.  (TXDELAY, PERSIST and SLOTTIME are ordinary KISS settings, which
+// every KISS program sets for itself.)
+func (t *Transport) restoreTNC() {
+	if !t.dev.FullDuplex || t.portFailed {
+		return
+	}
+	if t.finalWrite(kissFrame(kissFullDuplex, []byte{0})) {
+		t.monitorLine('T', "KISS FULLDUPLEX off (the TNC waits for a clear channel again)")
+	}
+}
+
 // finalWrite writes data to the TNC as the link goroutine exits, waiting no
 // longer than finalWriteTimeout.  It returns whether the write succeeded.
 func (t *Transport) finalWrite(data []byte) bool {
@@ -626,6 +640,7 @@ func (t *Transport) writer() {
 // caller is doing.
 func (t *Transport) link() {
 	defer close(t.done)
+	defer t.restoreTNC() // after finalDISC, so the DISC goes as configured
 	defer t.finalDISC()
 	closech := t.closech
 	t.configureTNC()
@@ -802,6 +817,10 @@ func (t *Transport) configureTNC() {
 				sent = append(sent, fmt.Sprintf("%s %d", setting.name, value))
 			}
 		}
+	}
+	if t.dev.FullDuplex {
+		t.writeTNC(kissFrame(kissFullDuplex, []byte{1}))
+		sent = append(sent, "FULLDUPLEX on (transmits without waiting for a clear channel)")
 	}
 	if len(sent) != 0 && t.state != stateDisconnected {
 		t.monitorLine('T', "KISS "+strings.Join(sent, ", "))
@@ -1199,8 +1218,13 @@ func (t *Transport) receiveConnected(f *frame) {
 		case ctlDISC:
 			t.sendU(ctlUA|f.control&pfBit, false)
 			// The BBS disconnected: cleanly, unless we still had data
-			// it hadn't acknowledged (which the TNC may still hold).
-			t.cleanEnd.Store(len(t.outstanding) == 0 && len(t.queue) == 0)
+			// it hadn't acknowledged, which a half-duplex TNC may
+			// still hold.  (A full-duplex TNC doesn't hold frames:
+			// they went on the air when we wrote them.  JNOS ends a
+			// session by disconnecting in answer to our "B", which it
+			// never acknowledges; resetting the TNC after that only
+			// held up the end of the session by four seconds.)
+			t.cleanEnd.Store(len(t.queue) == 0 && (len(t.outstanding) == 0 || t.dev.FullDuplex))
 			t.linkEnded = true
 			t.setState(stateDisconnected, jnos.ErrDisconnected)
 		case ctlDM:

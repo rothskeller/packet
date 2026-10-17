@@ -263,3 +263,37 @@ func TestKenwoodResetOutOfKISS(t *testing.T) {
 		t.Errorf("re-entered KISS with %q (in KISS: %v)", cmd, radio.kiss)
 	}
 }
+
+// TestNoResetAfterLogoffFullDuplex checks the usual end of a session with a
+// full-duplex TNC: we send "B", and JNOS disconnects without acknowledging it.
+// The TNC holds nothing, so there's nothing to reset.
+func TestNoResetAfterLogoffFullDuplex(t *testing.T) {
+	fastReset(t)
+	radio := newFakeRadio("0")
+	var reopened int
+	dev := *testDevice
+	dev.FullDuplex = true
+	client, server := net.Pipe()
+	b := newFakeBBS(t, server)
+	go func() {
+		b.accept()
+		for f := range b.frames {
+			if f.isI() { // our "B": disconnect without acknowledging it
+				b.send(&frame{command: true, control: ctlDISC | pfBit})
+				break
+			}
+		}
+		for range b.frames {
+		}
+	}()
+	tr, err := open(client, &dev, testClient, testBBS, nil, nil, withRadio(radio, &reopened))
+	if err != nil {
+		t.Fatal(err)
+	}
+	tr.Send("B")
+	tr.ReadUntil("\n")
+	tr.Close()
+	if reopened != 0 {
+		t.Errorf("reset the TNC (sent %q) after the BBS's ordinary disconnection", radio.commands())
+	}
+}

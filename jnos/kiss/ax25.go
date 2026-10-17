@@ -212,6 +212,9 @@ const (
 	kissTXDelay  = 0x01
 	kissPersist  = 0x02
 	kissSlotTime = 0x03
+	// kissFullDuplex set to nonzero makes the TNC transmit without waiting
+	// for the channel to be clear (ignoring carrier detect).
+	kissFullDuplex = 0x05
 )
 
 // kissEncode wraps an AX.25 frame in a KISS data frame for TNC port 0.
