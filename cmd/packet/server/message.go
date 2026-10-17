@@ -172,6 +172,8 @@ func (s *Server) servePostSendMessage(w http.ResponseWriter, r *http.Request) {
 		msg    *message.DraftMessage
 		manual bool
 		err    error
+
+		confirmReady bool
 	)
 	dir, tag = r.FormValue("dir"), r.FormValue("tag")
 	ident, _ = strconv.Atoi(r.FormValue("id"))
@@ -201,7 +203,16 @@ func (s *Server) servePostSendMessage(w http.ResponseWriter, r *http.Request) {
 			}
 			msg.SetBulletin(true)
 		}
-		msg.SetReadyToSend(true)
+		if bareAddressWarning(nil, msg.To()) != "" {
+			// Don't mark it ready yet: have the main window ask
+			// whether to send it to a mailbox with no @BBS (see
+			// bareAddressWarning).  The confirm-ready action asks
+			// for the Ready-to-Send flag, which reports the
+			// problem and offers to send it anyway.
+			confirmReady = true
+		} else {
+			msg.SetReadyToSend(true)
+		}
 	}
 	// Update the incident and save the message.
 	if err = incident.Write(dir, func(i *incident.Incident) (err error) {
@@ -211,7 +222,9 @@ func (s *Server) servePostSendMessage(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
-	if manual && msg.ReadyToSend() {
+	if confirmReady {
+		w.Header().Set("X-Packet-Action", fmt.Sprintf("confirm-ready:%d", ident))
+	} else if manual && msg.ReadyToSend() {
 		w.Header().Set("X-Packet-Action", fmt.Sprintf("manual-send:%d", ident))
 	} else {
 		w.Header().Set("X-Packet-Action", fmt.Sprintf("select:%d", ident))

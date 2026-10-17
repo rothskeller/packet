@@ -21,6 +21,15 @@
         else if (!resp.ok) openErrorDialog('Manual Send Error', await resp.text())
         else openManualSendDialog(ident, await resp.text())
       }
+      if (action === 'confirm-ready') {
+        // The editor saved the message without marking it ready to
+        // send, because the server has a warning about it.  Ask for the
+        // flag here, which shows the warning and offers to send anyway.
+        const params = new URLSearchParams({ dir: document.body.dataset.dir, id: ident, flag: 'Q' })
+        const resp = await fetch2('/toggle-flag?' + params.toString(), { method: 'POST' })
+        if (!resp.ok) openErrorDialog('Send Message', await resp.text())
+        else if (resp.status !== 204) openReadyConfirmDialog(item, await resp.text(), 'ready')
+      }
       if (action === 'edit') {
         const params = new URLSearchParams({ dir: document.body.dataset.dir, id: ident })
         window.open('/edit-message?' + params.toString(), `edit${ident}`)
