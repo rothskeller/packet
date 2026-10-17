@@ -14,6 +14,7 @@ import (
 	"time"
 
 	"github.com/rothskeller/packet/v4/jnos"
+	"github.com/rothskeller/packet/v4/jnos/kiss"
 	"github.com/rothskeller/packet/v4/jnos/serialtnc"
 	"github.com/rothskeller/packet/v4/jnos/telnet"
 	"github.com/rothskeller/packet/v4/jnos/tnc"
@@ -75,7 +76,7 @@ func BBSExchange(ctx context.Context, dir string, immOnly bool, updates BBSExcha
 		updates.Finished()
 		return
 	}
-	if e.config.ConnectType == ConnectSerialTNC {
+	if e.config.UsesSerialPort() {
 		if connectionsRunning.Has(e.config.SerialPort) {
 			connectionsRunningMutex.Unlock()
 			slog.Error("serial port in use", "port", e.config.SerialPort)
@@ -90,7 +91,7 @@ func BBSExchange(ctx context.Context, dir string, immOnly bool, updates BBSExcha
 	defer func() {
 		connectionsRunningMutex.Lock()
 		connectionsRunning.Delete(connTo)
-		if e.config.ConnectType == ConnectSerialTNC {
+		if e.config.UsesSerialPort() {
 			connectionsRunning.Delete(e.config.SerialPort)
 		}
 		connectionsRunningMutex.Unlock()
@@ -117,6 +118,16 @@ func BBSExchange(ctx context.Context, dir string, immOnly bool, updates BBSExcha
 		}
 		e.progress("Connecting to %s@%s...", e.config.ActiveCall(), e.config.ConnectBBS)
 		e.conn, err = serialtnc.Connect(tncconf, e.config.SerialPort, e.config.ConnectAddress, e.config.ActiveCall(), e.config.OpCall, logf)
+	case ConnectKISS:
+		dev := kiss.GetDevice(e.config.TNCType)
+		if dev == nil {
+			slog.Error("no such KISS device type", "type", e.config.TNCType)
+			updates.Error(fmt.Sprintf("The configuration specifies a KISS TNC type of %q which is not defined.", e.config.TNCType))
+			updates.Finished()
+			return
+		}
+		e.progress("Connecting to %s@%s...", e.config.ActiveCall(), e.config.ConnectBBS)
+		e.conn, err = kiss.Connect(dev, e.config.SerialPort, e.config.ConnectAddress, e.config.ActiveCall(), e.config.OpCall, logf)
 	case ConnectTelnet:
 		e.progress("Connecting to %s@%s...", e.config.TelnetUser, e.config.ConnectBBS)
 		e.conn, err = telnet.Connect(e.config.ConnectAddress, e.config.TelnetUser, e.config.TelnetPassword, logf)

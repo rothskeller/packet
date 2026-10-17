@@ -28,23 +28,22 @@ type IncDefaults struct {
 	// OpName is the name of the operator.
 	OpName string `json:"opName,omitempty"`
 	// ConnectType is the method to use to connect to the BBS.  Options are
-	// ConnectNone, ConnectSerialTNC, or ConnectTelnet.
+	// ConnectNone, ConnectSerialTNC, ConnectKISS, or ConnectTelnet.
 	ConnectType string `json:"connType,omitempty"`
 	// ConnectBBS is the name of the BBS that we are connecting to.
 	ConnectBBS string `json:"connBBS,omitempty"`
 	// ConnectAddress is the address of the BBS that we're connecting to.
-	// If ConnectType is ConnectSerialTNC, this should be an AX.25 address
-	// (e.g., "W5XSC-1").  If ConnectType is ConnectTelnet, this should be
-	// a hostname:port or ipaddr:port string.
+	// If ConnectType is ConnectSerialTNC or ConnectKISS, this should be an
+	// AX.25 address (e.g., "W5XSC-1").  If ConnectType is ConnectTelnet,
+	// this should be a hostname:port or ipaddr:port string.
 	ConnectAddress string `json:"connAddr,omitempty"`
 	// SerialPort is the pathname of the serial port to use to communicate
 	// with the TNC (e.g., "COM3" on Windows or "/dev/tty.something" on
 	// Mac or Linux).  It is relevant only when ConnectType is
-	// ConnectSerialTNC.
+	// ConnectSerialTNC or ConnectKISS.
 	SerialPort string `json:"serialPort,omitempty"`
-	// TNCType is the type of TNC in use.  Currently the only supported
-	// value is TNCKPC3Plus.  Relevant only when ConnectType is
-	// ConnectSerialTNC.
+	// TNCType is the type of TNC in use.  Relevant only when ConnectType is
+	// ConnectSerialTNC or ConnectKISS.
 	TNCType string `json:"tncType,omitempty"`
 	// TCPAddresses is a map from ConnectBBS to ConnectAddress for Telnet
 	// connections.
@@ -151,7 +150,7 @@ func (inc *Incident) UpdateIncDefaults() {
 	if inc.Config.ConnectAddress != "" {
 		idef.ConnectAddress = inc.Config.ConnectAddress
 	}
-	if inc.Config.ConnectType == ConnectSerialTNC {
+	if inc.Config.UsesSerialPort() {
 		if inc.Config.SerialPort != "" {
 			idef.SerialPort = inc.Config.SerialPort
 		}

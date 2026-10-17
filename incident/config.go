@@ -58,22 +58,23 @@ type Config struct {
 	// outgoing messages (often used for "**** This is drill traffic ****").
 	DefaultBody string `json:"defBody,omitempty"`
 	// ConnectType is the method to use to connect to the BBS.  Options are
-	// ConnectNone, ConnectSerialTNC, or ConnectTelnet.
+	// ConnectNone, ConnectSerialTNC, ConnectKISS, or ConnectTelnet.
 	ConnectType string `json:"connType,omitempty"`
 	// ConnectBBS is the name of the BBS that we are connecting to.
 	ConnectBBS string `json:"connBBS,omitempty"`
 	// ConnectAddress is the address of the BBS that we're connecting to.
-	// If ConnectType is ConnectSerialTNC, this should be an AX.25 address
-	// (e.g., "W5XSC-1").  If ConnectType is ConnectTelnet, this should be
-	// a hostname:port or ipaddr:port string.
+	// If ConnectType is ConnectSerialTNC or ConnectKISS, this should be an
+	// AX.25 address (e.g., "W5XSC-1").  If ConnectType is ConnectTelnet,
+	// this should be a hostname:port or ipaddr:port string.
 	ConnectAddress string `json:"connAddr,omitempty"`
 	// SerialPort is the pathname of the serial port to use to communicate
 	// with the TNC (e.g., "COM3" on Windows or "/dev/tty.something" on
 	// Mac or Linux).  It is relevant only when ConnectType is
-	// ConnectSerialTNC.
+	// ConnectSerialTNC or ConnectKISS.
 	SerialPort string `json:"serialPort,omitempty"`
 	// TNCType is the type of TNC in use.  Relevant only when ConnectType is
-	// ConnectSerialTNC.
+	// ConnectSerialTNC (where it names a tnc.TNC) or ConnectKISS (where it
+	// names a kiss.Device).
 	TNCType string `json:"tncType,omitempty"`
 	// TelnetUser is the username to use to log in to the BBS.  Relevant
 	// only when ConnectType is ConnectTelnet.
@@ -220,10 +221,20 @@ const (
 	// ConnectSerialTNC is connection to a BBS over the air using a serial
 	// connection to a TNC.
 	ConnectSerialTNC = "serial-tnc"
+	// ConnectKISS is connection to a BBS over the air using a serial
+	// connection to a TNC in KISS mode (e.g., the TNC built into a Kenwood
+	// TH-D75).
+	ConnectKISS = "kiss"
 	// ConnectTelnet is connection to a BBS over the Internet using the
 	// Telnet protocol.
 	ConnectTelnet = "telnet"
 )
+
+// UsesSerialPort returns whether the configured connection method talks to a
+// TNC through a serial port.
+func (c *Config) UsesSerialPort() bool {
+	return c.ConnectType == ConnectSerialTNC || c.ConnectType == ConnectKISS
+}
 
 // ActiveCall returns the active call sign in the configuration.
 func (c *Config) ActiveCall() string {

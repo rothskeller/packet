@@ -7,7 +7,7 @@
   <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
   <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
   <script>
-    let form, bbsCommBlock, conntypeRow, manualRow, serialTNCRow, telnetRow, helpLabel, helpText, bulletinsBlock
+    let form, bbsCommBlock, conntypeRow, manualRow, serialTNCRow, kissRow, telnetRow, helpLabel, helpText, bulletinsBlock
     function setValue(elm, val) {
       elm.value = val
       elm.dispatchEvent(new CustomEvent('i-change'))
@@ -103,6 +103,7 @@
           conntypeRow.insertAdjacentElement('afterend', manualRow)
           manualRow.removeAttribute('hidden')
           serialTNCRow.remove()
+          kissRow.remove()
           telnetRow.remove()
           bulletinsBlock.remove()
           break
@@ -110,6 +111,16 @@
           manualRow.remove()
           conntypeRow.insertAdjacentElement('afterend', serialTNCRow)
           serialTNCRow.removeAttribute('hidden')
+          kissRow.remove()
+          telnetRow.remove()
+          bbsCommBlock.insertAdjacentElement('afterend', bulletinsBlock)
+          bulletinsBlock.removeAttribute('hidden')
+          break
+        case 'kiss':
+          manualRow.remove()
+          serialTNCRow.remove()
+          conntypeRow.insertAdjacentElement('afterend', kissRow)
+          kissRow.removeAttribute('hidden')
           telnetRow.remove()
           bbsCommBlock.insertAdjacentElement('afterend', bulletinsBlock)
           bulletinsBlock.removeAttribute('hidden')
@@ -117,6 +128,7 @@
         case 'telnet':
           manualRow.remove()
           serialTNCRow.remove()
+          kissRow.remove()
           conntypeRow.insertAdjacentElement('afterend', telnetRow)
           telnetRow.removeAttribute('hidden')
           bbsCommBlock.insertAdjacentElement('afterend', bulletinsBlock)
@@ -270,6 +282,7 @@
       conntypeRow = document.getElementById('conntype')
       manualRow = document.getElementById('manual')
       serialTNCRow = document.getElementById('serial+tnc')
+      kissRow = document.getElementById('kiss')
       telnetRow = document.getElementById('telnet')
       bulletinsBlock = document.getElementById('bulletins')
       helpLabel = document.getElementById('help-label')
@@ -689,6 +702,7 @@
         <div class="radio-group cspan4">
           <label><input type=radio name=conntype value=manual> Manual</label>
           <label><input type=radio name=conntype value=serial+tnc> Serial+TNC</label>
+          <label><input type=radio name=conntype value=kiss> KISS</label>
           <label><input type=radio name=conntype value=telnet> Telnet</label>
           <help for=conntype>
             This selects how the packet software will connect to the BBS.
@@ -696,6 +710,8 @@
             terminal emulator talking to a TNC).
             "Serial+TNC" means the packet software will talk to a TNC through a serial port, and use it to connect to
             the BBS over the air.
+            "KISS" is similar, but for TNCs that only support KISS mode, such as the one built into the Kenwood
+            TH-D75.
             "Telnet" means the packet software will connect to the BBS over the Internet using the Telnet protocol.
           </help>
         </div>
@@ -776,6 +792,65 @@
             It will be the BBS call sign followed by a dash and a number from 0 to 15 (usually 1).
           </help>
           <datalist id=xscbbs1>
+            <option value="W1XSC-1"></option>
+            <option value="W2XSC-1"></option>
+            <option value="W3XSC-1"></option>
+            <option value="W4XSC-1"></option>
+          </datalist>
+        </div>
+      </div>
+      <div id=kiss class="form-grid container cspan5" style="grid-template: repeat(3, auto)/subgrid" hidden>
+        <div class="form-grid container subgrid2 border tblr rspan3">
+          <div><label>KISS Settings:</label></div>
+        </div>
+        <div class="form-grid container subgrid2 border tblr cspan4">
+          <div><label for=kisstype>TNC Type:</label></div>
+          <div class=cspan3>
+            <select id=kisstype name=tnctype>
+              <option value="" disabled>(select one)</option>
+              <for:kisstypes>
+                <option value={{.}}>{{.}}</option>
+              </for:kisstypes>
+            </select>
+          </div>
+          <help for=kisstype>
+            This setting specifies which KISS-mode TNC is in use.
+            For the Kenwood TH-D75, put the radio's built-in TNC into KISS mode, set its data band and speed to match
+            the BBS (usually 1200 baud), and set its KISS interface to USB or Bluetooth to match how the radio is
+            connected to this computer.
+            "Generic KISS TNC" works with most other TNCs and software modems that support KISS mode.
+          </help>
+        </div>
+        <div class="form-grid container subgrid2 border tblr cspan4">
+          <div><label for=kissport>Serial Port:</label></div>
+          <div class=cspan3><input id=kissport name=serport class=full-width list=kissports required></div>
+          <help for=kissport>
+            This identifies the serial port that the TNC is connected to.
+            On Windows, this will be "COM#", where # is some number.
+            On Mac OS, a TH-D75 connected by USB is usually /dev/cu.usbmodem<i>NNNN</i>; one paired over Bluetooth
+            appears as a /dev/cu.<i>XXXX</i> port named after the radio.
+            On Linux, this will be /dev/ttyXXX, identifying a character device file for the port.
+          </help>
+          <if:serports>
+            <datalist id=kissports>
+              <for:serports>
+                <option value={{.}}></option>
+              </for:serports>
+            </datalist>
+          </if:serports>
+        </div>
+        <div class="form-grid container subgrid2 border tblr cspan4">
+          <div><label for=kissaddr>BBS Address:</label></div>
+          <div class=cspan3>
+            <input id=kissaddr name=bbsaddr class=all-caps required list=xscbbs2 placeholder="e.g. W?XSC-1"
+              style="width:8rem"
+              pattern="(?:[KNW]\d[A-Z]{2,3}|A[A-K]\d[A-Z]{1,3}|[KNW][A-Z]\d[A-Z]{1,3})-(?:[0-9]|1[0-5])">
+          </div>
+          <help for=kissaddr>
+            This is the AX.25 address of the BBS to connect to.
+            It will be the BBS call sign followed by a dash and a number from 0 to 15 (usually 1).
+          </help>
+          <datalist id=xscbbs2>
             <option value="W1XSC-1"></option>
             <option value="W2XSC-1"></option>
             <option value="W3XSC-1"></option>
