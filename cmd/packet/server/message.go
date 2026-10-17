@@ -14,6 +14,7 @@ import (
 	"slices"
 	"strconv"
 	"strings"
+	"time"
 
 	"github.com/rothskeller/packet/v4/cmd/packet/osdep"
 	"github.com/rothskeller/packet/v4/errors"
@@ -438,7 +439,23 @@ func (s *Server) servePostNewMessageFrom(w http.ResponseWriter, r *http.Request)
 				}
 			}
 		case "copy":
+			// The copy is a new outgoing message: it gets a new
+			// message number (when AddDraftMessage adds it), the
+			// incident's defaults for what isn't copied (the To
+			// address, which a copy is usually sent to someone
+			// else, and the operator fields), and today's date and
+			// time.  Everything else comes from the source message.
+			i.ApplyDefaults(dr)
 			message.CopyFields(msg, dr)
+			now := time.Now()
+			for f := range dr.Fields() {
+				switch f.Common() {
+				case field.CMessageDate, field.CFormDate:
+					f.SetValue(dr, now.Format("01/02/2006"))
+				case field.CMessageTime:
+					f.SetValue(dr, now.Format("15:04"))
+				}
+			}
 		case "reply":
 			if _, ok := msg.(*message.ReceivedMessage); !ok {
 				return errors.New(`The "Reply" action can only be used with a received message.`)
