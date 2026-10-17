@@ -16,6 +16,7 @@ import (
 	"regexp"
 	"strconv"
 	"strings"
+	"sync/atomic"
 	"time"
 )
 
@@ -43,11 +44,28 @@ type Transport interface {
 	UseVerboseReads() bool
 }
 
+// Aborter is an optional interface that a Transport can implement.  Abort ends
+// the connection immediately, without an orderly disconnection from the BBS,
+// and makes any Transport call in progress on another goroutine return
+// promptly with an error, as will any later call.  Abort must be safe to call
+// at any time, more than once, and concurrently with the other methods; after
+// it, Close must still be called, and must return promptly.
+type Aborter interface {
+	Abort()
+}
+
 // ErrDisconnected is returned when the connection disconnects unexpectedly.
 var ErrDisconnected = errors.New("disconnected")
 
 // ErrTimeout is returned when a read times out.
 var ErrTimeout = errors.New("read timeout expired")
+
+// errAborted is the terminal error of a Conn that has been aborted.  It wraps
+// ErrDisconnected, since the link is gone.
+var errAborted = fmt.Errorf("connection aborted: %w", ErrDisconnected)
+
+// errClosed is the terminal error of a Conn that has been closed.
+var errClosed = errors.New("connection closed")
 
 //--- JNOS CONN ----------------------------------------------------------------
 
@@ -57,10 +75,90 @@ type Conn struct {
 	ident      string
 	identEvery time.Duration
 	nextIdent  time.Time
+	aborted    atomic.Bool
+	// err is the sticky terminal error.  Once it is set (because the
+	// transport reported ErrDisconnected, or the Conn was closed), every
+	// later method returns it without touching the transport.  It is only
+	// accessed by the goroutine calling Conn methods; Abort, which may run
+	// on another goroutine, uses aborted instead.
+	err error
+}
+
+// Abort ends the connection immediately, without an orderly disconnection from
+// the BBS.  It may be called from another goroutine while a Conn method is in
+// progress; that method returns promptly with an error, as will any later
+// method call.  Close must still be called afterward.
+func (c *Conn) Abort() {
+	if c.aborted.Swap(true) {
+		return
+	}
+	if a, ok := c.t.(Aborter); ok {
+		a.Abort()
+	}
+}
+
+// terminalErr returns the sticky terminal error of the Conn, if any.
+func (c *Conn) terminalErr() error {
+	if c.aborted.Load() {
+		return errAborted
+	}
+	return c.err
+}
+
+// record notes the error returned by a transport call, making it sticky if it
+// means the link is gone.  It returns the error the caller should report.
+func (c *Conn) record(err error) error {
+	if err == nil {
+		return nil
+	}
+	if c.aborted.Load() {
+		return errAborted
+	}
+	// ErrTimeout is deliberately not sticky: the link may still be up (a
+	// slow RF path), and the caller may retry or close in an orderly way.
+	if errors.Is(err, ErrDisconnected) && c.err == nil {
+		c.err = err
+	}
+	return err
+}
+
+// send sends a string to the BBS, unless the Conn has a terminal error.
+func (c *Conn) send(s string) error {
+	if err := c.terminalErr(); err != nil {
+		return err
+	}
+	return c.record(c.t.Send(s))
+}
+
+// readUntil reads from the BBS until the specified string, unless the Conn has
+// a terminal error.
+func (c *Conn) readUntil(s string) (string, error) {
+	if err := c.terminalErr(); err != nil {
+		return "", err
+	}
+	data, err := c.t.ReadUntil(s)
+	return data, c.record(err)
+}
+
+// drain reads and discards the rest of a response through the next prompt,
+// after a response format error, so that the next command starts in sync.  It
+// returns fmtErr; any error from the drain itself is not reported (but a
+// disconnect is still recorded as sticky by readUntil).
+func (c *Conn) drain(fmtErr error) error {
+	_ = c.skipLinesUntilPrompt()
+	return fmtErr
+}
+
+// identIfOK is deferred by the BBS command methods: it sends an ident if one
+// is due, but only if the command succeeded.
+func (c *Conn) identIfOK(err *error) {
+	if *err == nil {
+		c.maybeIdent()
+	}
 }
 
 // jnosPromptRE is a regular expression matching the JNOS prompt.
-var jnosPromptRE = regexp.MustCompile(`^(?:Area: [A-Za-z0-9]+ )?\(#\d+\) >$`)
+var jnosPromptRE = regexp.MustCompile(`^(?:Area: \S+ )?\(#\d+\) >$`)
 
 // Connect connects to the JNOS BBS over the supplied open Transport.  If an
 // ident is supplied, it is sent as a JSON comment when connected, periodically
@@ -78,7 +176,7 @@ func Connect(t Transport, ident string) (c *Conn, err error) {
 		c.maybeIdent()
 	}
 	// Turn off paging.
-	if err = c.t.Send("XM 0\n"); err != nil {
+	if err = c.send("XM 0\n"); err != nil {
 		return nil, err
 	}
 	if err = c.skipLinesUntilPrompt(); err != nil {
@@ -92,7 +190,6 @@ func Connect(t Transport, ident string) (c *Conn, err error) {
 func (c *Conn) Send(subject, body string, to ...string) (err error) {
 	var cmd string
 
-	defer c.maybeIdent()
 	switch len(to) {
 	case 0:
 		panic("jnos.Send with no destination address")
@@ -101,24 +198,25 @@ func (c *Conn) Send(subject, body string, to ...string) (err error) {
 	default:
 		cmd = "SC"
 	}
-	if err = c.t.Send(fmt.Sprintf("%s %s\n", cmd, to[0])); err != nil {
+	defer c.identIfOK(&err)
+	if err = c.send(fmt.Sprintf("%s %s\n", cmd, to[0])); err != nil {
 		return err
 	}
 	if len(to) > 1 {
-		if _, err = c.t.ReadUntil("Cc: "); err != nil {
+		if _, err = c.readUntil("Cc: "); err != nil {
 			return err
 		}
-		if err = c.t.Send(strings.Join(to[1:], " ") + "\n"); err != nil {
+		if err = c.send(strings.Join(to[1:], " ") + "\n"); err != nil {
 			return err
 		}
 	}
-	if _, err = c.t.ReadUntil("Subject:\n"); err != nil {
+	if _, err = c.readUntil("Subject:\n"); err != nil {
 		return err
 	}
-	if err = c.t.Send(subject + "\n"); err != nil {
+	if err = c.send(subject + "\n"); err != nil {
 		return err
 	}
-	if _, err = c.t.ReadUntil("Enter message.  End with /EX or ^Z in first column (^A aborts):\n"); err != nil {
+	if _, err = c.readUntil("Enter message.  End with /EX or ^Z in first column (^A aborts):\n"); err != nil {
 		return err
 	}
 	if !strings.HasSuffix(body, "\n") {
@@ -126,10 +224,10 @@ func (c *Conn) Send(subject, body string, to ...string) (err error) {
 	} else {
 		body += "/EX\n"
 	}
-	if err = c.t.Send(body); err != nil {
+	if err = c.send(body); err != nil {
 		return err
 	}
-	if _, err = c.t.ReadUntil("Msg queued\n"); err != nil {
+	if _, err = c.readUntil("Msg queued\n"); err != nil {
 		return err
 	}
 	if err = c.skipLinesUntilPrompt(); err != nil {
@@ -141,17 +239,17 @@ func (c *Conn) Send(subject, body string, to ...string) (err error) {
 // SendBulletin sends a bulletin message.  Note that the "to" address must be
 // a bare address without any display name or angle brackets.
 func (c *Conn) SendBulletin(subject, body string, to string) (err error) {
-	defer c.maybeIdent()
-	if err = c.t.Send(fmt.Sprintf("SB %s\n", to)); err != nil {
+	defer c.identIfOK(&err)
+	if err = c.send(fmt.Sprintf("SB %s\n", to)); err != nil {
 		return err
 	}
-	if _, err = c.t.ReadUntil("Subject:\n"); err != nil {
+	if _, err = c.readUntil("Subject:\n"); err != nil {
 		return err
 	}
-	if err = c.t.Send(subject + "\n"); err != nil {
+	if err = c.send(subject + "\n"); err != nil {
 		return err
 	}
-	if _, err = c.t.ReadUntil("Enter message.  End with /EX or ^Z in first column (^A aborts):\n"); err != nil {
+	if _, err = c.readUntil("Enter message.  End with /EX or ^Z in first column (^A aborts):\n"); err != nil {
 		return err
 	}
 	if !strings.HasSuffix(body, "\n") {
@@ -159,10 +257,10 @@ func (c *Conn) SendBulletin(subject, body string, to string) (err error) {
 	} else {
 		body += "/EX\n"
 	}
-	if err = c.t.Send(body); err != nil {
+	if err = c.send(body); err != nil {
 		return err
 	}
-	if _, err = c.t.ReadUntil("Msg queued\n"); err != nil {
+	if _, err = c.readUntil("Msg queued\n"); err != nil {
 		return err
 	}
 	if err = c.skipLinesUntilPrompt(); err != nil {
@@ -172,13 +270,11 @@ func (c *Conn) SendBulletin(subject, body string, to string) (err error) {
 }
 
 // SetArea switches to the specified message area.
-func (c *Conn) SetArea(area string) error {
-	var (
-		line string
-		err  error
-	)
-	defer c.maybeIdent()
-	if err = c.t.Send(fmt.Sprintf("A %s\n", area)); err != nil {
+func (c *Conn) SetArea(area string) (err error) {
+	var line string
+
+	defer c.identIfOK(&err)
+	if err = c.send(fmt.Sprintf("A %s\n", area)); err != nil {
 		return err
 	}
 	for {
@@ -190,7 +286,7 @@ func (c *Conn) SetArea(area string) error {
 		}
 		if strings.Contains(line, "No such message area") {
 			slog.Error("no such message area", "area", area)
-			return errors.New("no such message area: " + area)
+			return c.drain(errors.New("no such message area: " + area))
 		}
 	}
 }
@@ -244,25 +340,24 @@ func (c *Conn) List(to string) (ml *MessageList, err error) {
 		line  string
 		match []string
 	)
-	defer c.maybeIdent()
+	defer c.identIfOK(&err)
 	ml = new(MessageList)
 	if to != "" {
 		cmd = fmt.Sprintf("L> %s\n", to)
 	} else {
 		cmd = "LA\n"
 	}
-	if err = c.t.Send(cmd); err != nil {
+	if err = c.send(cmd); err != nil {
 		return nil, err
 	}
 	// Line 1: Mail area: %s
 	if line, err = c.readLine(); err != nil {
 		return nil, err
 	} else if line == listHeaderNone1 || line == listHeaderNone2 {
-		c.skipLinesUntilPrompt()
-		return nil, nil
+		return nil, c.skipLinesUntilPrompt()
 	} else if !strings.HasPrefix(line, listLine1Prefix) {
 		slog.Error("unexpected response", "exp", "Mail area: %s", "act", line)
-		return nil, fmt.Errorf(`expected "Mail area: %%s" received %q`, line)
+		return nil, c.drain(fmt.Errorf(`expected "Mail area: %%s" received %q`, line))
 	}
 	ml.Area = line[len(listLine1Prefix):]
 	// Line 2: %d messages  -  %d new
@@ -270,7 +365,7 @@ func (c *Conn) List(to string) (ml *MessageList, err error) {
 		return nil, err
 	} else if match = listLine2RE.FindStringSubmatch(line); match == nil {
 		slog.Error("unexpected response", "exp", "%d message(s)  -  %d new", "act", line)
-		return nil, fmt.Errorf(`expected "%%d message(s)  -  %%d new" received %q`, line)
+		return nil, c.drain(fmt.Errorf(`expected "%%d message(s)  -  %%d new" received %q`, line))
 	}
 	ml.Count, _ = strconv.Atoi(match[1])
 	ml.CountNew, _ = strconv.Atoi(match[2])
@@ -279,17 +374,16 @@ func (c *Conn) List(to string) (ml *MessageList, err error) {
 		return nil, err
 	} else if line != "" {
 		slog.Error("unexpected response", "exp", "", "act", line)
-		return nil, fmt.Errorf(`expected "" received %q`, line)
+		return nil, c.drain(fmt.Errorf(`expected "" received %q`, line))
 	}
 	// Line 4: possibly "None to list.", otherwise list header.
 	if line, err = c.readLine(); err != nil {
 		return nil, err
 	} else if line == listHeaderNone1 || line == listHeaderNone2 {
-		c.skipLinesUntilPrompt()
-		return nil, nil
+		return nil, c.skipLinesUntilPrompt()
 	} else if line != listHeader {
-		slog.Error("unexpected respuonse", "exp", listHeader, "act", line)
-		return nil, fmt.Errorf(`expected %q received %q`, listHeader, line)
+		slog.Error("unexpected response", "exp", listHeader, "act", line)
+		return nil, c.drain(fmt.Errorf(`expected %q received %q`, listHeader, line))
 	}
 	// Subsequent lines: messages.
 	if line, err = c.readLine(); err != nil {
@@ -328,12 +422,12 @@ func (c *Conn) List(to string) (ml *MessageList, err error) {
 	// We should now be looking at the JNOS prompt.
 	if !jnosPromptRE.MatchString(line) {
 		slog.Error("unexpected response", "exp", "JNOS prompt", "act", line)
-		return nil, fmt.Errorf(`expected JNOS prompt, received %q`, line)
+		return nil, c.drain(fmt.Errorf(`expected JNOS prompt, received %q`, line))
 	}
 	return ml, nil
 }
 
-var msgLine1RE = regexp.MustCompile(`^Message #(?:\d+) (?:\[Deleted|Held\])?$`)
+var msgLine1RE = regexp.MustCompile(`^Message #\d+ (?:\[(?:Deleted|Held)\])?$`)
 var removeNewMailRE = regexp.MustCompile(`\nYou have new mail.*\n$`)
 
 // Read reads a single message given its number.  It returns nil if there is no
@@ -345,13 +439,16 @@ func (c *Conn) Read(msgnum int) (msg string, err error) {
 		line      string
 		sawHeader bool
 	)
-	defer c.maybeIdent()
+	if err = c.terminalErr(); err != nil {
+		return "", err
+	}
+	defer c.identIfOK(&err)
 	if c.t.UseVerboseReads() {
 		cmd = "V"
 	} else {
 		cmd = "R"
 	}
-	if err = c.t.Send(fmt.Sprintf("%s %d\n", cmd, msgnum)); err != nil {
+	if err = c.send(fmt.Sprintf("%s %d\n", cmd, msgnum)); err != nil {
 		return "", err
 	}
 	if line, err = c.readLine(); err != nil {
@@ -359,9 +456,8 @@ func (c *Conn) Read(msgnum int) (msg string, err error) {
 	} else if strings.HasPrefix(line, "Invalid Message") || strings.HasPrefix(line, "No messages") {
 		return "", c.skipLinesUntilPrompt()
 	} else if !msgLine1RE.MatchString(line) {
-		c.skipLinesUntilPrompt()
 		slog.Error("unexpected response", "exp", "Message %d", "act", line)
-		return "", fmt.Errorf(`expected "Message %%d" received %q`, line)
+		return "", c.drain(fmt.Errorf(`expected "Message %%d" received %q`, line))
 	}
 	for {
 		if line, err = c.readLine(); err != nil {
@@ -390,13 +486,13 @@ var killMsgRE = regexp.MustCompile(`^Msg \d+ Killed.$`)
 func (c *Conn) Kill(msgnums ...int) (err error) {
 	var sb strings.Builder
 
-	defer c.maybeIdent()
+	defer c.identIfOK(&err)
 	sb.WriteString("K")
 	for _, msgnum := range msgnums {
 		fmt.Fprintf(&sb, " %d", msgnum)
 	}
 	sb.WriteByte('\n')
-	if err = c.t.Send(sb.String()); err != nil {
+	if err = c.send(sb.String()); err != nil {
 		return err
 	}
 	for {
@@ -412,51 +508,62 @@ func (c *Conn) Kill(msgnums ...int) (err error) {
 			continue
 		}
 		if !killMsgRE.MatchString(line) {
-			c.skipLinesUntilPrompt()
 			slog.Error("unexpected response", "exp", "Msg %d Killed.", "act", line)
-			return fmt.Errorf(`expected "Msg %%d Killed." received %q`, line)
+			return c.drain(fmt.Errorf(`expected "Msg %%d Killed." received %q`, line))
 		}
 	}
 }
 
 // maybeIdent checks for whether we should send an ident string, and if so, does
-// so.  Errors are ignored.
+// so.  Errors are ignored.  No ident is sent if the Conn has a terminal error.
 func (c *Conn) maybeIdent() {
-	if c.ident == "" || time.Now().Before(c.nextIdent) {
+	if c.ident == "" || time.Now().Before(c.nextIdent) || c.terminalErr() != nil {
 		return
 	}
 	c.nextIdent = time.Now().Add(c.identEvery)
-	if err := c.t.Send(fmt.Sprintf("# DE %s\n", c.ident)); err != nil {
+	if err := c.send(fmt.Sprintf("# DE %s\n", c.ident)); err != nil {
 		return
 	}
-	c.skipLinesUntilPrompt()
+	_ = c.skipLinesUntilPrompt()
 }
 
 // Close disconnects from the BBS and closes the underlying Transport
-// connection.
+// connection.  If the connection has already been lost or aborted, it just
+// closes the Transport.
 func (c *Conn) Close() (err error) {
 	var line string
 
+	if c.err == errClosed {
+		return nil // already closed
+	}
+	defer func() { c.err = errClosed }()
+	if c.terminalErr() != nil {
+		return c.t.Close()
+	}
 	// Send an ident if needed.
 	if c.ident != "" {
 		c.nextIdent = time.Time{}
 		c.maybeIdent()
+		if c.terminalErr() != nil {
+			return c.t.Close()
+		}
 	}
 	// Send the BYE command to the BBS.
-	if err = c.t.Send("B\r"); err != nil {
+	if err = c.send("B\r"); err != nil {
 		c.t.Close()
 		return err
 	}
-	// Read until the underlying connection has been disconnected.
+	// Read until the underlying connection has been disconnected.  Any
+	// read error counts as a disconnect: transports report the BBS
+	// dropping the link in various ways (ErrDisconnected, "no response
+	// from BBS", ECONNRESET, ...).
 	if line, err = c.readLine(); err == nil {
 		c.t.Close()
 		slog.Error("unexpected response", "exp", "disconnect", "act", line)
 		return fmt.Errorf(`expected disconnect, received %q`, line)
 	}
-	if err != ErrDisconnected {
-		c.t.Close()
-		slog.Error("unexpected response", "exp", "disconnect", "err", err)
-		return fmt.Errorf(`expected disconnect, got error: %s`, err)
+	if !errors.Is(err, ErrDisconnected) {
+		slog.Info("treating read error after BYE as disconnect", "err", err)
 	}
 	return c.t.Close()
 }
@@ -475,7 +582,7 @@ func (c *Conn) skipLinesUntilPrompt() (err error) {
 }
 
 func (c *Conn) readLine() (response string, err error) {
-	response, err = c.t.ReadUntil("\n")
+	response, err = c.readUntil("\n")
 	if len(response) != 0 && response[len(response)-1] == '\n' {
 		return response[:len(response)-1], err
 	}
