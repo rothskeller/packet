@@ -366,6 +366,14 @@ func (e *exchange) step(ctx context.Context) (done bool, err error) {
 	// without immOnly and we're just reading in order.
 	if e.indexes == nil && e.msgindex < 9999 {
 		e.msgindex++
+		// The BBS's prompt says how many messages the mailbox has.
+		// Past that, there's nothing to read: don't spend a round trip
+		// over the air (several seconds on RF) asking for one more and
+		// being told there's no such message.
+		if n, ok := e.conn.MessageCount(); ok && e.msgindex > n {
+			e.msgindex = 9999
+			return len(e.areas) == 0, nil
+		}
 		if err = e.readIndex(e.msgindex); err == errNoSuchIndex {
 			e.msgindex = 9999
 			return len(e.areas) == 0, nil

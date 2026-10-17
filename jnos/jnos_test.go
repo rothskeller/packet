@@ -409,3 +409,28 @@ func TestCloseReadErrorIsDisconnect(t *testing.T) {
 		})
 	}
 }
+
+// TestMessageCount checks that the message count in JNOS prompts is recorded.
+func TestMessageCount(t *testing.T) {
+	c := &Conn{}
+	if _, ok := c.MessageCount(); ok {
+		t.Error("count known before any prompt")
+	}
+	for _, tc := range []struct {
+		line   string
+		prompt bool
+		n      int
+	}{
+		{"Area: ko6nvy (#0) >", true, 0},
+		{"(#3) >", true, 3},
+		{"Area: xscevent (#12) >", true, 12},
+		{"You have 2 messages.", false, 12},
+	} {
+		if got := c.isPrompt(tc.line); got != tc.prompt {
+			t.Errorf("isPrompt(%q) = %v", tc.line, got)
+		}
+		if n, ok := c.MessageCount(); !ok || n != tc.n {
+			t.Errorf("after %q: MessageCount = %d, %v; want %d", tc.line, n, ok, tc.n)
+		}
+	}
+}

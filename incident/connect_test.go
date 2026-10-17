@@ -441,3 +441,41 @@ func TestBBSExchangeSentMessageDeleted(t *testing.T) {
 		t.Fatal(err)
 	}
 }
+
+// TestBBSExchangeSkipsEmptyMailbox checks that when the BBS's prompt says the
+// mailbox is empty ("(#0)"), the exchange doesn't ask for message 1 anyway: on
+// RF, that round trip costs several seconds.
+func TestBBSExchangeSkipsEmptyMailbox(t *testing.T) {
+	dir := newTestIncident(t)
+	ft := newFakeTransport(func(s string) (string, bool) {
+		switch {
+		case s == "XM 0\n":
+			return "Area: ko6nvy (#0) >\n", false
+		case strings.HasPrefix(s, "R "):
+			return "No messages\nArea: ko6nvy (#0) >\n", false
+		}
+		return "", false // includes "B\r": the BBS disconnects
+	})
+	ft.out = "[JNOS-2.0k]\nYou have 0 messages.\nArea: ko6nvy (#0) >\n"
+	useFakeTransport(t, ft)
+	rec := newRecorder(ft)
+	done := make(chan struct{})
+	go func() {
+		BBSExchange(context.Background(), dir, false, rec)
+		close(done)
+	}()
+	select {
+	case <-done:
+	case <-time.After(testTimeout):
+		t.Fatal("BBSExchange did not return")
+	}
+	sent := ft.sentCommands()
+	for _, cmd := range sent {
+		if strings.HasPrefix(cmd, "R ") {
+			t.Errorf("read a message from an empty mailbox; sent %q", sent)
+		}
+	}
+	if !slices.Contains(sent, "B\r") {
+		t.Errorf("no orderly disconnect; sent %q", sent)
+	}
+}

@@ -82,6 +82,11 @@ type Conn struct {
 	// accessed by the goroutine calling Conn methods; Abort, which may run
 	// on another goroutine, uses aborted instead.
 	err error
+	// msgCount is the number of messages in the current area, according to
+	// the most recent JNOS prompt; msgCountOK is set once there has been
+	// one (see MessageCount).
+	msgCount   int
+	msgCountOK bool
 }
 
 // Abort ends the connection immediately, without an orderly disconnection from
@@ -157,8 +162,30 @@ func (c *Conn) identIfOK(err *error) {
 	}
 }
 
-// jnosPromptRE is a regular expression matching the JNOS prompt.
-var jnosPromptRE = regexp.MustCompile(`^(?:Area: \S+ )?\(#\d+\) >$`)
+// jnosPromptRE is a regular expression matching the JNOS prompt.  Its
+// submatch is the number of messages in the current area.
+var jnosPromptRE = regexp.MustCompile(`^(?:Area: \S+ )?\(#(\d+)\) >$`)
+
+// isPrompt returns whether line is a JNOS prompt.  If it is, it records the
+// number of messages in the current area that the prompt reports.
+func (c *Conn) isPrompt(line string) bool {
+	match := jnosPromptRE.FindStringSubmatch(line)
+	if match == nil {
+		return false
+	}
+	if n, err := strconv.Atoi(match[1]); err == nil {
+		c.msgCount, c.msgCountOK = n, true
+	}
+	return true
+}
+
+// MessageCount returns the number of messages in the current area, as reported
+// by the most recent JNOS prompt ("Area: ko6nvy (#2) >"), and whether there
+// has been a prompt to report it.  (Messages killed during the session still
+// count until the area is closed.)
+func (c *Conn) MessageCount() (n int, ok bool) {
+	return c.msgCount, c.msgCountOK
+}
 
 // Connect connects to the JNOS BBS over the supplied open Transport.  If an
 // ident is supplied, it is sent as a JSON comment when connected, periodically
@@ -281,7 +308,7 @@ func (c *Conn) SetArea(area string) (err error) {
 		if line, err = c.readLine(); err != nil {
 			return err
 		}
-		if jnosPromptRE.MatchString(line) {
+		if c.isPrompt(line) {
 			return nil
 		}
 		if strings.Contains(line, "No such message area") {
@@ -420,7 +447,7 @@ func (c *Conn) List(to string) (ml *MessageList, err error) {
 		}
 	}
 	// We should now be looking at the JNOS prompt.
-	if !jnosPromptRE.MatchString(line) {
+	if !c.isPrompt(line) {
 		slog.Error("unexpected response", "exp", "JNOS prompt", "act", line)
 		return nil, c.drain(fmt.Errorf(`expected JNOS prompt, received %q`, line))
 	}
@@ -463,7 +490,7 @@ func (c *Conn) Read(msgnum int) (msg string, err error) {
 		if line, err = c.readLine(); err != nil {
 			return "", err
 		}
-		if jnosPromptRE.MatchString(line) {
+		if c.isPrompt(line) {
 			if sawHeader {
 				msg = sb.String()
 				msg = removeNewMailRE.ReplaceAllLiteralString(msg, "\n")
@@ -501,7 +528,7 @@ func (c *Conn) Kill(msgnums ...int) (err error) {
 		if line, err = c.readLine(); err != nil {
 			return err
 		}
-		if jnosPromptRE.MatchString(line) {
+		if c.isPrompt(line) {
 			return nil
 		}
 		if strings.HasPrefix(line, "You have new mail.") {
@@ -575,7 +602,7 @@ func (c *Conn) skipLinesUntilPrompt() (err error) {
 		if line, err = c.readLine(); err != nil {
 			return err
 		}
-		if jnosPromptRE.MatchString(line) {
+		if c.isPrompt(line) {
 			return nil
 		}
 	}
