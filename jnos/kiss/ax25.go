@@ -110,6 +110,45 @@ func (f *frame) sType() byte   { return f.control & 0x0F }
 func (f *frame) uType() byte   { return f.control &^ pfBit }
 func (f *frame) hasInfo() bool { return f.isI() || f.isUI() }
 
+// String describes the frame in the style of a packet monitor, e.g.
+// "KO6NVY>W3XSC-1 <I C P R1 S0>".
+func (f *frame) String() string {
+	var sb strings.Builder
+
+	fmt.Fprintf(&sb, "%s>%s <", f.src, f.dest)
+	switch {
+	case f.isI():
+		sb.WriteString("I")
+	case f.isS():
+		sb.WriteString(map[byte]string{ctlRR: "RR", ctlRNR: "RNR", ctlREJ: "REJ"}[f.sType()])
+	default:
+		name, ok := map[byte]string{ctlSABM: "SABM", ctlDISC: "DISC", ctlDM: "DM", ctlUA: "UA", ctlFRMR: "FRMR", ctlUI: "UI"}[f.uType()]
+		if !ok {
+			name = fmt.Sprintf("U%02X", f.uType())
+		}
+		sb.WriteString(name)
+	}
+	if f.command {
+		sb.WriteString(" C")
+		if f.pf() {
+			sb.WriteString(" P")
+		}
+	} else {
+		sb.WriteString(" R")
+		if f.pf() {
+			sb.WriteString(" F")
+		}
+	}
+	if f.isI() || f.isS() {
+		fmt.Fprintf(&sb, " R%d", f.nr())
+	}
+	if f.isI() {
+		fmt.Fprintf(&sb, " S%d", f.ns())
+	}
+	sb.WriteString(">")
+	return sb.String()
+}
+
 // encode returns the encoded frame (without any FCS, which the TNC adds).
 func (f *frame) encode() []byte {
 	b := make([]byte, 0, 16+len(f.info))
@@ -167,10 +206,21 @@ const (
 	tfesc = 0xDD
 )
 
+// KISS commands (for TNC port 0).
+const (
+	kissData     = 0x00
+	kissTXDelay  = 0x01
+	kissPersist  = 0x02
+	kissSlotTime = 0x03
+)
+
 // kissEncode wraps an AX.25 frame in a KISS data frame for TNC port 0.
-func kissEncode(data []byte) []byte {
+func kissEncode(data []byte) []byte { return kissFrame(kissData, data) }
+
+// kissFrame encodes a KISS frame with the specified command and contents.
+func kissFrame(cmd byte, data []byte) []byte {
 	b := make([]byte, 0, len(data)+8)
-	b = append(b, fend, 0x00)
+	b = append(b, fend, cmd)
 	for _, c := range data {
 		switch c {
 		case fend:
@@ -184,10 +234,21 @@ func kissEncode(data []byte) []byte {
 	return append(b, fend)
 }
 
+// maxKISSFrame is the longest KISS frame kissDecoder accepts.  Real AX.25
+// frames are far shorter (about 330 bytes at most); the limit just keeps
+// garbage input without FENDs from growing the buffer without bound.
+const maxKISSFrame = 4096
+
 // A kissDecoder extracts AX.25 frames from a stream of KISS-encoded bytes.
 type kissDecoder struct {
 	buf []byte
 	esc bool
+	// overflow is set when the current frame has grown too long; the
+	// rest of it, up to the next FEND, is discarded.
+	overflow bool
+	// command, if set, is called for each non-data KISS frame.  (TNCs
+	// don't send these; it is used in testing.)
+	command func(cmd byte, data []byte)
 }
 
 // feed processes received bytes, calling emit for each complete data frame.
@@ -197,11 +258,16 @@ func (d *kissDecoder) feed(data []byte, emit func([]byte)) {
 		case c == fend:
 			// The first byte is the KISS command; the low nibble is 0
 			// for data frames.  Anything else (including stray bytes
-			// received before the first FEND) is ignored.
-			if len(d.buf) > 1 && d.buf[0]&0x0F == 0 {
+			// received before the first FEND, and frames that were too
+			// long) is ignored.
+			if d.overflow {
+				// discard it
+			} else if len(d.buf) > 1 && d.buf[0]&0x0F == 0 {
 				emit(append([]byte(nil), d.buf[1:]...))
+			} else if len(d.buf) != 0 && d.command != nil {
+				d.command(d.buf[0], append([]byte(nil), d.buf[1:]...))
 			}
-			d.buf, d.esc = d.buf[:0], false
+			d.buf, d.esc, d.overflow = d.buf[:0], false, false
 		case d.esc:
 			switch c {
 			case tfend:
@@ -209,11 +275,23 @@ func (d *kissDecoder) feed(data []byte, emit func([]byte)) {
 			case tfesc:
 				c = fesc
 			}
-			d.buf, d.esc = append(d.buf, c), false
+			d.esc = false
+			d.add(c)
 		case c == fesc:
 			d.esc = true
 		default:
-			d.buf = append(d.buf, c)
+			d.add(c)
 		}
+	}
+}
+
+// add adds a byte to the frame being decoded, unless the frame is too long.
+func (d *kissDecoder) add(c byte) {
+	switch {
+	case d.overflow:
+	case len(d.buf) >= maxKISSFrame:
+		d.buf, d.overflow = d.buf[:0], true
+	default:
+		d.buf = append(d.buf, c)
 	}
 }

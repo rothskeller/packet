@@ -127,7 +127,7 @@ func BBSExchange(ctx context.Context, dir string, immOnly bool, updates BBSExcha
 			return
 		}
 		e.progress("Connecting to %s@%s...", e.config.ActiveCall(), e.config.ConnectBBS)
-		e.conn, err = kiss.Connect(dev, e.config.SerialPort, e.config.ConnectAddress, e.config.ActiveCall(), e.config.OpCall, logf)
+		e.conn, err = kiss.Connect(dev, e.config.SerialPort, e.config.ConnectAddress, e.config.ActiveCall(), e.config.OpCall, logf, nil)
 	case ConnectTelnet:
 		e.progress("Connecting to %s@%s...", e.config.TelnetUser, e.config.ConnectBBS)
 		e.conn, err = telnet.Connect(e.config.ConnectAddress, e.config.TelnetUser, e.config.TelnetPassword, logf)
