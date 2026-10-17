@@ -28,7 +28,6 @@ func (s *Server) servePostEditLogEntry(w http.ResponseWriter, r *http.Request) {
 		id    int
 		err   error
 	)
-	s.outpost = false
 	// Get the message from the incident and make sure it's proper.
 	dir, idstr = r.FormValue("dir"), r.FormValue("id")
 	if idstr != "NEW" {
@@ -116,7 +115,6 @@ func (s *Server) servePostResetLogEntry(w http.ResponseWriter, r *http.Request) 
 		id  int
 		err error
 	)
-	s.outpost = false
 	// Get the message from the incident and make sure it's proper.
 	dir = r.FormValue("dir")
 	if id, err = strconv.Atoi(r.FormValue("id")); err != nil || id <= 0 {
@@ -147,7 +145,6 @@ func (s *Server) servePostDeleteLogEntry(w http.ResponseWriter, r *http.Request)
 		id  int
 		err error
 	)
-	s.outpost = false
 	// Get the message from the incident and make sure it's proper.
 	dir = r.FormValue("dir")
 	if id, err = strconv.Atoi(r.FormValue("id")); err != nil || id <= 0 {
@@ -181,7 +178,6 @@ func (s *Server) servePostToggleFlag(w http.ResponseWriter, r *http.Request) {
 		warn error
 		err  error
 	)
-	s.outpost = false
 	// Get the message from the incident and make sure it's proper.
 	dir, flag = r.FormValue("dir"), r.FormValue("flag")
 	if flag != "F" && flag != "-" && flag != "Q" {

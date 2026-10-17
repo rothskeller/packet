@@ -1,9 +1,11 @@
 package incident
 
 import (
+	"bytes"
 	"context"
 	"errors"
 	"fmt"
+	"io"
 	"log/slog"
 	"os"
 	"path/filepath"
@@ -28,43 +30,39 @@ import (
 var connectionsRunning = sets.New[string]()
 var connectionsRunningMutex sync.Mutex
 
+// errAborted is the error reported when the user aborts the connection.
+var errAborted = errors.New("connection aborted by user")
+
 // BBSExchange connects to a BBS and exchanges messages with it for the incident
 // in the named directory (which should not be locked when the call is issued).
 // The connection will be aborted if the supplied context is canceled.  If
 // immOnly is true, only IMMEDIATE messages are transferred (and no bulletin
 // checks are performed).  Progress updates and results are sent to the supplied
-// watcher.  BBSExchange blocks, and should be run in a goroutine.
+// watcher; its Finished method is called exactly once, last.  BBSExchange
+// blocks, and should be run in a goroutine.
 func BBSExchange(ctx context.Context, dir string, immOnly bool, updates BBSExchangeWatcher) {
-	var (
-		logfname string
-		logf     *os.File
-		e        exchange
-		done     bool
-		err      error
-	)
-	defer func() {
-		if p := recover(); p != nil {
-			slog.Error("panic in BBSExchange", "err", p, "stack", string(debug.Stack()))
-			updates.Error("A software error occurred.  See log file for details.")
-			if e.conn != nil {
-				e.progress("Closing connection...")
-				e.conn.Close()
-			}
-			updates.Finished()
-		}
-	}()
-	e.dir, e.immOnly, e.updates = dir, immOnly, updates
+	var e = &exchange{dir: dir, immOnly: immOnly, updates: updates}
+
+	// All cleanup, including the call to Finished, is done by this single
+	// deferred call, on every path (including a panic).
+	defer e.cleanup(ctx)
+	if err := e.run(ctx); err != nil {
+		e.fail(err.Error())
+	}
+}
+
+// run performs the BBS exchange.  It returns an error if the exchange fails.
+// Resources that it acquires are recorded in e, and released by e.cleanup.
+func (e *exchange) run(ctx context.Context) (err error) {
 	// Read the incident configuration.
-	if err := Read(dir, func(i *Incident) error {
+	if err = Read(e.dir, func(i *Incident) error {
 		e.config = i.Config
-		if !immOnly {
+		if !e.immOnly {
 			e.areas = sets.New(i.BulletinAreasToCheck()...)
 		}
 		return nil
 	}); err != nil {
-		updates.Error(err.Error())
-		updates.Finished()
-		return
+		return err
 	}
 	// Make sure we don't already have a conflicting connection running.
 	connTo := e.config.ActiveCall() + "@" + e.config.ConnectBBS
@@ -72,91 +70,167 @@ func BBSExchange(ctx context.Context, dir string, immOnly bool, updates BBSExcha
 	if connectionsRunning.Has(connTo) {
 		connectionsRunningMutex.Unlock()
 		slog.Error("already connected", "to", connTo)
-		updates.Error(fmt.Sprintf("there is already a connection to %s in progress", connTo))
-		updates.Finished()
-		return
+		return fmt.Errorf("there is already a connection to %s in progress", connTo)
 	}
 	if e.config.UsesSerialPort() {
 		if connectionsRunning.Has(e.config.SerialPort) {
 			connectionsRunningMutex.Unlock()
 			slog.Error("serial port in use", "port", e.config.SerialPort)
-			updates.Error(fmt.Sprintf("can't connect using %s because it is in use", e.config.SerialPort))
-			updates.Finished()
-			return
+			return fmt.Errorf("can't connect using %s because it is in use", e.config.SerialPort)
 		}
 		connectionsRunning.Insert(e.config.SerialPort)
+		e.reserved = append(e.reserved, e.config.SerialPort)
 	}
 	connectionsRunning.Insert(connTo)
+	e.reserved = append(e.reserved, connTo)
 	connectionsRunningMutex.Unlock()
-	defer func() {
-		connectionsRunningMutex.Lock()
-		connectionsRunning.Delete(connTo)
-		if e.config.UsesSerialPort() {
-			connectionsRunning.Delete(e.config.SerialPort)
-		}
-		connectionsRunningMutex.Unlock()
-	}()
 	// Open the log file.
-	logfname = filepath.Join(dir, e.config.ConnectBBS+".log")
-	if logf, err = os.OpenFile(logfname, os.O_CREATE|os.O_APPEND|os.O_WRONLY, 0666); err != nil {
+	logfname := filepath.Join(e.dir, e.config.ConnectBBS+".log")
+	if e.logf, err = os.OpenFile(logfname, os.O_CREATE|os.O_APPEND|os.O_WRONLY, 0666); err != nil {
 		slog.Error("os.OpenFile", "f", logfname, "err", err)
-		updates.Error(err.Error())
-		updates.Finished()
-		return
+		e.logf = nil
+		return err
 	}
-	defer logf.Close()
-	fmt.Fprintf(logf, "\n[[%s]]\n", time.Now().Format(time.RFC3339))
+	fmt.Fprintf(e.logf, "\n[[%s]]\n", time.Now().Format(time.RFC3339))
+	// If the watcher wants a live monitor of the exchange, KISS connections
+	// report the AX.25 frames to it; other connections report the text
+	// exchanged with the BBS.
+	var (
+		monitor func(string)
+		textlog io.Writer = e.logf
+	)
+	if m, ok := e.updates.(BBSExchangeMonitor); ok {
+		monitor = m.Monitor
+		if e.config.ConnectType != ConnectKISS {
+			e.monitorlw = &lineWriter{fn: monitor}
+			textlog = io.MultiWriter(e.logf, e.monitorlw)
+		}
+	}
 	// Establish the JNOS connection.
+	conn, err := connectBBS(e, ctx, textlog, monitor)
+	if err != nil {
+		fmt.Fprintf(e.logf, "[[ERROR: %s]]\n", err)
+		if ctx.Err() != nil {
+			return errAborted
+		}
+		return err
+	}
+	// From here on, canceling the context aborts the connection, making
+	// any Conn call in progress return promptly with an error.
+	e.conn = conn
+	e.stopAbort = context.AfterFunc(ctx, conn.Abort)
+	// Run the main connection loop.
+	for done := false; !done; {
+		if done, err = e.step(ctx); err != nil {
+			break
+		}
+	}
+	if err != nil && ctx.Err() != nil {
+		// Whatever error we got is a consequence of the abort.
+		err = errAborted
+	}
+	return err
+}
+
+// connectBBS establishes the JNOS connection for an exchange.  It is a variable
+// so that tests can substitute a fake connection.
+var connectBBS = (*exchange).connect
+
+// connect establishes the JNOS connection, using the transport specified in
+// the configuration.  textlog receives the text exchanged with the BBS, and
+// monitor (if not nil) receives the Link Monitor display of KISS frames.
+// Canceling ctx abandons the connection attempt.
+func (e *exchange) connect(ctx context.Context, textlog io.Writer, monitor func(string)) (conn *jnos.Conn, err error) {
 	switch e.config.ConnectType {
 	case ConnectSerialTNC:
 		tncconf := tnc.Get(e.config.TNCType)
 		if tncconf == nil {
 			slog.Error("no such TNC type", "type", e.config.TNCType)
-			updates.Error(fmt.Sprintf("The configuration specifies a TNC type of %q which is not defined.", e.config.TNCType))
-			updates.Finished()
-			return
+			return nil, fmt.Errorf("The configuration specifies a TNC type of %q which is not defined.", e.config.TNCType)
 		}
 		e.progress("Connecting to %s@%s...", e.config.ActiveCall(), e.config.ConnectBBS)
-		e.conn, err = serialtnc.Connect(tncconf, e.config.SerialPort, e.config.ConnectAddress, e.config.ActiveCall(), e.config.OpCall, logf)
+		conn, err = serialtnc.ConnectContext(ctx, tncconf, e.config.SerialPort, e.config.ConnectAddress, e.config.ActiveCall(), e.config.OpCall, textlog)
 	case ConnectKISS:
 		dev := kiss.GetDevice(e.config.TNCType)
 		if dev == nil {
 			slog.Error("no such KISS device type", "type", e.config.TNCType)
-			updates.Error(fmt.Sprintf("The configuration specifies a KISS TNC type of %q which is not defined.", e.config.TNCType))
-			updates.Finished()
-			return
+			return nil, fmt.Errorf("The configuration specifies a KISS TNC type of %q which is not defined.", e.config.TNCType)
 		}
 		e.progress("Connecting to %s@%s...", e.config.ActiveCall(), e.config.ConnectBBS)
-		e.conn, err = kiss.Connect(dev, e.config.SerialPort, e.config.ConnectAddress, e.config.ActiveCall(), e.config.OpCall, logf, nil)
+		conn, err = kiss.ConnectContext(ctx, dev, e.config.SerialPort, e.config.ConnectAddress, e.config.ActiveCall(), e.config.OpCall, e.logf, monitor)
 	case ConnectTelnet:
 		e.progress("Connecting to %s@%s...", e.config.TelnetUser, e.config.ConnectBBS)
-		e.conn, err = telnet.Connect(e.config.ConnectAddress, e.config.TelnetUser, e.config.TelnetPassword, logf)
+		conn, err = telnet.ConnectContext(ctx, e.config.ConnectAddress, e.config.TelnetUser, e.config.TelnetPassword, textlog)
 	default:
 		slog.Error("invalid connect method", "method", e.config.ConnectType)
 		err = fmt.Errorf("can't connect using method %s", e.config.ConnectType)
 	}
-	if err != nil {
-		fmt.Fprintf(logf, "[[ERROR: %s]]\n", err)
-		updates.Error(err.Error())
-		updates.Finished()
-		return
+	return conn, err
+}
+
+// cleanup is deferred by BBSExchange.  It recovers from any panic, closes the
+// connection if it's still open (aborting it rather than disconnecting in an
+// orderly fashion if the context was canceled), releases the reservations of
+// the BBS and serial port, flushes the Link Monitor and closes the log file,
+// and finally calls the watcher's Finished method.
+func (e *exchange) cleanup(ctx context.Context) {
+	if p := recover(); p != nil {
+		slog.Error("panic in BBSExchange", "err", p, "stack", string(debug.Stack()))
+		e.fail("A software error occurred.  See log file for details.")
 	}
-	// Run the main connection loop.
-	for !done {
-		if done, err = e.step(ctx); err != nil {
-			break
+	if e.conn != nil {
+		if ctx.Err() != nil {
+			e.conn.Abort() // makes Close prompt, with no BBS dialog
+		} else {
+			e.safely("reporting progress", func() { e.progress("Closing connection...") })
 		}
+		e.safely("closing connection", func() {
+			if err := e.conn.Close(); err != nil && !e.failed {
+				if ctx.Err() != nil {
+					err = errAborted
+				}
+				e.fail(err.Error())
+			}
+		})
+		if e.stopAbort != nil {
+			e.stopAbort()
+		}
+		e.conn = nil
 	}
-	if err != nil {
-		updates.Error(err.Error())
+	if len(e.reserved) != 0 {
+		connectionsRunningMutex.Lock()
+		connectionsRunning.Delete(e.reserved...)
+		connectionsRunningMutex.Unlock()
+		e.reserved = nil
 	}
-	// Close the connection.
-	e.progress("Closing connection...")
-	if err2 := e.conn.Close(); err2 != nil && err == nil {
-		updates.Error(err2.Error())
+	if e.monitorlw != nil {
+		e.safely("flushing monitor", e.monitorlw.Flush)
 	}
-	e.conn = nil
-	updates.Finished()
+	if e.logf != nil {
+		e.logf.Close()
+		e.logf = nil
+	}
+	e.updates.Finished()
+}
+
+// safely calls fn, recovering from (and logging) any panic in it, so that the
+// rest of the cleanup still happens.
+func (e *exchange) safely(what string, fn func()) {
+	defer func() {
+		if p := recover(); p != nil {
+			slog.Error("panic in BBSExchange "+what, "err", p, "stack", string(debug.Stack()))
+			if !e.failed {
+				e.fail("A software error occurred.  See log file for details.")
+			}
+		}
+	}()
+	fn()
+}
+
+// fail reports an error to the watcher.
+func (e *exchange) fail(msg string) {
+	e.failed = true
+	e.updates.Error(msg)
 }
 
 // BBSExchangeWatcher is the interface required for the "updates" parameter to
@@ -176,6 +250,50 @@ type BBSExchangeWatcher interface {
 	Finished()
 }
 
+// BBSExchangeMonitor is an optional extension of BBSExchangeWatcher.  If the
+// watcher passed to BBSExchange implements it, Monitor is called with each line
+// of a live display of the exchange: for KISS connections, a packet monitor
+// display of the AX.25 frames exchanged with the BBS (e.g., "06:57:02T
+// KO6NVY>W3XSC-1 <SABM C P>", followed by the text of each I frame); for other
+// connections, the text exchanged with the BBS.
+type BBSExchangeMonitor interface {
+	Monitor(line string)
+}
+
+// lineWriter is an io.Writer that calls fn with each complete line written to
+// it, without its line ending.  It is safe for concurrent use (transports may
+// write to it from more than one goroutine); fn is called with the mutex held,
+// so lines are reported in order and fn is never called concurrently.
+type lineWriter struct {
+	mu  sync.Mutex
+	fn  func(string)
+	buf []byte
+}
+
+func (lw *lineWriter) Write(p []byte) (int, error) {
+	lw.mu.Lock()
+	defer lw.mu.Unlock()
+	lw.buf = append(lw.buf, p...)
+	for {
+		idx := bytes.IndexByte(lw.buf, '\n')
+		if idx < 0 {
+			return len(p), nil
+		}
+		lw.fn(strings.TrimSuffix(string(lw.buf[:idx]), "\r"))
+		lw.buf = lw.buf[idx+1:]
+	}
+}
+
+// Flush reports any partial line remaining.
+func (lw *lineWriter) Flush() {
+	lw.mu.Lock()
+	defer lw.mu.Unlock()
+	if len(lw.buf) != 0 {
+		lw.fn(strings.TrimSuffix(string(lw.buf), "\r"))
+		lw.buf = nil
+	}
+}
+
 type exchange struct {
 	dir      string
 	immOnly  bool
@@ -189,6 +307,13 @@ type exchange struct {
 	indexes  []int
 	msgindex int
 	tokill   int
+
+	// Resources held during the exchange, released by cleanup.
+	logf      *os.File
+	monitorlw *lineWriter
+	reserved  []string    // entries in connectionsRunning
+	stopAbort func() bool // unregisters the abort-on-cancel hook
+	failed    bool        // an error has been reported to updates
 }
 
 // bbsExchangeStep takes one step in the BBS exchange process.  If there's a
@@ -200,13 +325,12 @@ type exchange struct {
 func (e *exchange) step(ctx context.Context) (done bool, err error) {
 	// First, is the context canceled, meaning the user aborted the
 	// connection?
+	// (The connection has already been aborted, so we don't try to talk
+	// to the BBS, e.g. to kill a message we just read.)
 	select {
 	case <-ctx.Done():
 		slog.Info("connection aborted by user")
-		if e.tokill != 0 {
-			e.killMessage()
-		}
-		return false, errors.New("connection aborted by user")
+		return false, errAborted
 	default: // continue
 	}
 	// Is there a message waiting to be sent?
@@ -312,12 +436,26 @@ func (e *exchange) send(dm *message.DraftMessage, logident int) (err error) {
 	}
 
 	if err = Write(e.dir, func(i *Incident) error {
-		le = i.GetLogEntryByIdent(logident)
+		if le = i.GetLogEntryByIdent(logident); le == nil || le.Status == StatusDeleted {
+			// The user deleted the message while we were sending
+			// it (minutes, over RF).  It has been sent, but there's
+			// nothing left to mark as sent (a deleted log entry has
+			// lost its subject, addresses, and flags), and we don't
+			// resurrect what the user deleted.  It won't be sent
+			// again, since it's no longer in the queue.
+			slog.Warn("sent message was deleted during send", "ident", logident, "subject", dm.Subject().EncodedSubject())
+			le = nil
+			return nil
+		}
 		return i.MarkMessageSent(dm, le)
 	}); err != nil {
 		return err
 	}
-	e.updates.LogEntry(le)
+	if le != nil {
+		e.updates.LogEntry(le)
+	} else {
+		e.progress("Message %s was sent, but it had been deleted, so it is not logged.", dm.Subject().SubjectMessageID())
+	}
 	return nil
 }
 

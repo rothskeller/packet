@@ -36,7 +36,6 @@ func (s *Server) serveGetIncident(w http.ResponseWriter, r *http.Request) {
 		err  error
 		vars = map[string]string{}
 	)
-	s.outpost = false
 	if maybeShowREADME(w, r) {
 		return
 	}
@@ -111,7 +110,6 @@ func (s *Server) serveGetIncidentLog(w http.ResponseWriter, r *http.Request) {
 		upd    ilogUpdate
 		err    error
 	)
-	s.outpost = false
 	if dir = r.FormValue("dir"); dir == "" {
 		slog.Error("no incident dir")
 		http.Error(w, "dir is required", http.StatusBadRequest)
@@ -180,7 +178,6 @@ func (s *Server) serveViewICS309(w http.ResponseWriter, r *http.Request) {
 		dir   string
 		fname string
 	)
-	s.outpost = false
 	signature := r.FormValue("signature")
 	s.serveIncident(w, r, false, func(i *incident.Incident) (err error) {
 		dir = i.Dir

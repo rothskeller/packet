@@ -34,7 +34,6 @@ func (s *Server) serveGetIncidentConfig(w http.ResponseWriter, r *http.Request) 
 		variables = make(map[string]string)
 		form      = make(url.Values)
 	)
-	s.outpost = false
 	if maybeShowREADME(w, r) {
 		return
 	}
@@ -152,7 +151,6 @@ ERROR:
 func (s *Server) servePostIncidentConfig(w http.ResponseWriter, r *http.Request) {
 	var err error
 
-	s.outpost = false
 	err = incident.Write(r.FormValue("dir"), func(inc *incident.Incident) error {
 		var c = inc.Config.Clone()
 
