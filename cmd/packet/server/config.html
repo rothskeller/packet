@@ -193,6 +193,31 @@
       }
       addEmptyArea()
     }
+    // setupPortPicker makes a serial port field show every detected port when
+    // it gets focus, even if it already has a value.  (Browsers suggest only
+    // the datalist options that match the field's current value.)  The
+    // current value is shown as a placeholder, and is put back if the field
+    // is left empty.
+    function setupPortPicker(input) {
+      function restore() {
+        if (!input.value && input.dataset.prev) setValue(input, input.dataset.prev)
+        delete input.dataset.prev
+        input.placeholder = ''
+      }
+      input.addEventListener('focus', () => {
+        if (!input.value) return
+        input.dataset.prev = input.value
+        input.placeholder = input.value
+        input.value = ''
+      })
+      input.addEventListener('blur', () => {
+        restore()
+        checkFormValidity()
+      })
+      input.addEventListener('keydown', evt => {
+        if (evt.key === 'Enter') restore()
+      })
+    }
     function checkFormValidity() {
       const valid = form.checkValidity()
       document.getElementById('save').disabled = !valid
@@ -307,6 +332,8 @@
       if (af = document.querySelector('[autofocus]')) showHelp(af)
       setRequiredIf()
       setupBulletinAreas()
+      setupPortPicker(document.getElementById('serport'))
+      setupPortPicker(document.getElementById('kissport'))
       showConnTypeSettings()
       checkFormValidity()
     })
