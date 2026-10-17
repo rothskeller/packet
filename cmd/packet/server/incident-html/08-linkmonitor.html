@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <script> // Link Monitor panel
+    // The Link Monitor panel shows the exchange with the BBS as it happens,
+    // beside the message list.  Whether it is open, and its width, are
+    // remembered (in this browser) across page loads.
+    let lmPanel, lmLines, lmFollow, lmOthers, lmStatus, lmAbort = null, lmSeq = 0
+    // lmLastHeader is the class of the last frame header line seen, so that
+    // the text lines after it can be classed with it.
+    let lmLastHeader = ''
+    function lmSetting(key, value) {
+      try {
+        if (value === undefined) return localStorage.getItem(key)
+        localStorage.setItem(key, value)
+      } catch (e) {
+        return null
+      }
+    }
+    function showLinkMonitor(show) {
+      lmPanel.hidden = !show
+      document.getElementById('m-conn-monitor').setChecked(show)
+      lmSetting('link-monitor-open', show ? '1' : '')
+      if (show && !lmAbort) lmPoll()
+      if (!show && lmAbort) {
+        lmAbort.abort()
+        lmAbort = null
+      }
+    }
+    function lmClassify(line) {
+      let cls = ''
+      if (/^\d\d:\d\d:\d\dT /.test(line)) cls = 'sent'
+      else if (/^\d\d:\d\d:\d\dR /.test(line)) cls = 'rcvd'
+      else if (/^\d\d:\d\d:\d\d \(other\) /.test(line)) cls = 'other'
+      else if (line.startsWith('*** ')) return 'note'
+      else if (line.startsWith('------------------------ ')) cls = 'sep'
+      else return lmLastHeader === 'other' ? 'text other' : 'text'
+      lmLastHeader = cls
+      return cls
+    }
+    function lmAddLines(data) {
+      const atBottom = lmLines.scrollTop + lmLines.clientHeight >= lmLines.scrollHeight - 4
+      const frag = document.createDocumentFragment()
+      if (data.skipped) {
+        const div = document.createElement('div')
+        div.className = 'note'
+        div.textContent = `*** (${data.skipped} older lines not shown)`
+        frag.appendChild(div)
+      }
+      for (const line of data.lines) {
+        const div = document.createElement('div')
+        div.className = lmClassify(line)
+        div.textContent = line || '\u00a0'
+        frag.appendChild(div)
+      }
+      lmLines.appendChild(frag)
+      if (lmFollow.checked && atBottom) lmLines.scrollTop = lmLines.scrollHeight
+    }
+    async function lmPoll() {
+      const abort = lmAbort = new AbortController()
+      while (!abort.signal.aborted) {
+        const params = new URLSearchParams({ dir: document.body.dataset.dir, seq: lmSeq })
+        let resp = null, data = null
+        try {
+          resp = await fetch('/link-monitor/lines?' + params.toString(), { signal: abort.signal })
+          if (resp.ok) data = await resp.json()
+        } catch (e) {
+          if (abort.signal.aborted) return
+        }
+        if (!data) {
+          lmStatus.textContent = 'Lost contact with the server; retrying.'
+          await new Promise(resolve => setTimeout(resolve, 5000))
+          continue
+        }
+        lmStatus.textContent = ''
+        if (data.seq < lmSeq) lmLines.textContent = '' // the server restarted
+        lmSeq = data.seq
+        lmAddLines(data)
+      }
+    }
+    function setupLinkMonitor() {
+      lmPanel = document.getElementById('link-monitor')
+      lmLines = document.getElementById('lm-lines')
+      lmFollow = document.getElementById('lm-follow')
+      lmStatus = document.getElementById('lm-status')
+      document.getElementById('lm-close').addEventListener('click', () => { showLinkMonitor(false) })
+      document.getElementById('lm-clear').addEventListener('click', () => { lmLines.textContent = '' })
+      document.getElementById('lm-copy').addEventListener('click', () => {
+        const hideOthers = lmLines.classList.contains('hide-other')
+        navigator.clipboard.writeText(Array.from(lmLines.children)
+          .filter(div => !(hideOthers && div.classList.contains('other')))
+          .map(div => div.textContent).join('\n'))
+      })
+      // Other stations' traffic on the frequency can be hidden.
+      lmOthers = document.getElementById('lm-others')
+      lmOthers.checked = lmSetting('link-monitor-hide-other') !== '1'
+      lmLines.classList.toggle('hide-other', !lmOthers.checked)
+      lmOthers.addEventListener('change', () => {
+        lmLines.classList.toggle('hide-other', !lmOthers.checked)
+        lmSetting('link-monitor-hide-other', lmOthers.checked ? '' : '1')
+        if (lmFollow.checked) lmLines.scrollTop = lmLines.scrollHeight
+      })
+      lmFollow.addEventListener('change', () => {
+        if (lmFollow.checked) lmLines.scrollTop = lmLines.scrollHeight
+      })
+      // Dragging the left edge of the panel resizes it.
+      const handle = document.getElementById('lm-resize')
+      handle.addEventListener('pointerdown', evt => {
+        evt.preventDefault()
+        handle.setPointerCapture(evt.pointerId)
+        const move = evt => {
+          const width = Math.min(Math.max(window.innerWidth - evt.clientX, 240), window.innerWidth * 0.8)
+          lmPanel.style.width = `${Math.round(width)}px`
+        }
+        const up = () => {
+          handle.removeEventListener('pointermove', move)
+          handle.removeEventListener('pointerup', up)
+          lmSetting('link-monitor-width', lmPanel.style.width)
+        }
+        handle.addEventListener('pointermove', move)
+        handle.addEventListener('pointerup', up)
+      })
+      const width = lmSetting('link-monitor-width')
+      if (width) lmPanel.style.width = width
+      if (lmSetting('link-monitor-open') === '1' && document.getElementById('m-conn-monitor')) showLinkMonitor(true)
+    }
+  </script>
+  <style>
+    @font-face {
+      font-family: Go Mono;
+      src: local("Go Mono"),
+        local("Go-Mono"),
+        url("/Go-Mono.woff2") format("woff2");
+    }
+
+    #link-monitor {
+      grid-column: 2;
+      grid-row: 3 / -1;
+      position: relative;
+      width: 40vw;
+      min-width: 15rem;
+      max-width: 80vw;
+      min-height: 0;
+      display: flex;
+      flex-direction: column;
+      border-left: var(--border-width) solid #888;
+      background-color: white;
+    }
+
+    #link-monitor[hidden] {
+      display: none;
+    }
+
+    #lm-resize {
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      left: -4px;
+      width: 8px;
+      cursor: col-resize;
+      z-index: 1;
+    }
+
+    #lm-bar {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.25rem 0.5rem;
+      background-color: #dff6df;
+      border-bottom: var(--border-width) solid #888;
+    }
+
+    #lm-title {
+      font-weight: bold;
+      margin-right: auto;
+    }
+
+    #lm-bar label {
+      white-space: nowrap;
+    }
+
+    #lm-status:not(:empty) {
+      color: #b00;
+    }
+
+    #lm-close {
+      border: none;
+      background: none;
+      font-size: 1.125rem;
+      line-height: 1;
+      cursor: pointer;
+    }
+
+    #lm-lines {
+      flex: 1;
+      min-height: 0;
+      overflow: auto;
+      padding: 0.25rem 0.5rem;
+      font-family: Go Mono, monospace;
+      font-size: 0.8125rem;
+      white-space: pre-wrap;
+      overflow-wrap: anywhere;
+      user-select: text;
+    }
+
+    #lm-lines .sent {
+      color: #0645ad;
+    }
+
+    #lm-lines .rcvd {
+      color: #17701a;
+    }
+
+    #lm-lines .text {
+      padding-left: 2ch;
+    }
+
+    #lm-lines .other {
+      color: #999;
+    }
+
+    #lm-lines.hide-other .other {
+      display: none;
+    }
+
+    #lm-lines .note,
+    #lm-lines .sep {
+      color: #777;
+    }
+
+    #lm-lines .sep {
+      margin-top: 0.5rem;
+    }
+
+    #lm-lines:empty:before {
+      content: "No BBS connections yet.  This panel shows each connection's exchange with the BBS as it happens (and, for KISS connections, other traffic heard on the frequency).";
+      color: #777;
+      font-family: Go, sans-serif;
+      white-space: normal;
+    }
+  </style>
+</head>
+
+<body>
+  <aside id=link-monitor hidden>
+    <div id=lm-resize title="Drag to resize"></div>
+    <div id=lm-bar>
+      <span id=lm-title>Link Monitor</span>
+      <span id=lm-status></span>
+      <label title="Show packets between other stations heard on the frequency"><input type=checkbox id=lm-others checked> Other traffic</label>
+      <label><input type=checkbox id=lm-follow checked> Follow</label>
+      <button id=lm-copy>Copy</button>
+      <button id=lm-clear>Clear</button>
+      <button id=lm-close title="Close the Link Monitor">✕</button>
+    </div>
+    <div id=lm-lines></div>
+  </aside>
+</body>
+
+</html>

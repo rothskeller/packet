@@ -16,10 +16,6 @@ import (
 // Default target.
 var Default = GUI
 
-func init() {
-	os.Setenv("GOEXPERIMENT", "jsonv2")
-}
-
 func Forms() {
 	os.Remove("SCCoPIFO.zip")
 	os.Chdir("forms/SCCoPIFO")
@@ -34,7 +30,13 @@ func Dist() {
 	mg.Deps(IncidentHTML, WindowsResources)
 	os.MkdirAll("dist", 0777)
 	sh.RunWith(map[string]string{"GOOS": "darwin", "GOARCH": "amd64"},
-		mg.GoCmd(), "build", "-tags", "sccopifo", "-o", fmt.Sprintf("./dist/packet-v%s_darwin_amd64", packetver.Version), "./cmd/packet")
+		mg.GoCmd(), "build", "-tags", "sccopifo", "-o", "./dist/packet_darwin_amd64", "./cmd/packet")
+	sh.RunWith(map[string]string{"GOOS": "darwin", "GOARCH": "arm64"},
+		mg.GoCmd(), "build", "-tags", "sccopifo", "-o", "./dist/packet_darwin_arm64", "./cmd/packet")
+	sh.Run("lipo", "-create", "-output", fmt.Sprintf("./dist/packet-v%s_darwin_universal", packetver.Version),
+		"./dist/packet_darwin_amd64", "./dist/packet_darwin_arm64")
+	os.Remove("./dist/packet_darwin_amd64")
+	os.Remove("./dist/packet_darwin_arm64")
 	sh.RunWith(map[string]string{"GOOS": "linux", "GOARCH": "amd64"},
 		mg.GoCmd(), "build", "-tags", "sccopifo", "-o", fmt.Sprintf("./dist/packet-v%s_linux_amd64", packetver.Version), "./cmd/packet")
 	sh.RunWith(map[string]string{"GOOS": "windows", "GOARCH": "amd64"},

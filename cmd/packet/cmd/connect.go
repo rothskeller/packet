@@ -2,8 +2,10 @@ package cmd
 
 import (
 	"context"
+	"fmt"
 	"os"
 	"os/signal"
+	"sync"
 
 	"github.com/rothskeller/packet/v4/cmd/packet/cio"
 	"github.com/rothskeller/packet/v4/errors"
@@ -79,7 +81,17 @@ LOOP:
 	for {
 		select {
 		case <-sigintch:
+			// The first Ctrl-C aborts the connection, which should
+			// end promptly.  If the user isn't willing to wait for
+			// that, a second Ctrl-C exits immediately.
+			if ctx.Err() != nil {
+				fmt.Fprintln(os.Stderr, "\nExiting immediately; the connection was not closed cleanly.")
+				os.Exit(1)
+			}
 			cancel()
+			// (Not c.Status: cio isn't safe for concurrent use,
+			// and the exchange goroutine is using it.)
+			fmt.Fprintln(os.Stderr, "\nAborting connection; press Ctrl-C again to exit immediately.")
 		case <-finished:
 			break LOOP
 		}
@@ -98,6 +110,7 @@ LOOP:
 type connectUpdates struct {
 	c        *cio.CIO
 	finished chan struct{}
+	once     sync.Once
 	log      []*incident.LogEntry
 	err      string
 }
@@ -113,9 +126,13 @@ func (cu *connectUpdates) Error(e string) {
 	}
 }
 
+// Finished implements incident.BBSExchangeWatcher.  Calls after the first are
+// ignored.
 func (cu *connectUpdates) Finished() {
-	cu.c.Status("")
-	close(cu.finished)
+	cu.once.Do(func() {
+		cu.c.Status("")
+		close(cu.finished)
+	})
 }
 
 // drainSigInt stops trapping interrupt signals, drains the signal channel

@@ -8,6 +8,7 @@ import (
 	"log/slog"
 	"net/http"
 	"strconv"
+	"strings"
 	"time"
 
 	"github.com/rothskeller/packet/v4/incident"
@@ -28,7 +29,6 @@ func (s *Server) servePostEditLogEntry(w http.ResponseWriter, r *http.Request) {
 		id    int
 		err   error
 	)
-	s.outpost = false
 	// Get the message from the incident and make sure it's proper.
 	dir, idstr = r.FormValue("dir"), r.FormValue("id")
 	if idstr != "NEW" {
@@ -116,7 +116,6 @@ func (s *Server) servePostResetLogEntry(w http.ResponseWriter, r *http.Request) 
 		id  int
 		err error
 	)
-	s.outpost = false
 	// Get the message from the incident and make sure it's proper.
 	dir = r.FormValue("dir")
 	if id, err = strconv.Atoi(r.FormValue("id")); err != nil || id <= 0 {
@@ -147,7 +146,6 @@ func (s *Server) servePostDeleteLogEntry(w http.ResponseWriter, r *http.Request)
 		id  int
 		err error
 	)
-	s.outpost = false
 	// Get the message from the incident and make sure it's proper.
 	dir = r.FormValue("dir")
 	if id, err = strconv.Atoi(r.FormValue("id")); err != nil || id <= 0 {
@@ -181,7 +179,6 @@ func (s *Server) servePostToggleFlag(w http.ResponseWriter, r *http.Request) {
 		warn error
 		err  error
 	)
-	s.outpost = false
 	// Get the message from the incident and make sure it's proper.
 	dir, flag = r.FormValue("dir"), r.FormValue("flag")
 	if flag != "F" && flag != "-" && flag != "Q" {
@@ -246,8 +243,15 @@ func toggleQueued(i *incident.Incident, le *incident.LogEntry, force bool) (warn
 			return nil, errors.New("The message cannot be marked ready to send because it does not have a valid To: address.")
 		}
 		if !force {
+			var problems []string
 			if warn = message.ValidateMessage(dm, msgifc.VPacket); warn != nil {
-				return warn, nil
+				problems = append(problems, warn.Error())
+			}
+			if bare := bareAddressWarning(i, dm.To()); bare != "" {
+				problems = append(problems, bare)
+			}
+			if len(problems) != 0 {
+				return errors.New(strings.Join(problems, "\n")), nil
 			}
 		}
 		dm.SetReadyToSend(true)
@@ -256,4 +260,32 @@ func toggleQueued(i *incident.Incident, le *incident.LogEntry, force bool) (warn
 		dm.SetReadyToSend(false)
 		return nil, i.UpdateDraftMessage(le.Ident, dm)
 	}
+}
+
+// bareAddressWarning returns a warning if any address in to (a To: address
+// list) has no @BBS part, or "" if none does.  A message to a bare call sign
+// (e.g., PKTMON) is delivered to that mailbox on whichever BBS we connect to,
+// which is often not the BBS where the recipient reads its mail.  (A check-in
+// to PKTMON from W3XSC, say, must be addressed to PKTMON@W2XSC.)  County
+// practice is to always address messages as callsign@bbsname.
+func bareAddressWarning(i *incident.Incident, to string) string {
+	addrs, err := address.ParseList(to)
+	if err != nil {
+		return ""
+	}
+	var bare []string
+	for _, addr := range addrs {
+		if !strings.ContainsAny(addr.Address, "@%!") && !addressIsBulletin(addr) {
+			bare = append(bare, addr.Address)
+		}
+	}
+	if len(bare) == 0 {
+		return ""
+	}
+	where := "whichever BBS you connect to"
+	if i != nil && i.Config != nil && i.Config.ConnectBBS != "" {
+		where = "whichever BBS you connect to (" + i.Config.ConnectBBS + ")"
+	}
+	return fmt.Sprintf("The To address %s has no @BBS part, so the message will be delivered to that mailbox on %s, which may not be where the recipient reads its mail.  County practice is to address messages as callsign@bbsname (e.g., %s@W2XSC).",
+		strings.Join(bare, ", "), where, bare[0])
 }

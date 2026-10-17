@@ -18,6 +18,7 @@ import (
 	"github.com/rothskeller/packet/v4/cmd/packet/pseudomsg"
 	"github.com/rothskeller/packet/v4/form/htmlop"
 	"github.com/rothskeller/packet/v4/incident"
+	"github.com/rothskeller/packet/v4/jnos/kiss"
 	"github.com/rothskeller/packet/v4/jnos/tnc"
 	"golang.org/x/net/html"
 )
@@ -33,7 +34,6 @@ func (s *Server) serveGetIncidentConfig(w http.ResponseWriter, r *http.Request) 
 		variables = make(map[string]string)
 		form      = make(url.Values)
 	)
-	s.outpost = false
 	if maybeShowREADME(w, r) {
 		return
 	}
@@ -71,6 +71,10 @@ func (s *Server) serveGetIncidentConfig(w http.ResponseWriter, r *http.Request) 
 			form.Set("conntype", "serial+tnc")
 			form.Set("bbsaddr", inc.Config.ConnectAddress)
 			variables["nosaved"] = "true"
+		case incident.ConnectKISS:
+			form.Set("conntype", "kiss")
+			form.Set("bbsaddr", inc.Config.ConnectAddress)
+			variables["nosaved"] = "true"
 		case incident.ConnectTelnet:
 			form.Set("conntype", "telnet")
 			form.Set("bbscall", inc.Config.ConnectBBS)
@@ -89,6 +93,7 @@ func (s *Server) serveGetIncidentConfig(w http.ResponseWriter, r *http.Request) 
 		}
 		form.Set("tnctype", inc.Config.TNCType)
 		variables["tnctypes"] = strings.Join(tnc.AllTNCs(), ";")
+		variables["kisstypes"] = strings.Join(kiss.AllDevices(), ";")
 		form.Set("serport", inc.Config.SerialPort)
 		if ports := pseudomsg.GuessSerialPorts(); len(ports) != 0 {
 			variables["serports"] = strings.Join(ports, ";")
@@ -146,17 +151,16 @@ ERROR:
 func (s *Server) servePostIncidentConfig(w http.ResponseWriter, r *http.Request) {
 	var err error
 
-	s.outpost = false
 	err = incident.Write(r.FormValue("dir"), func(inc *incident.Incident) error {
 		var c = inc.Config.Clone()
 
 		c.IncidentName = r.FormValue("incname")
 		c.ActivationNum = r.FormValue("actnum")
 		if r.FormValue("opstartdate") == "" {
-			c.OpStart, c.OpEnd = time.Time{}, time.Time{}
+			c.OpStart, c.OpEnd = incident.OpTime{}, incident.OpTime{}
 		} else {
-			c.OpStart, _ = time.ParseInLocation("01/02/2006 15:04", r.FormValue("opstartdate")+" "+r.FormValue("opstarttime"), time.Local)
-			c.OpEnd, _ = time.ParseInLocation("01/02/2006 15:04", r.FormValue("openddate")+" "+r.FormValue("opendtime"), time.Local)
+			c.OpStart.Time, _ = time.ParseInLocation("01/02/2006 15:04", r.FormValue("opstartdate")+" "+r.FormValue("opstarttime"), time.Local)
+			c.OpEnd.Time, _ = time.ParseInLocation("01/02/2006 15:04", r.FormValue("openddate")+" "+r.FormValue("opendtime"), time.Local)
 		}
 		c.OpCall = r.FormValue("opcall")
 		c.OpName = r.FormValue("opname")
@@ -177,6 +181,13 @@ func (s *Server) servePostIncidentConfig(w http.ResponseWriter, r *http.Request)
 			c.NoSendReceipts = r.FormValue("sendrcpts") == ""
 		case "serial+tnc":
 			c.ConnectType = incident.ConnectSerialTNC
+			c.NoSendReceipts = false
+			c.TNCType = r.FormValue("tnctype")
+			c.SerialPort = r.FormValue("serport")
+			c.ConnectAddress = r.FormValue("bbsaddr")
+			c.ConnectBBS, _, _ = strings.Cut(c.ConnectAddress, "-")
+		case "kiss":
+			c.ConnectType = incident.ConnectKISS
 			c.NoSendReceipts = false
 			c.TNCType = r.FormValue("tnctype")
 			c.SerialPort = r.FormValue("serport")

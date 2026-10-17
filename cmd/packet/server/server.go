@@ -15,6 +15,8 @@ import (
 	"path/filepath"
 	"strconv"
 	"strings"
+	"sync"
+	"sync/atomic"
 	"syscall"
 	"time"
 
@@ -191,7 +193,7 @@ func Start(port int, outpost bool) (err error) {
 	go server.watchForInterrupt()
 	// Send a stop signal if Outpost is closed.
 	if outpost {
-		server.outpost = true
+		server.outpostOnly.Store(true)
 		go server.watchForOutpostClose()
 	}
 	// Set the server up to handle requests.
@@ -215,6 +217,9 @@ Activity is being logged to %s.
 	// Wait until (a) we've been idle for a long time, (b) the stop file is
 	// touched, or (c) we've received a POST /stop request.
 	<-server.stop
+	// Abort any BBS connections still running, giving them time to clean
+	// up their TNCs.
+	abortBBSConnections(stopConnectionsLimit)
 	// Remove the address file.  That saves anyone trying to send pings to
 	// us after we're gone.
 	os.Remove(osdep.AddressFile)
@@ -224,12 +229,40 @@ Activity is being logged to %s.
 	return nil
 }
 
+// stopConnectionsLimit is the longest the server waits, when stopping, for
+// running BBS connections to abort and clean up their TNCs.  (A KISS TNC reset
+// takes several seconds; see kiss.resetSettle.)
+const stopConnectionsLimit = 20 * time.Second
+
 // Server represents the packet HTTP server.
 type Server struct {
-	address string
-	stop    chan struct{}
-	mux     http.ServeMux
-	outpost bool
+	address  string
+	stop     chan struct{} // closed (only via requestStop) to stop the server
+	stopOnce sync.Once
+	mux      http.ServeMux
+	// outpostOnly is true if the server was started for Outpost and has
+	// been used only for Outpost requests, so it should stop when Outpost
+	// closes.  It is cleared (by the gui wrapper) by any GUI request.
+	outpostOnly atomic.Bool
+}
+
+// requestStop stops the server.  It is safe to call more than once, and from
+// any goroutine.
+func (s *Server) requestStop() {
+	s.stopOnce.Do(func() { close(s.stop) })
+}
+
+// nonOutpostUse records that the server has been used for something other
+// than Outpost requests, so it should not stop when Outpost closes.
+func (s *Server) nonOutpostUse() { s.outpostOnly.Store(false) }
+
+// gui wraps a handler for a GUI (i.e., non-Outpost) request, calling
+// nonOutpostUse before the handler.
+func (s *Server) gui(h http.HandlerFunc) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		s.nonOutpostUse()
+		h(w, r)
+	}
 }
 
 // watchForStopFile watches for the creation or update of the "packet-stop"
@@ -241,12 +274,12 @@ func (s *Server) watchForStopFile() {
 	)
 	if watcher, err = fsnotify.NewWatcher(); err != nil {
 		slog.Error("fsnotify.NewWatcher", "err", err)
-		close(s.stop)
+		s.requestStop()
 		return
 	}
 	if err = watcher.Add(filepath.Dir(osdep.ServerStopFile)); err != nil {
 		slog.Error("watcher.Add", "f", osdep.ServerStopFile, "err", err)
-		close(s.stop)
+		s.requestStop()
 		return
 	}
 	for {
@@ -256,11 +289,11 @@ func (s *Server) watchForStopFile() {
 				break
 			}
 			slog.Info("stopping server: stop file modtime has changed")
-			close(s.stop)
+			s.requestStop()
 			return
 		case err := <-watcher.Errors:
 			slog.Error("watcher.Error", "err", err)
-			close(s.stop)
+			s.requestStop()
 			return
 		}
 	}
@@ -277,13 +310,13 @@ func (s *Server) watchForOutpostClose() {
 	)
 	if conn, err = net.Dial("tcp4", "127.0.0.1:9334"); err != nil {
 		slog.Error("net.Dial (opdirect)", "err", err)
-		close(s.stop)
+		s.requestStop()
 		return
 	}
 	conn.Read(buf)
-	if s.outpost {
+	if s.outpostOnly.Load() {
 		slog.Info("stopping server: connection to opdirect has been closed")
-		close(s.stop)
+		s.requestStop()
 	} else {
 		slog.Info("opdirect connection closed; not stopping server due to non-Outpost usage")
 	}
@@ -297,7 +330,7 @@ func (s *Server) watchForInterrupt() {
 	signal.Notify(ch, os.Interrupt, syscall.SIGTERM)
 	<-ch
 	slog.Info("stopping server: interrupt signal")
-	close(s.stop)
+	s.requestStop()
 }
 
 // handleRequest handles a web request to the server.
@@ -321,7 +354,7 @@ func (s *Server) handleRequest(w http.ResponseWriter, r *http.Request) {
 // handleStop handles the POST /stop request by stopping the server.
 func (s *Server) handleStop(w http.ResponseWriter, r *http.Request) {
 	slog.Info("stopping server: received POST /stop")
-	close(s.stop)
+	s.requestStop()
 }
 
 // registerHandlers registers the server handlers.
@@ -332,30 +365,30 @@ func (s *Server) registerHandlers() {
 	s.mux.HandleFunc("GET /outpost-edit", s.outpostEditRequest)
 	s.mux.HandleFunc("POST /outpost-submit", s.outpostSubmit)
 	s.mux.HandleFunc("GET /pdf/{filename}", s.serveRenderedPDF)
-	s.mux.HandleFunc("GET /incident-config", s.serveGetIncidentConfig)
-	s.mux.HandleFunc("POST /incident-config", s.servePostIncidentConfig)
-	s.mux.HandleFunc("GET /incident", s.serveGetIncident)
-	s.mux.HandleFunc("GET /incident/log", s.serveGetIncidentLog)
-	s.mux.HandleFunc("POST /manual-receive", s.servePostManualReceive)
-	s.mux.HandleFunc("GET /new-message", s.serveGetNewMessage)
-	s.mux.HandleFunc("GET /edit-message", s.serveGetEditMessage)
+	s.mux.HandleFunc("GET /incident-config", s.gui(s.serveGetIncidentConfig))
+	s.mux.HandleFunc("POST /incident-config", s.gui(s.servePostIncidentConfig))
+	s.mux.HandleFunc("GET /incident", s.gui(s.serveGetIncident))
+	s.mux.HandleFunc("GET /incident/log", s.gui(s.serveGetIncidentLog))
+	s.mux.HandleFunc("POST /manual-receive", s.gui(s.servePostManualReceive))
+	s.mux.HandleFunc("GET /new-message", s.gui(s.serveGetNewMessage))
+	s.mux.HandleFunc("GET /edit-message", s.gui(s.serveGetEditMessage))
 	s.mux.HandleFunc("GET /assets/{tag}/{asset...}", s.serveGetAsset)
-	s.mux.HandleFunc("POST /send-message", s.servePostSendMessage)
-	s.mux.HandleFunc("GET /manual-send-command", s.serveGetManualSendCommand)
-	s.mux.HandleFunc("POST /mark-sent", s.servePostMarkSent)
-	s.mux.HandleFunc("GET /view-message", s.serveGetViewMessage)
-	s.mux.HandleFunc("POST /print-message", s.servePostPrintMessage)
-	s.mux.HandleFunc("POST /make-receipt", s.servePostMakeReceipt)
-	s.mux.HandleFunc("POST /edit-log-entry", s.servePostEditLogEntry)
-	s.mux.HandleFunc("POST /reset-log-entry", s.servePostResetLogEntry)
-	s.mux.HandleFunc("POST /delete-log-entry", s.servePostDeleteLogEntry)
-	s.mux.HandleFunc("POST /toggle-flag", s.servePostToggleFlag)
-	s.mux.HandleFunc("POST /new-message-from", s.servePostNewMessageFrom)
-	s.mux.HandleFunc("POST /delete-message", s.servePostDeleteMessage)
-	s.mux.HandleFunc("GET /view-encoded", s.serveGetViewEncoded)
-	s.mux.HandleFunc("/view-ics309", s.serveViewICS309)
-	s.mux.HandleFunc("GET /manpage.html", s.serveGetManPage)
-	s.mux.HandleFunc("/incident-open", s.serveIncidentOpen)
+	s.mux.HandleFunc("POST /send-message", s.gui(s.servePostSendMessage))
+	s.mux.HandleFunc("GET /manual-send-command", s.gui(s.serveGetManualSendCommand))
+	s.mux.HandleFunc("POST /mark-sent", s.gui(s.servePostMarkSent))
+	s.mux.HandleFunc("GET /view-message", s.gui(s.serveGetViewMessage))
+	s.mux.HandleFunc("POST /print-message", s.gui(s.servePostPrintMessage))
+	s.mux.HandleFunc("POST /make-receipt", s.gui(s.servePostMakeReceipt))
+	s.mux.HandleFunc("POST /edit-log-entry", s.gui(s.servePostEditLogEntry))
+	s.mux.HandleFunc("POST /reset-log-entry", s.gui(s.servePostResetLogEntry))
+	s.mux.HandleFunc("POST /delete-log-entry", s.gui(s.servePostDeleteLogEntry))
+	s.mux.HandleFunc("POST /toggle-flag", s.gui(s.servePostToggleFlag))
+	s.mux.HandleFunc("POST /new-message-from", s.gui(s.servePostNewMessageFrom))
+	s.mux.HandleFunc("POST /delete-message", s.gui(s.servePostDeleteMessage))
+	s.mux.HandleFunc("GET /view-encoded", s.gui(s.serveGetViewEncoded))
+	s.mux.HandleFunc("/view-ics309", s.gui(s.serveViewICS309))
+	s.mux.HandleFunc("GET /manpage.html", s.gui(s.serveGetManPage))
+	s.mux.HandleFunc("/incident-open", s.gui(s.serveIncidentOpen))
 	s.mux.HandleFunc("GET /county-seal.svg", s.serveGetCountySeal)
 	s.mux.HandleFunc("GET /Go-Regular.woff2", s.serveGetGoRegular)
 	s.mux.HandleFunc("GET /Go-Bold.woff2", s.serveGetGoBold)
@@ -365,10 +398,11 @@ func (s *Server) registerHandlers() {
 	s.mux.HandleFunc("GET /favicon-16x16.png", s.serveGetFavicon16)
 	s.mux.HandleFunc("GET /favicon-32x32.png", s.serveGetFavicon32)
 	s.mux.HandleFunc("GET /apple-touch-icon.png", s.serveGetAppleTouchIcon)
-	s.mux.HandleFunc("POST /connect-bbs", s.servePostConnectBBS)
-	s.mux.HandleFunc("POST /connect-abort", s.servePostConnectAbort)
-	s.mux.HandleFunc("GET /connect-progress", s.serveGetConnectProgress)
-	s.mux.HandleFunc("POST /set-view-flag", s.servePostSetViewFlag)
+	s.mux.HandleFunc("POST /connect-bbs", s.gui(s.servePostConnectBBS))
+	s.mux.HandleFunc("POST /connect-abort", s.gui(s.servePostConnectAbort))
+	s.mux.HandleFunc("GET /connect-progress", s.gui(s.serveGetConnectProgress))
+	s.mux.HandleFunc("GET /link-monitor/lines", s.gui(s.serveGetLinkMonitorLines))
+	s.mux.HandleFunc("POST /set-view-flag", s.gui(s.servePostSetViewFlag))
 	s.mux.HandleFunc("GET /{$}", func(w http.ResponseWriter, r *http.Request) {
 		http.Redirect(w, r, "/incident-open", http.StatusSeeOther)
 	})
@@ -378,7 +412,6 @@ func (s *Server) registerHandlers() {
 var manpageHTML []byte
 
 func (s *Server) serveGetManPage(w http.ResponseWriter, r *http.Request) {
-	s.outpost = false
 	if doc, err := htmlop.Parse(bytes.NewReader(manpageHTML)); err != nil {
 		s.ErrPage(w, err.Error(), http.StatusInternalServerError)
 		return

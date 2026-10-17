@@ -65,8 +65,19 @@
     body {
       margin: 0;
       display: grid;
-      grid: max-content max-content 1fr max-content max-content / auto;
+      grid: max-content max-content 1fr max-content max-content / minmax(0, 1fr) auto;
       height: 100vh;
+    }
+
+    /* The top bar and menu bar span the window; everything else is in the
+       left column, leaving the right column for the Link Monitor panel. */
+    body>* {
+      grid-column: 1;
+    }
+
+    body>#topbar,
+    body>menu-bar {
+      grid-column: 1 / -1;
     }
 
     #topbar {

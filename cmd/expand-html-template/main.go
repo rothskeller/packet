@@ -8,7 +8,6 @@ import (
 
 	"github.com/rothskeller/packet/v4/form/htmlop"
 	"golang.org/x/net/html"
-	"golang.org/x/net/html/atom"
 )
 
 func main() {
@@ -30,21 +29,19 @@ func main() {
 	if formFile, err = os.ReadFile(filename); err != nil {
 		panic("x")
 	}
-	if formHTML, err = html.Parse(bytes.NewReader(formFile)); err != nil {
+	if formHTML, err = htmlop.Parse(bytes.NewReader(formFile)); err != nil {
 		panic("y")
 	}
 	// If there is a definitions.html in the same directory, read and parse
 	// it too, and prepend it to the form HTML.
 	if formFile, err = os.ReadFile(filepath.Join(filepath.Dir(filename), "definitions.html")); err == nil {
 		var defHTML *html.Node
-		if defHTML, err = html.Parse(bytes.NewReader(formFile)); err != nil {
+		if defHTML, err = htmlop.Parse(bytes.NewReader(formFile)); err != nil {
 			panic("z")
 		}
-		formBody := findBody(formHTML)
-		defBody := findBody(defHTML)
-		for c := defBody.LastChild; c != nil; c = defBody.LastChild {
-			defBody.RemoveChild(c)
-			formBody.InsertBefore(c, formBody.FirstChild)
+		for c := defHTML.LastChild; c != nil; c = defHTML.LastChild {
+			defHTML.RemoveChild(c)
+			formHTML.InsertBefore(c, formHTML.FirstChild)
 		}
 	}
 	// Expand the templates in the form HTML, using the supplied fields.
@@ -52,13 +49,4 @@ func main() {
 	// Render and minimize the result.
 	htmlop.Minify(&formBuf, formHTML)
 	os.Stdout.Write(formBuf.Bytes())
-}
-
-func findBody(doc *html.Node) *html.Node {
-	for n := range doc.Descendants() {
-		if n.Type == html.ElementNode && n.DataAtom == atom.Body {
-			return n
-		}
-	}
-	return nil
 }

@@ -14,6 +14,7 @@ import (
 	"slices"
 	"strconv"
 	"strings"
+	"time"
 
 	"github.com/rothskeller/packet/v4/cmd/packet/osdep"
 	"github.com/rothskeller/packet/v4/errors"
@@ -43,7 +44,6 @@ func (s *Server) serveGetNewMessage(w http.ResponseWriter, r *http.Request) {
 		params url.Values
 		err    error
 	)
-	s.outpost = false
 	dir, tag = r.FormValue("dir"), r.FormValue("tag")
 	if mt = message.FindCreateTag(tag); mt == nil {
 		slog.Error("no such message tag", "tag", tag)
@@ -83,7 +83,6 @@ func (s *Server) serveGetEditMessage(w http.ResponseWriter, r *http.Request) {
 		err    error
 		params = url.Values{}
 	)
-	s.outpost = false
 	dir = r.FormValue("dir")
 	ident, _ = strconv.Atoi(r.FormValue("id"))
 	params.Set("dir", dir)
@@ -173,8 +172,9 @@ func (s *Server) servePostSendMessage(w http.ResponseWriter, r *http.Request) {
 		msg    *message.DraftMessage
 		manual bool
 		err    error
+
+		confirmReady bool
 	)
-	s.outpost = false
 	dir, tag = r.FormValue("dir"), r.FormValue("tag")
 	ident, _ = strconv.Atoi(r.FormValue("id"))
 	if mt = message.FindCreateTag(tag); mt == nil {
@@ -203,7 +203,16 @@ func (s *Server) servePostSendMessage(w http.ResponseWriter, r *http.Request) {
 			}
 			msg.SetBulletin(true)
 		}
-		msg.SetReadyToSend(true)
+		if bareAddressWarning(nil, msg.To()) != "" {
+			// Don't mark it ready yet: have the main window ask
+			// whether to send it to a mailbox with no @BBS (see
+			// bareAddressWarning).  The confirm-ready action asks
+			// for the Ready-to-Send flag, which reports the
+			// problem and offers to send it anyway.
+			confirmReady = true
+		} else {
+			msg.SetReadyToSend(true)
+		}
 	}
 	// Update the incident and save the message.
 	if err = incident.Write(dir, func(i *incident.Incident) (err error) {
@@ -213,7 +222,9 @@ func (s *Server) servePostSendMessage(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
-	if manual && msg.ReadyToSend() {
+	if confirmReady {
+		w.Header().Set("X-Packet-Action", fmt.Sprintf("confirm-ready:%d", ident))
+	} else if manual && msg.ReadyToSend() {
 		w.Header().Set("X-Packet-Action", fmt.Sprintf("manual-send:%d", ident))
 	} else {
 		w.Header().Set("X-Packet-Action", fmt.Sprintf("select:%d", ident))
@@ -246,7 +257,6 @@ func (s *Server) serveGetViewMessage(w http.ResponseWriter, r *http.Request) {
 		dpdf  string
 		err   error
 	)
-	s.outpost = false
 	if maybeShowREADME(w, r) {
 		return
 	}
@@ -309,7 +319,6 @@ func (s *Server) serveGetViewEncoded(w http.ResponseWriter, r *http.Request) {
 		err      error
 		vars     = map[string]string{}
 	)
-	s.outpost = false
 	if maybeShowREADME(w, r) {
 		return
 	}
@@ -362,7 +371,6 @@ func (s *Server) servePostPrintMessage(w http.ResponseWriter, r *http.Request) {
 		cmd   *exec.Cmd
 		err   error
 	)
-	s.outpost = false
 	dir = r.FormValue("dir")
 	ident, _ = strconv.Atoi(r.FormValue("id"))
 	err = incident.Read(dir, func(i *incident.Incident) (err error) {
@@ -417,7 +425,6 @@ func (s *Server) servePostPrintMessage(w http.ResponseWriter, r *http.Request) {
 func (s *Server) servePostNewMessageFrom(w http.ResponseWriter, r *http.Request) {
 	var action = r.FormValue("action")
 
-	s.outpost = false
 	s.serveMessage(w, r, true, func(i *incident.Incident, le *incident.LogEntry, msg message.Message) error {
 		var dr *message.DraftMessage
 
@@ -445,7 +452,23 @@ func (s *Server) servePostNewMessageFrom(w http.ResponseWriter, r *http.Request)
 				}
 			}
 		case "copy":
+			// The copy is a new outgoing message: it gets a new
+			// message number (when AddDraftMessage adds it), the
+			// incident's defaults for what isn't copied (the To
+			// address, which a copy is usually sent to someone
+			// else, and the operator fields), and today's date and
+			// time.  Everything else comes from the source message.
+			i.ApplyDefaults(dr)
 			message.CopyFields(msg, dr)
+			now := time.Now()
+			for f := range dr.Fields() {
+				switch f.Common() {
+				case field.CMessageDate, field.CFormDate:
+					f.SetValue(dr, now.Format("01/02/2006"))
+				case field.CMessageTime:
+					f.SetValue(dr, now.Format("15:04"))
+				}
+			}
 		case "reply":
 			if _, ok := msg.(*message.ReceivedMessage); !ok {
 				return errors.New(`The "Reply" action can only be used with a received message.`)
@@ -465,7 +488,6 @@ func (s *Server) servePostNewMessageFrom(w http.ResponseWriter, r *http.Request)
 }
 
 func (s *Server) servePostDeleteMessage(w http.ResponseWriter, r *http.Request) {
-	s.outpost = false
 	s.serveLogIdent(w, r, true, func(i *incident.Incident, le *incident.LogEntry) error {
 		return i.DeleteMessage(le)
 	}, nil)
