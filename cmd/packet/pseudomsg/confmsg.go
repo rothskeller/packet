@@ -117,7 +117,7 @@ func (cm *ConfigMessage) Fields() iter.Seq[field.Field] {
 				SetValueFunc(func(m message.Message, s string) {
 					m.(*ConfigMessage).startstr = s
 					if t, err := time.ParseInLocation("01/02/2006 15:04", s, time.Local); err == nil {
-						m.(*ConfigMessage).Config.OpStart = t
+						m.(*ConfigMessage).Config.OpStart.Time = t
 					}
 				}).
 				ValidateFunc(func(m message.Message, f field.Field, vf message.ValidateFlags) error {
@@ -154,7 +154,7 @@ func (cm *ConfigMessage) Fields() iter.Seq[field.Field] {
 				SetValueFunc(func(m message.Message, s string) {
 					m.(*ConfigMessage).endstr = s
 					if t, err := time.ParseInLocation("01/02/2006 15:04", s, time.Local); err == nil {
-						m.(*ConfigMessage).Config.OpEnd = t
+						m.(*ConfigMessage).Config.OpEnd.Time = t
 					}
 				}).
 				ValidateFunc(func(m message.Message, f field.Field, vf message.ValidateFlags) error {

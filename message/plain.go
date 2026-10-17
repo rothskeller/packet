@@ -96,8 +96,8 @@ func (mt plainMessage) EditHTML(msg Message, vars EditHTMLVars) (out []byte, err
 		values   = make(url.Values)
 	)
 	// Read and parse the HTML for the form.
-	if formHTML, err = html.Parse(bytes.NewReader(plainHTML)); err != nil {
-		slog.Error("html.Parse", "err", err)
+	if formHTML, err = htmlop.Parse(bytes.NewReader(plainHTML)); err != nil {
+		slog.Error("htmlop.Parse", "err", err)
 		return nil, err
 	}
 	fields["submit-url"] = vars.SubmitURL

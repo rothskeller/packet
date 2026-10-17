@@ -153,10 +153,10 @@ func (s *Server) servePostIncidentConfig(w http.ResponseWriter, r *http.Request)
 		c.IncidentName = r.FormValue("incname")
 		c.ActivationNum = r.FormValue("actnum")
 		if r.FormValue("opstartdate") == "" {
-			c.OpStart, c.OpEnd = time.Time{}, time.Time{}
+			c.OpStart, c.OpEnd = incident.OpTime{}, incident.OpTime{}
 		} else {
-			c.OpStart, _ = time.ParseInLocation("01/02/2006 15:04", r.FormValue("opstartdate")+" "+r.FormValue("opstarttime"), time.Local)
-			c.OpEnd, _ = time.ParseInLocation("01/02/2006 15:04", r.FormValue("openddate")+" "+r.FormValue("opendtime"), time.Local)
+			c.OpStart.Time, _ = time.ParseInLocation("01/02/2006 15:04", r.FormValue("opstartdate")+" "+r.FormValue("opstarttime"), time.Local)
+			c.OpEnd.Time, _ = time.ParseInLocation("01/02/2006 15:04", r.FormValue("openddate")+" "+r.FormValue("opendtime"), time.Local)
 		}
 		c.OpCall = r.FormValue("opcall")
 		c.OpName = r.FormValue("opname")

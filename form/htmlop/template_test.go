@@ -100,7 +100,7 @@ var expandTests = []struct {
 
 func TestExpand(t *testing.T) {
 	for _, tt := range expandTests {
-		input, err := html.Parse(strings.NewReader(tt.input))
+		input, err := Parse(strings.NewReader(tt.input))
 		if err != nil {
 			t.Fatal(err)
 		}
