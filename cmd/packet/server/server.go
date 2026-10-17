@@ -401,6 +401,7 @@ func (s *Server) registerHandlers() {
 	s.mux.HandleFunc("POST /connect-bbs", s.gui(s.servePostConnectBBS))
 	s.mux.HandleFunc("POST /connect-abort", s.gui(s.servePostConnectAbort))
 	s.mux.HandleFunc("GET /connect-progress", s.gui(s.serveGetConnectProgress))
+	s.mux.HandleFunc("GET /link-monitor/lines", s.gui(s.serveGetLinkMonitorLines))
 	s.mux.HandleFunc("POST /set-view-flag", s.gui(s.servePostSetViewFlag))
 	s.mux.HandleFunc("GET /{$}", func(w http.ResponseWriter, r *http.Request) {
 		http.Redirect(w, r, "/incident-open", http.StatusSeeOther)

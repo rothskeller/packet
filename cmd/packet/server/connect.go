@@ -14,7 +14,8 @@ import (
 
 // A bbsConnection is the server's record of a BBS exchange, and the watcher
 // for it.  All of its fields (other than dir and cancel, which never change)
-// are guarded by bbsConnectionsMutex.
+// are guarded by bbsConnectionsMutex.  Lock order: bbsConnectionsMutex may be
+// held while taking linkMonitorsMutex, never the reverse.
 type bbsConnection struct {
 	dir              string
 	ProgMsg          string `json:"progress"`
@@ -49,9 +50,10 @@ func (s *Server) servePostConnectBBS(w http.ResponseWriter, r *http.Request) {
 	// Any finished connection still recorded here is one whose error was
 	// never fetched by a poller.  The user is starting a new connection,
 	// which supersedes it, so its error is dropped.  (It was also written
-	// to the log file when it happened.)
+	// to the Link Monitor, and the log file, when it happened.)
 	ctx, cancel := context.WithCancel(context.Background())
 	conn := &bbsConnection{dir: dir, cancel: cancel, done: make(chan struct{})}
+	addMonitorLine(dir, monitorSeparator())
 	bbsConnections[dir] = conn
 	bbsConnectionsMutex.Unlock()
 	go incident.BBSExchange(ctx, dir, r.FormValue("immOnly") != "", conn)
@@ -134,6 +136,7 @@ func (c *bbsConnection) wake() {
 }
 
 func (c *bbsConnection) Progress(msg string) {
+	addMonitorLine(c.dir, "*** "+time.Now().Format("15:04:05")+" "+msg)
 	bbsConnectionsMutex.Lock()
 	defer bbsConnectionsMutex.Unlock()
 	c.ProgMsg = msg
@@ -144,6 +147,7 @@ func (c *bbsConnection) Progress(msg string) {
 func (c *bbsConnection) LogEntry(*incident.LogEntry) {}
 
 func (c *bbsConnection) Error(msg string) {
+	addMonitorLine(c.dir, "*** "+time.Now().Format("15:04:05")+" ERROR: "+msg)
 	bbsConnectionsMutex.Lock()
 	defer bbsConnectionsMutex.Unlock()
 	if c.ErrMsg == "" {

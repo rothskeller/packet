@@ -51,6 +51,9 @@ func addTestConnection(t *testing.T, dir string) *bbsConnection {
 		bbsConnectionsMutex.Lock()
 		delete(bbsConnections, dir)
 		bbsConnectionsMutex.Unlock()
+		linkMonitorsMutex.Lock()
+		delete(linkMonitors, dir)
+		linkMonitorsMutex.Unlock()
 	})
 	return c
 }
@@ -149,6 +152,9 @@ func TestConnectAfterUnfetchedError(t *testing.T) {
 		bbsConnectionsMutex.Lock()
 		delete(bbsConnections, dir)
 		bbsConnectionsMutex.Unlock()
+		linkMonitorsMutex.Lock()
+		delete(linkMonitors, dir)
+		linkMonitorsMutex.Unlock()
 	})
 	post := func() {
 		r := httptest.NewRequest(http.MethodPost, "/connect-bbs?"+url.Values{"dir": {dir}}.Encode(), nil)
@@ -184,6 +190,60 @@ func TestConnectAfterUnfetchedError(t *testing.T) {
 	bbsConnectionsMutex.Unlock()
 	if cur != nil {
 		t.Errorf("after delivering error, entry is %v, want nil", cur)
+	}
+}
+
+func TestLinkMonitorUnknownDir(t *testing.T) {
+	s := newTestServer()
+	dir := "/test/no-such-monitor"
+	t.Cleanup(func() {
+		linkMonitorsMutex.Lock()
+		delete(linkMonitors, dir)
+		linkMonitorsMutex.Unlock()
+	})
+	get := func(ctx context.Context) *httptest.ResponseRecorder {
+		r := httptest.NewRequestWithContext(ctx, http.MethodGet, "/link-monitor/lines?"+url.Values{"dir": {dir}, "seq": {"0"}}.Encode(), nil)
+		w := httptest.NewRecorder()
+		s.serveGetLinkMonitorLines(w, r)
+		return w
+	}
+	// A request for an unknown dir waits, and doesn't create an entry.
+	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Millisecond)
+	get(ctx)
+	cancel()
+	linkMonitorsMutex.Lock()
+	_, exists := linkMonitors[dir]
+	linkMonitorsMutex.Unlock()
+	if exists {
+		t.Fatal("GET /link-monitor/lines created a monitor for an unknown dir")
+	}
+	// A waiting request is woken when the monitor is created.
+	ctx, cancel = context.WithTimeout(context.Background(), testTimeout)
+	defer cancel()
+	result := make(chan *httptest.ResponseRecorder, 1)
+	go func() { result <- get(ctx) }()
+	time.Sleep(20 * time.Millisecond)
+	addMonitorLine("/test/some-other-dir", "unrelated") // wakes, rechecks, waits again
+	addMonitorLine(dir, "hello")
+	t.Cleanup(func() {
+		linkMonitorsMutex.Lock()
+		delete(linkMonitors, "/test/some-other-dir")
+		linkMonitorsMutex.Unlock()
+	})
+	select {
+	case w := <-result:
+		var resp struct {
+			Seq   int      `json:"seq"`
+			Lines []string `json:"lines"`
+		}
+		if err := json.Unmarshal(w.Body.Bytes(), &resp); err != nil {
+			t.Fatalf("response %q: %s", w.Body.String(), err)
+		}
+		if resp.Seq != 1 || len(resp.Lines) != 1 || resp.Lines[0] != "hello" {
+			t.Errorf("response %+v", resp)
+		}
+	case <-time.After(testTimeout):
+		t.Fatal("waiting request not woken when the monitor was created")
 	}
 }
 
