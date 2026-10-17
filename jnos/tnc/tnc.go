@@ -2,6 +2,7 @@ package tnc
 
 import (
 	"encoding/json/v2"
+	"errors"
 	"log/slog"
 	"maps"
 	"os"
@@ -66,9 +67,42 @@ func fetchOne(path string) {
 		slog.Warn("os.ReadFile", "f", path, "err", err)
 	} else if err = json.Unmarshal(by, &t, json.MatchCaseInsensitiveNames(true), json.RejectUnknownMembers(true)); err != nil {
 		slog.Warn("json.Unmarshal", "f", path, "err", err)
+	} else if err = t.Validate(); err != nil {
+		slog.Warn("invalid TNC definition", "f", path, "err", err)
 	} else {
 		tncs[t.Name] = &t
 	}
+}
+
+// Validate returns an error if the TNC definition is not usable: if any of
+// the strings needed to interact with the TNC is empty (or only white
+// space), or if a timeout is
+// negative.  (A zero timeout means "use the default".)  An empty prompt or
+// message string would match immediately or never, depending on how it is
+// used, so it is never valid.
+func (t *TNC) Validate() error {
+	if t == nil {
+		return errors.New("no TNC definition")
+	}
+	for _, f := range []struct{ name, value string }{
+		{"Name", t.Name},
+		{"CommandPrompt", t.CommandPrompt},
+		{"ConnectedMessage", t.ConnectedMessage},
+		{"DisconnectedMessage", t.DisconnectedMessage},
+		{"MyCallCommand", t.MyCallCommand},
+		{"ConnectCommand", t.ConnectCommand},
+	} {
+		if strings.TrimSpace(f.value) == "" {
+			return errors.New(f.name + " is missing or blank")
+		}
+	}
+	if t.EchoTimeout < 0 {
+		return errors.New("EchoTimeout is negative")
+	}
+	if t.ReplyTimeout < 0 {
+		return errors.New("ReplyTimeout is negative")
+	}
+	return nil
 }
 
 // AllTNCs returns an alphabetical list of the names of all supported TNCs.
