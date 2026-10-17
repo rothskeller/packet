@@ -84,18 +84,20 @@ var devices = map[string]*Device{
 	// still wait out Turnaround after the BBS's frames, so we don't
 	// transmit over it.
 	//
-	// The other settings suit a slow, lossy path to W3XSC: one frame at a
-	// time (so a lost frame doesn't take the next one with it), and
-	// patient: T1 starts at 15 seconds, then adapts to the measured answer
-	// time (but no lower than 8 seconds), backing off for each retry, up to
-	// 30 seconds; 6 retries cover about 3 minutes of silence from the BBS.
+	// The other settings suit W3XSC, which answers in about 3 seconds:
+	// two frames per turn (each turn costs the BBS's answer time plus the
+	// turnaround hold, about 5 seconds, so sending two halves the turns a
+	// long message takes; a lost frame costs a resend of it and the one
+	// after it), and T1 starting at 10 seconds, then adapting to the
+	// measured answer time (but no lower than 6 seconds), backing off for
+	// each retry; 6 retries cover over 2 minutes of silence from the BBS.
 	"Kenwood TH-D75": {
 		Name:         "Kenwood TH-D75",
 		KenwoodReset: true,
 		PacLen:       128,
-		MaxFrame:     1,
-		Frack:        8 * time.Second,
-		InitialFrack: 15 * time.Second,
+		MaxFrame:     2,
+		Frack:        6 * time.Second,
+		InitialFrack: 10 * time.Second,
 		Retry:        6,
 		RespTime:     500 * time.Millisecond,
 		Turnaround:   2 * time.Second,
