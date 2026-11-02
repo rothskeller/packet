@@ -29,10 +29,7 @@ type expandState struct {
 //
 // In an element tag, if an attribute setting contains a variable reference,
 // and the attribute's value is empty after variable expansion, the attribute
-// setting is removed.  Otherwise, any preceding settings of the attribute in
-// the same element tag are removed.  This means an element tag like
-// `<div attr="foo" attr="{{bar}}">` will give `attr` the value of `bar` if it
-// is set, and the static value "foo" otherwise.
+// setting is removed.
 //
 // The `{{variable++}}` construct, used when the variable's value is an
 // integer, increments the variable's value after expansion.
@@ -147,15 +144,8 @@ func (state *expandState) expandAttributes(node *html.Node, emptyBools bool) {
 		if variableRE.MatchString(node.Attr[i].Val) {
 			if node.Attr[i].Val = state.expandVariables(node.Attr[i].Val); node.Attr[i].Val == "" {
 				node.Attr[i].Key = "" // removes attribute later
-			} else {
-				for prev := range i {
-					if node.Attr[prev].Key == node.Attr[i].Key {
-						node.Attr[prev].Key = ""
-					}
-				}
-				if emptyBools && booleanAttributes.Has(strings.ToLower(node.Attr[i].Key)) {
-					node.Attr[i].Val = "" // Boolean attributes should have empty values
-				}
+			} else if emptyBools && booleanAttributes.Has(strings.ToLower(node.Attr[i].Key)) {
+				node.Attr[i].Val = "" // Boolean attributes should have empty values
 			}
 		}
 	}
