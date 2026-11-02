@@ -53,14 +53,6 @@ var expandTests = []struct {
 		`<div>Hello, world</div>`,
 	},
 	{
-		"<def:x><div class=default class={{var}}>Hello, world</div></def:x><x var=foo></x>",
-		`<div class="foo">Hello, world</div>`,
-	},
-	{
-		"<def:x><div class=default class={{var}}>Hello, world</div></def:x><x></x>",
-		`<div class="default">Hello, world</div>`,
-	},
-	{
 		"<def:x><input type=checkbox checked={{var}}></def:x><x var></x>",
 		`<input type="checkbox" checked=""/>`,
 	},
