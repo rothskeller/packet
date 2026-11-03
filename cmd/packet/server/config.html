@@ -193,6 +193,26 @@
       }
       addEmptyArea()
     }
+    function setupPortPicker(input) {
+      function restore() {
+        if (!input.value && input.dataset.prev) setValue(input, input.dataset.prev)
+        delete input.dataset.prev
+        input.placeholder = ''
+      }
+      input.addEventListener('focus', () => {
+        if (!input.value) return
+        input.dataset.prev = input.value
+        input.placeholder = input.value
+        input.value = '' // allow datalist to show all possible values
+      })
+      input.addEventListener('blur', () => {
+        restore()
+        checkFormValidity()
+      })
+      input.addEventListener('keydown', evt => {
+        if (evt.key === 'Enter') restore()
+      })
+    }
     function checkFormValidity() {
       const valid = form.checkValidity()
       document.getElementById('save').disabled = !valid
@@ -307,6 +327,8 @@
       if (af = document.querySelector('[autofocus]')) showHelp(af)
       setRequiredIf()
       setupBulletinAreas()
+      setupPortPicker(document.getElementById('serport'))
+      setupPortPicker(document.getElementById('kissport'))
       showConnTypeSettings()
       checkFormValidity()
     })
