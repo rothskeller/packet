@@ -37,6 +37,8 @@ type TNC struct {
 	MyCallCommand string
 	// ConnectCommand is the command to establish a connection.
 	ConnectCommand string
+	// DisconnectCommand is the command to disconnect a connection.
+	DisconnectCommand string
 	// EchoTimeout is the number of milliseconds to wait for the TNC to echo
 	// data sent to it.
 	EchoTimeout int
@@ -71,6 +73,11 @@ func fetchOne(path string) {
 	} else if err = t.Validate(); err != nil {
 		slog.Warn("invalid TNC definition", "f", path, "err", err)
 	} else {
+		if t.DisconnectCommand == "" {
+			// DisconnectCommand was added after initial release, so
+			// there may be configs where it isn't set.
+			t.DisconnectCommand = "D"
+		}
 		tncs[t.Name] = &t
 	}
 }
@@ -83,6 +90,7 @@ func (t *TNC) Validate() error {
 		{"DisconnectedMessage", t.DisconnectedMessage},
 		{"MyCallCommand", t.MyCallCommand},
 		{"ConnectCommand", t.ConnectCommand},
+		{"DisconnectCommand", t.DisconnectCommand},
 	} {
 		if strings.TrimSpace(f.value) == "" {
 			return fmt.Errorf("%s is missing or blank", f.name)

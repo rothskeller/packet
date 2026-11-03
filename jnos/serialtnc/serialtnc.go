@@ -218,7 +218,7 @@ func (t *Transport) setupTNC(mailbox string) (err error) {
 	}
 	if tries != 0 {
 		slog.Warn("TNC was not in command mode; disconnecting any stale connection")
-		if err = t.send("D"); err != nil { // TODO: this command should be part of the TNC settings
+		if err = t.send(t.tnc.DisconnectCommand); err != nil {
 			return err
 		}
 		// If the TNC was connected, it reports the disconnect once it's
@@ -621,7 +621,7 @@ func (t *Transport) Close() (err error) {
 		// we get the *** DISCONNECTED message.
 		if !t.connected {
 			// we got it while getting back to command mode
-		} else if err2 := t.send("D"); err2 == jnos.ErrDisconnected {
+		} else if err2 := t.send(t.tnc.DisconnectCommand); err2 == jnos.ErrDisconnected {
 			// We got it while sending D.
 		} else if err2 != nil {
 			slog.Error("can't disconnect", "err", err2)
@@ -642,7 +642,7 @@ func (t *Transport) Close() (err error) {
 		t.connecting = false
 		if err2 := t.sendRaw([]byte{3}); err2 == nil {
 			t.readUntil(t.tnc.CommandPrompt, t.replyTimeout) // may or may not get a prompt
-			if err2 = t.send("D"); err2 != nil {
+			if err2 = t.send(t.tnc.DisconnectCommand); err2 != nil {
 				slog.Error("cleanup: can't cancel connection", "err", err2)
 			}
 		}
