@@ -2,6 +2,8 @@ package tnc
 
 import (
 	"encoding/json/v2"
+	"errors"
+	"fmt"
 	"log/slog"
 	"maps"
 	"os"
@@ -66,9 +68,33 @@ func fetchOne(path string) {
 		slog.Warn("os.ReadFile", "f", path, "err", err)
 	} else if err = json.Unmarshal(by, &t, json.MatchCaseInsensitiveNames(true), json.RejectUnknownMembers(true)); err != nil {
 		slog.Warn("json.Unmarshal", "f", path, "err", err)
+	} else if err = t.Validate(); err != nil {
+		slog.Warn("invalid TNC definition", "f", path, "err", err)
 	} else {
 		tncs[t.Name] = &t
 	}
+}
+
+func (t *TNC) Validate() error {
+	for _, f := range []struct{ name, value string }{
+		{"Name", t.Name},
+		{"CommandPrompt", t.CommandPrompt},
+		{"ConnectedMessage", t.ConnectedMessage},
+		{"DisconnectedMessage", t.DisconnectedMessage},
+		{"MyCallCommand", t.MyCallCommand},
+		{"ConnectCommand", t.ConnectCommand},
+	} {
+		if strings.TrimSpace(f.value) == "" {
+			return fmt.Errorf("%s is missing or blank", f.name)
+		}
+	}
+	if t.EchoTimeout < 0 {
+		return errors.New("EchoTimeout is negative")
+	}
+	if t.ReplyTimeout < 0 {
+		return errors.New("ReplyTimeout is negative")
+	}
+	return nil
 }
 
 // AllTNCs returns an alphabetical list of the names of all supported TNCs.
