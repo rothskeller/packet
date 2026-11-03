@@ -438,6 +438,7 @@ func (s *Server) servePostNewMessageFrom(w http.ResponseWriter, r *http.Request)
 				}
 			}
 		case "copy":
+			i.ApplyDefaults(dr)
 			message.CopyFields(msg, dr)
 		case "reply":
 			if _, ok := msg.(*message.ReceivedMessage); !ok {
