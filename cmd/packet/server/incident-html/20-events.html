@@ -310,6 +310,11 @@
           else openErrorDialog('Connect Error', await resp.text())
         }
       })
+      // Connect: Link Monitor
+      setupMenuItem({
+        id: 'm-conn-monitor',
+        clicked: (sel, item) => { showLinkMonitor(item.checked()) }
+      })
       // Connect: Abort Connection
       setupMenuItem({
         id: 'm-conn-abort',

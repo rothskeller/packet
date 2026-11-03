@@ -48,6 +48,7 @@ func (s *Server) servePostConnectBBS(w http.ResponseWriter, r *http.Request) {
 	// which supersedes it, so its error is dropped.
 	ctx, cancel := context.WithCancel(context.Background())
 	conn := &bbsConnection{dir: dir, cancel: cancel, done: make(chan struct{})}
+	addMonitorLine(dir, monitorSeparator())
 	bbsConnections[dir] = conn
 	bbsConnectionsMutex.Unlock()
 	go incident.BBSExchange(ctx, dir, r.FormValue("immOnly") != "", conn)
@@ -126,6 +127,7 @@ func (c *bbsConnection) wake() {
 }
 
 func (c *bbsConnection) Progress(msg string) {
+	addMonitorLine(c.dir, "*** "+time.Now().Format("15:04:05")+" "+msg)
 	bbsConnectionsMutex.Lock()
 	defer bbsConnectionsMutex.Unlock()
 	c.ProgMsg = msg
@@ -136,6 +138,7 @@ func (c *bbsConnection) Progress(msg string) {
 func (c *bbsConnection) LogEntry(*incident.LogEntry) {}
 
 func (c *bbsConnection) Error(msg string) {
+	addMonitorLine(c.dir, "*** "+time.Now().Format("15:04:05")+" ERROR: "+msg)
 	bbsConnectionsMutex.Lock()
 	defer bbsConnectionsMutex.Unlock()
 	if c.ErrMsg == "" {

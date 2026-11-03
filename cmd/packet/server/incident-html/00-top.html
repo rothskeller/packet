@@ -65,8 +65,17 @@
     body {
       margin: 0;
       display: grid;
-      grid: max-content max-content 1fr max-content max-content / auto;
+      grid: max-content max-content 1fr max-content max-content / minmax(0, 1fr);
       height: 100vh;
+    }
+
+    body>* {
+      grid-column: 1;
+    }
+
+    body>#topbar,
+    body>menu-bar {
+      grid-column: 1 / -1;
     }
 
     #topbar {
