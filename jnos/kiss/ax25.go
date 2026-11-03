@@ -94,9 +94,13 @@ type frame struct {
 	dest, src address
 	// command is true for command frames and false for response frames.
 	command bool
-	// digis is true if the frame has a digipeater path.
+	// digis is true if the frame has a digipeater path, and via lists it
+	// (in monitor style: "N6XYZ-2*" for a digipeater that has repeated
+	// the frame).
 	digis   bool
+	via     []string
 	control byte
+	pid     byte // protocol ID, for frames with an information field
 	info    []byte
 }
 
@@ -109,6 +113,49 @@ func (f *frame) pf() bool      { return f.control&pfBit != 0 }
 func (f *frame) sType() byte   { return f.control & 0x0F }
 func (f *frame) uType() byte   { return f.control &^ pfBit }
 func (f *frame) hasInfo() bool { return f.isI() || f.isUI() }
+
+// String describes the frame in the style of a packet monitor, e.g.
+// "KO6NVY>W3XSC-1 <I C P R1 S0>".
+func (f *frame) String() string {
+	var sb strings.Builder
+
+	fmt.Fprintf(&sb, "%s>%s", f.src, f.dest)
+	for _, digi := range f.via {
+		sb.WriteString("," + digi)
+	}
+	sb.WriteString(" <")
+	switch {
+	case f.isI():
+		sb.WriteString("I")
+	case f.isS():
+		sb.WriteString(map[byte]string{ctlRR: "RR", ctlRNR: "RNR", ctlREJ: "REJ"}[f.sType()])
+	default:
+		name, ok := map[byte]string{ctlSABM: "SABM", ctlDISC: "DISC", ctlDM: "DM", ctlUA: "UA", ctlFRMR: "FRMR", ctlUI: "UI"}[f.uType()]
+		if !ok {
+			name = fmt.Sprintf("U%02X", f.uType())
+		}
+		sb.WriteString(name)
+	}
+	if f.command {
+		sb.WriteString(" C")
+		if f.pf() {
+			sb.WriteString(" P")
+		}
+	} else {
+		sb.WriteString(" R")
+		if f.pf() {
+			sb.WriteString(" F")
+		}
+	}
+	if f.isI() || f.isS() {
+		fmt.Fprintf(&sb, " R%d", f.nr())
+	}
+	if f.isI() {
+		fmt.Fprintf(&sb, " S%d", f.ns())
+	}
+	sb.WriteString(">")
+	return sb.String()
+}
 
 // encode returns the encoded frame (without any FCS, which the TNC adds).
 func (f *frame) encode() []byte {
@@ -140,8 +187,17 @@ func decodeFrame(b []byte) (f *frame, err error) {
 		if len(b) < 8 {
 			return nil, errBadFrame
 		}
+		var (
+			digi     address
+			repeated bool
+		)
 		f.digis = true
-		_, _, last = decodeAddress(b[0:7])
+		digi, repeated, last = decodeAddress(b[0:7])
+		if repeated {
+			f.via = append(f.via, digi.String()+"*")
+		} else {
+			f.via = append(f.via, digi.String())
+		}
 		b = b[7:]
 	}
 	// AX.25 2.0 marks commands with the C bit set in the destination
@@ -154,7 +210,7 @@ func decodeFrame(b []byte) (f *frame, err error) {
 		if len(b) < 1 {
 			return nil, errBadFrame
 		}
-		f.info = b[1:] // skip the PID
+		f.pid, f.info = b[0], b[1:]
 	}
 	return f, nil
 }
@@ -167,10 +223,24 @@ const (
 	tfesc = 0xDD
 )
 
+// KISS commands (for TNC port 0).
+const (
+	kissData     = 0x00
+	kissTXDelay  = 0x01
+	kissPersist  = 0x02
+	kissSlotTime = 0x03
+	// kissFullDuplex set to nonzero makes the TNC transmit without waiting
+	// for the channel to be clear (ignoring carrier detect).
+	kissFullDuplex = 0x05
+)
+
 // kissEncode wraps an AX.25 frame in a KISS data frame for TNC port 0.
-func kissEncode(data []byte) []byte {
+func kissEncode(data []byte) []byte { return kissFrame(kissData, data) }
+
+// kissFrame encodes a KISS frame with the specified command and contents.
+func kissFrame(cmd byte, data []byte) []byte {
 	b := make([]byte, 0, len(data)+8)
-	b = append(b, fend, 0x00)
+	b = append(b, fend, cmd)
 	for _, c := range data {
 		switch c {
 		case fend:
@@ -184,10 +254,21 @@ func kissEncode(data []byte) []byte {
 	return append(b, fend)
 }
 
+// maxKISSFrame is the longest KISS frame kissDecoder accepts.  Real AX.25
+// frames are far shorter (about 330 bytes at most); the limit just keeps
+// garbage input without FENDs from growing the buffer without bound.
+const maxKISSFrame = 4096
+
 // A kissDecoder extracts AX.25 frames from a stream of KISS-encoded bytes.
 type kissDecoder struct {
 	buf []byte
 	esc bool
+	// overflow is set when the current frame has grown too long; the
+	// rest of it, up to the next FEND, is discarded.
+	overflow bool
+	// command, if set, is called for each non-data KISS frame.  (TNCs
+	// don't send these; it is used in testing.)
+	command func(cmd byte, data []byte)
 }
 
 // feed processes received bytes, calling emit for each complete data frame.
@@ -197,11 +278,16 @@ func (d *kissDecoder) feed(data []byte, emit func([]byte)) {
 		case c == fend:
 			// The first byte is the KISS command; the low nibble is 0
 			// for data frames.  Anything else (including stray bytes
-			// received before the first FEND) is ignored.
-			if len(d.buf) > 1 && d.buf[0]&0x0F == 0 {
+			// received before the first FEND, and frames that were too
+			// long) is ignored.
+			if d.overflow {
+				// discard it
+			} else if len(d.buf) > 1 && d.buf[0]&0x0F == 0 {
 				emit(append([]byte(nil), d.buf[1:]...))
+			} else if len(d.buf) != 0 && d.command != nil {
+				d.command(d.buf[0], append([]byte(nil), d.buf[1:]...))
 			}
-			d.buf, d.esc = d.buf[:0], false
+			d.buf, d.esc, d.overflow = d.buf[:0], false, false
 		case d.esc:
 			switch c {
 			case tfend:
@@ -209,11 +295,23 @@ func (d *kissDecoder) feed(data []byte, emit func([]byte)) {
 			case tfesc:
 				c = fesc
 			}
-			d.buf, d.esc = append(d.buf, c), false
+			d.esc = false
+			d.add(c)
 		case c == fesc:
 			d.esc = true
 		default:
-			d.buf = append(d.buf, c)
+			d.add(c)
 		}
+	}
+}
+
+// add adds a byte to the frame being decoded, unless the frame is too long.
+func (d *kissDecoder) add(c byte) {
+	switch {
+	case d.overflow:
+	case len(d.buf) >= maxKISSFrame:
+		d.buf, d.overflow = d.buf[:0], true
+	default:
+		d.buf = append(d.buf, c)
 	}
 }
