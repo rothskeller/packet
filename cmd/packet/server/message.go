@@ -43,7 +43,6 @@ func (s *Server) serveGetNewMessage(w http.ResponseWriter, r *http.Request) {
 		params url.Values
 		err    error
 	)
-	s.outpost = false
 	dir, tag = r.FormValue("dir"), r.FormValue("tag")
 	if mt = message.FindCreateTag(tag); mt == nil {
 		slog.Error("no such message tag", "tag", tag)
@@ -83,7 +82,6 @@ func (s *Server) serveGetEditMessage(w http.ResponseWriter, r *http.Request) {
 		err    error
 		params = url.Values{}
 	)
-	s.outpost = false
 	dir = r.FormValue("dir")
 	ident, _ = strconv.Atoi(r.FormValue("id"))
 	params.Set("dir", dir)
@@ -174,7 +172,6 @@ func (s *Server) servePostSendMessage(w http.ResponseWriter, r *http.Request) {
 		manual bool
 		err    error
 	)
-	s.outpost = false
 	dir, tag = r.FormValue("dir"), r.FormValue("tag")
 	ident, _ = strconv.Atoi(r.FormValue("id"))
 	if mt = message.FindCreateTag(tag); mt == nil {
@@ -246,7 +243,6 @@ func (s *Server) serveGetViewMessage(w http.ResponseWriter, r *http.Request) {
 		dpdf  string
 		err   error
 	)
-	s.outpost = false
 	if maybeShowREADME(w, r) {
 		return
 	}
@@ -309,7 +305,6 @@ func (s *Server) serveGetViewEncoded(w http.ResponseWriter, r *http.Request) {
 		err      error
 		vars     = map[string]string{}
 	)
-	s.outpost = false
 	if maybeShowREADME(w, r) {
 		return
 	}
@@ -362,7 +357,6 @@ func (s *Server) servePostPrintMessage(w http.ResponseWriter, r *http.Request) {
 		cmd   *exec.Cmd
 		err   error
 	)
-	s.outpost = false
 	dir = r.FormValue("dir")
 	ident, _ = strconv.Atoi(r.FormValue("id"))
 	err = incident.Read(dir, func(i *incident.Incident) (err error) {
@@ -417,7 +411,6 @@ func (s *Server) servePostPrintMessage(w http.ResponseWriter, r *http.Request) {
 func (s *Server) servePostNewMessageFrom(w http.ResponseWriter, r *http.Request) {
 	var action = r.FormValue("action")
 
-	s.outpost = false
 	s.serveMessage(w, r, true, func(i *incident.Incident, le *incident.LogEntry, msg message.Message) error {
 		var dr *message.DraftMessage
 
@@ -465,7 +458,6 @@ func (s *Server) servePostNewMessageFrom(w http.ResponseWriter, r *http.Request)
 }
 
 func (s *Server) servePostDeleteMessage(w http.ResponseWriter, r *http.Request) {
-	s.outpost = false
 	s.serveLogIdent(w, r, true, func(i *incident.Incident, le *incident.LogEntry) error {
 		return i.DeleteMessage(le)
 	}, nil)

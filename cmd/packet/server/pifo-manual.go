@@ -26,7 +26,6 @@ func (s *Server) servePostManualReceive(w http.ResponseWriter, r *http.Request) 
 		msg    *message.JustReceivedMessage
 		err    error
 	)
-	s.outpost = false
 	// Check parameters.
 	makedr = r.FormValue("mrdr") != ""
 	mtext = strings.ReplaceAll(r.FormValue("mrmsg"), "\r\n", "\n")
@@ -77,7 +76,6 @@ func (s *Server) serveGetManualSendCommand(w http.ResponseWriter, r *http.Reques
 		nl    []byte
 		err   error
 	)
-	s.outpost = false
 	// Get the message from the incident and make sure it's proper.
 	dir = r.FormValue("dir")
 	if id, err = strconv.Atoi(r.FormValue("id")); err != nil || id <= 0 {
@@ -168,7 +166,6 @@ func (s *Server) servePostMarkSent(w http.ResponseWriter, r *http.Request) {
 		msg message.Message
 		err error
 	)
-	s.outpost = false
 	// Get the message from the incident and make sure it's proper.
 	dir = r.FormValue("dir")
 	if id, err = strconv.Atoi(r.FormValue("id")); err != nil || id <= 0 {
@@ -205,7 +202,6 @@ func (s *Server) servePostMakeReceipt(w http.ResponseWriter, r *http.Request) {
 		drle *incident.LogEntry
 		err  error
 	)
-	s.outpost = false
 	// Get the message from the incident and make sure it's proper.
 	dir = r.FormValue("dir")
 	if id, err = strconv.Atoi(r.FormValue("id")); err != nil || id <= 0 {

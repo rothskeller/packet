@@ -31,7 +31,6 @@ func (s *Server) serveIncidentOpen(w http.ResponseWriter, r *http.Request) {
 		vars    = make(map[string]string)
 		dir     = r.FormValue("dir")
 	)
-	s.outpost = false
 	if maybeShowREADME(w, r) {
 		return
 	}

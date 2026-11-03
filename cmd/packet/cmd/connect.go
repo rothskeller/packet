@@ -4,6 +4,7 @@ import (
 	"context"
 	"os"
 	"os/signal"
+	"sync"
 
 	"github.com/rothskeller/packet/v4/cmd/packet/cio"
 	"github.com/rothskeller/packet/v4/errors"
@@ -98,6 +99,7 @@ LOOP:
 type connectUpdates struct {
 	c        *cio.CIO
 	finished chan struct{}
+	once     sync.Once
 	log      []*incident.LogEntry
 	err      string
 }
@@ -114,8 +116,10 @@ func (cu *connectUpdates) Error(e string) {
 }
 
 func (cu *connectUpdates) Finished() {
-	cu.c.Status("")
-	close(cu.finished)
+	cu.once.Do(func() {
+		cu.c.Status("")
+		close(cu.finished)
+	})
 }
 
 // drainSigInt stops trapping interrupt signals, drains the signal channel
