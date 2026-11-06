@@ -363,6 +363,9 @@ func readStateFile(fname string) (inc *Incident, err error) {
 	if inc.Config == nil {
 		inc.Config = new(Config)
 	}
+	if inc.Config.ConnectType == "serial+tnc" {
+		inc.Config.ConnectType = ConnectSerialTNC // fix legacy bug
+	}
 	return inc, nil
 }
 

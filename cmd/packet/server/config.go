@@ -67,7 +67,7 @@ func (s *Server) serveGetIncidentConfig(w http.ResponseWriter, r *http.Request) 
 			form.Set("bbscall", inc.Config.ConnectBBS)
 			variables["nosaved"] = "true"
 		case incident.ConnectSerialTNC:
-			form.Set("conntype", "serial+tnc")
+			form.Set("conntype", "serial-tnc")
 			form.Set("bbsaddr", inc.Config.ConnectAddress)
 			variables["nosaved"] = "true"
 		case incident.ConnectTelnet:
@@ -173,7 +173,7 @@ func (s *Server) servePostIncidentConfig(w http.ResponseWriter, r *http.Request)
 			c.ConnectType = incident.ConnectNone
 			c.ConnectBBS = r.FormValue("bbscall")
 			c.NoSendReceipts = r.FormValue("sendrcpts") == ""
-		case "serial+tnc":
+		case "serial-tnc":
 			c.ConnectType = incident.ConnectSerialTNC
 			c.NoSendReceipts = false
 			c.TNCType = r.FormValue("tnctype")

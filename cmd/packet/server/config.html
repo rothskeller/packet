@@ -106,7 +106,7 @@
           telnetRow.remove()
           bulletinsBlock.remove()
           break
-        case 'serial+tnc':
+        case 'serial-tnc':
           manualRow.remove()
           conntypeRow.insertAdjacentElement('afterend', serialTNCRow)
           serialTNCRow.removeAttribute('hidden')
@@ -289,7 +289,7 @@
       bbsCommBlock = document.getElementById('bbscomm')
       conntypeRow = document.getElementById('conntype')
       manualRow = document.getElementById('manual')
-      serialTNCRow = document.getElementById('serial+tnc')
+      serialTNCRow = document.getElementById('serial-tnc')
       telnetRow = document.getElementById('telnet')
       bulletinsBlock = document.getElementById('bulletins')
       helpLabel = document.getElementById('help-label')
@@ -709,7 +709,7 @@
         <div><label>Connection Method:</label></div>
         <div class="radio-group cspan4">
           <label><input type=radio name=conntype value=manual> Manual</label>
-          <label><input type=radio name=conntype value=serial+tnc> Serial+TNC</label>
+          <label><input type=radio name=conntype value=serial-tnc> Serial+TNC</label>
           <label><input type=radio name=conntype value=telnet> Telnet</label>
           <help for=conntype>
             This selects how the packet software will connect to the BBS.
@@ -747,7 +747,7 @@
           </help>
         </div>
       </div>
-      <div id=serial+tnc class="form-grid container cspan5" style="grid-template: repeat(3, auto)/subgrid" hidden>
+      <div id=serial-tnc class="form-grid container cspan5" style="grid-template: repeat(3, auto)/subgrid" hidden>
         <div class="form-grid container subgrid2 border tblr rspan3">
           <div><label>Serial+TNC Settings:</label></div>
         </div>
