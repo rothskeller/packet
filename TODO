@@ -1,8 +1,6 @@
 Allow sorting of log grid columns
 Suggestion: address book
-Problems with incident directory names that have + in them
 Request to allow manual log entry text to span multiple lines
-Submodule for forms should use https address rather than SSH address
 WPP show receipt/scoring time and/or last retrieval time per BBS
 
 Update packet-ex
@@ -10,4 +8,3 @@ Incident archive
 Field comparisons
 CLI edit field honor bracketed escape mode
 Need more reliable way to locate Outpost data directory
-Need an import command to add a message in a text file to an incident (e.g. for WPP).

@@ -72,7 +72,8 @@
   <dialog id=s3dlg>
     <h1>Generate ICS-309 Log</h1>
     <div id=s3err></div>
-    <form id=s3form action="/view-ics309?dir={{DIR}}" method=GET target=_blank>
+    <form id=s3form action="/view-ics309" method=GET target=_blank>
+      <input type=hidden name=dir value={{DIR}}>
       <p>If you want to sign the ICS-309 log, enter your signature here. (If you don't, leave it blank.)</p>
       <p><label for=s3sign>Signature</label> <input id=s3sign name=signature></p>
       <p>
