@@ -151,7 +151,7 @@ func (inc *Incident) UpdateIncDefaults() {
 	if inc.Config.ConnectAddress != "" {
 		idef.ConnectAddress = inc.Config.ConnectAddress
 	}
-	if inc.Config.UsesSerialPort() {
+	if inc.Config.ConnectType == ConnectSerialTNC {
 		if inc.Config.SerialPort != "" {
 			idef.SerialPort = inc.Config.SerialPort
 		}

@@ -19,7 +19,6 @@ import (
 
 	"github.com/rothskeller/packet/v4/errors"
 	"github.com/rothskeller/packet/v4/incident"
-	"github.com/rothskeller/packet/v4/jnos/kiss"
 	"github.com/rothskeller/packet/v4/jnos/tnc"
 	"github.com/rothskeller/packet/v4/message"
 	"github.com/rothskeller/packet/v4/message/address"
@@ -242,11 +241,10 @@ func (cm *ConfigMessage) Fields() iter.Seq[field.Field] {
 				ValueFunc(func(m message.Message) string {
 					return m.(*ConfigMessage).Config.ConnectType
 				}).
-				EditHelp(`This indicates how the software connects to the BBS.  "Serial+TNC" means it talks to a TNC through a serial port and through that, to the BBS over the radio.  "KISS" is similar, but for TNCs that only support "KISS mode."  (Note that KISS mode support is experimental.)  "Telnet" means it connects to JNOS over the Internet.  "Manual" means it does not connect to the BBS at all.`).
+				EditHelp(`This indicates how the software connects to the BBS.  "Serial+TNC" means it talks to a TNC through a serial port and through that, to the BBS over the radio.  "Telnet" means it connects to JNOS over the Internet.  "Manual" means it does not connect to the BBS at all.`).
 				AllowedValues(
 					field.ChoicePair{PIFO: incident.ConnectNone, Human: "Manual"},
 					field.ChoicePair{PIFO: incident.ConnectSerialTNC, Human: "Serial+TNC"},
-					field.ChoicePair{PIFO: incident.ConnectKISS, Human: "KISS TNC"},
 					field.ChoicePair{PIFO: incident.ConnectTelnet, Human: "Telnet"},
 				).
 				SetValueFunc(func(m message.Message, s string) {
@@ -259,7 +257,7 @@ func (cm *ConfigMessage) Fields() iter.Seq[field.Field] {
 				}).
 				EditHelp(`This is the call sign of the BBS in use.  It is required.`).
 				EditableWhen(func(m message.Message, b bool) bool {
-					return !m.(*ConfigMessage).Config.UsesSerialPort()
+					return m.(*ConfigMessage).Config.ConnectType != incident.ConnectSerialTNC
 				}).
 				Required().
 				SetValueFunc(func(m message.Message, s string) {
@@ -295,21 +293,16 @@ func (cm *ConfigMessage) Fields() iter.Seq[field.Field] {
 							list = append(list, field.ChoicePair{PIFO: v, Human: v})
 						}
 					}
-					if m.(*ConfigMessage).Config.ConnectType == incident.ConnectKISS {
-						for _, v := range kiss.AllDevices() {
-							list = append(list, field.ChoicePair{PIFO: v, Human: v})
-						}
-					}
 					return list
 				}).
 				Required().
-				DisallowedUnless(`"Connection Type" is "Serial+TNC" or "KISS TNC"`, func(m message.Message) bool {
-					return m.(*ConfigMessage).Config.UsesSerialPort()
+				DisallowedUnless(`"Connection Type" is "Serial+TNC"`, func(m message.Message) bool {
+					return m.(*ConfigMessage).Config.ConnectType == incident.ConnectSerialTNC
 				}).
 				VisibleWhen(func(m message.Message) bool {
-					return m.(*ConfigMessage).Config.UsesSerialPort()
+					return m.(*ConfigMessage).Config.ConnectType == incident.ConnectSerialTNC
 				}).
-				EditHelp(`This indicates the type of TNC connected to the host computer.  It is required when "Connection Type" is "Serial+TNC" or "KISS TNC".`).
+				EditHelp(`This indicates the type of TNC connected to the host computer.  It is required when "Connection Type" is "Serial+TNC".`).
 				SetValueFunc(func(m message.Message, s string) {
 					m.(*ConfigMessage).Config.TNCType = s
 				}).
@@ -331,11 +324,11 @@ func (cm *ConfigMessage) Fields() iter.Seq[field.Field] {
 					return pairs
 				}).
 				Required().
-				DisallowedUnless(`"Connection Type" is "Serial+TNC" or "KISS TNC"`, func(m message.Message) bool {
-					return m.(*ConfigMessage).Config.UsesSerialPort()
+				DisallowedUnless(`"Connection Type" is "Serial+TNC"`, func(m message.Message) bool {
+					return m.(*ConfigMessage).Config.ConnectType == incident.ConnectSerialTNC
 				}).
 				VisibleWhen(func(m message.Message) bool {
-					return m.(*ConfigMessage).Config.UsesSerialPort()
+					return m.(*ConfigMessage).Config.ConnectType == incident.ConnectSerialTNC
 				}).
 				SetValueFunc(func(m message.Message, s string) {
 					m.(*ConfigMessage).Config.SerialPort = s
@@ -351,14 +344,14 @@ func (cm *ConfigMessage) Fields() iter.Seq[field.Field] {
 					}
 					return nil
 				}).
-				EditHelp(`This is the serial port to which the TNC is connected.  On Windows, this will be "COM#", where # is a number.  On Mac and Linux, this will be a pathname to a character device file in /dev.  It is required when "Connection Type" is "Serial+TNC" or "KISS TNC".`).
+				EditHelp(`This is the serial port to which the TNC is connected.  On Windows, this will be "COM#", where # is a number.  On Mac and Linux, this will be a pathname to a character device file in /dev.  It is required when "Connection Type" is "Serial+TNC".`).
 				MakeField(),
 			field.NewField("", "BBS Address").
 				ValueFunc(func(m message.Message) string {
 					return m.(*ConfigMessage).Config.ConnectAddress
 				}).
 				FromHumanFunc(func(m message.Message, s string) string {
-					if m.(*ConfigMessage).Config.UsesSerialPort() {
+					if m.(*ConfigMessage).Config.ConnectType == incident.ConnectSerialTNC {
 						s = strings.ToUpper(s)
 					}
 					return s
@@ -373,7 +366,7 @@ func (cm *ConfigMessage) Fields() iter.Seq[field.Field] {
 				ValidateFunc(func(m message.Message, f field.Field, vf message.ValidateFlags) error {
 					value := f.Value(m)
 					switch m.(*ConfigMessage).Config.ConnectType {
-					case incident.ConnectSerialTNC, incident.ConnectKISS:
+					case incident.ConnectSerialTNC:
 						if !ax25RE.MatchString(value) {
 							return errors.NewF("%q is not a valid AX.25 address (i.e., FCC call sign followed by a dash and a number between 0 and 15).", value)
 						}
@@ -386,11 +379,11 @@ func (cm *ConfigMessage) Fields() iter.Seq[field.Field] {
 				}).
 				SetValueFunc(func(m message.Message, s string) {
 					m.(*ConfigMessage).Config.ConnectAddress = s
-					if m.(*ConfigMessage).Config.UsesSerialPort() {
+					if m.(*ConfigMessage).Config.ConnectType == incident.ConnectSerialTNC {
 						m.(*ConfigMessage).Config.ConnectBBS, _, _ = strings.Cut(s, "-")
 					}
 				}).
-				EditHelp(`This is the address of the BBS.  For "Connection Type" "Serial+TNC" or "KISS TNC", it must be an AX.25 address (i.e., a call sign followed by a dash an a number from 0 to 15).  For "Connection Type" "Telnet", it must be a hostname:port or IPaddr:port string.  For "Connection Type" "Manual" it must not be set.`).
+				EditHelp(`This is the address of the BBS.  For "Connection Type" "Serial+TNC", it must be an AX.25 address (i.e., a call sign followed by a dash an a number from 0 to 15).  For "Connection Type" "Telnet", it must be a hostname:port or IPaddr:port string.  For "Connection Type" "Manual" it must not be set.`).
 				MakeField(),
 			field.NewField("", "Bulletin Checks").
 				ValueFunc(func(m message.Message) string {

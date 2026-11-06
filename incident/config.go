@@ -72,8 +72,7 @@ type Config struct {
 	// ConnectSerialTNC or ConnectKISS.
 	SerialPort string `json:"serialPort,omitempty"`
 	// TNCType is the type of TNC in use.  Relevant only when ConnectType is
-	// ConnectSerialTNC (where it names a tnc.TNC) or ConnectKISS (where it
-	// names a kiss.Device).
+	// ConnectSerialTNC.
 	TNCType string `json:"tncType,omitempty"`
 	// TelnetUser is the username to use to log in to the BBS.  Relevant
 	// only when ConnectType is ConnectTelnet.
@@ -210,19 +209,10 @@ const (
 	// ConnectSerialTNC is connection to a BBS over the air using a serial
 	// connection to a TNC.
 	ConnectSerialTNC = "serial-tnc"
-	// ConnectKISS is a connection to a BBS over the air using a serial
-	// connection to a TNC in KISS mode.
-	ConnectKISS = "kiss"
 	// ConnectTelnet is connection to a BBS over the Internet using the
 	// Telnet protocol.
 	ConnectTelnet = "telnet"
 )
-
-// UsesSerialPort returns whether the configured connection method talks to a
-// TNC through a serial port.
-func (c *Config) UsesSerialPort() bool {
-	return c.ConnectType == ConnectSerialTNC || c.ConnectType == ConnectKISS
-}
 
 // ActiveCall returns the active call sign in the configuration.
 func (c *Config) ActiveCall() string {

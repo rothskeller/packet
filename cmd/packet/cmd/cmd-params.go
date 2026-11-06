@@ -384,7 +384,7 @@ RETRY:
 		switch i.Config.ConnectType {
 		case incident.ConnectNone:
 			ok = i.Config.ConnectBBS != ""
-		case incident.ConnectSerialTNC, incident.ConnectKISS:
+		case incident.ConnectSerialTNC:
 			ok = i.Config.ConnectAddress != "" && i.Config.SerialPort != "" && i.Config.TNCType != ""
 		case incident.ConnectTelnet:
 			ok = i.Config.ConnectAddress != "" && i.Config.TelnetUser != "" && i.Config.TelnetPassword != ""

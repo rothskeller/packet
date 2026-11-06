@@ -107,7 +107,7 @@ func ConnectToBBS(bbsname, mailbox string) (conn *jnos.Conn) {
 		log.Printf("ERROR: can't connect to %s@%s: connections to %s are disabled", mailbox, bbsname, bbsname)
 		return nil
 	case "kpc3plus":
-		conn, err = serialtnc.Connect(tnc.Get("Kantronics KPC-3 Plus"), "/dev/tty.usbserial-1410", bbs.AX25, mailbox, "KC6RSC", nil)
+		conn, err = serialtnc.Connect(tnc.Get("Kantronics KPC-3 Plus").Robust, "/dev/tty.usbserial-1410", bbs.AX25, mailbox, "KC6RSC", nil)
 	case "telnet":
 		conn, err = telnet.Connect(bbs.TCP, mailbox, bbs.Passwords[mailbox], nil)
 	}

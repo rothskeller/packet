@@ -78,10 +78,10 @@ var errOverflow = errors.New("too much unexpected data received from TNC")
 // that call sign for FCC compliance.  (callsign should be the licensed FCC call
 // sign of the calling user.)  If log is set, all traffic except echo-backs is
 // logged to it.
-func Connect(tnc *tnc.TNC, serialPort, bbsAddress, mailbox, callsign string, log io.Writer) (c *jnos.Conn, err error) {
+func Connect(tnc *tnc.RobustTNC, serialPort, bbsAddress, mailbox, callsign string, log io.Writer) (c *jnos.Conn, err error) {
 	return ConnectContext(context.Background(), tnc, serialPort, bbsAddress, mailbox, callsign, log)
 }
-func ConnectContext(ctx context.Context, tnc *tnc.TNC, serialPort, bbsAddress, mailbox, callsign string, log io.Writer) (c *jnos.Conn, err error) {
+func ConnectContext(ctx context.Context, tnc *tnc.RobustTNC, serialPort, bbsAddress, mailbox, callsign string, log io.Writer) (c *jnos.Conn, err error) {
 	var t *Transport
 
 	if callsign == mailbox {
@@ -118,12 +118,12 @@ func (t *Transport) stopContext() {
 // sign of the calling user.  (For connecting to other mailboxes, see the
 // Connect function.)  If log is set, all traffic except echo-backs is logged to
 // it.
-func Open(tnc *tnc.TNC, serialPort, bbsAddress string, log io.Writer) (t *Transport, err error) {
+func Open(tnc *tnc.RobustTNC, serialPort, bbsAddress string, log io.Writer) (t *Transport, err error) {
 	return open(tnc, serialPort, bbsAddress, "", log)
 }
 
 // open is the common code between Connect and Open.
-func open(tnc *tnc.TNC, serialPort, bbsAddress, mailbox string, log io.Writer, opts ...func(*Transport)) (t *Transport, err error) {
+func open(tnc *tnc.RobustTNC, serialPort, bbsAddress, mailbox string, log io.Writer, opts ...func(*Transport)) (t *Transport, err error) {
 	var sp serial.Port
 
 	if err = tnc.Validate(); err != nil {
@@ -149,7 +149,7 @@ func withReopen(reopen func() (port, error)) func(*Transport) {
 
 // start sets up the TNC attached to the (open) port p, and connects to the BBS.
 // The port is closed if it fails.  opts are applied to the Transport first.
-func start(def *tnc.TNC, p port, bbsAddress, mailbox string, log io.Writer, opts ...func(*Transport)) (t *Transport, err error) {
+func start(def *tnc.RobustTNC, p port, bbsAddress, mailbox string, log io.Writer, opts ...func(*Transport)) (t *Transport, err error) {
 	t = newTransport(def, p, log)
 	for _, opt := range opts {
 		opt(t)
@@ -169,7 +169,7 @@ func start(def *tnc.TNC, p port, bbsAddress, mailbox string, log io.Writer, opts
 
 // newTransport returns a new Transport for the TNC described by def, attached
 // to the port p.
-func newTransport(def *tnc.TNC, p port, log io.Writer) *Transport {
+func newTransport(def *tnc.RobustTNC, p port, log io.Writer) *Transport {
 	t := &Transport{tnc: def, serial: p, log: log, readbuf: make([]byte, 1024)}
 	if def.EchoTimeout > 0 {
 		t.echoTimeout = time.Duration(def.EchoTimeout) * time.Millisecond
@@ -310,7 +310,7 @@ type port interface {
 
 // Transport is the KPC-3 Plus transport to the JNOS BBS.
 type Transport struct {
-	tnc          *tnc.TNC
+	tnc          *tnc.RobustTNC
 	serial       port
 	readbuf      []byte
 	pending      []byte

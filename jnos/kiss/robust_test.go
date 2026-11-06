@@ -569,8 +569,8 @@ func TestKISSDecoderOverflow(t *testing.T) {
 	}
 }
 
-// TestDeviceValidated checks that device parameters are forced into range.
-func TestDeviceValidated(t *testing.T) {
+// TestDeviceValidate checks that device parameters are forced into range.
+func TestDeviceValidate(t *testing.T) {
 	for _, tt := range []struct{ in, want Device }{
 		{Device{MaxFrame: 0, PacLen: 0, Frack: 0, Retry: 0, RespTime: -1}, Device{MaxFrame: 1, PacLen: 1, Frack: minFrack, InitialFrack: minFrack, Retry: 1}},
 		{Device{MaxFrame: 8, PacLen: 1000, Frack: time.Second, Retry: 3}, Device{MaxFrame: 7, PacLen: 256, Frack: time.Second, InitialFrack: time.Second, Retry: 3}},
@@ -578,11 +578,9 @@ func TestDeviceValidated(t *testing.T) {
 		{*testDevice, func() Device { d := *testDevice; d.InitialFrack = d.Frack; return d }()},
 	} {
 		in := tt.in
-		if got := in.validated(); *got != tt.want {
-			t.Errorf("%+v: got %+v, want %+v", tt.in, *got, tt.want)
-		}
-		if in != tt.in {
-			t.Errorf("validated modified its receiver")
+		in.Validate()
+		if in != tt.want {
+			t.Errorf("%+v: got %+v, want %+v", tt.in, in, tt.want)
 		}
 	}
 }

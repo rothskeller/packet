@@ -127,10 +127,13 @@ func TestT1AdaptsToSlowBBS(t *testing.T) {
 func TestInitialFrack(t *testing.T) {
 	dev := *testDevice
 	dev.Frack, dev.InitialFrack, dev.Retry = 200*time.Millisecond, 700*time.Millisecond, 3
-	if v := dev.validated(); v.InitialFrack != 700*time.Millisecond {
-		t.Fatalf("validated InitialFrack = %v", v.InitialFrack)
+	dev.Validate()
+	if dev.InitialFrack != 700*time.Millisecond {
+		t.Fatalf("validated InitialFrack = %v", dev.InitialFrack)
 	}
-	if v := (&Device{Frack: time.Second}).validated(); v.InitialFrack != time.Second {
+	v := (&Device{Frack: time.Second})
+	v.Validate()
+	if v.InitialFrack != time.Second {
 		t.Errorf("zero InitialFrack validated to %v, want Frack", v.InitialFrack)
 	}
 	client, server := net.Pipe()

@@ -1,15 +1,11 @@
 package kiss
 
 import (
-	"maps"
-	"slices"
 	"time"
 )
 
 // A Device describes a KISS TNC and the AX.25 link parameters to use with it.
 type Device struct {
-	// Name is the name of the device.
-	Name string
 	// PacLen is the maximum number of data bytes in each packet.
 	PacLen int
 	// MaxFrame is the maximum number of unacknowledged packets that can be
@@ -69,35 +65,6 @@ type Device struct {
 	FullDuplex bool
 }
 
-var devices = map[string]*Device{
-	"Generic KISS TNC": {
-		Name:     "Generic KISS TNC",
-		PacLen:   128,
-		MaxFrame: 2,
-		Frack:    6 * time.Second,
-		Retry:    8,
-		// Without measurements, wait twice Frack before resending.
-		InitialFrack: 12 * time.Second,
-		RespTime:     500 * time.Millisecond,
-		Turnaround:   2 * time.Second,
-		TXDelay:      400 * time.Millisecond,
-		Persist:      63,
-		SlotTime:     100 * time.Millisecond,
-	},
-}
-
-// AllDevices returns an alphabetical list of the names of all supported KISS
-// devices.
-func AllDevices() []string {
-	return slices.Sorted(maps.Keys(devices))
-}
-
-// GetDevice returns the definition of the KISS device with the specified name,
-// or nil if there is none.
-func GetDevice(name string) *Device {
-	return devices[name]
-}
-
 // Limits on device parameters, enforced by validated.
 const (
 	// maxMaxFrame is the largest usable MaxFrame: with modulo 8 sequence
@@ -111,16 +78,15 @@ const (
 	minFrack = 100 * time.Millisecond
 )
 
-// validated returns a copy of d with its link parameters forced into their
+// Validate returns a copy of d with its link parameters forced into their
 // valid ranges.
-func (d *Device) validated() *Device {
-	v := *d
-	v.MaxFrame = min(max(v.MaxFrame, 1), maxMaxFrame)
-	v.PacLen = min(max(v.PacLen, 1), maxPacLen)
-	v.Frack = max(v.Frack, minFrack)
-	v.InitialFrack = min(max(v.InitialFrack, v.Frack), max(maxFrack, v.Frack))
-	v.Retry = max(v.Retry, 1)
-	v.RespTime = max(v.RespTime, 0)
-	v.Turnaround = max(v.Turnaround, 0)
-	return &v
+func (d *Device) Validate() error {
+	d.MaxFrame = min(max(d.MaxFrame, 1), maxMaxFrame)
+	d.PacLen = min(max(d.PacLen, 1), maxPacLen)
+	d.Frack = max(d.Frack, minFrack)
+	d.InitialFrack = min(max(d.InitialFrack, d.Frack), max(maxFrack, d.Frack))
+	d.Retry = max(d.Retry, 1)
+	d.RespTime = max(d.RespTime, 0)
+	d.Turnaround = max(d.Turnaround, 0)
+	return nil
 }

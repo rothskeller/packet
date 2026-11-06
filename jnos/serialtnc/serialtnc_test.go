@@ -197,9 +197,8 @@ func tncSim(connectReply string) func(string) string {
 	}
 }
 
-func testTNC() *tnc.TNC {
-	return &tnc.TNC{
-		Name:                   "Test TNC",
+func testTNC() *tnc.RobustTNC {
+	return &tnc.RobustTNC{
 		CommandPrompt:          "cmd:",
 		ConnectedMessage:       "*** CONNECTED",
 		DisconnectedMessage:    "*** DISCONNECTED",
@@ -207,6 +206,7 @@ func testTNC() *tnc.TNC {
 		PostDisconnectCommands: []string{"CR ON"},
 		MyCallCommand:          "MY",
 		ConnectCommand:         "C",
+		DisconnectCommand:      "D",
 		EchoTimeout:            50,
 		ReplyTimeout:           100,
 	}

@@ -15,7 +15,6 @@ import (
 )
 
 var testDevice = &Device{
-	Name:     "test",
 	PacLen:   32,
 	MaxFrame: 2,
 	Frack:    300 * time.Millisecond,

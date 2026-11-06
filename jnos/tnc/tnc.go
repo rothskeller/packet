@@ -11,12 +11,26 @@ import (
 	"slices"
 	"strings"
 	"sync"
+
+	"github.com/rothskeller/packet/v4/jnos/kiss"
 )
 
 // A TNC describes the details of interacting with a particular type of TNC.
 type TNC struct {
 	// Name is the name of the TNC type.
 	Name string
+	// Robust contains the TNC parameters if the TNC is one with a built-in
+	// AX.25 implementation that we issue commands to.  It should be set if
+	// and only if KISS is not set.
+	Robust *RobustTNC `json:"embed"`
+	// KISS contains the TNC parameters if the TNC is a KISS-mode only TNC.
+	// It should be set if and only if Robust is not set.
+	KISS *kiss.Device
+}
+
+// A RobustTNC describes the details of interacting with a particular type of
+// full-featured TNC (i.e., one with a built-in AX.25 implementation).
+type RobustTNC struct {
 	// CommandPrompt is the TNC command prompt that we wait for between
 	// commands.
 	CommandPrompt string
@@ -73,18 +87,31 @@ func fetchOne(path string) {
 	} else if err = t.Validate(); err != nil {
 		slog.Warn("invalid TNC definition", "f", path, "err", err)
 	} else {
-		if t.DisconnectCommand == "" {
+		if t.Robust != nil && t.Robust.DisconnectCommand == "" {
 			// DisconnectCommand was added after initial release, so
 			// there may be configs where it isn't set.
-			t.DisconnectCommand = "D"
+			t.Robust.DisconnectCommand = "D"
 		}
 		tncs[t.Name] = &t
 	}
 }
 
 func (t *TNC) Validate() error {
+	if strings.TrimSpace(t.Name) == "" {
+		return errors.New("Name is missing or blank")
+	}
+	if (t.Robust == nil) == (t.KISS == nil) {
+		return errors.New("exactly one of Robust or KISS must be set")
+	}
+	if t.Robust != nil {
+		return t.Robust.Validate()
+	} else {
+		return t.KISS.Validate()
+	}
+}
+
+func (t *RobustTNC) Validate() error {
 	for _, f := range []struct{ name, value string }{
-		{"Name", t.Name},
 		{"CommandPrompt", t.CommandPrompt},
 		{"ConnectedMessage", t.ConnectedMessage},
 		{"DisconnectedMessage", t.DisconnectedMessage},

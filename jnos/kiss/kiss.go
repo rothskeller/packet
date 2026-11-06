@@ -271,7 +271,7 @@ type Transport struct {
 // open starts an AX.25 connection from local to remote through a KISS TNC
 // reachable over port.  It returns once the connection is established.
 func open(port io.ReadWriteCloser, dev *Device, local, remote address, log io.Writer, monitor func(string), opts ...func(*Transport)) (t *Transport, err error) {
-	dev = dev.validated()
+	dev.Validate()
 	t = &Transport{
 		port:             port,
 		dev:              dev,

@@ -68,7 +68,7 @@ func (e *exchange) run(ctx context.Context) (err error) {
 		slog.Error("already connected", "to", connTo)
 		return fmt.Errorf("there is already a connection to %s in progress", connTo)
 	}
-	if e.config.UsesSerialPort() {
+	if e.config.ConnectType == ConnectSerialTNC {
 		if connectionsRunning.Has(e.config.SerialPort) {
 			connectionsRunningMutex.Unlock()
 			slog.Error("serial port in use", "port", e.config.SerialPort)
@@ -97,10 +97,6 @@ func (e *exchange) run(ctx context.Context) (err error) {
 	)
 	if m, ok := e.updates.(BBSExchangeMonitor); ok {
 		monitor = m.Monitor
-		if e.config.ConnectType != ConnectKISS {
-			e.monitorlw = &lineWriter{fn: monitor}
-			textlog = io.MultiWriter(e.logf, e.monitorlw)
-		}
 	}
 	// Establish the JNOS connection.
 	conn, err := connectBBS(e, ctx, textlog, monitor)
@@ -145,15 +141,13 @@ func (e *exchange) connect(ctx context.Context, textlog io.Writer, monitor func(
 			return nil, fmt.Errorf("The configuration specifies a TNC type of %q which is not defined.", e.config.TNCType)
 		}
 		e.progress("Connecting to %s@%s...", e.config.ActiveCall(), e.config.ConnectBBS)
-		conn, err = serialtnc.ConnectContext(ctx, tncconf, e.config.SerialPort, e.config.ConnectAddress, e.config.ActiveCall(), e.config.OpCall, textlog)
-	case ConnectKISS:
-		dev := kiss.GetDevice(e.config.TNCType)
-		if dev == nil {
-			slog.Error("no such KISS device type", "type", e.config.TNCType)
-			return nil, fmt.Errorf("The configuration specifies a KISS TNC type of %q which is not defined.", e.config.TNCType)
+		if tncconf.Robust != nil {
+			e.monitorlw = &lineWriter{fn: monitor}
+			textlog = io.MultiWriter(e.logf, e.monitorlw)
+			conn, err = serialtnc.ConnectContext(ctx, tncconf.Robust, e.config.SerialPort, e.config.ConnectAddress, e.config.ActiveCall(), e.config.OpCall, textlog)
+		} else {
+			conn, err = kiss.ConnectContext(ctx, tncconf.KISS, e.config.SerialPort, e.config.ConnectAddress, e.config.ActiveCall(), e.config.OpCall, e.logf, monitor)
 		}
-		e.progress("Connecting to %s@%s...", e.config.ActiveCall(), e.config.ConnectBBS)
-		conn, err = kiss.ConnectContext(ctx, dev, e.config.SerialPort, e.config.ConnectAddress, e.config.ActiveCall(), e.config.OpCall, e.logf, monitor)
 	case ConnectTelnet:
 		e.progress("Connecting to %s@%s...", e.config.TelnetUser, e.config.ConnectBBS)
 		conn, err = telnet.ConnectContext(ctx, e.config.ConnectAddress, e.config.TelnetUser, e.config.TelnetPassword, textlog)
