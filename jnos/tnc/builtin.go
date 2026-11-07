@@ -323,8 +323,8 @@ var tncs = map[string]*TNC{
 			EchoTimeout:       800,
 		},
 	},
-	"Generic KISS TNC": {
-		Name: "Generic KISS TNC",
+	"KISS-Only TNC": {
+		Name: "KISS-Only TNC",
 		KISS: &kiss.Device{
 			PacLen:   128,
 			MaxFrame: 2,
