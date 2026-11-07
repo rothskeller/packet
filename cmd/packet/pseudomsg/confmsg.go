@@ -195,6 +195,15 @@ func (cm *ConfigMessage) Fields() iter.Seq[field.Field] {
 				SetValueFunc(func(m message.Message, s string) {
 					m.(*ConfigMessage).Config.TacCall = s
 					m.(*ConfigMessage).setDefaultMessageNumbers()
+					if m.(*ConfigMessage).Config.ConnectType == incident.ConnectTelnet {
+						if m.(*ConfigMessage).Config.TelnetUser == "" {
+							if s == "" {
+								m.(*ConfigMessage).Config.TelnetUser = m.(*ConfigMessage).Config.OpCall
+							} else {
+								m.(*ConfigMessage).Config.TelnetUser = s
+							}
+						}
+					}
 				}).
 				MakeField(),
 			field.NewField("", "Tactical Station Name").
@@ -378,12 +387,46 @@ func (cm *ConfigMessage) Fields() iter.Seq[field.Field] {
 					return nil
 				}).
 				SetValueFunc(func(m message.Message, s string) {
+					s = strings.TrimSpace(s)
 					m.(*ConfigMessage).Config.ConnectAddress = s
 					if m.(*ConfigMessage).Config.ConnectType == incident.ConnectSerialTNC {
 						m.(*ConfigMessage).Config.ConnectBBS, _, _ = strings.Cut(s, "-")
 					}
 				}).
 				EditHelp(`This is the address of the BBS.  For "Connection Type" "Serial+TNC", it must be an AX.25 address (i.e., a call sign followed by a dash an a number from 0 to 15).  For "Connection Type" "Telnet", it must be a hostname:port or IPaddr:port string.  For "Connection Type" "Manual" it must not be set.`).
+				MakeField(),
+			field.NewField("", "Telnet User").
+				ValueFunc(func(m message.Message) string {
+					return m.(*ConfigMessage).Config.TelnetUser
+				}).
+				Required().
+				DisallowedUnless(`"Connection Type" is "Telnet"`, func(m message.Message) bool {
+					return m.(*ConfigMessage).Config.ConnectType == incident.ConnectTelnet
+				}).
+				VisibleWhen(func(m message.Message) bool {
+					return m.(*ConfigMessage).Config.ConnectType == incident.ConnectTelnet
+				}).
+				SetValueFunc(func(m message.Message, s string) {
+					m.(*ConfigMessage).Config.TelnetUser = s
+				}).
+				EditHelp(`This is the username to use for telnet login to the BBS.  It is required for "Connection Type" "Telnet" and not allowed otherwise.`).
+				MakeField(),
+			field.NewField("", "Telnet Password").
+				ValueFunc(func(m message.Message) string {
+					return m.(*ConfigMessage).Config.TelnetPassword
+				}).
+				Obscured().
+				Required().
+				DisallowedUnless(`"Connection Type" is "Telnet"`, func(m message.Message) bool {
+					return m.(*ConfigMessage).Config.ConnectType == incident.ConnectTelnet
+				}).
+				VisibleWhen(func(m message.Message) bool {
+					return m.(*ConfigMessage).Config.ConnectType == incident.ConnectTelnet
+				}).
+				SetValueFunc(func(m message.Message, s string) {
+					m.(*ConfigMessage).Config.TelnetPassword = s
+				}).
+				EditHelp(`This is the password to use for telnet login to the BBS.  It is required for "Connection Type" "Telnet" and not allowed otherwise.`).
 				MakeField(),
 			field.NewField("", "Bulletin Checks").
 				ValueFunc(func(m message.Message) string {
