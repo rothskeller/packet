@@ -142,14 +142,20 @@ func (e *exchange) connect(ctx context.Context, textlog io.Writer, monitor func(
 		}
 		e.progress("Connecting to %s@%s...", e.config.ActiveCall(), e.config.ConnectBBS)
 		if tncconf.Robust != nil {
-			e.monitorlw = &lineWriter{fn: monitor}
-			textlog = io.MultiWriter(e.logf, e.monitorlw)
+			if monitor != nil {
+				e.monitorlw = &lineWriter{fn: monitor}
+				textlog = io.MultiWriter(e.logf, e.monitorlw)
+			}
 			conn, err = serialtnc.ConnectContext(ctx, tncconf.Robust, e.config.SerialPort, e.config.ConnectAddress, e.config.ActiveCall(), e.config.OpCall, textlog)
 		} else {
 			conn, err = kiss.ConnectContext(ctx, tncconf.KISS, e.config.SerialPort, e.config.ConnectAddress, e.config.ActiveCall(), e.config.OpCall, e.logf, monitor)
 		}
 	case ConnectTelnet:
 		e.progress("Connecting to %s@%s...", e.config.TelnetUser, e.config.ConnectBBS)
+		if monitor != nil {
+			e.monitorlw = &lineWriter{fn: monitor}
+			textlog = io.MultiWriter(e.logf, e.monitorlw)
+		}
 		conn, err = telnet.ConnectContext(ctx, e.config.ConnectAddress, e.config.TelnetUser, e.config.TelnetPassword, textlog)
 	default:
 		slog.Error("invalid connect method", "method", e.config.ConnectType)

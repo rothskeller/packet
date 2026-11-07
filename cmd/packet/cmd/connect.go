@@ -17,10 +17,13 @@ const (
 	connectHelp = `
 usage: packet connect [-i]
   -i, --immediate  ⇥Send and receive only immediate messages
+  -v, --verbose    ⇥Show BBS traffic
 
 The "connect" (or "c") command makes a connection to the BBS and sends and/or receives messages.  With the --immediate (or -i) flag, only immediate messages are sent and/or received.
 
 When receiving messages without the --immediate flag, any scheduled bulletin checks are performed as well.
+
+With the --verbose (or -v) flag, all communications with the TNC (if any) and BBS are shown as they occur.  (The communications are logged to $BBSNAME.log regardless of whether --verbose is specified.)
 
 The "connect" command lists all messages sent and received.  Run "packet help list" for details of the output format.
 `
@@ -31,6 +34,7 @@ var ErrInterrupted = errors.New("connection interrupted by Ctrl-C")
 func cmdConnect(args []string) (err error) {
 	var (
 		immediate bool
+		verbose   bool
 		dir       string
 		myID      string
 		ctx       context.Context
@@ -42,6 +46,7 @@ func cmdConnect(args []string) (err error) {
 	)
 	flags := pflag.NewFlagSet("connect", pflag.ContinueOnError)
 	flags.BoolVarP(&immediate, "immediate", "i", false, "Send and receive only immediate messages")
+	flags.BoolVarP(&verbose, "verbose", "v", false, "Show BBS traffic")
 	flags.Usage = func() {} // we do our own
 	if err = flags.Parse(args); err == pflag.ErrHelp {
 		return cmdHelp([]string{"connect"})
@@ -73,7 +78,7 @@ func cmdConnect(args []string) (err error) {
 	// When the connection finishes, we need to break out of the select
 	// loop, so we'll use a sentinel channel for that.
 	finished = make(chan struct{})
-	updates = &connectUpdates{c: c, finished: finished}
+	updates = &connectUpdates{c: c, finished: finished, verbose: verbose}
 	// Run the connection.
 	go incident.BBSExchange(ctx, dir, immediate, updates)
 LOOP:
@@ -99,12 +104,19 @@ LOOP:
 type connectUpdates struct {
 	c        *cio.CIO
 	finished chan struct{}
+	verbose  bool
 	once     sync.Once
 	log      []*incident.LogEntry
 	err      string
 }
 
 func (cu *connectUpdates) Progress(s string) { cu.c.Status("%s", s) }
+
+func (cu *connectUpdates) Monitor(line string) {
+	if cu.verbose {
+		cu.c.Monitor(line)
+	}
+}
 
 func (cu *connectUpdates) LogEntry(le *incident.LogEntry) { cu.log = append(cu.log, le) }
 
