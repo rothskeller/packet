@@ -20,7 +20,7 @@
     }
     function showLinkMonitor(show) {
       lmPanel.hidden = !show
-      document.getElementById('m-conn-monitor').setChecked(show)
+      document.getElementById('m-view-monitor').setChecked(show)
       lmSetting('link-monitor-open', show ? '1' : '')
       if (show && !lmAbort) lmPoll()
       if (!show && lmAbort) {
@@ -123,7 +123,7 @@
       })
       const width = lmSetting('link-monitor-width')
       if (width) lmPanel.style.width = width
-      if (lmSetting('link-monitor-open') === '1' && document.getElementById('m-conn-monitor')) showLinkMonitor(true)
+      if (lmSetting('link-monitor-open') === '1' && document.getElementById('m-view-monitor')) showLinkMonitor(true)
     }
   </script>
   <style>
